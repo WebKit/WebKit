@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 55: TypeError: Value null (result of expression myImage.onload) is not object.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 765x36
+          text run at (0,0) width 599: "This test merely ensures we don't crash when giving invalid arguments to Canvas::drawImage. "
+          text run at (599,0) width 166: "If you can see this without"
+          text run at (0,18) width 180: "crashing, the test has passed."
+      RenderBlock {P} at (0,52) size 784x150
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,15 @@
+2007-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Layout tests for rdar://problem/4849948
+        Make sure we don't crash when passing invalid args to Canvas::drawImage
+
+        * fast/canvas/drawImage-with-invalid-args-expected.checksum: Added.
+        * fast/canvas/drawImage-with-invalid-args-expected.png: Added.
+        * fast/canvas/drawImage-with-invalid-args-expected.txt: Added.
+        * fast/canvas/drawImage-with-invalid-args.html: Added.
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

@@ -1,3 +1,21 @@
+2007-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for rdar://problem/4849948 -- JSCanvasRenderingContext2D::drawImage
+        crashes when given invalid arguments.
+
+        JSCanvasRenderingContext2D frequently casts from JSValue* to JSObject*
+        and then checks isObject *after* the cast.  JSObject::isObject is unsafe 
+        if applied to a JSImmediate value (null, undefined, etc).  This patch 
+        corrects the logic in a number of places by performing the isObject check
+        before casting to JSObject.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

@@ -1,0 +1,57 @@
+<body onload="draw();">
+    This test merely ensures we don't crash when giving invalid arguments to Canvas::drawImage.
+    If you can see this without crashing, the test has passed.<p/>
+<canvas id="canvas" width="150" height="150"></canvas>
+<script>
+    // Create image
+    var myImage = new Image();   
+    var img_src = 'resources/apple.gif';
+    myImage.src = img_src;
+
+    function draw() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+
+        // draw image
+        try{
+            ctx.drawImage();
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(myImage);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(myImage, 0);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(null);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(null, 0);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(null, 0, 0);
+        } catch (e) {
+        }
+        try{
+            ctx.drawImage(null, 0, 0, 20, 20);
+        } catch (e) {
+        }
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0,0,150,150);
+    }
+
+    myImage.onload(draw);
+</script>
+</body>

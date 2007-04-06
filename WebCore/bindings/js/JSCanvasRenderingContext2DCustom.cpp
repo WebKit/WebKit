@@ -181,9 +181,11 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
     //     drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
     // Composite operation is specified with globalCompositeOperation.
     // The img parameter can be a <img> or <canvas> element.
-    JSObject* o = static_cast<JSObject*>(args[0]);
-    if (!o->isObject())
+    JSValue* value = args[0];
+    if (!value->isObject())
         return throwError(exec, TypeError);
+    JSObject* o = static_cast<JSObject*>(value);
+    
     ExceptionCode ec = 0;
     if (o->inherits(&JSHTMLImageElement::info)) {
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
@@ -238,10 +240,12 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
 JSValue* JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec, const List& args)
 { 
     CanvasRenderingContext2D* context = impl();
-
-    JSObject* o = static_cast<JSObject*>(args[0]);
-    if (!o->isObject())
+    
+    JSValue* value = args[0];
+    if (!value->isObject())
         return throwError(exec, TypeError);
+    JSObject* o = static_cast<JSObject*>(value);
+    
     if (!o->inherits(&JSHTMLImageElement::info))
         return throwError(exec, TypeError);
     context->drawImageFromRect(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
@@ -303,9 +307,11 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
 { 
     CanvasRenderingContext2D* context = impl();
 
-    JSObject* o = static_cast<JSObject*>(args[0]);
-    if (!o->isObject())
+    JSValue* value = args[0];
+    if (!value->isObject())
         return throwError(exec, TypeError);
+    JSObject* o = static_cast<JSObject*>(value);
+    
     if (o->inherits(&JSHTMLImageElement::info)) {
         ExceptionCode ec;
         JSValue* pattern = toJS(exec,
