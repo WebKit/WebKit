@@ -1,3 +1,19 @@
+2007-04-06  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        These two editing tests were using the wrong case for
+        dumpEditingCallbacks, which meant that they were falling into DRT's
+        invokeUndefinedMethodFromWebScript instead of actually turning on the
+        callback dumping.
+        
+        This patch fixes the case of the call and updates the results.
+
+        * editing/execCommand/4641880-1-expected.txt:
+        * editing/execCommand/4641880-1.html:
+        * editing/execCommand/4641880-2-expected.txt:
+        * editing/execCommand/4641880-2.html:
+
 2007-04-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
