@@ -39,6 +39,7 @@ typedef struct {
     NPObject header;
     NPP npp;
     NPBool eventLogging;
+    NPBool logDestroy;
     NPObject* testObject;
     NPStream* stream;
     char* onStreamLoad;

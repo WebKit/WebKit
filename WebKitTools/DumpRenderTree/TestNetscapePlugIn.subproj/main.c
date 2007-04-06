@@ -95,6 +95,9 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
         if (obj->onStreamLoad)
             free(obj->onStreamLoad);
         
+        if (obj->logDestroy)
+            printf("PLUGIN: NPP_Destroy\n");
+
         browser->releaseobject(&obj->header);
     }
     return NPERR_NO_ERROR;

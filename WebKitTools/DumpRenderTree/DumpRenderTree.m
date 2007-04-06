@@ -104,6 +104,9 @@ WebFrame *frame = 0;
 BOOL shouldDumpEditingCallbacks;
 BOOL shouldDumpResourceLoadCallbacks;
 NSMutableSet *disallowedURLs = 0;
+BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
+BOOL canOpenWindows;
+BOOL closeWebViews;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -130,7 +133,6 @@ static ResourceLoadDelegate *resourceLoadDelegate;
 // where a frameset is loaded, and then new content is loaded into one of the child frames,
 // that child frame is the "topmost frame that is loading".
 static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
-static BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 
 static BOOL dumpAsText;
 static BOOL dumpDOMAsWebArchive;
@@ -163,6 +165,8 @@ static BOOL workQueueFrozen;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
+
+static CFMutableSetRef allWindowsRef;
 
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static BOOL javaScriptThreadsShouldTerminate;
@@ -433,7 +437,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:1];
     [preferences setJavaEnabled:NO];
-    [preferences setJavaScriptCanOpenWindowsAutomatically:NO];
+    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
 
@@ -1023,7 +1027,9 @@ static void dump(void)
             || aSelector == @selector(setUserStyleSheetLocation:)
             || aSelector == @selector(setUserStyleSheetEnabled:)
             || aSelector == @selector(objCClassNameOf:)
-            || aSelector == @selector(addDisallowedURL:))
+            || aSelector == @selector(addDisallowedURL:)    
+            || aSelector == @selector(setCanOpenWindows)
+            || aSelector == @selector(setCallCloseOnWebViews:))
         return NO;
     return YES;
 }
@@ -1056,7 +1062,9 @@ static void dump(void)
         return @"objCClassName";
     if (aSelector == @selector(addDisallowedURL:))
         return @"addDisallowedURL";
-    
+    if (aSelector == @selector(setCallCloseOnWebViews:))
+        return @"setCallCloseOnWebViews";
+
     return nil;
 }
 
@@ -1082,6 +1090,16 @@ static void dump(void)
         [WebHistory setOptionalSharedHistory:history];
         [history release];
     }
+}
+
+- (void)setCallCloseOnWebViews:(BOOL)callClose
+{
+    closeWebViews = callClose;
+}
+
+- (void)setCanOpenWindows
+{
+    canOpenWindows = YES;
 }
 
 - (void)waitUntilDone 
@@ -1350,6 +1368,8 @@ static void runTest(const char *pathOrURL)
     dumpTitleChanges = NO;
     dumpBackForwardList = NO;
     readFromWindow = NO;
+    canOpenWindows = NO;
+    closeWebViews = YES;
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if ([WebHistory optionalSharedHistory])
@@ -1381,6 +1401,10 @@ static void runTest(const char *pathOrURL)
     pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
     [pool release];
+    
+    // We should only have our main window left when we're done
+    assert(CFSetGetCount(allWindowsRef) == 1);
+    assert(CFSetContainsValue(allWindowsRef, [[frame webView] window]));
     
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
@@ -1579,7 +1603,34 @@ static void displayWebView()
 
 @end
 
+static CFSetCallBacks NonRetainingSetCallbacks = {
+    0,
+    NULL,
+    NULL,
+    CFCopyDescription,
+    CFEqual,
+    CFHash
+};
+
 @implementation DumpRenderTreeWindow
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+    if (!allWindowsRef)
+        allWindowsRef = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+
+    CFSetSetValue(allWindowsRef, self);
+            
+    return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
+}
+
+- (void)dealloc
+{
+    assert(CFSetContainsValue(allWindowsRef, self));
+    
+    CFSetRemoveValue(allWindowsRef, self);
+    [super dealloc];
+}
 
 - (BOOL)isKeyWindow
 {

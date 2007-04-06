@@ -28,6 +28,7 @@
 
 @class DumpRenderTreeDraggingInfo;
 @class WebFrame;
+@class WebView;
 
 extern BOOL windowIsKey;
 extern WebFrame *frame;
@@ -35,3 +36,8 @@ extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern volatile BOOL done;
 extern BOOL shouldDumpResourceLoadCallbacks;
 extern NSMutableSet *disallowedURLs;
+extern BOOL waitToDump;
+extern BOOL canOpenWindows;
+extern BOOL closeWebViews;
+
+WebView *createWebView();

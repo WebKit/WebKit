@@ -1,3 +1,24 @@
+2007-04-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5083023>
+        REGRESSION: In Real Player (10.1.0), video continues to play after closing window
+        
+        This broke in revision 18422 because now the plugin isn't stopped when the window is closed. Since the window is retained
+        by the plugin view for as long as it is running (so that removeTrackingRect works even though the window has been closed),
+        we would end up with a reference cycle (NSWindow -> WebView -> PluginView -> NSWindow) and stopping the plug-in when the window
+        was closed would break that cycle.
+        
+        Applications that call -[WebView close] when closing aren't affected, but RealPlayer doesn't do this.
+        
+        The bug that 18422 was supposed to fix was fixed by 19275, which is why it's safe to add back the check.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView addWindowObservers]):
+        (-[WebBaseNetscapePluginView removeWindowObservers]):
+        (-[WebBaseNetscapePluginView windowWillClose:]):
+
 2007-04-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

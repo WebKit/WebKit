@@ -68,6 +68,29 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         [(WebHTMLView *)documentView _updateActiveState];
 }
 
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
+{
+    if (!canOpenWindows)
+        return nil;
+    
+    // Make sure that waitUntilDone has been called.
+    assert(waitToDump);
+
+    WebView *webView = createWebView();
+    
+    return [webView autorelease];
+}
+
+- (void)webViewClose:(WebView *)sender
+{
+    NSWindow* window = [sender window];
+ 
+    if (closeWebViews)
+        [sender close];
+    
+    [window close];
+}
+
 - (void)dealloc
 {
     [draggingInfo release];

@@ -1,5 +1,39 @@
 2007-04-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Add support for opening new windows in DumpRenderTree.
+        
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setCallCloseOnWebViews:]):
+        (-[LayoutTestController setCanOpenWindows]):
+        Add two new methods callable from JavaScript. setCanOpenWindows controls whether a test
+        can open new windows, and setCallCloseOnWebViews controls whether -[WebView close] should be called on 
+        web views that are about to be closed.
+        
+        (runTest):
+        Make sure that only the main window is around when a test has finished running.
+        
+        (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[DumpRenderTreeWindow dealloc]):
+        Manage the set of windows.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_Destroy):
+        Add a "logDestroy" property which controls whether plugins should print when they are destroyed or not.
+        
+        * DumpRenderTree/UIDelegate.m:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        Create new windows.
+        
+        (-[UIDelegate webViewClose:]):
+        Close windows.
+        
+2007-04-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Maciej.
 
         Move WebView and NSWindow creation to a separate function in preparation of supporting opening new
