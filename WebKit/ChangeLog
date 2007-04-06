@@ -1,3 +1,14 @@
+2007-04-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Adds a build phase script that ensures WebKit's version dosen't end in a 4.
+        If our version ends in 4, some sites might think we are Netscape 4 in their
+        user agent checks.
+
+        * Configurations/Version.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-04-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
