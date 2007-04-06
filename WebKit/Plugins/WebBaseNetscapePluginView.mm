@@ -472,7 +472,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 // knows about the true set of dirty rects.
                 NSView *opaqueAncestor = [self opaqueAncestor];
                 const NSRect *dirtyRects;
-                int dirtyRectCount, dirtyRectIndex;
+                WebNSInteger dirtyRectCount, dirtyRectIndex;
                 [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
 
                 for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
@@ -546,7 +546,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             // knows about the true set of dirty rects.
             NSView *opaqueAncestor = [self opaqueAncestor];
             const NSRect *dirtyRects;
-            int count;
+            WebNSInteger count;
             [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&count];
             Vector<CGRect, 16> convertedDirtyRects;
             convertedDirtyRects.resize(count);
