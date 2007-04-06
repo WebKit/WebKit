@@ -1,3 +1,15 @@
+2007-04-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5115601> 
+        REGRESSION: Crash deleting a selection that starts in an editable table cell
+
+        * editing/deleting/5115601-expected.checksum: Added.
+        * editing/deleting/5115601-expected.png: Added.
+        * editing/deleting/5115601-expected.txt: Added.
+        * editing/deleting/5115601.html: Added.
+
 2007-04-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by.

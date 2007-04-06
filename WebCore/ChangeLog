@@ -1,3 +1,24 @@
+2007-04-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/5115601> 
+        REGRESSION: Crash deleting a selection that starts in an editable table cell
+        
+        The selection starts at the start of an editable 
+        root that's embedded in a non-editable ToDo (table).  
+        Removing the selection removes all editable 
+        VisiblePositions from the root.  Then, the creation 
+        of mergeDestination fails, and using it causes a crash.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        Nil-check mergeDestination to avoid crashing and
+        also insert a break in that case at m_upstreamStart, 
+        so that we can create a valid mergeDestination and
+        perform the merge.
+        
+        
 2007-04-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Oliver.
