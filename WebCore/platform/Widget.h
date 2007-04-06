@@ -120,12 +120,6 @@ namespace WebCore {
         ScrollView* parent() const;
 
         virtual void geometryChanged() const {};
-
-        bool capturingMouse() const;
-        void setCapturingMouse(bool);
-        Widget* capturingTarget();
-        Widget* capturingChild();
-        void setCapturingChild(Widget*);
         
         IntRect convertToContainingWindow(const IntRect&) const;
         IntPoint convertToContainingWindow(const IntPoint&) const;

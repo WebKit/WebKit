@@ -103,6 +103,9 @@ public:
     void incrementWheelDelta(int delta);
     void reduceWheelDelta(int delta);
     int wheelDelta() const { return m_wheelDelta; }
+
+    bool scrollbarCapturingMouse() const { return m_scrollbarCapturingMouse; }
+    void setScrollbarCapturingMouse(bool b) { m_scrollbarCapturingMouse = b; }
 #endif
 
 protected:
@@ -140,6 +143,7 @@ private:
     int m_scrollOffset;
     int m_wheelDelta;
     int m_focusedIndex;
+    bool m_scrollbarCapturingMouse;
 #endif
 
 };

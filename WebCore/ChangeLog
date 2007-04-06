@@ -1,3 +1,28 @@
+2007-04-06  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13274.  Rework mouse events so that subframe capturing works again.  Make sure
+        everything just comes down through the top FrameView even when capturing is in effect.  Update
+        scrollbar handling logic so that scrollbars receive events correctly while capturing is in
+        effect.  Eliminate the notion of widget capture.  Fix mouse moves so that they only fire
+        on the innermost hit frame.
+
+        Reviewed by olliej
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::subframeForTargetNode):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h:
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::scrollbarCapturingMouse):
+        (WebCore::PopupMenu::setScrollbarCapturingMouse):
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::handleMouseReleaseEvent):
+        * platform/Widget.h:
+        (WebCore::Widget::geometryChanged):
+
 2007-04-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
