@@ -1,5 +1,11 @@
 2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Not reviewed - gdk build fix.
+
+        * platform/gdk/MouseEventGdk.cpp:
+
+2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by darin.
 
         Coverity fix. Coverity says:

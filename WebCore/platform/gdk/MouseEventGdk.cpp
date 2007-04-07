@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
-
 // FIXME: Would be even better to figure out which modifier is Alt instead of always using GDK_MOD1_MASK.
 
 PlatformMouseEvent::PlatformMouseEvent(GdkEvent* event)
