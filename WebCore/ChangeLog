@@ -3,6 +3,16 @@
         Reviewed by darin.
 
         Coverity fix. Coverity says:
+        "Event var_deref_op: Variable "info_ptr" tracked as NULL was dereferenced."
+
+        * platform/image-decoders/png/pngrutil.c:
+        (png_handle_gAMA):
+
+2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
+        Coverity fix. Coverity says:
         "Event var_deref_model: Variable "(this)->clientptr" tracked as NULL was passed to a function that dereferences it."
 
         * platform/image-decoders/gif/GIFImageReader.cpp:

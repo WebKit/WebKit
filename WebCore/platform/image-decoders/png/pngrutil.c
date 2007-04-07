@@ -587,7 +587,7 @@ png_handle_gAMA(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
       /* Should be an error, but we can cope with it */
       png_warning(png_ptr, "Out of place gAMA chunk");
 
-   if (info_ptr != NULL && (info_ptr->valid & PNG_INFO_gAMA)
+   if (info_ptr->valid & PNG_INFO_gAMA
 #if defined(PNG_READ_sRGB_SUPPORTED)
       && !(info_ptr->valid & PNG_INFO_sRGB)
 #endif
