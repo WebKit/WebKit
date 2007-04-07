@@ -50,6 +50,7 @@ namespace WebCore {
         // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others),
         // but we will match the standard DOM.
         unsigned short button() const { return m_button; }
+        bool buttonDown() const { return m_buttonDown; }
         EventTargetNode* relatedTarget() const { return m_relatedTarget.get(); }
         Clipboard* clipboard() const { return m_clipboard.get(); }
         
@@ -62,6 +63,7 @@ namespace WebCore {
 
     private:
         unsigned short m_button;
+        bool m_buttonDown;
         RefPtr<EventTargetNode> m_relatedTarget;
         RefPtr<Clipboard> m_clipboard;
     };

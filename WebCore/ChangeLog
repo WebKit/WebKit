@@ -1,3 +1,20 @@
+2007-04-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix MouseEvent so it's possible to distinguish between
+        a MouseMouseEvent with NoButton down, and a move with
+        LeftButton down.  It would be nice if the DOM allowed 
+        for NoButton to exist, but it doesn't so this is necessary.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::noButton):
+
 2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.
