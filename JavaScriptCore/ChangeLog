@@ -1,3 +1,14 @@
+2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
+        Coverity fix. Coverity says:
+        "Event var_deref_model: Variable "sourceRanges" tracked as NULL was passed to a
+        function that dereferences it"
+
+        * kjs/string_object.cpp:
+        (KJS::replace):
+
 2007-04-06  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Adele Peterson.
