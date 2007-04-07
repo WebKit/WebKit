@@ -967,10 +967,11 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(false, false, false, true), mouseEvent);
     Node* targetNode = m_capturingMouseEventsNode.get() ? m_capturingMouseEventsNode.get() : mev.targetNode();
-    setCapturingMouseEventsNode(0);
     Frame* subframe = subframeForTargetNode(targetNode);
-    if (subframe && passMouseReleaseEventToSubframe(mev, subframe))
+    if (subframe && passMouseReleaseEventToSubframe(mev, subframe)) {
+        setCapturingMouseEventsNode(0);
         return true;
+    }
 
     bool swallowMouseUpEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 

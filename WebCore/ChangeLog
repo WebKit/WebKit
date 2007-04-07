@@ -1,3 +1,13 @@
+2007-04-06  David Hyatt  <hyatt@apple.com>
+
+        Fix failing slider layout test.  Don't clear the subframe capture unless we really were capturing on a
+        subframe.
+
+        Reviewed by adele, darin
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2007-04-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff and Darin.
