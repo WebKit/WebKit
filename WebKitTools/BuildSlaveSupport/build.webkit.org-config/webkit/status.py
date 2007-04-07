@@ -21,7 +21,7 @@ allBuildsEmail = mail.MailNotifier(fromaddr="buildbot@webkit.org",
                                     sendToInterestedUsers=False)
 breakageEmail = mail.MailNotifier(fromaddr="buildbot@webkit.org",
                                   extraRecipients=["mark+webkit-builds@bdash.net.nz"],
-                                  lookup=mail.Domain("opensource.apple.com"),
+                                  lookup=mail.Domain("webkit.org"),
                                   mode="breakage")
 
 IRC = words.IRC(host="irc.freenode.net",
@@ -29,8 +29,5 @@ IRC = words.IRC(host="irc.freenode.net",
                 channels=["#webkit-build"],
                 announceAllBuilds=True)
 
-PBClient = client.PBListener("tcp:9988", "statusClient", "clientpw")
-
 def getStatusListeners():
-    return [waterfall, allBuildsEmail, breakageEmail, IRC, PBClient]
-
+    return [waterfall, allBuildsEmail, breakageEmail, IRC]
