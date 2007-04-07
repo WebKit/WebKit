@@ -1,3 +1,13 @@
+2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
+        Coverity fix. Coverity says:
+        "Event var_deref_model: Variable "(this)->clientptr" tracked as NULL was passed to a function that dereferences it."
+
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+
 2007-04-06  David Hyatt  <hyatt@apple.com>
 
         Fix more of the layout test failures caused by fixing the slider layout test failure (sigh).  clear()
