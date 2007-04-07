@@ -1,5 +1,15 @@
 2007-04-06  David Hyatt  <hyatt@apple.com>
 
+        Fix more of the layout test failures caused by fixing the slider layout test failure (sigh).  clear()
+        needs to null out the capturingMouseEventsNode in the case where a mousedown or move while captured
+        causes a navigation to another page.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
+2007-04-06  David Hyatt  <hyatt@apple.com>
+
         Fix failing slider layout test.  Don't clear the subframe capture unless we really were capturing on a
         subframe.
 
