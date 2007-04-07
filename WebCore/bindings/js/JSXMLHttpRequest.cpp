@@ -23,6 +23,7 @@
 
 #include "Event.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
@@ -215,7 +216,7 @@ JSValue* JSXMLHttpRequestPrototypeFunction::callAsFunction(ExecState* exec, JSOb
                 return throwError(exec, SyntaxError, "Not enough arguments");
 
             String method = args[0]->toString(exec);
-            KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(DeprecatedString(args[1]->toString(exec))));
+            KURL url = Window::retrieveActive(exec)->frame()->loader()->completeURL(DeprecatedString(args[1]->toString(exec)));
 
             bool async = true;
             if (args.size() >= 3)

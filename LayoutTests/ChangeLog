@@ -2,6 +2,16 @@
 
         Reviewed by Beth Dakin.
         
+        Layout tests for one more case of <rdar://problem/5112273> REGRESSION(TOT): 
+        Reproducible crash loading an old version of amazon.com as a web archive
+
+        * fast/dom/null-document-xmlhttprequest-open-expected.txt: Added.
+        * fast/dom/null-document-xmlhttprequest-open.html: Added.
+
+2007-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
         Layout tests for <rdar://problem/5112273> REGRESSION(TOT): Reproducible 
         crash loading an old version of amazon.com as a web archive
 
