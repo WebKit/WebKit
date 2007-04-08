@@ -69,10 +69,6 @@ using namespace WebCore;
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int, int, int) const { notImplemented(); return FloatRect(); }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
-namespace WebCore {
-PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
-}
-
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
