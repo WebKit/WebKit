@@ -1,5 +1,17 @@
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/5026893>
+        REGRESSION: "Mail Contents of this Page" for standalone image in Safari results in a broken image in Mail
+        
+        * WebView/WebFrame.mm:
+        (-[WebFrame DOMDocument]):
+        We can't check for _isHTMLDocument here since image and plugin documents inherit from HTMLDocument. Instead,
+        check for those two document types explicitly.
+        
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff, Ada and John.
 
         <rdar://problem/4600978> Would like a way to test whether a WebView is displaying a standalone image

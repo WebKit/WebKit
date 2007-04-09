@@ -704,9 +704,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = core(self);
     if (!coreFrame)
         return nil;
-    // FIXME: Why do we need this check?
-    if (![[self dataSource] _isDocumentHTML])
+    
+    Document* document = coreFrame->document();
+    
+    // According to the documentation, we should return nil if the frame doesn't have a document.
+    // While full-frame images and plugins do have an underlying HTML document, we return nil here to be
+    // backwards compatible.
+    if (document && (document->isPluginDocument() || document->isImageDocument()))
         return nil;
+    
     return kit(coreFrame->document());
 }
 
