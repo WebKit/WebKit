@@ -1,3 +1,52 @@
+2007-04-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+        
+        These were never checked in:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum: Added.
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        
+        New results were never checked in after some selection 
+        gap filling fixes: 
+        * editing/style/remove-underline-across-paragraph-expected.checksum:
+        * editing/style/remove-underline-across-paragraph-expected.png:
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.checksum:
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.png:
+        * editing/style/style-3690704-fix-expected.checksum:
+        * editing/style/style-3690704-fix-expected.png:
+        * editing/style/table-selection-expected.checksum:
+        * editing/style/table-selection-expected.png:
+        * editing/undo/4063751-expected.checksum:
+        * editing/undo/4063751-expected.png:                
+        * editing/style/apple-style-editable-mix-expected.checksum:
+        * editing/style/apple-style-editable-mix-expected.png:
+        * editing/inserting/paragraph-separator-in-table-1-expected.checksum:
+        * editing/inserting/paragraph-separator-in-table-1-expected.png:
+        * editing/inserting/paragraph-separator-in-table-2-expected.checksum:
+        * editing/inserting/paragraph-separator-in-table-2-expected.png:
+        
+        Checking in incorrect results and adding a FIXME that references the
+        bug that this test demonstrates:
+        * editing/style/smoosh-styles-003-expected.checksum:
+        * editing/style/smoosh-styles-003-expected.png:
+        * editing/style/smoosh-styles-003-expected.txt:
+        * editing/style/smoosh-styles-003.html:
+        
+        Misspelling marker correctly removed:
+        * editing/deleting/delete-to-select-table-expected.checksum:
+        * editing/deleting/delete-to-select-table-expected.png:
+        
+        Horizontal rules and parts of table borders were made very slightly 
+        darker, and these results were never updated:
+        * editing/inserting/4278698-expected.checksum:
+        * editing/inserting/4278698-expected.png:
+        * editing/unsupported-content/table-type-after-expected.checksum:
+        * editing/unsupported-content/table-type-after-expected.png:
+        * editing/unsupported-content/table-type-before-expected.checksum:
+        * editing/unsupported-content/table-type-before-expected.png:
+        * editing/deleting/table-cells-expected.checksum:
+        * editing/deleting/table-cells-expected.png:
+        
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
