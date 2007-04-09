@@ -304,6 +304,32 @@ void Pasteboard::writeImage(const HitTestResult& result)
         writeFileWrapperAsRTFDAttachment(fileWrapperForImage(imageResource, URL));
 }
 
+void Pasteboard::writeImage(Node* imageNode, const KURL& url)
+{
+    NSURL *URL = url.getNSURL();
+    ASSERT(URL);
+
+    Frame* frame = imageNode->document()->frame();
+    NSString *title = imageNode->document()->title();
+    
+    NSArray *types = writableTypesForImage();
+    [m_pasteboard declareTypes:types owner:nil];
+    writeURL(m_pasteboard, types, URL, title, frame);
+
+    if (!imageNode->renderer() || !imageNode->renderer()->isImage())
+        return;
+    RenderImage* renderer = static_cast<RenderImage*>(imageNode->renderer());
+    CachedImage* imageResource = renderer->cachedImage();
+    if (!imageResource)
+        return;
+    String MIMEType = imageResource->response().mimeType();
+    ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
+
+    [m_pasteboard setData:[imageResource->image()->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
+    
+    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(imageResource, URL));
+}
+
 bool Pasteboard::canSmartReplace()
 {
     return [[m_pasteboard types] containsObject:WebSmartPastePboardType];

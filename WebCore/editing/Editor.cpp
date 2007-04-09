@@ -154,6 +154,13 @@ bool Editor::canCut() const
 
 bool Editor::canCopy() const
 {
+    if (m_frame->document() && m_frame->document()->isImageDocument()) {
+        Document* doc = m_frame->document();
+        if (doc->body() && doc->body()->firstChild() &&
+            doc->body()->firstChild()->hasTagName(imgTag))  
+            return true;
+    }
+        
     SelectionController* selectionController = m_frame->selectionController();
     return selectionController->isRange() && !selectionController->isInPasswordField();
 }
@@ -1414,7 +1421,16 @@ void Editor::copy()
         systemBeep();
         return;
     }
-    Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
+    if (m_frame->document() && m_frame->document()->isImageDocument()) {
+        Document* doc = m_frame->document();
+
+        if (doc->body() && doc->body()->firstChild() &&
+            doc->body()->firstChild()->hasTagName(imgTag))
+            Pasteboard::generalPasteboard()->writeImage(doc->body()->firstChild(), KURL(doc->URL()));
+        else
+            return;
+    } else
+        Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
     didWriteSelectionToPasteboard();
 }
 

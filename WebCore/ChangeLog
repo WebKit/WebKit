@@ -1,3 +1,23 @@
+2007-04-09  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Justin Garcia.
+        
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12959
+        "REGRESSION: Edit -> Copy not enabled on standalone images"
+
+        * dom/Document.h: Add support for determining if a document is an image
+        (WebCore::Document::isImageDocument):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canCopy): Image documents are copyable
+        (WebCore::Editor::copy): If copying an image document, call appropriate pasteboard methods
+        * loader/ImageDocument.h:
+        (WebCore::ImageDocument::isImageDocument): Override to return true for image documents
+        * platform/Pasteboard.h: Add new writeImage function to pasteboard
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): Add writeImage implementation that takes Node and URL
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage): Stub for Qt implementation of pasteboard
+
 2007-04-08  Oliver Hunt  <oliver@apple.com>
 
         rs=Adam.

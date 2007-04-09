@@ -1,3 +1,15 @@
+2007-04-09  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Justin Garcia.
+        
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=12959
+        "REGRESSION: Edit -> Copy not enabled on standalone images"
+
+        * editing/pasteboard/copy-standalone-image-expected.checksum: Added.
+        * editing/pasteboard/copy-standalone-image-expected.png: Added.
+        * editing/pasteboard/copy-standalone-image-expected.txt: Added.
+        * editing/pasteboard/copy-standalone-image.html: Added.
+
 2007-04-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

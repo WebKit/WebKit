@@ -60,6 +60,7 @@ class DocumentFragment;
 class Frame;
 class HitTestResult;
 class KURL;
+class Node;
 class Range;
 class String;
     
@@ -75,6 +76,7 @@ public:
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(const HitTestResult&);
+    void writeImage(Node* imageNode, const KURL& url);
 #if PLATFORM(MAC)
     void writeFileWrapperAsRTFDAttachment(NSFileWrapper*);
 #endif
