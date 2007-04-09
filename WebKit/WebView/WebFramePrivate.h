@@ -62,4 +62,7 @@ typedef enum {
 // You should use WebView's selectedDOMRange and setSelectedDOMRange whenever possible.
 - (NSRange)_selectedNSRange;
 - (void)_selectNSRange:(NSRange)range;
+
+- (BOOL)_isDisplayingStandaloneImage;
+
 @end

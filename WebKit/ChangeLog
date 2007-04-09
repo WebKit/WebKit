@@ -1,3 +1,14 @@
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff, Ada and John.
+
+        <rdar://problem/4600978> Would like a way to test whether a WebView is displaying a standalone image
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _isDisplayingStandaloneImage]):
+        * WebView/WebFramePrivate.h:
+        Add _isDisplayingStandaloneImage SPI.
+
 2007-04-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

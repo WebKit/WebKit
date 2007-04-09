@@ -645,6 +645,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     [_private->bridge selectNSRange:range];
 }
 
+- (BOOL)_isDisplayingStandaloneImage
+{
+    Document* document = core(self)->document();
+    return document && document->isImageDocument();
+}
+
 @end
 
 @implementation WebFrame
