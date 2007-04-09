@@ -3,8 +3,7 @@ function runTest() {
     var plugin = document.getElementById('testPlugin');
     plugin.logDestroy = true;
 
-    // I would like to come up with something better than a timeout here
-    window.opener.setTimeout('layoutTestController.notifyDone()', 50);
+    window.opener.setTimeout('setTimeout("layoutTestController.notifyDone()",50)', 0);
     window.close();
 }
 

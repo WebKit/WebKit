@@ -1,5 +1,12 @@
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        * plugins/resources/open-and-close-window-with-plugin.html:
+        Try to fix the ASSERT on the build bot by scheduling a timeout that schedules a timeout.
+
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
         
         <rdar://problem/5120801> 
