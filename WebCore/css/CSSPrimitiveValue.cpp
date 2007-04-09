@@ -143,13 +143,11 @@ CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<RectImpl> r)
     m_value.rect = r.releaseRef();
 }
 
-#if PLATFORM(MAC)
 CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<DashboardRegion> r)
     : m_type(CSS_DASHBOARD_REGION)
 {
     m_value.region = r.releaseRef();
 }
-#endif
 
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : m_type(CSS_RGBCOLOR)
@@ -186,12 +184,10 @@ void CSSPrimitiveValue::cleanup()
         case CSS_PAIR:
             m_value.pair->deref();
             break;
-#if PLATFORM(MAC)
         case CSS_DASHBOARD_REGION:
             if (m_value.region)
                 m_value.region->deref();
             break;
-#endif
         default:
             break;
     }
@@ -550,7 +546,6 @@ String CSSPrimitiveValue::cssText() const
             text += " ";
             text += m_value.pair->second()->cssText();
             break;
-#if PLATFORM(MAC)
         case CSS_DASHBOARD_REGION:
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 text = "dashboard-region(";
@@ -568,7 +563,6 @@ String CSSPrimitiveValue::cssText() const
                 text += ")";
             }
             break;
-#endif
     }
     return text;
 }

@@ -120,9 +120,7 @@ public:
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
 
-#if PLATFORM(MAC)
     void updateDashboardRegions();
-#endif
 
     void restoreScrollbar();
 

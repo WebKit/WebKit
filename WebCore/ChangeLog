@@ -1,3 +1,54 @@
+2007-04-08  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Oliver.
+
+        Bestowed the gift of -webkit-dashboard-region upon all platforms, since
+        there's nothing Mac-specific about it other than the name. This also
+        allowed me to get rid of FrameViewMac.mm.
+
+        Removed a lot of #if PLATFORM(MAC):
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getDashboardRegionValue):
+        (WebCore::CSSPrimitiveValue::):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseDashboardRegions):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::updateDashboardRegions): Moved from FrameViewMac.mm.
+        * page/FrameView.h:
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::dashboardRegionsChanged): Stubbed out.
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::Frame::dashboardRegionsChanged): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+
+        * WebCore.xcodeproj/project.pbxproj: Removed FrameViewMac.mm.
+        * bridge/mac/FrameViewMac.mm: Removed.
+
 2007-04-08  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.

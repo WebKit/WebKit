@@ -307,4 +307,9 @@ DragImageRef Frame::dragImageForSelection()
     return 0;
 }
 
+void Frame::dashboardRegionsChanged()
+{
+    notImplementedGdk();
+}
+
 }

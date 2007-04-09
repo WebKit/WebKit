@@ -146,9 +146,7 @@ namespace WebCore {
 
         void addBackgroundValue(CSSValue*& lval, CSSValue* rval);
 
-#if PLATFORM(MAC)
         bool parseDashboardRegions(int propId, bool important);
-#endif
 
         bool parseShape(int propId, bool important);
 

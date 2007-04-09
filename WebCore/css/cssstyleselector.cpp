@@ -4256,7 +4256,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setTextSecurity(textSecurity);
         return;
     }
-#if PLATFORM(MAC)
     case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
@@ -4288,7 +4287,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         
         return;
     }
-#endif
     case CSS_PROP__WEBKIT_RTL_ORDERING:
         HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
         if (!primitiveValue || !primitiveValue->getIdent())

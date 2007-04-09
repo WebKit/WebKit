@@ -449,8 +449,8 @@ void FrameView::layout(bool allowSubtree)
 #if PLATFORM(MAC)
     if (AXObjectCache::accessibilityEnabled())
         root->document()->axObjectCache()->postNotificationToElement(root, "AXLayoutComplete");
-    updateDashboardRegions();
 #endif
+    updateDashboardRegions();
 
     if (didFirstLayout)
         m_frame->loader()->didFirstLayout();
@@ -880,6 +880,17 @@ bool FrameView::handleMouseMoveEvent(const PlatformMouseEvent& event)
 bool FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& event)
 {
     return m_frame->eventHandler()->handleMouseReleaseEvent(event);
+}
+
+void FrameView::updateDashboardRegions()
+{
+    Document* doc = m_frame->document();
+    if (doc->hasDashboardRegions()) {
+        Vector<DashboardRegionValue> newRegions;
+        doc->renderer()->collectDashboardRegions(newRegions);
+        doc->setDashboardRegions(newRegions);
+        m_frame.get()->dashboardRegionsChanged();
+    }
 }
 
 }

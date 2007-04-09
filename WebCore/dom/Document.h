@@ -767,14 +767,12 @@ public:
 
     UChar backslashAsCurrencySymbol() const;
 
-#if PLATFORM(MAC)
     void setDashboardRegionsDirty(bool f) { m_dashboardRegionsDirty = f; }
     bool dashboardRegionsDirty() const { return m_dashboardRegionsDirty; }
     bool hasDashboardRegions () const { return m_hasDashboardRegions; }
     void setHasDashboardRegions (bool f) { m_hasDashboardRegions = f; }
     const Vector<DashboardRegionValue>& dashboardRegions() const;
     void setDashboardRegions(const Vector<DashboardRegionValue>&);
-#endif
 
     void removeAllEventListenersFromAllNodes();
 
@@ -830,11 +828,9 @@ private:
     SVGDocumentExtensions* m_svgExtensions;
 #endif
     
-#if PLATFORM(MAC)
     Vector<DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;
     bool m_dashboardRegionsDirty;
-#endif
 
     mutable bool m_accessKeyMapValid;
     bool m_createRenderers;
