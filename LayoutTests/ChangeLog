@@ -51,6 +51,9 @@
 
         Reviewed by Mitz.
 
+        http://bugs.webkit.org/show_bug.cgi?id=13313
+        Many pixel tests started failing in the range (r20794, r20801]
+
         * plugins/resources/open-and-close-window-with-plugin.html:
         Try to fix the ASSERT on the build bot by scheduling a timeout that schedules a timeout.
 
