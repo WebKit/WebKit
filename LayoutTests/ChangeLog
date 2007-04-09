@@ -1,3 +1,14 @@
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5120801> 
+        http://bugs.webkit.org/show_bug.cgi?id=13247
+        Closing a page during slow cloning causes crash in setJSStatusBarText (13247)
+        
+        * fast/dom/Window/setting-properties-on-closed-window-expected.txt: Added.
+        * fast/dom/Window/setting-properties-on-closed-window.html: Added.
+
 2007-04-09  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Justin Garcia.

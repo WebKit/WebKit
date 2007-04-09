@@ -1011,6 +1011,9 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
 
 void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)
 {
+  if (!m_frame)
+    return;
+    
   // Called by an internal KJS call.
   // If yes, save time and jump directly to JSObject.
   if ((attr != None && attr != DontDelete)

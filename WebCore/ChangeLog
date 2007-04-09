@@ -1,3 +1,16 @@
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5120801> 
+        http://bugs.webkit.org/show_bug.cgi?id=13247
+        Closing a page during slow cloning causes crash in setJSStatusBarText (13247)
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+        Return early if m_frame is null. A closed window only has one property, "closed" 
+        so no properties should be settable in that case.
+
 2007-04-09  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Justin Garcia.
