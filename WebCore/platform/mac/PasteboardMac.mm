@@ -138,6 +138,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
 {
     if (WebArchivePboardType == nil)
         Pasteboard::generalPasteboard(); //Initialises pasteboard types
+    ASSERT(selectedRange);
     
     NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:[DOMRange _wrapRange:selectedRange]] autorelease];
 #ifdef BUILDING_ON_TIGER

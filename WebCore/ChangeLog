@@ -2,6 +2,15 @@
 
         rs=Adam.
 
+        Add ASSERT(selectedRange) to previous change
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+
+2007-04-08  Oliver Hunt  <oliver@apple.com>
+
+        rs=Adam.
+
         Fix minor error when writing selection to pasteboard.
         This shouldn't have an effect as selectedRange should be the
         selected range from source frame, however this is safer.
