@@ -1,3 +1,15 @@
+2007-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5113621> REGRESSION: Dragging PDF as image does not give any feedback
+
+        If we fail when attempting to create a drag image for a dragged
+        image, we fall back to the appropriate icon.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+
 2007-04-08  Adam Roben  <aroben@apple.com>
 
         Reviewed by Oliver.
