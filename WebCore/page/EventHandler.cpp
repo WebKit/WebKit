@@ -915,15 +915,20 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         m_resizeLayer->resize(mouseEvent, m_offsetFromResizeCorner);
-
+        
     bool swallowEvent = false;
     Node* targetNode = m_capturingMouseEventsNode.get() ? m_capturingMouseEventsNode.get() : mev.targetNode();
     RefPtr<Frame> newSubframe = subframeForTargetNode(targetNode);
+    
+    // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
     if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree()->isDescendantOf(m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
         passMouseMoveEventToSubframe(mev, m_lastMouseMoveEventSubframe.get());
-    if (newSubframe)
+
+    if (newSubframe) {
+        // Update over/out state before passing the event to the subframe.
+        updateMouseEventTargetNode(mev.targetNode(), mouseEvent, true);
         swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get());
-    else {
+    } else {
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && m_frame->view())
@@ -934,7 +939,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 
     if (swallowEvent)
         return true;
-        
+    
     swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mev);
@@ -1100,48 +1105,55 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return m_frame->document()->prepareMouseEvent(request, documentPoint, mev);
 }
 
-bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool cancelable,
-    int clickCount, const PlatformMouseEvent& mouseEvent, bool setUnder)
+void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& mouseEvent, bool fireMouseOverOut)
 {
-    if (m_capturingMouseEventsNode)
-        targetNode = m_capturingMouseEventsNode.get();
+    Node* result = targetNode;
     
-    // if the target node is a text node, dispatch on the parent node - rdar://4196646
-    if (targetNode && targetNode->isTextNode())
-        targetNode = targetNode->parentNode();
-    if (targetNode)
-        targetNode = targetNode->shadowAncestorNode();
+    // If we're capturing, we always go right to that node.
+    if (m_capturingMouseEventsNode)
+        result = m_capturingMouseEventsNode.get();
+    
+    // If the target node is a text node, dispatch on the parent node - rdar://4196646
+    if (result && result->isTextNode())
+        result = result->parentNode();
+    if (result)
+        result = result->shadowAncestorNode();
         
-    m_nodeUnderMouse = targetNode;
-
-    // mouseout/mouseover
-    if (setUnder) {
+    m_nodeUnderMouse = result;
+    
+    // Fire mouseout/mouseover if the mouse has shifted to a different node.
+    if (fireMouseOverOut) {
         if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {
             m_lastNodeUnderMouse = 0;
             m_lastScrollbarUnderMouse = 0;
         }
 
-        if (m_lastNodeUnderMouse != targetNode) {
+        if (m_lastNodeUnderMouse != m_nodeUnderMouse) {
             // send mouseout event to the old node
             if (m_lastNodeUnderMouse)
-                EventTargetNodeCast(m_lastNodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoutEvent, 0, targetNode);
+                EventTargetNodeCast(m_lastNodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoutEvent, 0, m_nodeUnderMouse.get());
             // send mouseover event to the new node
-            if (targetNode)
-                EventTargetNodeCast(targetNode)->dispatchMouseEvent(mouseEvent, mouseoverEvent, 0, m_lastNodeUnderMouse.get());
+            if (m_nodeUnderMouse)
+                EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoverEvent, 0, m_lastNodeUnderMouse.get());
         }
-        m_lastNodeUnderMouse = targetNode;
+        m_lastNodeUnderMouse = m_nodeUnderMouse;
     }
+}
+
+bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool cancelable, int clickCount, const PlatformMouseEvent& mouseEvent, bool setUnder)
+{
+    updateMouseEventTargetNode(targetNode, mouseEvent, setUnder);
 
     bool swallowEvent = false;
 
-    if (targetNode)
-        swallowEvent = EventTargetNodeCast(targetNode)->dispatchMouseEvent(mouseEvent, eventType, clickCount);
+    if (m_nodeUnderMouse)
+        swallowEvent = EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventType, clickCount);
     
     if (!swallowEvent && eventType == mousedownEvent) {
         // Blur current focus node when a link/button is clicked; this
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
-        Node* node = targetNode;
+        Node* node = m_nodeUnderMouse.get();
         RenderObject* renderer = node ? node->renderer() : 0;
                 
         // Walk up the render tree to search for a node to focus.
