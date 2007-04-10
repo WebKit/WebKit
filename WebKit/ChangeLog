@@ -1,5 +1,23 @@
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John.
+
+        <rdar://problem/5081860>
+        REGRESSION: Select All for standalone image has no visible effect but does change state
+        
+        <rdar://problem/5081840>
+        REGRESSION: context menu in white space beyond standalone image is different after Select All
+        
+        Have validateUserInterface emulate the old behavior for full-frame images and plugins, which is:
+        
+        - For full-frame plugins, always return false.
+        - For images, only return true if the selector is copy: and the image has finished loading.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItem:]):
+
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/5026893>

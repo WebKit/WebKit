@@ -1,3 +1,10 @@
+2007-04-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        * WebCore.exp:
+        Add __ZNK7WebCore11FrameLoader10isCompleteEv.
+        
 2007-04-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

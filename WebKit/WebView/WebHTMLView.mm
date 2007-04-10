@@ -81,6 +81,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
@@ -2116,6 +2117,18 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     SEL action = [item action];
     Frame* frame = core([self _frame]);
 
+    if (Document* doc = frame->document()) {
+        if (doc->isPluginDocument())
+            return NO;
+        
+        if (doc->isImageDocument()) {            
+            if (action == @selector(copy:))
+                return frame->loader()->isComplete();
+        
+            return NO;
+        }
+    }
+    
     if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
             || action == @selector(checkSpelling:)
