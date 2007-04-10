@@ -177,7 +177,7 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
     if (obj)
         NSAccessibilityPostNotification(obj, message);
     else
-        NSAccessibilityPostNotification(get(renderer->document()->topDocument()->renderer()), message);
+        NSAccessibilityPostNotification(get(renderer->document()->renderer()), message);
 }
 
 void AXObjectCache::postNotificationToElement(RenderObject* renderer, const String& message)

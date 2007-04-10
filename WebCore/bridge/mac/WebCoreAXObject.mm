@@ -672,14 +672,23 @@ static HTMLLabelElement* labelForElement(Element* element)
             return alt;
         }
     } else if ([self isAttachment])
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute]];
 
     if ([self isWebArea]) {
-        Node* owner = m_renderer->document()->ownerElement();
-        if (owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag))) {
-            HTMLFrameElementBase* frameElement = static_cast<HTMLFrameElementBase*>(owner);
-            return frameElement->name();
-        }
+        Document *document = m_renderer->document();
+        Node* owner = document->ownerElement();
+        if (owner) {
+            if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
+                HTMLFrameElementBase* frameElement = static_cast<HTMLFrameElementBase*>(owner);
+                return frameElement->name();
+            } else if (owner->isHTMLElement()) {
+                return static_cast<Element*>(owner)->getAttribute(nameAttr);
+            }
+        } else {
+            owner = document->body();
+            if (owner && owner->isHTMLElement()) 
+                return static_cast<Element*>(owner)->getAttribute(nameAttr);
+        } 
     }
     
     return nil;
