@@ -1,3 +1,27 @@
+2007-04-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        - fixed <rdar://problem/4859132> Grammar must always be checked in entire-sentence chunks, 
+          and shouldn't show markers for current sentence
+
+        * editing/Editor.h:
+        add markBadGrammar, now distinct from markMisspellings
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        call markMisspellings on one word, and markBadGrammar on entire sentence
+        (WebCore::markMisspellingsOrBadGrammar):
+        new static function, extracted from markMisspellings
+        (WebCore::Editor::markMisspellings):
+        now calls extracted function
+        (WebCore::Editor::markBadGrammar):
+        new method, calls extracted function
+
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+        update grammar markers for entire new and old sentences
+
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John.
