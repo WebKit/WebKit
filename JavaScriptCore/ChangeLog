@@ -1,5 +1,14 @@
 2007-04-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Mark Rowe.
+        
+        Fixed last check-in to print in release builds, too.
+
+        * kjs/collector.cpp:
+        (KJS::getPlatformThreadRegisters):
+
+2007-04-10  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by John Sullivan, Darin Adler.
         
         Fixed <rdar://problem/5121899> JavaScript garbage collection leads to 
