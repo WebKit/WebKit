@@ -672,7 +672,7 @@ static HTMLLabelElement* labelForElement(Element* element)
             return alt;
         }
     } else if ([self isAttachment])
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute]];
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
 
     if ([self isWebArea]) {
         Document *document = m_renderer->document();
