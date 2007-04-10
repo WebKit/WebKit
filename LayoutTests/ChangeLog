@@ -1,3 +1,15 @@
+2007-04-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Layout test for <rdar://5057686>
+        Flex box layout example hangs in WebCore::RenderFlexibleBox::allowedChildFlex
+
+        * fast/flexbox/flex-hang-expected.checksum: Added.
+        * fast/flexbox/flex-hang-expected.png: Added.
+        * fast/flexbox/flex-hang-expected.txt: Added.
+        * fast/flexbox/flex-hang.html: Added.
+
 2007-04-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

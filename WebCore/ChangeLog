@@ -1,3 +1,16 @@
+2007-04-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix <rdar://5057686> 
+        Flex box layout example hangs in WebCore::RenderFlexibleBox::allowedChildFlex
+        
+        Forcibly distribute remaining pixels if the algorithm is not advancing.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+
 2007-04-11  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

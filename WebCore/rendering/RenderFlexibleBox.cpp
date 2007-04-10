@@ -529,6 +529,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                     // For a given pass, we always start off by computing the totalFlex of all objects that can grow/shrink at all, and
                     // computing the allowed growth before an object hits its min/max width (and thus
                     // forces a totalFlex recomputation).
+                    int groupRemainingSpaceAtBeginning = groupRemainingSpace;
                     float totalFlex = 0.0f;
                     child = iterator.first();
                     while (child) {
@@ -572,6 +573,21 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                             totalFlex -= child->style()->boxFlex();
                         }
                         child = iterator.next();
+                    }
+                    if (groupRemainingSpace == groupRemainingSpaceAtBeginning) {
+                        // this is not advancing, avoid getting stuck by distributing the remaining pixels
+                        child = iterator.first();
+                        int spaceAdd = groupRemainingSpace > 0 ? 1 : -1;
+                        while (child && groupRemainingSpace) {
+                            if (allowedChildFlex(child, expanding, i)) {
+                                child->setOverrideSize(child->overrideWidth() + spaceAdd);
+                                m_flexingChildren = true;
+                                relayoutChildren = true;
+                                remainingSpace -= spaceAdd;
+                                groupRemainingSpace -= spaceAdd;
+                            }
+                            child = iterator.next();
+                        }
                     }
                 } while (groupRemainingSpace);
             }
@@ -924,6 +940,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     // For a given pass, we always start off by computing the totalFlex of all objects that can grow/shrink at all, and
                     // computing the allowed growth before an object hits its min/max width (and thus
                     // forces a totalFlex recomputation).
+                    int groupRemainingSpaceAtBeginning = groupRemainingSpace;
                     float totalFlex = 0.0f;
                     child = iterator.first();
                     while (child) {
@@ -967,6 +984,21 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                             totalFlex -= child->style()->boxFlex();
                         }
                         child = iterator.next();
+                    }
+                    if (groupRemainingSpace == groupRemainingSpaceAtBeginning) {
+                        // this is not advancing, avoid getting stuck by distributing the remaining pixels
+                        child = iterator.first();
+                        int spaceAdd = groupRemainingSpace > 0 ? 1 : -1;
+                        while (child && groupRemainingSpace) {
+                            if (allowedChildFlex(child, expanding, i)) {
+                                child->setOverrideSize(child->overrideHeight() + spaceAdd);
+                                m_flexingChildren = true;
+                                relayoutChildren = true;
+                                remainingSpace -= spaceAdd;
+                                groupRemainingSpace -= spaceAdd;
+                            }
+                            child = iterator.next();
+                        }
                     }
                 } while (groupRemainingSpace);
             }
