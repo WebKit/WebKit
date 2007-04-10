@@ -1,3 +1,21 @@
+2007-04-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan, Darin Adler.
+        
+        Fixed <rdar://problem/5121899> JavaScript garbage collection leads to 
+        later crash under Rosetta (should abort or leak instead?)
+        
+        Log an error message and crash if the kernel reports failure during GC.
+        We decided to do this instead of just leaking because we don't want people
+        to get the mistaken impression that running in Rosetta is a supported
+        configurtion.
+        
+        The CRASH macro will also hook into CrashReporter, which will tell us if 
+        many (any?) users run into this issue.
+
+        * kjs/collector.cpp:
+        (KJS::getPlatformThreadRegisters):
+
 2007-04-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by darin.
