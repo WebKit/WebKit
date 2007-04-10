@@ -115,7 +115,7 @@ void SVGAElement::defaultEventHandler(Event* evt)
         String url = parseURL(href());
         if (!evt->defaultPrevented())
             if (document()->frame())
-                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt);
+                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt, false, true);
 
         evt->setDefaultHandled();
     }

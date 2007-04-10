@@ -1745,10 +1745,10 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         String url;
         if (frame && parseHTTPRefresh(content, true, delay, url)) {
             if (url.isEmpty())
-                frame->loader()->scheduleRedirection(delay, frame->loader()->url().url(), delay <= 1);
+                url = frame->loader()->url().url();
             else
-                // We want a new history item if the refresh timeout > 1 second
-                frame->loader()->scheduleRedirection(delay, completeURL(url), delay <= 1);
+                url = completeURL(url);
+            frame->loader()->scheduleRedirection(delay, url);
         }
     } else if (equalIgnoringCase(equiv, "set-cookie")) {
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>

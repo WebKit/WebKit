@@ -264,8 +264,8 @@ namespace WebCore {
         void setDefersLoading(bool);
 
         void changeLocation(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-        void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory = false);
-        void urlSelected(const FrameLoadRequest&, Event*);
+        void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
+        void urlSelected(const FrameLoadRequest&, Event*, bool userGesture);
       
         bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
@@ -287,7 +287,7 @@ namespace WebCore {
         String baseTarget() const;
         KURL dataURLBaseFromRequest(const ResourceRequest& request) const;
 
-        void scheduleRedirection(double delay, const String& URL, bool lockHistory = true);
+        void scheduleRedirection(double delay, const String& URL);
 
         void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void scheduleRefresh(bool userGesture = false);

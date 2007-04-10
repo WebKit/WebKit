@@ -1,3 +1,13 @@
+2007-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Layout test for the fix for <rdar://4921797> and http://bugs.webkit.org/show_bug.cgi?id=12005
+
+        * http/tests/navigation/multiple-back-forward-entries-expected.txt: Added.
+        * http/tests/navigation/multiple-back-forward-entries.html: Added.
+        * http/tests/navigation/resources/slow-resource.pl: Added.
+
 2007-04-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren

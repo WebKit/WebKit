@@ -123,13 +123,13 @@ struct ScheduledRedirection {
     bool lockHistory;
     bool wasUserGesture;
 
-    ScheduledRedirection(double redirectDelay, const String& redirectURL, bool redirectLockHistory)
+    ScheduledRedirection(double redirectDelay, const String& redirectURL, bool redirectLockHistory, bool userGesture)
         : type(redirection)
         , delay(redirectDelay)
         , URL(redirectURL)
         , historySteps(0)
         , lockHistory(redirectLockHistory)
-        , wasUserGesture(false)
+        , wasUserGesture(userGesture)
     {
     }
 
@@ -329,10 +329,10 @@ void FrameLoader::changeLocation(const String& URL, const String& referrer, bool
         ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
     ResourceRequest request(completeURL(URL), referrer, policy);
     
-    urlSelected(request, "_self", 0, lockHistory);
+    urlSelected(request, "_self", 0, lockHistory, userGesture);
 }
 
-void FrameLoader::urlSelected(const ResourceRequest& request, const String& _target, Event* triggeringEvent, bool lockHistory)
+void FrameLoader::urlSelected(const ResourceRequest& request, const String& _target, Event* triggeringEvent, bool lockHistory, bool userGesture)
 {
     String target = _target;
     if (target.isEmpty() && m_frame->document())
@@ -352,7 +352,7 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
     if (frameRequest.resourceRequest().httpReferrer().isEmpty())
         frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
 
-    urlSelected(frameRequest, triggeringEvent);
+    urlSelected(frameRequest, triggeringEvent, userGesture);
 }
 
 bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName)
@@ -368,7 +368,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
     Frame* frame = m_frame->tree()->child(frameName);
     if (frame)
-        frame->loader()->scheduleLocationChange(url.url(), m_outgoingReferrer, false, false);
+        frame->loader()->scheduleLocationChange(url.url(), m_outgoingReferrer, false, userGestureHint());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     
@@ -772,8 +772,7 @@ void FrameLoader::receivedFirstData()
     else
         URL = m_frame->document()->completeURL(URL);
 
-    // We want a new history item if the refresh timeout > 1 second
-    scheduleRedirection(delay, URL, delay <= 1);
+    scheduleRedirection(delay, URL);
 }
 
 const String& FrameLoader::responseMIMEType() const
@@ -1155,12 +1154,15 @@ KURL FrameLoader::completeURL(const String& url)
     return m_frame->document()->completeURL(url).deprecatedString();
 }
 
-void FrameLoader::scheduleRedirection(double delay, const String& url, bool doLockHistory)
+void FrameLoader::scheduleRedirection(double delay, const String& url)
 {
     if (delay < 0 || delay > INT_MAX / 1000)
         return;
+        
+    // We want a new history item if the refresh timeout > 1 second.  We accomplish this
+    // by pretending a slow redirect is a user gesture and passing false for lockHistory
     if (!m_scheduledRedirection || delay <= m_scheduledRedirection->delay)
-        scheduleRedirection(new ScheduledRedirection(delay, url, doLockHistory));
+        scheduleRedirection(new ScheduledRedirection(delay, url, delay <= 1, delay > 1));
 }
 
 void FrameLoader::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool wasUserGesture)
@@ -1283,7 +1285,7 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
         case ScheduledRedirection::historyNavigation:
             if (redirection->historySteps == 0) {
                 // Special case for go(0) from a frame -> reload only the frame
-                urlSelected(m_URL, "", 0);
+                urlSelected(m_URL, "", 0, redirection->lockHistory, redirection->wasUserGesture);
                 return;
             }
             // go(i!=0) from a frame navigates into the history of the frame only,
@@ -2828,14 +2830,13 @@ void FrameLoader::submitForm(const FrameLoadRequest& request, Event* event)
     clearRecordedFormValues();
 }
 
-void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event)
+void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event, bool userGesture)
 {
     FrameLoadRequest copy = request;
     if (copy.resourceRequest().httpReferrer().isEmpty())
         copy.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
 
-    // FIXME: Why do we always pass true for userGesture?
-    load(copy, true, event, 0, HashMap<String, String>());
+    load(copy, userGesture, event, 0, HashMap<String, String>());
 }
     
 String FrameLoader::userAgent(const KURL& url) const
@@ -4032,21 +4033,25 @@ void FrameLoader::updateHistoryForInternalLoad()
     if (documentLoader())
         LOG(History, "WebCoreHistory - Updating History for internal load in frame %s", documentLoader()->title().utf8().data());
 #endif
-
-    // Add an item to the item tree for this frame
-    ASSERT(!documentLoader()->isClientRedirect());
-    Frame* parentFrame = m_frame->tree()->parent();
-    // The only case where parentItem is NULL should be when a parent frame loaded an
-    // empty URL, which doesn't set up a current item in that parent.
-    if (parentFrame) {
-        if (parentFrame->loader()->m_currentHistoryItem)
-            parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
+    
+    if (documentLoader()->isClientRedirect()) {
+        m_currentHistoryItem->setURL(documentLoader()->URL());
+        m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
     } else {
-        // See 3556159. It's not clear if it's valid to be in FrameLoadTypeOnLoadEvent
-        // for a top-level frame, but that was a likely explanation for those crashes,
-        // so let's guard against it.
-        // ...and all FrameLoadTypeOnLoadEvent uses were folded to WebFrameLoadTypeInternal
-        LOG_ERROR("No parent frame in transitionToCommitted:, FrameLoadTypeInternal");
+        // Add an item to the item tree for this frame
+        Frame* parentFrame = m_frame->tree()->parent();
+        // The only case where parentItem is NULL should be when a parent frame loaded an
+        // empty URL, which doesn't set up a current item in that parent.
+        if (parentFrame) {
+            if (parentFrame->loader()->m_currentHistoryItem)
+                parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
+        } else {
+            // See 3556159. It's not clear if it's valid to be in FrameLoadTypeOnLoadEvent
+            // for a top-level frame, but that was a likely explanation for those crashes,
+            // so let's guard against it.
+            // ...and all FrameLoadTypeOnLoadEvent uses were folded to WebFrameLoadTypeInternal
+            LOG_ERROR("No parent frame in transitionToCommitted:, FrameLoadTypeInternal");
+        }
     }
 }
 

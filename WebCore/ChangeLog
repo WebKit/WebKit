@@ -1,3 +1,42 @@
+2007-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fixes <rdar://4921797> and http://bugs.webkit.org/show_bug.cgi?id=12005
+
+        The original regression was to claim that more loads were the result of a "user gesture" than really
+        were.  A lot of the ways a frame load could be kicked off didn't properly set up this flag, and it 
+        wasn't properly propagated and respected where it should've been.
+
+        This patch cleans much of that up.  One loose end is the "treatAsUserGesture" flag which is a stop
+        gap measure to keep "slow redirects" working to create a new history item.  In the future, we need
+        to cleanup the meaning and use of "userGesture" and "lockHistory."  This includes integrating them 
+        in to FrameLoadRequest and being very clear of what their meaning actually is at different stages of
+        the Frame load process.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Pass only the delay for the redirect
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Pass "lockHistory" false, "userGesture" true
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): Pass "lockHistory" false, "userGesture" true
+
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection): Figure "lockHistory" and "userGesture" from the 
+          delay here, instead of at 3 other different sites that call this method
+        (WebCore::FrameLoader::changeLocation): Set userGesture correctly
+        (WebCore::FrameLoader::urlSelected): Propagate userGesture down
+        (WebCore::FrameLoader::requestFrame): 
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::scheduleRedirection): Pass only the delay here
+        (WebCore::FrameLoader::redirectionTimerFired): Set userGesture correctly
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::updateHistoryForInternalLoad): Insteading of asserting we aren't a redirect,
+          handle the case where we *are* a redirect by updating the previous history item
+        * loader/FrameLoader.h:
+
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
