@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PageState.h"
+#include "CachedPage.h"
 
 #include "Document.h"
 #include "Element.h"
@@ -34,9 +34,11 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "SystemTime.h"
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 #endif
+
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include "kjs_window.h"
@@ -48,13 +50,14 @@ using namespace KJS;
 
 namespace WebCore {
 
-PassRefPtr<PageState> PageState::create(Page* page)
+PassRefPtr<CachedPage> CachedPage::create(Page* page)
 {
-    return new PageState(page);
+    return new CachedPage(page);
 }
 
-PageState::PageState(Page* page)
-    : m_document(page->mainFrame()->document())
+CachedPage::CachedPage(Page* page)
+    : m_timeStamp(0)
+    , m_document(page->mainFrame()->document())
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
     , m_URL(page->mainFrame()->loader()->url())
@@ -85,12 +88,12 @@ PageState::PageState(Page* page)
 #endif
 }
 
-PageState::~PageState()
+CachedPage::~CachedPage()
 {
-    clear();
+    close();
 }
 
-void PageState::restore(Page* page)
+void CachedPage::restore(Page* page)
 {
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
@@ -121,7 +124,7 @@ void PageState::restore(Page* page)
     }
 }
 
-void PageState::clear()
+void CachedPage::clear()
 {
     if (!m_document)
         return;
@@ -159,4 +162,29 @@ void PageState::clear()
     Collector::collect();
 }
 
+void CachedPage::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
+{
+    m_documentLoader = loader;
 }
+
+DocumentLoader* CachedPage::documentLoader()
+{
+    return m_documentLoader.get();
+}
+
+void CachedPage::setTimeStamp(double timeStamp)
+{
+    m_timeStamp = timeStamp;
+}
+
+void CachedPage::setTimeStampToNow()
+{
+    m_timeStamp = currentTime();
+}
+
+double CachedPage::timeStamp() const
+{
+    return m_timeStamp;
+}
+
+} // namespace WebCore

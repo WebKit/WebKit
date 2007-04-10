@@ -43,10 +43,10 @@
 #import "WebNSViewExtras.h"
 #import "WebPluginController.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/CachedPage.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
 #import <WebCore/KURL.h>
-#import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -463,7 +463,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
 {
-    core(_private)->setAlwaysAttemptToUsePageCache(flag);
+    core(_private)->setAlwaysAttemptToUseCachedPage(flag);
 }
 
 - (NSURL *)URL
@@ -499,7 +499,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 + (void)_releaseAllPendingPageCaches
 {
-    HistoryItem::releaseAllPendingPageCaches();
+    HistoryItem::performPendingReleaseOfCachedPages();
 }
 
 @end
@@ -510,6 +510,6 @@ static WebWindowWatcher *_windowWatcher = nil;
 @implementation WebWindowWatcher
 -(void)windowWillClose:(NSNotification *)notification
 {
-    WebCoreHistoryItem::releaseAllPendingPageCaches();
+    WebCoreHistoryItem::performPendingReleaseOfCachedPages();
 }
 @end

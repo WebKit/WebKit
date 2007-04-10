@@ -1,3 +1,118 @@
+2007-04-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4887095> - PageCache and PageState should be combined
+
+        These two objects are a relic of when the PageCache was split between WebCore and WebKit
+        It just makes good sense to combine them now, and the new object is more appropriately
+        called "CachedPage"
+
+        This patch is vast in scope, but simple in depth - anywhere a PageCache or PageState object 
+        was used has been adjusted to use a CachedPage object instead.  The most notable change is
+        that HistoryItem - which always used to have a PageCache object which may or may not have 
+        had a PageState - now may or may not have a CachedPage.  This actually simplifies the 
+        HistoryItem code a bit while making the role of CachedPage much more clear.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem):
+        (WebCore::BackForwardList::setCapacity):
+        (WebCore::BackForwardList::setPageCacheSize):
+        (WebCore::BackForwardList::clearPageCache):
+        (WebCore::BackForwardList::close):
+
+        * history/PageCache.cpp: Removed.
+        * history/PageCache.h: Removed.
+        * page/PageState.cpp: Removed.
+        * page/PageState.h: Removed.
+        * history/CachedPage.cpp: Added.
+        (WebCore::CachedPage::create):
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::~CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        (WebCore::CachedPage::setDocumentLoader):
+        (WebCore::CachedPage::documentLoader):
+        (WebCore::CachedPage::setTimeStamp):
+        (WebCore::CachedPage::setTimeStampToNow):
+        (WebCore::CachedPage::timeStamp):
+        * history/CachedPage.h: Added.
+        (WebCore::CachedPage::document):
+        (WebCore::CachedPage::mousePressNode):
+        (WebCore::CachedPage::URL):
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::setCachedPage):
+        (WebCore::HistoryItem::setURL):
+        (WebCore::HistoryItem::alwaysAttemptToUseCachedPage):
+        (WebCore::HistoryItem::setAlwaysAttemptToUseCachedPage):
+        (WebCore::HistoryItem::cachedPage):
+        (WebCore::cachedPagesPendingRelease):
+        (WebCore::HistoryItem::releaseCachedPagesOrReschedule):
+        (WebCore::HistoryItem::releaseAllPendingCachedPages):
+        (WebCore::HistoryItem::scheduleCachedPageForRelease):
+        * history/HistoryItem.h:
+        * history/mac/HistoryItemMac.mm:
+
+        * history/HistoryItemTimer.cpp:
+        (WebCore::HistoryItemTimer::HistoryItemTimer):
+        (WebCore::HistoryItemTimer::callReleaseCachedPagesOrReschedule):
+        * history/HistoryItemTimer.h:
+
+        * history/mac/PageCacheMac.mm: Removed.
+        * history/mac/CachedPageMac.mm: Added.
+        (WebCore::CachedPage::close):
+        (WebCore::CachedPage::setDocumentView):
+        (WebCore::CachedPage::documentView):
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::loadFromCachedPage):
+        (WebCore::DocumentLoader::setLoadingFromCachedPage):
+        (WebCore::DocumentLoader::isLoadingFromCachedPage):
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        (WebCore::FrameLoader::cachePageToHistoryItem):
+        (WebCore::FrameLoader::createHistoryItem):
+        (WebCore::FrameLoader::purgePageCache):
+        (WebCore::FrameLoader::invalidateCurrentItemCachedPage):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::updateHistoryForStandardLoad):
+        (WebCore::FrameLoader::updateHistoryForClientRedirect):
+        (WebCore::FrameLoader::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoader::updateHistoryForReload):
+        (WebCore::FrameLoader::updateHistoryForInternalLoad):
+        (WebCore::FrameLoader::updateHistoryForCommit):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
+        * page/mac/WebCoreFrameBridge.h: Got rid of unused WebCorePageCacheStateKey
+        * page/mac/WebCoreFrameBridge.mm: Ditto
+
+        * platform/graphics/svg/SVGImage.cpp:
+        * platform/graphics/svg/SVGImageEmptyClients.h: Update to reflect the new names
+        (WebCore::SVGEmptyFrameLoaderClient::loadProvisionalItemFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::invalidateCurrentItemCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::loadedFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::clearLoadingFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::isLoadingFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::setDocumentViewFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::saveDocumentViewToCachedPage):
+
 2007-04-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

@@ -68,6 +68,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/CachedPage.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -84,8 +85,6 @@
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
-#import <WebCore/PageCache.h>
-#import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
@@ -168,12 +167,12 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
     [dataSource(loader) _makeRepresentation];
 }
 
-void WebFrameLoaderClient::setDocumentViewFromPageCache(PageCache* pageCache)
+void WebFrameLoaderClient::setDocumentViewFromCachedPage(CachedPage* cachedPage)
 {
-    DocumentLoader* cachedDocumentLoader = pageCache->documentLoader();
+    DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
     ASSERT(cachedDocumentLoader);
     cachedDocumentLoader->setFrame(core(m_webFrame.get()));
-    NSView <WebDocumentView> *cachedView = pageCache->documentView();
+    NSView <WebDocumentView> *cachedView = cachedPage->documentView();
     ASSERT(cachedView != nil);
     [cachedView setDataSource:dataSource(cachedDocumentLoader)];
     [m_webFrame->_private->webFrameView _setDocumentView:cachedView];
@@ -225,13 +224,13 @@ void WebFrameLoaderClient::detachedFromParent4()
     m_webFrame->_private->bridge = nil;
 }
 
-void WebFrameLoaderClient::loadedFromPageCache()
+void WebFrameLoaderClient::loadedFromCachedPage()
 {
     // Release the resources kept in the page cache.
     // They will be reset when we leave this page.
     // The WebCore side of the page cache will have already been invalidated by
     // the bridge to prevent premature release.
-    core(m_webFrame.get())->loader()->currentHistoryItem()->setHasPageCache(false);
+    core(m_webFrame.get())->loader()->currentHistoryItem()->setCachedPage(0);
 }
 
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
@@ -957,9 +956,9 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
     }
 }
 
-void WebFrameLoaderClient::saveDocumentViewToPageCache(PageCache* pageCache)
+void WebFrameLoaderClient::saveDocumentViewToCachedPage(CachedPage* cachedPage)
 {
-    pageCache->setDocumentView([m_webFrame->_private->webFrameView documentView]);
+    cachedPage->setDocumentView([m_webFrame->_private->webFrameView documentView]);
 }
 
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)

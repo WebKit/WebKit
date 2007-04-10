@@ -36,6 +36,7 @@
 namespace WebCore {
 
     class AuthenticationChallenge;
+    class CachedPage;
     class DocumentLoader;
     class Element;
     class FormState;
@@ -46,7 +47,6 @@ namespace WebCore {
     class IntSize;
     class KURL;
     class NavigationAction;
-    class PageCache;
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
@@ -71,7 +71,7 @@ namespace WebCore {
 
         virtual void makeDocumentView() = 0;
         virtual void makeRepresentation(DocumentLoader*) = 0;
-        virtual void setDocumentViewFromPageCache(PageCache*) = 0;
+        virtual void setDocumentViewFromCachedPage(CachedPage*) = 0;
         virtual void forceLayout() = 0;
         virtual void forceLayoutForNonHTML() = 0;
 
@@ -81,7 +81,7 @@ namespace WebCore {
         virtual void detachedFromParent3() = 0;
         virtual void detachedFromParent4() = 0;
 
-        virtual void loadedFromPageCache() = 0;
+        virtual void loadedFromCachedPage() = 0;
 
         virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) = 0;
 
@@ -183,7 +183,7 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&) = 0;
         
-        virtual void saveDocumentViewToPageCache(PageCache*) = 0;
+        virtual void saveDocumentViewToCachedPage(CachedPage*) = 0;
         virtual bool canCachePage() const = 0;
         virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
 

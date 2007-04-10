@@ -1,3 +1,22 @@
+2007-04-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4887095> - PageCache and PageState should be combined
+
+        WebKit side of the change to reflect the new object name of CachedPage and new Client method names
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem setAlwaysAttemptToUsePageCache:]):
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        (-[WebWindowWatcher windowWillClose:]):
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setDocumentViewFromCachedPage):
+        (WebFrameLoaderClient::loadedFromCachedPage):
+        (WebFrameLoaderClient::saveDocumentViewToCachedPage):
+
 2007-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

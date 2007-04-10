@@ -24,56 +24,35 @@
  */
 
 #include "config.h"
-#include "PageCache.h"
+#include "CachedPage.h"
 
-#include "PageState.h"
-#include "SystemTime.h"
+#import <objc/objc-runtime.h>
 
 namespace WebCore {
 
-PageCache::PageCache()
-    : m_timeStamp(0)
+void CachedPage::close()
 {
+    if (!m_document)
+        return;
+        
+    // FIXME: <rdar://problem/4886844>
+    // The current method of tracking the "document view" is messy and quite platform specific
+    // Having a WebCore-way to track this would be great.
+    if (m_documentView)
+        objc_msgSend(m_documentView.get(), @selector(closeIfNotCurrentView));
+
+    clear();
 }
 
-void PageCache::setPageState(PassRefPtr<PageState> pageState)
+void CachedPage::setDocumentView(id documentView)
 {
-    m_pageState = pageState;
+    m_documentView = documentView;
 }
 
-PageCache::~PageCache()
+id CachedPage::documentView()
 {
-    close();
+    return m_documentView.get();
 }
 
-PageState* PageCache::pageState()
-{
-    return m_pageState.get();
-}
+} //namespace WebCore
 
-void PageCache::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
-{
-    m_documentLoader = loader;
-}
-
-DocumentLoader* PageCache::documentLoader()
-{
-    return m_documentLoader.get();
-}
-
-void PageCache::setTimeStamp(double timeStamp)
-{
-    m_timeStamp = timeStamp;
-}
-
-void PageCache::setTimeStampToNow()
-{
-    m_timeStamp = currentTime();
-}
-
-double PageCache::timeStamp() const
-{
-    return m_timeStamp;
-}
-
-} // namespace WebCore

@@ -51,8 +51,6 @@ namespace WebCore {
 
 @protocol WebCoreRenderTreeCopier;
 
-extern NSString *WebCorePageCacheStateKey;
-
 enum WebCoreDeviceType {
     WebCoreDeviceScreen,
     WebCoreDevicePrinter

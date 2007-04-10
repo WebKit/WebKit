@@ -117,8 +117,6 @@ using KJS::Window;
 
 using KJS::Bindings::RootObject;
 
-NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
-
 static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
 {
     NSView *view = (NSView *)nativeHandle;

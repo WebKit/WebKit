@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BackForwardList.h"
 
+#include "CachedPage.h"
 #include "HistoryItem.h"
 #include "Logging.h"
 
@@ -63,7 +64,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
             RefPtr<HistoryItem> item = m_entries.last();
             m_entries.removeLast();
             m_entryHash.remove(item);
-            item->setHasPageCache(false);
+            item->setCachedPage(0);
         }
     }
 
@@ -73,7 +74,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
         RefPtr<HistoryItem> item = m_entries[0];
         m_entries.remove(0);
         m_entryHash.remove(item);
-        item->setHasPageCache(false);
+        item->setCachedPage(0);
         m_current--;
     }
     
@@ -167,7 +168,7 @@ void BackForwardList::setCapacity(int size)
         RefPtr<HistoryItem> item = m_entries.last();
         m_entries.removeLast();
         m_entryHash.remove(item);
-        item->setHasPageCache(false);
+        item->setCachedPage(0);
     }
 
     if (m_current > m_entries.size() - 1)
@@ -182,8 +183,8 @@ void BackForwardList::setPageCacheSize(unsigned size)
         clearPageCache();
     else if (size < m_pageCacheSize) {
         for (signed i = m_current - size - 1; i > -1; --i)
-            m_entries[i]->setHasPageCache(false);
-        HistoryItem::releaseAllPendingPageCaches();
+            m_entries[i]->setCachedPage(0);
+        HistoryItem::performPendingReleaseOfCachedPages();
     }
     
     m_pageCacheSize = size;
@@ -199,10 +200,10 @@ void BackForwardList::clearPageCache()
     for (unsigned i = 0; i < m_entries.size(); i++) {
         // Don't clear the current item.  Objects are still in use.
         if (i != m_current)
-            m_entries[i]->setHasPageCache(false);
+            m_entries[i]->setCachedPage(0);
     }
     
-    HistoryItem::releaseAllPendingPageCaches();
+    HistoryItem::performPendingReleaseOfCachedPages();
 }
 
 bool BackForwardList::usesPageCache()
@@ -241,7 +242,7 @@ void BackForwardList::close()
 {
     int size = m_entries.size();
     for (int i = 0; i < size; ++i)
-        m_entries[i]->setHasPageCache(false);
+        m_entries[i]->setCachedPage(0);
     m_entries.clear();
     m_entryHash.clear();
     m_closed = true;

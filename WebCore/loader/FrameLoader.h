@@ -51,6 +51,7 @@ namespace KJS {
 namespace WebCore {
 
     class AuthenticationChallenge;
+    class CachedPage;
     class Document;
     class DocumentLoader;
     class Element;
@@ -66,8 +67,6 @@ namespace WebCore {
     class NavigationAction;
     class Node;
     class Page;
-    class PageCache;
-    class PageState;
     class RenderPart;
     class ResourceError;
     class ResourceLoader;
@@ -394,7 +393,7 @@ namespace WebCore {
         bool shouldGoToHistoryItem(HistoryItem*) const;
         bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
-        void commitProvisionalLoad(PassRefPtr<PageCache>);
+        void commitProvisionalLoad(PassRefPtr<CachedPage>);
 
         void goToItem(HistoryItem*, FrameLoadType);
         void saveDocumentAndScrollState();
@@ -426,7 +425,7 @@ namespace WebCore {
         void loadItem(HistoryItem*, FrameLoadType);
         bool urlsMatchItem(HistoryItem*) const;
         void purgePageCache();
-        void invalidateCurrentItemPageCache();
+        void invalidateCurrentItemCachedPage();
         void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
         bool childFramesMatchItem(HistoryItem*) const;
 
@@ -451,8 +450,8 @@ namespace WebCore {
         bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
         
-        bool loadProvisionalItemFromPageCache();
-        bool createPageCache(HistoryItem*);
+        bool loadProvisionalItemFromCachedPage();
+        bool cachePageToHistoryItem(HistoryItem*);
 
         void emitLoadEvent();
 
@@ -472,7 +471,7 @@ namespace WebCore {
         void clearProvisionalLoad();
         void markLoadComplete();
         void commitProvisionalLoad();
-        void transitionToCommitted(PassRefPtr<PageCache>);
+        void transitionToCommitted(PassRefPtr<CachedPage>);
         void frameLoadCompleted();
 
         void mainReceivedError(const ResourceError&, bool isComplete);
@@ -510,7 +509,7 @@ namespace WebCore {
         void setState(FrameState);
 
         void closeOldDataSources();
-        void open(PageState&);
+        void open(CachedPage&);
         void opened();
         void updateHistoryAfterClientRedirect();
 

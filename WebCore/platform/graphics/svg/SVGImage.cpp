@@ -26,6 +26,7 @@
 #include "config.h"
 #if ENABLE(SVG)
 
+#include "CachedPage.h"
 #include "DocumentLoader.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -33,7 +34,6 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "Page.h"
-#include "PageCache.h"
 #include "ResourceError.h"
 #include "SVGDocument.h"
 #include "SVGImage.h"

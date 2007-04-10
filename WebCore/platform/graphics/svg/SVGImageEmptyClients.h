@@ -124,8 +124,8 @@ public:
     virtual void resetBackForwardList() { }
     
     virtual bool provisionalItemIsTarget() const { return false; }
-    virtual bool loadProvisionalItemFromPageCache() { return false; }
-    virtual void invalidateCurrentItemPageCache() { }
+    virtual bool loadProvisionalItemFromCachedPage() { return false; }
+    virtual void invalidateCurrentItemCachedPage() { }
     
     virtual bool privateBrowsingEnabled() const { return false; }
     
@@ -149,7 +149,7 @@ public:
     virtual void detachedFromParent3() { }
     virtual void detachedFromParent4() { }
     
-    virtual void loadedFromPageCache() { }
+    virtual void loadedFromCachedPage() { }
     
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
     
@@ -192,8 +192,8 @@ public:
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) { }
     
     virtual void dispatchDidLoadMainResource(DocumentLoader*) { }
-    virtual void clearLoadingFromPageCache(DocumentLoader*) { }
-    virtual bool isLoadingFromPageCache(DocumentLoader*) { return 0; }
+    virtual void clearLoadingFromCachedPage(DocumentLoader*) { }
+    virtual bool isLoadingFromCachedPage(DocumentLoader*) { return 0; }
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) { }
     virtual void clearUnarchivingState(DocumentLoader*) { }
@@ -250,12 +250,12 @@ public:
     
     virtual String userAgent(const KURL&) { return ""; }
     
-    virtual void setDocumentViewFromPageCache(PageCache*) { }
+    virtual void setDocumentViewFromCachedPage(CachedPage*) { }
     virtual void updateGlobalHistoryForStandardLoad(const KURL&) { }
     virtual void updateGlobalHistoryForReload(const KURL&) { }
     virtual bool shouldGoToHistoryItem(HistoryItem*) const { return false; }
     virtual void saveViewStateToItem(HistoryItem*) { }
-    virtual void saveDocumentViewToPageCache(PageCache*) { }
+    virtual void saveDocumentViewToCachedPage(CachedPage*) { }
     virtual bool canCachePage() const { return false; }
 
     virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

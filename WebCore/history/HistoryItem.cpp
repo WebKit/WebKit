@@ -26,13 +26,13 @@
 #include "config.h"
 #include "HistoryItem.h"
 
+#include "CachedPage.h"
 #include "FrameLoader.h"
 #include "HistoryItemTimer.h"
 #include "IconDatabase.h"
 #include "IntSize.h"
 #include "KURL.h"
 #include "Logging.h"
-#include "PageCache.h"
 #include "ResourceRequest.h"
 #include "SystemTime.h"
 
@@ -41,11 +41,19 @@ namespace WebCore {
 void defaultNotifyHistoryItemChanged() {}
 void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
 
+static HashSet<RefPtr<CachedPage> >& cachedPagesPendingRelease()
+{
+    // We keep this on the heap because otherwise, at app shutdown, we run into the "static destruction order fiasco" 
+    // where the vector is torn down, the CachedPages destroyed, and all havok may break loose.  Instead, we just leak at shutdown
+    // since nothing here persists
+    static HashSet<RefPtr<CachedPage> >* cachedPagesPendingRelease = new HashSet<RefPtr<CachedPage> >;
+    return *cachedPagesPendingRelease;
+}
+
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
-    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
-    , m_alwaysAttemptToUsePageCache(false)
+    , m_alwaysAttemptToUseCachedPage(false)
     , m_visitCount(0)
 {
 }
@@ -55,9 +63,8 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_originalURLString(urlString)
     , m_title(title)
     , m_lastVisitedTime(time)
-    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
-    , m_alwaysAttemptToUsePageCache(false)
+    , m_alwaysAttemptToUseCachedPage(false)
     , m_visitCount(0)
 {    
     retainIconInDatabase(true);
@@ -68,9 +75,8 @@ HistoryItem::HistoryItem(const KURL& url, const String& title)
     , m_originalURLString(url.url())
     , m_title(title)
     , m_lastVisitedTime(0)
-    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
-    , m_alwaysAttemptToUsePageCache(false)
+    , m_alwaysAttemptToUseCachedPage(false)
     , m_visitCount(0)
 {    
     retainIconInDatabase(true);
@@ -83,9 +89,8 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_parent(parent)
     , m_title(title)
     , m_lastVisitedTime(0)
-    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
-    , m_alwaysAttemptToUsePageCache(false)
+    , m_alwaysAttemptToUseCachedPage(false)
     , m_visitCount(0)
 {    
     retainIconInDatabase(true);
@@ -106,9 +111,8 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_displayTitle(item.m_displayTitle)
     , m_lastVisitedTime(item.m_lastVisitedTime)
     , m_scrollPoint(item.m_scrollPoint)
-    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(item.m_isTargetItem)
-    , m_alwaysAttemptToUsePageCache(item.m_alwaysAttemptToUsePageCache)
+    , m_alwaysAttemptToUseCachedPage(item.m_alwaysAttemptToUseCachedPage)
     , m_visitCount(item.m_visitCount)
     , m_formContentType(item.m_formContentType)
     , m_formReferrer(item.m_formReferrer)
@@ -128,17 +132,19 @@ PassRefPtr<HistoryItem> HistoryItem::copy() const
     return new HistoryItem(*this);
 }
 
-void HistoryItem::setHasPageCache(bool hasCache)
+void HistoryItem::setCachedPage(PassRefPtr<CachedPage> cachedPage)
 {
-    LOG(PageCache, "WebCorePageCache - HistoryItem %p setting has page cache to %s", this, hasCache ? "TRUE" : "FALSE" );
-        
-    if (hasCache) {
-        if (!m_pageCache)
-            m_pageCache = new PageCache;
-        else if (m_pageCacheIsPendingRelease)
-            cancelRelease();
-    } else if (m_pageCache)
-        scheduleRelease();
+    CachedPage* rawCachedPage = cachedPage.releaseRef();
+    
+    // The new cached page should always be distinct from the current cached page and should also
+    // not be in the set of cached pages pending release
+    ASSERT(!rawCachedPage || rawCachedPage != m_cachedPage.get());
+    ASSERT(!cachedPagesPendingRelease().contains(rawCachedPage));
+    
+    scheduleCachedPageForRelease();
+    m_cachedPage = adoptRef(rawCachedPage);
+    
+    LOG(PageCache, "WebCorePageCache: HistoryItem %p (%s) set cached page to %p", this, m_urlString.ascii().data(), m_cachedPage.get());
 }
 
 void HistoryItem::retainIconInDatabase(bool retain)
@@ -224,7 +230,7 @@ void HistoryItem::setURLString(const String& urlString)
 void HistoryItem::setURL(const KURL& url)
 {
     setURLString(url.url());
-    setHasPageCache(false);
+    setCachedPage(0);
 }
 
 void HistoryItem::setOriginalURLString(const String& urlString)
@@ -309,14 +315,14 @@ void HistoryItem::setIsTargetItem(bool flag)
     m_isTargetItem = flag;
 }
 
-bool HistoryItem::alwaysAttemptToUsePageCache() const
+bool HistoryItem::alwaysAttemptToUseCachedPage() const
 {
-    return m_alwaysAttemptToUsePageCache;
+    return m_alwaysAttemptToUseCachedPage;
 }
 
-void HistoryItem::setAlwaysAttemptToUsePageCache(bool flag)
+void HistoryItem::setAlwaysAttemptToUseCachedPage(bool flag)
 {
-    m_alwaysAttemptToUsePageCache = flag;
+    m_alwaysAttemptToUseCachedPage = flag;
 }
 
 void HistoryItem::addChildItem(PassRefPtr<HistoryItem> child)
@@ -359,18 +365,9 @@ HistoryItem* HistoryItem::targetItem()
     return recurseToFindTargetItem();
 }
 
-PageCache* HistoryItem::pageCache()
+CachedPage* HistoryItem::cachedPage()
 {
-    if (m_pageCacheIsPendingRelease)
-        return 0;
-    return m_pageCache.get();
-}
-
-bool HistoryItem::hasPageCache() const
-{
-    if (m_pageCacheIsPendingRelease)
-        return false;
-    return m_pageCache;
+    return m_cachedPage.get();
 }
 
 const HistoryItemVector& HistoryItem::children() const
@@ -438,69 +435,56 @@ static HistoryItemTimer& timer()
     return historyItemTimer;
 }
 
-static HashSet<RefPtr<HistoryItem> >& itemsWithPendingPageCacheToRelease()
-{
-    // We keep this on the heap because otherwise, at app shutdown, we run into the "static destruction order fiasco" 
-    // where the vector is torn down, the PageCaches destroyed, and all havok may break loose.  Instead, we just leak at shutdown
-    // since nothing here persists
-    static HashSet<RefPtr<HistoryItem> >* itemsWithPendingPageCacheToRelease = new HashSet<RefPtr<HistoryItem> >;
-    return *itemsWithPendingPageCacheToRelease;
-}
-
-void HistoryItem::releasePageCachesOrReschedule()
+void HistoryItem::releaseCachedPagesOrReschedule()
 {
     double loadDelta = currentTime() - FrameLoader::timeOfLastCompletedLoad();
     float userDelta = userIdleTime();
     
     // FIXME: This size of 42 pending caches to release seems awfully arbitrary
     // Wonder if anyone knows the rationalization
-    if ((userDelta < 0.5 || loadDelta < 1.25) && itemsWithPendingPageCacheToRelease().size() < 42) {
-        LOG(PageCache, "WebCorePageCache: Postponing releasePageCachesOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, itemsWithPendingPageCacheToRelease().size());
+    if ((userDelta < 0.5 || loadDelta < 1.25) && cachedPagesPendingRelease().size() < 42) {
+        LOG(PageCache, "WebCorePageCache: Postponing releaseCachedPagesOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, cachedPagesPendingRelease().size());
         timer().schedule();
         return;
     }
 
-    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, itemsWithPendingPageCacheToRelease().size());
-    releaseAllPendingPageCaches();
+    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, cachedPagesPendingRelease().size());
+    performPendingReleaseOfCachedPages();
 }
 
-void HistoryItem::releasePageCache()
-{
-    m_pageCache->close();
-    m_pageCache = 0;
-    m_pageCacheIsPendingRelease = false;
-}
-
-void HistoryItem::releaseAllPendingPageCaches()
+void HistoryItem::performPendingReleaseOfCachedPages()
 {
     timer().invalidate();
 
-    HashSet<RefPtr<HistoryItem> >::iterator i = itemsWithPendingPageCacheToRelease().begin();
-    HashSet<RefPtr<HistoryItem> >::iterator end = itemsWithPendingPageCacheToRelease().end();
+    Vector<CachedPage*> cachedPages;
+    cachedPages.reserveCapacity(cachedPagesPendingRelease().size());
+    
+    HashSet<RefPtr<CachedPage> >::iterator i = cachedPagesPendingRelease().begin();
+    HashSet<RefPtr<CachedPage> >::iterator end = cachedPagesPendingRelease().end();
     for (; i != end; ++i)
-        (*i)->releasePageCache();
+        cachedPages.append((*i).get());
+        
+    for (unsigned j = 0; j < cachedPages.size(); ++j)
+        cachedPages[j]->close();
 
-    itemsWithPendingPageCacheToRelease().clear();
+    cachedPagesPendingRelease().clear();
 }
 
-void HistoryItem::scheduleRelease()
+void HistoryItem::scheduleCachedPageForRelease()
 {
-    LOG (PageCache, "WebCorePageCache: Scheduling release of %s", m_urlString.ascii().data());
+    if (!m_cachedPage)
+        return;
+        
+    LOG (PageCache, "WebCorePageCache: HistoryItem %p (%s) scheduling release of cached page %p", this, m_urlString.ascii().data(), m_cachedPage.get());
+
+    cachedPagesPendingRelease().add(m_cachedPage);
+    m_cachedPage = 0;
+
     // Don't reschedule the timer if its already running
     if (!timer().isActive())
         timer().schedule();
-
-    if (m_pageCache && !m_pageCacheIsPendingRelease) {
-        m_pageCacheIsPendingRelease = true;
-        itemsWithPendingPageCacheToRelease().add(this);
-    }
 }
 
-void HistoryItem::cancelRelease()
-{
-    itemsWithPendingPageCacheToRelease().remove(this);
-    m_pageCacheIsPendingRelease = false;
-}
 #ifndef NDEBUG
 int HistoryItem::showTree() const
 {

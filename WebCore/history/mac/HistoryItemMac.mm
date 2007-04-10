@@ -26,8 +26,6 @@
 #include "config.h"
 #include "HistoryItem.h"
 
-#include "PageCache.h"
-
 namespace WebCore {
 
 // Notification strings.
