@@ -855,6 +855,7 @@ static bool debugWidget = true;
     settings->setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
+    settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "PlatformString.h"
 #include "SelectionController.h"
+#include "Settings.h"
 #include "StringHash.h"
 #include "TypingCommand.h"
 
@@ -41,8 +42,6 @@ namespace WebCore {
 class Frame;
 
 namespace {
-//FIXME: there's a setter for this. Bring it in later when we need it
-bool supportsPasteCommand = false;
 
 struct CommandImp {
     bool (*execFn)(Frame* frame);
@@ -170,7 +169,7 @@ bool enabledAnyEditableSelection(Frame* frame)
 
 bool enabledPaste(Frame* frame)
 {
-    return supportsPasteCommand && frame->editor()->canPaste();
+    return frame->settings()->isDOMPasteAllowed() && frame->editor()->canPaste();
 }
 
 bool enabledAnyRangeSelection(Frame* frame)

@@ -232,8 +232,8 @@ NS_ENDHANDLER
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"1",                           WebKitUsePDFPreviewViewPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
-        [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], 
-                                        WebKitEditableLinkBehaviorPreferenceKey,
+        [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -760,6 +760,16 @@ static NSString *classIBCreatorID = nil;
     NSString *old = classIBCreatorID;
     classIBCreatorID = [string copy];
     [old release];
+}
+
+- (BOOL)isDOMPasteAllowed
+{
+    return [self _boolValueForKey:WebKitDOMPasteAllowedPreferenceKey];
+}
+
+- (void)setDOMPasteAllowed:(BOOL)DOMPasteAllowed
+{
+    [self _setBoolValue:DOMPasteAllowed forKey:WebKitDOMPasteAllowedPreferenceKey];
 }
 
 @end

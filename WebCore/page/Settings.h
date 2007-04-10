@@ -114,6 +114,9 @@ namespace WebCore {
         void setNeedsAcrobatFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAcrobatFrameReloadingQuirk; }
         
+        void setDOMPasteAllowed(bool);
+        bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
+        
     private:
         String m_defaultTextEncodingName;
         KURL m_userStyleSheetLocation;
@@ -138,6 +141,7 @@ namespace WebCore {
         bool m_textAreasAreResizable : 1;
         bool m_usesDashboardBackwardCompatibilityMode : 1;
         bool m_needsAcrobatFrameReloadingQuirk : 1;
+        bool m_isDOMPasteAllowed: 1;
     };
 
 } // namespace WebCore

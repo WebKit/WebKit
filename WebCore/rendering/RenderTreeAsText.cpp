@@ -478,8 +478,6 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
 
 DeprecatedString externalRepresentation(RenderObject* o)
 {
-    JSEditor::setSupportsPasteCommand(true);
-
     DeprecatedString s;
     if (o) {
         TextStream ts(&s);

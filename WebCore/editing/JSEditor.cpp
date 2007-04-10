@@ -36,12 +36,13 @@
 #include "FormatBlockCommand.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
-#include "HTMLNames.h"
 #include "HTMLImageElement.h"
+#include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
+#include "Settings.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
 #include "htmlediting.h"
@@ -54,8 +55,6 @@ using namespace HTMLNames;
 class Document;
 
 namespace {
-
-bool supportsPasteCommand = false;
 
 struct CommandImp {
     bool (*execFn)(Frame*, bool userInterface, const String& value);
@@ -126,7 +125,7 @@ bool JSEditor::queryCommandState(const String& command)
 
 bool JSEditor::queryCommandSupported(const String& command)
 {
-    if (!supportsPasteCommand && command.lower() == "paste")
+    if ((!m_document->frame() || !m_document->frame()->settings()->isDOMPasteAllowed()) && command.lower() == "paste")
         return false;
     return commandImp(command) != 0;
 }
@@ -141,11 +140,6 @@ String JSEditor::queryCommandValue(const String& command)
         return String();
     m_document->updateLayoutIgnorePendingStylesheets();
     return cmd->valueFn(frame);
-}
-
-void JSEditor::setSupportsPasteCommand(bool flag)
-{
-    supportsPasteCommand = flag;
 }
 
 // =============================================================================================
@@ -525,7 +519,7 @@ bool enabledCopy(Frame* frame)
 
 bool enabledPaste(Frame* frame)
 {
-    return supportsPasteCommand && frame->editor()->canPaste();
+    return frame->settings()->isDOMPasteAllowed() && frame->editor()->canPaste();
 }
 
 bool enabledAnyRangeSelection(Frame* frame)
@@ -762,9 +756,6 @@ CommandMap* createCommandDictionary()
         name->ref();
         commandMap->set(name, &commands[i].imp);
     }
-#ifndef NDEBUG
-    supportsPasteCommand = true;
-#endif
     return commandMap;
 }
 

@@ -1,3 +1,21 @@
+2007-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed fast/forms/textarea-paste-newline.html.
+        
+        This failure was pretty funny. run-webkit-tests kills and respawns
+        DumpRenderTree once every 1000 runs. Adding a few tests caused 
+        textarea-paste-newline.html to run right at the beginning of DumpRenderTree's 
+        lifetime, before any render tree dumps had occurred. However, WebCore 
+        used a render tree dump as the hook that set a global flag to allow 
+        pasting through the DOM API, so running before any render tree dumps had 
+        occurred caused this test to fail.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree): Explicitly tell WebKit to allow pasting through the DOM
+        API, instead of hoping it will read the tea leaves.
+
 2007-04-07  Mark Rowe  <mrowe@apple.com>
 
         Not reviewed.  Update to match some configuration changes that have been active on build.webkit.org.

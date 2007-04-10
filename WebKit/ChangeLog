@@ -1,3 +1,23 @@
+2007-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Support for fixing fast/forms/textarea-paste-newline.html.
+        
+        Added SPI for specifying whether a WebView should allow pasting through the 
+        DOM API.
+
+        * ChangeLog:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (+[WebPreferences standardPreferences]):
+        (-[WebPreferences isDOMPasteAllowed]):
+        (-[WebPreferences setDOMPasteAllowed:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2007-04-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John.

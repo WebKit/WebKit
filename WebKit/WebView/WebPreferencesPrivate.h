@@ -83,6 +83,10 @@ typedef enum {
 - (BOOL)_usePDFPreviewView;
 - (void)_setUsePDFPreviewView:(BOOL)newValue;
 
+// WARNING: Allowing paste through the DOM API opens a security hole. We only use it for testing purposes.
+- (BOOL)isDOMPasteAllowed;
+- (void)setDOMPasteAllowed:(BOOL)DOMPasteAllowed;
+
 // Other private methods
 - (size_t)_pageCacheSize;
 - (size_t)_objectCacheSize;

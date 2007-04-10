@@ -1,3 +1,32 @@
+2007-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Support for fixing fast/forms/textarea-paste-newline.html.
+        
+        Changed clients to use new preference specifying whether a Page should 
+        allow pasting through the DOM API, instead of a global flag.
+
+        Removed old behavior of always allowing DOM paste in debug builds. In 
+        light of the new preference-based API, that behavior makes no sense anymore. 
+        Instead, developers who want to test paste inside Safari can set the 
+        preference for themselves.
+
+        * WebCore.exp:
+        * editing/CommandByName.cpp: Removed crazy hack to keep an identically 
+        named but invalid copy of the global "pate allowed" flag in this file.
+        (WebCore::Frame::enabledPaste):
+        * editing/JSEditor.cpp: Removed "always allow" behavior for debug builds.
+        (WebCore::JSEditor::queryCommandSupported):
+        * editing/JSEditor.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setDOMPasteAllowed):
+        * page/Settings.h:
+        (WebCore::Settings::isDOMPasteAllowed):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation): Removed crazy hack to allow DOM paste
+        after this function has been called.
+
 2007-04-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher

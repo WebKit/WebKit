@@ -440,7 +440,8 @@ void dumpRenderTree(int argc, const char *argv[])
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
-
+    [preferences setDOMPasteAllowed:YES];
+    
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
         switch (option) {
