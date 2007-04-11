@@ -1,3 +1,20 @@
+2007-04-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti
+
+        <rdar://problem/5125648> and http://bugs.webkit.org/show_bug.cgi?id=13326
+
+        Crash opening a link in a new window from Gmail
+
+        Problem here is that the currentHistoryItem in the new window is null.  This *shouldn't* be the case, 
+        and is the cause of a very long standing bug - 
+        http://bugs.webkit.org/show_bug.cgi?id=3546 - Can't go back to first page in new window opened from gmail
+
+        For now, adding a null check prevents this crash and restores the original, long standing regression
+ 
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForInternalLoad): NULL check
+
 2007-04-11  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

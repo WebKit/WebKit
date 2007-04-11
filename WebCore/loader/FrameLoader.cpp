@@ -4030,8 +4030,10 @@ void FrameLoader::updateHistoryForInternalLoad()
 #endif
     
     if (documentLoader()->isClientRedirect()) {
-        m_currentHistoryItem->setURL(documentLoader()->URL());
-        m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
+        if (m_currentHistoryItem) {
+            m_currentHistoryItem->setURL(documentLoader()->URL());
+            m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
+        }
     } else {
         // Add an item to the item tree for this frame
         Frame* parentFrame = m_frame->tree()->parent();
