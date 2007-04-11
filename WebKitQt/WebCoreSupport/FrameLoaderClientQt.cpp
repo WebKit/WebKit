@@ -278,7 +278,7 @@ void FrameLoaderClientQt::detachedFromParent4()
 }
 
 
-void FrameLoaderClientQt::loadedFromPageCache()
+void FrameLoaderClientQt::loadedFromCachedPage()
 {
     notImplemented();
 }
@@ -597,7 +597,7 @@ void FrameLoaderClientQt::windowObjectCleared() const
         emit m_webFrame->cleared();
 }
 
-void FrameLoaderClientQt::setDocumentViewFromPageCache(WebCore::PageCache*)
+void FrameLoaderClientQt::setDocumentViewFromCachedPage(CachedPage*)
 {
     notImplemented();
 }
@@ -625,7 +625,7 @@ void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem*)
     notImplemented();
 }
 
-void FrameLoaderClientQt::saveDocumentViewToPageCache(WebCore::PageCache*)
+void FrameLoaderClientQt::saveDocumentViewToCachedPage(CachedPage*)
 {
     notImplemented();
 }
