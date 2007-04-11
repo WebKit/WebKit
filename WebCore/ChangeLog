@@ -1,3 +1,26 @@
+2007-04-11  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        Made image document copying more cross-platform.
+
+        All layout tests pass.
+
+        * editing/Editor.cpp:
+        (WebCore::imageNodeFromImageDocument): Added.
+        (WebCore::Editor::canCopy): Called imageNodeFromImageDocument.
+        (WebCore::Editor::copy): Ditto.
+        (WebCore::Editor::copyImage): Updated for changes to Pasteboard.
+        * platform/Pasteboard.h: Made writeImage more general, which allowed
+        getting rid of its second incarnation.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): Collapsed logic from the two
+        writeImage methods into one.
+        (Pasteboard::writeImage): Updated for Pasteboard changes.
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+
 2007-04-11  Darin Adler  <darin@apple.com>
 
         * css/CSSValueKeywords.in: Fix a comment.

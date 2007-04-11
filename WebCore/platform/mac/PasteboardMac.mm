@@ -269,65 +269,31 @@ void Pasteboard::writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper)
     [m_pasteboard setData:RTFDData forType:NSRTFDPboardType];
 }
 
-void Pasteboard::writeImage(const HitTestResult& result)
-{    
-    KURL coreURL = result.absoluteLinkURL();
-    if (coreURL.isEmpty())
-        coreURL = result.absoluteImageURL();
-    NSURL *URL = coreURL.getNSURL();
-    ASSERT(URL);
-
-    Node* node = result.innerNonSharedNode();
-    if (!node)
-        return;
-
-    NSString *title = result.altDisplayString().isNull() ? nil : (NSString*)(result.altDisplayString());
+void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
+{
+    ASSERT(node);
     Frame* frame = node->document()->frame();
 
-    NSArray* types = writableTypesForImage();
-    [m_pasteboard declareTypes:types owner:nil];
-    writeURL(m_pasteboard, types, URL, title, frame);
-
-    Image* coreImage = result.image();
-    ASSERT(coreImage);
-    if (!coreImage)
-        return;
-    [m_pasteboard setData:[coreImage->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
-
-    RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
-    CachedResource* imageResource = static_cast<CachedResource*>(renderer->cachedImage());
-    ASSERT(imageResource);
-    String MIMEType = imageResource->response().mimeType();
-    ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
-
-    if (imageResource)
-        writeFileWrapperAsRTFDAttachment(fileWrapperForImage(imageResource, URL));
-}
-
-void Pasteboard::writeImage(Node* imageNode, const KURL& url)
-{
     NSURL *URL = url.getNSURL();
     ASSERT(URL);
 
-    Frame* frame = imageNode->document()->frame();
-    NSString *title = imageNode->document()->title();
-    
-    NSArray *types = writableTypesForImage();
+    NSArray* types = writableTypesForImage();
     [m_pasteboard declareTypes:types owner:nil];
-    writeURL(m_pasteboard, types, URL, title, frame);
+    writeURL(m_pasteboard, types, URL, nsStringNilIfEmpty(title), frame);
 
-    if (!imageNode->renderer() || !imageNode->renderer()->isImage())
-        return;
-    RenderImage* renderer = static_cast<RenderImage*>(imageNode->renderer());
-    CachedImage* imageResource = renderer->cachedImage();
-    if (!imageResource)
-        return;
-    String MIMEType = imageResource->response().mimeType();
+    ASSERT(node->renderer() && node->renderer()->isImage());
+    RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
+    CachedImage* cachedImage = static_cast<CachedImage*>(renderer->cachedImage());
+    ASSERT(cachedImage);
+    Image* image = cachedImage->image();
+    ASSERT(image);
+    
+    [m_pasteboard setData:[image->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
+
+    String MIMEType = cachedImage->response().mimeType();
     ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
 
-    [m_pasteboard setData:[imageResource->image()->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
-    
-    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(imageResource, URL));
+    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, URL));
 }
 
 bool Pasteboard::canSmartReplace()

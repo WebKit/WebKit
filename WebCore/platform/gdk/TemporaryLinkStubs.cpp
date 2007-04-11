@@ -295,7 +295,7 @@ void Editor::markMisspellings(const Selection&) { notImplementedGdk(); }
 Pasteboard* Pasteboard::generalPasteboard() { notImplementedGdk(); return 0; }
 void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplementedGdk(); }
 void Pasteboard::writeURL(const KURL&, const String&, Frame*) { notImplementedGdk(); }
-void Pasteboard::writeImage(const HitTestResult&) { notImplementedGdk(); }
+void Pasteboard::writeImage(Node*, const KURL&, const String&) { notImplementedGdk(); }
 void Pasteboard::clear() { notImplementedGdk(); }
 bool Pasteboard::canSmartReplace() { notImplementedGdk(); return false; }
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText) { notImplementedGdk(); return 0; }
