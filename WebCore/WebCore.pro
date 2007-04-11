@@ -392,10 +392,10 @@ SOURCES += \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
     history/BackForwardList.cpp \
+    history/CachedPage.cpp \
     history/HistoryItem.cpp \
     history/HistoryItemTimer.cpp \
-    history/PageCache.cpp \
-    history/qt/PageCacheQt.cpp \
+    history/qt/CachedPageQt.cpp \
     html/CanvasGradient.cpp \
     html/CanvasPattern.cpp \
     html/CanvasRenderingContext2D.cpp \
@@ -521,7 +521,6 @@ SOURCES += \
     page/FrameView.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
-    page/PageState.cpp \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \

@@ -24,26 +24,22 @@
  */
 
 #include "config.h"
-#include "PageCache.h"
+#include "CachedPage.h"
 
 namespace WebCore {
 
-void PageCache::close()
+void CachedPage::close()
 {
-    if (!m_pageState)
+    if (!m_document)
         return;
     
     // FIXME: <rdar://problem/4886844>
     // The current method of tracking the "document view" is messy and quite platform specific
     // Having a WebCore-way to track this would be great.
-//     if (m_documentView)
-//         objc_msgSend(m_documentView.get(), @selector(closeIfNotCurrentView));
+    //     if (m_documentView)
+    //         objc_msgSend(m_documentView.get(), @selector(closeIfNotCurrentView));
 
-    m_pageState->clear();
-    
-    // Setting these to null is how the PageCache object knows it's been closed
-    m_pageState = 0;
-    m_documentLoader = 0;
+    clear();
 }
 
 } //namespace WebCore

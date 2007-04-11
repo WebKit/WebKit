@@ -91,4 +91,9 @@ void Editor::markMisspellings(const Selection& selection)
 
 }
 
+void Editor::markBadGrammar(const Selection& selection)
+{
+
+}
+
 } // namespace WebCore

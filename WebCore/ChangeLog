@@ -1,3 +1,14 @@
+2007-04-12  Mark Rowe  <mrowe@apple.com>
+
+        Qt build fix.
+
+        * WebCore.pro:
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::markBadGrammar):
+        * history/qt/CachedPageQt.cpp: Added.
+        (WebCore::CachedPage::close):
+        * history/qt/PageCacheQt.cpp: Removed.
+
 2007-04-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti
