@@ -1,3 +1,38 @@
+2007-04-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4932260> 
+        Invalid attributed string for attachment range obtained via AXPreviousWordStartTextMarkerForTextMarker
+
+        Forgot to check these in in my previous checkin:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum: Added.
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        
+        Tests for a bug where replaced elements would act
+        as sentence boundaries:
+        * editing/selection/4932260-1-expected.checksum: Added.
+        * editing/selection/4932260-1-expected.png: Added.
+        * editing/selection/4932260-1-expected.txt: Added.
+        * editing/selection/4932260-1.html: Added.
+        
+        Tests to see that replaced elements do not act as word
+        boundaries when moving forward through the document:
+        * editing/selection/4932260-2-expected.checksum: Added.
+        * editing/selection/4932260-2-expected.png: Added.
+        * editing/selection/4932260-2-expected.txt: Added.
+        * editing/selection/4932260-2.html: Added.
+        
+        Ditto but tests moving backward:
+        * editing/selection/4932260-3-expected.checksum: Added.
+        * editing/selection/4932260-3-expected.png: Added.
+        * editing/selection/4932260-3-expected.txt: Added.
+        * editing/selection/4932260-3.html: Added.
+        
+        No way to test accessibility APIs atm, and had trouble
+        making a test for selection creation with double-click 
+        and drag.
+
 2007-04-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

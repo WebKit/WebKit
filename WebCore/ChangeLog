@@ -1,3 +1,54 @@
+2007-04-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4932260> 
+        Invalid attributed string for attachment range obtained via AXPreviousWordStartTextMarkerForTextMarker
+        
+        By default, text iterators don't emit anything for replaced 
+        elements.  Boundary finding code works around this but has 
+        bugs: replaced elements act as sentence boundaries and the 
+        above bug, where previousBoundary moves past the start of a 
+        word if there is a replaced element just before it. This 
+        patch fixes these issues by treating replaced elements as 
+        punctuation for boundary finding.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        Set m_pastStartNode, the node after (in a reverse pre-order traversal) the 
+        last one that should be processed.
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        Stop at m_pastStartNode.
+        Iterate over nodes in reverse pre-order (TextIterator traverses in 
+        pre-orer). This makes knowing when to emit characters after nodes vs. when
+        to emit characters before nodes easier.
+        Remove the special case for entering a new block, emitting characters 
+        after nodes can now be handled generally, in handleNonTextNode(), because
+        of the way we traverse.
+        Set m_handledChildren to false every iteration since we now do traverse in 
+        reverse pre-order.
+        (WebCore::SimplifiedBackwardsTextIterator::handleReplacedElement):
+        Emit a comma for replaced elements.  We only use this kind of iterator 
+        for finding boundaries, so we can do this unconditionally.
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        Don't use emitNewline, instead specify where the newline should be positioned.
+        A node is handled before its children, so characters emitted here should 
+        be positioned after the node, not before it.
+        (WebCore::SimplifiedBackwardsTextIterator::exitNode): 
+        Don't use emitNewline, instead specify where the newline should be positioned.
+        (WebCore::CharacterIterator::CharacterIterator): 
+        Create a TextIterator that emits content for replaced elements, if requested.
+        * editing/TextIterator.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): 
+        Removed replaced element handling code.
+        If the start of the chunk that contained the boundary was in a non-text
+        node, then the boundary is not necessarily in that node.  Particularly
+        because it is only the end of the chunk that is guaranteed to be a valid
+        position in those cases.  We must iterate backwards by character from 
+        the end of the chunk to find the boundary.
+        (WebCore::nextBoundary): Removed replaced element handling code.
+
 2007-04-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

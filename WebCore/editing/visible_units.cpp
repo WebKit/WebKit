@@ -72,7 +72,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     DeprecatedString string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
-    while (!it.atEnd() && it.length() > 0) {
+    while (!it.atEnd()) {
         // iterate to get chunks until the searchFunction returns a non-zero value.
         String iteratorString(it.characters(), it.length());
         // Treat bullets used in the text security mode as regular characters when looking for boundaries
@@ -87,34 +87,21 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     
     if (it.atEnd() && next == 0) {
         pos = it.range()->startPosition();
-    } else if (!it.atEnd() && it.length() == 0) {
-        // Got a zero-length chunk.
-        // This means we have hit a replaced element.
-        // Make a check to see if the position should be before or after the replaced element
-        // by performing an additional check with a modified string which uses an "X" 
-        // character to stand in for the replaced element.
-        DeprecatedChar chars[2];
-        chars[0] = 'X';
-        chars[1] = ' ';
-        string.prepend(chars, 2);
-        unsigned pastImage = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
-        RefPtr<Range> range(it.range());
-        if (pastImage == 0)
-            pos = Position(range->startContainer(exception), range->startOffset(exception));
-        else
-            pos = Position(range->endContainer(exception), range->endOffset(exception));
     } else if (next != 0) {
-        // The simpler iterator used in this function, as compared to the one used in 
-        // nextWordPosition(), gives us results we can use directly without having to 
-        // iterate again to translate the next value into a DOM position. 
         Node *node = it.range()->startContainer(exception);
         if (node->isTextNode() || (node->renderer() && node->renderer()->isBR()))
             // The next variable contains a usable index into a text node
             pos = Position(node, next);
-        else
-            // If we are not in a text node, we ended on a node boundary, so the
-            // range start offset should be used.
-            pos = Position(node, it.range()->startOffset(exception));
+        else {
+            // Use the end of the found range, the start is not guaranteed to
+            // be correct.
+            Position end = it.range()->endPosition();
+            VisiblePosition boundary(end);
+            unsigned i = it.length() - next;
+            while (i--)
+                boundary = boundary.previous();
+            return boundary;
+        }
     }
 
     return VisiblePosition(pos, DOWNSTREAM);
@@ -142,11 +129,11 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     ExceptionCode ec = 0;
     searchRange->selectNodeContents(boundary, ec);
     searchRange->setStart(start.node(), start.offset(), ec);
-    TextIterator it(searchRange.get());
+    TextIterator it(searchRange.get(), true);
     DeprecatedString string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
-    while (!it.atEnd() && it.length() > 0) {
+    while (!it.atEnd()) {
         // Keep asking the iterator for chunks until the search function
         // returns an end value not equal to the length of the string passed to it.
         String iteratorString(it.characters(), it.length());
@@ -162,26 +149,9 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     
     if (it.atEnd() && next == string.length()) {
         pos = it.range()->startPosition();
-    } else if (!it.atEnd() && it.length() == 0) {
-        // Got a zero-length chunk.
-        // This means we have hit a replaced element.
-        // Make a check to see if the position should be before or after the replaced element
-        // by performing an additional check with a modified string which uses an "X" 
-        // character to stand in for the replaced element.
-        DeprecatedChar chars[2];
-        chars[0] = ' ';
-        chars[1] = 'X';
-        string.append(chars, 2);
-        unsigned pastImage = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
-        RefPtr<Range> range(it.range());
-        int exception = 0;
-        if (next != pastImage)
-            pos = Position(range->endContainer(exception), range->endOffset(exception));
-        else
-            pos = Position(range->startContainer(exception), range->startOffset(exception));
     } else if (next != 0) {
         // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(searchRange.get());
+        CharacterIterator charIt(searchRange.get(), true);
         charIt.advance(next - 1);
         pos = charIt.range()->endPosition();
     }

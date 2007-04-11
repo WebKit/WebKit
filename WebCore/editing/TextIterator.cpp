@@ -78,13 +78,13 @@ TextIterator::TextIterator() : m_startContainer(0), m_startOffset(0), m_endConta
 {
 }
 
-TextIterator::TextIterator(const Range* r, bool emitSpaceForReplacedElements) 
+TextIterator::TextIterator(const Range* r, bool emitForReplacedElements) 
     : m_startContainer(0) 
     , m_startOffset(0)
     , m_endContainer(0)
     , m_endOffset(0)
     , m_positionNode(0)
-    , m_emitSpaceForReplacedElements(emitSpaceForReplacedElements)
+    , m_emitForReplacedElements(emitForReplacedElements)
 {
     if (!r)
         return;
@@ -349,8 +349,11 @@ bool TextIterator::handleReplacedElement()
 
     m_haveEmitted = true;
     
-    if (m_emitSpaceForReplacedElements) {
-        emitCharacter(' ', m_node->parentNode(), m_node, 0, 1);
+    if (m_emitForReplacedElements) {
+        // We want replaced elements to behave like punctuation for boundary 
+        // finding, and to simply take up space for the selection preservation 
+        // code in moveParagraphs, so we use a comma.
+        emitCharacter(',', m_node->parentNode(), m_node, 0, 1);
         return true;
     }
     
@@ -690,6 +693,15 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
 
     m_lastTextNode = 0;
     m_lastCharacter = '\n';
+    
+    if (startOffset == 0 || !startNode->firstChild()) {
+        m_pastStartNode = startNode->previousSibling();
+        while (!m_pastStartNode && startNode->parentNode()) {
+            startNode = startNode->parentNode();
+            m_pastStartNode = startNode->previousSibling();
+        }
+    } else
+        m_pastStartNode = startNode->childNode(startOffset - 1);
 
     advance();
 }
@@ -701,7 +713,7 @@ void SimplifiedBackwardsTextIterator::advance()
     m_positionNode = 0;
     m_textLength = 0;
 
-    while (m_node) {
+    while (m_node && m_node != m_pastStartNode) {
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
@@ -717,49 +729,27 @@ void SimplifiedBackwardsTextIterator::advance()
                 return;
         }
 
-        if (m_node == m_startNode)
-            return;
-
-        Node *next = 0;
-        if (!m_handledChildren) {
-            next = m_node->lastChild();
-            while (next && next->lastChild())
-                next = next->lastChild();
-            m_handledChildren = true;
-        }
-        if (!next && m_node != m_startNode) {
+        Node* next = m_handledChildren ? 0 : m_node->lastChild();
+        if (!next) {
             next = m_node->previousSibling();
-            if (next) {
+            while (!next) {
+                if (!m_node->parentNode())
+                    break;
+                m_node = m_node->parentNode();
                 exitNode();
-                while (next->lastChild())
-                    next = next->lastChild();
-            }
-            else if (m_node->parentNode()) {
-                next = m_node->parentNode();
-                exitNode();
-            }
-        }
-        
-        // Check for leaving a node and iterating backwards
-        // into a different block that is an descendent of the
-        // block containing the node (as in leaving
-        // the "bar" node in this example: <p>foo</p>bar).
-        // Must emit newline when leaving node containing "bar".
-        if (next && m_node->renderer() && m_node->renderer()->style()->visibility() == VISIBLE) {
-            Node *block = m_node->enclosingBlockFlowElement();
-            if (block) {
-                Node *nextBlock = next->enclosingBlockFlowElement();
-                if (nextBlock && nextBlock->isDescendantOf(block))
-                    emitNewline();
+                if (m_positionNode) {
+                    m_handledNode = true;
+                    m_handledChildren = true;
+                    return;
+                }
+                next = m_node->previousSibling();
             }
         }
         
         m_node = next;
-        if (m_node)
-            m_offset = m_node->caretMaxOffset();
-        else
-            m_offset = 0;
+        m_offset = m_node ? m_node->caretMaxOffset() : 0;
         m_handledNode = false;
+        m_handledChildren = false;
         
         if (m_positionNode)
             return;
@@ -791,17 +781,12 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()
 {
-    int offset = m_node->nodeIndex();
-
-    m_positionNode = m_node->parentNode();
-    m_positionStartOffset = offset;
-    m_positionEndOffset = offset + 1;
-
-    m_textCharacters = 0;
-    m_textLength = 0;
-
-    m_lastCharacter = 0;
-
+    unsigned index = m_node->nodeIndex();
+    // We want replaced elements to behave like punctuation for boundary 
+    // finding, and to simply take up space for the selection preservation 
+    // code in moveParagraphs, so we use a comma.  Unconditionally emit
+    // here because this iterator is only used for boundary finding.
+    emitCharacter(',', m_node->parentNode(), index, index + 1);
     return true;
 }
 
@@ -811,8 +796,12 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
     // find boundaries, not actual content.  A linefeed breaks words, sentences, and paragraphs.
     if (shouldEmitNewlineForNode(m_node) ||
         shouldEmitNewlineAfterNode(m_node) ||
-        shouldEmitTabBeforeNode(m_node))
-        emitNewline();
+        shouldEmitTabBeforeNode(m_node)) {
+        unsigned index = m_node->nodeIndex();
+        // The start of this emitted range is wrong, ensuring correctness would require
+        // VisiblePositions and so would be slow.  previousBoundary expects this.
+        emitCharacter('\n', m_node->parentNode(), index + 1, index + 1);
+    }
     
     return true;
 }
@@ -822,9 +811,9 @@ void SimplifiedBackwardsTextIterator::exitNode()
     if (shouldEmitNewlineForNode(m_node) ||
         shouldEmitNewlineBeforeNode(m_node) ||
         shouldEmitTabBeforeNode(m_node))
-        emitNewline();
-    
-    return;
+        // The start of this emitted range is wrong, ensuring correctness would require
+        // VisiblePositions and so would be slow.  previousBoundary expects this.
+        emitCharacter('\n', m_node, 0, 0);
 }
 
 void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node *node, int startOffset, int endOffset)
@@ -836,19 +825,6 @@ void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node *node, int sta
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
     m_lastCharacter = c;
-}
-
-void SimplifiedBackwardsTextIterator::emitNewline()
-{
-    int offset;
-    
-    if (m_lastTextNode) {
-        offset = m_lastTextNode->nodeIndex();
-        emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
-    } else {
-        offset = m_node->nodeIndex();
-        emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
-    }
 }
 
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
@@ -864,8 +840,8 @@ CharacterIterator::CharacterIterator()
 {
 }
 
-CharacterIterator::CharacterIterator(const Range *r)
-    : m_offset(0), m_runOffset(0), m_atBreak(true), m_textIterator(r)
+CharacterIterator::CharacterIterator(const Range *r, bool emitSpaceForReplacedElements)
+    : m_offset(0), m_runOffset(0), m_atBreak(true), m_textIterator(r, emitSpaceForReplacedElements)
 {
     while (!atEnd() && m_textIterator.length() == 0)
         m_textIterator.advance();
