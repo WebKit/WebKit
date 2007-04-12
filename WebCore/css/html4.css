@@ -448,11 +448,12 @@ keygen, select {
     -webkit-appearance: menulist;
     box-sizing: border-box;
     -webkit-box-align: center;
+    border: 1px solid;
+    -webkit-border-radius: 5px;
+    white-space: pre;
     -webkit-rtl-ordering: logical;
     color: black;
-    border: 1px solid;
     background-color: white;
-    white-space: pre;
     cursor: default;
 }
 
@@ -460,8 +461,8 @@ select[size],
 select[multiple],
 select[size][multiple] {
     -webkit-appearance: listbox;
-    -webkit-box-align: start;
     box-sizing: initial;
+    -webkit-box-align: start;
     border: 1px inset gray;
     -webkit-border-radius: initial;
     white-space: initial;
@@ -472,10 +473,9 @@ select[size="1"] {
     -webkit-appearance: menulist;
     box-sizing: border-box;
     -webkit-box-align: center;
-    color: black;
     border: 1px solid;
     -webkit-border-radius: 5px;
-    background-color: white;
+    white-space: pre;
 }
 
 optgroup {

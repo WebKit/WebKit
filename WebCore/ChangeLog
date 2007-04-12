@@ -1,3 +1,15 @@
+2007-04-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11362
+          Native popup with size="1" wraps options
+
+        Test: fast/forms/menulist-option-wrap.html
+
+        * css/html4.css: Added white-space declaration for select[size="0"] and
+        select[size="1"]. Added border-radius declaration for select.
+
 2007-04-11  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.
