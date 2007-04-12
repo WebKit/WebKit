@@ -1,3 +1,14 @@
+2007-04-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Ada
+
+        <rdar://problem/5080987> - Crash in DocumentLoader::frameLoader() const
+
+        This was free nil checking lost during the ObjC -> C++ conversion
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Null check the DocumentLoader
+
 2007-04-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
