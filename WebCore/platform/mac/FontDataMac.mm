@@ -40,6 +40,7 @@
 #import <float.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;
@@ -84,10 +85,10 @@ bool initFontData(FontData* fontData)
 
 static NSString *webFallbackFontFamily(void)
 {
-    static NSString *webFallbackFontFamily = nil;
+    static RetainPtr<NSString> webFallbackFontFamily = nil;
     if (!webFallbackFontFamily)
-        webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0] familyName] retain];
-    return webFallbackFontFamily;
+        webFallbackFontFamily = [[NSFont systemFontOfSize:16.0] familyName];
+    return webFallbackFontFamily.get();
 }
 
 void FontData::platformInit()

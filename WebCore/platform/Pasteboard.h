@@ -30,6 +30,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
 // FIXME: This class is too high-level to be in the platform directory, since it
 // uses the DOM and makes calls to Editor. It should either be divested of its
 // knowledge of the frame and editor or moved into the editing directory.
@@ -90,7 +94,7 @@ private:
 
 #if PLATFORM(MAC)
     Pasteboard(NSPasteboard *);
-    NSPasteboard *m_pasteboard;
+    RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 
 #if PLATFORM(WIN)

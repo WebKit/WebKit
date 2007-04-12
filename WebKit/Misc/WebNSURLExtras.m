@@ -102,15 +102,18 @@ static void applyHostNameFunctionToMailToURLString(NSString *string, StringRange
 
     static NSCharacterSet *hostNameOrStringStartCharacters;
     if (hostNameOrStringStartCharacters == nil) {
-        hostNameOrStringStartCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"@?"] retain];
+        hostNameOrStringStartCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\"@?"];
+        CFRetain(hostNameOrStringStartCharacters);
     }
     static NSCharacterSet *hostNameEndCharacters;
     if (hostNameEndCharacters == nil) {
-        hostNameEndCharacters = [[NSCharacterSet characterSetWithCharactersInString:@">,?"] retain];
+        hostNameEndCharacters = [NSCharacterSet characterSetWithCharactersInString:@">,?"];
+        CFRetain(hostNameEndCharacters);
     }
     static NSCharacterSet *quotedStringCharacters;
     if (quotedStringCharacters == nil) {
-        quotedStringCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"\"\\"] retain];
+        quotedStringCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\"\\"];
+        CFRetain(quotedStringCharacters);
     }
 
     unsigned stringLength = [string length];
@@ -204,7 +207,8 @@ static void applyHostNameFunctionToURLString(NSString *string, StringRangeApplie
     // Check that all characters before the :// are valid scheme characters.
     static NSCharacterSet *nonSchemeCharacters;
     if (nonSchemeCharacters == nil) {
-        nonSchemeCharacters = [[[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-."] invertedSet] retain];
+        nonSchemeCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-."] invertedSet];
+        CFRetain(nonSchemeCharacters);
     }
     if ([string rangeOfCharacterFromSet:nonSchemeCharacters options:0 range:NSMakeRange(0, separatorRange.location)].location != NSNotFound) {
         return;
@@ -214,7 +218,8 @@ static void applyHostNameFunctionToURLString(NSString *string, StringRangeApplie
 
     static NSCharacterSet *hostTerminators;
     if (hostTerminators == nil) {
-        hostTerminators = [[NSCharacterSet characterSetWithCharactersInString:@":/?#"] retain];
+        hostTerminators = [NSCharacterSet characterSetWithCharactersInString:@":/?#"];
+        CFRetain(hostTerminators);
     }
 
     // Start after the separator.

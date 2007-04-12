@@ -37,6 +37,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebKit/DOMPrivate.h>
+#import <WTF/RetainPtr.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -84,7 +85,7 @@ NSString *WebURLNamePboardType = nil;
 
 + (NSArray *)_web_writableTypesForURL
 {
-    static NSArray *types = nil;
+    static RetainPtr<NSArray> types;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:
             WebURLsWithTitlesPboardType,
@@ -94,28 +95,28 @@ NSString *WebURLNamePboardType = nil;
             NSStringPboardType,
             nil];
     }
-    return types;
+    return types.get();
 }
 
 static NSArray *_writableTypesForImageWithoutArchive (void)
 {
-    static NSMutableArray *types = nil;
+    static RetainPtr<NSMutableArray> types;
     if (types == nil) {
         types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
-        [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
+        [types.get() addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
     }
-    return types;
+    return types.get();
 }
 
 static NSArray *_writableTypesForImageWithArchive (void)
 {
-    static NSMutableArray *types = nil;
+    static RetainPtr<NSMutableArray> types;
     if (types == nil) {
         types = [_writableTypesForImageWithoutArchive() mutableCopy];
-        [types addObject:NSRTFDPboardType];
-        [types addObject:WebArchivePboardType];
+        [types.get() addObject:NSRTFDPboardType];
+        [types.get() addObject:WebArchivePboardType];
     }
-    return types;
+    return types.get();
 }
 
 + (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive

@@ -1,3 +1,34 @@
+2007-04-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Adding RetainPtr to the many global obj-c pointers we use in
+        C/C++ methods.  This is necessary to prevent GC from collecting
+        globals we want to keep around.
+
+        We use RetainPtr in obj-c++ and c++ files, and CFRetain/Release in pure
+        obj-c.
+
+        This fixes <rdar://problem/5058731> -- Crash in 
+        WebCore::DragData::containsCompatibleContent due to early release 
+        of types array
+
+        * Misc/WebLocalizableStrings.m:
+        (WebLocalizedString):
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_writableTypesForURL]):
+        (_writableTypesForImageWithoutArchive):
+        (_writableTypesForImageWithArchive):
+        * Misc/WebNSURLExtras.m:
+        (applyHostNameFunctionToMailToURLString):
+        (applyHostNameFunctionToURLString):
+        * Misc/WebStringTruncator.m:
+        (defaultMenuFont):
+        (fontFromNSFont):
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::insertablePasteboardTypes):
+
+=======
 2007-04-11  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.
@@ -14,6 +45,7 @@
         (WebChromeClient::createWindow):
         (WebChromeClient::createModalDialog):
 
+>>>>>>> .r20857
 2007-04-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

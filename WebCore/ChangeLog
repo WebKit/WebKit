@@ -1,3 +1,41 @@
+2007-04-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Adding RetainPtr to the many global obj-c pointers we use in
+        C/C++ methods.  This is necessary to prevent GC from collecting
+        globals we want to keep around.
+
+        We use RetainPtr in obj-c++ and c++ files, and CFRetain/Release in pure
+        obj-c.
+
+        Also made the Pasteboard::m_pasteboard a RetainPtr although it
+        shouldn't be necessary as the only NSPasteboard instances that 
+        should ever be inserted are the system clipboard and dragging 
+        pasteboard.  Neither of which should ever be collected.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (_getPreSmartSet):
+        (_getPostSmartSet):
+        * platform/Pasteboard.h:
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::webFallbackFontFamily):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writableTypesForURL):
+        (WebCore::writableTypesForImage):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeFileWrapperAsRTFDAttachment):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+
 2007-04-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

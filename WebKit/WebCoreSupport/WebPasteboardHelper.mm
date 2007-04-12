@@ -32,6 +32,7 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMDocumentFragment.h>
 #import <WebCore/PlatformString.h>
+#import <WTF/RetainPtr.h>
 
 using namespace WebCore;
 
@@ -89,9 +90,9 @@ DOMDocumentFragment *WebPasteboardHelper::fragmentFromPasteboard(const NSPastebo
 
 NSArray *WebPasteboardHelper::insertablePasteboardTypes() const
 {    
-    static NSArray *types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
+    static RetainPtr<NSArray> types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
            NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, nil];
     
-    return types;
+    return types.get();
 }

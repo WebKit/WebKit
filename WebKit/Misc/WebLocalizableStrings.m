@@ -40,6 +40,7 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
         if (mainBundle == nil) {
             mainBundle = [NSBundle mainBundle];
             ASSERT(mainBundle);
+            CFRetain(mainBundle);
         }
         bundle = mainBundle;
     } else {

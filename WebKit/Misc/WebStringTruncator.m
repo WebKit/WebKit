@@ -38,7 +38,11 @@ using namespace WebCore;
 
 static NSFont *defaultMenuFont()
 {
-    static NSFont *defaultMenuFont = [[NSFont menuFontOfSize:0] retain];
+    static NSFont *defaultMenuFont = nil;
+    if (!defaultMenuFont) {
+        defaultMenuFont = [NSFont menuFontOfSize:0];
+        CFRetain(defaultMenuFont);
+    }
     return defaultMenuFont;
 }
 
@@ -49,9 +53,10 @@ static Font& fontFromNSFont(NSFont *font)
 
     if ([font isEqual:currentFont])
         return currentRenderer;
-    
-    [currentFont release];
-    currentFont = [font retain];
+    if (currentFont)
+        CFRelease(currentFont);
+    currentFont = font;
+    CFRetain(currentFont);
     FontPlatformData f(font);
     currentRenderer = Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     return currentRenderer;
