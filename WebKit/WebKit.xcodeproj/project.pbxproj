@@ -287,6 +287,8 @@
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDD6132C0AED9990000B75CA /* WebViewEditingContextMenuOld.nib in Resources */ = {isa = PBXBuildFile; fileRef = EDD6132A0AED9990000B75CA /* WebViewEditingContextMenuOld.nib */; };
+		EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */; };
+		EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -536,6 +538,8 @@
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD6132B0AED9990000B75CA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebViewEditingContextMenuOld.nib; sourceTree = "<group>"; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSArrayExtras.h; sourceTree = "<group>"; };
+		EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSArrayExtras.m; sourceTree = "<group>"; };
 		F508946902B71D59018A9CD4 /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSViewExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSViewExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5143A370221DCCE01A80181 /* WebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrame.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -760,6 +764,8 @@
 				1C0D40860AC1C8F40009C113 /* WebKitVersionChecks.m */,
 				BEE18F990472B73200CA289C /* WebLocalizableStrings.h */,
 				BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */,
+				EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */,
+				EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */,
 				ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */,
 				ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */,
 				65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */,
@@ -1290,6 +1296,7 @@
 				51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */,
 				A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */,
 				A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */,
+				EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1327,6 +1334,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1341,6 +1349,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1537,6 +1546,7 @@
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
 				A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */,
 				A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */,
+				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

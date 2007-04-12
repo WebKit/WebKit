@@ -35,12 +35,14 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebLocalizableStrings.h"
+#import "WebNSArrayExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPDFRepresentation.h"
 #import "WebPreferencesPrivate.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/EventNames.h>
@@ -917,7 +919,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             case WebMenuItemPDFZoomOut:
             case WebMenuItemPDFAutoSize:
             case WebMenuItemPDFSinglePage:
+            case WebMenuItemPDFSinglePageScrolling:
             case WebMenuItemPDFFacingPages:
+            case WebMenuItemPDFFacingPagesScrolling:
             case WebMenuItemPDFContinuous:
             case WebMenuItemPDFNextPage:
             case WebMenuItemPDFPreviousPage:
@@ -967,30 +971,51 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [NSNumber numberWithInt:WebMenuItemPDFZoomOut], NSStringFromSelector(@selector(zoomOut:)),
         [NSNumber numberWithInt:WebMenuItemPDFAutoSize], NSStringFromSelector(@selector(_setAutoSize:)),
         [NSNumber numberWithInt:WebMenuItemPDFSinglePage], NSStringFromSelector(@selector(_setSinglePage:)),
+        [NSNumber numberWithInt:WebMenuItemPDFSinglePageScrolling], NSStringFromSelector(@selector(_setSinglePageScrolling:)),
         [NSNumber numberWithInt:WebMenuItemPDFFacingPages], NSStringFromSelector(@selector(_setDoublePage:)),
+        [NSNumber numberWithInt:WebMenuItemPDFFacingPagesScrolling], NSStringFromSelector(@selector(_setDoublePageScrolling:)),
         [NSNumber numberWithInt:WebMenuItemPDFContinuous], NSStringFromSelector(@selector(_toggleContinuous:)),
         [NSNumber numberWithInt:WebMenuItemPDFNextPage], NSStringFromSelector(@selector(goToNextPage:)),
         [NSNumber numberWithInt:WebMenuItemPDFPreviousPage], NSStringFromSelector(@selector(goToPreviousPage:)),
         nil];
     
+    // Leave these menu items out, since WebKit inserts equivalent ones.
+    // FIXME 4184640: need to make "Look Up in Dictionary" item work with PDFKit. Either we need to use PDFKit's
+    // menu item instead of ignoring it here, or we need to make WebKit's menu item hook into PDFKit's method.
+    NSSet *unwantedActions = [[NSSet alloc] initWithObjects:
+                              NSStringFromSelector(@selector(_searchInSpotlight:)),
+                              NSStringFromSelector(@selector(_searchInGoogle:)),
+                              NSStringFromSelector(@selector(_searchInDictionary:)),
+                              NSStringFromSelector(@selector(copy:)),
+                              nil];
+    
     NSEnumerator *e = [[[PDFSubview menuForEvent:theEvent] itemArray] objectEnumerator];
     NSMenuItem *item;
     while ((item = [e nextObject]) != nil) {
+        
+        NSString *actionString = NSStringFromSelector([item action]);
+        
+        if ([unwantedActions containsObject:actionString])
+            continue;
+        
         // Copy items since a menu item can be in only one menu at a time, and we don't
         // want to modify the original menu supplied by PDFKit.
         NSMenuItem *itemCopy = [item copy];
         [copiedItems addObject:itemCopy];
         
+        // Include all of PDFKit's separators for now. At the end we'll remove any ones that were made
+        // useless by removing PDFKit's menu items.
         if ([itemCopy isSeparatorItem])
             continue;
 
-        NSString *actionString = NSStringFromSelector([itemCopy action]);
         NSNumber *tagNumber = [actionsToTags objectForKey:actionString];
         
         int tag;
         if (tagNumber != nil)
             tag = [tagNumber intValue];
         else {
+            // This should happen only if PDFKit updates behind WebKit's back. It's non-ideal because clients that only include tags
+            // that they recognize (like Safari) won't get these PDFKit additions until WebKit is updated to match.
             tag = WebMenuItemTagOther;
             LOG_ERROR("no WebKit menu item tag found for PDF context menu item action \"%@\", using WebMenuItemTagOther", actionString);
         }
@@ -1007,6 +1032,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     }
     
     [actionsToTags release];
+    [unwantedActions release];
+    
+    // Since we might have removed elements supplied by PDFKit, and we want to minimize our hardwired
+    // knowledge of the order and arrangement of PDFKit's menu items, we need to remove any bogus
+    // separators that were left behind.
+    [copiedItems _webkit_removeUselessMenuItemSeparators];
     
     return copiedItems;
 }

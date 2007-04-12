@@ -1,3 +1,18 @@
+2007-04-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        - WebCore part of fix for:
+        <rdar://problem/5128697> REGRESSION: At least one PDF context menu item isn't appearing on Leopard
+
+        * platform/ContextMenuItem.h:
+        (WebCore::):
+        add two PDF-related context menu items to enum to keep it in sync with WebKit
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        add the new context menu items to the do-nothing case of a big switch statement
+
 2007-04-12  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

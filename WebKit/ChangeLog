@@ -1,3 +1,30 @@
+2007-04-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders
+
+        - WebKit part of fix for:
+        <rdar://problem/5128697> REGRESSION: At least one PDF context menu item isn't appearing on Leopard
+
+        * Misc/WebNSArrayExtras.h: Added.
+        * Misc/WebNSArrayExtras.m: Added.
+        (-[NSMutableArray _webkit_removeUselessMenuItemSeparators]):
+        New file, includes this method to strip leading, trailing, and duplicate separators from arrays
+        of NSMenuItems (copied from Safari)
+
+        * WebView/WebUIDelegatePrivate.h:
+        new MenuItemTag enum values for new PDFKit context menu items
+
+        * WebKit.xcodeproj/project.pbxproj:
+        updated for new files
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _anyPDFTagsFoundInMenu:]):
+        check for new PDFKit context menu items
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        associate new PDFKit context menu item selectors with the new tags; skip certain selectors that
+        correspond to menu items that WebKit already includes; remove useless menu item separators when
+        we're done, since we might have removed arbitrarily-placed menu items
+
 2007-04-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
@@ -28,7 +55,6 @@
         * WebCoreSupport/WebPasteboardHelper.mm:
         (WebPasteboardHelper::insertablePasteboardTypes):
 
-=======
 2007-04-11  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.
@@ -45,7 +71,6 @@
         (WebChromeClient::createWindow):
         (WebChromeClient::createModalDialog):
 
->>>>>>> .r20857
 2007-04-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

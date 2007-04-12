@@ -506,6 +506,8 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagStartSpeaking:
         case ContextMenuItemTagStopSpeaking:
         case ContextMenuItemTagWritingDirectionMenu:
+        case ContextMenuItemTagPDFSinglePageScrolling:
+        case ContextMenuItemTagPDFFacingPagesScrolling:
         case ContextMenuItemBaseApplicationTag:
             break;
     }

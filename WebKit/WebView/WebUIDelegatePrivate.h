@@ -58,6 +58,8 @@ enum {
     WebMenuItemTagDefaultDirection,
     WebMenuItemTagLeftToRight,
     WebMenuItemTagRightToLeft,
+    WebMenuItemPDFSinglePageScrolling,
+    WebMenuItemPDFFacingPagesScrolling,
     WebMenuItemTagBaseApplication = 10000
 };
 

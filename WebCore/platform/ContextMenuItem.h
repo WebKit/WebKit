@@ -117,6 +117,8 @@ namespace WebCore {
         ContextMenuItemTagDefaultDirection,
         ContextMenuItemTagLeftToRight,
         ContextMenuItemTagRightToLeft,
+        ContextMenuItemTagPDFSinglePageScrolling,
+        ContextMenuItemTagPDFFacingPagesScrolling,
         ContextMenuItemBaseApplicationTag = 10000
     };
 
