@@ -52,12 +52,29 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     p.setPen(QColor(color));
     p.setFont(font->platformData().font());
 
-    // TODO: rework this to make justified text work.  Qt doesn't provide a good
-    // API to solve this problem yet.
-    const QChar* buffer = reinterpret_cast<const QChar*>(glyphBuffer.glyphs(from));
-    QString str = QString::fromRawData(buffer, numGlyphs);
+    const GlyphBufferGlyph *glyphs = glyphBuffer.glyphs(from);
+    const GlyphBufferAdvance *advances = glyphBuffer.advances(from);
 
-    p.drawText(point, str);
+    int spanStart = 0;
+    qreal x = point.x();
+    qreal y = point.y();
+    qreal width = 0;
+    int i = 0;
+    for (; i < numGlyphs; ++i) {
+        if (advances[i].width() == font->widthForGlyph(glyphs[i])
+            && advances[i].height() == 0) {
+            width += advances[i].width();
+            continue;
+        }
+        QString string = QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart);
+        p.drawText(QPointF(x, y), string);
+        x += width;
+        width = advances[i].width();
+        spanStart = i;
+    }
+
+    if (i - spanStart > 0)
+        p.drawText(QPointF(x, y), QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart));
 }
 
 void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const TextStyle&, const FloatPoint& point, int from, int to) const
