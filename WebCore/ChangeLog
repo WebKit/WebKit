@@ -1,3 +1,23 @@
+2007-04-11  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Add a Frame pointer to ChromeClient methods:
+        http://bugs.webkit.org/show_bug.cgi?id=13127
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow):
+        (WebCore::Chrome::createModalDialog):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::createWindow):
+        (WebCore::SVGEmptyChromeClient::createModalDialog):
+
 2007-04-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Ada

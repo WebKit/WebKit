@@ -85,13 +85,13 @@ void ChromeClientWin::takeFocus(WebCore::FocusDirection)
     notImplemented();
 }
 
-WebCore::Page* ChromeClientWin::createWindow(const WebCore::FrameLoadRequest&)
+WebCore::Page* ChromeClientWin::createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&)
 {
     notImplemented();
     return 0;
 }
 
-WebCore::Page* ChromeClientWin::createModalDialog(const WebCore::FrameLoadRequest&)
+WebCore::Page* ChromeClientWin::createModalDialog(WebCore::Frame*, const WebCore::FrameLoadRequest&)
 {
     notImplemented();
     return 0;

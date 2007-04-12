@@ -121,7 +121,7 @@ void WebChromeClient::takeFocus(FocusDirection direction)
         [[m_webView window] selectKeyViewPrecedingView:m_webView];
 }
 
-Page* WebChromeClient::createWindow(const FrameLoadRequest& request)
+Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& request)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())
@@ -137,7 +137,7 @@ Page* WebChromeClient::createWindow(const FrameLoadRequest& request)
     return core(newWebView);
 }
 
-Page* WebChromeClient::createModalDialog(const FrameLoadRequest& request)
+Page* WebChromeClient::createModalDialog(Frame*, const FrameLoadRequest& request)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())

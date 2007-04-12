@@ -57,8 +57,8 @@ namespace WebCore {
         bool canTakeFocus(FocusDirection) const;
         void takeFocus(FocusDirection) const;
 
-        Page* createWindow(const FrameLoadRequest&) const;
-        Page* createModalDialog(const FrameLoadRequest&) const;
+        Page* createWindow(Frame*, const FrameLoadRequest&) const;
+        Page* createModalDialog(Frame*, const FrameLoadRequest&) const;
         void show() const;
 
         bool canRunModal() const;

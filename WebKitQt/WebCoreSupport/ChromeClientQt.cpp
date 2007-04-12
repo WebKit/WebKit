@@ -116,7 +116,7 @@ void ChromeClientQt::takeFocus(FocusDirection)
 }
 
 
-Page* ChromeClientQt::createWindow(const FrameLoadRequest& request)
+Page* ChromeClientQt::createWindow(Frame*, const FrameLoadRequest& request)
 {
     QWebPage *newPage = m_webPage->createWindow();
     if (!newPage)
@@ -125,7 +125,7 @@ Page* ChromeClientQt::createWindow(const FrameLoadRequest& request)
 }
 
 
-Page* ChromeClientQt::createModalDialog(const FrameLoadRequest&)
+Page* ChromeClientQt::createModalDialog(Frame*, const FrameLoadRequest&)
 {
     notImplemented();
     return 0;

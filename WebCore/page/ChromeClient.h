@@ -51,8 +51,12 @@ namespace WebCore {
         virtual bool canTakeFocus(FocusDirection) = 0;
         virtual void takeFocus(FocusDirection) = 0;
 
-        virtual Page* createWindow(const FrameLoadRequest&) = 0;
-        virtual Page* createModalDialog(const FrameLoadRequest&) = 0;
+        // The Frame pointer provides the ChromeClient with context about which
+        // Frame wants to create the new Page.  Also, the newly created window
+        // should not be shown to the user until the ChromeClient of the newly
+        // created Page has its show method called.
+        virtual Page* createWindow(Frame*, const FrameLoadRequest&) = 0;
+        virtual Page* createModalDialog(Frame*, const FrameLoadRequest&) = 0;
         virtual void show() = 0;
 
         virtual bool canRunModal() = 0;

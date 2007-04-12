@@ -1,3 +1,15 @@
+2007-04-11  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Add a Frame pointer to ChromeClient methods:
+        http://bugs.webkit.org/show_bug.cgi?id=13127
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::createModalDialog):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2007-04-12  Mark Rowe  <mrowe@apple.com>
 
         Second part of Qt build fix.
