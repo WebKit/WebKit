@@ -1,3 +1,10 @@
+2007-04-12  Brady Eidson  <beidson@apple.com>
+
+        Build fix for case sensitive file systems
+
+        * Misc/WebNSPasteboardExtras.mm:
+        * WebCoreSupport/WebPasteboardHelper.mm:
+
 2007-04-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

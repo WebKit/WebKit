@@ -32,7 +32,7 @@
 #import <WebCore/DOMDocument.h>
 #import <WebCore/DOMDocumentFragment.h>
 #import <WebCore/PlatformString.h>
-#import <WTF/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

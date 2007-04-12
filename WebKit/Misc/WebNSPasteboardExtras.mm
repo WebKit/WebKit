@@ -37,7 +37,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebKit/DOMPrivate.h>
-#import <WTF/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
