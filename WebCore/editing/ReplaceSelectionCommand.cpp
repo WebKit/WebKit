@@ -338,7 +338,7 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& from, const Vis
     return !enclosingNodeOfType(fromNode, &isMailPasteAsQuotationNode) &&
            fromNodeBlock && (!fromNodeBlock->hasTagName(blockquoteTag) || isMailBlockquote(fromNodeBlock))  &&
            enclosingListChild(fromNode) == enclosingListChild(toNode) &&
-           enclosingTableCell(fromNode) == enclosingTableCell(toNode) &&
+           enclosingTableCell(from.deepEquivalent()) == enclosingTableCell(from.deepEquivalent()) &&
            // Don't merge to or from a position before or after a block because it would
            // be a no-op and cause infinite recursion.
            !isBlock(fromNode) && !isBlock(toNode);

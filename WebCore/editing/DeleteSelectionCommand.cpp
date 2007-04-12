@@ -132,8 +132,8 @@ void DeleteSelectionCommand::initializePositionData()
     m_startRoot = editableRootForPosition(start);
     m_endRoot = editableRootForPosition(end);
     
-    Node* startCell = enclosingTableCell(m_upstreamStart.node());
-    Node* endCell = enclosingTableCell(m_downstreamEnd.node());
+    Node* startCell = enclosingTableCell(m_upstreamStart);
+    Node* endCell = enclosingTableCell(m_downstreamEnd);
     // Don't move content out of a table cell.
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)

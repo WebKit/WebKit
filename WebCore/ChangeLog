@@ -1,3 +1,36 @@
+2007-04-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/5126166> 
+        Deleting selection starting at before ToDo checkbox to end of line, inserts a BR in the subsequent ToDo
+        
+        If a selection ends in a table cell, we shouldn't perform
+        a merge after deleting that selection.  We have code in
+        place to prevent those merges, but it failed here.
+        
+        It fails because the end of the selection was [tableCell, 0],
+        (normally not a valid VisiblePosition, but valid here
+        because the table cell is empty).  We prevent the merge
+        if the node of the position at the end of the selection 
+        has an enclosingTableCell.  Even though [tableCell, 0] has 
+        an enclosing table cell, the node tableCell doesn't, so 
+        the check fails.
+        
+        Fixed this by changing enclosingTableCell to take in
+        a position, instead of a node.  The other enclosing element
+        getters should be changed in this way as well.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        Call the new enclosingTableCell.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMerge): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingTableCell): Take in a position instead
+        of a node.
+        * editing/htmlediting.h:
+
 2007-04-12  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.

@@ -577,12 +577,14 @@ Node* enclosingNodeOfType(Node* node, bool (*nodeIsOfType)(Node*))
     return 0;
 }
 
-Node* enclosingTableCell(Node* node)
+Node* enclosingTableCell(const Position& p)
 {
-    if (!node)
+    if (p.isNull())
         return 0;
-        
-    for (Node* n = node->parentNode(); n; n = n->parentNode())
+    // Note: Should theoretically start with p.node()->parentNode() if p is a position 
+    // that internally means before or after p.node(), but we don't use position's like 
+    // that for table cells.
+    for (Node* n = p.node(); n; n = n->parentNode())
         if (n->renderer() && n->renderer()->isTableCell())
             return n;
             
