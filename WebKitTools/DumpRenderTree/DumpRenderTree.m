@@ -705,6 +705,39 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
     return [[[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding] autorelease];
 }
 
+static void dumpBackForwardListForWebView(WebView *view)
+{
+    printf("\n============== Back Forward List ==============\n");
+    WebBackForwardList *bfList = [view backForwardList];
+
+    // Print out all items in the list after prevTestBFItem, which was from the previous test
+    // Gather items from the end of the list, the print them out from oldest to newest
+    NSMutableArray *itemsToPrint = [[NSMutableArray alloc] init];
+    for (int i = [bfList forwardListCount]; i > 0; i--) {
+        WebHistoryItem *item = [bfList itemAtIndex:i];
+        // something is wrong if the item from the last test is in the forward part of the b/f list
+        assert(item != prevTestBFItem);
+        [itemsToPrint addObject:item];
+    }
+            
+    assert([bfList currentItem] != prevTestBFItem);
+    [itemsToPrint addObject:[bfList currentItem]];
+    int currentItemIndex = [itemsToPrint count] - 1;
+
+    for (int i = -1; i >= -[bfList backListCount]; i--) {
+        WebHistoryItem *item = [bfList itemAtIndex:i];
+        if (item == prevTestBFItem)
+            break;
+        [itemsToPrint addObject:item];
+    }
+
+    for (int i = [itemsToPrint count]-1; i >= 0; i--) {
+        dumpHistoryItem([itemsToPrint objectAtIndex:i], 8, i == currentItemIndex);
+    }
+    [itemsToPrint release];
+    printf("===============================================\n");
+}
+
 static void dump(void)
 {
     if (dumpTree) {
@@ -747,35 +780,12 @@ static void dump(void)
         }
 
         if (dumpBackForwardList) {
-            printf("\n============== Back Forward List ==============\n");
-            WebBackForwardList *bfList = [[frame webView] backForwardList];
-
-            // Print out all items in the list after prevTestBFItem, which was from the previous test
-            // Gather items from the end of the list, the print them out from oldest to newest
-            NSMutableArray *itemsToPrint = [[NSMutableArray alloc] init];
-            for (int i = [bfList forwardListCount]; i > 0; i--) {
-                WebHistoryItem *item = [bfList itemAtIndex:i];
-                // something is wrong if the item from the last test is in the forward part of the b/f list
-                assert(item != prevTestBFItem);
-                [itemsToPrint addObject:item];
+            unsigned count = [(NSArray *)allWindowsRef count];
+            for (unsigned i = 0; i < count; i++) {
+                NSWindow *window = [(NSArray *)allWindowsRef objectAtIndex:i];
+                WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
+                dumpBackForwardListForWebView(webView);
             }
-            
-            assert([bfList currentItem] != prevTestBFItem);
-            [itemsToPrint addObject:[bfList currentItem]];
-            int currentItemIndex = [itemsToPrint count] - 1;
-
-            for (int i = -1; i >= -[bfList backListCount]; i--) {
-                WebHistoryItem *item = [bfList itemAtIndex:i];
-                if (item == prevTestBFItem)
-                    break;
-                [itemsToPrint addObject:item];
-            }
-
-            for (int i = [itemsToPrint count]-1; i >= 0; i--) {
-                dumpHistoryItem([itemsToPrint objectAtIndex:i], 8, i == currentItemIndex);
-            }
-            [itemsToPrint release];
-            printf("===============================================\n");
         }
 
         if (printSeparators)

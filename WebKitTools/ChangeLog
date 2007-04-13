@@ -1,3 +1,13 @@
+2007-04-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Add the ability to dump the back/forward history of all windows open at the end of a test
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpBackForwardListForWebView): Dump B/F list for the given WebView
+        (dump): Call dumpBackForwardListForWebView for each WebView open after the test
+
 2007-04-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
