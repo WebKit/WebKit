@@ -1,3 +1,15 @@
+2007-04-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5131716> 
+        Clicking just before a ToDo doesn't put the caret before the ToDo
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates):
+        Consider clicks inside the blocks padding, instead of
+        incorrectly sending them to the position before the block.
+
 2007-04-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders

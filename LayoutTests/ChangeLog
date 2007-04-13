@@ -1,3 +1,27 @@
+2007-04-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5131716> 
+        Clicking just before a ToDo doesn't put the caret before the ToDo
+        
+        * editing/selection/5131716-1-expected.checksum: Added.
+        * editing/selection/5131716-1-expected.png: Added.
+        * editing/selection/5131716-1-expected.txt: Added.
+        * editing/selection/5131716-1.html: Added.
+        * editing/selection/5131716-2-expected.checksum: Added.
+        * editing/selection/5131716-2-expected.png: Added.
+        * editing/selection/5131716-2-expected.txt: Added.
+        * editing/selection/5131716-2.html: Added.
+        * editing/selection/5131716-3-expected.checksum: Added.
+        * editing/selection/5131716-3-expected.png: Added.
+        * editing/selection/5131716-3-expected.txt: Added.
+        * editing/selection/5131716-3.html: Added.
+        * editing/selection/5131716-4-expected.checksum: Added.
+        * editing/selection/5131716-4-expected.png: Added.
+        * editing/selection/5131716-4-expected.txt: Added.
+        * editing/selection/5131716-4.html: Added.
+
 2007-04-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

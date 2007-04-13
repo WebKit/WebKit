@@ -2847,11 +2847,11 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     if (isTable())
         return RenderFlow::positionForCoordinates(x, y); 
 
-    int top = borderTop() + paddingTop();
-    int bottom = top + contentHeight() + borderTopExtra() + borderBottomExtra();
+    int top = borderTop();
+    int bottom = top + borderTopExtra() + paddingTop() + contentHeight() + paddingBottom() + borderBottomExtra();
 
-    int left = borderLeft() + paddingLeft();
-    int right = left + contentWidth();
+    int left = borderLeft();
+    int right = left + paddingLeft() + contentWidth() + paddingRight();
 
     Node* n = element();
     
