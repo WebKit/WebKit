@@ -1,3 +1,20 @@
+2007-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        By default, close any windows that have been opened during a test. This can be overridden by
+        calling setCloseRemainingWindowsWhenComplete(false).
+        
+        Change the windows set to an array so we can gurantee the enumeration order.
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setCloseRemainingWindowsWhenComplete:]):
+        (runTest):
+        (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[DumpRenderTreeWindow dealloc]):
+
 2007-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

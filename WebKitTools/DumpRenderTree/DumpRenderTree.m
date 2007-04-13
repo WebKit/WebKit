@@ -107,6 +107,7 @@ NSMutableSet *disallowedURLs = 0;
 BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 BOOL canOpenWindows;
 BOOL closeWebViews;
+BOOL closeRemainingWindowsWhenComplete = YES;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -166,7 +167,7 @@ static BOOL workQueueFrozen;
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
-static CFMutableSetRef allWindowsRef;
+static CFMutableArrayRef allWindowsRef;
 
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static BOOL javaScriptThreadsShouldTerminate;
@@ -1030,7 +1031,8 @@ static void dump(void)
             || aSelector == @selector(objCClassNameOf:)
             || aSelector == @selector(addDisallowedURL:)    
             || aSelector == @selector(setCanOpenWindows)
-            || aSelector == @selector(setCallCloseOnWebViews:))
+            || aSelector == @selector(setCallCloseOnWebViews:)
+            || aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
         return NO;
     return YES;
 }
@@ -1065,6 +1067,8 @@ static void dump(void)
         return @"addDisallowedURL";
     if (aSelector == @selector(setCallCloseOnWebViews:))
         return @"setCallCloseOnWebViews";
+    if (aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
+        return @"setCloseRemainingWindowsWhenComplete";
 
     return nil;
 }
@@ -1082,6 +1086,11 @@ static void dump(void)
     [backForwardList addItem:item];
     [backForwardList goToItem:item];
     [item release];
+}
+
+- (void)setCloseRemainingWindowsWhenComplete:(BOOL)closeWindows
+{
+    closeRemainingWindowsWhenComplete = closeWindows;
 }
 
 - (void)keepWebHistory
@@ -1401,11 +1410,31 @@ static void runTest(const char *pathOrURL)
     }
     pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
+    
+    if (closeRemainingWindowsWhenComplete) {
+        NSArray* array = [(NSArray *)allWindowsRef copy];
+        
+        unsigned count = [array count];
+        for (unsigned i = 0; i < count; i++) {
+            NSWindow *window = [array objectAtIndex:i];
+
+            // Don't try to close the main window
+            if (window == [[frame webView] window])
+                continue;
+            
+            WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
+
+            [webView close];
+            [window close];
+        }
+        [array release];
+    }
+    
     [pool release];
     
     // We should only have our main window left when we're done
-    assert(CFSetGetCount(allWindowsRef) == 1);
-    assert(CFSetContainsValue(allWindowsRef, [[frame webView] window]));
+    assert(CFArrayGetCount(allWindowsRef) == 1);
+    assert(CFArrayGetValueAtIndex(allWindowsRef, 0) == [[frame webView] window]);
     
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
@@ -1604,13 +1633,12 @@ static void displayWebView()
 
 @end
 
-static CFSetCallBacks NonRetainingSetCallbacks = {
+static CFArrayCallBacks NonRetainingArrayCallbacks = {
     0,
     NULL,
     NULL,
     CFCopyDescription,
-    CFEqual,
-    CFHash
+    CFEqual
 };
 
 @implementation DumpRenderTreeWindow
@@ -1618,18 +1646,20 @@ static CFSetCallBacks NonRetainingSetCallbacks = {
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
     if (!allWindowsRef)
-        allWindowsRef = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
+        allWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
 
-    CFSetSetValue(allWindowsRef, self);
+    CFArrayAppendValue(allWindowsRef, self);
             
     return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
 }
 
 - (void)dealloc
 {
-    assert(CFSetContainsValue(allWindowsRef, self));
-    
-    CFSetRemoveValue(allWindowsRef, self);
+    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(allWindowsRef));
+    CFIndex i = CFArrayGetFirstIndexOfValue(allWindowsRef, arrayRange, self);
+    assert(i != -1);
+
+    CFArrayRemoveValueAtIndex(allWindowsRef, i);
     [super dealloc];
 }
 
