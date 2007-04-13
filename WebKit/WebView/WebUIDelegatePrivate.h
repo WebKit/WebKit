@@ -28,6 +28,9 @@
 
 #import <WebKit/WebUIDelegate.h>
 
+// Mail on Tiger expects the old value for WebMenuItemTagSearchInGoogle
+#define WebMenuItemTagSearchInGoogle OldWebMenuItemTagSearchWeb
+
 #define WEBMENUITEMTAG_WEBKIT_3_0_SPI_START 2000
 enum { 
     // The next three values were used in WebKit 2.0 for SPI. In WebKit 3.0 these are API, with different values.
