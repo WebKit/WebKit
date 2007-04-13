@@ -35,6 +35,7 @@
 
 #include "TestObject.h"
 #include <assert.h>
+#include <stdio.h>
 
 static void pluginInvalidate(NPObject *obj);
 static bool pluginHasProperty(NPObject *obj, NPIdentifier name);

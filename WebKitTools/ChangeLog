@@ -1,3 +1,10 @@
+2007-04-13  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Anders.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c: #include
+        stdio.h so that snprintf is defined.
+
 2007-04-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
