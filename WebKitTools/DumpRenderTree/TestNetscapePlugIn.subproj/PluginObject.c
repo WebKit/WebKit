@@ -241,9 +241,12 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
         VOID_TO_NPVARIANT(*result);
         return true;
     } else if (name == pluginMethodIdentifiers[ID_TEST_GET_URL_NOTIFY]) {
-        if (argCount == 3 && NPVARIANT_IS_STRING(args[0]) && NPVARIANT_IS_STRING(args[1]) && NPVARIANT_IS_STRING(args[2])) {
+        if (argCount == 3
+          && NPVARIANT_IS_STRING(args[0])
+          && (NPVARIANT_IS_STRING(args[1]) || NPVARIANT_IS_NULL(args[1]))
+          && NPVARIANT_IS_STRING(args[2])) {
             NPUTF8* urlString = createCStringFromNPVariant(&args[0]);
-            NPUTF8* targetString = createCStringFromNPVariant(&args[1]);            
+            NPUTF8* targetString = (NPVARIANT_IS_STRING(args[1]) ? createCStringFromNPVariant(&args[1]) : NULL);
             NPUTF8* callbackString = createCStringFromNPVariant(&args[2]);
             
             NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
@@ -332,6 +335,11 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->logDestroy = FALSE;
     newInstance->stream = 0;
     
+    newInstance->firstUrl = NULL;
+    newInstance->firstHeaders = NULL;
+    newInstance->lastUrl = NULL;
+    newInstance->lastHeaders = NULL;
+    
     return (NPObject *)newInstance;
 }
 
@@ -340,15 +348,20 @@ static void pluginDeallocate(NPObject *header)
     PluginObject* obj = (PluginObject*)header;
     
     browser->releaseobject(obj->testObject);
-    
-    free(header);
+
+    free(obj->firstUrl);
+    free(obj->firstHeaders);
+    free(obj->lastUrl);
+    free(obj->lastHeaders);
+
+    free(obj);
 }
 
 void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData)
 {
     assert(object);
     
-    NPVariant args[1];
+    NPVariant args[2];
     
     NPObject *windowScriptObject;
     browser->getvalue(object->npp, NPNVWindowNPObject, &windowScriptObject);
@@ -357,7 +370,40 @@ void handleCallback(PluginObject* object, const char *url, NPReason reason, void
 
     INT32_TO_NPVARIANT(reason, args[0]);
 
+    char *strHdr = NULL;
+    if (object->firstUrl && object->firstHeaders && object->lastUrl && object->lastHeaders) {
+        // Format expected by JavaScript validator: four fields separated by \n\n:
+        // First URL; first header block; last URL; last header block.
+        // Note that header blocks already end with \n due to how NPStream::headers works.
+        int len = strlen(object->firstUrl) + 2
+            + strlen(object->firstHeaders) + 1
+            + strlen(object->lastUrl) + 2
+            + strlen(object->lastHeaders) + 1;
+        strHdr = malloc(len + 1);
+        snprintf(strHdr, len + 1, "%s\n\n%s\n%s\n\n%s\n",
+                 object->firstUrl, object->firstHeaders, object->lastUrl, object->lastHeaders);
+        STRINGN_TO_NPVARIANT(strHdr, len, args[1]);
+    } else
+        NULL_TO_NPVARIANT(args[1]);
+
     NPVariant browserResult;
-    browser->invoke(object->npp, windowScriptObject, callbackIdentifier, args, 1, &browserResult);
+    browser->invoke(object->npp, windowScriptObject, callbackIdentifier, args, 2, &browserResult);
     browser->releasevariantvalue(&browserResult);
+
+    free(strHdr);
+}
+
+void notifyStream(PluginObject* object, const char *url, const char *headers)
+{
+    if (object->firstUrl == NULL) {
+        if (url)
+            object->firstUrl = strdup(url);
+        if (headers)
+            object->firstHeaders = strdup(headers);
+    } else {
+        free(object->lastUrl);
+        free(object->lastHeaders);
+        object->lastUrl = (url ? strdup(url) : NULL);
+        object->lastHeaders = (headers ? strdup(headers) : NULL);
+    }
 }

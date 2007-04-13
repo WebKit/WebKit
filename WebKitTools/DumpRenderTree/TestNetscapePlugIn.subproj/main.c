@@ -114,6 +114,9 @@ NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool se
     obj->stream = stream;
     *stype = NP_ASFILEONLY;
 
+    if (obj && (browser->version >= NPVERS_HAS_RESPONSE_HEADERS))
+        notifyStream(obj, stream->url, stream->headers);
+
     if (obj->onStreamLoad) {
         NPObject *windowScriptObject;
         browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);

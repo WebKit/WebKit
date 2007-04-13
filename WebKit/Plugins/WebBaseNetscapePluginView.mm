@@ -2042,7 +2042,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         [stream startStreamResponseURL:URL
                  expectedContentLength:[JSData length]
                       lastModifiedDate:nil
-                              MIMEType:@"text/plain"];
+                              MIMEType:@"text/plain"
+                               headers:nil];
         [stream receivedData:JSData];
         [stream finishedLoadingWithData:JSData];
         [stream release];

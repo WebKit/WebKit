@@ -1,3 +1,22 @@
+2007-04-12  Deneb Meketa  <dmeketa@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+        rdar://problem/4994849
+        Bug 13029: Permit NPAPI plug-ins to see HTTP response headers.
+        Changes in WebKitTools are only for the NPAPI test plugin.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c: main test logic.
+        (pluginInvoke): support null window argument for NPStream creation.
+        (pluginAllocate): initialization.
+        (pluginDeallocate): cleanup.
+        (handleCallback): add second JS callback arg: header dump.
+        (notifyStream): added; hook from NPP_NewStream to record headers.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: declarations.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c: call new header hook.
+        (NPP_NewStream): call new header hook.
+
 2007-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

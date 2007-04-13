@@ -141,6 +141,7 @@ static StreamMap& streams()
     
     free((void *)stream.url);
     free(path);
+    free(headers);
 
     streams().remove(&stream);
 
@@ -158,6 +159,7 @@ static StreamMap& streams()
 
     free((void *)stream.url);
     free(path);
+    free(headers);
 
     streams().remove(&stream);
 
@@ -228,6 +230,7 @@ static StreamMap& streams()
          expectedContentLength:(long long)expectedContentLength
               lastModifiedDate:(NSDate *)lastModifiedDate
                       MIMEType:(NSString *)theMIMEType
+                       headers:(NSData *)theHeaders
 {
     ASSERT(!isTerminated);
     
@@ -241,6 +244,14 @@ static StreamMap& streams()
     stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
     stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
     stream.notifyData = notifyData;
+
+    if (theHeaders) {
+        unsigned len = [theHeaders length];
+        headers = (char*) malloc(len + 1);
+        [theHeaders getBytes:headers];
+        headers[len] = 0;
+        stream.headers = headers;
+    }
     
     transferMode = NP_NORMAL;
     offset = 0;
@@ -282,10 +293,50 @@ static StreamMap& streams()
 
 - (void)startStreamWithResponse:(NSURLResponse *)r
 {
+    NSMutableData *theHeaders = nil;
+    if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)r;
+        theHeaders = [NSMutableData dataWithCapacity:1024];
+        
+        // FIXME: it would be nice to be able to get the raw HTTP header block.
+        // This includes the HTTP version, the real status text,
+        // all headers in their original order and including duplicates,
+        // and all original bytes verbatim, rather than sent through Unicode translation.
+        // Unfortunately NSHTTPURLResponse doesn't provide access at that low a level.
+        
+        [theHeaders appendBytes:"HTTP " length:5];
+        char statusStr[10];
+        snprintf(statusStr, sizeof(statusStr), "%d", [httpResponse statusCode]);
+        [theHeaders appendBytes:statusStr length:strlen(statusStr)];
+        [theHeaders appendBytes:" OK\n" length:4];
+
+        // HACK: pass the headers through as UTF-8.
+        // This is not the intended behavior; we're supposed to pass original bytes verbatim.
+        // But we don't have the original bytes, we have NSStrings built by the URL loading system.
+        // It hopefully shouldn't matter, since RFC2616/RFC822 require ASCII-only headers,
+        // but surely someone out there is using non-ASCII characters, and hopefully UTF-8 is adequate here.
+        // It seems better than NSASCIIStringEncoding, which will lose information if non-ASCII is used.
+
+        NSDictionary *headerDict = [httpResponse allHeaderFields];
+        NSArray *keys = [[headerDict allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+        NSEnumerator *i = [keys objectEnumerator];
+        NSString *k;
+        while ((k = [i nextObject]) != nil) {
+            NSString *v = [headerDict objectForKey:k];
+            [theHeaders appendData:[k dataUsingEncoding:NSUTF8StringEncoding]];
+            [theHeaders appendBytes:": " length:2];
+            [theHeaders appendData:[v dataUsingEncoding:NSUTF8StringEncoding]];
+            [theHeaders appendBytes:"\n" length:1];
+        }
+
+        // startStreamResponseURL:... will null-terminate.
+    }
+
     [self startStreamResponseURL:[r URL]
            expectedContentLength:[r expectedContentLength]
                 lastModifiedDate:WKGetNSURLResponseLastModifiedDate(r)
-                        MIMEType:[r MIMEType]];
+                        MIMEType:[r MIMEType]
+                         headers:theHeaders];
 }
 
 - (void)_destroyStream
@@ -330,6 +381,10 @@ static StreamMap& streams()
         npErr = NPP_DestroyStream(plugin, &stream, reason);
         [pv didCallPlugInFunction];
         LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
+
+        free(headers);
+        headers = NULL;
+        stream.headers = NULL;
 
         stream.ndata = nil;
 

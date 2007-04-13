@@ -1,3 +1,21 @@
+2007-04-12  Deneb Meketa  <dmeketa@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+        rdar://problem/4994849
+        Bug 13029: Permit NPAPI plug-ins to see HTTP response headers.
+        This doesn't actually change JavaScriptCore, but that's where npapi.h is.
+
+        * bindings/npapi.h:
+        Add headers member to NPStream struct.  Also increase NP_VERSION_MINOR to 18.
+        Increasing to >= 17 allows plug-ins to safely detect whether to look for
+        NPStream::headers.  Increasing from 17 to 18 reflects presence of NPObject
+        enumeration, which was added in a prior patch, and which has been agreed to
+        constitute version 18 by the plugin-futures list.  Also add other missing
+        bits of npapi.h to catch up from 14 to 18.  This includes features that are
+        not implemented in WebKit, but those are safely stubbed.
+
 2007-04-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,25 @@
+2007-04-12  Deneb Meketa  <dmeketa@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+        rdar://problem/4994849
+        Bug 13029: Permit NPAPI plug-ins to see HTTP response headers.
+
+        * Plugins/WebBaseNetscapePluginStream.h: declarations.
+        * Plugins/WebBaseNetscapePluginStream.mm: main implementation.
+        (-[WebBaseNetscapePluginStream dealloc]): cleanup.
+        (-[WebBaseNetscapePluginStream finalize]): cleanup.
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        Pass headers along.
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]):
+        Main work is here.  Extract headers from NSHTTPURLResponse object into a byte sequence.
+        See comments here about how it would be nice to have low-level access to the HTTP response.
+        (-[WebBaseNetscapePluginStream _destroyStream]): cleanup.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        Conform to new startStream params.  Not applicable here, pass nil.
+
 2007-04-12  Brady Eidson  <beidson@apple.com>
 
         Build fix for case sensitive file systems

@@ -1,3 +1,16 @@
+2007-04-12  Deneb Meketa  <dmeketa@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+        rdar://problem/4994849
+        Bug 13029: Permit NPAPI plug-ins to see HTTP response headers.
+
+        * http/tests/plugins/npapi-response-headers-expected.txt: Added.
+        * http/tests/plugins/npapi-response-headers.html: Added.
+        * http/tests/plugins/resources/load-me-1.txt: Added.
+        * http/tests/plugins/resources/load-me-2.txt: Added.
+
 2007-04-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

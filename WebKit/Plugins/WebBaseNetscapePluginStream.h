@@ -48,6 +48,7 @@
     char *path;
     BOOL sendNotification;
     void *notifyData;
+    char *headers;
     WebBaseNetscapePluginView *pluginView;
     NPReason reason;
     BOOL isTerminated;
@@ -80,7 +81,8 @@
 - (void)startStreamResponseURL:(NSURL *)theResponseURL
          expectedContentLength:(long long)expectedContentLength
               lastModifiedDate:(NSDate *)lastModifiedDate
-                      MIMEType:(NSString *)MIMEType;
+                      MIMEType:(NSString *)MIMEType
+                       headers:(NSData *)theHeaders;
 
 // cancelLoadWithError cancels the NSURLConnection and informs WebKit of the load error.
 // This method is overriden by subclasses.
