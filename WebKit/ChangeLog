@@ -1,3 +1,11 @@
+2007-04-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5130686> Using WebPreferencesPrivate.h requires modifying framework search path
+
+        * WebView/WebPreferencesPrivate.h: Remove unneeded #ifdef.
+
 2007-04-12  Deneb Meketa  <dmeketa@adobe.com>
 
         Reviewed by Darin Adler.
