@@ -379,7 +379,7 @@ void handleCallback(PluginObject* object, const char *url, NPReason reason, void
             + strlen(object->firstHeaders) + 1
             + strlen(object->lastUrl) + 2
             + strlen(object->lastHeaders) + 1;
-        strHdr = malloc(len + 1);
+        strHdr = (char*)malloc(len + 1);
         snprintf(strHdr, len + 1, "%s\n\n%s\n%s\n\n%s\n",
                  object->firstUrl, object->firstHeaders, object->lastUrl, object->lastHeaders);
         STRINGN_TO_NPVARIANT(strHdr, len, args[1]);
