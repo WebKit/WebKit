@@ -1,3 +1,22 @@
+2007-04-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Black Sheep
+
+        <rdar://problem/4664154> and http://bugs.webkit.org/show_bug.cgi?id=3546
+
+        When you click on a link that opens in a new window from within gmail, they first create a new window 
+        with an empty URL, then immediately document.write() into the window to schedule a redirect.
+
+        Since the initial page doesn't have a URL associated with it, a history item never gets created.  The 
+        reasonable solution?  To actually create the history item after the redirect (in updateHistoryForInternalLoad)
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addHistoryForCurrentLocation): Updates global and B/F history with a new history item
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Call addHistoryForCurrentLocation
+        (WebCore::FrameLoader::updateHistoryForInternalLoad): Call addHistoryForCurrentLocation if there is not already
+          a current history item
+        * loader/FrameLoader.h:
+
 2007-04-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

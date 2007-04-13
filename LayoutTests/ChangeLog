@@ -1,3 +1,16 @@
+2007-04-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoose
+
+        <rdar://problem/4664154> and http://bugs.webkit.org/show_bug.cgi?id=3546
+
+        Layout test that covers opening an empty new window, then starting to navigate around in it
+
+        * history/new-window-redirect-history-expected.txt: Added.
+        * history/new-window-redirect-history.html: Added.
+        * history/resources/redirect-1.html: Added.
+        * history/resources/redirect-2.html: Added.
+
 2007-04-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

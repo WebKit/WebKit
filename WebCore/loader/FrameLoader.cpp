@@ -3954,19 +3954,22 @@ bool FrameLoader::childFramesMatchItem(HistoryItem* item) const
     return true;
 }
 
+void FrameLoader::addHistoryForCurrentLocation()
+{
+    if (!privateBrowsingEnabled()) {
+        // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
+        updateGlobalHistoryForStandardLoad(documentLoader()->urlForHistory());
+    }
+    addBackForwardItemClippedAtTarget(true);
+}
+
 void FrameLoader::updateHistoryForStandardLoad()
 {
     LOG(History, "WebCoreHistory: Updating History for Standard Load in frame %s", documentLoader()->URL().url().ascii());
 
     if (!documentLoader()->isClientRedirect()) {
-        KURL url = documentLoader()->urlForHistory();
-        if (!url.isEmpty()) {
-            if (!privateBrowsingEnabled()) {
-                // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
-                updateGlobalHistoryForStandardLoad(url);
-            }
-            addBackForwardItemClippedAtTarget(true);
-        }
+        if (!documentLoader()->urlForHistory().isEmpty()) 
+            addHistoryForCurrentLocation();
     } else if (documentLoader()->unreachableURL().isEmpty() && m_currentHistoryItem) {
         m_currentHistoryItem->setURL(documentLoader()->URL());
         m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
@@ -4030,10 +4033,11 @@ void FrameLoader::updateHistoryForInternalLoad()
 #endif
     
     if (documentLoader()->isClientRedirect()) {
-        if (m_currentHistoryItem) {
-            m_currentHistoryItem->setURL(documentLoader()->URL());
-            m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
-        }
+        if (!m_currentHistoryItem)
+            addHistoryForCurrentLocation();
+            
+        m_currentHistoryItem->setURL(documentLoader()->URL());
+        m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
     } else {
         // Add an item to the item tree for this frame
         Frame* parentFrame = m_frame->tree()->parent();
