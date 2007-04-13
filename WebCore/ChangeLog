@@ -1,3 +1,19 @@
+2007-04-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        This fixes <rdar://problem/5060766> -- Frameset with 
+        an empty frame crashes due to null document.  Debug
+        builds hit the frame->document() assertion in 
+        EventHandler::prepareMouseEvent
+
+        This null check seems necessary now, having run through 
+        all the logic on the path to this crash it appears that
+        we can't avoid this null check.  
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+
 2007-04-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
