@@ -8,10 +8,10 @@ The test will run automatically with popup blocking disabled, or you can click t
 
 
 ============== Back Forward List ==============
-curr->  file:///Volumes/Data/Users/bradeeoh/dev_svn/OpenSource/LayoutTests/history/new-window-redirect-history.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/new-window-redirect-history.html  **nav target**
 ===============================================
 
 ============== Back Forward List ==============
-        file:///Volumes/Data/Users/bradeeoh/dev_svn/OpenSource/LayoutTests/history/resources/redirect-1.html  **nav target**
-curr->  file:///Volumes/Data/Users/bradeeoh/dev_svn/OpenSource/LayoutTests/history/resources/redirect-2.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/redirect-1.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/redirect-2.html  **nav target**
 ===============================================

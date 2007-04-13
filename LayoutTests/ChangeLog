@@ -1,3 +1,21 @@
+2007-04-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by a sanity check
+
+        My layout test *has* to be http, since dumping history in DRT with hard coded file paths
+        will never match up to expected results across machines.
+
+        Lame
+
+        * history/new-window-redirect-history-expected.txt: Removed.
+        * history/new-window-redirect-history.html: Removed.
+        * history/resources/redirect-1.html: Removed.
+        * history/resources/redirect-2.html: Removed.
+        * http/tests/navigation/new-window-redirect-history-expected.txt: Added.
+        * http/tests/navigation/new-window-redirect-history.html: Added.
+        * http/tests/navigation/resources/redirect-1.html: Added.
+        * http/tests/navigation/resources/redirect-2.html: Added.
+
 2007-04-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoose
