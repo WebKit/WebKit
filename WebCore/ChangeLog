@@ -1,3 +1,40 @@
+2007-04-13  David Kilzer  <ddkilzer@webkit.org>
+
+        Patch and review by hyatt.  Testing and landing by ddkilzer.
+
+        <rdar://problem/5078866>
+        tables don't inherit text-align (in strict mode; they're not supposed to in quirks mode)
+
+        Test: fast/css/table-text-align-quirk.html
+              fast/css/table-text-align-strict.html
+
+        Previous commit (r20731) removed the wrong property from WebCore/css/html4.css.  However,
+        when the correct property was removed, it caused tables to inherit alignment properties
+        from tags like <center> and <div align="center">.  This is fixed in
+        WebCore::CSSStyleSelector::adjustRenderStyle() by special-casing tables to reset the
+        text-align property.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForTextAlign): Renamed KHTML_CENTER, KHTML_LEFT and KHTML_RIGHT to
+        WEBKIT_CENTER, WEBKIT_LEFT and WEBKIT_RIGHT.
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Tables should not support -webkit-center,
+        -webkit-left or -webkit-right values for text-align, so reset them back to auto.
+        * css/html4.css: Removed "text-align: -webkit-auto;" property from tables selector.  It
+        was previously added to css/quirks.css in r20731.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineHorizontalPosition): Renamed KHTML_* to WEBKIT_*.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHorizontalMargins): Ditto.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::caretRect): Ditto.
+        * rendering/RenderStyle.h: Ditto.
+        (WebCore::):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Ditto.
+
 2007-04-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Black Sheep

@@ -679,7 +679,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_TEXT_ALIGN:
-        // left | right | center | justify | khtml_left | khtml_right | khtml_center | <string> | inherit
+        // left | right | center | justify | webkit_left | webkit_right | webkit_center | <string> | inherit
         if ((id >= CSS_VAL__WEBKIT_AUTO && id <= CSS_VAL__WEBKIT_CENTER) ||
              value->unit == CSSPrimitiveValue::CSS_STRING)
             valid_primitive = true;

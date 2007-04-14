@@ -1,3 +1,32 @@
+2007-04-13  David Kilzer  <ddkilzer@webkit.org>
+
+        Patch and review by hyatt.  Testing and landing by ddkilzer.
+
+        <rdar://problem/5078866>
+        tables don't inherit text-align (in strict mode; they're not supposed to in quirks mode)
+
+        Test tables/mozilla_expected_failures/bugs/bug11384s.html progressed after this fix, so
+        it was moved to tables/mozilla/bugs/bug11384s.html.
+
+        * fast/css/table-text-align-quirk-expected.checksum: Added.
+        * fast/css/table-text-align-quirk-expected.png: Added.
+        * fast/css/table-text-align-quirk-expected.txt: Added.
+        * fast/css/table-text-align-quirk.html: Added.
+        * fast/css/table-text-align-strict-expected.checksum: Added.
+        * fast/css/table-text-align-strict-expected.png: Added.
+        * fast/css/table-text-align-strict-expected.txt: Added.
+        * fast/css/table-text-align-strict.html: Added.
+        * fast/table/border-collapsing/rtl-border-collapsing.html: Replaced "text-align: -khtml-center"
+        style with "text-align: center" style.
+        * tables/mozilla/bugs/bug11384s-expected.checksum: Added.
+        * tables/mozilla/bugs/bug11384s-expected.png: Added.
+        * tables/mozilla/bugs/bug11384s-expected.txt: Added.
+        * tables/mozilla/bugs/bug11384s.html: Added.
+        * tables/mozilla_expected_failures/bugs/bug11384s-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug11384s-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug11384s-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug11384s.html: Removed.
+
 2007-04-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by a sanity check

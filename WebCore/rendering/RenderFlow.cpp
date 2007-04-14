@@ -605,14 +605,14 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int* extraWidthToE
                 alignment = alignRight;
             break;
         case LEFT:
-        case KHTML_LEFT:
+        case WEBKIT_LEFT:
             break;
         case CENTER:
-        case KHTML_CENTER:
+        case WEBKIT_CENTER:
             alignment = alignCenter;
             break;
         case RIGHT:
-        case KHTML_RIGHT:
+        case WEBKIT_RIGHT:
             alignment = alignRight;
             break;
     }

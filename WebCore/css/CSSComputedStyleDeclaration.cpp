@@ -242,11 +242,11 @@ static PassRefPtr<CSSValue> valueForTextAlign(ETextAlign align)
             return new CSSPrimitiveValue(CSS_VAL_CENTER);
         case JUSTIFY:
             return new CSSPrimitiveValue(CSS_VAL_JUSTIFY);
-        case KHTML_LEFT:
+        case WEBKIT_LEFT:
             return new CSSPrimitiveValue(CSS_VAL__WEBKIT_LEFT);
-        case KHTML_RIGHT:
+        case WEBKIT_RIGHT:
             return new CSSPrimitiveValue(CSS_VAL__WEBKIT_RIGHT);
-        case KHTML_CENTER:
+        case WEBKIT_CENTER:
             return new CSSPrimitiveValue(CSS_VAL__WEBKIT_CENTER);
     }
     ASSERT_NOT_REACHED();

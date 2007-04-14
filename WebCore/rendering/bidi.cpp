@@ -978,7 +978,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
     int x = leftOffset(m_height);
     switch(style()->textAlign()) {
         case LEFT:
-        case KHTML_LEFT:
+        case WEBKIT_LEFT:
             // The direction of the block should determine what happens with wide lines.  In
             // particular with RTL blocks, wide lines should still spill out to the left.
             if (style()->direction() == RTL && totWidth > availableWidth)
@@ -995,7 +995,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             if (style()->direction() == LTR)
                 break;
         case RIGHT:
-        case KHTML_RIGHT:
+        case WEBKIT_RIGHT:
             // Wide lines spill out of the block based off direction.
             // So even if text-align is right, if direction is LTR, wide lines should overflow out of the right
             // side of the block.
@@ -1004,7 +1004,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             numSpaces = 0;
             break;
         case CENTER:
-        case KHTML_CENTER:
+        case WEBKIT_CENTER:
             int xd = (availableWidth - totWidth)/2;
             x += xd > 0 ? xd : 0;
             numSpaces = 0;

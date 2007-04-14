@@ -1026,6 +1026,10 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
                 style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
+        // Tables never support the -webkit-* values for text-align and will reset back to the default.
+        if (e && e->hasTagName(tableTag) && (style->textAlign() == WEBKIT_LEFT || style->textAlign() == WEBKIT_CENTER || style->textAlign() == WEBKIT_RIGHT))
+            style->setTextAlign(TAAUTO);
+
         // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
         // fix a crash where a site tries to position these objects.  They also never honor display.
         if (e && (e->hasTagName(frameTag) || e->hasTagName(framesetTag))) {
