@@ -251,7 +251,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
             ASSERT(resource != nil);
             
             ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
-            [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
+            if (MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
+                [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }
         if ([types containsObject:WebArchivePboardType]) {
             [self setData:[archive data] forType:WebArchivePboardType];

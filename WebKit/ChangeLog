@@ -1,3 +1,18 @@
+2007-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Due to rdar://problem/5133910 -- WebArchives should not be constructed 
+        using resource from the cache -- We may try to create a potentially 
+        incorrect WebArchive when dragging an image multiple times.
+
+        This patch retains the assertion for invalid behaviour, but adds a
+        branch to make sure we don't try to do anything with the WebArchive
+        in release builds.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]):
+
 2007-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Harrison.
