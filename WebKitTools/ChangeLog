@@ -1,3 +1,7 @@
+2007-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        * Drosera/debugger.css: hide the borders for iframes
+
 2007-04-13  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Anders.

@@ -29,6 +29,7 @@
 
 img { padding: 0; margin: 0; }
 body { margin: 0; padding: 0; overflow: hidden; }
+iframe { border: none; }
 
 #fileBrowser { position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 220px;}
 #fileList { position: absolute; top: 0; bottom: 0; left: 0; right: 10px; padding: 0; margin: 0; }
