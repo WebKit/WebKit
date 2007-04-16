@@ -1,3 +1,20 @@
+2007-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5134759> 
+        GMail Editor: Hang after pasting underlined text multiple times
+
+        Demonstrates the bug:
+        * editing/pasteboard/5134759-expected.checksum: Added.
+        * editing/pasteboard/5134759-expected.png: Added.
+        * editing/pasteboard/5134759-expected.txt: Added.
+        * editing/pasteboard/5134759.html: Added.
+        
+        A unnecessary extra space was added to an element's 
+        inline style declaration, because of the way cssText behaves:
+        * editing/pasteboard/paste-table-002-expected.txt:
+
 2007-04-13  David Kilzer  <ddkilzer@webkit.org>
 
         Patch and review by hyatt.  Testing and landing by ddkilzer.

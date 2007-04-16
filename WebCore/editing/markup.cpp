@@ -191,30 +191,15 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             const Element* el = static_cast<const Element*>(node);
             convertBlocksToInlines &= isBlock(const_cast<Node*>(node));
             markup += el->nodeNamePreservingCase().deprecatedString();
-            String additionalStyle;
-            if (annotate && el->isHTMLElement()) {
-                RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(const_cast<Element*>(el));
-                if (convertBlocksToInlines)
-                    style->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
-                if (style->length() > 0)
-                    additionalStyle = style->cssText();
-            }
             NamedAttrMap *attrs = el->attributes();
             unsigned length = attrs->length();
 
             for (unsigned int i = 0; i < length; i++) {
                 Attribute *attr = attrs->attributeItem(i);
+                // We'll handle the style attribute separately, below.
+                if (attr->name() == styleAttr && el->isHTMLElement() && (annotate || convertBlocksToInlines))
+                    continue;
                 String value = attr->value();
-                if (attr->name() == styleAttr && convertBlocksToInlines && el->isHTMLElement()) {
-                    Element* element = const_cast<Element*>(el);
-                    RefPtr<CSSMutableStyleDeclaration> inlineStyle = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
-                    inlineStyle->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
-                    value = inlineStyle->cssText();
-                }
-                if (annotate && attr->name() == styleAttr && additionalStyle.length()) {
-                    value += "; " + additionalStyle;
-                    additionalStyle = "";
-                }
                 // FIXME: Handle case where value has illegal characters in it, like "
                 if (documentIsHTML)
                     markup += " " + attr->name().localName().deprecatedString();
@@ -223,9 +208,18 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                 markup += "=\"" + escapeTextForMarkup(value.deprecatedString(), true) + "\"";
             }
             
-            if (annotate && additionalStyle.length())
-                // FIXME: Handle case where additionalStyle has illegal characters in it, like "
-                markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + additionalStyle.deprecatedString() + "\"";
+            if (el->isHTMLElement() && (annotate || convertBlocksToInlines)) {
+                Element* element = const_cast<Element*>(el);
+                RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
+                if (annotate) {
+                    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(el));
+                    style->merge(styleFromMatchedRules.get());
+                }
+                if (convertBlocksToInlines)
+                    style->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
+                if (style->length() > 0)
+                    markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + style->cssText().deprecatedString() + "\"";
+            }
             
             if (shouldSelfClose(el)) {
                 if (el->isHTMLElement())

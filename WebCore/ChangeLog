@@ -1,3 +1,22 @@
+2007-04-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5134759> 
+        GMail Editor: Hang after pasting underlined text multiple times
+        
+        The moveParagraphs call that ReplaceSelectionCommand
+        performs must receive only inline content from createMarkup, 
+        or else it will result in another call to moveParagraphs 
+        when it performs the move, resulting in infinite recursion.
+
+        * editing/markup.cpp:
+        (WebCore::startMarkup): We were only converting a block to
+        an inline if it had an inline style declaration or styles 
+        coming from matched rules.  Cleaned up this code a bit by 
+        handling an element's style separately from its other 
+        attributes.
+
 2007-04-16  Darin Adler  <darin@apple.com>
 
         - get layout tests going again
