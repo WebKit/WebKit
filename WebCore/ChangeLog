@@ -1,3 +1,19 @@
+2007-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13227
+          StringImpl::isLower incorrectly assumes islower returns 1 (it can return any non-0)
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::isLower): Based on test application results, changed to use &&
+        instead of trying to use & to avoid branches. Use U16_NEXT so we can handle characters
+        outside the BMP. Improved comments.
+        (WebCore::StringImpl::lower): Improved comments.
+        (WebCore::equalIgnoringCase): Changed to use && instead of trying to use & to avoid
+        branches. Improved comments. Added an assertion about the assumption we're
+        making that characters in the char* are all ASCII.
+
 2007-04-13  David Kilzer  <ddkilzer@webkit.org>
 
         Patch and review by hyatt.  Testing and landing by ddkilzer.

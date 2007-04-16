@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -383,26 +383,29 @@ Length* StringImpl::toLengthArray(int& len) const
 
 bool StringImpl::isLower() const
 {
-    // Do a quick check for the case where it's all ASCII.
-    int allLower = true;
+    // Do a faster loop for the case where all the characters are ASCII.
+    bool allLower = true;
     UChar ored = 0;
     for (unsigned i = 0; i < m_length; i++) {
         UChar c = m_data[i];
         // The islower function is only guaranteed to work correctly and 
-        // locale-independently for ASCII characters.
-        allLower &= islower(c & 0x7F);
+        // in a locale-independent fashion for ASCII characters. We mask
+        // to guarantee we don't pass any non-ASCII values in.
+        allLower = allLower && islower(c & 0x7F);
         ored |= c;
     }
     if (!(ored & ~0x7F))
         return allLower;
 
-    // Do a slower check for the other cases.
-    // FIXME : still broken for non-BMP characters 
-    // (e.g. Deseret and Mathematical alphanumeric symbols)
-    bool allLower2 = true;
-    for (unsigned i = 0; i < m_length; i++)
-        allLower2 &= Unicode::isLower(m_data[i]);
-    return allLower2;
+    // Do a slower check for cases that include non-ASCII characters.
+    allLower = true;
+    unsigned i = 0;
+    while (i < m_length) {
+        UChar32 character;
+        U16_NEXT(m_data, i, m_length, character)
+        allLower = allLower && Unicode::isLower(character);
+    }
+    return allLower;
 }
 
 StringImpl* StringImpl::lower() const
@@ -417,19 +420,20 @@ StringImpl* StringImpl::lower() const
     c->m_data = data;
     c->m_length = length;
 
-    // Do a faster loop for the case where it's all ASCII.
+    // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
     for (int i = 0; i < length; i++) {
         UChar c = m_data[i];
         ored |= c;
         // The tolower function is only guaranteed to work correctly and 
-        // locale-independently for ASCII characters. If it's not all ASCII,
-        // we'll take a slower but correct path after the loop.
+        // in a locale-independent fashion for ASCII characters. We mask
+        // to guarantee we don't pass any non-ASCII values in.
         data[i] = tolower(c & 0x7F);
     }
     if (!(ored & ~0x7F))
         return c;
 
+    // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
     int32_t realLength = Unicode::toLower(data, length, m_data, m_length, &error);
     if (!error && realLength == length)
@@ -1032,7 +1036,7 @@ bool equalIgnoringCase(const StringImpl* a, const char* b)
     unsigned length = a->length();
     const UChar* as = a->characters();
 
-    // Do a faster loop for the case where it's all ASCII.
+    // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
     bool equal = true;
     for (unsigned i = 0; i != length; ++i) {
@@ -1042,16 +1046,18 @@ bool equalIgnoringCase(const StringImpl* a, const char* b)
         UChar ac = as[i];
         ored |= ac;
         // The tolower function is only guaranteed to work correctly and 
-        // locale-independently for ASCII characters. If it's not all ASCII,
-        // we'll take a slower but correct path after the loop.
-        equal &= tolower(ac & 0x7F) == tolower(bc);
+        // in a locale-independent fashion for ASCII characters. We mask
+        // to guarantee we don't pass any non-ASCII values in.
+        ASSERT(!(bc & ~0x7F));
+        equal = equal && (tolower(ac & 0x7F) == tolower(bc));
     }
 
+    // Do a slower implementation for cases that include non-ASCII characters.
     if (ored & ~0x7F) {
         equal = true;
         for (unsigned i = 0; i != length; ++i) {
             unsigned char bc = b[i];
-            equal &= foldCase(as[i]) == foldCase(bc);
+            equal = equal && (foldCase(as[i]) == foldCase(bc));
         }
     }
 
