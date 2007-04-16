@@ -23,6 +23,7 @@
 #include "RenderTheme.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -354,9 +355,12 @@ bool RenderTheme::isEnabled(const RenderObject* o) const
 
 bool RenderTheme::isFocused(const RenderObject* o) const
 {
-    if (!o->element())
+    Node* node = o->element();
+    if (!node)
         return false;
-    return o->element() == o->element()->document()->focusedNode();
+    Document* document = node->document();
+    Frame* frame = document->frame();
+    return node == document->focusedNode() && frame && frame->isActive();
 }
 
 bool RenderTheme::isPressed(const RenderObject* o) const

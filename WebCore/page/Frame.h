@@ -1,13 +1,12 @@
 // -*- c-basic-offset: 4 -*-
- /* This file is part of the KDE project
- *
+/*
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
  *                     1999-2001 Lars Knoll <knoll@kde.org>
  *                     1999-2001 Antti Koivisto <koivisto@kde.org>
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -42,7 +41,6 @@ class NPObject;
 
 namespace KJS {
     class Interpreter;
-    class JSObject;
     
     namespace Bindings {
         class Instance;
@@ -52,28 +50,21 @@ namespace KJS {
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class WebCoreFrameBridge;
-@class WebScriptObject;
 @class NSArray;
 @class NSDictionary;
-@class NSFont;
-@class NSImage;
 @class NSMenu;
 @class NSMutableDictionary;
 @class NSString;
 @class WebCoreFrameBridge;
+@class WebScriptObject;
 #else
-class WebCoreFrameBridge;
-class WebScriptObject;
 class NSArray;
 class NSDictionary;
-class NSFont;
-class NSImage;
 class NSMenu;
 class NSMutableDictionary;
 class NSString;
 class WebCoreFrameBridge;
-typedef unsigned int NSDragOperation;
+class WebScriptObject;
 typedef int NSWritingDirection;
 #endif
 #endif
@@ -105,9 +96,7 @@ class KURL;
 class Node;
 class Page;
 class Range;
-class RenderObject;
 class RenderPart;
-class RenderStyle;
 class Selection;
 class SelectionController;
 class Settings;
@@ -178,7 +167,7 @@ public:
 
     // should move to FrameView
     void paint(GraphicsContext*, const IntRect&);
-    void setPaintRestriction(PaintRestriction pr);
+    void setPaintRestriction(PaintRestriction);
 
     void setUserStyleSheetLocation(const KURL&);
     void setUserStyleSheet(const String& styleSheetData);
@@ -325,8 +314,7 @@ public:
 
     bool isContentEditable() const; // if true, everything in frame is editable
 
-    void setSecureKeyboardEntry(bool);
-    bool isSecureKeyboardEntry();
+    void setUseSecureKeyboardEntryWhenActive(bool);
 
     CSSMutableStyleDeclaration* typingStyle() const;
     void setTypingStyle(CSSMutableStyleDeclaration*);
@@ -343,6 +331,7 @@ public:
 
 private:
     void caretBlinkTimerFired(Timer<Frame>*);
+    void setUseSecureKeyboardEntry(bool);
 
 // === to be moved into the Platform directory
 
@@ -359,6 +348,7 @@ public:
     String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
 #if PLATFORM(MAC)
+
 // === undecided, may or may not belong here
 
 public:
@@ -379,19 +369,19 @@ private:
 // === to be moved into Chrome
 
 public:
-
     FloatRect customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect, Node*);
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line, Node*);
 
 // === to be moved into Editor
 
 public:
-
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
     void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
+
 #endif
+
 };
 
 } // namespace WebCore

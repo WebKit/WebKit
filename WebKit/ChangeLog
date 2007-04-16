@@ -1,3 +1,14 @@
+2007-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13303
+          <rdar://problem/5126341> REGRESSION: controls in a background Safari window
+          maintain active appearance if the address bar has focus (13303)
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView _windowChangedKeyState]):
+        Added. Calls FrameView::updateControlTints.
+
 2007-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

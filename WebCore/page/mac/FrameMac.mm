@@ -506,11 +506,13 @@ void Frame::issueTransposeCommand()
 }
 
 const short enableRomanKeyboardsOnly = -23;
-void Frame::setSecureKeyboardEntry(bool enable)
+void Frame::setUseSecureKeyboardEntry(bool enable)
 {
+    // Caller is responsible for only calling when it's an actual change.
+    ASSERT(enable != IsSecureEventInputEnabled());
     if (enable) {
         EnableSecureEventInput();
-// FIXME: KeyScript is deprecated in Leopard, we need a new solution for this <rdar://problem/4727607>
+        // FIXME: Since KeyScript is deprecated in Leopard, we need a new solution for this. <rdar://problem/4727607>
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
         KeyScript(enableRomanKeyboardsOnly);
 #endif
@@ -520,11 +522,6 @@ void Frame::setSecureKeyboardEntry(bool enable)
         KeyScript(smKeyEnableKybds);
 #endif
     }
-}
-
-bool Frame::isSecureKeyboardEntry()
-{
-    return IsSecureEventInputEnabled();
 }
 
 static void convertAttributesToUnderlines(Vector<MarkedTextUnderline>& result, const Range* markedTextRange, NSArray* attributes, NSArray* ranges)

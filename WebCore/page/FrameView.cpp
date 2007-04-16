@@ -1,10 +1,9 @@
-/* This file is part of the KDE project
- *
+/*
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -33,11 +32,13 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "GraphicsContext.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "OverflowEvent.h"
 #include "RenderPart.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -890,6 +891,22 @@ void FrameView::updateDashboardRegions()
         doc->renderer()->collectDashboardRegions(newRegions);
         doc->setDashboardRegions(newRegions);
         m_frame.get()->dashboardRegionsChanged();
+    }
+}
+
+void FrameView::updateControlTints()
+{
+    // This is called when control tints are changed from aqua/graphite to clear and vice versa.
+    // We do a "fake" paint, and when the theme gets a paint call, it can then do an invalidate.
+    // This is only done if the theme supports control tinting. It's up to the theme and platform
+    // to define when controls get the tint and to call this function when that changes.
+    Document* doc = m_frame->document();
+    if (doc && theme()->supportsControlTints() && m_frame->renderer()) {
+        doc->updateLayout(); // Ensure layout is up to date.
+        PlatformGraphicsContext* const noContext = 0;
+        GraphicsContext context(noContext);
+        context.setUpdatingControlTints(true);
+        m_frame->paint(&context, enclosingIntRect(visibleContentRect()));
     }
 }
 

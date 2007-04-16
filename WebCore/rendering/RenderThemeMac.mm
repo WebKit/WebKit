@@ -257,10 +257,8 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject* o)
 
 void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject* o)
 {
-    // FIXME: Need to add a key window test here, or the element will look
-    // focused even when in the background.
     bool oldFocused = [cell showsFirstResponder];
-    bool focused = (o->element() && o->document()->focusedNode() == o->element()) && (o->style()->outlineStyleIsAuto());
+    bool focused = isFocused(o) && o->style()->outlineStyleIsAuto();
     if (focused != oldFocused)
         [cell setShowsFirstResponder:focused];
 }
@@ -282,6 +280,11 @@ short RenderThemeMac::baselinePosition(const RenderObject* o) const
 
 bool RenderThemeMac::controlSupportsTints(const RenderObject* o) const
 {
+    // An alternate way to implement this would be to get the appropriate cell object
+    // and call the private _needRedrawOnWindowChangedKeyState method. An advantage of
+    // that would be that we would match AppKit behavior more closely, but a disadvantage
+    // would be that we would rely on an AppKit SPI method.
+
     if (!isEnabled(o))
         return false;
 

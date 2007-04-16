@@ -82,6 +82,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
@@ -128,6 +129,7 @@ void _NSResetKillRingOperationFlag(void);
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
+- (void)_windowChangedKeyState;
 @end
 
 @interface NSApplication (AppKitSecretsIKnowAbout)
@@ -4890,6 +4892,18 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (disabled && [self _arrowKeyDownEventSelectorIfPreprocessing] != NULL)
         return nil;
     return [super nextResponder];
+}
+
+// Despite its name, this is called at different times than windowDidBecomeKey is.
+// It takes into account all the other factors that determine when NSCell draws
+// with different tints, so it's the right call to use for control tints. We'd prefer
+// to do this with API. <rdar://problem/5136760>
+- (void)_windowChangedKeyState
+{
+    if (Frame* frame = core([self _frame]))
+        if (FrameView* view = frame->view())
+            view->updateControlTints();
+    [super _windowChangedKeyState];
 }
 
 @end

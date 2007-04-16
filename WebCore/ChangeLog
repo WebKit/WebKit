@@ -2,6 +2,55 @@
 
         Reviewed by John Sullivan.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13303
+          <rdar://problem/5126341> REGRESSION: controls in a background Safari window
+          maintain active appearance if the address bar has focus (13303)
+
+        - fix a related problem where elements could look focused in non-active windows
+
+        - simplify secure keyboard entry logic in Frame::setIsActive
+
+        * WebCore.exp: Add two new symbols for use by WebKit.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dispatchFocusEvent): Call setUseSecureKeyboardEntryWhenActive
+        rather than calling setSecureKeyboardEntry directly -- does nothing if the frame is not active.
+        (WebCore::HTMLInputElement::dispatchBlurEvent): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setUseSecureKeyboardEntryWhenActive): Added. Calls
+        setUseSecureKeyboardEntry only if the frame is active, but also stores away the state,
+        so that the setIsActive function doesn't have to recompute it.
+        (WebCore::Frame::setIsActive): Rewrote all the comments in the function. Removed the code
+        to manage control tints, which are not based on the whether the frame is active but rather
+        on AppKit's concept of whether the window should have "key appearance". Simplified the
+        logic about when to call setUseSecureKeyboardEntry by using the value of
+        m_useSecureKeyboardEntryWhenActive.
+        (WebCore::FramePrivate::FramePrivate): Initialize m_useSecureKeyboardEntryWhenActive.
+        * page/Frame.h: Made setSecureKeyboardEntry private and renamed it to
+        setUseSecureKeyboardEntry, removed isSecureKeyboardEntry, and
+        added a public setUseSecureKeyboardEntryWhenActive.
+        * page/FramePrivate.h: Added m_useSecureKeyboardEntryWhenActive.
+        * page/mac/FrameMac.mm: (WebCore::Frame::setUseSecureKeyboardEntry): Added an assertion,
+        and removed isSecureKeyboardEntry().
+
+        * page/FrameView.h: Added updateControlTints.
+        * page/FrameView.cpp: (WebCore::FrameView::updateControlTints): Added. Code was moved
+        here from setIsActive for two reasons: (1) it makes more sense in the view class, and
+        (2) it needs to be called at the appropriate time for AppKit, not when active changes.
+
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::isFocused): Added an isActive
+        check here to match the logic in the implementation of the CSS pseudo-state.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateFocusedState): Use the isFocused function instead of
+        repeating the logic here. Removed the "need to add a key window test here" comment.
+        (WebCore::RenderThemeMac::controlSupportsTints): Added a comment about the NSCell
+        SPI that's related to the _windowChangedKeyState method we now use in WebHTMLView.
+
+2007-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13227
           StringImpl::isLower incorrectly assumes islower returns 1 (it can return any non-0)
 

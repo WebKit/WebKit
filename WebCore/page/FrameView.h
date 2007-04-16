@@ -121,6 +121,7 @@ public:
     void removeSlowRepaintObject();
 
     void updateDashboardRegions();
+    void updateControlTints();
 
     void restoreScrollbar();
 

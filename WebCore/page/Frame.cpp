@@ -770,16 +770,22 @@ bool Frame::isContentEditable() const
 }
 
 #if !PLATFORM(MAC)
-void Frame::setSecureKeyboardEntry(bool)
-{
-}
 
-bool Frame::isSecureKeyboardEntry()
+void Frame::setUseSecureKeyboardEntry(bool)
 {
-    return false;
 }
 
 #endif
+
+void Frame::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
+{
+    if (d->m_useSecureKeyboardEntryWhenActive == usesSecureKeyboard)
+        return;
+    d->m_useSecureKeyboardEntryWhenActive = usesSecureKeyboard;
+
+    if (d->m_isActive)
+        setUseSecureKeyboardEntry(usesSecureKeyboard);
+}
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const
 {
@@ -1480,48 +1486,34 @@ void Frame::setIsActive(bool flag)
 {
     if (d->m_isActive == flag)
         return;
-    
     d->m_isActive = flag;
 
-    // This method does the job of updating the view based on whether the view is "active".
-    // This involves three kinds of drawing updates:
-
-    // 1. The background color used to draw behind selected content (active | inactive color)
+    // Because RenderObject::selectionBackgroundColor() and
+    // RenderObject::selectionForegroundColor() check if the frame is active,
+    // we have to update places those colors were painted.
     if (d->m_view)
         d->m_view->updateContents(enclosingIntRect(visibleSelectionRect()));
 
-    // 2. Caret blinking (blinks | does not blink)
+    // Caret appears in the active frame.
     if (flag)
         setSelectionFromNone();
     setCaretVisible(flag);
-    
-    // 3. The drawing of a focus ring around links in web pages.
-    Document *doc = document();
-    if (doc) {
-        Node *node = doc->focusedNode();
-        if (node) {
+
+    // Because CSSStyleSelector::checkOneSelector() and
+    // RenderTheme::isFocused() check if the frame is active, we have to
+    // update style and theme state that depended on those.
+    if (d->m_doc) {
+        if (Node* node = d->m_doc->focusedNode()) {
             node->setChanged();
-            if (node->renderer() && node->renderer()->style()->hasAppearance())
-                theme()->stateChanged(node->renderer(), FocusState);
+            if (RenderObject* renderer = node->renderer())
+                if (renderer && renderer->style()->hasAppearance())
+                    theme()->stateChanged(renderer, FocusState);
         }
     }
-    
-    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa.  We
-    // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.  This is only
-    // done if the theme supports control tinting.
-    if (doc && d->m_view && theme()->supportsControlTints() && renderer()) {
-        doc->updateLayout(); // Ensure layout is up to date.
-        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
-        GraphicsContext context((PlatformGraphicsContext*)0);
-        context.setUpdatingControlTints(true);
-        paint(&context, visibleRect);
-    }
-   
-    // 5. Enable or disable secure keyboard entry
-    if ((flag && !isSecureKeyboardEntry() && doc && doc->focusedNode() && doc->focusedNode()->hasTagName(inputTag) && 
-            static_cast<HTMLInputElement*>(doc->focusedNode())->inputType() == HTMLInputElement::PASSWORD) ||
-        (!flag && isSecureKeyboardEntry()))
-            setSecureKeyboardEntry(flag);
+
+    // Secure keyboard entry is set by the active frame.
+    if (d->m_useSecureKeyboardEntryWhenActive)
+        setUseSecureKeyboardEntry(flag);
 }
 
 void Frame::setWindowHasFocus(bool flag)
@@ -1870,6 +1862,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isActive(false)
+    , m_useSecureKeyboardEntryWhenActive(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_userStyleSheetLoader(0)
