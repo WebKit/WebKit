@@ -1,5 +1,13 @@
 2007-04-16  Darin Adler  <darin@apple.com>
 
+        - get layout tests going again
+
+        * page/mac/FrameMac.mm: (WebCore::Frame::setUseSecureKeyboardEntry):
+        Replace assertion with a runtime check. We can consider changing it back to
+        an assertion some day, but it's not important.
+
+2007-04-16  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13303

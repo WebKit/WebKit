@@ -508,8 +508,8 @@ void Frame::issueTransposeCommand()
 const short enableRomanKeyboardsOnly = -23;
 void Frame::setUseSecureKeyboardEntry(bool enable)
 {
-    // Caller is responsible for only calling when it's an actual change.
-    ASSERT(enable != IsSecureEventInputEnabled());
+    if (enable == IsSecureEventInputEnabled())
+        return;
     if (enable) {
         EnableSecureEventInput();
         // FIXME: Since KeyScript is deprecated in Leopard, we need a new solution for this. <rdar://problem/4727607>
