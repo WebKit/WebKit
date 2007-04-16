@@ -1,5 +1,16 @@
 2007-04-16  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Tim Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj: Added Radar bug number to the error message
+        for the "version number ending in 4" check so folks from Apple can find the
+        original bug that motivated for this. To summarize what's in that bug, it says that
+        <http://my.fedex.com> was failing, that it was because of the OpenCube DHTML Menu,
+        and that some other affected sites were not using OpenCube (so the error is presumably
+        more widespread).
+
+2007-04-16  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13303
