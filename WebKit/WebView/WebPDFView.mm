@@ -68,6 +68,7 @@ using namespace EventNames;
 + (Class)_PDFViewClass;
 - (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu;
 - (void)_applyPDFDefaults;
+- (BOOL)_canLookUpInDictionary;
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey;
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent;
 - (void)_openWithFinder:(id)sender;
@@ -450,6 +451,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     
     if (action == @selector(_openWithFinder:))
         return [PDFSubview document] != nil;
+    
+    if (action == @selector(_lookUpInDictionaryFromMenu:))
+        return [self _canLookUpInDictionary];
 
     return YES;
 }
@@ -945,6 +949,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [PDFSubview setDisplayMode:[prefs PDFDisplayMode]];    
 }
 
+- (BOOL)_canLookUpInDictionary
+{
+    return [PDFSubview respondsToSelector:@selector(_searchInDictionary:)];
+}
+
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey
 {
     // FIXME 4400480: when PDFView implements the standard scrolling selectors that this
@@ -960,6 +969,15 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
          charactersIgnoringModifiers:keyAsString
                            isARepeat:NO
                              keyCode:0];
+}
+
+- (void)_lookUpInDictionaryFromMenu:(id)sender
+{
+    // This method is used by WebKit's context menu item. Here we map to the method that
+    // PDFView uses. Since the PDFView method isn't API, and isn't available on all versions
+    // of PDFKit, we use performSelector after a respondsToSelector check, rather than calling it directly.
+    if ([self _canLookUpInDictionary])
+        [PDFSubview performSelector:@selector(_searchInDictionary:) withObject:sender];
 }
 
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent
@@ -979,9 +997,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [NSNumber numberWithInt:WebMenuItemPDFPreviousPage], NSStringFromSelector(@selector(goToPreviousPage:)),
         nil];
     
-    // Leave these menu items out, since WebKit inserts equivalent ones.
-    // FIXME 4184640: need to make "Look Up in Dictionary" item work with PDFKit. Either we need to use PDFKit's
-    // menu item instead of ignoring it here, or we need to make WebKit's menu item hook into PDFKit's method.
+    // Leave these menu items out, since WebKit inserts equivalent ones. Note that we leave out PDFKit's "Look Up in Dictionary"
+    // item here because WebKit already includes an item with the same title and purpose. We map WebKit's to PDFKit's 
+    // "Look Up in Dictionary" via the implementation of -[WebPDFView _lookUpInDictionaryFromMenu:].
     NSSet *unwantedActions = [[NSSet alloc] initWithObjects:
                               NSStringFromSelector(@selector(_searchInSpotlight:)),
                               NSStringFromSelector(@selector(_searchInGoogle:)),

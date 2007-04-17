@@ -1,3 +1,19 @@
+2007-04-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+
+        - fixed <rdar://problem/4184640> "Look Up in Dictionary" item is always disabled for PDF pages
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView validateUserInterfaceItem:]):
+        enable "Look Up in Dictionary" only if we're using a version of PDFKit that knows how to do so
+        (-[WebPDFView _canLookUpInDictionary]):
+        use respondsToSelector to test whether the current version of PDFKit supports this non-API feature
+        (-[WebPDFView _lookUpInDictionaryFromMenu:]):
+        implement this method, which WebKit includes in the context menu when there's selected text
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        updated comment for this change
+
 2007-04-16  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Tim Hatcher.
