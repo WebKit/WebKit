@@ -1,3 +1,10 @@
+2007-04-16  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (fixed misspelling).
+
+        * manual-tests/containing-block-position-chage.html: Removed.
+        * manual-tests/containing-block-position-change.html: Added.
+
 2007-04-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
