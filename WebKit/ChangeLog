@@ -1,5 +1,42 @@
 2007-04-17  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Tim Hatcher
+
+        - fixed <rdar://problem/5138492> Safari doesn't remember some changes to the PDF scale and display mode 
+
+        Some of the user interactions that could change the PDF scale and display mode were not going through
+        the proxy mechanism in WebPDFView that updates preferences. Now we also listen to PDFKit notifications
+        in order to catch the other cases.
+
+        * WebView/WebPDFView.h:
+        new _ignoreScaleAndDisplayModeNotifications and _updatePreferencesTimer ivars
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView setPDFDocument:]):
+        ignore scale and display mode notifications while we're setting up a fresh document
+        (-[WebPDFView dealloc]):
+        cancel the new timer (which releases it)
+        (-[WebPDFView viewDidMoveToWindow]):
+        listen for two PDFKit notifications
+        (-[WebPDFView viewWillMoveToWindow:]):
+        stop listening to the two PDFKit notifications
+        (-[WebPDFView _applyPDFDefaults]):
+        white space change
+        (-[WebPDFView _cancelUpdatePreferencesTimer]):
+        invalidate, release, and nil out the timer
+        (-[WebPDFView _scaleOrDisplayModeChanged:]):
+        update preferences soon, unless deliberately ignoring these notifications
+        (-[WebPDFView _updatePreferencesNow]):
+        cancel timer, then save data to preferences (code for saving the data was extracted from
+        -[PDFPrefUpdatingProxy forwardInvocation:])
+        (-[WebPDFView _updatePreferencesSoon]):
+        use timer to consolidate multiple calls into one action; formerly we were setting preferences
+        multiple times for some atomic user actions
+        (-[PDFPrefUpdatingProxy forwardInvocation:]):
+        call _updatePreferencesSoon where we used to immediately set preferences
+
+2007-04-17  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Kevin Decker
 
         - fixed <rdar://problem/4184640> "Look Up in Dictionary" item is always disabled for PDF pages

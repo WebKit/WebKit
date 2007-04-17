@@ -40,6 +40,8 @@
     NSString *path;
     id trackedFirstResponder;
     BOOL written;
+    BOOL _ignoreScaleAndDisplayModeNotifications;
+    NSTimer *_updatePreferencesTimer;
     PDFView *PDFSubviewProxy;
 @public
     WebDataSource *dataSource;

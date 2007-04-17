@@ -58,7 +58,10 @@
 using namespace WebCore;
 using namespace EventNames;
 
-#define PDFKitLaunchNotification @"PDFPreviewLaunchPreview"
+// Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
+#define _webkit_PDFKitLaunchNotification @"PDFPreviewLaunchPreview"
+#define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
+#define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
@@ -68,6 +71,7 @@ using namespace EventNames;
 + (Class)_PDFViewClass;
 - (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu;
 - (void)_applyPDFDefaults;
+- (void)_cancelUpdatePreferencesTimer;
 - (BOOL)_canLookUpInDictionary;
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey;
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent;
@@ -79,6 +83,7 @@ using namespace EventNames;
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString;
 - (NSString *)_temporaryPDFDirectoryPath;
 - (void)_trackFirstResponder;
+- (void)_updatePreferencesSoon;
 @end;
 
 // PDFPrefUpdatingProxy is a class that forwards everything it gets to a target and updates the PDF viewing prefs
@@ -166,8 +171,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)setPDFDocument:(PDFDocument *)doc
 {
+    // Both setDocument: and _applyPDFDefaults will trigger scale and mode-changed notifications.
+    // Those aren't reflecting user actions, so we need to ignore them.
+    _ignoreScaleAndDisplayModeNotifications = YES;
     [PDFSubview setDocument:doc];
     [self _applyPDFDefaults];
+    _ignoreScaleAndDisplayModeNotifications = NO;
 }
 
 #pragma mark NSObject OVERRIDES
@@ -175,6 +184,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)dealloc
 {
     ASSERT(!trackedFirstResponder);
+    [self _cancelUpdatePreferencesTimer];
     [previewView release];
     [PDFSubview release];
     [path release];
@@ -413,10 +423,20 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
                                name:NSWindowDidUpdateNotification
                              object:newWindow];
     
+    [notificationCenter addObserver:self
+                           selector:@selector(_scaleOrDisplayModeChanged:) 
+                               name:_webkit_PDFViewScaleChangedNotification
+                             object:PDFSubview];
+    
+    [notificationCenter addObserver:self
+                           selector:@selector(_scaleOrDisplayModeChanged:) 
+                               name:_webkit_PDFViewDisplayModeChangedNotification
+                             object:PDFSubview];
+    
     if (previewView)
         [notificationCenter addObserver:self
                                selector:@selector(_receivedPDFKitLaunchNotification:)
-                                   name:PDFKitLaunchNotification
+                                   name:_webkit_PDFKitLaunchNotification
                                  object:previewView];
 }
 
@@ -432,9 +452,15 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [notificationCenter removeObserver:self
                                   name:NSWindowDidUpdateNotification
                                 object:oldWindow];
+    [notificationCenter removeObserver:self
+                                  name:_webkit_PDFViewScaleChangedNotification
+                                object:PDFSubview];
+    [notificationCenter removeObserver:self
+                                  name:_webkit_PDFViewDisplayModeChangedNotification
+                                object:PDFSubview];
     if (previewView)
         [notificationCenter removeObserver:self
-                                      name:PDFKitLaunchNotification
+                                      name:_webkit_PDFKitLaunchNotification
                                     object:previewView];
     
     [trackedFirstResponder release];
@@ -946,7 +972,14 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [PDFSubview setAutoScales:NO];
         [PDFSubview setScaleFactor:scaleFactor];
     }
-    [PDFSubview setDisplayMode:[prefs PDFDisplayMode]];    
+    [PDFSubview setDisplayMode:[prefs PDFDisplayMode]];
+}
+
+- (void)_cancelUpdatePreferencesTimer
+{
+    [_updatePreferencesTimer invalidate];
+    [_updatePreferencesTimer release];
+    _updatePreferencesTimer = nil;
 }
 
 - (BOOL)_canLookUpInDictionary
@@ -1151,6 +1184,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [self _openWithFinder:self];
 }
 
+- (void)_scaleOrDisplayModeChanged:(NSNotification *)notification
+{
+    ASSERT([notification object] == PDFSubview);
+    if (!_ignoreScaleAndDisplayModeNotifications)
+        [self _updatePreferencesSoon];
+}
+
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString
 {
     if (!unscaledAttributedString)
@@ -1228,6 +1268,26 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     trackedFirstResponder = [newFirstResponder retain];
 }
 
+- (void)_updatePreferencesNow
+{
+    [self _cancelUpdatePreferencesTimer];
+
+    WebPreferences *prefs = [[dataSource _webView] preferences];
+    float scaleFactor = [PDFSubview autoScales] ? 0.0f : [PDFSubview scaleFactor];
+    [prefs setPDFScaleFactor:scaleFactor];
+    [prefs setPDFDisplayMode:[PDFSubview displayMode]];
+}
+
+- (void)_updatePreferencesSoon
+{   
+    // Consolidate calls; due to the PDFPrefUpdatingProxy method, this can be called multiple times with a single user action
+    // such as showing the context menu.
+    if (_updatePreferencesTimer)
+        return;
+
+    _updatePreferencesTimer = [[NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(_updatePreferencesNow) userInfo:nil repeats:NO] retain];
+}
+
 @end;
 
 @implementation PDFPrefUpdatingProxy
@@ -1241,13 +1301,8 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-    PDFView *PDFSubview = [view _PDFSubview];
-    [invocation invokeWithTarget:PDFSubview];
-
-    WebPreferences *prefs = [[view->dataSource _webView] preferences];
-    float scaleFactor = [PDFSubview autoScales] ? 0.0f : [PDFSubview scaleFactor];
-    [prefs setPDFScaleFactor:scaleFactor];
-    [prefs setPDFDisplayMode:[PDFSubview displayMode]];
+    [invocation invokeWithTarget:[view _PDFSubview]];    
+    [view _updatePreferencesSoon];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
