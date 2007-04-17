@@ -306,11 +306,8 @@ static StreamMap& streams()
         
         [theHeaders appendBytes:"HTTP " length:5];
         char statusStr[10];
-#ifdef __LP64__
-        snprintf(statusStr, sizeof(statusStr), "%ld", [httpResponse statusCode]);
-#else
-        snprintf(statusStr, sizeof(statusStr), "%d", [httpResponse statusCode]);
-#endif
+        long statusCode = [httpResponse statusCode];
+        snprintf(statusStr, sizeof(statusStr), "%ld", statusCode);
         [theHeaders appendBytes:statusStr length:strlen(statusStr)];
         [theHeaders appendBytes:" OK\n" length:4];
 
