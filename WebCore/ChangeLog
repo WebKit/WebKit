@@ -1,3 +1,42 @@
+2007-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - a few baby steps to try to make lockHistory and userGesture less confusing
+
+        * page/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Add initialization of m_isUserGesture
+        to true.
+        (WebCore::FrameLoadRequest::shouldLockHistory): Renamed from lockHistory to avoid having
+        a getter that sounds like a verb phrase.
+        (WebCore::FrameLoadRequest::setShouldLockHistory): Ditto.
+        (WebCore::FrameLoadRequest::isUserGesture): Added.
+        (WebCore::FrameLoadRequest::setIsUserGesture): Ditto.
+
+        * loader/FrameLoader.h: Remove userGesture parameter from load that takes
+        FrameLoadRequest. Remove default values for lockHistory and userGesture parameters,
+        since that just makes it more likely we'll forget to pass them in. Remove one of
+        the overloads of urlSelected, since it's only called one place.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow): Remove userGesture parameter, relying on
+        the true default in FrameLoadRequest.
+        (WebCore::FrameLoader::urlSelected): Call setShouldLockHistory and setIsUserGesture
+        on the FrameLoadRequest, and call load directly; also eliminate the other urlSelected
+        overload since this was the only place it was called.
+        (WebCore::FrameLoader::load): Remove userGesture parameter, relying on the true
+        default in FrameLoadRequest. In the other overload, clean up logic to eliminate the
+        argsReferrer variable and get rid of the userGesture parameter, using the value from
+        FrameLoadRequest.
+        (WebCore::FrameLoader::submitForm): Remove userGesture parameter, relying on the value
+        in the FrameLoadRequest. This actually changes behavior.
+
+        * bindings/js/kjs_html.cpp: (KJS::JSHTMLDocument::putValueProperty): Pass
+        false for userGesture explicitly instead of relying on default argument.
+
+        * page/ContextMenuController.cpp: (WebCore::ContextMenuController::contextMenuItemSelected):
+        Remove userGesture parameter, relying on the true default in FrameLoadRequest.
+
 2007-04-16  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (fixed misspelling).

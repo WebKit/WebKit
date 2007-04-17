@@ -349,7 +349,8 @@ void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value
 
       // We want a new history item if this JS was called via a user gesture
       bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
-      frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), !userGesture);
+      // FIXME: This always passes false for userGesture.
+      frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), !userGesture, false);
     }
     break;
   case BgColor:
