@@ -195,13 +195,14 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             // FIXME: Some day we may be able to do this from within WebCore.
             m_client->lookUpInDictionary(frame);
             break;
-        case ContextMenuItemTagOpenLink:
+        case ContextMenuItemTagOpenLink: {
             if (Frame* targetFrame = result.targetFrame())
-                targetFrame->loader()->load(ResourceRequest(result.absoluteLinkURL(), 
-                    frame->loader()->outgoingReferrer()), 0, 0, HashMap<String, String>());
+                targetFrame->loader()->load(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), 
+                    frame->loader()->outgoingReferrer())), true, 0, 0, HashMap<String, String>());
             else
                 openNewWindow(result.absoluteLinkURL(), frame);
             break;
+        }
         case ContextMenuItemTagBold:
             frame->editor()->execCommand("ToggleBold");
             break;

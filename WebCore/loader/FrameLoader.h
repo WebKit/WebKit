@@ -132,7 +132,7 @@ namespace WebCore {
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finalSetupForReplace(DocumentLoader*);
         void load(const KURL&, Event*);
-        void load(const FrameLoadRequest&,
+        void load(const FrameLoadRequest&, bool userGesture,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
         void load(const KURL&, const String& referrer, FrameLoadType, const String& target,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
@@ -262,8 +262,9 @@ namespace WebCore {
 
         void setDefersLoading(bool);
 
-        void changeLocation(const String& URL, const String& referrer, bool lockHistory, bool userGesture);
+        void changeLocation(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
+        void urlSelected(const FrameLoadRequest&, Event*, bool userGesture);
       
         bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
@@ -287,8 +288,8 @@ namespace WebCore {
 
         void scheduleRedirection(double delay, const String& URL);
 
-        void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory, bool userGesture);
-        void scheduleRefresh(bool userGesture);
+        void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void scheduleRefresh(bool userGesture = false);
         bool isScheduledLocationChangePending() const;
 
         void scheduleHistoryNavigation(int steps);

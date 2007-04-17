@@ -1,5 +1,10 @@
 2007-04-17  Darin Adler  <darin@apple.com>
 
+        Oops, rolled that last change out. I'll redo it again later after making
+        som additional refinments.
+
+2007-04-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady.
 
         - a few baby steps to try to make lockHistory and userGesture less confusing

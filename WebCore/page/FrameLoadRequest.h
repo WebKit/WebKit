@@ -34,23 +34,20 @@ namespace WebCore {
     struct FrameLoadRequest {
     public:
         FrameLoadRequest()
-            : m_shouldLockHistory(false)
-            , m_isUserGesture(true)
+            : m_lockHistory(false)
         {
         }
 
         FrameLoadRequest(const ResourceRequest& resourceRequest)
             : m_resourceRequest(resourceRequest)
-            , m_shouldLockHistory(false)
-            , m_isUserGesture(true)
+            , m_lockHistory(false)
         {
         }
 
         FrameLoadRequest(const ResourceRequest& resourceRequest, const String& frameName)
             : m_resourceRequest(resourceRequest)
             , m_frameName(frameName)
-            , m_shouldLockHistory(false)
-            , m_isUserGesture(true)
+            , m_lockHistory(false)
         {
         }
 
@@ -62,17 +59,13 @@ namespace WebCore {
         const String& frameName() const { return m_frameName; }
         void setFrameName(const String& frameName) { m_frameName = frameName; }
 
-        bool shouldLockHistory() const { return m_shouldLockHistory; }
-        void setShouldLockHistory(bool lock) { m_shouldLockHistory = lock; }
-
-        bool isUserGesture() const { return m_isUserGesture; }
-        void setIsUserGesture(bool userGesture) { m_isUserGesture = userGesture; }
+        bool lockHistory() const { return m_lockHistory; }
+        void setLockHistory(bool lock) { m_lockHistory = lock; }
 
     private:
         ResourceRequest m_resourceRequest;
         String m_frameName;
-        bool m_shouldLockHistory;
-        bool m_isUserGesture;
+        bool m_lockHistory;
     };
 
 }
