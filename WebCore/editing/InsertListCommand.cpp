@@ -170,6 +170,8 @@ void InsertListCommand::doApply()
         VisiblePosition previousPosition = start.previous(true);
         VisiblePosition nextPosition = end.next(true);
         RefPtr<Element> listItemElement = createListItemElement(document());
+        RefPtr<Element> placeholder = createBreakElement(document());
+        appendNode(placeholder.get(), listItemElement.get());
         Node* previousList = outermostEnclosingList(previousPosition.deepEquivalent().node());
         Node* nextList = outermostEnclosingList(nextPosition.deepEquivalent().node());
         if (previousList && !previousList->hasTagName(listTag))
@@ -198,7 +200,7 @@ void InsertListCommand::doApply()
             
             insertNodeAt(listElement.get(), start.deepEquivalent().node(), start.deepEquivalent().offset());
         }
-        moveParagraph(start, end, VisiblePosition(Position(listItemElement.get(), 0)), true);
+        moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
         if (nextList && previousList)
             mergeIdenticalElements(static_cast<Element*>(previousList), static_cast<Element*>(nextList));
     }

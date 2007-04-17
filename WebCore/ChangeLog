@@ -1,3 +1,21 @@
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5136770> 
+        Gmail Editor: Hang when turning a particular multi-line selection into a list
+        
+        When InsertListCommand pushes content into list items, 
+        it creates an empty list item and then calls moveParagraphs.  
+        But moveParagraphs' selection preservation code fails when 
+        it encounters empty list items (list items w/o placeholders).
+        This causes InsertListCommand to lose track of where it has 
+        already been performed, which causes the hang.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Use brs to hold open 
+        empty list items.
+
 2007-04-17  Darin Adler  <darin@apple.com>
 
         Oops, rolled that last change out. I'll redo it again later after making

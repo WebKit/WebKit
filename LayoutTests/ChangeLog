@@ -1,3 +1,30 @@
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5136770> 
+        Gmail Editor: Hang when turning a particular multi-line selection into a list
+
+        Demonstrates the bug:
+        * editing/execCommand/5136770-expected.checksum: Added.
+        * editing/execCommand/5136770-expected.png: Added.
+        * editing/execCommand/5136770-expected.txt: Added.
+        * editing/execCommand/5136770.html: Added.
+        
+        Added placeholders in empty list items:
+        * editing/execCommand/4747450-expected.txt:
+        * editing/execCommand/insert-list-empty-div-expected.txt:
+        * editing/execCommand/4917055-expected.txt:
+        
+        A horizontal rule pushed into a list item appears *before*
+        the list marker in the render tree, although, the new results 
+        look more correct (13376):
+        * editing/execCommand/create-list-with-hr-expected.checksum:
+        * editing/execCommand/create-list-with-hr-expected.png:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/execCommand/create-list-with-hr.html:
+
+
 2007-04-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
