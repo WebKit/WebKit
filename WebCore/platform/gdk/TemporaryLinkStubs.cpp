@@ -61,7 +61,7 @@
 #include "MainResourceLoader.h"
 #include "Node.h"
 #include "NotImplementedGdk.h"
-#include "PageCache.h"
+#include "CachedPage.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h"
@@ -280,7 +280,7 @@ void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, c
 float Font::floatWidthForComplexText(const TextRun&, const TextStyle&) const { notImplementedGdk(); return 0; }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplementedGdk(); return 0; }
 
-void PageCache::close() { notImplementedGdk(); }
+void CachedPage::close() { notImplementedGdk(); }
 
 void Editor::ignoreSpelling() { notImplementedGdk(); }
 void Editor::learnSpelling() { notImplementedGdk(); }

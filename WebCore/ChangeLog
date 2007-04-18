@@ -1,3 +1,15 @@
+2007-04-18  Alp Toker  <alp@atoker.com>
+
+        Gdk build fix.  Reviewed by Mark.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::loadedFromCachedPage):
+        (WebCore::FrameLoaderClientGdk::setDocumentViewFromCachedPage):
+        (WebCore::FrameLoaderClientGdk::saveDocumentViewToCachedPage):
+        * loader/gdk/FrameLoaderClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (CachedPage::close): Track PageCache to CachedPage refactoring.
+
 2007-04-17  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

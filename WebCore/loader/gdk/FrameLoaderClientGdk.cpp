@@ -254,7 +254,7 @@ void FrameLoaderClientGdk::detachedFromParent1() { notImplementedGdk(); }
 void FrameLoaderClientGdk::detachedFromParent2() { notImplementedGdk(); }
 void FrameLoaderClientGdk::detachedFromParent3() { notImplementedGdk(); }
 void FrameLoaderClientGdk::detachedFromParent4() { notImplementedGdk(); }
-void FrameLoaderClientGdk::loadedFromPageCache() { notImplementedGdk(); }
+void FrameLoaderClientGdk::loadedFromCachedPage() { notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidHandleOnloadEvents() {notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidCancelClientRedirect() { notImplementedGdk(); }
@@ -288,7 +288,7 @@ void FrameLoaderClientGdk::provisionalLoadStarted() { notImplementedGdk(); }
 void FrameLoaderClientGdk::didFinishLoad() { notImplementedGdk(); }
 void FrameLoaderClientGdk::prepareForDataSourceReplacement() { notImplementedGdk(); }
 void FrameLoaderClientGdk::setTitle(const String&, const KURL&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::setDocumentViewFromPageCache(WebCore::PageCache*) { notImplementedGdk(); }
+void FrameLoaderClientGdk::setDocumentViewFromCachedPage(WebCore::CachedPage*) { notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplementedGdk(); }
 void FrameLoaderClientGdk::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplementedGdk(); }
@@ -304,7 +304,7 @@ ResourceError FrameLoaderClientGdk::cannotShowMIMETypeError(const ResourceRespon
 ResourceError FrameLoaderClientGdk::fileDoesNotExistError(const ResourceResponse&) { notImplementedGdk(); return ResourceError(); }
 bool FrameLoaderClientGdk::shouldFallBack(const ResourceError&) { notImplementedGdk(); return false; }
 bool FrameLoaderClientGdk::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplementedGdk(); return false; }
-void FrameLoaderClientGdk::saveDocumentViewToPageCache(PageCache*) { notImplementedGdk(); }
+void FrameLoaderClientGdk::saveDocumentViewToCachedPage(CachedPage*) { notImplementedGdk(); }
 bool FrameLoaderClientGdk::canCachePage() const { notImplementedGdk(); return false; }
 Frame* FrameLoaderClientGdk::dispatchCreatePage() { notImplementedGdk(); return 0; }
 void FrameLoaderClientGdk::dispatchUnableToImplementPolicy(const ResourceError&) { notImplementedGdk(); }
