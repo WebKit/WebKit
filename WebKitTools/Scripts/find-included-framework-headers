@@ -1,8 +1,10 @@
 #!/bin/sh
 
+FILE_EXTENSIONS_TO_SEARCH="cpp h m mm"
+
 for framework in $*; do
     echo -e "\n$framework\n=================="
-    for ext in cpp h; do
-        find . -name "*.$ext" -exec grep $framework {} ';' | grep include | sed -e 's|.*/\(.*\.h\).*|\1|'
+    for ext in ${FILE_EXTENSIONS_TO_SEARCH}; do
+        find . -name "*.$ext" -exec grep $framework {} ';' | grep '\(include\|import\)' | sed -e 's|.*/\(.*\.h\).*|\1|'
     done | sort | uniq
 done

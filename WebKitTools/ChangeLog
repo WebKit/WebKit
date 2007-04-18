@@ -1,5 +1,10 @@
 2007-04-17  Adam Roben  <aroben@apple.com>
 
+        * Scripts/find-included-framework-headers: Search Obj-C and Obj-C++
+        files as well.
+
+2007-04-17  Adam Roben  <aroben@apple.com>
+
         Added a simple shell script to find all the headers from a specified
         framework or frameworks that are included by files beneath the working
         directory.
