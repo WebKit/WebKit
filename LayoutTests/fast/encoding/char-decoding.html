@@ -39,6 +39,10 @@ function testDecode(charsetName, characterSequence, unicode)
 testDecode('UTF-8', '%E2%88%9A', 'U+221A');
 testDecode('macintosh', '%C3', 'U+221A');
 testDecode('MacRoman', '%C3', 'U+221A');
+testDecode('x-nextstep', '%E1', 'U+00C6');
+debug('');
+
+debug("The x-nextstep test is meant to ensure that we still support legacy encodings that are not part of ICU - it is expected that it fails in other browsers, which do not support this particular encoding. See <a href=\"http://bugs.webkit.org/show_bug.cgi?id=4195\">http://bugs.webkit.org/show_bug.cgi?id=4195</a> for more details.");
 
 debug('');
 

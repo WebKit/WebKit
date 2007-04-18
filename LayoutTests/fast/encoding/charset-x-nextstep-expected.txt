@@ -1,5 +1,0 @@
-Test for bug 4195 - REGRESSION: KOI8-U encoding no longer supported.
-
-Testing for an encoding that's less likely to be in your version of ICU than KOI8-U. These two characters should look the same: "ÆÆ".
-
-

@@ -1,3 +1,14 @@
+2007-04-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by AP.
+
+        - Consolidated encoding tests.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/charset-x-nextstep-expected.txt: Removed.
+        * fast/encoding/charset-x-nextstep.html: Removed.
+
 2007-04-17  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
