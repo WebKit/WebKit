@@ -1,3 +1,11 @@
+2007-04-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitdirs.pm:
+        (sub setConfiguration): Added an optional argument to set the
+        configuration instead of parsing it from ARGV.
+
 2007-04-17  Adam Roben  <aroben@apple.com>
 
         * Scripts/find-included-framework-headers: Search Obj-C and Obj-C++

@@ -241,6 +241,11 @@ sub passedConfiguration
 
 sub setConfiguration
 {
+    if (my $config = shift @_) {
+        $configuration = $config;
+        return;
+    }
+
     determinePassedConfiguration();
     $configuration = $passedConfiguration if $passedConfiguration;
 }
