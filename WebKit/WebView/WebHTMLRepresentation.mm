@@ -259,7 +259,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSString *)title
 {
-    return [_private->dataSource _documentLoader]->title();
+    return nsStringNilIfEmpty([_private->dataSource _documentLoader]->title());
 }
 
 - (DOMDocument *)DOMDocument

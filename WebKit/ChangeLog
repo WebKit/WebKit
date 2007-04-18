@@ -1,3 +1,13 @@
+2007-04-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam
+
+        - fixed <rdar://problem/5103009> REGRESSION: Activity window shows blank name for untitled pages
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation title]):
+        return nil for empty string, to match old behavior
+
 2007-04-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher
