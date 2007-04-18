@@ -1,3 +1,16 @@
+2007-04-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13369
+          REGRESSION (r13366): Invisible table cell background is painted
+
+        Test: fast/table/invisible-cell-background.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell): Don't paint any
+        background if the cell is not visible. This behavior matches WinIE and Opera.
+
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -1,3 +1,15 @@
+2007-04-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13369
+          REGRESSION (r13366): Invisible table cell background is painted
+
+        * fast/table/invisible-cell-background-expected.checksum: Added.
+        * fast/table/invisible-cell-background-expected.png: Added.
+        * fast/table/invisible-cell-background-expected.txt: Added.
+        * fast/table/invisible-cell-background.html: Added.
+
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
