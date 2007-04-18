@@ -334,7 +334,8 @@ void ScrollView::resizeContents(int w, int h)
         if (_h < 0)
             _h = 0;
             
-        [view setFrameSize:NSMakeSize(_w, _h)];
+        NSSize tempSize = { _w, _h }; // workaround for 4213314
+        [view setFrameSize:tempSize];
     } else {
         resize (_w, _h);
     }
@@ -391,7 +392,8 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
     if (docView)
         view = docView;
     
-    NSPoint np = [view convertPoint:contentsPoint toView: nil];
+    NSPoint tempPoint = { contentsPoint.x(), contentsPoint.y() }; // workaround for 4213314
+    NSPoint np = [view convertPoint:tempPoint toView: nil];
     return IntPoint(np);
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -410,7 +412,8 @@ IntPoint ScrollView::windowToContents(const IntPoint& point) const
     if (docView)
         view = docView;
     
-    NSPoint np = [view convertPoint:point fromView: nil];
+    NSPoint tempPoint = { point.x(), point.y() }; // workaround for 4213314
+    NSPoint np = [view convertPoint:tempPoint fromView: nil];
 
     return IntPoint(np);
 

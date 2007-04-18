@@ -1,18 +1,5 @@
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
-        Reviewed by adam
-
-        Removed workarounds for compiler bug 4213314.
-
-        * platform/mac/CursorMac.mm:
-        (WebCore::leakNamedCursor):
-        * platform/mac/ScrollViewMac.mm:
-        (WebCore::ScrollView::resizeContents):
-        (WebCore::ScrollView::contentsToWindow):
-        (WebCore::ScrollView::windowToContents):
-
-2007-04-17  Justin Garcia  <justin.garcia@apple.com>
-
         Reviewed by harrison
 
         <rdar://problem/5119244> 

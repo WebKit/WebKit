@@ -1,13 +1,3 @@
-2007-04-17  Justin Garcia  <justin.garcia@apple.com>
-
-        Reviewed by adam
-        
-        Removed workarounds for compiler bug 4213314.
-
-        * Misc/WebNSAttributedStringExtras.mm:
-        (+[NSAttributedString _web_attributedStringFromRange:]):
-        * WebKit.xcodeproj/project.pbxproj:
-
 2007-04-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher
