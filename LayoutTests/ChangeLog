@@ -1,5 +1,23 @@
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by hyatt
+        
+        <rdar://problem/5138441> 
+        GoogleDocs: Indented text looks like text that's been Quoted
+
+        Demonstrates the bug:
+        * editing/execCommand/5138441-expected.checksum: Added.
+        * editing/execCommand/5138441-expected.png: Added.
+        * editing/execCommand/5138441-expected.txt: Added.
+        * editing/execCommand/5138441.html: Added.
+        
+        Added inline style declarations for indent blockquotes
+        to match those that the engine creates:
+        * editing/execCommand/indent-selection.html:
+        * editing/execCommand/outdent-selection.html:
+
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         <rdar://problem/5136770> 

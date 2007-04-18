@@ -51,6 +51,7 @@ static PassRefPtr<Element> createIndentBlockquoteElement(Document* document)
 {
     RefPtr<Element> indentBlockquoteElement = createElement(document, "blockquote");
     indentBlockquoteElement->setAttribute(classAttr, indentBlockquoteString());
+    indentBlockquoteElement->setAttribute(styleAttr, "margin: 0 0 0 40px; border: none; padding: 0px;");
     return indentBlockquoteElement.release();
 }
 

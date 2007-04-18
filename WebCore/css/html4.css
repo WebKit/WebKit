@@ -596,9 +596,4 @@ iframe {
     border: 2px inset
 }
 
-blockquote.webkit-indent-blockquote {
-    margin: 0 0 0 40px;
-}
-
-
 /* noscript is handled internally, as it depends on settings */

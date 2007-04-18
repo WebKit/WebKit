@@ -1,5 +1,23 @@
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by hyatt
+
+        <rdar://problem/5138441> 
+        GoogleDocs: Indented text looks like text that's been Quoted
+        
+        GoogleDocs uses FormatBlock, blockquotes and a style rule
+        for blockquotes to implement a "Quote Text" feature.  Styles
+        intended only for those blockquotes were added to the 
+        blockquotes that we use for indenting.
+
+        * css/html4.css: Removed the webkit-indent-blockquote class rule.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::createIndentBlockquoteElement): Use custom margins
+        and turn off border and padding to override author rules for
+        blockquotes.
+
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
 
         <rdar://problem/5136770> 
