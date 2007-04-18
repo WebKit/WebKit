@@ -425,8 +425,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     KURL kURL = linkStartNode->document()->frame()->loader()->completeURL(href.deprecatedString());
                     
                     NSURL *URL = kURL.getNSURL();
-                    NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314
-                    [result addAttribute:NSLinkAttributeName value:URL range:tempRange];
+                    [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length] - linkStartLocation)];
                     linkStartNode = 0;
                 }
             }
@@ -544,8 +543,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         [[[NSTextTab alloc] initWithType:NSRightTabStopType location:rx-(pointSize*2/3)] autorelease],
                         [[[NSTextTab alloc] initWithType:NSLeftTabStopType location:rx] autorelease],
                         nil]];
-            NSRange tempRange = { info.start, info.end-info.start }; // workaround for 4213314
-            [result addAttribute:NSParagraphStyleAttributeName value:mps range:tempRange];
+            [result addAttribute:NSParagraphStyleAttributeName value:mps range:NSMakeRange(info.start, info.end - info.start)];
             [mps release];
         }
     }
