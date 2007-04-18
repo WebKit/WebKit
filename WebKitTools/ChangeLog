@@ -1,3 +1,11 @@
+2007-04-17  Adam Roben  <aroben@apple.com>
+
+        Added a simple shell script to find all the headers from a specified
+        framework or frameworks that are included by files beneath the working
+        directory.
+
+        * Scripts/find-included-framework-headers: Added.
+
 2007-04-16  Timothy Hatcher  <timothy@apple.com>
 
         * Drosera/debugger.css: hide the borders for iframes
