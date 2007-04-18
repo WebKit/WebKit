@@ -1,5 +1,17 @@
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+
+        <rdar://problem/5119244> 
+        Crash when indenting a selected ToDo
+        
+        * editing/execCommand/5119244-expected.checksum: Added.
+        * editing/execCommand/5119244-expected.png: Added.
+        * editing/execCommand/5119244-expected.txt: Added.
+        * editing/execCommand/5119244.html: Added.
+
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by hyatt
         
         <rdar://problem/5138441> 

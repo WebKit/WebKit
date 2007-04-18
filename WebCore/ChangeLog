@@ -1,5 +1,22 @@
 2007-04-17  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+
+        <rdar://problem/5119244> 
+        Crash when indenting a selected ToDo
+        
+        indentRegion() was using the old (incorrect) editable root 
+        getter, which returned null for a valid, editable position, 
+        causing the crash.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion):
+        The editable root for a position is editableRootForPosition(p),
+        not p.node()->rootEditableElement(), because of VisiblePositions 
+        before/after tables, replaced elements and others.
+
+2007-04-17  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by hyatt
 
         <rdar://problem/5138441> 
