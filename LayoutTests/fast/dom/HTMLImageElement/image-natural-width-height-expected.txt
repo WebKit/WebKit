@@ -1,0 +1,4 @@
+   
+This tests that the naturalWidth and naturalHeight HTMLImageElement properties work correctly.
+SUCCESS
+

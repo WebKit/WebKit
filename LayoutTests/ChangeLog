@@ -1,3 +1,13 @@
+2007-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13333
+        Support naturalWidth/naturalHeight on image elements
+        
+        * fast/dom/HTMLImageElement/image-natural-width-height-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-natural-width-height.html: Added.
+
 2007-04-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt

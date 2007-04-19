@@ -256,6 +256,22 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
     return renderer() ? renderer()->contentHeight() : 0;
 }
 
+int HTMLImageElement::naturalWidth() const
+{
+    if (!m_imageLoader.image())
+        return 0;
+
+    return m_imageLoader.image()->imageSize().width();
+}
+
+int HTMLImageElement::naturalHeight() const
+{
+    if (!m_imageLoader.image())
+        return 0;
+    
+    return m_imageLoader.image()->imageSize().height();
+}
+    
 bool HTMLImageElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == srcAttr

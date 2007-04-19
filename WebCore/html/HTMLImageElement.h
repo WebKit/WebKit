@@ -53,6 +53,9 @@ public:
     int width(bool ignorePendingStylesheets = false) const;
     int height(bool ignorePendingStylesheets = false) const;
 
+    int naturalWidth() const;
+    int naturalHeight() const;
+    
     bool isServerMap() const { return ismap && usemap.isEmpty(); }
 
     String altText() const;

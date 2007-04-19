@@ -1,3 +1,16 @@
+2007-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13333
+        Support naturalWidth/naturalHeight on image elements
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::naturalWidth):
+        (WebCore::HTMLImageElement::naturalHeight):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+
 2007-04-19  Patti Hoa  <patti@apple.com>
 
         Reviewed by Darin.
