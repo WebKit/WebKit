@@ -1,3 +1,12 @@
+2007-04-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver and Adam.
+
+        <rdar://problem/5141290> WebAssertions.h is still needed some internal clients.
+
+        * Misc/WebAssertions.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim

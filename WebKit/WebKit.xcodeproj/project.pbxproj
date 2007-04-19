@@ -49,6 +49,7 @@
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
+		5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
 		650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 650F74E309E488F70020118A /* WebUnarchivingState.m */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
@@ -405,6 +406,7 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
+		5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebAssertions.h; sourceTree = "<group>"; };
 		650F74E209E488F70020118A /* WebUnarchivingState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebUnarchivingState.h; sourceTree = "<group>"; };
 		650F74E309E488F70020118A /* WebUnarchivingState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebUnarchivingState.m; sourceTree = "<group>"; };
 		65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDictionaryExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -736,6 +738,7 @@
 		254DC334016E1D3F0ECA149E /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */,
 				5241ADF30B1BC48A004012BD /* WebCache.h */,
 				5241ADF40B1BC48A004012BD /* WebCache.mm */,
 				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
@@ -1297,6 +1300,7 @@
 				A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */,
 				A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */,
 				EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */,
+				5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
