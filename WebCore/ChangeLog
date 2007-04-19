@@ -1,3 +1,20 @@
+2007-04-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13291
+          REGRESSION (r19595): WebViewDidBeginEditingNotification not posted when focusing with the mouse
+
+        Covered by editing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode): Moved the call to Editor::didBeginEditing()
+        back into here.
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance): Removed the call to didBeginEditing().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateFocusAppearance): Ditto.
+
 2007-04-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

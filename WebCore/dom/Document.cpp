@@ -2219,6 +2219,9 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         }
         m_focusedNode->setFocus();
 
+        if (m_focusedNode.get() == m_focusedNode->rootEditableElement())
+            frame()->editor()->didBeginEditing();
+
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
         if (view()) {

@@ -213,10 +213,8 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
             // Restore the cached selection.
             setSelectionRange(cachedSelStart, cachedSelEnd); 
         
-        if (document()->frame()) {
-            document()->frame()->editor()->didBeginEditing();
+        if (document() && document()->frame())
             document()->frame()->revealSelection();
-        }
     } else
         HTMLGenericFormElement::updateFocusAppearance();
 }
