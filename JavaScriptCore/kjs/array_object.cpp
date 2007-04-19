@@ -284,7 +284,7 @@ void ArrayInstance::mark()
   }
 }
 
-static ExecState *execForCompareByStringForQSort;
+static ExecState* execForCompareByStringForQSort = 0;
 
 static int compareByStringForQSort(const void *a, const void *b)
 {
@@ -300,13 +300,14 @@ static int compareByStringForQSort(const void *a, const void *b)
     return compare(va->toString(exec), vb->toString(exec));
 }
 
-void ArrayInstance::sort(ExecState *exec)
+void ArrayInstance::sort(ExecState* exec)
 {
     int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
-    
+
+    ExecState* oldExec = execForCompareByStringForQSort;
     execForCompareByStringForQSort = exec;
-    qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue *), compareByStringForQSort);
-    execForCompareByStringForQSort = 0;
+    qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue*), compareByStringForQSort);
+    execForCompareByStringForQSort = oldExec;
 }
 
 struct CompareWithCompareFunctionArguments {
@@ -325,7 +326,7 @@ struct CompareWithCompareFunctionArguments {
     JSObject *globalObject;
 };
 
-static CompareWithCompareFunctionArguments *compareWithCompareFunctionArguments;
+static CompareWithCompareFunctionArguments* compareWithCompareFunctionArguments = 0;
 
 static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 {
@@ -348,14 +349,15 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
     return compareResult < 0 ? -1 : compareResult > 0 ? 1 : 0;
 }
 
-void ArrayInstance::sort(ExecState *exec, JSObject *compareFunction)
+void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
 {
     int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
-    
+
+    CompareWithCompareFunctionArguments* oldArgs = compareWithCompareFunctionArguments;
     CompareWithCompareFunctionArguments args(exec, compareFunction);
     compareWithCompareFunctionArguments = &args;
-    qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue *), compareWithCompareFunctionForQSort);
-    compareWithCompareFunctionArguments = 0;
+    qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue*), compareWithCompareFunctionForQSort);
+    compareWithCompareFunctionArguments = oldArgs;
 }
 
 unsigned ArrayInstance::pushUndefinedObjectsToEnd(ExecState *exec)

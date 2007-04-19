@@ -1,3 +1,15 @@
+2007-04-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13401
+        Bug 13401: Reproducible crash calling myArray.sort(compareFn) from within
+        a sort comparison function
+
+        * fast/js/array-sort-reentrance-expected.txt: Added.
+        * fast/js/array-sort-reentrance.html: Added.
+        * fast/js/resources/array-sort-reentrance.js: Added.
+
 2007-04-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
