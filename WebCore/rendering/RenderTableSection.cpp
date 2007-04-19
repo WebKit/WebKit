@@ -494,45 +494,42 @@ int RenderTableSection::layoutRows(int toAdd)
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage. -dwh
-                cell->setCellTopExtra(0);
-                cell->setCellBottomExtra(0);
-
                 cell->setOverrideSize(max(0, 
                                            rHeight - cell->borderTop() - cell->paddingTop() - 
                                                      cell->borderBottom() - cell->paddingBottom()));
                 cell->layoutIfNeeded();
-            } else {
-                int te = 0;
-                switch (cell->style()->verticalAlign()) {
-                    case SUB:
-                    case SUPER:
-                    case TEXT_TOP:
-                    case TEXT_BOTTOM:
-                    case BASELINE:
-                        te = getBaseline(r) - cell->baselinePosition() ;
-                        break;
-                    case TOP:
-                        te = 0;
-                        break;
-                    case MIDDLE:
-                        te = (rHeight - cell->height()) / 2;
-                        break;
-                    case BOTTOM:
-                        te = rHeight - cell->height();
-                        break;
-                    default:
-                        break;
-                }
-                
-                int oldTe = cell->borderTopExtra();
-                int oldBe = cell->borderBottomExtra();
-                
-                int be = rHeight - cell->height() - te;
-                cell->setCellTopExtra(te);
-                cell->setCellBottomExtra(be);
-                if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                    cell->repaint();
             }
+            
+            int te = 0;
+            switch (cell->style()->verticalAlign()) {
+                case SUB:
+                case SUPER:
+                case TEXT_TOP:
+                case TEXT_BOTTOM:
+                case BASELINE:
+                    te = getBaseline(r) - cell->baselinePosition() ;
+                    break;
+                case TOP:
+                    te = 0;
+                    break;
+                case MIDDLE:
+                    te = (rHeight - cell->height()) / 2;
+                    break;
+                case BOTTOM:
+                    te = rHeight - cell->height();
+                    break;
+                default:
+                    break;
+            }
+                
+            int oldTe = cell->borderTopExtra();
+            int oldBe = cell->borderBottomExtra();
+                
+            int be = rHeight - cell->height() - te;
+            cell->setCellTopExtra(te);
+            cell->setCellBottomExtra(be);
+            if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
+                cell->repaint();
             
             IntRect oldCellRect(cell->xPos(), cell->yPos() - cell->borderTopExtra() , cell->width(), cell->height());
         

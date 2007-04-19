@@ -190,11 +190,11 @@ layer at (0,0) size 785x980
       RenderTable {TABLE} at (0,942) size 769x22
         RenderTableSection {TBODY} at (0,0) size 769x22
           RenderTableRow {TR} at (0,1) size 769x20
-            RenderTableCell {TD} at (1,1) size 2x18 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (1,2) size 2x18 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 12x16
-            RenderTableCell {TD} at (4,1) size 2x18 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (4,2) size 2x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 12x16
-            RenderTableCell {TD} at (7,1) size 2x18 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (7,2) size 2x18 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 12x16
             RenderTableCell {TD} at (10,1) size 758x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18

@@ -1,3 +1,23 @@
+2007-04-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5120889> Sized table cells w/borders not 
+        drawn to correct size
+
+        When table cells have children with %-height, the cells were 
+        incorrectly shrinking down to be the size of the child. This 
+        exposed another problem with replaced children and sizing.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedHeightUsing): The exposed problem. 
+        Subtract our borders and padding in the auto or percent table cell 
+        containing block case.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): When our children can 
+        flex, do not always set the cellTopExtra and cellBottomExtra to 0! 
+        That is bad! We should do the same as the non-flex case.
+
 2007-04-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

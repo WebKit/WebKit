@@ -1415,9 +1415,15 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
                 cb->calcHeight();
                 int newHeight = cb->calcContentBoxHeight(cb->contentHeight());
                 cb->setHeight(oldHeight);
-
                 return calcContentBoxHeight(height.calcValue(newHeight));
             }
+            
+            // It is necessary to use the border-box to match WinIE's broken
+            // box model.  This is essential for sizing inside
+            // table cells using percentage heights.
+            if (cb->isTableCell() && (cb->style()->height().isAuto() || cb->style()->height().isPercent()))
+                return height.calcValue(cb->availableHeight() - (borderTop() + borderBottom()
+                    + paddingTop() + paddingBottom()));
 
             return calcContentBoxHeight(height.calcValue(cb->availableHeight()));
         }

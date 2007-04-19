@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,36) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
-              RenderTableCell {TD} at (2,2) size 780x75 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,12) size 780x75 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderTextControl {TEXTAREA} at (1,1) size 622x73 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
                 RenderText {#text} at (0,0) size 0x0
         RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,272) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
-              RenderTableCell {TD} at (2,2) size 780x77 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,11) size 780x77 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {P} at (1,1) size 622x75 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 229x18
                     text run at (0,0) width 229: "BUG: the height of the P is not 80%"
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 RenderBlock {P} at (1,1) size 622x80 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 222x18
                     text run at (0,0) width 222: "OK: the height of the P is 80 pixels"
-layer at (12,84) size 620x71
+layer at (12,94) size 620x71
   RenderBlock {DIV} at (1,1) size 620x71
     RenderText {#text} at (3,0) size 224x13
       text run at (3,0) width 224: "BUG: the height of the textarea is not 80%"
