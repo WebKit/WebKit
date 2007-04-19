@@ -122,7 +122,6 @@
         page/FrameView.cpp
         page/MouseEventWithHitTestResults.cpp
         page/Page.cpp
-        page/PageState.cpp
         page/Settings.cpp
         page/gdk/EventHandlerGdk.cpp
         page/gdk/ContextMenuClientGdk.cpp
