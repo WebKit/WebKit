@@ -110,8 +110,8 @@ FloatRect ChromeClientGdk::pageRect() { notImplementedGdk(); return FloatRect();
 float ChromeClientGdk::scaleFactor() { notImplementedGdk(); return 1.0; }
 void ChromeClientGdk::focus() { notImplementedGdk(); }
 void ChromeClientGdk::unfocus() { notImplementedGdk(); }
-WebCore::Page* ChromeClientGdk::createWindow(const FrameLoadRequest&) { notImplementedGdk(); return 0; }
-WebCore::Page* ChromeClientGdk::createModalDialog(const FrameLoadRequest&) { notImplementedGdk(); return 0;}
+WebCore::Page* ChromeClientGdk::createWindow(Frame*, const FrameLoadRequest&) { notImplementedGdk(); return 0; }
+WebCore::Page* ChromeClientGdk::createModalDialog(Frame*, const FrameLoadRequest&) { notImplementedGdk(); return 0; }
 void ChromeClientGdk::show() { notImplementedGdk(); }
 bool ChromeClientGdk::canRunModal() { notImplementedGdk(); return false; }
 void ChromeClientGdk::runModal() { notImplementedGdk(); }
@@ -291,6 +291,7 @@ Vector<String> Editor::guessesForUngrammaticalSelection() { notImplementedGdk();
 void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition&) { notImplementedGdk(); }
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy) { notImplementedGdk(); return 0; }
 void Editor::markMisspellings(const Selection&) { notImplementedGdk(); }
+void Editor::markBadGrammar(const Selection&) { notImplementedGdk(); }
 
 Pasteboard* Pasteboard::generalPasteboard() { notImplementedGdk(); return 0; }
 void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplementedGdk(); }

@@ -105,9 +105,9 @@
 
     <set append="1" var="WEBCORE_SOURCES_HISTORY">
         history/BackForwardList.cpp
+        history/CachedPage.cpp
         history/HistoryItem.cpp
         history/HistoryItemTimer.cpp
-        history/PageCache.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PAGE">

@@ -1,3 +1,16 @@
+2007-04-18  Alp Toker  <alp@atoker.com>
+
+        Gdk build fix.  Reviewed by Sam Weinig.
+
+        Track changes to make GdkLauncher work again.
+
+        * WebCoreSources.bkl:
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (ChromeClientGdk::createWindow):
+        (ChromeClientGdk::createModalDialog):
+        (Editor::markBadGrammar):
+
 2007-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim
