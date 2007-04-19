@@ -705,6 +705,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!coreFrame)
         return nil;
     
+    // FIXME: <rdar://problem/5145841> When loading a custom view/representation 
+    // into a web frame, the old document can still be around. This makes sure that
+    // we'll return nil in those cases.
+    if (![[self dataSource] _isDocumentHTML]) 
+        return nil; 
+
     Document* document = coreFrame->document();
     
     // According to the documentation, we should return nil if the frame doesn't have a document.

@@ -1,3 +1,14 @@
+2007-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5137002>
+        REGRESSION (r20812): [WebFrame DOMDocument] is returning non-nil value in bookmarks view, causing trouble in Safari
+
+        Put back the MIME type check as a workaround.
+        * WebView/WebFrame.mm:
+        (-[WebFrame DOMDocument]):
+
 2007-04-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver and Adam.
