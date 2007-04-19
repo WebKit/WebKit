@@ -1,3 +1,26 @@
+2007-04-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13336
+          REGRESSION (r20646): editing/execCommand/hilitecolor.html crashes under guardMalloc
+
+        Avoid calling selectionRect() and selectionGapRects() on a renderer that needs
+        layout.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRects):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::BlockSelectionInfo::BlockSelectionInfo):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRect):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::SelectionInfo::SelectionInfo):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRect):
+
 2007-04-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

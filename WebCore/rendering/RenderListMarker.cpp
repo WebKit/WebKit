@@ -859,6 +859,8 @@ void RenderListMarker::setSelectionState(SelectionState state)
 
 IntRect RenderListMarker::selectionRect()
 {
+    ASSERT(!needsLayout());
+
     if (selectionState() == SelectionNone || !inlineBoxWrapper())
         return IntRect();
 

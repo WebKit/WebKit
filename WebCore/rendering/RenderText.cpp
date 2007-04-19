@@ -1021,6 +1021,8 @@ IntRect RenderText::absoluteClippedOverflowRect()
 
 IntRect RenderText::selectionRect()
 {
+    ASSERT(!needsLayout());
+
     IntRect rect;
     if (selectionState() == SelectionNone)
         return rect;

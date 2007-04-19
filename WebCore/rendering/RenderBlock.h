@@ -240,7 +240,7 @@ public:
 
         BlockSelectionInfo(RenderBlock* b)
             : m_block(b)
-            , m_rects(b->selectionGapRects())
+            , m_rects(b->needsLayout() ? GapRects() : b->selectionGapRects())
             , m_state(b->selectionState())
         { 
         }
