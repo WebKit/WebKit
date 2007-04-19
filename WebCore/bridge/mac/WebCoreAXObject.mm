@@ -594,6 +594,7 @@ static int headingLevel(RenderObject* renderer)
         NSView* attachmentView = [self attachmentView];
         if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
             return [attachmentView accessibilityAttributeValue:NSAccessibilityValueAttribute];
+        return nil;
     }
     
     if ([self isHeading])

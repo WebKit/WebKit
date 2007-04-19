@@ -1,6 +1,15 @@
 2007-04-19  Patti Hoa  <patti@apple.com>
 
         Reviewed by Darin.
+        - review suggestion for rdar://5145011 code change
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject value]):
+        return early if value attribute is not supported by the attachment view.
+
+2007-04-19  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Darin.
 
         <rdar://problem/5145011> Allow attachment view of web object to handle accessibility actions
         
