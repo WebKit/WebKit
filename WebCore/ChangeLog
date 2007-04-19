@@ -1,3 +1,13 @@
+2007-04-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13375
+          REGRESSION (r20901): failing fast/overflow/scrollRevealButton.html
+
+        * dom/Document.cpp: (WebCore::Document::updateLayout):
+        If we have a parent frame, update its layout too.
+
 2007-04-18  Alp Toker  <alp@atoker.com>
 
         Gdk build fix.  Reviewed by Mark.
