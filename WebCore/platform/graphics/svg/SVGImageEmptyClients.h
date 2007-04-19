@@ -271,7 +271,7 @@ public:
 
 #if PLATFORM(MAC)
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse* response) const { return response; }
-#endif PLATFORM(MAC)
+#endif
 
 };
 
