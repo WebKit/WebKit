@@ -89,6 +89,8 @@ private:
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier);
     virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&);
 
+    virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const;
+
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();

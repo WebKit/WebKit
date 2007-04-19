@@ -332,6 +332,17 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, un
         implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, [webView _objectForIdentifier:identifier], response.nsURLResponse(), dataSource(loader));
 }
 
+NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader* loader, unsigned long identifier, NSCachedURLResponse* response) const
+{
+    WebView *webView = getWebView(m_webFrame.get());
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsWillCacheResponse)
+        return implementations.willCacheResponseFunc(resourceLoadDelegate, @selector(webView:resource:willCacheResponse:fromDataSource:), webView, [webView _objectForIdentifier:identifier], response, dataSource(loader));
+
+    return response;
+}
+
 void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int lengthReceived)
 {
     WebView *webView = getWebView(m_webFrame.get());

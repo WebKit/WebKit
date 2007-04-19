@@ -268,6 +268,11 @@ public:
 
     virtual void redirectDataToPlugin(WebCore::Widget*) {}
     virtual void windowObjectCleared() const {}
+
+#if PLATFORM(MAC)
+    virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse* response) const { return response; }
+#endif PLATFORM(MAC)
+
 };
 
 class SVGEmptyEditorClient : public EditorClient {

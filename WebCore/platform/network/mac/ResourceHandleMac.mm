@@ -388,18 +388,23 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!m_handle)
         return nil;
     ++inNSURLConnectionCallback;
-    CacheStoragePolicy policy = static_cast<CacheStoragePolicy>([cachedResponse storagePolicy]);
+    
+    NSCachedURLResponse * newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
+    if (newResponse != cachedResponse)
+        return newResponse;
+    
+    CacheStoragePolicy policy = static_cast<CacheStoragePolicy>([newResponse storagePolicy]);
         
     m_handle->client()->willCacheResponse(m_handle, policy);
 
-    if (static_cast<NSURLCacheStoragePolicy>(policy) != [cachedResponse storagePolicy])
-        cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
-                                                                   data:[cachedResponse data]
-                                                               userInfo:[cachedResponse userInfo]
+    if (static_cast<NSURLCacheStoragePolicy>(policy) != [newResponse storagePolicy])
+        newResponse = [[[NSCachedURLResponse alloc] initWithResponse:[newResponse response]
+                                                                   data:[newResponse data]
+                                                               userInfo:[newResponse userInfo]
                                                           storagePolicy:static_cast<NSURLCacheStoragePolicy>(policy)] autorelease];
 
     --inNSURLConnectionCallback;
-    return cachedResponse;
+    return newResponse;
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge

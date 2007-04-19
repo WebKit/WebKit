@@ -906,6 +906,7 @@ static bool debugWidget = true;
     cache->delegateImplementsWillSendRequest = [delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)];
     cache->delegateImplementsIdentifierForRequest = [delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)];
     cache->delegateImplementsDidLoadResourceFromMemoryCache = [delegate respondsToSelector:@selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:)];
+    cache->delegateImplementsWillCacheResponse = [delegate respondsToSelector:@selector(webView:resource:willCacheResponse:fromDataSource:)];
 
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
 #define GET_OBJC_METHOD_IMP(class,selector) class_getMethodImplementation(class, selector)
@@ -929,7 +930,8 @@ static bool debugWidget = true;
         cache->identifierForRequestFunc = (WebIdentifierForRequestFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:identifierForInitialRequest:fromDataSource:));
     if (cache->delegateImplementsDidLoadResourceFromMemoryCache)
         cache->didLoadResourceFromMemoryCacheFunc = (WebDidLoadResourceFromMemoryCacheFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:));
-
+    if (cache->delegateImplementsWillCacheResponse)
+        cache->willCacheResponseFunc = (WebWillCacheResponseFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:willCacheResponse:fromDataSource:));
 #undef GET_OBJC_METHOD_IMP
 }
 

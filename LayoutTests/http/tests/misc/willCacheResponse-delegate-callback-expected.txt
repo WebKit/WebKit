@@ -1,0 +1,4 @@
+<unknown> - willCacheResponse: called
+This tests for the willCacheResponse resource delegate callback as added for radar 5008925.
+The test is only meaningful if you are running it under DumpRenderTree
+

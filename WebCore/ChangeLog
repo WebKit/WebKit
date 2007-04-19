@@ -1,3 +1,28 @@
+2007-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        <rdar://problem/5008925>
+        Expose the NSURLConnection delegate willCacheResponse API to WebResourceLoadDelegate
+
+        * WebCore.xcodeproj/project.pbxproj: Added ResourceLoaderMac.mm
+
+        * loader/FrameLoaderClient.h: Add the willCacheResponse SPI for WebKit to implement
+
+        * loader/ResourceLoader.h:
+        * loader/mac/ResourceLoaderMac.mm: Added.
+        (WebCore::ResourceLoader::willCacheResponse): Return the new cachedResponse from the client
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::willCacheResponse): Stub
+
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willCacheResponse):  Return the new cachedResponse from the client
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]): Call to get the new 
+          cachedURLResponse before calling for the cache policy
+
 2007-04-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

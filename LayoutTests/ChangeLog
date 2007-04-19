@@ -1,3 +1,13 @@
+2007-04-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        <rdar://problem/5008925>
+        Expose the NSURLConnection delegate willCacheResponse API to WebResourceLoadDelegate
+
+        * http/tests/misc/willCacheResponse-delegate-callback-expected.txt: Added.
+        * http/tests/misc/willCacheResponse-delegate-callback.html: Added.
+
 2007-04-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by AP.

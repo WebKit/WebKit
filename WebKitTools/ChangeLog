@@ -1,3 +1,14 @@
+2007-04-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        <rdar://problem/5008925>
+        Expose the NSURLConnection delegate willCacheResponse API to WebResourceLoadDelegate
+
+        * DumpRenderTree/ResourceLoadDelegate.m:
+        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]): 
+          Add the willCacheResponse delegate call
+
 2007-04-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by David Kilzer.

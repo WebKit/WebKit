@@ -163,4 +163,13 @@
 {
 }
 
+-(NSCachedURLResponse *) webView: (WebView *)wv resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource
+{
+    if (shouldDumpResourceLoadCallbacks && !done) {
+        NSString *string = [NSString stringWithFormat:@"%@ - willCacheResponse: called", identifier];
+        printf ("%s\n", [string UTF8String]);
+    }
+    return response;
+}
+
 @end

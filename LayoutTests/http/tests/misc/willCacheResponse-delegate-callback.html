@@ -1,0 +1,18 @@
+<html>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpResourceLoadCallbacks();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function loaded() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+<body onLoad="loaded();">
+This tests for the willCacheResponse resource delegate callback as added for radar 5008925.<br>
+The test is only meaningful if you are running it under DumpRenderTree<br>
+</body>
+</html>

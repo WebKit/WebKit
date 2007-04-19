@@ -1,3 +1,20 @@
+2007-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        <rdar://problem/5008925>
+        Expose the NSURLConnection delegate willCacheResponse API to WebResourceLoadDelegate
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::willCacheResponse): Call 
+          [WebResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:];
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheResourceLoadDelegateImplementations]): Pull out the willCacheResponse impl
+
+        * WebView/WebViewPrivate.h: Add WebResourceLoadDelegatePrivate category for this new SPI
+
 2007-04-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam

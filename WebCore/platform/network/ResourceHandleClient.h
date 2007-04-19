@@ -35,6 +35,14 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #endif
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class NSCachedURLResponse;
+#else
+class NSCachedURLResponse;
+#endif
+#endif
+
 namespace WebCore {
     class AuthenticationChallenge;
     class Credential;
@@ -72,6 +80,7 @@ namespace WebCore {
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
 #if PLATFORM(MAC)        
+        virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse* response) { return response; }
         virtual void willStopBufferingData(ResourceHandle*, const char*, int) { } 
 #endif
     };

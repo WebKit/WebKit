@@ -98,6 +98,9 @@ namespace WebCore {
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didCancelAuthenticationChallenge(challenge); } 
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedCancellation(challenge); }
         virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&);
+#if PLATFORM(MAC)
+        virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*);
+#endif
 
         ResourceHandle* handle() const { return m_handle.get(); }
 
