@@ -2,7 +2,7 @@
 
         Reviewed by Oliver and Adam.
 
-        <rdar://problem/5141290> WebAssertions.h is still needed some internal clients.
+        <rdar://problem/5141290> WebAssertions.h is still needed by some internal clients.
 
         * Misc/WebAssertions.h: Added.
         * WebKit.xcodeproj/project.pbxproj:
