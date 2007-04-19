@@ -1,3 +1,21 @@
+2007-04-19  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5145011> Allow attachment view of web object to handle accessibility actions
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject value]):
+        Only allow asking the attachmentView for value if attachmentView supports this value attribute 
+        (-[WebCoreAXObject title]):
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        Should not return that long list of unrelated attributes for attachmentView.
+        (-[WebCoreAXObject accessibilityActionNames]):
+        (-[WebCoreAXObject accessibilityPerformAction:]):
+        Allow attachmentView a chance to handle actions.
+        (-[WebCoreAXObject accessibilityParameterizedAttributeNames]):
+        Should not return that long list of unrelated attributes for attachmentView.
+        
 2007-04-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

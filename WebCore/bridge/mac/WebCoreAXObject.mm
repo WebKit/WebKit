@@ -590,9 +590,12 @@ static int headingLevel(RenderObject* renderer)
         return plainText(makeRange(startVisiblePosition, endVisiblePosition).get()).getNSString();
     }
     
-    if ([self isAttachment])
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
-
+    if ([self isAttachment]) {
+        NSView* attachmentView = [self attachmentView];
+        if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
+            return [attachmentView accessibilityAttributeValue:NSAccessibilityValueAttribute];
+    }
+    
     if ([self isHeading])
         return [NSNumber numberWithInt:[self headingLevel]];
         
@@ -651,9 +654,8 @@ static HTMLLabelElement* labelForElement(Element* element)
         
     if ([self isAttachment]) {
         NSView* attachmentView = [self attachmentView];
-        if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute]) {
+        if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute]) 
             return [attachmentView accessibilityAttributeValue:NSAccessibilityTitleAttribute];
-        }
     }
     
     return nil;
@@ -818,6 +820,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 - (NSArray*)accessibilityAttributeNames
 {
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeNames];
+        
     static NSArray* attributes = nil;
     static NSArray* anchorAttrs = nil;
     static NSArray* webAreaAttrs = nil;
@@ -888,13 +893,14 @@ static IntRect boundingBoxRect(RenderObject* obj)
 {
     static NSArray* actions = nil;
     
-    if ([self actionElement]) {
-        if (actions == nil)
+    if (actions == nil) {
+        if ([self actionElement]) 
             actions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, nil];
-        return actions;
+        else if ([self isAttachment])
+            actions = [[[self attachmentView] accessibilityActionNames] retain];
     }
 
-    return nil;
+    return actions;
 }
 
 - (NSString*)accessibilityActionDescription:(NSString*)action
@@ -906,6 +912,11 @@ static IntRect boundingBoxRect(RenderObject* obj)
 - (void)accessibilityPerformAction:(NSString*)action
 {
     if ([action isEqualToString:NSAccessibilityPressAction]) {
+        if ([self isAttachment]) {
+            [[self attachmentView] accessibilityPerformAction:action];
+            return;
+        }
+            
         Element* actionElement = [self actionElement];
         if (!actionElement)
             return;
@@ -1130,6 +1141,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 - (NSArray* )accessibilityParameterizedAttributeNames
 {
+    if ([self isAttachment]) 
+        return nil;
+        
     static NSArray* paramAttrs = nil;
     static NSArray* textParamAttrs = nil;
     if (paramAttrs == nil) {
