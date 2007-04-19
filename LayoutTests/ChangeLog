@@ -1,3 +1,32 @@
+2007-04-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5142012> 
+        GoogleDocs: Crash at WebCore::Range::startPosition() when creating a list from a link
+
+        Tests the change to pushAnchorElementDown, where we remove
+        the anchor element that has had copies of it pushed down:
+        * editing/execCommand/5142012-1-expected.checksum: Added.
+        * editing/execCommand/5142012-1-expected.png: Added.
+        * editing/execCommand/5142012-1-expected.txt: Added.
+        * editing/execCommand/5142012-1.html: Added.
+        
+        Demonstrates the crash (fixed by adding nil-checks 
+        to moveParagraphs):
+        * editing/execCommand/5142012-2-expected.checksum: Added.
+        * editing/execCommand/5142012-2-expected.png: Added.
+        * editing/execCommand/5142012-2-expected.txt: Added.
+        * editing/execCommand/5142012-2.html: Added.
+        
+        Tests the changes to positionAvoidingSpecialElementBoundary,
+        where we push down anchors before we avoid them so that
+        we don't also avoid structural elements like lists and paragraphs:
+        * editing/execCommand/5142012-3-expected.checksum: Added.
+        * editing/execCommand/5142012-3-expected.png: Added.
+        * editing/execCommand/5142012-3-expected.txt: Added.
+        * editing/execCommand/5142012-3.html: Added.
+
 2007-04-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

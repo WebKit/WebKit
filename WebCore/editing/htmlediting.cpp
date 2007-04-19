@@ -528,6 +528,24 @@ Position positionOutsideContainingSpecialElement(const Position &pos, Node **con
     return pos;
 }
 
+Node* isFirstPositionAfterTable(const VisiblePosition& visiblePosition)
+{
+    Position upstream(visiblePosition.deepEquivalent().upstream());
+    if (upstream.node() && upstream.node()->renderer() && upstream.node()->renderer()->isTable() && upstream.offset() == maxDeepOffset(upstream.node()))
+        return upstream.node();
+    
+    return 0;
+}
+
+Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
+{
+    Position downstream(visiblePosition.deepEquivalent().downstream());
+    if (downstream.node() && downstream.node()->renderer() && downstream.node()->renderer()->isTable() && downstream.offset() == 0)
+        return downstream.node();
+    
+    return 0;
+}
+
 Position positionBeforeNode(const Node *node)
 {
     return Position(node->parentNode(), node->nodeIndex());
@@ -591,6 +609,17 @@ Node* enclosingTableCell(const Position& p)
     return 0;
 }
 
+Node* enclosingAnchorElement(const Position& p)
+{
+    if (p.isNull())
+        return 0;
+    
+    Node* node = p.node();
+    while (node && !(node->isElementNode() && node->isLink()))
+        node = node->parentNode();
+    return node;
+}
+
 Node* enclosingList(Node* node)
 {
     if (!node)
@@ -608,7 +637,7 @@ Node* enclosingList(Node* node)
     return 0;
 }
 
-Node* enclosingListChild (Node *node)
+Node* enclosingListChild(Node *node)
 {
     if (!node)
         return 0;
@@ -699,44 +728,6 @@ bool isTableElement(Node* n)
 
     RenderObject* renderer = n->renderer();
     return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
-}
-
-// This function is necessary because a VisiblePosition is allowed
-// to be at the start or end of elements where we do not want to
-// add content directly.  For example, clicking at the end of a hyperlink,
-// then typing, needs to add the text after the link.  Also, table
-// offset 0 and table offset childNodeCount are valid VisiblePostions,
-// but we can not add more content right there... it needs to go before
-// or after the table.
-Position positionAvoidingSpecialElementBoundary(const Position &pos, bool avoidAnchor)
-{
-    if (pos.isNull())
-        return pos;
-        
-    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-    Node* enclosingAnchor = enclosingNodeWithTag(pos.node(), aTag);
-    Position result;
-    if (enclosingAnchor && !isBlock(enclosingAnchor)) {
-        // If the caret is after an anchor, do insertion inside the anchor unless it's the last 
-        // VisiblePosition in the document, to match TextEdit.
-        if (VisiblePosition(Position(enclosingAnchor, maxDeepOffset(enclosingAnchor))) == vPos && (isEndOfDocument(vPos) || avoidAnchor))
-            result = positionAfterNode(enclosingAnchor);
-        // If the caret is before an anchor, do insertion outside the anchor unless it's the first
-        // VisiblePosition in a paragraph, to match TextEdit.
-        if (VisiblePosition(Position(enclosingAnchor, 0)) == vPos && (!isStartOfParagraph(vPos) || avoidAnchor))
-            result = positionBeforeNode(enclosingAnchor);
-    } else if (isTableElement(pos.node())) {
-        if (VisiblePosition(Position(pos.node(), maxDeepOffset(pos.node()))) == vPos)
-            result = positionAfterNode(pos.node());
-        if (VisiblePosition(Position(pos.node(), 0)) == vPos)
-            result = positionBeforeNode(pos.node());
-    } else
-        return pos;
-        
-    if (result.isNull() || !editableRootForPosition(result))
-        result = pos;
-    
-    return result;
 }
 
 PassRefPtr<Element> createDefaultParagraphElement(Document *document)

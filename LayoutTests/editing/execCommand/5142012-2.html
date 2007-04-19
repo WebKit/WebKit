@@ -1,0 +1,6 @@
+<body contenteditable="true"><a href="#">This tests for a crash when creating a list from a link.  This paragraph should be a link and should be inside a list item.</a> <br></div>
+<script>
+document.body.focus();
+document.execCommand("SelectAll");
+document.execCommand("InsertUnorderedList");
+</script>

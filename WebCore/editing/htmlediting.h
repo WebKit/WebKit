@@ -100,18 +100,20 @@ Position positionBeforeContainingSpecialElement(const Position&, Node** containi
 bool isLastVisiblePositionInSpecialElement(const Position&);
 Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
+Node* isLastPositionBeforeTable(const VisiblePosition&);
+Node* isFirstPositionAfterTable(const VisiblePosition&);
 
 Node* enclosingNodeWithTag(Node*, const QualifiedName&);
 Node* enclosingNodeOfType(Node*, bool (*nodeIsOfType)(Node*));
 Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
+Node* enclosingAnchorElement(const Position&);
 bool isListElement(Node*);
 Node* enclosingList(Node*);
 Node* outermostEnclosingList(Node*);
 Node* enclosingListChild(Node*);
 Node* highestAncestor(Node*);
 bool isTableElement(Node*);
-Position positionAvoidingSpecialElementBoundary(const Position&, bool avoidAnchor = true);
 
 }
 

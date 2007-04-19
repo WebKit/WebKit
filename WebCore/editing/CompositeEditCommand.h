@@ -99,6 +99,8 @@ protected:
     void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
     
     bool breakOutOfEmptyListItem();
+    
+    Position positionAvoidingSpecialElementBoundary(const Position&, bool alwaysAvoidAnchors = true);
 
     Vector<RefPtr<EditCommand> > m_commands;
 

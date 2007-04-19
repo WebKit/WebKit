@@ -333,24 +333,6 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     typingAddedToOpenCommand();
 }
 
-static Node* isFirstPositionAfterTable(const VisiblePosition& visiblePosition)
-{
-    Position upstream(visiblePosition.deepEquivalent().upstream());
-    if (upstream.node() && upstream.node()->renderer() && upstream.node()->renderer()->isTable() && upstream.offset() == maxDeepOffset(upstream.node()))
-        return upstream.node();
-    
-    return 0;
-}
-
-static Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
-{
-    Position downstream(visiblePosition.deepEquivalent().upstream());
-    if (downstream.node() && downstream.node()->renderer() && downstream.node()->renderer()->isTable() && downstream.offset() == maxDeepOffset(downstream.node()))
-        return downstream.node();
-    
-    return 0;
-}
-
 void TypingCommand::deleteKeyPressed(TextGranularity granularity)
 {
     Selection selectionToDelete;

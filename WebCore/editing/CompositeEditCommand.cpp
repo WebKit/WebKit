@@ -636,13 +636,6 @@ Node* CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Pos
     return newBlock.get();
 }
 
-Node* enclosingAnchorElement(Node* node)
-{
-    while (node && !(node->isElementNode() && node->isLink()))
-        node = node->parentNode();
-    return node;
-}
-
 void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
 {
     if (!anchorNode)
@@ -652,6 +645,9 @@ void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
     
     setEndingSelection(Selection::selectionFromContentsOfNode(anchorNode));
     applyStyledElement(static_cast<Element*>(anchorNode));
+    // Clones of anchorNode have been pushed down, now remove it.
+    if (anchorNode->inDocument())
+        removeNodePreservingChildren(anchorNode);
 }
 
 // We must push partially selected anchors down before creating or removing
@@ -664,12 +660,12 @@ void CompositeEditCommand::pushPartiallySelectedAnchorElementsDown()
     VisiblePosition visibleStart(originalSelection.start());
     VisiblePosition visibleEnd(originalSelection.end());
     
-    Node* startAnchor = enclosingAnchorElement(originalSelection.start().node());
+    Node* startAnchor = enclosingAnchorElement(originalSelection.start());
     VisiblePosition startOfStartAnchor(Position(startAnchor, 0));
     if (startAnchor && startOfStartAnchor != visibleStart)
         pushAnchorElementDown(startAnchor);
 
-    Node* endAnchor = enclosingAnchorElement(originalSelection.end().node());
+    Node* endAnchor = enclosingAnchorElement(originalSelection.end());
     VisiblePosition endOfEndAnchor(Position(endAnchor, 0));
     if (endAnchor && endOfEndAnchor != visibleEnd)
         pushAnchorElementDown(endAnchor);
@@ -790,9 +786,15 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     applyCommandToComposite(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
     
     if (preserveSelection && startIndex != -1) {
-        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0, true)->startPosition(), 
-                                     TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0, true)->startPosition(), 
-                                     DOWNSTREAM));
+        // Fragment creation (using createMarkup) incorrectly uses regular
+        // spaces instead of nbsps for some spaces that were rendered (11475), which
+        // causes spaces to be collapsed during the move operation.  This results
+        // in a call to rangeFromLocationAndLength with a location past the end
+        // of the document (which will return null).
+        RefPtr<Range> start = TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0, true);
+        RefPtr<Range> end = TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0, true);
+        if (start && end)
+            setEndingSelection(Selection(start->startPosition(), end->startPosition(), DOWNSTREAM));
     }
 }
 
@@ -827,6 +829,64 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         applyStyle(style.get());
     
     return true;
+}
+
+// Operations use this function to avoid inserting content into an anchor when at the start or the end of 
+// that anchor, as in NSTextView.
+// FIXME: This is only an approximation of NSTextViews insertion behavior, which varies depending on how
+// the caret was made. 
+Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Position& p, bool alwaysAvoidAnchors)
+{
+    if (p.isNull())
+        return p;
+        
+    VisiblePosition visiblePos(p);
+    Node* enclosingAnchor = enclosingAnchorElement(p);
+    Position result = p;
+    // Don't avoid block level anchors, because that would insert content into the wrong paragraph.
+    if (enclosingAnchor && !isBlock(enclosingAnchor)) {
+        VisiblePosition firstInAnchor(Position(enclosingAnchor, 0));
+        VisiblePosition lastInAnchor(Position(enclosingAnchor, maxDeepOffset(enclosingAnchor)));
+        // If visually just after the anchor, insert *inside* the anchor unless it's the last 
+        // VisiblePosition in the document, to match NSTextView.
+        if (visiblePos == lastInAnchor && (isEndOfDocument(visiblePos) || alwaysAvoidAnchors)) {
+            // Make sure anchors are pushed down before avoiding them so that we don't
+            // also avoid structural elements like lists and blocks (5142012).
+            if (Node* anchor = enclosingAnchorElement(p))
+                if (p.node() != anchor && p.node()->parentNode() != anchor) {
+                    pushAnchorElementDown(anchor);
+                    enclosingAnchor = enclosingAnchorElement(p);
+                }
+            result = positionAfterNode(enclosingAnchor);
+        }
+        // If visually just before an anchor, insert *outside* the anchor unless it's the first
+        // VisiblePosition in a paragraph, to match NSTextView.
+        if (visiblePos == firstInAnchor && (!isStartOfParagraph(visiblePos) || alwaysAvoidAnchors)) {
+            // Make sure anchors are pushed down before avoiding them so that we don't
+            // also avoid structural elements like lists and blocks (5142012).
+            if (Node* anchor = enclosingAnchorElement(p))
+                if (p.node() != anchor && p.node()->parentNode() != anchor) {
+                    pushAnchorElementDown(anchor);
+                    enclosingAnchor = enclosingAnchorElement(p);
+                }
+            result = positionBeforeNode(enclosingAnchor);
+        }
+    // FIXME: If this avoids positions before/after tables, then it should
+    // probably avoid positions before/after replaced elements, before brs,
+    // etc.  Since it doesn't and there are no known cases where we insert
+    // into such elements, avoiding tables is probably done elsewhere
+    // and is not needed here.
+    } else if (isTableElement(p.node())) {
+        if (isFirstPositionAfterTable(visiblePos))
+            result = positionAfterNode(p.node());
+        if (isLastPositionBeforeTable(visiblePos))
+            result = positionBeforeNode(p.node());
+    }
+        
+    if (result.isNull() || !editableRootForPosition(result))
+        result = p;
+    
+    return result;
 }
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
