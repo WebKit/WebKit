@@ -2,6 +2,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -318,6 +319,13 @@ JSValue* jsStringOrFalse(const String& s)
 String valueToStringWithNullCheck(ExecState* exec, JSValue* val)
 {
     if (val->isNull())
+        return String();
+    return val->toString(exec);
+}
+
+String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue* val)
+{
+    if (val->isUndefinedOrNull())
         return String();
     return val->toString(exec);
 }

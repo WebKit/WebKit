@@ -1,3 +1,22 @@
+2007-04-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=12249
+          FCKeditor: <hr>, <ul> and <ol> have id="undefined"
+
+        Convert undefined and null to a null string for third argument of
+        execCommand(); 
+
+        Test: editing/execCommand/arguments-combinations.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::valueToStringWithUndefinedOrNullCheck):
+        * bindings/js/kjs_binding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.idl:
+
 2007-04-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by hyatt.

@@ -1,3 +1,13 @@
+2007-04-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Test for http://bugs.webkit.org/show_bug.cgi?id=12249
+          FCKeditor: <hr>, <ul> and <ol> have id="undefined"
+
+        * editing/execCommand/arguments-combinations-expected.txt: Added.
+        * editing/execCommand/arguments-combinations.html: Added.
+
 2007-04-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim

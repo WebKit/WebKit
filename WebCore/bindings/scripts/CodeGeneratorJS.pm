@@ -1,7 +1,7 @@
 #
 # Copyright (C) 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
-# Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+# Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
 #
@@ -1271,6 +1271,7 @@ sub JSValueToNative
     return "$value->toString(exec)" if $type eq "AtomicString";
     if ($type eq "DOMString") {
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
+        return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
         return "$value->toString(exec)";
     }
 
