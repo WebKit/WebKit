@@ -2148,11 +2148,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!URL) 
         return NPERR_INVALID_URL;
 
-    // don't let a plugin start any loads if it is no longer part of a document that is being
-    // displayed
-    if ([[self dataSource] _documentLoader] != [[self webFrame] _frameLoader]->activeDocumentLoader())
-        return NPERR_GENERIC_ERROR;
-    
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString != nil) {
         if (![[[self webView] preferences] isJavaScriptEnabled]) {

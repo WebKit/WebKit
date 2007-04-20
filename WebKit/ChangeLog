@@ -1,3 +1,19 @@
+2007-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5085897> REGRESSION: Some Flash links at www.jumpskyhigh.com just reload the page
+        
+        Get rid of the check that would prevent plugin requests from being loaded if a new page load was underway.
+        www.jumpskyhigh.com had a flash movie that was embedded inside an <a> tag and clicking on the plug-in would cause the
+        URL pointed to by the <a> tag to start loading and thus preventing the plug-in from loading the real URL.
+        
+        This check was added by Maciej and we should be able to remove it with the loader changes that have happened now,
+        (mainly the fact that resource loaders are handled by the document loader instead of the frame loader).
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+
 2007-04-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
