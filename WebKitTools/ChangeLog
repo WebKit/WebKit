@@ -1,3 +1,12 @@
+2007-04-20  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13421
+        Bug 13421: prepare-ChangeLog should use svn-create-patch when spewing diffs
+
+        * Scripts/prepare-ChangeLog: Use svn-create-patch instead of svn diff.
+
 2007-04-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim

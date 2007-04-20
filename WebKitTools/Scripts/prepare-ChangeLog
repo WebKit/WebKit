@@ -56,6 +56,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 use File::Temp;
+use FindBin;
 use Getopt::Long;
 
 sub canonicalizePath($);
@@ -329,7 +330,7 @@ foreach my $prefix (sort keys %files)
 if ($spewDiff && @changed_files)
   {
     print STDERR "  Running 'svn diff' to help you write the ChangeLog entries.\n";
-    open DIFF, "$SVN diff $changed_files_string |" or die "The svn diff failed: $!.\n";
+    open DIFF, "'$FindBin::Bin/svn-create-patch' $changed_files_string |" or die "The svn diff failed: $!.\n";
     while (<DIFF>) { print; }
     close DIFF;
   }
