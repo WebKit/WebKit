@@ -1406,13 +1406,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
         case CSS_PROP_WIDTH:
             return new CSSPrimitiveValue(renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
+        case CSS_PROP_WORD_BREAK:
+            switch (style->wordBreak()) {
+                case NormalWordBreak:
+                    return new CSSPrimitiveValue(CSS_VAL_NORMAL);
+                case BreakAllWordBreak:
+                    return new CSSPrimitiveValue(CSS_VAL_BREAK_ALL);
+                case BreakWordBreak:
+                    return new CSSPrimitiveValue(CSS_VAL_BREAK_WORD);
+            }
         case CSS_PROP_WORD_SPACING:
             return new CSSPrimitiveValue(style->wordSpacing(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP_WORD_WRAP:
             switch (style->wordWrap()) {
-                case WBNORMAL:
+                case NormalWordWrap:
                     return new CSSPrimitiveValue(CSS_VAL_NORMAL);
-                case BREAK_WORD:
+                case BreakWordWrap:
                     return new CSSPrimitiveValue(CSS_VAL_BREAK_WORD);
             }
             ASSERT_NOT_REACHED();

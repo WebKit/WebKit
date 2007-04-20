@@ -524,7 +524,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textShadow(0)
     , textSecurity(RenderStyle::initialTextSecurity())
     , userModify(READ_ONLY)
-    , wordWrap(WBNORMAL)
+    , wordBreak(RenderStyle::initialWordBreak())
+    , wordWrap(RenderStyle::initialWordWrap())
     , nbspMode(NBNORMAL)
     , khtmlLineBreak(LBNORMAL)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
@@ -541,6 +542,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , highlight(o.highlight)
     , textSecurity(o.textSecurity)
     , userModify(o.userModify)
+    , wordBreak(o.wordBreak)
     , wordWrap(o.wordWrap)
     , nbspMode(o.nbspMode)
     , khtmlLineBreak(o.khtmlLineBreak)
@@ -563,6 +565,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && highlight == o.highlight
         && textSecurity == o.textSecurity
         && userModify == o.userModify
+        && wordBreak == o.wordBreak
         && wordWrap == o.wordWrap
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
@@ -943,6 +946,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
     if (rareInheritedData.get() != other->rareInheritedData.get()) {
         if (rareInheritedData->highlight != other->rareInheritedData->highlight ||
             rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust ||
+            rareInheritedData->wordBreak != other->rareInheritedData->wordBreak ||
             rareInheritedData->wordWrap != other->rareInheritedData->wordWrap ||
             rareInheritedData->nbspMode != other->rareInheritedData->nbspMode ||
             rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak ||

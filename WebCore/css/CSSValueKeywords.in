@@ -461,6 +461,11 @@ continuous
 skip-white-space
 
 #
+# CSS_PROP_WORD_BREAK
+#
+break-all
+
+#
 # CSS_PROP_WORD_WRAP
 #
 break-word

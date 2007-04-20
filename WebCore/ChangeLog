@@ -1,3 +1,42 @@
+2007-04-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13208, implement word-break.  This patch produces a partial
+        implementation of word-break.  word-break: break-all is implemented.  In
+        addition, a custom value, word-break: break-word is added that is a hybrid
+        of word-wrap: break-word and word-break: break-all (and more useful than
+        either).
+
+        Reviewed by beth
+
+        Added fast/text/word-break.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::RenderStyle::breakWords):
+        (WebCore::RenderStyle::wordBreak):
+        (WebCore::RenderStyle::setWordBreak):
+        (WebCore::RenderStyle::initialWordBreak):
+        (WebCore::RenderStyle::initialWordWrap):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcMinMaxWidthInternal):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle):
+        (WebCore::RenderTextControl::calcHeight):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2007-04-20  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix for FreeBSD.

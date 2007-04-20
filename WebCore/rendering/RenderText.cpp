@@ -536,6 +536,8 @@ void RenderText::calcMinMaxWidthInternal(int leadWidth)
     int nextBreakable = -1;
     bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
 
+    bool breakAll = (style()->wordBreak() == BreakAllWordBreak || style()->wordBreak() == BreakWordBreak) && style()->autoWrap();
+
     for (int i = 0; i < len; i++) {
         UChar c = txt[i];
 
@@ -573,14 +575,14 @@ void RenderText::calcMinMaxWidthInternal(int leadWidth)
         if (ignoringSpaces || c == softHyphen)
             continue;
 
-        bool hasBreak = isBreakable(txt, i, len, nextBreakable, breakNBSP);
+        bool hasBreak = breakAll || isBreakable(txt, i, len, nextBreakable, breakNBSP);
         int j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style()) && c != '\t' && c != softHyphen) {
             j++;
             if (j == len)
                 break;
             c = txt[j];
-            if (isBreakable(txt, j, len, nextBreakable, breakNBSP))
+            if (breakAll || isBreakable(txt, j, len, nextBreakable, breakNBSP))
                 break;
         }
 
