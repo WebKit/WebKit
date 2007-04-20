@@ -45,9 +45,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     penColor.getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(context, red, green, blue, alpha);
 
-    // FIXME: this should probably be here but right now it makes some text
-    // invisible, probably due to breakage in other place
-    //font->setFont(context);
+    // This was commented out as it made "some text invisible" but seems to work now.
+    font->setFont(context);
 
     GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*) glyphBuffer.glyphs(from);
 

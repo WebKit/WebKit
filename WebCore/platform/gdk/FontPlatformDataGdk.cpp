@@ -4,6 +4,7 @@
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -41,37 +42,45 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 {
     init();
 
-    FcChar8* family = (FcChar8*)((const char*)(familyName.deprecatedString().utf8()));
+    FcChar8* fcfamily = static_cast<FcChar8*>(familyName.deprecatedString().ascii());
     int fcslant = FC_SLANT_ROMAN;
     int fcweight = FC_WEIGHT_NORMAL;
-    int fcsize = (int)fontDescription.computedSize();
+    float fcsize = fontDescription.computedSize();
     if (fontDescription.italic())
         fcslant = FC_SLANT_ITALIC;
     if (fontDescription.bold())
         fcweight = FC_WEIGHT_BOLD;
 
     int type = fontDescription.genericFamily();
+
+    FcPattern* pattern = FcPatternCreate();
+
+    if (!FcPatternAddString(pattern, FC_FAMILY, fcfamily))
+        goto freePattern;
+
     switch (type) {
         case FontDescription::SerifFamily:
-            family = (FcChar8*)"sans-serif";
+            fcfamily = static_cast<FcChar8*>("serif");
             break;
         case FontDescription::SansSerifFamily:
-            family = (FcChar8*)"sans-serif";
+            fcfamily = static_cast<FcChar8*>("sans-serif");
+            break;
+        case FontDescription::MonospaceFamily:
+            fcfamily = static_cast<FcChar8*>("monospace");
             break;
         case FontDescription::NoFamily:
         case FontDescription::StandardFamily:
         default:
-            family = (FcChar8*)"sans-serif";
+            fcfamily = static_cast<FcChar8*>("sans-serif");
     }
-    FcPattern* pattern = FcPatternCreate();
-    assert(pattern != 0);
-    if (!FcPatternAddString(pattern, FC_FAMILY, family))
+
+    if (!FcPatternAddString(pattern, FC_FAMILY, fcfamily))
         goto freePattern;
     if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
         goto freePattern;
     if (!FcPatternAddInteger(pattern, FC_WEIGHT, fcweight))
         goto freePattern;
-    if (!FcPatternAddInteger(pattern, FC_PIXEL_SIZE, fcsize))
+    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fcsize))
         goto freePattern;
 
     FcConfigSubstitute(NULL, pattern, FcMatchPattern);
@@ -89,8 +98,6 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     cairo_matrix_init_identity(&ctm);
     m_options = cairo_font_options_create();
     m_scaledFont = cairo_scaled_font_create(m_fontFace, m_fontMatrix, &ctm, m_options);
-
-    assert(m_scaledFont != 0);
 
 freePattern:
     FcPatternDestroy(pattern);

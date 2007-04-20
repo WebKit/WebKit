@@ -1,3 +1,12 @@
+2007-04-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark.
+
+        * platform/gdk/FontGdk.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/gdk/FontPlatformDataGdk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Fix font support in Gdk port.
+
 2007-04-19  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13208, implement word-break.  This patch produces a partial
