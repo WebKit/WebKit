@@ -277,7 +277,10 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:_private->data] autorelease];
-    [wrapper setPreferredFilename:[_private->URL _webkit_suggestedFilenameWithMIMEType:_private->MIMEType]];
+    NSString *preferredFilename = [_private->response suggestedFilename];
+    if (!preferredFilename || ![preferredFilename length])
+        preferredFilename = [_private->URL _webkit_suggestedFilenameWithMIMEType:_private->MIMEType];
+    [wrapper setPreferredFilename:preferredFilename];
     return wrapper;
 }
 

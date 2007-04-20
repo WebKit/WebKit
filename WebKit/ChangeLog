@@ -1,3 +1,15 @@
+2007-04-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/4960912> -- REGRESSION: Content-Disposition:
+        filename is ignored for drag-and-drop.
+
+        * WebView/WebResource.mm:
+        (-[WebResource _fileWrapperRepresentation]):
+          When creating the NSFileWrapper check the response for a preferred 
+          filename, rather than just blindly hoping for the best.
+
 2007-04-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John.
