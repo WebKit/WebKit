@@ -44,7 +44,7 @@ function runTest() {
 <body>
     <p>This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an image, without crashing.</p>
     
-    <img id="dragme" src="../resources/abe.jpg"/>
+    <img id="dragme" src="../resources/abe.png"/>
     <iframe id="drag_target" onload="runTest();" src='data:text/html,<div contenteditable="true" style="height: 95%; width: 95%; border: solid 1px black;"><img id="dragme" src="broken_image"/></div>'>
     </iframe>
     <ul id="console"></ul>

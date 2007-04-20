@@ -1,3 +1,91 @@
+2007-04-19  Mitz Pettel  <mitz@webkit.org>
+
+        Rubber-stamped by Adam.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13412
+          Replace abe.jpg with a PNG file
+
+        * editing/abe.jpg: Removed.
+        * editing/deleting/4866671.html:
+        * editing/deleting/delete-3608462-fix.html:
+        * editing/deleting/delete-image-001.html:
+        * editing/deleting/delete-image-002.html:
+        * editing/deleting/delete-image-003.html:
+        * editing/deleting/delete-image-004.html:
+        * editing/execCommand/5080333-1-expected.checksum:
+        * editing/execCommand/5080333-1-expected.png:
+        * editing/execCommand/5080333-1.html:
+        * editing/execCommand/5080333-2-expected.checksum:
+        * editing/execCommand/5080333-2-expected.png:
+        * editing/execCommand/5080333-2.html:
+        * editing/execCommand/createLink-expected.txt:
+        * editing/execCommand/createLink.html:
+        * editing/execCommand/insertImage-expected.checksum:
+        * editing/execCommand/insertImage-expected.png:
+        * editing/execCommand/insertImage.html:
+        * editing/execCommand/unlink-expected.txt:
+        * editing/execCommand/unlink.html:
+        * editing/inserting/12882.html:
+        * editing/inserting/typing-around-image-001.html:
+        * editing/pasteboard/4641033-expected.checksum:
+        * editing/pasteboard/4641033-expected.png:
+        * editing/pasteboard/4641033.html:
+        * editing/pasteboard/4947130-expected.checksum:
+        * editing/pasteboard/4947130-expected.png:
+        * editing/pasteboard/4947130.html:
+        * editing/pasteboard/4989774-expected.checksum:
+        * editing/pasteboard/4989774-expected.png:
+        * editing/pasteboard/4989774.html:
+        * editing/pasteboard/copy-standalone-image.html:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe.html:
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.checksum:
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.png:
+        * editing/pasteboard/drag-selected-image-to-contenteditable.html:
+        * editing/pasteboard/styled-element-markup-expected.checksum:
+        * editing/pasteboard/styled-element-markup-expected.png:
+        * editing/pasteboard/styled-element-markup.html:
+        * editing/resources/abe.jpg: Removed.
+        * editing/resources/abe.png: Added.
+        * editing/selection/4402375-expected.checksum:
+        * editing/selection/4402375-expected.png:
+        * editing/selection/4402375.html:
+        * editing/selection/4932260-1-expected.checksum:
+        * editing/selection/4932260-1-expected.png:
+        * editing/selection/4932260-1.html:
+        * editing/selection/4932260-2-expected.checksum:
+        * editing/selection/4932260-2-expected.png:
+        * editing/selection/4932260-2.html:
+        * editing/selection/4932260-3-expected.checksum:
+        * editing/selection/4932260-3-expected.png:
+        * editing/selection/4932260-3.html:
+        * editing/selection/drag-to-contenteditable-iframe-expected.checksum:
+        * editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * editing/selection/drag-to-contenteditable-iframe.html:
+        * editing/selection/extend-by-character-002-expected.checksum:
+        * editing/selection/extend-by-character-002-expected.png:
+        * editing/selection/extend-by-character-002.html:
+        * editing/selection/extend-by-character-004-expected.checksum:
+        * editing/selection/extend-by-character-004-expected.png:
+        * editing/selection/extend-by-character-004.html:
+        * editing/selection/image-before-linebreak-expected.checksum:
+        * editing/selection/image-before-linebreak-expected.png:
+        * editing/selection/image-before-linebreak.html:
+        * editing/selection/legal-positions.html:
+        * editing/selection/move-by-character-002-expected.checksum:
+        * editing/selection/move-by-character-002-expected.png:
+        * editing/selection/move-by-character-002.html:
+        * editing/selection/move-by-character-004-expected.checksum:
+        * editing/selection/move-by-character-004-expected.png:
+        * editing/selection/move-by-character-004.html:
+        * editing/selection/replaced-boundaries-1-expected.checksum:
+        * editing/selection/replaced-boundaries-1-expected.png:
+        * editing/selection/replaced-boundaries-1.html:
+        * editing/selection/replaced-boundaries-2-expected.checksum:
+        * editing/selection/replaced-boundaries-2-expected.png:
+        * editing/selection/replaced-boundaries-2.html:
+
 2007-04-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
