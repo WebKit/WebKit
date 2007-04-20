@@ -1,3 +1,14 @@
+2007-04-20  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13420
+
+        * platform/TextEncodingRegistry.cpp:
+        (WebCore::addToTextEncodingNameMap): Change a pointer comparison to a
+        strcmp(), since the strings here are not necessarily
+        pointer-equivalent.
+
 2007-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen and John Sullivan.
