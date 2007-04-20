@@ -177,12 +177,6 @@ void FrameView::clear()
     
     d->reset();
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (d->layoutTimer.isActive() && m_frame->document() && !m_frame->document()->ownerElement())
-        printf("Killing the layout timer from a clear at %d\n", m_frame->document()->elapsedTime());
-#endif    
-    d->layoutTimer.stop();
-
     if (m_frame)
         if (RenderPart* renderer = m_frame->ownerRenderer())
             renderer->viewCleared();
@@ -702,7 +696,7 @@ bool FrameView::needsLayout() const
     // It is possible that our document will not have a body yet. If this is the case, 
     // then we are not allowed to schedule layouts yet, so we won't be pending layout.
     RenderView* root = static_cast<RenderView*>(m_frame->renderer());
-    return layoutPending() || (root && root->needsLayout());
+    return layoutPending() || (root && root->needsLayout()) || d->layoutRoot;
 }
 
 void FrameView::setNeedsLayout()

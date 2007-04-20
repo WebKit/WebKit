@@ -1,3 +1,21 @@
+2007-04-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13403
+          REGRESSION (r18875-r18899): Can no longer type into search form field after searching and then clicking "back"
+
+        The problem was that the page was loaded from the page cache with a subtree
+        marked for layout and the layout timer stopped (having been stopped when the
+        page entered the page cache). FrameView::needsLayout() was returning false
+        which prevented the pending layout from completing.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clear): Removed the call to stop the layout timer, since
+        reset() does that already.
+        (WebCore::FrameView::needsLayout): Changed to return true if there's a subtree
+        pending relayout.
+
 2007-04-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
