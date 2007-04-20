@@ -3352,7 +3352,7 @@ for (;; ptr++)
 #ifdef SUPPORT_UCP
       else if (-c == ESC_P || -c == ESC_p)
         {
-        BOOL negated;
+        BOOL negated = 0;
         int value = get_ucp(&ptr, patternEnd, &negated, errorcodeptr);
         previous = code;
         *code++ = ((-c == ESC_p) != negated)? OP_PROP : OP_NOTPROP;
@@ -4050,7 +4050,7 @@ patternEnd = (const pcre_uchar *)(pattern + patternLength);
 
 while (++ptr < patternEnd)
   {
-  int min, max;
+  int min = 0, max = 0;
   int class_optcount;
   int bracket_length;
   int duplength;

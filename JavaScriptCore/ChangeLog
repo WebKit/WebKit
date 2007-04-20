@@ -1,5 +1,15 @@
 2007-04-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+
+        - fix build problem with last change - -O3 complains more about uninitialized variables
+        
+        * pcre/pcre_compile.c:
+        (compile_branch):
+        (pcre_compile2):
+
+2007-04-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - <rdar://problem/5149915> use mergesort when possible, since it leads to fewer compares (2% JS iBench speedup)
