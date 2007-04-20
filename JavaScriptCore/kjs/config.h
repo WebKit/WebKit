@@ -31,6 +31,7 @@
 #define HAVE_FUNC_ISINF 1
 #define HAVE_FUNC_ISNAN 1
 #define HAVE_MMAP 1
+#define HAVE_MERGESORT 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1

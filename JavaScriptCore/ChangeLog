@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
         
+        - <rdar://problem/5149915> use mergesort when possible, since it leads to fewer compares (2% JS iBench speedup)
+
+        * kjs/array_object.cpp:
+        (ArrayInstance::sort): Use mergesort(3) on platforms that have it, since it tends
+        to do fewer compares than qsort; but avoid it very on large arrays since it uses extra
+        memory. Also added comments identifying possibly even better sorting algorithms
+        for sort by string value and sort by compare function.
+        * kjs/config.h:
+
+2007-04-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
         - bump optimization flags up to -O3 for 1% JS iBench speed improvement 
 
         * Configurations/Base.xcconfig:

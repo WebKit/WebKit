@@ -302,10 +302,28 @@ static int compareByStringForQSort(const void *a, const void *b)
 
 void ArrayInstance::sort(ExecState* exec)
 {
-    int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
-
+    size_t lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
+      
     ExecState* oldExec = execForCompareByStringForQSort;
     execForCompareByStringForQSort = exec;
+#if HAVE(MERGESORT)
+    // mergesort usually does fewer compares, so it is actually faster than qsort for JS sorts.
+    // however, becuase it requires extra copies of the storage buffer, don't use it for very
+    // large arrays
+    // FIXME: for sorting by string value, the fastest thing would actually be to convert all the
+    // values to string once up front, and then use a radix sort. That would be O(N) rather than 
+    // O(N log N).
+    if (lengthNotIncludingUndefined < sparseArrayCutoff) {
+        JSValue** storageCopy = static_cast<JSValue**>(fastMalloc(capacity * sizeof(JSValue*)));
+        memcpy(storageCopy, storage, capacity * sizeof(JSValue*));
+        mergesort(storageCopy, lengthNotIncludingUndefined, sizeof(JSValue *), compareByStringForQSort);
+        storage = storageCopy;
+        fastFree(storage);
+        execForCompareByStringForQSort = oldExec;
+        return;
+    }
+#endif
+
     qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue*), compareByStringForQSort);
     execForCompareByStringForQSort = oldExec;
 }
@@ -351,11 +369,26 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 
 void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
 {
-    int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
+    size_t lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
 
     CompareWithCompareFunctionArguments* oldArgs = compareWithCompareFunctionArguments;
     CompareWithCompareFunctionArguments args(exec, compareFunction);
     compareWithCompareFunctionArguments = &args;
+#if HAVE(MERGESORT)
+    // mergesort usually does fewer compares, so it is actually faster than qsort for JS sorts.
+    // however, becuase it requires extra copies of the storage buffer, don't use it for very
+    // large arrays
+    // FIXME: a tree sort using a perfectly balanced tree (e.g. an AVL tree) could do an even
+    // better job of minimizing compares
+    if (lengthNotIncludingUndefined < sparseArrayCutoff) {
+        JSValue** storageCopy = static_cast<JSValue**>(fastMalloc(capacity * sizeof(JSValue*)));
+        memcpy(storageCopy, storage, capacity * sizeof(JSValue*));
+        mergesort(storageCopy, lengthNotIncludingUndefined, sizeof(JSValue *), compareWithCompareFunctionForQSort);
+        storage = storageCopy;
+        compareWithCompareFunctionArguments = oldArgs;
+        return;
+    }
+#endif
     qsort(storage, lengthNotIncludingUndefined, sizeof(JSValue*), compareWithCompareFunctionForQSort);
     compareWithCompareFunctionArguments = oldArgs;
 }
