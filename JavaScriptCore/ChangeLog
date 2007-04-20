@@ -1,5 +1,14 @@
 2007-04-20  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Maciej.
+
+        Fix bogus optimisation in the generic pthread code path.
+
+        * kjs/collector.cpp:
+        (KJS::currentThreadStackBase):
+
+2007-04-20  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Anders.
 
         Improve FreeBSD compatibility, as suggested by Alexander Botero-Lowry.

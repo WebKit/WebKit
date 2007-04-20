@@ -236,6 +236,7 @@ static inline void* currentThreadStackBase()
     return (void*)pTib->StackBase;
 #elif PLATFORM(UNIX)
     static void *stackBase = 0;
+    static size_t stackSize = 0;
     static pthread_t stackThread;
     pthread_t thread = pthread_self();
     if (stackBase == 0 || thread != stackThread) {
@@ -248,14 +249,13 @@ static inline void* currentThreadStackBase()
         // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
         pthread_getattr_np(thread, &sattr);
 #endif
-        size_t stackSize;
         int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
         (void)rc; // FIXME: deal with error code somehow?  seems fatal...
         ASSERT(stackBase);
         pthread_attr_destroy(&sattr);
-        return (void*)(size_t(stackBase) + stackSize);
         stackThread = thread;
     }
+    return (void*)(size_t(stackBase) + stackSize);
 #else
 #error Need a way to get the stack base on this platform
 #endif
