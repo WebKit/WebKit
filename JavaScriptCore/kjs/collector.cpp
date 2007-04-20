@@ -240,6 +240,7 @@ static inline void* currentThreadStackBase()
     pthread_t thread = pthread_self();
     if (stackBase == 0 || thread != stackThread) {
         pthread_attr_t sattr;
+        pthread_attr_init(&sattr);
 #if HAVE(PTHREAD_NP_H)
         // e.g. on FreeBSD 5.4, neundorf@kde.org
         pthread_attr_get_np(thread, &sattr);
@@ -251,6 +252,7 @@ static inline void* currentThreadStackBase()
         int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
         (void)rc; // FIXME: deal with error code somehow?  seems fatal...
         ASSERT(stackBase);
+        pthread_attr_destroy(&sattr);
         return (void*)(size_t(stackBase) + stackSize);
         stackThread = thread;
     }

@@ -1,3 +1,13 @@
+2007-04-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders.
+
+        Improve FreeBSD compatibility, as suggested by Alexander Botero-Lowry.
+
+        * kjs/collector.cpp:
+        (KJS::currentThreadStackBase): FreeBSD requires that pthread_attr_t's are
+        initialized via pthread_attr_init before being used in any context.
+
 2007-04-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.
