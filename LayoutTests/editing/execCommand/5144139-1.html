@@ -1,0 +1,9 @@
+<p>This tests for a bug when creating a list from a table.  The table should be inside a a list item.</p>
+<div contenteditable="true" id="div"><table border="1"><tr><td>foo</td></tr></table></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("InsertUnorderedList");
+</script>

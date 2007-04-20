@@ -57,7 +57,7 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     // If an anchor was removed and the selection hasn't changed, we restore it.
     RefPtr<Node> anchor = document()->frame()->editor()->removedAnchor();
     if (anchor) {
-        insertNodeAt(anchor.get(), pos.node(), pos.offset());
+        insertNodeAt(anchor.get(), pos);
         document()->frame()->editor()->setRemovedAnchor(0);
         pos = Position(anchor.get(), 0);
     }
@@ -70,15 +70,7 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     if (!pos.node()->isTextNode()) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
 
-        // Now insert the node in the right place
-        if (pos.node()->rootEditableElement() != NULL) {
-            insertNodeAt(textNode.get(), pos.node(), pos.offset());
-        } else if (pos.node()->caretMinOffset() == pos.offset()) {
-            insertNodeBefore(textNode.get(), pos.node());
-        } else if (pos.node()->caretMaxOffset() == pos.offset()) {
-            insertNodeAfter(textNode.get(), pos.node());
-        } else
-            ASSERT_NOT_REACHED();
+        insertNodeAt(textNode.get(), pos);
         
         return Position(textNode.get(), 0);
     }
@@ -174,7 +166,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     
     // place it
     if (!node->isTextNode()) {
-        insertNodeAt(spanNode.get(), node, offset);
+        insertNodeAt(spanNode.get(), insertPos);
     } else {
         Text *textNode = static_cast<Text *>(node);
         if (offset >= textNode->length()) {

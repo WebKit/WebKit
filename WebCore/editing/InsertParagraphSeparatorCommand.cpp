@@ -192,7 +192,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // content will move down a line.
     if (isStartOfParagraph(visiblePos)) {
         RefPtr<Element> br = createBreakElement(document());
-        insertNodeAt(br.get(), pos.node(), pos.offset());
+        insertNodeAt(br.get(), pos);
         pos = positionAfterNode(br.get());
     }
     

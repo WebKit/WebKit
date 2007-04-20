@@ -573,7 +573,7 @@ void ReplaceSelectionCommand::doApply()
     RefPtr<Node> node = refNode->nextSibling();
     
     fragment.removeNode(refNode);
-    insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos.node(), insertionPos.offset());
+    insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos);
     
     while (node) {
         Node* next = node->nextSibling();
@@ -591,7 +591,7 @@ void ReplaceSelectionCommand::doApply()
     // We inserted before the startBlock to prevent nesting, and the content before the startBlock wasn't in its own block and
     // didn't have a br after it, so the inserted content ended up in the same paragraph.
     if (startBlock && insertionPos.node() == startBlock->parentNode() && (unsigned)insertionPos.offset() < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
-        insertNodeAt(createBreakElement(document()).get(), startOfInsertedContent.deepEquivalent().node(), startOfInsertedContent.deepEquivalent().offset());
+        insertNodeAt(createBreakElement(document()).get(), startOfInsertedContent.deepEquivalent());
     
     Position lastPositionToSelect;
     
@@ -777,9 +777,9 @@ void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(Node *insert
     updateNodesInserted(insertChild);
 }
 
-void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(Node *insertChild, Node *refChild, int offset)
+void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(Node *insertChild, const Position& p)
 {
-    insertNodeAt(insertChild, refChild, offset);
+    insertNodeAt(insertChild, p);
     updateNodesInserted(insertChild);
 }
 

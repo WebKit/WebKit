@@ -198,7 +198,7 @@ void InsertListCommand::doApply()
                 end = start;
             }
             
-            insertNodeAt(listElement.get(), start.deepEquivalent().node(), start.deepEquivalent().offset());
+            insertNodeAt(listElement.get(), start.deepEquivalent());
         }
         moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
         if (nextList && previousList)

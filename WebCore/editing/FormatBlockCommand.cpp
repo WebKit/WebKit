@@ -119,7 +119,7 @@ void FormatBlockCommand::doApply()
         // Already in a valid block tag that only contains the current paragraph, so we can swap with the new tag
         insertNodeBefore(blockNode.get(), refNode);
     else {
-        insertNodeAt(blockNode.get(), upstreamStart.node(), upstreamStart.offset());
+        insertNodeAt(blockNode.get(), upstreamStart);
     }
     appendNode(placeholder.get(), blockNode.get());
     moveParagraph(paragraphStart, paragraphEnd, VisiblePosition(Position(placeholder.get(), 0)), true, false);

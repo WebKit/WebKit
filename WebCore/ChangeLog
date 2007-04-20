@@ -1,3 +1,49 @@
+2007-04-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Fixes some issues found while investigating:
+        <rdar://problem/5144139> On delete, <BR> inserted into non-editable ToDo <TABLE> element
+        
+        Move the code to handle inserting content before/after
+        tables for [table, 0/max] to insertNodeAt, so that
+        all insertions get it, not just some.
+        Changed insertNodeAt to take in a position instead of a
+        node and an offset.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::insertNodeAtTabSpanPosition):
+        (WebCore::CompositeEditCommand::insertBlockPlaceholder):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        If paragrahStart.node() is an atomic node, insertNodeAt can handle
+        insertion, we don't need to special case it.
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::prepareForTextInsertion): Removed some
+        dead code that handled insertion at non-editable positions.
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted):
+        * editing/ReplaceSelectionCommand.h:
+
 2007-04-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -56,7 +56,7 @@ protected:
     virtual void deleteTextFromNode(Text* node, int offset, int count);
     void inputText(const String&, bool selectInsertedText = false);
     void insertNodeAfter(Node* insertChild, Node* refChild);
-    void insertNodeAt(Node* insertChild, Node* refChild, int offset);
+    void insertNodeAt(Node* insertChild, const Position&);
     void insertNodeBefore(Node* insertChild, Node* refChild);
     void insertParagraphSeparator();
     void insertTextIntoNode(Text* node, int offset, const String& text);
