@@ -1,3 +1,17 @@
+2007-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and John Sullivan.
+
+        - test changes for <rdar://problem/4671964> document property on <iframe> elements causes problems for SAP application
+
+        * fast/dom/iframe-document-expected.txt: Added.
+        * fast/dom/iframe-document.html: Added.
+
+        * fast/dom/attr_dead_doc.html: Changed to use contentDocument instead of relying on the document property
+        on HTMLIFrameElement.
+        * fast/events/mouseover-mouseout.html: Ditto.
+        * fast/frames/repaint-display-none-crash.html: Ditto.
+
 2007-04-19  Mitz Pettel  <mitz@webkit.org>
 
         Rubber-stamped by Adam.

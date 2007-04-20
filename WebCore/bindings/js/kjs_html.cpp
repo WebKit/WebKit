@@ -646,7 +646,6 @@ rows          KJS::JSHTMLElement::FrameSetRows                  DontDelete
   align           KJS::JSHTMLElement::IFrameAlign                 DontDelete
   contentDocument KJS::JSHTMLElement::IFrameContentDocument       DontDelete|ReadOnly
   contentWindow   KJS::JSHTMLElement::IFrameContentWindow         DontDelete|ReadOnly
-  document        KJS::JSHTMLElement::IFrameDocument              DontDelete|ReadOnly
   frameBorder     KJS::JSHTMLElement::IFrameFrameBorder           DontDelete
   height          KJS::JSHTMLElement::IFrameHeight                DontDelete
   longDesc        KJS::JSHTMLElement::IFrameLongDesc              DontDelete
@@ -952,7 +951,6 @@ JSValue *JSHTMLElement::iFrameGetter(ExecState* exec, int token) const
     switch (token) {
         case IFrameAlign:                return jsString(iFrame.align());
           // ### security check ?
-        case IFrameDocument: // non-standard, mapped to contentDocument
         case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
                                       toJS(exec, iFrame.contentDocument()) : jsUndefined();
         case IFrameContentWindow:   return checkNodeSecurity(exec,iFrame.contentDocument()) 

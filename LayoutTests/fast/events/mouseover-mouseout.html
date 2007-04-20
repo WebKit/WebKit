@@ -45,9 +45,7 @@ Mouse events vs. DOM manipulation.</p>
 <div style='height: 50; width: 50; background:yellow;top:100;left:200; position:absolute;' id='t3_1' 
     onMouseOver="
         logMouseEvent(event);
-        newDoc = document.getElementById('invisible_frame').document;
-        if (!newDoc)
-            newDoc = document.getElementById('invisible_frame').contentDocument;
+        newDoc = document.getElementById('invisible_frame').contentDocument;
         try {
             newDoc.adoptNode(document.getElementById('t3_1'));
         } catch (e) {
@@ -63,9 +61,7 @@ Mouse events vs. DOM manipulation.</p>
 <div style='height: 50; width: 50; background:green;top:100;left:250; position:absolute;' id='t4_1' 
     onMouseOver="
         logMouseEvent(event);
-        newDoc = document.getElementById('invisible_frame').document;
-        if (!newDoc)
-            newDoc = document.getElementById('invisible_frame').contentDocument;
+        newDoc = document.getElementById('invisible_frame').contentDocument;
         try {
             newDoc.documentElement.appendChild(newDoc.adoptNode(document.getElementById('t4_1')));
         } catch (ex) {

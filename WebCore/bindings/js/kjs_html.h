@@ -142,7 +142,7 @@ namespace KJS {
            TableCellAlign, TableCellAxis, TableCellScope, FrameSetCols,
            FrameSetRows, FrameSrc, FrameLocation, FrameFrameBorder, FrameScrolling,
            FrameMarginWidth, FrameLongDesc, FrameMarginHeight, FrameName, FrameContentDocument, FrameContentWindow, 
-           FrameNoResize, FrameWidth, FrameHeight, IFrameLongDesc, IFrameDocument, IFrameAlign,
+           FrameNoResize, FrameWidth, FrameHeight, IFrameLongDesc, IFrameAlign,
            IFrameFrameBorder, IFrameSrc, IFrameName, IFrameHeight,
            IFrameMarginHeight, IFrameMarginWidth, IFrameScrolling, IFrameWidth, IFrameContentDocument, IFrameContentWindow,
            MarqueeStart, MarqueeStop,

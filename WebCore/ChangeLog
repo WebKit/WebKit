@@ -1,3 +1,14 @@
+2007-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and John Sullivan.
+
+        - fix <rdar://problem/4671964> document property on <iframe> elements causes problems for SAP application
+
+        Test: fast/dom/iframe-document.html
+
+        * bindings/js/kjs_html.h: Removed IFrameDocument.
+        * bindings/js/kjs_html.cpp: (KJS::JSHTMLElement::iFrameGetter): Ditto.
+
 2007-04-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark.
