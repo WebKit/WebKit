@@ -249,8 +249,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // If the paragraph separator was inserted at the end of a paragraph, an empty line must be
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
-    if (isEndOfParagraph(visiblePos) && !startNode->hasTagName(brTag) &&
-        !(startNode->renderer()->style()->preserveNewline() && visiblePos.characterAfter() == '\n'))
+    if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtPosition(visiblePos))
         appendNode(createBreakElement(document()).get(), blockToInsert.get());
         
     // Move the start node and the siblings of the start node.

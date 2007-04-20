@@ -2,6 +2,39 @@
 
         Reviewed by harrison
         
+        <rdar://problem/5144139> 
+        On delete, <BR> inserted into non-editable ToDo <TABLE> element
+        
+        The fact that the br was being inserted at a bad position 
+        (a non-editable position and one inside a table instead of 
+        before it) was fixed in the previous checkin. This change 
+        stops us from inserting a br at all, to fix the bug.
+        
+        After a delete, we need a placeholder if the selection
+        started at the start of a paragraph and ended at the end 
+        of a paragraph. But not if it starts just before a table 
+        and ends inside that table.  We need placeholders to hold 
+        open emptied out table cells, but that is handled separately.
+        
+        Also, moved lineBreakExistsAtPosition to htmlediting.cpp 
+        so that it can be used in more places.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::lineBreakExistsAtPosition):
+        * editing/htmlediting.h:
+
+2007-04-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         Fixes some issues found while investigating:
         <rdar://problem/5144139> On delete, <BR> inserted into non-editable ToDo <TABLE> element
         

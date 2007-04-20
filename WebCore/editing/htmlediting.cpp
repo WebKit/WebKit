@@ -861,4 +861,14 @@ bool isMailBlockquote(const Node *node)
     return static_cast<const Element *>(node)->getAttribute("type") == "cite";
 }
 
+bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return false;
+        
+    Position downstream(visiblePosition.deepEquivalent().downstream());
+    return downstream.node()->hasTagName(brTag) ||
+           downstream.node()->isTextNode() && downstream.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n';
+}
+
 } // namespace WebCore

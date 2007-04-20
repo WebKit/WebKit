@@ -598,8 +598,16 @@ void DeleteSelectionCommand::doApply()
     Position downstreamEnd = m_selectionToDelete.end().downstream();
     m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
                         isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
-                        !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0) &&
-                        !(downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->style()->preserveNewline() && m_selectionToDelete.visibleEnd().characterAfter() == '\n');
+                        !lineBreakExistsAtPosition(m_selectionToDelete.visibleEnd());
+    if (m_needPlaceholder) {
+        // Don't need a placeholder when deleting a selection that starts just before a table
+        // and ends inside it (we do need placeholders to hold open empty cells, but that's
+        // handled elsewhere).
+        if (Node* table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart()))
+            if (m_selectionToDelete.end().node()->isDescendantOf(table))
+                m_needPlaceholder = false;
+    }
+        
     
     // set up our state
     initializePositionData();

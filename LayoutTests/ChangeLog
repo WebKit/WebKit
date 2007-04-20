@@ -1,6 +1,18 @@
 2007-04-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
+        
+        <rdar://problem/5144139> 
+        On delete, <BR> inserted into non-editable ToDo <TABLE> element
+
+        * editing/deleting/5144139-2-expected.checksum: Added.
+        * editing/deleting/5144139-2-expected.png: Added.
+        * editing/deleting/5144139-2-expected.txt: Added.
+        * editing/deleting/5144139-2.html: Added.
+
+2007-04-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
 
         * editing/execCommand/5144139-1-expected.checksum: Added.
         * editing/execCommand/5144139-1-expected.png: Added.
