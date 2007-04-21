@@ -48,6 +48,7 @@
 #include "KURL.h"
 #include "Logging.h"
 #include "ProcessingInstruction.h"
+#include "QualifiedName.h"
 #include "Range.h"
 #include "Selection.h"
 #include "htmlediting.h"
@@ -154,7 +155,50 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     blockquoteStyle->diff(style);
 }
 
-static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false)
+static bool shouldAddNamespaceElem(const Element* elem)
+{
+    // Don't add namespace attribute if it is already defined for this elem.
+    const AtomicString& prefix = elem->prefix();
+    AtomicString attr = !prefix.isEmpty() ? "xmlns:" + prefix : "xmlns";
+    return !elem->hasAttribute(attr);
+}
+
+static bool shouldAddNamespaceAttr(const Attribute* attr, HashMap<AtomicStringImpl*, AtomicStringImpl*>& namespaces)
+{
+    // Don't add namespace attributes twice
+    static const AtomicString xmlnsURI = "http://www.w3.org/2000/xmlns/";
+    static const QualifiedName xmlnsAttr(nullAtom, "xmlns", xmlnsURI);
+    if (attr->name() == xmlnsAttr) {
+        namespaces.set(emptyAtom.impl(), attr->value().impl());
+        return false;
+    }
+    
+    QualifiedName xmlnsPrefixAttr("xmlns", attr->localName(), xmlnsURI);
+    if (attr->name() == xmlnsPrefixAttr) {
+        namespaces.set(attr->localName().impl(), attr->value().impl());
+        return false;
+    }
+    
+    return true;
+}
+
+static String addNamespace(const AtomicString& prefix, const AtomicString& ns, HashMap<AtomicStringImpl*, AtomicStringImpl*>& namespaces)
+{
+    if (ns.isEmpty())
+        return "";
+    
+    // Use emptyAtoms's impl() for both null and empty strings since the HashMap can't handle 0 as a key
+    AtomicStringImpl* pre = prefix.isEmpty() ? emptyAtom.impl() : prefix.impl();
+    AtomicStringImpl* foundNS = namespaces.get(pre);
+    if (foundNS != ns.impl()) {
+        namespaces.set(pre, ns.impl());
+        return " xmlns" + (!prefix.isEmpty() ? ":" + prefix : "") + "=\"" + escapeTextForMarkup(ns.deprecatedString(), true) + "\"";
+    }
+    
+    return "";
+}
+
+static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
     switch (node->nodeType()) {
@@ -193,6 +237,8 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             markup += el->nodeNamePreservingCase().deprecatedString();
             NamedAttrMap *attrs = el->attributes();
             unsigned length = attrs->length();
+            if (!documentIsHTML && namespaces && shouldAddNamespaceElem(el))
+                markup += addNamespace(el->prefix(), el->namespaceURI(), *namespaces).deprecatedString();
 
             for (unsigned int i = 0; i < length; i++) {
                 Attribute *attr = attrs->attributeItem(i);
@@ -206,6 +252,9 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
                 else
                     markup += " " + attr->name().toString().deprecatedString();
                 markup += "=\"" + escapeTextForMarkup(value.deprecatedString(), true) + "\"";
+
+                if (!documentIsHTML && namespaces && shouldAddNamespaceAttr(attr, *namespaces))
+                    markup += addNamespace(attr->prefix(), attr->namespaceURI(), *namespaces).deprecatedString();
             }
             
             if (el->isHTMLElement() && (annotate || convertBlocksToInlines)) {
@@ -274,26 +323,27 @@ static DeprecatedString endMarkup(const Node *node)
     return "";
 }
 
-static DeprecatedString markup(Node* startNode, bool onlyIncludeChildren, bool includeSiblings, Vector<Node*> *nodes)
+static DeprecatedString markup(Node* startNode, bool onlyIncludeChildren, Vector<Node*>* nodes, const HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0)
 {
-    // Doesn't make sense to only include children and include siblings.
-    ASSERT(!(onlyIncludeChildren && includeSiblings));
+    HashMap<AtomicStringImpl*, AtomicStringImpl*> namespaceHash;
+    if (namespaces)
+        namespaceHash = *namespaces;
+    
     DeprecatedString me = "";
-    for (Node* current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
-        if (!onlyIncludeChildren) {
-            if (nodes)
-                nodes->append(current);
-            me += startMarkup(current, 0, DoNotAnnotateForInterchange);
-        }
-        // print children
-        if (Node *n = current->firstChild())
-            if (!(n->document()->isHTMLDocument() && doesHTMLForbidEndTag(current)))
-                me += markup(n, false, true, nodes);
-        
-        // Print my ending tag
-        if (!onlyIncludeChildren)
-            me += endMarkup(current);
+    if (!onlyIncludeChildren) {
+        if (nodes)
+            nodes->append(startNode);
+        me += startMarkup(startNode, 0, DoNotAnnotateForInterchange, false, &namespaceHash);
     }
+    // print children
+    if (!(startNode->document()->isHTMLDocument() && doesHTMLForbidEndTag(startNode)))
+        for (Node* current = startNode->firstChild(); current; current = current->nextSibling())
+            me += markup(current, false, nodes, &namespaceHash);
+    
+    // Print my ending tag
+    if (!onlyIncludeChildren)
+        me += endMarkup(startNode);
+    
     return me;
 }
 
@@ -585,7 +635,7 @@ DeprecatedString createMarkup(const Node* node, EChildrenOnly includeChildren,
     if (node->document()->frame())
         node->document()->frame()->editor()->deleteButtonController()->disable();
     node->document()->updateLayoutIgnorePendingStylesheets();
-    DeprecatedString result(markup(const_cast<Node*>(node), includeChildren, false, nodes));
+    DeprecatedString result(markup(const_cast<Node*>(node), includeChildren, nodes));
     if (node->document()->frame())
         node->document()->frame()->editor()->deleteButtonController()->enable();
     return result;

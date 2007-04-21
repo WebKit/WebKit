@@ -1194,7 +1194,7 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const String& name)
  
 PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String &namespaceURI, const String &localName)
 {
-    if (namespaceURI.isNull() || localName.isNull())
+    if (localName.isNull())
         return 0; // FIXME: Who relies on getting 0 instead of a node list in this case?
     
     String name = localName;

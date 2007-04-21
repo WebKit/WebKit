@@ -1,3 +1,19 @@
+2007-04-21  Lamar Goddard  <lamargoddard@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=5262
+        <rdar://problem/5018778>
+        XMLSerializer drops Namespace information
+
+        * fast/dom/serialize-nodes-expected.txt: Added.
+        * fast/dom/serialize-nodes.xhtml: Added.
+        * dom/xhtml/level3/core/nodeisequalnode14-expected.txt: This test fails because 
+        createAttribute is supposed to create an Attr with localName of null.
+        * dom/xhtml/level3/core/nodeisequalnode15-expected.txt: Now succeeds.
+        * fast/innerHTML/004-expected.txt: Added namespace information to head and body nodes
+        as xhtml nodes now serialize with namespace information.
+
 2007-04-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

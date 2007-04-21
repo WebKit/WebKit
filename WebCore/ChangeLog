@@ -1,3 +1,30 @@
+2007-04-21  Lamar Goddard <lamargoddard@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=5262
+        <rdar://problem/5018778>
+        XMLSerializer drops Namespace information
+
+        Updated WebCore::markup to output namespace information for elements/attributes whose namespace information
+        doesn't appear in its scope in the output.
+
+        Added test case: fast/dom/serialize-nodes.xhtml
+
+        * WebCore/editing/markup.cpp:
+        (WebCore::createMarkup(const Node*, ...)): Changed call to WebCore::markup to match parameters
+        (WebCore::markup): Changed recursive call to match tree structure, removed ASSERT and no longer needed includeSiblings parameter.
+        (WebCore::startMarkup): Added optional parameter to track namespaces in the current scope.
+        (WebCore::addNamespace): Function to add namespace information to markup.
+        (WebCore::shouldAddNamespaceAttr):
+        (WebCore::shouldAddNamespaceElem): Functions that test whether namespace information should be added for a given node.
+        * WebCore/dom/Document.idl:
+        (createElementNS):
+        (createAttributeNS):
+        (getElementsByTagNameNS): Added [ConvertNullToNullString] to namespaceURI parameter.
+        * WebCore/dom/Node.cpp:
+        (Node::getElementsByTagNameNS): removed test for namespaceURI being null as null can be a valid namespace.
+
 2007-04-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

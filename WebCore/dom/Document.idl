@@ -49,13 +49,13 @@ module core {
         [OldStyleObjC] Node importNode(in Node importedNode,
                                        in boolean deep)
             raises (DOMException);
-        [OldStyleObjC] Element createElementNS(in DOMString namespaceURI,
+        [OldStyleObjC] Element createElementNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                in DOMString qualifiedName)
             raises (DOMException);
-        [OldStyleObjC] Attr createAttributeNS(in DOMString namespaceURI,
+        [OldStyleObjC] Attr createAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                               in DOMString qualifiedName)
             raises (DOMException);
-        [OldStyleObjC] NodeList getElementsByTagNameNS(in DOMString namespaceURI,
+        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);
         Element            getElementById(in DOMString elementId);
 

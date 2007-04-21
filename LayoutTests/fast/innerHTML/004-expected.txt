@@ -1,10 +1,10 @@
 Content:
 
-<head>
+<head xmlns="http://www.w3.org/1999/xhtml">
 <meta name="description" content="This tests singular elements too" />
 <title>xhtml innerHTML test</title>
 </head>
-<body>
+<body xmlns="http://www.w3.org/1999/xhtml">
 <span>Content:</span>
 <pre id="content">placeholder</pre>
 <div></div>
