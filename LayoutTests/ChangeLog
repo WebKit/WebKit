@@ -1,3 +1,12 @@
+2007-04-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Test I meant to check in a while ago.
+
+        * fast/events/fire-scroll-event-expected.txt: Added.
+        * fast/events/fire-scroll-event.html: Added.
+
 2007-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen and John Sullivan.

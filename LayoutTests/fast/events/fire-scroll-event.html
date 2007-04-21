@@ -1,0 +1,30 @@
+<html>
+<script>
+var eventFired = false;
+
+function scroller() {
+    if (!eventFired) {
+        eventFired = true;
+        document.getElementById("passed").innerHTML = "<p style='color:red'>PASSED</p>";
+    }
+}
+
+window.onload = function() {
+    window.addEventListener('scroll', scroller, false);
+    window.scrollTo(500, 500);
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+}
+
+</script>
+<body>
+<div id="passed"></div>
+
+<p>If the word 'PASSED' does not appear above, then the test has failed. If the test fails, it means that a scroll event did not fire.</p>
+
+a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+</body>
+</html>
