@@ -14,7 +14,7 @@ if they do anything that changes the layout. Once we get a test rendering proper
 
 <ol>
 <li>The test should be the smallest possible code fragment that tests the feature.
-<li>The test should fit on one page (unless of course it's testing scrolling).
+<li>The test should fit on one page (unless of course it&rsquo;s testing scrolling).
 <li>The test should clearly describe what feature it is testing.
 <li>The test should clearly describe the expected result.  It should be possible through visual inspection alone to determine that the test has
 failed.
@@ -29,6 +29,12 @@ One you should know about is the <tt>layoutTestController.dumpAsText</tt> method
 for the output to be written out as plain text rather than as a render tree dump. 
 This is useful for tests that are testing something other than layout. The event creation test mentioned above is a good example of 
 how to do this and when it makes sense.</p>
+
+<p><a href="http://www.hixie.ch/resources/fonts/">The Ahem font</a> is useful in testing text layout, since its
+glyphs&rsquo; metrics are well known, and it is always available to tests running
+in the layout test tool. However, if you want to view tests that use Ahem in Safari,
+you should <a href="Ahem.ttf">download Ahem</a>, open it in the Font Book
+application, and click on the Install Font button to install it.</p>
 
 <p>The CSS working group has an excellent document on <a href="http://www.w3.org/Style/CSS/Test/guidelines.html">test writing guidelines</a> for CSS tests.  <a href="http://trac.webkit.org/projects/webkit/wiki/Writing%20Layout%20Tests%20for%20DumpRenderTree">This wiki article</a> has more information on writing good tests and the DumpRenderTree tool.</p>
 

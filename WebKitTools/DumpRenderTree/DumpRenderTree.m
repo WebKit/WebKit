@@ -63,6 +63,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <JavaScriptCore/Assertions.h>
 #import <getopt.h>
+#import <mach-o/getsect.h>
 #import <malloc/malloc.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
 #import <pthread.h>
@@ -299,6 +300,24 @@ static void crashHandler(int sig)
     exit(128 + sig);
 }
 
+static void activateAhemFont(void)
+{    
+    unsigned long fontDataLength;
+    char* fontData = getsectdata("__DATA", "Ahem", &fontDataLength);
+    if (!fontData) {
+        fprintf(stderr, "Failed to locate the Ahem font.\n");
+        exit(1);
+    }
+
+    ATSFontContainerRef fontContainer;
+    OSStatus status = ATSFontActivateFromMemory(fontData, fontDataLength, kATSFontContextLocal, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &fontContainer);
+
+    if (status != noErr) {
+        fprintf(stderr, "Failed to activate the Ahem font.\n");
+        exit(1);
+    }
+}
+
 static void setDefaultColorProfileToRGB(void)
 {
     CMProfileRef genericProfile = [[NSColorSpace genericRGBColorSpace] colorSyncProfile];
@@ -451,12 +470,9 @@ void dumpRenderTree(int argc, const char *argv[])
                 exit(1);
                 break;
         }
-    
-    if ([[[NSFontManager sharedFontManager] availableMembersOfFontFamily:@"Ahem"] count] == 0) {
-        fprintf(stderr, "\nAhem font is not available. This special simple font is used to construct certain types of predictable tests.\n\nTo run regression tests, please get it from <http://webkit.org/quality/Ahem.ttf>.\n");
-        exit(1);
-    }
-    
+
+    activateAhemFont();
+
     if (dumpPixels) {
         setDefaultColorProfileToRGB();
         screenCaptureBuffer = malloc(maxViewHeight * maxViewWidth * 4);

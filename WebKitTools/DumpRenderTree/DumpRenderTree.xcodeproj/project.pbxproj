@@ -114,6 +114,7 @@
 		22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPluginFunction.h; sourceTree = "<group>"; };
 		22181BD009DC8C4B008342E8 /* ObjCPluginFunction.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ObjCPluginFunction.m; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
+		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
@@ -180,6 +181,7 @@
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				1422A2750AF6F4BD00E1A883 /* Delegates */,
 				1422A2690AF6F45200E1A883 /* Controllers */,
+				9345229B0BD12B2C0086EDA0 /* Resources */,
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
 				08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */,
@@ -237,6 +239,14 @@
 				1422A1B90AF6EDD600E1A883 /* UIDelegate.m */,
 			);
 			name = Delegates;
+			sourceTree = "<group>";
+		};
+		9345229B0BD12B2C0086EDA0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9345229C0BD12B710086EDA0 /* AHEM____.TTF */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		9340995508540CAF007F3BC8 /* Products */ = {
@@ -510,6 +520,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__DATA,
+					Ahem,
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+				);
 				PRODUCT_NAME = DumpRenderTree;
 			};
 			name = Debug;
@@ -518,6 +534,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__DATA,
+					Ahem,
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+				);
 				PRODUCT_NAME = DumpRenderTree;
 			};
 			name = Release;

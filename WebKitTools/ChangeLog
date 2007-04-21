@@ -1,3 +1,19 @@
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13350
+          Build Ahem into DumpRenderTree
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (activateAhemFont): Added. Activates the copy of Ahem included in the
+        DumpRenderTree binary.
+        (dumpRenderTree): Replaced the check that Ahem is available with a call
+        to activateAhemFont().
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+          Added linker options to include Ahem in the data section of the
+          DumpRenderTree binary.
+
 2007-04-20  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

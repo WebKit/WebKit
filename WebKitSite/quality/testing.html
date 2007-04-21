@@ -6,17 +6,9 @@
 
 <h3>The WebKit Tests</h3>
 
-<p>Before patches can land in any of the frameworks in the repository, the layout regression tests must be run. To run these tests, do the following:</p>
-
-<ol>
-<li><p>Download the <a href="Ahem.ttf">Ahem font</a>.</p>
-<p>This special simple font is used to construct certain types of predictable tests. <a href="http://www.hixie.ch/resources/fonts/">A page on Ian Hickson's site</a> has a more detailed explanation.</p></li>
-<li><p>Open the downloaded file in the Font Book application and click on the Install Font button to install it.</p></li>
-<li><p>Execute the <tt>run-webkit-tests</tt> script.</p>
+<p>Before patches can land in any of the frameworks in the repository, the layout regression tests must be run. To run these tests, execute the <tt>run-webkit-tests</tt> script.</p>
 <p class="code">WebKitTools/Scripts/run-webkit-tests</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>build-webkit</tt> without specifying the path to the script.</p>
-</li>
-</ol>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>run-webkit-tests</tt> without specifying the path to the script.</p>
 
 <p>The script will dump the render trees for all of the pages and diff the results against the expected correct results.  If no
 differences are found, then the patch has passed the tests.  If any tests fail, then the patch cannot be committed until the
