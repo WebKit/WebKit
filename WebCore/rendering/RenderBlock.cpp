@@ -2652,34 +2652,12 @@ void RenderBlock::addVisualOverflow(const IntRect& r)
     m_overflowHeight = max(m_overflowHeight, r.bottom());
 }
 
-bool RenderBlock::isPointInScrollbar(HitTestResult& result, int _x, int _y, int _tx, int _ty)
+bool RenderBlock::isPointInOverflowControl(HitTestResult& result, int _x, int _y, int _tx, int _ty)
 {
     if (!scrollsOverflow())
         return false;
 
-    if (m_layer->verticalScrollbarWidth()) {
-        IntRect vertRect(_tx + width() - borderRight() - m_layer->verticalScrollbarWidth(),
-                       _ty + borderTop() - borderTopExtra(),
-                       m_layer->verticalScrollbarWidth(),
-                       height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom() -  m_layer->horizontalScrollbarHeight());
-        if (vertRect.contains(_x, _y)) {
-            result.setScrollbar(m_layer->verticalScrollbarWidget());
-            return true;
-        }
-    }
-
-    if (m_layer->horizontalScrollbarHeight()) {
-        IntRect horizRect(_tx + borderLeft(),
-                        _ty + height() + borderBottomExtra() - m_layer->horizontalScrollbarHeight() - borderBottom(),
-                        width() - borderLeft() - borderRight() - m_layer->verticalScrollbarWidth(),
-                        m_layer->horizontalScrollbarHeight());
-        if (horizRect.contains(_x, _y)) {
-            result.setScrollbar(m_layer->horizontaScrollbarWidget());
-            return true;
-        }
-    }
-
-    return false;    
+    return layer()->hitTestOverflowControls(result);
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
@@ -2697,7 +2675,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             return false;
     }
 
-    if (isPointInScrollbar(result, _x, _y, tx, ty)) {
+    if (isPointInOverflowControl(result, _x, _y, tx, ty)) {
         if (hitTestAction == HitTestBlockBackground) {
             updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
             return true;

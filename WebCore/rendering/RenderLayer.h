@@ -256,7 +256,7 @@ public:
     Scrollbar* horizontalScrollbar() { return m_hBar.get(); }
     Scrollbar* verticalScrollbar() { return m_vBar.get(); }
 
-    PlatformScrollbar* horizontaScrollbarWidget() const;
+    PlatformScrollbar* horizontalScrollbarWidget() const;
     PlatformScrollbar* verticalScrollbarWidget() const;
 
     int verticalScrollbarWidth() const;
@@ -264,6 +264,7 @@ public:
 
     void positionOverflowControls();
     bool isPointInResizeControl(const IntPoint&);
+    bool hitTestOverflowControls(HitTestResult&);
     IntSize offsetFromResizeCorner(const IntPoint&) const;
 
     void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect);

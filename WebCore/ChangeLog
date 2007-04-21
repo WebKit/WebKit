@@ -2,6 +2,35 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13353
+          REGRESSION (r20754-20766): Textarea does not resize when scrollbar is present
+
+        Test: fast/overflow/hit-test-overflow-controls.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): Avoid activating scrollbars
+        during layer resize.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInOverflowControl): Renamed isPointInScrollbar
+        to this, to reflect that it returns true for points in the resize corner
+        as well. Changed it to call the layer to do the actual work.
+        (WebCore::RenderBlock::nodeAtPoint): Updated for the above rename.
+        * rendering/RenderBlock.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::horizontalScrollbarWidget): Fixed typo in this function's
+        name (it was horizontaScrollbarWidget).
+        (WebCore::RenderLayer::hitTestOverflowControls): Added. Returns whether the
+        hit point is in one of the scrollbars or the resize corner, and updates the
+        platform scrollbar in the hit test result if a scrollbar was hit.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl): Rename.
+        * rendering/RenderListBox.h:
+
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13417
           Repro crash when the first argument to getMatchedCSSRules is not an element
 

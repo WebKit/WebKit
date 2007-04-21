@@ -900,21 +900,23 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
 
     PlatformScrollbar* scrollbar = 0;
-    if (m_frame->view())
-        scrollbar = m_frame->view()->scrollbarUnderMouse(mouseEvent);
-
-    if (!scrollbar)
-        scrollbar = mev.scrollbar();
-
-    if (m_lastScrollbarUnderMouse != scrollbar) {
-        // Send mouse exited to the old scrollbar.
-        if (m_lastScrollbarUnderMouse)
-            m_lastScrollbarUnderMouse->handleMouseOutEvent(mouseEvent);
-        m_lastScrollbarUnderMouse = scrollbar;
-    }
 
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         m_resizeLayer->resize(mouseEvent, m_offsetFromResizeCorner);
+    else {
+        if (m_frame->view())
+            scrollbar = m_frame->view()->scrollbarUnderMouse(mouseEvent);
+
+        if (!scrollbar)
+            scrollbar = mev.scrollbar();
+
+        if (m_lastScrollbarUnderMouse != scrollbar) {
+            // Send mouse exited to the old scrollbar.
+            if (m_lastScrollbarUnderMouse)
+                m_lastScrollbarUnderMouse->handleMouseOutEvent(mouseEvent);
+            m_lastScrollbarUnderMouse = scrollbar;
+        }
+    }
         
     bool swallowEvent = false;
     Node* targetNode = m_capturingMouseEventsNode.get() ? m_capturingMouseEventsNode.get() : mev.targetNode();

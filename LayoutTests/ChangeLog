@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13353
+          REGRESSION (r20754-20766): Textarea does not resize when scrollbar is present
+
+        * fast/overflow/hit-test-overflow-controls-expected.checksum: Added.
+        * fast/overflow/hit-test-overflow-controls-expected.png: Added.
+        * fast/overflow/hit-test-overflow-controls-expected.txt: Added.
+        * fast/overflow/hit-test-overflow-controls.html: Added.
+
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=13417
           Repro crash when the first argument to getMatchedCSSRules is not an element
 

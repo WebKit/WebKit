@@ -944,7 +944,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFro
     }
 }
 
-PlatformScrollbar* RenderLayer::horizontaScrollbarWidget() const
+PlatformScrollbar* RenderLayer::horizontalScrollbarWidget() const
 {
     if (m_hBar && m_hBar->isWidget())
         return static_cast<PlatformScrollbar*>(m_hBar.get());
@@ -1342,6 +1342,45 @@ bool RenderLayer::isPointInResizeControl(const IntPoint& point)
     return scrollCornerRect(m_object, absBounds).contains(point);
 }
     
+bool RenderLayer::hitTestOverflowControls(HitTestResult& result)
+{
+    if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
+        return false;
+
+    int x = 0;
+    int y = 0;
+    convertToLayerCoords(root(), x, y);
+    IntRect absBounds(x, y, renderer()->width(), renderer()->height());
+    
+    IntRect resizeControlRect;
+    if (renderer()->style()->resize() != RESIZE_NONE) {
+        resizeControlRect = scrollCornerRect(renderer(), absBounds);
+        if (resizeControlRect.contains(result.point()))
+            return true;
+    }
+
+    int resizeControlSize = max(resizeControlRect.height(), 0);
+
+    if (m_vBar) {
+        IntRect vBarRect(absBounds.right() - renderer()->borderRight() - m_vBar->width(), absBounds.y() + renderer()->borderTop(), m_vBar->width(), absBounds.height() - (renderer()->borderTop() + renderer()->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize));
+        if (vBarRect.contains(result.point())) {
+            result.setScrollbar(verticalScrollbarWidget());
+            return true;
+        }
+    }
+
+    resizeControlSize = max(resizeControlRect.width(), 0);
+    if (m_hBar) {
+        IntRect hBarRect(absBounds.x() + renderer()->borderLeft(), absBounds.bottom() - renderer()->borderBottom() - m_hBar->height(), absBounds.width() - (renderer()->borderLeft() + renderer()->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize), m_hBar->height());
+        if (hBarRect.contains(result.point())) {
+            result.setScrollbar(horizontalScrollbarWidget());
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     bool didHorizontalScroll = false;
