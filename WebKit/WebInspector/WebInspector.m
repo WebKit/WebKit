@@ -300,7 +300,7 @@
                 if ([node isKindOfClass:[DOMElement class]])
                     element = (DOMElement *)node;
                 else
-                    element = (DOMElement *)[element parentNode];
+                    element = (DOMElement *)[node parentNode];
                 [element scrollIntoViewIfNeeded:YES];
 
                 // give time for the scroll to happen
