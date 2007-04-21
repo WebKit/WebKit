@@ -1,3 +1,18 @@
+2007-04-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13300
+        Reproducible crash opening anekdot.ru
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::getNode):
+        (WebCore::HTMLParser::handleIsindex):
+        * html/HTMLParser.h:
+        Made HTMLParser::form a RefPtr, and renamed it to m_currentFormElement.
+        Made m_currentMapElement a RefPtr.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,15 @@
+2007-04-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13300
+        Reproducible crash opening anekdot.ru
+
+        * fast/parser/rewrite-form-expected.txt: Added.
+        * fast/parser/rewrite-form.html: Added.
+        * fast/parser/rewrite-map-expected.txt: Added.
+        * fast/parser/rewrite-map.html: Added.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -112,8 +112,6 @@ HTMLParser::HTMLParser(HTMLDocument* doc)
     , current(doc)
     , didRefCurrent(false)
     , blockStack(0)
-    , form(0)
-    , m_currentMapElement(0)
     , head(0)
     , inBody(false)
     , haveContent(false)
@@ -128,8 +126,6 @@ HTMLParser::HTMLParser(DocumentFragment* frag)
     , current(frag)
     , didRefCurrent(true)
     , blockStack(0)
-    , form(0)
-    , m_currentMapElement(0)
     , head(0)
     , inBody(true)
     , haveContent(false)
@@ -161,7 +157,7 @@ void HTMLParser::reset()
     haveContent = false;
     inStrayTableContent = 0;
 
-    form = 0;
+    m_currentFormElement = 0;
     m_currentMapElement = 0;
     head = 0;
     m_isindexElement = 0;
@@ -251,8 +247,8 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         if (m_currentMapElement == n)
             m_currentMapElement = 0;
 
-        if (form == n)
-            form = 0;
+        if (m_currentFormElement == n)
+            m_currentFormElement = 0;
 
         if (head == n)
             head = 0;
@@ -404,8 +400,8 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             else if (!current->isDocumentNode())
                 return false;
         } else if (h->hasLocalName(inputTag)) {
-            if (equalIgnoringCase(h->getAttribute(typeAttr), "hidden") && form) {
-                form->addChild(n);
+            if (equalIgnoringCase(h->getAttribute(typeAttr), "hidden") && m_currentFormElement) {
+                m_currentFormElement->addChild(n);
                 if (!n->attached() && !m_isParsingFragment)
                     n->attach();
                 return true;
@@ -693,9 +689,9 @@ bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
-    if (!form) {
-        form = new HTMLFormElement(document);
-        result = form;
+    if (!m_currentFormElement) {
+        m_currentFormElement = new HTMLFormElement(document);
+        result = m_currentFormElement;
     }
     return false;
 }
@@ -829,7 +825,7 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
     if (CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl()))
         proceed = (this->*errorCheckFunc)(t, result);
     if (proceed)
-        result = HTMLElementFactory::createHTMLElement(t->tagName, document, form);
+        result = HTMLElementFactory::createHTMLElement(t->tagName, document, m_currentFormElement.get());
     return result.release();
 }
 
@@ -854,7 +850,7 @@ void HTMLParser::processCloseTag(Token* t)
         return;
     
     if (t->tagName == formTag)
-        form = 0;
+        m_currentFormElement = 0;
     else if (t->tagName == mapTag)
         m_currentMapElement = 0;
         
@@ -1091,8 +1087,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
     //
     // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
-    if (form)
-        form->setPreserveAcrossRemove(true);
+    if (m_currentFormElement)
+        m_currentFormElement->setPreserveAcrossRemove(true);
     if (isBlockStillInTree)
         blockElem->parentNode()->removeChild(blockElem, ec);
 
@@ -1158,8 +1154,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     reopenResidualStyleTags(residualStyleStack, 0); // FIXME: Deal with stray table content some day
                                                     // if it becomes necessary to do so.
                                                     
-    if (form)
-        form->setPreserveAcrossRemove(false);
+    if (m_currentFormElement)
+        m_currentFormElement->setPreserveAcrossRemove(false);
 }
 
 void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)
@@ -1253,11 +1249,11 @@ void HTMLParser::popBlock(const AtomicString& tagName)
             }
         }
         else {
-            if (form && elem->tagName == formTag)
+            if (m_currentFormElement && elem->tagName == formTag)
                 // A <form> is being closed prematurely (and this is
                 // malformed HTML).  Set an attribute on the form to clear out its
                 // bottom margin.
-                form->setMalformed(true);
+                m_currentFormElement->setMalformed(true);
 
             // Schedule this tag for reopening
             // after we complete the close of this entire block.
@@ -1364,7 +1360,7 @@ PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
 
     NamedMappedAttrMap* attrs = t->attrs.get();
 
-    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(document, form);
+    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(document, m_currentFormElement.get());
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 

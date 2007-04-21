@@ -137,8 +137,8 @@ private:
 
     HTMLStackElem* blockStack;
 
-    HTMLFormElement* form; // currently active form
-    HTMLMapElement* m_currentMapElement; // current map
+    RefPtr<HTMLFormElement> m_currentFormElement; // currently active form
+    RefPtr<HTMLMapElement> m_currentMapElement; // current map
     HTMLHeadElement* head; // head element; needed for HTML which defines <base> after </head>
     RefPtr<Node> m_isindexElement; // a possible <isindex> element in the head
 
