@@ -325,6 +325,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     m_closeAfterStyleRecalc = false;
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
+    m_usesFirstLineRules = false;
 
     m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
     m_pendingStylesheets = 0;

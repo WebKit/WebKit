@@ -1,3 +1,21 @@
+2007-04-20  David Hyatt  <hyatt@apple.com>
+
+        Bug 13424, firstLineStyle and verticalPositionHint together take
+        33% of the time on the new tag nesting PLT.  Don't waste time even
+        looking for first-line styles if no stylesheet used them.
+
+        Reviewed by beth
+
+        * css/CSSGrammar.y:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::usesFirstLineRules):
+        (WebCore::Document::setUsesFirstLineRules):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::verticalPositionHint):
+        (WebCore::RenderObject::firstLineStyle):
+
 2007-04-20  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Oliver.
