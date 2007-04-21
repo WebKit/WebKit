@@ -1,3 +1,15 @@
+2007-04-21  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13432, determineFlowSpacing is O(n^2).
+
+        Reviewed by aroben
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nextOnLineExists):
+        (WebCore::InlineBox::prevOnLineExists):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2007-04-21  Lamar Goddard <lamargoddard@gmail.com>
 
         Reviewed by Darin.
