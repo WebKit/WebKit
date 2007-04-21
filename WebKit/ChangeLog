@@ -1,3 +1,17 @@
+2007-04-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver (Black Sheep)
+
+        <rdar://problem/3559794>
+        [WebView setMaintainsBackForwardList:] doesn't actually flush out the current page caches
+
+        * WebView/WebView.mm: Remove _private->useBackForwardList
+        (-[WebView _setInitiatedDrag:]): Use _private->page instead of [self page]
+        (-[WebView initWithCoder:]): Manipulate the flag that is now in WebCore::BackForwardList
+        (-[WebView encodeWithCoder:]): Ditto
+        (-[WebView backForwardList]): Use _private->page instead of [self page]
+        (-[WebView setMaintainsBackForwardList:]): Manipulate the flag that is now in WebCore::BackForwardList
+
 2007-04-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

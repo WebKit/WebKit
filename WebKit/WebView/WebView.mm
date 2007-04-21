@@ -269,7 +269,6 @@ static int pluginDatabaseClientCount = 0;
     id scriptDebugDelegate;
     id scriptDebugDelegateForwarder;
     
-    BOOL useBackForwardList;
     BOOL allowsUndo;
         
     float textSizeMultiplier;
@@ -1184,7 +1183,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag
 {
-    [self page]->dragController()->setDidInitiateDrag(initiatedDrag);
+    _private->page->dragController()->setDidInitiateDrag(initiatedDrag);
 }
 
 #define DASHBOARD_CONTROL_LABEL @"control"
@@ -1759,7 +1758,7 @@ NS_DURING
 
     LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
     [result _commonInitializationWithFrameName:frameName groupName:groupName];
-    result->_private->useBackForwardList = useBackForwardList;
+    [result page]->backForwardList()->setEnabled(useBackForwardList);
     result->_private->allowsUndo = allowsUndo;
     if (preferences)
         [result setPreferences:preferences];
@@ -1782,19 +1781,20 @@ NS_ENDHANDLER
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
-        [encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
+        [encoder encodeBool:_private->page->backForwardList()->enabled() forKey:@"UseBackForwardList"];
         [encoder encodeBool:_private->allowsUndo forKey:@"AllowsUndo"];
     } else {
         int version = WebViewVersion;
+        BOOL useBackForwardList = _private->page->backForwardList()->enabled();
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
         [encoder encodeObject:[[self mainFrame] name]];
         [encoder encodeObject:[self groupName]];
         [encoder encodeObject:[self preferences]];
-        [encoder encodeValuesOfObjCTypes:"c", &_private->useBackForwardList];
+        [encoder encodeValuesOfObjCTypes:"c", &useBackForwardList];
         [encoder encodeValuesOfObjCTypes:"c", &_private->allowsUndo];
     }
 
-    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->useBackForwardList);
+    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->page->backForwardList()->enabled());
 }
 
 - (void)dealloc
@@ -1984,14 +1984,14 @@ NS_ENDHANDLER
 
 - (WebBackForwardList *)backForwardList
 {
-    if (_private->useBackForwardList)
-        return kit([self page]->backForwardList());
+    if (_private->page->backForwardList()->enabled())
+        return kit(_private->page->backForwardList());
     return nil;
 }
 
 - (void)setMaintainsBackForwardList: (BOOL)flag
 {
-    _private->useBackForwardList = flag;
+    _private->page->backForwardList()->setEnabled(flag);
 }
 
 - (BOOL)goBack

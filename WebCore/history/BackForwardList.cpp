@@ -43,6 +43,7 @@ BackForwardList::BackForwardList()
     , m_capacity(DefaultCapacitiy)
     , m_pageCacheSize(DefaultPageCacheSize)
     , m_closed(true)
+    , m_enabled(true)
 {
 }
 
@@ -54,7 +55,7 @@ BackForwardList::~BackForwardList()
 void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
 {
     ASSERT(prpItem);
-    if (m_capacity == 0)
+    if (m_capacity == 0 || !m_enabled)
         return;
     
     // Toss anything in the forward list    
@@ -171,10 +172,27 @@ void BackForwardList::setCapacity(int size)
         item->setCachedPage(0);
     }
 
-    if (m_current > m_entries.size() - 1)
+    if (!size)
+        m_current = NoCurrentItemIndex;
+    else if (m_current > m_entries.size() - 1)
         m_current = m_entries.size() - 1;
         
     m_capacity = size;
+}
+
+bool BackForwardList::enabled()
+{
+    return m_enabled;
+}
+
+void BackForwardList::setEnabled(bool enabled)
+{
+    m_enabled = enabled;
+    if (!enabled) {
+        int capacity = m_capacity;
+        setCapacity(0);
+        setCapacity(capacity);
+    }
 }
 
 void BackForwardList::setPageCacheSize(unsigned size)

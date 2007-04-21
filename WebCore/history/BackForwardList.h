@@ -57,6 +57,8 @@ public:
 
     int capacity();
     void setCapacity(int);
+    bool enabled();
+    void setEnabled(bool);
     int backListCount();
     int forwardListCount();
     bool containsItem(HistoryItem*);
@@ -81,6 +83,7 @@ private:
     unsigned m_capacity;
     unsigned m_pageCacheSize;
     bool m_closed;
+    bool m_enabled;
 }; //class BackForwardList
     
 }; //namespace WebCore
