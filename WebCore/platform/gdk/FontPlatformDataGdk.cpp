@@ -42,7 +42,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 {
     init();
 
-    FcChar8* fcfamily = static_cast<FcChar8*>(familyName.deprecatedString().ascii());
+    const char* fcfamily = familyName.deprecatedString().ascii();
     int fcslant = FC_SLANT_ROMAN;
     int fcweight = FC_WEIGHT_NORMAL;
     float fcsize = fontDescription.computedSize();
@@ -55,26 +55,26 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 
     FcPattern* pattern = FcPatternCreate();
 
-    if (!FcPatternAddString(pattern, FC_FAMILY, fcfamily))
+    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         goto freePattern;
 
     switch (type) {
         case FontDescription::SerifFamily:
-            fcfamily = static_cast<FcChar8*>("serif");
+            fcfamily = "serif";
             break;
         case FontDescription::SansSerifFamily:
-            fcfamily = static_cast<FcChar8*>("sans-serif");
+            fcfamily = "sans-serif";
             break;
         case FontDescription::MonospaceFamily:
-            fcfamily = static_cast<FcChar8*>("monospace");
+            fcfamily = "monospace";
             break;
         case FontDescription::NoFamily:
         case FontDescription::StandardFamily:
         default:
-            fcfamily = static_cast<FcChar8*>("sans-serif");
+            fcfamily = "sans-serif";
     }
 
-    if (!FcPatternAddString(pattern, FC_FAMILY, fcfamily))
+    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         goto freePattern;
     if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
         goto freePattern;
