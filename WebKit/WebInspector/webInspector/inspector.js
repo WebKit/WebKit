@@ -736,7 +736,7 @@ function updateNodePane()
 
         updateElementAttributes();
 
-        if (focusedDOMNode.namespaceURI.length > 0) {
+        if (focusedDOMNode.namespaceURI && focusedDOMNode.namespaceURI.length > 0) {
             document.getElementById("nodeNamespace").textContent = focusedDOMNode.namespaceURI;
             document.getElementById("nodeNamespace").title = focusedDOMNode.namespaceURI;
             document.getElementById("nodeNamespaceRow").style.removeProperty("display");
@@ -815,7 +815,7 @@ function updateStylePane()
             }
         }
 
-        if (styleNode.style.length) {
+        if (styleNode.style && styleNode.style.length) {
             var inlineStyle = {
                 selectorText: "Inline Style Attribute",
                 style: styleNode.style,

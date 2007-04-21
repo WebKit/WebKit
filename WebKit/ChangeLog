@@ -1,3 +1,11 @@
+2007-04-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix some problems I ran into using the inspector
+
+        * WebInspector/webInspector/inspector.js: Add some null checks.
+
 2007-04-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
