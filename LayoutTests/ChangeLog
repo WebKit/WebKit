@@ -1,3 +1,13 @@
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13417
+          Repro crash when the first argument to getMatchedCSSRules is not an element
+
+        * fast/dom/Window/getMatchedCSSRules-null-crash-expected.txt: Added.
+        * fast/dom/Window/getMatchedCSSRules-null-crash.html: Added.
+
 2007-04-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

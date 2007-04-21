@@ -1176,7 +1176,7 @@ void CSSStyleSelector::cacheBorderAndBackground()
 
 RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
 {
-    if (!e->document()->haveStylesheetsLoaded())
+    if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
 
     m_collectRulesOnly = true;
