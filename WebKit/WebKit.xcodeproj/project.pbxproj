@@ -20,8 +20,6 @@
 		1C68F668095B5FC100C2984E /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F65C095B5FC100C2984E /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C68F669095B5FC100C2984E /* WebInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F65D095B5FC100C2984E /* WebInspector.m */; };
 		1C68F66A095B5FC100C2984E /* WebInspectorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F65E095B5FC100C2984E /* WebInspectorInternal.h */; };
-		1C68F66B095B5FC100C2984E /* WebInspectorOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F65F095B5FC100C2984E /* WebInspectorOutlineView.h */; };
-		1C68F66C095B5FC100C2984E /* WebInspectorOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F660095B5FC100C2984E /* WebInspectorOutlineView.m */; };
 		1C68F66D095B5FC100C2984E /* WebInspectorPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F661095B5FC100C2984E /* WebInspectorPanel.h */; };
 		1C68F66E095B5FC100C2984E /* WebInspectorPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F662095B5FC100C2984E /* WebInspectorPanel.m */; };
 		1C68F66F095B5FC100C2984E /* WebNodeHighlight.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F663095B5FC100C2984E /* WebNodeHighlight.h */; };
@@ -325,8 +323,6 @@
 		1C68F65C095B5FC100C2984E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F65D095B5FC100C2984E /* WebInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebInspector.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F65E095B5FC100C2984E /* WebInspectorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		1C68F65F095B5FC100C2984E /* WebInspectorOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorOutlineView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		1C68F660095B5FC100C2984E /* WebInspectorOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebInspectorOutlineView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F661095B5FC100C2984E /* WebInspectorPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F662095B5FC100C2984E /* WebInspectorPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebInspectorPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F663095B5FC100C2984E /* WebNodeHighlight.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlight.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; wrapsLines = 0; };
@@ -708,8 +704,6 @@
 				1C68F65C095B5FC100C2984E /* WebInspector.h */,
 				1C68F65D095B5FC100C2984E /* WebInspector.m */,
 				1C68F65E095B5FC100C2984E /* WebInspectorInternal.h */,
-				1C68F65F095B5FC100C2984E /* WebInspectorOutlineView.h */,
-				1C68F660095B5FC100C2984E /* WebInspectorOutlineView.m */,
 				1C68F661095B5FC100C2984E /* WebInspectorPanel.h */,
 				1C68F662095B5FC100C2984E /* WebInspectorPanel.m */,
 				1C68F663095B5FC100C2984E /* WebNodeHighlight.h */,
@@ -1268,7 +1262,6 @@
 				224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */,
 				1C68F668095B5FC100C2984E /* WebInspector.h in Headers */,
 				1C68F66A095B5FC100C2984E /* WebInspectorInternal.h in Headers */,
-				1C68F66B095B5FC100C2984E /* WebInspectorOutlineView.h in Headers */,
 				1C68F66D095B5FC100C2984E /* WebInspectorPanel.h in Headers */,
 				1C68F66F095B5FC100C2984E /* WebNodeHighlight.h in Headers */,
 				1C68F671095B5FC100C2984E /* WebNodeHighlightView.h in Headers */,
@@ -1338,6 +1331,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1352,6 +1346,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1527,7 +1522,6 @@
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */,
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 				1C68F669095B5FC100C2984E /* WebInspector.m in Sources */,
-				1C68F66C095B5FC100C2984E /* WebInspectorOutlineView.m in Sources */,
 				1C68F66E095B5FC100C2984E /* WebInspectorPanel.m in Sources */,
 				1C68F670095B5FC100C2984E /* WebNodeHighlight.m in Sources */,
 				1C68F672095B5FC100C2984E /* WebNodeHighlightView.m in Sources */,

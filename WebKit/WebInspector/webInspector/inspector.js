@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var Inspector = null;
+var Inspector;
+var rootDOMNode = null;
+var focusedDOMNode = null;
+var ignoreWhitespace = true;
 var showUserAgentStyles = true;
 
 // Property values to omit in the computed style list.
@@ -189,7 +192,7 @@ var noPaddingDisplayType = {
 
 function setUpScrollbar(id)
 {
-    var bar = new AppleVerticalScrollbar(document.getElementById(id));
+    var bar = new VerticalScrollbar(document.getElementById(id));
 
     bar.setTrackStart("Images/scrollTrackTop.png", 18);
     bar.setTrackMiddle("Images/scrollTrackMiddle.png");
@@ -203,100 +206,79 @@ function setUpScrollbar(id)
 
 function loaded()
 {
-    treeScrollbar = setUpScrollbar("treeScrollbar");
+    treeOutlineScrollArea = new ScrollArea(document.getElementById("treeOutlineScrollView"),
+        setUpScrollbar("treeOutlineScrollbar"));
 
-    nodeContentsScrollArea = new AppleScrollArea(document.getElementById("nodeContentsScrollview"),
+    treeOutline = new TreeOutline(document.getElementById("treeOutline"));
+
+    nodeContentsScrollArea = new ScrollArea(document.getElementById("nodeContentsScrollview"),
         setUpScrollbar("nodeContentsScrollbar"));
-    elementAttributesScrollArea = new AppleScrollArea(document.getElementById("elementAttributesScrollview"),
+    elementAttributesScrollArea = new ScrollArea(document.getElementById("elementAttributesScrollview"),
         setUpScrollbar("elementAttributesScrollbar"));
     
-    styleRulesScrollArea = new AppleScrollArea(document.getElementById("styleRulesScrollview"),
+    styleRulesScrollArea = new ScrollArea(document.getElementById("styleRulesScrollview"),
         setUpScrollbar("styleRulesScrollbar"));
-    stylePropertiesScrollArea = new AppleScrollArea(document.getElementById("stylePropertiesScrollview"),
+    stylePropertiesScrollArea = new ScrollArea(document.getElementById("stylePropertiesScrollview"),
         setUpScrollbar("stylePropertiesScrollbar"));
 
-    jsPropertiesScrollArea = new AppleScrollArea(document.getElementById("jsPropertiesScrollview"),
+    jsPropertiesScrollArea = new ScrollArea(document.getElementById("jsPropertiesScrollview"),
         setUpScrollbar("jsPropertiesScrollbar"));
 
-    treeScrollbar._getViewToContentRatio = function() {
-        var contentHeight = Inspector.treeViewScrollHeight();
-        var height = document.getElementById("treeScrollArea").offsetHeight;
-        if (contentHeight > height)
-            return height / contentHeight;
-        return 1.0;
-    }
+    window.addEventListener("resize", refreshScrollbars, true);
+    document.addEventListener("mousedown", changeFocus, true);
+    document.addEventListener("focus", changeFocus, true);
+    document.addEventListener("keypress", documentKeypress, true);
+    document.getElementById("splitter").addEventListener("mousedown", topAreaResizeDragStart, true);
 
-    treeScrollbar._computeTrackOffset = function() { return Inspector.treeViewOffsetTop(); }
-    treeScrollbar._getContentLength = function() { return Inspector.treeViewScrollHeight(); }
-    treeScrollbar._getViewLength = function() { return document.getElementById("treeScrollArea").offsetHeight; }
-    treeScrollbar._canScroll = function() { return true; }
-
-    treeScrollbar.scrollTo = function(pos) {
-        Inspector.treeViewScrollTo(pos);
-        this.verticalHasScrolled();
-    }
-
-    treeScrollbar.verticalHasScrolled = function() {
-        var new_thumb_pos = this._thumbPositionForContentPosition(Inspector.treeViewOffsetTop());
-        this._thumbStart = new_thumb_pos;
-        this._thumb.style.top = new_thumb_pos + "px";
-    }
-
-    // much better AppleScrollArea reveal
-    AppleScrollArea.prototype.reveal = function(node) {
-        var offsetY = 0;
-        var obj = node;
-        do {
-            offsetY += obj.offsetTop;
-            obj = obj.offsetParent;
-        } while (obj && obj != this.content);
-
-        var offsetX = 0;
-        obj = node;
-        do {
-            offsetX += obj.offsetLeft;
-            obj = obj.offsetParent;
-        } while (obj && obj != this.content);
-
-        var top = this.content.scrollTop;
-        var height = this.viewHeight;
-        if ((top + height) < (offsetY + node.clientHeight)) 
-            this.verticalScrollTo(offsetY - height + node.clientHeight);
-        else if (top > offsetY)
-            this.verticalScrollTo(offsetY);
-
-        var left = this.content.scrollLeft;
-        var width = this.viewWidth;
-        if ((left + width) < (offsetX + node.clientWidth)) 
-            this.horizontalScrollTo(offsetX - width + node.clientWidth);
-        else if (left > offsetX)
-            this.horizontalScrollTo(offsetX);
-    }
-
-    // Change the standard show/hide to include the entire scrollbar.
-    // This lets the content reflow to use the additional space when the scrollbar is hidden.
-    AppleScrollbar.prototype.hide = function() {
-        this._track.style.display = "none";
-        this.scrollbar.style.display = "none";
-        this.hidden = true;
-    }
-    AppleScrollbar.prototype.show = function() {
-        this._track.style.display = "block";
-        this.scrollbar.style.removeProperty("display");
-        if (this.hidden) {
-            this.hidden = false;
-            this.refresh();
-        }
-    }
-
-    window.addEventListener("resize", refreshScrollbars, false);
+    currentFocusElement = document.getElementById("tree");
 
     toggleNoSelection(false);
     switchPane("node");
 }
 
+var currentFocusElement;
+
+function changeFocus(event)
+{
+    var nextFocusElement;
+
+    var current = event.target;
+    while (current) {
+        if (current.nodeName.toLowerCase() === "input")
+            nextFocusElement = current;
+        current = current.parentNode;
+    }
+
+    if (!nextFocusElement)
+        nextFocusElement = event.target.firstParentWithClass("focusable");
+
+    if (!nextFocusElement || (currentFocusElement && currentFocusElement === nextFocusElement))
+        return;
+
+    if (currentFocusElement) {
+        currentFocusElement.removeStyleClass("focused");
+        currentFocusElement.addStyleClass("blured");
+    }
+
+    currentFocusElement = nextFocusElement;
+
+    if (currentFocusElement) {
+        currentFocusElement.addStyleClass("focused");
+        currentFocusElement.removeStyleClass("blured");
+    }
+}
+
+function documentKeypress(event)
+{
+    if (!currentFocusElement || !currentFocusElement.id || !currentFocusElement.id.length)
+        return;
+    if (window[currentFocusElement.id + "Keypress"])
+        eval(currentFocusElement.id + "Keypress(event)");
+}
+
 function refreshScrollbars()
 {
+    treeOutlineScrollArea.refresh();
     elementAttributesScrollArea.refresh();
     jsPropertiesScrollArea.refresh();
     nodeContentsScrollArea.refresh();
@@ -305,6 +287,8 @@ function refreshScrollbars()
 }
 
 var searchActive = false;
+var searchQuery = "";
+var searchResults = [];
 
 function performSearch(query)
 {
@@ -324,19 +308,55 @@ function performSearch(query)
         searchActive = false;
     }
 
-    Inspector.searchPerformed(query);
+    searchQuery = query;
+    refreshSearch();
 }
 
-function resultsWithXpathQuery(query)
+function refreshSearch()
 {
-    var nodeList = null;
-    try {
-        var focusedNode = Inspector.focusedDOMNode();
-        nodeList = focusedNode.document.evaluate(query, focusedNode.document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    } catch(err) {
-        // ignore any exceptions. the query might be malformed, but we allow that 
+    searchResults = [];
+
+    if (searchActive) {
+        // perform the search
+        treeOutline.removeChildrenRecursive();
+        treeOutlineScrollArea.refresh();
+        toggleNoSelection(true);
+
+        var count = 0;
+        var xpathQuery = searchQuery;
+        if (searchQuery.indexOf("/") === -1) {
+            var escapedQuery = searchQuery.escapeCharacters("'");
+            xpathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
+        }
+
+        try {
+            var focusedNodeDocument = focusedDOMNode.ownerDocument;
+            var nodeList = focusedNodeDocument.evaluate(xpathQuery, focusedNodeDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            for (var i = 0; i < nodeList.snapshotLength; ++i) {
+                searchResults.push(nodeList.snapshotItem(i));
+                count++;
+            }
+        } catch(err) {
+            // ignore any exceptions. the query might be malformed, but we allow that 
+        }
+
+        for (var i = 0; i < searchResults.length; ++i) {
+            var item = new DOMNodeTreeElement(searchResults[i]);
+            treeOutline.appendChild(item);
+            item.collapse();
+            if (!i)
+                item.select();
+        }
+
+        var searchCountElement = document.getElementById("searchCount");
+        if (count === 1)
+            searchCountElement.textContent = "1 node";
+        else
+            searchCountElement.textContent = count + " nodes";
+    } else {
+        // switch back to the DOM tree and reveal the focused node
+        updateTreeOutline();
     }
-    return nodeList;
 }
 
 var tabNames = ["node","metrics","style","properties"];
@@ -348,7 +368,7 @@ function toggleNoSelection(state)
 {
     noSelection = state;
     if (noSelection) {
-        for (var i = 0; i < tabNames.length; i++)
+        for (var i = 0; i < tabNames.length; ++i)
             document.getElementById(tabNames[i] + "Pane").style.display = "none";
         document.getElementById("noSelection").style.removeProperty("display");
     } else {
@@ -360,12 +380,13 @@ function toggleNoSelection(state)
 function switchPane(pane)
 {
     currentPane = pane;
-    for (var i = 0; i < tabNames.length; i++) {
+
+    for (var i = 0; i < tabNames.length; ++i) {
         var paneElement = document.getElementById(tabNames[i] + "Pane");
         var button = document.getElementById(tabNames[i] + "Button");
         if (!button.originalClassName)
             button.originalClassName = button.className;
-        if (pane == tabNames[i]) {
+        if (pane === tabNames[i]) {
             if (!noSelection)
                 paneElement.style.removeProperty("display");
             button.className = button.originalClassName + " selected";
@@ -379,54 +400,291 @@ function switchPane(pane)
         return;
 
     if (!paneUpdateState[pane]) {
-        eval("update" + pane.charAt(0).toUpperCase() + pane.substr(1) + "Pane()");
+        var functionName = "update" + pane.charAt(0).toUpperCase() + pane.substr(1) + "Pane";
+        if (window[functionName])
+            eval(functionName + "()");
         paneUpdateState[pane] = true;
     } else {
         refreshScrollbars();
     }
 }
 
-function nodeTypeName(node)
+function treeElementPopulate(element)
 {
-    switch (node.nodeType) {
-        case Node.ELEMENT_NODE: return "Element";
-        case Node.ATTRIBUTE_NODE: return "Attribute";
-        case Node.TEXT_NODE: return "Text";
-        case Node.CDATA_SECTION_NODE: return "Character Data";
-        case Node.ENTITY_REFERENCE_NODE: return "Entity Reference";
-        case Node.ENTITY_NODE: return "Entity";
-        case Node.PROCESSING_INSTRUCTION_NODE: return "Processing Instruction";
-        case Node.COMMENT_NODE: return "Comment";
-        case Node.DOCUMENT_NODE: return "Document";
-        case Node.DOCUMENT_TYPE_NODE: return "Document Type";
-        case Node.DOCUMENT_FRAGMENT_NODE: return "Document Fragment";
-        case Node.NOTATION_NODE: return "Notation";
+    if (element.children.length || element.whitespaceIgnored !== ignoreWhitespace)
+        return;
+
+    element.removeChildren();
+    element.whitespaceIgnored = ignoreWhitespace;
+
+    var node = (ignoreWhitespace ? firstChildSkippingWhitespace.call(element.representedObject) : element.representedObject.firstChild);
+    while (node) {
+        var item = new DOMNodeTreeElement(node);
+        element.appendChild(item);
+        node = ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
     }
-    return "(unknown)";
+}
+
+function treeElementExpanded(element)
+{
+    treeOutlineScrollArea.refresh();
+}
+
+function treeElementCollapsed(element)
+{
+    treeOutlineScrollArea.refresh();
+}
+
+function treeElementRevealed(element)
+{
+    if (element._listItemNode)
+        treeOutlineScrollArea.reveal(element._listItemNode);
+}
+
+function treeElementSelected(element)
+{
+    updateFocusedNode(element.representedObject);
+
+    // update the disabled state of the traverse buttons
+    var traverseUp = document.getElementById("traverseUp");
+    if (searchActive)
+        traverseUp.disabled = !treeOutline.selectedTreeElement.traversePreviousTreeElement(false);
+    else
+        traverseUp.disabled = (!element.representedObject.previousSibling && !element.representedObject.parentNode);
+
+    var traverseDown = document.getElementById("traverseDown");
+    if (searchActive)
+        traverseDown.disabled = !treeOutline.selectedTreeElement.traverseNextTreeElement(false);
+    else
+        traverseDown.disabled = !traverseNextNode.call(element.representedObject, ignoreWhitespace);
+}
+
+function treeElementDoubleClicked(element)
+{
+    if (element.hasChildren)
+        updateRootNode(element.representedObject);
+}
+
+function DOMNodeTreeElement(node)
+{
+    var title = nodeDisplayName.call(node).escapeHTML();
+    var hasChildren = (ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes());
+
+    if (hasChildren) 
+        title += " <span class=\"content\">" + nodeContentPreview.call(node) + "</span>";
+
+    var item = new TreeElement(title, node, hasChildren);
+    item.onpopulate = treeElementPopulate;
+    item.onexpand = treeElementExpanded;
+    item.oncollapse = treeElementCollapsed;
+    item.onselect = treeElementSelected;
+    item.onreveal = treeElementRevealed;
+    item.ondblclick = treeElementDoubleClicked;
+    if (hasChildren) 
+        item.whitespaceIgnored = ignoreWhitespace;
+    return item;
+}
+
+function revealNodeInTreeOutline(node)
+{
+    var item = treeOutline.findTreeElement(node);
+    if (item) {
+        item.reveal();
+        return item;
+    }
+
+    var found = false;
+    for (var i = 0; i < treeOutline.children.length; ++i) {
+        item = treeOutline.children[i];
+        if (item.representedObject === node || isAncestorNode.call(item.representedObject, node)) {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+        return null;
+
+    var ancestors = []; 
+    var currentNode = node; 
+    while (currentNode) { 
+        ancestors.unshift(currentNode); 
+        if (currentNode === item.representedObject)
+            break;
+        currentNode = currentNode.parentNode; 
+    }
+
+    for (var i = 0; i < ancestors.length; ++i) {
+        item = treeOutline.findTreeElement(ancestors[i]);
+        if (ancestors[i] !== node)
+            item.expand();
+    }
+
+    return item;
+}
+
+function updateRootNode(node)
+{
+    if (!node || !rootDOMNode || rootDOMNode !== node) {
+        rootDOMNode = node;
+        updateTreeOutline();
+    }
+}
+
+function updateFocusedNode(node)
+{
+    if (!node || !focusedDOMNode || focusedDOMNode !== node) {
+        focusedDOMNode = node;
+
+        updatePanes();
+
+        if (focusedDOMNode) {
+            if (!rootDOMNode === node && !isAncestorNode.call(rootDOMNode, node))
+                updateRootNode(firstCommonNodeAncestor.call(focusedDOMNode, node));
+
+            var item = treeOutline.findTreeElement(focusedDOMNode);
+            if (!item)
+                item = revealNodeInTreeOutline(focusedDOMNode);
+            if (item)
+                item.select();
+
+            Inspector.highlightDOMNode(focusedDOMNode);
+        }
+    }
+}
+
+function updateTreeOutline(dontRevealSelectedItem)
+{
+    if (searchActive)
+        return;
+
+    var item = treeOutline.findTreeElement(rootDOMNode);
+
+    if (item && item.whitespaceIgnored !== ignoreWhitespace)
+        item = null;
+    if (item && item.parent)
+        item.parent.removeChild(item);
+
+    treeOutline.removeChildrenRecursive();
+
+    if (!rootDOMNode) {
+        treeOutlineScrollArea.refresh();
+        return;
+    }
+
+    if (!item)
+        item = new DOMNodeTreeElement(rootDOMNode);
+    treeOutline.appendChild(item);
+    item.expand();
+
+    if (dontRevealSelectedItem)
+        item = treeOutline.findTreeElement(focusedDOMNode);
+    else
+        item = revealNodeInTreeOutline(focusedDOMNode);
+
+    if (item)
+        item.select();
+
+    treeOutlineScrollArea.refresh();
+
+    var rootPopup = document.getElementById("treePopup");
+
+    var resetPopup = true;
+    for (var i = 0; i < rootPopup.options.length; ++i) {
+        if (rootPopup.options[i].representedNode === rootDOMNode) {
+            rootPopup.options[i].selected = true;
+            resetPopup = false;
+            break;
+        }
+    }
+
+    if (!resetPopup)
+        return;
+
+    rootPopup.removeChildren();
+
+    var currentNode = rootDOMNode;
+    while (currentNode) {
+        var option = document.createElement("option");
+        option.representedNode = currentNode;
+        option.textContent = nodeDisplayName.call(currentNode);
+        if (currentNode === rootDOMNode)
+            option.selected = true;
+        rootPopup.insertBefore(option, rootPopup.firstChild);
+        currentNode = currentNode.parentNode;
+    }
+}
+
+function selectNewRoot(event)
+{
+    var rootPopup = document.getElementById("treePopup");
+    var option = rootPopup.options[rootPopup.selectedIndex];
+    updateRootNode(option.representedNode);
+}
+
+function treeKeypress(event)
+{
+    treeOutline.handleKeyEvent(event);
+}
+
+function traverseTreeBackward(event)
+{
+    var item;
+
+    // traverse backward, holding the opton key will traverse only to the previous sibling
+    if (event.altKey)
+        item = treeOutline.selectedTreeElement.previousSibling;
+    else
+        item = treeOutline.selectedTreeElement.traversePreviousTreeElement(false);
+
+    if (item) {
+        item.reveal();
+        item.select();
+    }
+}
+
+function traverseTreeForward(event)
+{
+    var item;
+
+    // traverse forward, holding the opton key will traverse only to the next sibling
+    if (event.altKey)
+        item = treeOutline.selectedTreeElement.nextSibling;
+    else
+        item = treeOutline.selectedTreeElement.traverseNextTreeElement(false);
+
+    if (item) {
+        item.reveal();
+        item.select();
+    }
 }
 
 function updatePanes()
 {
-    for (var i = 0; i < tabNames.length; i++)
+    for (var i = 0; i < tabNames.length; ++i)
         paneUpdateState[tabNames[i]] = false;
+
+    toggleNoSelection(!focusedDOMNode);
     if (noSelection)
         return;
-    eval("update" + currentPane.charAt(0).toUpperCase() + currentPane.substr(1) + "Pane()");    
+
+    var functionName = "update" + currentPane.charAt(0).toUpperCase() + currentPane.substr(1) + "Pane";
+    if (window[functionName])
+        eval(functionName + "()");    
     paneUpdateState[currentPane] = true;
 }
 
 function updateElementAttributes()
 {
-    var focusedNode = Inspector.focusedDOMNode();
     var attributesList = document.getElementById("elementAttributesList")
 
-    attributesList.innerHTML = "";
+    attributesList.removeChildren();
 
-    if (!focusedNode.attributes.length)
+    if (!focusedDOMNode.attributes.length)
         attributesList.innerHTML = "<span class=\"disabled\">(none)</span>";
 
-    for (i = 0; i < focusedNode.attributes.length; i++) {
-        var attr = focusedNode.attributes[i];
+    for (var i = 0; i < focusedDOMNode.attributes.length; ++i) {
+        var attr = focusedDOMNode.attributes[i];
         var li = document.createElement("li");
 
         var span = document.createElement("span");
@@ -435,7 +693,7 @@ function updateElementAttributes()
             span.title = attr.namespaceURI;
         span.textContent = attr.name;
         li.appendChild(span);
-        
+
         span = document.createElement("span");
         span.className = "relation";
         span.textContent = "=";
@@ -462,68 +720,67 @@ function updateElementAttributes()
 
 function updateNodePane()
 {
-    if (!Inspector)
+    if (!focusedDOMNode)
         return;
-    var focusedNode = Inspector.focusedDOMNode();
 
-    if (focusedNode.nodeType == Node.TEXT_NODE || focusedNode.nodeType == Node.COMMENT_NODE) {
+    if (focusedDOMNode.nodeType === Node.TEXT_NODE || focusedDOMNode.nodeType === Node.COMMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.removeProperty("display");
 
-        document.getElementById("nodeContentsScrollview").textContent = focusedNode.nodeValue;
+        document.getElementById("nodeContentsScrollview").textContent = focusedDOMNode.nodeValue;
         nodeContentsScrollArea.refresh();
-    } else if (focusedNode.nodeType == Node.ELEMENT_NODE) {
+    } else if (focusedDOMNode.nodeType === Node.ELEMENT_NODE) {
         document.getElementById("elementAttributes").style.removeProperty("display");
         document.getElementById("nodeContents").style.display = "none";
 
         updateElementAttributes();
-        
-        if (focusedNode.namespaceURI.length > 0) {
-            document.getElementById("nodeNamespace").textContent = focusedNode.namespaceURI;
-            document.getElementById("nodeNamespace").title = focusedNode.namespaceURI;
+
+        if (focusedDOMNode.namespaceURI.length > 0) {
+            document.getElementById("nodeNamespace").textContent = focusedDOMNode.namespaceURI;
+            document.getElementById("nodeNamespace").title = focusedDOMNode.namespaceURI;
             document.getElementById("nodeNamespaceRow").style.removeProperty("display");
         } else {
             document.getElementById("nodeNamespaceRow").style.display = "none";
         }
-    } else if (focusedNode.nodeType == Node.DOCUMENT_NODE) {
+    } else if (focusedDOMNode.nodeType === Node.DOCUMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.display = "none";
     }
 
-    document.getElementById("nodeType").textContent = nodeTypeName(focusedNode);
-    document.getElementById("nodeName").textContent = focusedNode.nodeName;
+    document.getElementById("nodeType").textContent = nodeTypeName.call(focusedDOMNode);
+    document.getElementById("nodeName").textContent = focusedDOMNode.nodeName;
 
     refreshScrollbars();
 }
 
-var styleRules = null;
+var styleRules = [];
 var selectedStyleRuleIndex = 0;
-var styleProperties = null;
+var styleProperties = [];
 var expandedStyleShorthands = [];
 
 function updateStylePane()
 {
-    var focusedNode = Inspector.focusedDOMNode();
-    if (focusedNode.nodeType == Node.TEXT_NODE && focusedNode.parentNode && focusedNode.parentNode.nodeType == Node.ELEMENT_NODE)
-        focusedNode = focusedNode.parentNode;
+    var styleNode = focusedDOMNode;
+    if (styleNode.nodeType === Node.TEXT_NODE && styleNode.parentNode && styleNode.parentNode.nodeType === Node.ELEMENT_NODE)
+        styleNode = styleNode.parentNode;
     var rulesArea = document.getElementById("styleRulesScrollview");
     var propertiesArea = document.getElementById("stylePropertiesTree");
 
-    rulesArea.innerHTML = "";
-    propertiesArea.innerHTML = "";
+    rulesArea.removeChildren();
+    propertiesArea.removeChildren();
     styleRules = [];
     styleProperties = [];
 
-    if (focusedNode.nodeType == Node.ELEMENT_NODE) {
+    if (styleNode.nodeType === Node.ELEMENT_NODE) {
         document.getElementById("styleRules").style.removeProperty("display");
         document.getElementById("styleProperties").style.removeProperty("display");
         document.getElementById("noStyle").style.display = "none";
 
         var propertyCount = [];
 
-        var computedStyle = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode);
+        var computedStyle = styleNode.ownerDocument.defaultView.getComputedStyle(styleNode);
         if (computedStyle && computedStyle.length) {
             var computedObj = {
                 isComputedStyle: true,
@@ -534,16 +791,16 @@ function updateStylePane()
             styleRules.push(computedObj);
         }
 
-        var focusedNodeName = focusedNode.nodeName.toLowerCase();
-        for (var i = 0; i < focusedNode.attributes.length; i++) {
-            var attr = focusedNode.attributes[i];
+        var styleNodeName = styleNode.nodeName.toLowerCase();
+        for (var i = 0; i < styleNode.attributes.length; ++i) {
+            var attr = styleNode.attributes[i];
             if (attr.style) {
                 var attrStyle = {
                     attrName: attr.name,
                     style: attr.style,
                     subtitle: "element\u2019s \u201C" + attr.name + "\u201D attribute",
                 };
-                attrStyle.selectorText = focusedNodeName + "[" + attr.name;
+                attrStyle.selectorText = styleNodeName + "[" + attr.name;
                 if (attr.value.length)
                     attrStyle.selectorText += "=" + attr.value;
                 attrStyle.selectorText += "]";
@@ -551,17 +808,17 @@ function updateStylePane()
             }
         }
 
-        var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "", !showUserAgentStyles);
+        var matchedStyleRules = styleNode.ownerDocument.defaultView.getMatchedCSSRules(styleNode, "", !showUserAgentStyles);
         if (matchedStyleRules) {
-            for (var i = 0; i < matchedStyleRules.length; i++) {
+            for (var i = 0; i < matchedStyleRules.length; ++i) {
                 styleRules.push(matchedStyleRules[i]);
             }
         }
 
-        if (focusedNode.style.length) {
+        if (styleNode.style.length) {
             var inlineStyle = {
                 selectorText: "Inline Style Attribute",
-                style: focusedNode.style,
+                style: styleNode.style,
                 subtitle: "element\u2019s \u201Cstyle\u201D attribute",
             };
             styleRules.push(inlineStyle);
@@ -576,8 +833,8 @@ function updateStylePane()
 
             var row = document.createElement("div");
             row.className = "row";
-            if (i == selectedStyleRuleIndex)
-                row.className += " focused";
+            if (i === selectedStyleRuleIndex)
+                row.className += " selected";
             if (styleRules[i].isComputedStyle)
                 row.className += " computedStyle";
 
@@ -591,7 +848,7 @@ function updateStylePane()
             cell = document.createElement("div");
             cell.className = "cell stylesheet";
             var sheet;
-            if (styleRules[i].subtitle != null)
+            if (styleRules[i].subtitle)
                 sheet = styleRules[i].subtitle;
             else if (styleRules[i].parentStyleSheet && styleRules[i].parentStyleSheet.href)
                 sheet = styleRules[i].parentStyleSheet.href;
@@ -604,11 +861,11 @@ function updateStylePane()
             row.appendChild(cell);
 
             row.styleRuleIndex = i;
-            row.addEventListener("click", styleRuleSelect, true);
+            row.addEventListener("mousedown", styleRuleSelect, false);
 
             var style = styleRules[i].style;
             var styleShorthandLookup = [];
-            for (var j = 0; j < style.length; j++) {
+            for (var j = 0; j < style.length; ++j) {
                 var prop = null;
                 var name = style[j];
                 var shorthand = style.getPropertyShorthand(name);
@@ -665,13 +922,13 @@ function updateStylePane()
         if (priorityUsed) {
             // walk the properties again and account for !important
             var priorityCount = [];
-            for (var i = 0; i < styleRules.length; i++) {
+            for (var i = 0; i < styleRules.length; ++i) {
                 if (styleRules[i].isComputedStyle)
                     continue;
                 var style = styleRules[i].style;
-                for (var j = 0; j < styleProperties[i].length; j++) {
+                for (var j = 0; j < styleProperties[i].length; ++j) {
                     var prop = styleProperties[i][j];
-                    for (var k = 0; k < prop.subProperties.length; k++) {
+                    for (var k = 0; k < prop.subProperties.length; ++k) {
                         var name = prop.subProperties[k];
                         if (style.getPropertyPriority(name).length) {
                             if (!priorityCount[name]) {
@@ -692,7 +949,7 @@ function updateStylePane()
         updateStyleProperties();
     } else {
         var noStyle = document.getElementById("noStyle");
-        noStyle.textContent = "Can't style " + nodeTypeName(focusedNode) + " nodes.";
+        noStyle.textContent = "Can't style " + nodeTypeName.call(styleNode) + " nodes.";
         document.getElementById("styleRules").style.display = "none";
         document.getElementById("styleProperties").style.display = "none";
         noStyle.style.removeProperty("display");
@@ -705,13 +962,13 @@ function styleRuleSelect(event)
 {
     var row = document.getElementById("styleRulesScrollview").firstChild;
     while (row) {
-        if (row.nodeName == "DIV")
+        if (row.nodeName.toLowerCase() === "div")
             row.className = "row";
         row = row.nextSibling;
     }
 
     row = event.currentTarget;
-    row.className = "row focused";
+    row.className = "row selected";
 
     selectedStyleRuleIndex = row.styleRuleIndex;
     updateStyleProperties();
@@ -740,7 +997,7 @@ function populateStyleListItem(li, prop, name)
 
     var colors = value.match(/(rgb\([0-9]+, [0-9]+, [0-9]+\))|(rgba\([0-9]+, [0-9]+, [0-9]+, [0-9]+\))/g);
     if (colors) {
-        for (var k = 0; k < colors.length; k++) {
+        for (var k = 0; k < colors.length; ++k) {
             var swatch = document.createElement("span");
             swatch.className = "colorSwatch";
             swatch.style.backgroundColor = colors[k];
@@ -751,9 +1008,8 @@ function populateStyleListItem(li, prop, name)
 
 function updateStyleProperties()
 {
-    var focusedNode = Inspector.focusedDOMNode();
     var propertiesTree = document.getElementById("stylePropertiesTree");
-    propertiesTree.innerHTML = "";
+    propertiesTree.removeChildren();
 
     if (selectedStyleRuleIndex >= styleProperties.length) {
         stylePropertiesScrollArea.refresh();
@@ -762,9 +1018,10 @@ function updateStyleProperties()
 
     var properties = styleProperties[selectedStyleRuleIndex];
     var omitTypicalValues = styleRules[selectedStyleRuleIndex].isComputedStyle;
-    for (var i = 0; i < properties.length; i++) {
+    for (var i = 0; i < properties.length; ++i) {
         var prop = properties[i];
         var name = prop.name;
+
         if (omitTypicalValues && typicalStylePropertyValue[name] == prop.style.getPropertyValue(name))
             continue;
 
@@ -788,7 +1045,7 @@ function updateStyleProperties()
             if (!expandedStyleShorthands[name])
                 subTree.style.display = "none";
 
-            for (var j = 0; j < prop.subProperties.length; j++) {
+            for (var j = 0; j < prop.subProperties.length; ++j) {
                 var name = prop.subProperties[j];
                 var li = document.createElement("li");
                 if (prop.style.isPropertyImplicit(name) || prop.style.getPropertyValue(name) == "initial")
@@ -806,7 +1063,7 @@ function updateStyleProperties()
             propertiesTree.appendChild(subTree);
         }
 
-        if (prop.unusedProperties[name] || overloadCount == prop.subProperties.length)
+        if (prop.unusedProperties[name] || overloadCount === prop.subProperties.length)
             mainli.className += " overloaded";
     }
 
@@ -816,17 +1073,23 @@ function updateStyleProperties()
 function toggleStyleShorthand(event)
 {
     var li = event.currentTarget.parentNode;
-    if (li.className.indexOf("expanded") != -1) {
-        li.className = li.className.replace(/ expanded/, "");
+    if (li.hasStyleClass("expanded")) {
+        li.removeStyleClass("expanded");
         li.nextSibling.style.display = "none";
         expandedStyleShorthands[li.shorthand] = false;
     } else {
-        li.className += " expanded";
+        li.addStyleClass("expanded");
         li.nextSibling.style.removeProperty("display");
         expandedStyleShorthands[li.shorthand] = true;
     }
 
     stylePropertiesScrollArea.refresh();
+}
+
+function toggleIgnoreWhitespace()
+{
+    ignoreWhitespace = !ignoreWhitespace;
+    updateTreeOutline(true);
 }
 
 function toggleShowUserAgentStyles()
@@ -840,20 +1103,22 @@ function selectMappedStyleRule(attrName)
     if (!paneUpdateState["style"])
         updateStylePane();
 
-    for (var i = 0; i < styleRules.length; i++)
-        if (styleRules[i].attrName == attrName)
+    var attrName = attrName.toLowerCase();
+    for (var i = 0; i < styleRules.length; ++i)
+        if (styleRules[i].attrName.toLowerCase() === attrName)
             break;
 
     selectedStyleRuleIndex = i;
 
     var row = document.getElementById("styleRulesScrollview").firstChild;
     while (row) {
-        if (row.nodeName == "DIV") {
-            if (row.styleRuleIndex == selectedStyleRuleIndex)
-                row.className = "row focused";
+        if (row.nodeName.toLowerCase() === "div") {
+            if (row.styleRuleIndex === selectedStyleRuleIndex)
+                row.className = "row selected";
             else
                 row.className = "row";
         }
+
         row = row.nextSibling;
     }
 
@@ -884,10 +1149,9 @@ function setBoxMetrics(style, box, suffix)
 function updateMetricsPane()
 {
     var style;
-    var focusedNode = Inspector.focusedDOMNode();
-    if (focusedNode.nodeType == Node.ELEMENT_NODE)
-        style = focusedNode.ownerDocument.defaultView.getComputedStyle(focusedNode);
-    if (!style || style.length == 0) {
+    if (focusedDOMNode.nodeType === Node.ELEMENT_NODE)
+        style = focusedDOMNode.ownerDocument.defaultView.getComputedStyle(focusedDOMNode);
+    if (!style || !style.length) {
         document.getElementById("noMetrics").style.removeProperty("display");
         document.getElementById("marginBoxTable").style.display = "none";
         return;
@@ -905,12 +1169,12 @@ function updateMetricsPane()
         + style.getPropertyValue("height").replace(/px$/, "");
     document.getElementById("content").textContent = size;
 
-    if (noMarginDisplayType[style.display] == "no")
+    if (noMarginDisplayType[style.display] === "no")
         document.getElementById("marginBoxTable").setAttribute("hide", "yes");
     else
         document.getElementById("marginBoxTable").removeAttribute("hide");
 
-    if (noPaddingDisplayType[style.display] == "no")
+    if (noPaddingDisplayType[style.display] === "no")
         document.getElementById("paddingBoxTable").setAttribute("hide", "yes");
     else
         document.getElementById("paddingBoxTable").removeAttribute("hide");
@@ -922,11 +1186,10 @@ function updatePropertiesPane()
     // and separate items for each item in the prototype chain. For now, we implement
     // only the "all properties" part, and only for enumerable properties.
 
-    var focusedNode = Inspector.focusedDOMNode();
     var list = document.getElementById("jsPropertiesList");
-    list.innerHTML = "";
+    list.removeChildren();
 
-    for (var name in focusedNode) {
+    for (var name in focusedDOMNode) {
         var li = document.createElement("li");
 
         var span = document.createElement("span");
@@ -934,7 +1197,7 @@ function updatePropertiesPane()
         span.textContent = name + ": ";
         li.appendChild(span);
 
-        var value = focusedNode[name];
+        var value = focusedDOMNode[name];
 
         span = document.createElement("span");
         span.className = "value";
@@ -948,9 +1211,56 @@ function updatePropertiesPane()
     jsPropertiesScrollArea.refresh();
 }
 
-// This is a workaround for rdar://4901491 - Dashboard AppleClasses try to set a NaN value and break the scrollbar.
-AppleVerticalScrollbar.prototype._setObjectLength = function(object, length)
+function dividerDragStart(element, dividerDrag, dividerDragEnd, event, cursor) 
 {
-    if (!isNaN(length))
-        object.style.height = length + "px";
+    element.dragging = true;
+    element.dragLastY = event.clientY + window.scrollY;
+    element.dragLastX = event.clientX + window.scrollX;
+    document.addEventListener("mousemove", dividerDrag, true);
+    document.addEventListener("mouseup", dividerDragEnd, true);
+    document.body.style.cursor = cursor;
+    event.preventDefault();
+}
+
+function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) 
+{
+    element.dragging = false;
+    document.removeEventListener("mousemove", dividerDrag, true);
+    document.removeEventListener("mouseup", dividerDragEnd, true);
+    document.body.style.removeProperty("cursor");
+}
+
+function topAreaResizeDragStart(event) 
+{
+    dividerDragStart(document.getElementById("splitter"), topAreaResizeDrag, topAreaResizeDragEnd, event, "row-resize");
+}
+
+function topAreaResizeDrag(event) 
+{
+    var element = document.getElementById("splitter");
+    if (element.dragging) {
+        var y = event.clientY + window.scrollY;
+        var delta = element.dragLastY - y;
+        element.dragLastY = y;
+
+        var top = document.getElementById("top");
+        top.style.height = (top.clientHeight - delta) + "px";
+
+        var splitter = document.getElementById("splitter");
+        splitter.style.top = (splitter.offsetTop - delta) + "px";
+
+        var bottom = document.getElementById("bottom");
+        bottom.style.top = (bottom.offsetTop - delta) + "px";
+
+        window.resizeBy(0, (delta * -1));
+
+        treeOutlineScrollArea.refresh();
+
+        event.preventDefault();
+    }
+}
+
+function topAreaResizeDragEnd(event) 
+{
+    dividerDragEnd(document.getElementById("splitter"), topAreaResizeDrag, topAreaResizeDragEnd, event);
 }

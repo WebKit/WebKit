@@ -1,3 +1,42 @@
+2007-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Merge over the WebInspectorRefresh branch. This change removes the NSOutlineView and
+        is replaced with a HTML/JavaScript tree. Most of the inspector logic is now in the JavaScript.
+
+        A few bugs are fixed by these changes:
+
+        Bug 6615: Parent node drop-down list is upside-down
+        http://bugs.webkit.org/show_bug.cgi?id=6615
+
+        Bug 6643: REGRESSION: Tree view repaints lines without erasing them first
+        http://bugs.webkit.org/show_bug.cgi?id=6643
+
+        Bug 6650: Web Inspector HTML Hierarchy can't be scrolled with scrollwheel
+        http://bugs.webkit.org/show_bug.cgi?id=6650
+
+        Bug 6677: Can't drag inspector when tree view has focus
+        http://bugs.webkit.org/show_bug.cgi?id=6677
+
+        Bug 7326: Web Inspector tree scrollbar always shows up when resizing the top pane down
+        http://bugs.webkit.org/show_bug.cgi?id=7326
+
+        * WebInspector/WebInspector.h: Removed the searchQuery methods.
+        * WebInspector/WebInspector.m: Removed the DOMNode category and code for the old outline view.
+        * WebInspector/WebInspectorOutlineView.h: Removed.
+        * WebInspector/WebInspectorOutlineView.m: Removed.
+        * WebInspector/WebInspectorInternal.h: Remove some methods and instance variables.
+        * WebInspector/webInspector/Images/resize.png: Added.
+        * WebInspector/webInspector/inspector.css: 
+        * WebInspector/webInspector/inspector.html: Include the new classes and remove the plugin.
+        * WebInspector/webInspector/inspector.js: Changes to use the new tree outline and other fixes.
+        * WebInspector/webInspector/scrollarea.js: Copied from the Dashboard widget resources.
+        * WebInspector/webInspector/scrollbar.js: Ditto.
+        * WebInspector/webInspector/treeoutline.js: New tree outline class.
+        * WebInspector/webInspector/utilities.js: DOM and String prototype additions.
+        * WebKit.xcodeproj/project.pbxproj: Remove WebInspectorOutlineView.
+
 2007-04-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver (Black Sheep)

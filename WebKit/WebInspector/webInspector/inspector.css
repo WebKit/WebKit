@@ -42,7 +42,7 @@ a:link {
     color: inherit;
 }
 
-button {
+button, select, input {
     -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
@@ -127,7 +127,7 @@ button {
     top: 0;
     left: 0;
     width: 21px;
-    background-image: url( Images/upTriangle.png ), url( Images/buttonDivider.png );
+    background-image: url(Images/upTriangle.png), url(Images/buttonDivider.png);
     background-repeat: no-repeat;
     background-position: 2px 0px, -4px right;
 }
@@ -137,7 +137,7 @@ button {
     top: 0;
     left: 20px;
     width: 20px;
-    background-image: url( Images/downTriangle.png );
+    background-image: url(Images/downTriangle.png);
     background-repeat: no-repeat;
     background-position: 5px 1px;
 }
@@ -183,7 +183,7 @@ button {
     left: 5px;
     border: 0;
     background-color: transparent;
-    background-image: url( Images/close.png );
+    background-image: url(Images/close.png);
     background-repeat: no-repeat;
     height: 13px;
     width: 13px;
@@ -194,7 +194,7 @@ button {
 }
 
 #title button.close:active {
-    background-image: url( Images/closePressed.png );
+    background-image: url(Images/closePressed.png);
 }
 
 #title button.menu {
@@ -203,7 +203,7 @@ button {
     right: 5px;
     border: 0;
     background-color: transparent;
-    background-image: url( Images/menu.png );
+    background-image: url(Images/menu.png);
     background-repeat: no-repeat;
     height: 13px;
     width: 13px;
@@ -214,7 +214,7 @@ button {
 }
 
 #title button.menu:active {
-    background-image: url( Images/menuPressed.png );
+    background-image: url(Images/menuPressed.png);
 }
 
 button {
@@ -222,7 +222,7 @@ button {
     border-width: 4px 6px 6px 6px;
     border-color: transparent;
     border-style: solid;
-    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    -webkit-border-image: url(Images/button.png) 4 6 6 6;
     box-sizing: border-box;
     line-height: 5px;
     height: 20px;
@@ -233,18 +233,18 @@ button {
 }
 
 button:active, button.selected {
-    -webkit-border-image: url( Images/buttonPressed.png ) 4 6 6 6;
+    -webkit-border-image: url(Images/buttonPressed.png) 4 6 6 6;
     text-shadow: black 1px -1px 3px;
 }
 
 button[disabled] {
-    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    -webkit-border-image: url(Images/button.png) 4 6 6 6;
     opacity: 0.5;
 }
 
 button.left {
     border-width: 4px 0 6px 6px;
-    background-image: url( Images/buttonDivider.png );
+    background-image: url(Images/buttonDivider.png);
     background-position: -4px right;
     background-repeat: no-repeat;
 }
@@ -255,7 +255,7 @@ button.right {
 
 button.middle {
     border-width: 4px 0 6px 0;
-    background-image: url( Images/buttonDivider.png );
+    background-image: url(Images/buttonDivider.png);
     background-position: -4px right;
     background-repeat: no-repeat;
 }
@@ -265,7 +265,7 @@ select {
     border-width: 4px 16px 6px 6px;
     border-color: transparent;
     border-style: solid;
-    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
+    -webkit-border-image: url(Images/popup.png) 4 16 6 6;
     box-sizing: border-box;
     line-height: 5px;
     height: 20px;
@@ -277,11 +277,11 @@ select {
 }
 
 select:active {
-    -webkit-border-image: url( Images/popupPressed.png ) 4 16 6 6;
+    -webkit-border-image: url(Images/popupPressed.png) 4 16 6 6;
 }
 
 select[disabled] {
-    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
+    -webkit-border-image: url(Images/popup.png) 4 16 6 6;
     opacity: 0.5;
 }
 
@@ -293,7 +293,7 @@ select[disabled] {
     height: 16px;
     z-index: 10;
     -webkit-dashboard-region: dashboard-region(resize rectangle);
-    background-image: url( file:///System/Library/WidgetResources/resize.png );
+    background-image: url(Images/resize.png);
     background-repeat: no-repeat;
 }
 
@@ -353,7 +353,7 @@ select[disabled] {
     -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
-#treeScrollArea {
+#treeOutlineScrollView {
     position: absolute;
     top: 0; 
     left: 3px;
@@ -361,15 +361,7 @@ select[disabled] {
     bottom: 0;
 }
 
-#treeOutlineView {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-#treeScrollbar {
+#treeOutlineScrollbar {
     position: absolute;
     top: 2px;
     bottom: 2px;
@@ -388,11 +380,11 @@ button.toggle {
 }
 
 button.toggle.down {
-    background-image: url( Images/downTriangle.png );
+    background-image: url(Images/downTriangle.png);
 }
 
 button.toggle.right {
-    background-image: url( Images/rightTriangle.png );
+    background-image: url(Images/rightTriangle.png);
 }
 
 #noSelection {
@@ -575,12 +567,23 @@ button.toggle.right {
 
 #styleRulesScrollview > .row {
     padding: 1px 6px;
+    -webkit-border-radius: 6px;
+    background-color: transparent;
+    border: 2px solid transparent;
 }
 
-#styleRulesScrollview > .row.focused {
-    background-color: rgba(128,128,255,0.25);
-    -webkit-border-radius: 6px;
+#styleRulesScrollview > .row.selected {
     text-shadow: black 1px 2px 3px;
+}
+
+#styleRules.blured #styleRulesScrollview > .row.selected {
+    background-color: transparent;
+    border-color: rgba(128,128,255,0.4);
+}
+
+#styleRules.focused #styleRulesScrollview > .row.selected {
+    background-color: rgba(128,128,255,0.4);
+    border-color: transparent;
 }
 
 #styleRulesScrollview > .row > .cell {
@@ -628,7 +631,7 @@ button.toggle.right {
     top: 4px;
     left: 1px;
     float: left;
-    background-image: url( Images/rightTriangle.png );
+    background-image: url(Images/rightTriangle.png);
     width: 8px;
     height: 8px;
     border: 0;
@@ -641,14 +644,14 @@ button.toggle.right {
     padding-left: 2px;
 }
 
-.treeList li.focused {
-    background-color: rgba(128,128,255,0.25);
+.treeList li.selected {
+    background-color: rgba(128,128,255,0.4);
     -webkit-border-radius: 4px;
     text-shadow: black 1px 2px 3px;
 }
 
 .treeList li.expanded button {
-    background-image: url( Images/downTriangle.png );
+    background-image: url(Images/downTriangle.png);
 }
 
 .treeList li span {
@@ -769,4 +772,84 @@ button.toggle.right {
 
 #marginBoxTable[hide] .marginBox, #paddingBoxTable[hide] .paddingBox {
     display: none
+}
+
+ol#treeOutline {
+    padding: 2px 1px;
+}
+
+#treeOutline, #treeOutline ol {
+    list-style-type: none;
+    font-size: 11px;
+    font-family: Lucida Grande, sans-serif;
+    -webkit-padding-start: 11px;
+    margin: 0;
+}
+
+#treeOutline li {
+    -webkit-border-radius: 8px;
+    padding: 0px 5px 2px 18px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    color: white;
+    font-weight: bold;
+    text-shadow: black 2px 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    cursor: normal;
+    -webkit-user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#treeOutline li.selected {
+    background-color: transparent;
+    border-width: 2px;
+    border-style: solid;
+}
+
+#tree.blured li.selected {
+    background-color: transparent;
+    border-color: rgba(128,128,255,0.4);
+}
+
+#tree.focused li.selected {
+    background-color: rgba(128,128,255,0.4);
+    border-color: transparent;
+}
+
+#treeOutline li.parent {
+    padding-left: 0;
+}
+
+#treeOutline li.parent:before {
+    content: url(Images/rightTriangle.png);
+    width: 8px;
+    height: 8px;
+    padding-right: 2px;
+    padding-left: 8px;
+    position: relative;
+    top: 1px;
+}
+
+#treeOutline li.parent.expanded:before {
+    content: url(Images/downTriangle.png);
+}
+
+#treeOutline ol.children {
+    display: none;
+}
+
+#treeOutline ol.children.expanded {
+    display: block;
+}
+
+#treeOutline li .content {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#treeOutline li.expanded .content {
+    display: none;
 }

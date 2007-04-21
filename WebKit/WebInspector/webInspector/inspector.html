@@ -30,29 +30,29 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Web Inspector</title>
-    <script type="text/javascript" src="file:///System/Library/WidgetResources/AppleClasses/AppleScrollbar.js"></script>
-    <script type="text/javascript" src="file:///System/Library/WidgetResources/AppleClasses/AppleScrollArea.js"></script>
+    <script type="text/javascript" src="utilities.js"></script>
+    <script type="text/javascript" src="scrollbar.js"></script>
+    <script type="text/javascript" src="scrollarea.js"></script>
+    <script type="text/javascript" src="treeoutline.js"></script>
     <script type="text/javascript" src="inspector.js"></script>
-    <style type="text/css">
-        @import "inspector.css";
-    </style>
+    <link rel="stylesheet" type="text/css" href="inspector.css" />
 </head>
 <body onload="loaded()">
 <div id="body">
 <div id="title"><button class="close" onclick="window.close()"></button>Web Inspector<button class="menu" onmousedown="Inspector.showOptionsMenu()"></button></div>
 <div id="top">
     <div id="header">
-        <div id="traverse"><button class="left" id="traverseUp" onclick="Inspector.traverseTreeBackward()"></button><button class="right" id="traverseDown" onclick="Inspector.traverseTreeForward()"></button></div>
-        <select id="treePopup" onchange="Inspector.selectNewRoot(this)"></select>
+        <div id="traverse"><button class="left" id="traverseUp" onclick="traverseTreeBackward(event)"></button><button class="right" id="traverseDown" onclick="traverseTreeForward(event)"></button></div>
+        <select id="treePopup" onchange="selectNewRoot(this)"></select>
         <div id="searchCount"></div>
         <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" onsearch="performSearch(this.value)" />
     </div>
-    <div id="tree">
-        <div id="treeScrollArea"><object id="treeOutlineView"><param name="type" value="application/x-inspector-tree" /></object></div>
-        <div id="treeScrollbar"></div>
+    <div id="tree" class="focusable focused">
+        <div id="treeOutlineScrollView"><ol id="treeOutline"></ol></div>
+        <div id="treeOutlineScrollbar"></div>
     </div>
 </div>
-<div id="splitter" onmousedown="Inspector.resizeTopArea()"><hr size="2" /></div>
+<div id="splitter"><hr size="2" /></div>
 <div id="bottom">
     <div id="tabs">
         <button class="left" id="nodeButton" onclick="switchPane('node')">Node</button>
@@ -95,7 +95,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </div>
     <div id="stylePane" class="pane" style="display: none">
         <div id="noStyle" style="display: none"></div>
-        <div id="styleRules" class="scrollArea">
+        <div id="styleRules" class="scrollArea focusable blured">
             <div class="view"><div id="styleRulesScrollview"></div></div>
             <div id="styleRulesScrollbar" class="scrollbar"></div>
         </div>
