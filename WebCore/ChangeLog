@@ -1,3 +1,17 @@
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13416
+          Repro crash after referencing the user stylesheet from JavaScript
+
+        No test included because DumpRenderTree does not support setting the user stylesheet.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        * css/cssstyleselector.h: Made m_userSheet a RefPtr.
+
 2007-04-21  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Adam.

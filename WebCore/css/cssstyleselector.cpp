@@ -230,7 +230,6 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
         loadDefaultStyle();
 
     m_userStyle = 0;
-    m_userSheet = 0;
 
     // construct document root element default style. this is needed
     // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
@@ -259,7 +258,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
         m_userSheet->parseString(userStyleSheet, strictParsing);
 
         m_userStyle = new CSSRuleSet();
-        m_userStyle->addRulesFromSheet(m_userSheet, m_medium);
+        m_userStyle->addRulesFromSheet(m_userSheet.get(), m_medium);
     }
 
     // add stylesheets from document
@@ -334,7 +333,6 @@ CSSStyleSelector::~CSSStyleSelector()
 
     delete m_authorStyle;
     delete m_userStyle;
-    delete m_userSheet;
 }
 
 static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)

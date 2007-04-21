@@ -171,7 +171,7 @@ class StyledElement;
 
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
-        CSSStyleSheet* m_userSheet;
+        RefPtr<CSSStyleSheet> m_userSheet;
         
         bool m_hasUAAppearance;
         BorderData m_borderData;
