@@ -37,7 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-class NPObject;
+struct NPObject;
 
 namespace KJS {
     class Interpreter;

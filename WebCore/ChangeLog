@@ -1,3 +1,11 @@
+2007-04-21  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Adam.
+
+        NPObject should be forward declared using 'struct' instead of 'class'
+
+        * page/Frame.h:
+
 2007-04-21  Alp Toker  <alp@atoker.com>
 
         Gdk build fix.
