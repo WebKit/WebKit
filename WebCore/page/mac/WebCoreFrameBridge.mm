@@ -687,7 +687,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!result)
         return 0;
     JSLock lock;
-    return String(result->isString() ? result->getString() : result->toString(m_frame->scriptProxy()->interpreter()->globalExec()));
+    return nsStringNilIfEmpty(result->isString() ? result->getString() : result->toString(m_frame->scriptProxy()->interpreter()->globalExec()));
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string

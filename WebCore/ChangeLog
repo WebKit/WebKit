@@ -1,3 +1,17 @@
+2007-04-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/4782422> REGRESSION: -[stringByEvaluatingJavaScriptFromString]
+          returns an empty string instead of nil for non-string results
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        Added a call to nsStringNilIfEmpty to restore the old behavior. It might be nice to
+        distinguish the empty string from a non-string result, but there's no obvious way
+        to do that, and for compatibility it's probably best to just restore the old
+        behavior instead.
+
 2007-04-21  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13432, determineFlowSpacing is O(n^2).
