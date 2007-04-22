@@ -1,3 +1,15 @@
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13391
+          REGRESSION (r18819): Incomplete repaint of button text
+
+        * fast/repaint/control-clip-expected.checksum: Added.
+        * fast/repaint/control-clip-expected.png: Added.
+        * fast/repaint/control-clip-expected.txt: Added.
+        * fast/repaint/control-clip.html: Added.
+
 2007-04-21  Lamar Goddard  <lamargoddard@gmail.com>
 
         Reviewed by Darin.

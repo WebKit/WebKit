@@ -952,21 +952,14 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
                 y += sy;
         }
 
-        // <body> may not have overflow, since it might be applying its overflow value to the
-        // scrollbars.
+        // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
+        // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
         if (o->hasOverflowClip()) {
             // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
             IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
             o->layer()->subtractScrollOffset(x, y); // For overflow:auto/scroll/hidden.
-            IntRect repaintRect(x, y, rect.width(), rect.height());
-            rect = intersection(repaintRect, boxRect);
-            if (rect.isEmpty())
-                return;
-        } else if (o->hasControlClip()) {
-            // Some form controls use a lightweight clipping scheme to avoid the overhead of a layer.
-            IntRect boxRect(borderLeft(), borderTop(), m_width - borderLeft() - borderRight(), m_height - borderTop() - borderBottom());
             IntRect repaintRect(x, y, rect.width(), rect.height());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())

@@ -1,3 +1,17 @@
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13391
+          REGRESSION (r18819): Incomplete repaint of button text
+
+        Test: fast/repaint/control-clip.html
+
+        Ignore controls' lightweight clip in repaint rect computation for now.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+
 2007-04-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
