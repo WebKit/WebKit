@@ -5294,15 +5294,18 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
         KeypressCommand command = event->keypressCommand();
-        bool hasKeypressCommand = !command.name.isEmpty() || !command.text.isEmpty();
+        bool hasKeypressCommand = !command.commandNames.isEmpty() || !command.text.isEmpty();
 
         if (parameters.shouldSaveCommand || !hasKeypressCommand)
             [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
         else {
             if (!command.text.isEmpty())
                 [self insertText:command.text];
-            else
-                [self doCommandBySelector:NSSelectorFromString(command.name)];
+            else {
+                size_t size = command.commandNames.size();
+                for (size_t i = 0; i < size; ++i)
+                    [self doCommandBySelector:NSSelectorFromString(command.commandNames[i])];
+            }
         }
         _private->interpretKeyEventsParameters = 0;
     }
@@ -5517,48 +5520,58 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     coreFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
 }
 
-- (void)doCommandBySelector:(SEL)aSelector
+- (void)doCommandBySelector:(SEL)selector
 {
+    if (selector == @selector(noop:))
+        return;
+
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    // The same call to interpretKeyEvents can do more than one command.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
-    _private->interpretKeyEventsParameters = 0;
+
     KeyboardEvent* event = parameters ? parameters->event : 0;
-    
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
+
     if (event && shouldSaveCommand) {
-        KeypressCommand command;
-        command.name = NSStringFromSelector(aSelector);
+        KeypressCommand command = event->keypressCommand();
+        command.commandNames.append(NSStringFromSelector(selector));
         event->setKeypressCommand(command);
-        return;
+    } else {
+        // Make sure that only direct calls to doCommandBySelector: see the parameters by setting to 0.
+        _private->interpretKeyEventsParameters = 0;
+
+        bool eventWasHandled = true;
+
+        WebView *webView = [self _webView];
+        Frame* coreFrame = core([self _frame]);
+        if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector] && coreFrame) {
+            if (selector == @selector(insertNewline:) || selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
+                eventWasHandled = coreFrame->editor()->execCommand("InsertNewline", event);
+            else if (selector == @selector(insertLineBreak:))
+                eventWasHandled = coreFrame->editor()->execCommand("InsertLineBreak", event);
+            else if (selector == @selector(insertTab:) || selector == @selector(insertTabIgnoringFieldEditor:))
+                eventWasHandled = coreFrame->editor()->execCommand("InsertTab", event);
+            else if (selector == @selector(insertBacktab:))
+                eventWasHandled = coreFrame->editor()->execCommand("InsertBacktab", event);
+            else
+                [super doCommandBySelector:selector];
+        }
+
+        if (parameters)
+            parameters->eventWasHandled = eventWasHandled;
+
+        // Restore the parameters so that other calls to doCommandBySelector: see them,
+        // and other commands can participate in setting the "eventWasHandled" flag.
+        _private->interpretKeyEventsParameters = parameters;
     }
-    
-    if (aSelector == @selector(noop:))
-        return;
-
-    bool eventWasHandled = true;
-
-    WebView *webView = [self _webView];
-    Frame* coreFrame = core([self _frame]);
-    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector] && coreFrame) {
-        if (aSelector == @selector(insertNewline:) || aSelector == @selector(insertParagraphSeparator:) || aSelector == @selector(insertNewlineIgnoringFieldEditor:))
-            eventWasHandled = coreFrame->editor()->execCommand("InsertNewline", event);
-        else if (aSelector == @selector(insertLineBreak:))
-            eventWasHandled = coreFrame->editor()->execCommand("InsertLineBreak", event);
-        else if (aSelector == @selector(insertTab:) || aSelector == @selector(insertTabIgnoringFieldEditor:))
-            eventWasHandled = coreFrame->editor()->execCommand("InsertTab", event);
-        else if (aSelector == @selector(insertBacktab:))
-            eventWasHandled = coreFrame->editor()->execCommand("InsertBacktab", event);
-        else
-            [super doCommandBySelector:aSelector];
-    }
-
-    if (parameters)
-        parameters->eventWasHandled = eventWasHandled;
 }
 
 - (void)insertText:(id)string
 {
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    // If insertText: is called by interpretKeyEvents, we assume that's the only thing it will do;
+    // we don't handle multiple calls to this the way we do in doCommandBySelector:, and we also
+    // don't handle a mix of doCommandBySelector: and insertText:. 
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
 

@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
@@ -27,6 +25,7 @@
 #define KeyboardEvent_h
 
 #include "UIEventWithKeyState.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -34,7 +33,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
     struct KeypressCommand {
-        String name;
+        Vector<String> commandNames;
         String text;
     };
 #endif

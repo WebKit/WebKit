@@ -1,3 +1,17 @@
+2007-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix for <rdar://problem/5100240> REGRESSION: Control-O broken
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]): Update to handle a vector of
+        command names instead of a single command.
+        (-[WebHTMLView doCommandBySelector:]): Change logic so that we add the command to a vector
+        and also so that the interpretKeyEvents parameters are still intact for a second call to
+        doCommandBySelector:, since the key bindings mechanism can do more than one.
+        (-[WebHTMLView insertText:]): Added comment.
+
 2007-04-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

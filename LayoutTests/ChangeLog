@@ -1,3 +1,14 @@
+2007-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for <rdar://problem/5100240> REGRESSION: Control-O broken
+
+        * editing/input/emacs-ctrl-o-expected.checksum: Added.
+        * editing/input/emacs-ctrl-o-expected.png: Added.
+        * editing/input/emacs-ctrl-o-expected.txt: Added.
+        * editing/input/emacs-ctrl-o.html: Added.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,12 @@
+2007-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - support for fix for <rdar://problem/5100240> REGRESSION: Control-O broken
+
+        * dom/KeyboardEvent.h: Include a vector of command names in the KeypressCommand object
+        instead of a single command name.
+
 2007-04-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
