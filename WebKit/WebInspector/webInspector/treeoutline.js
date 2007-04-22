@@ -187,20 +187,23 @@ TreeOutline.prototype.findTreeElement = function(representedObject)
 
 TreeOutline.prototype.handleKeyEvent = function(event)
 {
-    if (!this.selectedTreeElement || event.shiftKey || event.metaKey || event.altKey || event.ctrlKey)
+    if (!this.selectedTreeElement || event.shiftKey || event.metaKey || event.ctrlKey)
         return;
 
     var handled = false;
     var nextSelectedElement;
-    if (event.keyIdentifier === "Up") {
+    if (event.keyIdentifier === "Up" && !event.altKey) {
         nextSelectedElement = this.selectedTreeElement.traversePreviousTreeElement(true);
         handled = true;
-    } else if (event.keyIdentifier === "Down") {
+    } else if (event.keyIdentifier === "Down" && !event.altKey) {
         nextSelectedElement = this.selectedTreeElement.traverseNextTreeElement(true);
         handled = true;
     } else if (event.keyIdentifier === "Left") {
         if (this.selectedTreeElement.expanded) {
-            this.selectedTreeElement.collapse();
+            if (event.altKey)
+                this.selectedTreeElement.collapseRecursively();
+            else
+                this.selectedTreeElement.collapse();
             handled = true;
         } else if (this.selectedTreeElement.parent && !this.selectedTreeElement.parent.root) {
             nextSelectedElement = this.selectedTreeElement.parent;
@@ -208,7 +211,10 @@ TreeOutline.prototype.handleKeyEvent = function(event)
         }
     } else if (event.keyIdentifier === "Right") {
         if (this.selectedTreeElement.hasChildren) {
-            this.selectedTreeElement.expand();
+            if (event.altKey)
+                this.selectedTreeElement.expandRecursively();
+            else
+                this.selectedTreeElement.expand();
             handled = true;
         }
     }
@@ -346,9 +352,15 @@ TreeElement.treeElementToggled = function(event)
 
     if (event.offsetX <= 20 && element.treeElement.hasChildren) {
         if (element.treeElement.expanded) {
-            element.treeElement.collapse();
+            if (event.altKey)
+                element.treeElement.collapseRecursively();
+            else
+                element.treeElement.collapse();
         } else {
-            element.treeElement.expand();
+            if (event.altKey)
+                element.treeElement.expandRecursively();
+            else
+                element.treeElement.expand();
         }
     }
 }
@@ -379,6 +391,16 @@ TreeElement.prototype.collapse = function()
 
     if (this.oncollapse)
         this.oncollapse(this);
+}
+
+TreeElement.prototype.collapseRecursively = function()
+{
+    var item = this;
+    while (item) {
+        if (item.expanded)
+            item.collapse();
+        item = item.traverseNextTreeElement(false, this, true);
+    }
 }
 
 TreeElement.prototype.expand = function()
@@ -422,6 +444,15 @@ TreeElement.prototype.expand = function()
 
     if (this.onexpand)
         this.onexpand(this);
+}
+
+TreeElement.prototype.expandRecursively = function()
+{
+    var item = this;
+    while (item) {
+        item.expand();
+        item = item.traverseNextTreeElement(false, this);
+    }
 }
 
 TreeElement.prototype.reveal = function()

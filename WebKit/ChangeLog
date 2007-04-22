@@ -2,6 +2,18 @@
 
         Reviewed by Mitz.
 
+        Bug 13436: Make Option-clicking a disclosure triangle expand the entire subtree
+        http://bugs.webkit.org/show_bug.cgi?id=13436
+
+        Makes option-click recursively expand and collapse the sub-tree. Pressing option-left
+        and -right also recursively expands and collapses the sub-tree.
+
+        * WebInspector/webInspector/treeoutline.js:
+
+2007-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mitz.
+
         Bug 13437: Inspector does not update when navigating to a different page
         http://bugs.webkit.org/show_bug.cgi?id=13437
 
