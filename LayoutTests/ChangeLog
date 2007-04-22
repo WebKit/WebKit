@@ -1,5 +1,20 @@
 2007-04-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13439
+          4 problems found in dashboard-region parser and serializer
+
+        * fast/css/dashboard-region-parser.html: Added.
+        * fast/css/dashboard-region-parser-expected.txt: Added.
+
+        * fast/css/dashboard-regions-attr-crash.html: Updated bug URL to point to bugs.webkit.org
+        instead of bugzilla.opendarwin.org. At some point we should do this for the roughly 100
+        other tests that have the old URL.
+        * fast/css/dashboard-regions-attr-crash-expected.txt: Ditto.
+
+2007-04-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - test for <rdar://problem/5100240> REGRESSION: Control-O broken

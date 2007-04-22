@@ -548,18 +548,30 @@ String CSSPrimitiveValue::cssText() const
             break;
         case CSS_DASHBOARD_REGION:
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
-                text = "dashboard-region(";
+                if (!text.isEmpty())
+                    text.append(' ');
+                text += "dashboard-region(";
                 text += region->m_label;
                 if (region->m_isCircle)
-                    text += " circle ";
+                    text += " circle";
                 else if (region->m_isRectangle)
-                    text += " rectangle ";
+                    text += " rectangle";
                 else
                     break;
-                text += region->top()->cssText() + " ";
-                text += region->right()->cssText() + " ";
-                text += region->bottom()->cssText() + " ";
-                text += region->left()->cssText();
+                if (region->top()->m_type == CSS_IDENT && region->top()->getIdent() == CSS_VAL_INVALID) {
+                    ASSERT(region->right()->m_type == CSS_IDENT);
+                    ASSERT(region->bottom()->m_type == CSS_IDENT);
+                    ASSERT(region->left()->m_type == CSS_IDENT);
+                    ASSERT(region->right()->getIdent() == CSS_VAL_INVALID);
+                    ASSERT(region->bottom()->getIdent() == CSS_VAL_INVALID);
+                    ASSERT(region->left()->getIdent() == CSS_VAL_INVALID);
+                } else {
+                    text.append(' ');
+                    text += region->top()->cssText() + " ";
+                    text += region->right()->cssText() + " ";
+                    text += region->bottom()->cssText() + " ";
+                    text += region->left()->cssText();
+                }
                 text += ")";
             }
             break;

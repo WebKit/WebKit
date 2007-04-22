@@ -2067,6 +2067,8 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
     Value *value = valueList->current();
 
     if (value->id == CSS_VAL_NONE) {
+        if (valueList->next())
+            return false;
         addProperty(propId, new CSSPrimitiveValue(value->id), important);
         return valid;
     }
@@ -2138,9 +2140,8 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         region->m_geometryType = domString(arg->string);
 
         if (numArgs == DASHBOARD_REGION_SHORT_NUM_PARAMETERS || numArgs == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
-            CSSPrimitiveValue *amount = arg->id == CSS_VAL_AUTO ?
-                new CSSPrimitiveValue(CSS_VAL_AUTO) :
-                new CSSPrimitiveValue((double)0, (CSSPrimitiveValue::UnitTypes) arg->unit);
+            // This originally used CSS_VAL_INVALID by accident. It might be more logical to use something else.
+            CSSPrimitiveValue *amount = new CSSPrimitiveValue(CSS_VAL_INVALID);
                 
             region->setTop(amount);
             region->setRight(amount);
@@ -2172,6 +2173,9 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
                     region->setLeft(amount);
             }
         }
+
+        if (args->next())
+            return false;
 
         value = valueList->next();
     }

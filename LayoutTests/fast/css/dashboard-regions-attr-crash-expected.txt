@@ -1,4 +1,4 @@
-Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8469 CRASH: WebCore::CSSParser::parseDashboardRegions when attr() is passed.
+Test for http://bugs.webkit.org/show_bug.cgi?id=8469 CRASH: WebCore::CSSParser::parseDashboardRegions when attr() is passed.
 
 If the test passes it won't crash
 

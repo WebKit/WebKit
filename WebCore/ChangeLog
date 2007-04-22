@@ -1,5 +1,27 @@
 2007-04-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13439
+          4 problems found in dashboard-region parser and serializer
+
+        Test: fast/css/dashboard-region-parser.html
+
+        * css/CSSPrimitiveValue.cpp: (WebCore::CSSPrimitiveValue::cssText):
+        Fix code that overwrote each additional region with the previous one to
+        instead build a space-separated list. Check for the case of an identifier
+        that's invalid, since that's (accidentally) how we represent a region
+        value that doesn't have explicit top/right/bottom/left values. The old code
+        would end up writing out four spaces after the region type.
+
+        * css/cssparser.cpp: (WebCore::CSSParser::parseDashboardRegions):
+        Fail to parse if there is something after the "none" identifier or after
+        the arguments inside the dashboard-region "function". Also replaced code
+        that produced a identifier with CSS_VAL_INVALID in a roundabout way with
+        code that does it explicitly.
+
+2007-04-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - support for fix for <rdar://problem/5100240> REGRESSION: Control-O broken
