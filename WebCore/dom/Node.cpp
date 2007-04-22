@@ -47,6 +47,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+typedef HashSet<NodeList*> NodeListSet;
+struct NodeListsNodeData {
+    NodeListSet m_registeredLists;
+    NodeList::Caches m_childNodeListCaches;
+};
+
+
 /**
  * NodeList which lists all Nodes in a document with a given tag name
  */
@@ -215,7 +222,10 @@ void Node::setNodeValue( const String &/*_nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    return new ChildNodeList(this);
+    if (!m_nodeLists)
+        m_nodeLists = new NodeListsNodeData;
+
+    return new ChildNodeList(this, &m_nodeLists->m_childNodeListCaches);
 }
 
 Node *Node::firstChild() const
@@ -430,15 +440,15 @@ unsigned Node::nodeIndex() const
 void Node::registerNodeList(NodeList* list)
 {
     if (!m_nodeLists)
-        m_nodeLists = new NodeListSet;
-    m_nodeLists->add(list);
+        m_nodeLists = new NodeListsNodeData;
+    m_nodeLists->m_registeredLists.add(list);
 }
 
 void Node::unregisterNodeList(NodeList* list)
 {
     if (!m_nodeLists)
         return;
-    m_nodeLists->remove(list);
+    m_nodeLists->m_registeredLists.remove(list);
 }
 
 void Node::notifyLocalNodeListsAttributeChanged()
@@ -446,8 +456,8 @@ void Node::notifyLocalNodeListsAttributeChanged()
     if (!m_nodeLists)
         return;
 
-    NodeListSet::iterator end = m_nodeLists->end();
-    for (NodeListSet::iterator i = m_nodeLists->begin(); i != end; ++i)
+    NodeListSet::iterator end = m_nodeLists->m_registeredLists.end();
+    for (NodeListSet::iterator i = m_nodeLists->m_registeredLists.begin(); i != end; ++i)
         (*i)->rootNodeAttributeChanged();
 }
 
@@ -462,8 +472,8 @@ void Node::notifyLocalNodeListsChildrenChanged()
     if (!m_nodeLists)
         return;
 
-    NodeListSet::iterator end = m_nodeLists->end();
-    for (NodeListSet::iterator i = m_nodeLists->begin(); i != end; ++i)
+    NodeListSet::iterator end = m_nodeLists->m_registeredLists.end();
+    for (NodeListSet::iterator i = m_nodeLists->m_registeredLists.begin(); i != end; ++i)
         (*i)->rootNodeChildrenChanged();
 }
 

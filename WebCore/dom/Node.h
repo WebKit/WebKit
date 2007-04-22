@@ -45,6 +45,7 @@ class IntRect;
 class KeyboardEvent;
 class NamedAttrMap;
 class NodeList;
+struct NodeListsNodeData;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -456,8 +457,7 @@ private: // members
     RenderObject* m_renderer;
 
 protected:
-    typedef HashSet<NodeList*> NodeListSet;
-    NodeListSet* m_nodeLists;
+    NodeListsNodeData* m_nodeLists;
 
     short m_tabIndex;
 

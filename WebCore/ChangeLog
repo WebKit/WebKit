@@ -1,3 +1,40 @@
+2007-04-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13115
+        REGRESSION: 1000% performance regression in DOM access by index, which was already slow
+
+        * dom/NodeList.h: Move cached data into a separate class, so it can be shared.
+
+        * dom/Node.h: Replace the set of registered NodeLists with a struct that also
+        contains a shared NodeList::Caches (so the size of Node doesn't change).
+
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::NodeList):
+        (WebCore::NodeList::~NodeList):
+        (WebCore::NodeList::recursiveLength):
+        (WebCore::NodeList::itemForwardsFromCurrent):
+        (WebCore::NodeList::itemBackwardsFromCurrent):
+        (WebCore::NodeList::recursiveItem):
+        (WebCore::NodeList::itemWithName):
+        (WebCore::NodeList::rootNodeChildrenChanged):
+        (WebCore::NodeList::NodeListInfo::NodeListInfo):
+        (WebCore::NodeList::NodeListInfo::reset):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerNodeList):
+        (WebCore::Node::unregisterNodeList):
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged):
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged):
+        Adjust for the above changes.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -30,38 +30,38 @@ using namespace WebCore;
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList( Node *n )
-    : NodeList(n)
+ChildNodeList::ChildNodeList(Node* n, NodeList::Caches* info)
+    : NodeList(n, info)
 {
 }
 
 unsigned ChildNodeList::length() const
 {
-    if (isLengthCacheValid)
-        return cachedLength;
+    if (m_caches->isLengthCacheValid)
+        return m_caches->cachedLength;
 
     unsigned len = 0;
     Node *n;
-    for(n = rootNode->firstChild(); n != 0; n = n->nextSibling())
+    for (n = m_rootNode->firstChild(); n != 0; n = n->nextSibling())
         len++;
 
-    cachedLength = len;
-    isLengthCacheValid = true;
+    m_caches->cachedLength = len;
+    m_caches->isLengthCacheValid = true;
 
     return len;
 }
 
-Node *ChildNodeList::item ( unsigned index ) const
+Node *ChildNodeList::item(unsigned index) const
 {
     unsigned int pos = 0;
-    Node *n = rootNode->firstChild();
+    Node *n = m_rootNode->firstChild();
 
-    if (isItemCacheValid) {
-        if (index == lastItemOffset) {
-            return lastItem;
-        } else if (index > lastItemOffset) {
-            n = lastItem;
-            pos = lastItemOffset;
+    if (m_caches->isItemCacheValid) {
+        if (index == m_caches->lastItemOffset)
+            return m_caches->lastItem;
+        if (index > m_caches->lastItemOffset) {
+            n = m_caches->lastItem;
+            pos = m_caches->lastItemOffset;
         }
     }
 
@@ -71,9 +71,9 @@ Node *ChildNodeList::item ( unsigned index ) const
     }
 
     if (n) {
-        lastItem = n;
-        lastItemOffset = pos;
-        isItemCacheValid = true;
+        m_caches->lastItem = n;
+        m_caches->lastItemOffset = pos;
+        m_caches->isItemCacheValid = true;
         return n;
     }
 
@@ -82,7 +82,7 @@ Node *ChildNodeList::item ( unsigned index ) const
 
 bool ChildNodeList::nodeMatches(Node *testNode) const
 {
-    return testNode->parentNode() == rootNode;
+    return testNode->parentNode() == m_rootNode;
 }
 
 }

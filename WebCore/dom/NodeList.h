@@ -37,7 +37,20 @@ class Node;
 
 class NodeList : public Shared<NodeList> {
 public:
+
+    struct Caches {
+        Caches();
+        void reset();
+        
+        int cachedLength;
+        Node* lastItem;
+        unsigned lastItemOffset;
+        bool isLengthCacheValid : 1;
+        bool isItemCacheValid : 1;
+    };
+
     NodeList(PassRefPtr<Node> rootNode);
+    NodeList(PassRefPtr<Node> rootNode, Caches*);
     virtual ~NodeList();
 
     // DOM methods & attributes for NodeList
@@ -55,12 +68,9 @@ protected:
     Node* recursiveItem (unsigned offset, Node* start = 0) const;
     virtual bool nodeMatches(Node* testNode) const = 0;
 
-    RefPtr<Node> rootNode;
-    mutable int cachedLength;
-    mutable Node* lastItem;
-    mutable unsigned lastItemOffset;
-    mutable bool isLengthCacheValid : 1;
-    mutable bool isItemCacheValid : 1;
+    RefPtr<Node> m_rootNode;
+    mutable Caches* m_caches;
+    bool m_ownsCaches;
 
  private:
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
