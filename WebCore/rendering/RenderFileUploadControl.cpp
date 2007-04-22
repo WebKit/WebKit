@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -92,8 +92,9 @@ void RenderFileUploadControl::valueChanged()
     // onChange may destroy this renderer
     RefPtr<FileChooser> fileChooser = m_fileChooser;
 
-    static_cast<HTMLInputElement*>(node())->setValueFromRenderer(m_fileChooser->filename());
-    static_cast<HTMLInputElement*>(node())->onChange();
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
+    inputElement->setValueFromRenderer(fileChooser->filename());
+    inputElement->onChange();
  
     // only repaint if it doesn't seem we have been destroyed
     if (!fileChooser->disconnected())
@@ -107,8 +108,10 @@ void RenderFileUploadControl::click()
 
 void RenderFileUploadControl::updateFromElement()
 {
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
+
     if (!m_button) {
-        m_button = new HTMLFileUploadInnerButtonElement(document(), node());
+        m_button = new HTMLFileUploadInnerButtonElement(document(), inputElement);
         m_button->setInputType("button");
         m_button->setValue(fileButtonChooseFileLabel());
         RenderStyle* buttonStyle = createButtonStyle(style());
@@ -119,9 +122,17 @@ void RenderFileUploadControl::updateFromElement()
         m_button->setAttached();
         m_button->setInDocument(true);
 
-        addChild(m_button->renderer());
+        addChild(renderer);
     }
+
     m_button->setDisabled(!theme()->isEnabled(this));
+
+    // This only supports clearing out the filename, but that's OK because for
+    // security reasons that's the only change the DOM is allowed to make.
+    if (inputElement->value().isEmpty() || !m_fileChooser->filename().isEmpty()) {
+        m_fileChooser->clear();
+        repaint();
+    }
 }
 
 int RenderFileUploadControl::maxFilenameWidth() const

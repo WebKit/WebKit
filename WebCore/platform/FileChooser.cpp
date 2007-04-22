@@ -38,6 +38,12 @@ PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Str
     return new FileChooser(client, filename);
 }
 
+void FileChooser::clear()
+{
+    m_filename = String();
+    m_icon = chooseIcon(m_filename);
+}
+
 void FileChooser::chooseFile(const String& filename)
 {
     if (m_filename == filename)

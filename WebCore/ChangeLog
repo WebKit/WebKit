@@ -1,3 +1,38 @@
+2007-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5196
+          <rdar://problem/4537384> input type=file fields with style=display:none do not post
+          their values (5196)
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8248
+          Can not clear file input field
+
+        * manual-tests/clear-input-file.html: Added.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData): Remove check that prevents submission of
+        form data when there is no renderer or the renderer is invisible. While well-intentioned,
+        the rule does not match the behavior of other web browsers.
+        (WebCore::HTMLInputElement::setValue): Instead of disallowing all value changes for file
+        type, allow changes to the empty string.
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute): Made file type return true
+        for this. 1) The file type does store its value separate from the value attribute.
+        2) The code in setInputType() should do the right thing given this new value, according to
+        my inspection of the code. 3) The code in both reset() and setValue() will work properly
+        if this is true, which was the motivation for changing it.
+
+        * platform/FileChooser.h: Added a clear function.
+        * platform/FileChooser.cpp: (WebCore::FileChooser::clear): Clear the filename and the icon.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::valueChanged): Used a local variable to make the code
+        a little bit more readable (and match the change below).
+        (WebCore::RenderFileUploadControl::updateFromElement): Used local variables a bit more in
+        the old code. Added code that will call clear on the FileChooser and repaint if the DOM
+        element has an empty value and the FileChooser does not.
+
 2007-04-22  Grace Kloba  <klobag@gmail.com>
 
         Reviewed by Hyatt.

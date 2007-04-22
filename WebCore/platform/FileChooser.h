@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,8 @@ public:
     String basenameForWidth(const Font&, int width) const;
 
     Icon* icon() const { return m_icon.get(); }
+
+    void clear(); // for use by client; does not call valueChanged
 
     void chooseFile(const String& filename);
 
