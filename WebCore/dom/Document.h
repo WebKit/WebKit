@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
@@ -255,7 +253,14 @@ public:
      * This method returns true if all top-level stylesheets have loaded (including
      * any @imports that they may be loading).
      */
-    bool haveStylesheetsLoaded() const { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
+    bool haveStylesheetsLoaded() const
+    {
+        return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets
+#if USE(LOW_BANDWIDTH_DISPLAY)
+            || m_inLowBandwidthDisplay
+#endif
+            ;
+    }
 
     /**
      * Increments the number of pending sheets.  The <link> elements
@@ -629,6 +634,12 @@ public:
 
     bool isAllowedToLoadLocalResources() const { return m_isAllowedToLoadLocalResources; }
 
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    void setDocLoader(DocLoader* loader) { m_docLoader = loader; }
+    bool inLowBandwidthDisplay() const { return m_inLowBandwidthDisplay; }
+    void setLowBandwidthDisplay(bool lowBandWidth) { m_inLowBandwidthDisplay = lowBandWidth; }
+#endif     
+
 protected:
     CSSStyleSelector* m_styleSelector;
     FrameView* m_view;
@@ -842,6 +853,10 @@ private:
     String m_iconURL;
 
     bool m_isAllowedToLoadLocalResources;
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    bool m_inLowBandwidthDisplay;
+#endif
 };
 
 } //namespace

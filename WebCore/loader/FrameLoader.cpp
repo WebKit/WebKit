@@ -90,6 +90,10 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
+#if USE(LOW_BANDWIDTH_DISPLAY)
+const unsigned int cMaxPenderingSourceLengthInLowBandwidthDisplay = 128 * 1024;
+#endif
+
 struct FormSubmission {
     const char* action;
     String URL;
@@ -225,6 +229,11 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_checkCompletedTimer(this, &FrameLoader::checkCompletedTimerFired)
     , m_opener(0)
     , m_openedByJavaScript(false)
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    , m_useLowBandwidthDisplay(true)
+    , m_finishedParsingDuringLowBandwidthDisplay(false)
+    , m_needToSwitchOutLowBandwidthDisplay(false)
+#endif 
 {
 }
 
@@ -356,6 +365,14 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
 
 bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName)
 {
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    // don't create sub-frame during low bandwidth display
+    if (frame()->document()->inLowBandwidthDisplay()) {
+        m_needToSwitchOutLowBandwidthDisplay = true;
+        return false;
+    }
+#endif
+
     // Support for <frame src="javascript:string">
     KURL scriptURL;
     KURL url;
@@ -554,6 +571,14 @@ void FrameLoader::stopLoading(bool sendUnload)
         child->loader()->stopLoading(sendUnload);
 
     cancelRedirection();
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    if (m_frame->document() && m_frame->document()->inLowBandwidthDisplay()) {
+        // Since loading is forced to stop, reset the state without really switching.
+        m_needToSwitchOutLowBandwidthDisplay = false;
+        switchOutLowBandwidthDisplayIfReady();
+    }
+#endif  
 }
 
 void FrameLoader::stop()
@@ -840,6 +865,18 @@ void FrameLoader::begin(const KURL& url)
 
     if (m_frame->view())
         m_frame->view()->resizeContents(0, 0);
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    // Low bandwidth display is a first pass display without external resources
+    // used to give an instant visual feedback. We currently only enable it for
+    // HTML documents in the top frame.
+    if (document->isHTMLDocument() && !m_frame->tree()->parent() && m_useLowBandwidthDisplay) {
+        m_pendingSourceInLowBandwidthDisplay = String();
+        m_finishedParsingDuringLowBandwidthDisplay = false;
+        m_needToSwitchOutLowBandwidthDisplay = false;
+        document->setLowBandwidthDisplay(true);
+    }
+#endif
 }
 
 void FrameLoader::write(const char* str, int len, bool flush)
@@ -870,6 +907,13 @@ void FrameLoader::write(const char* str, int len, bool flush)
         decoded += m_decoder->flush();
     if (decoded.isEmpty())
         return;
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    if (m_frame->document()->inLowBandwidthDisplay())
+        m_pendingSourceInLowBandwidthDisplay.append(decoded);
+    else // reset policy which is changed in switchOutLowBandwidthDisplayIfReady()
+        m_frame->document()->docLoader()->setCachePolicy(m_cachePolicy);    
+#endif
 
     if (!m_receivedData) {
         m_receivedData = true;
@@ -919,6 +963,12 @@ void FrameLoader::endIfNotLoading()
     if (m_frame->document()) {
         write(0, 0, true);
         m_frame->document()->finishParsing();
+#if USE(LOW_BANDWIDTH_DISPLAY)
+        if (m_frame->document()->inLowBandwidthDisplay()) {
+            m_finishedParsingDuringLowBandwidthDisplay = true;
+            switchOutLowBandwidthDisplayIfReady();
+        }
+#endif            
     } else
         // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
         // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
@@ -1081,6 +1131,12 @@ void FrameLoader::checkCompleted()
     if (m_frame->document() && m_frame->document()->docLoader())
         if (cache()->loader()->numRequests(m_frame->document()->docLoader()))
             return;
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    // as switch will be called, don't complete yet
+    if (m_frame->document() && m_frame->document()->inLowBandwidthDisplay() && m_needToSwitchOutLowBandwidthDisplay)
+        return;
+#endif
 
     // OK, completed.
     m_isComplete = true;
@@ -1349,6 +1405,14 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 {
     if (url.isEmpty() && mimeType.isEmpty())
         return true;
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    // don't care object during low bandwidth display
+    if (frame()->document()->inLowBandwidthDisplay()) {
+        m_needToSwitchOutLowBandwidthDisplay = true;
+        return false;
+    }
+#endif
 
     KURL completedURL;
     if (!url.isEmpty())
@@ -4358,5 +4422,131 @@ bool FrameLoader::shouldTreatURLAsLocal(const String& url)
     String scheme = url.left(loc);
     return localSchemes().contains(scheme);
 }
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+
+bool FrameLoader::addLowBandwidthDisplayRequest(CachedResource* cache)
+{
+    if (m_frame->document()->inLowBandwidthDisplay() == false)
+        return false;
+        
+    // if cache is loaded, don't add to the list, where notifyFinished() is expected. 
+    if (cache->isLoaded())
+        return false;
+                
+    switch (cache->type()) {
+        case CachedResource::CSSStyleSheet:
+        case CachedResource::Script:
+            m_needToSwitchOutLowBandwidthDisplay = true;
+            m_externalRequestsInLowBandwidthDisplay.add(cache);
+            cache->ref(this);
+            return true;
+        case CachedResource::ImageResource:
+#if ENABLE(XSLT)
+        case CachedResource::XSLStyleSheet:
+#endif
+#if ENABLE(XBL)
+        case CachedResource::XBLStyleSheet:
+#endif
+            return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void FrameLoader::removeAllLowBandwidthDisplayRequests()
+{
+    HashSet<CachedResource*>::iterator end = m_externalRequestsInLowBandwidthDisplay.end();
+    for (HashSet<CachedResource*>::iterator it = m_externalRequestsInLowBandwidthDisplay.begin(); it != end; ++it)
+        (*it)->deref(this);
+    m_externalRequestsInLowBandwidthDisplay.clear();
+}
+    
+void FrameLoader::notifyFinished(CachedResource* script)
+{
+    HashSet<CachedResource*>::iterator it = m_externalRequestsInLowBandwidthDisplay.find(script);
+    if (it != m_externalRequestsInLowBandwidthDisplay.end()) {
+        (*it)->deref(this);
+        m_externalRequestsInLowBandwidthDisplay.remove(it);
+        switchOutLowBandwidthDisplayIfReady();        
+    }
+}
+
+void FrameLoader::switchOutLowBandwidthDisplayIfReady()
+{
+    RefPtr<Document> oldDoc = m_frame->document();
+    if (oldDoc->inLowBandwidthDisplay()) {
+        if (!m_needToSwitchOutLowBandwidthDisplay) {
+            // no need to switch, just reset state
+            oldDoc->setLowBandwidthDisplay(false);
+            removeAllLowBandwidthDisplayRequests();        
+            m_pendingSourceInLowBandwidthDisplay = String();
+            m_finishedParsingDuringLowBandwidthDisplay = false;
+            return;
+        } else if (m_externalRequestsInLowBandwidthDisplay.isEmpty() || 
+            m_pendingSourceInLowBandwidthDisplay.length() > cMaxPenderingSourceLengthInLowBandwidthDisplay) {
+            // clear the flag first
+            oldDoc->setLowBandwidthDisplay(false);
+            
+            // similar to clear(), should be refactored to share more code
+            oldDoc->cancelParsing();
+            oldDoc->detach();
+            if (m_frame->scriptProxy())
+                m_frame->scriptProxy()->clear();
+            if (m_frame->view())
+                m_frame->view()->clear();
+            
+            // similar to begin(), should be refactored to share more code
+            RefPtr<Document> newDoc = DOMImplementation::instance()->
+                createDocument(m_responseMIMEType, m_frame->view(), m_frame->inViewSourceMode());
+            m_frame->d->m_doc = newDoc;
+            if (!newDoc->attached())
+                newDoc->attach();
+            newDoc->setURL(m_URL.url());
+            newDoc->setBaseURL(m_URL.url());
+            if (m_decoder)
+                newDoc->setDecoder(m_decoder.get());
+            restoreDocumentState();
+            partClearedInBegin();         
+            newDoc->implicitOpen();
+
+            // swap DocLoader ownership
+            DocLoader* docLoader = newDoc->docLoader();
+            newDoc->setDocLoader(oldDoc->docLoader());
+            newDoc->docLoader()->replaceDocument(newDoc.get());
+            docLoader->replaceDocument(oldDoc.get());
+            oldDoc->setDocLoader(docLoader);
+            
+            // drop the old doc            
+            oldDoc = 0;
+
+            // write decoded data to the new doc, similar to write()
+            if (m_pendingSourceInLowBandwidthDisplay.length()) {
+                // set cachePolicy to Cache to use the loaded resource
+                newDoc->docLoader()->setCachePolicy(CachePolicyCache);
+                newDoc->determineParseMode(m_pendingSourceInLowBandwidthDisplay);
+                if (m_decoder->encoding().usesVisualOrdering())
+                    newDoc->setVisuallyOrdered();                    
+                newDoc->recalcStyle(Node::Force);                
+                newDoc->tokenizer()->write(m_pendingSourceInLowBandwidthDisplay, true);
+            
+                if (m_finishedParsingDuringLowBandwidthDisplay)
+                    newDoc->finishParsing();
+            }
+
+            // update rendering
+            newDoc->updateRendering();
+                        
+            // reset states
+            removeAllLowBandwidthDisplayRequests();        
+            m_pendingSourceInLowBandwidthDisplay = String();
+            m_finishedParsingDuringLowBandwidthDisplay = false;
+            m_needToSwitchOutLowBandwidthDisplay = false;
+        }
+    }
+}
+
+#endif
 
 } // namespace WebCore

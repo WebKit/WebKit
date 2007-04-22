@@ -401,6 +401,15 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             kdDebug( 6036 ) << "---END SCRIPT---" << endl;
 #endif
             // Parse scriptCode containing <script> info
+#if USE(LOW_BANDWIDTH_DISPLAY)
+            if (m_doc->inLowBandwidthDisplay()) {
+                // ideal solution is only skipping internal JavaScript if there is external JavaScript.
+                // but internal JavaScript can use document.write() to create an external JavaScript,
+                // so we have to skip internal JavaScript all the time.
+                m_doc->frame()->loader()->needToSwitchOutLowBandwidthDisplay();
+                doScriptExec = false;
+            } else
+#endif
             doScriptExec = static_cast<HTMLScriptElement*>(scriptNode.get())->shouldExecuteAsJavaScript();
             scriptNode = 0;
         }

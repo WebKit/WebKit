@@ -1,6 +1,4 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
@@ -37,6 +35,7 @@
 #include "FrameLoader.h"
 #include "Image.h"
 #include "ResourceHandle.h"
+#include "Frame.h"
 
 using namespace std;
 
@@ -120,6 +119,13 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
 
     if (resource->type() != type)
         return 0;
+
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    // addLowBandwidthDisplayRequest() returns true if requesting CSS or JS during low bandwidth display.
+    // Here, return 0 to not block parsing or layout.
+    if (docLoader->frame() && docLoader->frame()->loader()->addLowBandwidthDisplayRequest(resource))
+        return 0;
+#endif
 
     return resource;
 }

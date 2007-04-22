@@ -1,3 +1,47 @@
+2007-04-22  Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by Hyatt.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12279
+        Implemented two pass loading. Enabled by WTF_USE_LOW_BANDWIDTH_DISPLAY flag.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): initialize member variable m_inLowBandwidthDisplay
+
+        * dom/Document.h:
+        (WebCore::Document::haveStylesheetsLoaded): while in low bandwidth display mode, ignore pending style sheets
+        (WebCore::Document::setDocLoader):
+        (WebCore::Document::inLowBandwidthDisplay):
+        (WebCore::Document::setLowBandwidthDisplay):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler): while in low bandwidth display mode, don't execute JavaScript
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource): while in low bandwidth display mode, don't let style sheet and JavaScript block
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify): add notifyFinished() as client may need "this" pointer
+
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::replaceDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::requestFrame): while in low bandwidth display mode, don't load sub-frame
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::begin): set to low bandwidth display mode if the top frame is HTML document
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::endIfNotLoading):
+        (WebCore::FrameLoader::checkCompleted): while in low bandwidth display mode, don't set complete
+        (WebCore::FrameLoader::requestObject): while in low bandwidth display mode, don't care Object
+        (WebCore::FrameLoader::addLowBandwidthDisplayRequest):
+        (WebCore::FrameLoader::removeAllLowbandwidthDisplayRequests):
+        (WebCore::FrameLoader::notifyFinished):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::FrameLoader::needToSwitchOutLowBandwidthDisplay):
+        (WebCore::FrameLoader::FrameLoader::setUseLowBandwidthDisplay):
+        (WebCore::FrameLoader::FrameLoader::useLowBandwidthDisplay):
+
 2007-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

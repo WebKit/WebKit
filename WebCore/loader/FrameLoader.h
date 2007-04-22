@@ -43,6 +43,9 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include "ResourceRequest.h"
+#if USE(LOW_BANDWIDTH_DISPLAY)
+#include "CachedResourceClient.h"
+#endif
 
 namespace KJS {
     class JSValue;
@@ -119,7 +122,11 @@ namespace WebCore {
         void* m_argument;
     };
 
-    class FrameLoader : Noncopyable {
+    class FrameLoader : Noncopyable
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    , private CachedResourceClient
+#endif
+    {
     public:
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
@@ -415,6 +422,16 @@ namespace WebCore {
         static void setRestrictAccessToLocal(bool);
         static bool shouldTreatURLAsLocal(const String& url);
 
+#if USE(LOW_BANDWIDTH_DISPLAY)    
+        bool addLowBandwidthDisplayRequest(CachedResource*);
+        void needToSwitchOutLowBandwidthDisplay() { m_needToSwitchOutLowBandwidthDisplay = true; }
+
+        // Client can control whether to use low bandwidth display on a per frame basis.
+        // However, this should only be used for the top frame, not sub-frame.
+        void setUseLowBandwidthDisplay(bool lowBandwidth) { m_useLowBandwidthDisplay = lowBandwidth; }
+        bool useLowBandwidthDisplay() const { return m_useLowBandwidthDisplay; }
+#endif
+
     private:        
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
@@ -527,6 +544,14 @@ namespace WebCore {
 
         void startIconLoader();
 
+#if USE(LOW_BANDWIDTH_DISPLAY)
+        // implementation of CachedResourceClient        
+        virtual void notifyFinished(CachedResource*);
+
+        void removeAllLowBandwidthDisplayRequests();    
+        void switchOutLowBandwidthDisplayIfReady();        
+#endif
+
         Frame* m_frame;
         FrameLoaderClient* m_client;
 
@@ -601,6 +626,20 @@ namespace WebCore {
         RefPtr<HistoryItem> m_previousHistoryItem;
         RefPtr<HistoryItem> m_provisionalHistoryItem;
 
+#if USE(LOW_BANDWIDTH_DISPLAY)
+        // whether to use low bandwidth dislay, set by client
+        bool m_useLowBandwidthDisplay;
+
+        // whether to call finishParsing() in switchOutLowBandwidthDisplayIfReady() 
+        bool m_finishedParsingDuringLowBandwidthDisplay;
+
+        // whether to call switchOutLowBandwidthDisplayIfReady;
+        // true if there is external css, javascript, or subframe/plugin
+        bool m_needToSwitchOutLowBandwidthDisplay;
+        
+        String m_pendingSourceInLowBandwidthDisplay;        
+        HashSet<CachedResource*> m_externalRequestsInLowBandwidthDisplay;
+#endif   
     };
 
 }

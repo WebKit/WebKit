@@ -1,6 +1,4 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
@@ -90,6 +88,15 @@ void CachedCSSStyleSheet::checkNotify()
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
         c->setCSSStyleSheet(m_response.url().url(), m_decoder->encoding().name(), m_sheet);
+
+#if USE(LOW_BANDWIDTH_DISPLAY)        
+    // if checkNotify() is called from error(), client's setCSSStyleSheet(...)
+    // can't find "this" from url, so they can't do clean up if needed.
+    // call notifyFinished() to make sure they have a chance.
+    CachedResourceClientWalker n(m_clients);
+    while (CachedResourceClient* s = n.next())
+        s->notifyFinished(this);
+#endif        
 }
 
 void CachedCSSStyleSheet::error()

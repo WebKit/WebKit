@@ -298,6 +298,9 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     , m_createRenderers(true)
     , m_inPageCache(false)
     , m_isAllowedToLoadLocalResources(false)
+#if USE(LOW_BANDWIDTH_DISPLAY)
+    , m_inLowBandwidthDisplay(false)
+#endif    
 {
     m_document.resetSkippingRef(this);
 
