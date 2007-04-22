@@ -1,3 +1,13 @@
+2007-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mitz.
+
+        Bug 13437: Inspector does not update when navigating to a different page
+        http://bugs.webkit.org/show_bug.cgi?id=13437
+
+        * WebInspector/webInspector/inspector.js: Correctly update to a new root node
+          if the new focus node and the old focus node don't have a common ancestor.
+
 2007-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

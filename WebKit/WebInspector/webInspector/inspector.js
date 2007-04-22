@@ -534,13 +534,20 @@ function updateRootNode(node)
 function updateFocusedNode(node)
 {
     if (!node || !focusedDOMNode || focusedDOMNode !== node) {
+        var oldFocusNode = focusedDOMNode;
         focusedDOMNode = node;
 
         updatePanes();
 
         if (focusedDOMNode) {
-            if (!rootDOMNode === node && !isAncestorNode.call(rootDOMNode, node))
-                updateRootNode(firstCommonNodeAncestor.call(focusedDOMNode, node));
+            if (rootDOMNode !== focusedDOMNode && !isAncestorNode.call(rootDOMNode, focusedDOMNode)) {
+                var newRoot = firstCommonNodeAncestor.call(oldFocusNode, focusedDOMNode);
+                if (!newRoot && focusedDOMNode.parentNode)
+                    newRoot = focusedDOMNode.parentNode;
+                else if(!newRoot)
+                    newRoot = focusedDOMNode;
+                updateRootNode(newRoot);
+            }
 
             var item = treeOutline.findTreeElement(focusedDOMNode);
             if (!item)
