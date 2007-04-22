@@ -77,6 +77,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString fileUploadButton("-webkit-file-upload-button");
     static AtomicString disabled("disabled");
     static AtomicString drag("-webkit-drag");
+    static AtomicString dragAlias("-khtml-drag"); // was documented with this name in Apple documentation, so keep an alias
     static AtomicString empty("empty");
     static AtomicString enabled("enabled");
     static AtomicString firstChild("first-child");
@@ -124,7 +125,7 @@ void CSSSelector::extractPseudoType() const
         element = true;
     } else if (m_value == disabled)
         m_pseudoType = PseudoDisabled;
-    else if (m_value == drag)
+    else if (m_value == drag || m_value == dragAlias)
         m_pseudoType = PseudoDrag;
     else if (m_value == enabled)
         m_pseudoType = PseudoEnabled;

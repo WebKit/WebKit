@@ -1,5 +1,15 @@
 2007-04-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - fix <rdar://problem/4816343> :-khtml-drag CSS pseudo-class changed to :-webkit-drag, need alias
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType):
+        Since Apple documentation claims "-khtml-drag" works, we need to keep it working,
+        so add it back as an alias.
+
+2007-04-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver.
 
         - fix <rdar://problem/4782422> REGRESSION: -[stringByEvaluatingJavaScriptFromString]
