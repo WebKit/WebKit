@@ -1,3 +1,21 @@
+2007-04-23  Patti Hoa  <patti@apple.com>
+        
+        <rdar://problem/4938364> Attachment button has different string length between attributeStringForRange and stringForRange
+        <rdar://problem/4939536> AXLengthForTextMarkerRange returns zero length for the range of an attachment
+        
+        Reviewed by Darin.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (nsStringForReplacedNode):
+        Added helper routine to check if the replaced node should be exposed as an attachment character in string representation.
+        Added an additional check to make sure that text node is not considered a replaced node.
+        Removed helper routine AXAttributedStringAppendReplaced since half of the functions are now taken care by nsStringForReplacedNode.
+        The other half is directly used in the doAXAttributedStringForTextMarkerRange method.
+        (-[WebCoreAXObject doAXStringForTextMarkerRange:]):
+        (-[WebCoreAXObject doAXAttributedStringForTextMarkerRange:]):
+        Both string and AttrbributedString methods will now utilize the helper routine nsStringForReplacedNode to return replacement
+        characters for range occupied by attachment.
+        
 2007-04-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

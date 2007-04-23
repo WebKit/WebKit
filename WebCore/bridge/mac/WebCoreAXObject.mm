@@ -1276,6 +1276,25 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
+static NSString *nsStringForReplacedNode(Node* replacedNode)
+{
+    // we should always be given a rendered node and a replaced node, but be safe
+    // replaced nodes are either attachments (widgets) or images
+    if (!replacedNode || !replacedNode->renderer() || !replacedNode->renderer()->isReplaced() || replacedNode->isTextNode()) {
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    // create an AX object, but skip it if it is not supposed to be seen
+    WebCoreAXObject* obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
+    if ([obj accessibilityIsIgnored])
+        return nil;
+    
+    // use the attachmentCharacter to represent the replaced node
+    const UniChar attachmentChar = NSAttachmentCharacter;
+    return [NSString stringWithCharacters:&attachmentChar length:1];
+}
+
 - (id)doAXStringForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // extract the start and end VisiblePosition
@@ -1287,8 +1306,28 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (endVisiblePosition.isNull())
         return nil;
     
-    // get the visible text in the range
-    return plainText(makeRange(startVisiblePosition, endVisiblePosition).get()).getNSString();
+    NSMutableString* resultString = [[[NSMutableString alloc] init] autorelease];
+    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
+    while (!it.atEnd()) {
+        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+        if (it.length() != 0) {
+            [resultString appendString:[NSString stringWithCharacters:it.characters() length:it.length()]];
+        } else {
+            // locate the node and starting offset for this replaced range
+            int exception = 0;
+            Node* node = it.range()->startContainer(exception);
+            ASSERT(node == it.range()->endContainer(exception));
+            int offset = it.range()->startOffset(exception);
+            NSString* attachmentString = nsStringForReplacedNode(node->childNode(offset));
+            
+            // append the replacement string
+            if (attachmentString)
+                [resultString appendString:attachmentString];
+        }
+        it.advance();
+    }
+    
+    return [resultString length] > 0 ? resultString : nil;
 }
 
 - (id)doAXTextMarkerForPosition: (NSPoint) point
@@ -1603,41 +1642,6 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetSpelling(attrString, node, offset, attrStringRange);
 }
 
-static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrString, Node* replacedNode)
-{
-    static const UniChar attachmentChar = NSAttachmentCharacter;
-
-    // we should always be given a rendered node, but be safe
-    if (!replacedNode || !replacedNode->renderer()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    // we should always be given a replaced node, but be safe
-    // replaced nodes are either attachments (widgets) or images
-    if (!replacedNode->renderer()->isReplaced()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-        
-    // create an AX object, but skip it if it is not supposed to be seen
-    WebCoreAXObject* obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
-    if ([obj accessibilityIsIgnored])
-        return;
-    
-    // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], 1);
-    
-    // append the placeholder string
-    [[attrString mutableString] appendString:[NSString stringWithCharacters:&attachmentChar length:1]];
-    
-    // remove all inherited attributes
-    [attrString setAttributes:nil range:attrStringRange];
-
-    // add the attachment attribute
-    AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
-}
-
 - (id)doAXAttributedStringForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
     // extract the start and end VisiblePosition
@@ -1660,11 +1664,25 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString* attrStr
         int offset = it.range()->startOffset(exception);
         
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.length() != 0)
+        if (it.length() != 0) {
             AXAttributedStringAppendText(attrString, node, offset, it.characters(), it.length());
-        else
-            AXAttributedStringAppendReplaced(attrString, node->childNode(offset));
-        
+        } else {
+            Node* replacedNode = node->childNode(offset);
+            NSString *attachmentString = nsStringForReplacedNode(replacedNode);
+            if (attachmentString) {
+                NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);
+                
+                // append the placeholder string
+                [[attrString mutableString] appendString:attachmentString];
+                
+                // remove all inherited attributes
+                [attrString setAttributes:nil range:attrStringRange];
+                
+                // add the attachment attribute
+                WebCoreAXObject* obj = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
+                AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
+            }
+        }
         it.advance();
     }
 
