@@ -48,10 +48,9 @@ namespace KJS {
     class List {
     public:
         List();
-        explicit List(bool needsMarking);
         ~List() { deref(); }
 
-        List(const List &b) : _impBase(b._impBase), _needsMarking(false) {
+        List(const List &b) : _impBase(b._impBase) {
             ++_impBase->refCount; 
             ++_impBase->valueRefCount; 
         }
@@ -67,6 +66,8 @@ namespace KJS {
          * Remove all elements from the list.
          */
         void clear();
+
+        void reset() { deref(); ++(_impBase = empty()._impBase)->refCount; }
 
         /**
          * Make a copy of the list
@@ -120,14 +121,11 @@ namespace KJS {
          */
         static const List &empty();
         
-        void mark() { if (_impBase->valueRefCount == 0) markValues(); }
-
         static void markProtectedLists();
     private:
         ListImpBase *_impBase;
-        bool _needsMarking;
         
-        void deref() { if (!_needsMarking) --_impBase->valueRefCount; if (--_impBase->refCount == 0) release(); }
+        void deref() { --_impBase->valueRefCount; if (--_impBase->refCount == 0) release(); }
 
         void release();
         void markValues();

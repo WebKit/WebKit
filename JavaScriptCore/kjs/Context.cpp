@@ -1,9 +1,9 @@
-// -*- c-basic-offset: 2 -*-
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006-2007 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -84,6 +84,14 @@ Context::Context(JSObject* glob, Interpreter* interpreter, JSObject* thisV,
 Context::~Context()
 {
     m_interpreter->setContext(m_callingContext);
+
+    // The arguments list is only needed to potentially create the  arguments object, 
+    // which isn't accessible from nested scopes so we can discard the list as soon 
+    // as the function is done running.
+    // This prevents lists of Lists from building up, waiting to be garbage collected
+    ActivationImp* activation = static_cast<ActivationImp*>(m_activation);
+    if (activation)
+        activation->releaseArguments();
 }
 
 void Context::mark()

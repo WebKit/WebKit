@@ -2,6 +2,41 @@
 
         Reviewed by Darin.
         
+        - discard the arguments List for an ActivationImp when the corresponding Context is destroyed (1.7% speedup)
+        http://bugs.webkit.org/show_bug.cgi?id=13385
+
+        Based an idea by Christopher E. Hyde <C.Hyde@parableuk.force9.co.uk>. His patch to do 
+        this also had many other List changes and I found this much simpler subset of the changes
+        was actually a hair faster.
+        
+        This optimization is valid because the arguments list is only kept around to
+        lazily make the arguments object. If it's not made by the time the function
+        exits, it never will be, since any function that captures the continuation will
+        have its own local arguments variable in scope.
+        
+        Besides the 1.7% speed improvement, it shrinks List by 4 bytes
+        (which in turn shrinks ActivationImp by 4 bytes).
+        
+        * kjs/Context.cpp:
+        (KJS::Context::~Context): Clear the activation's arguments list.
+        * kjs/function.cpp:
+        (KJS::ActivationImp::ActivationImp): Adjusted for list changes.
+        (KJS::ActivationImp::mark): No need to mark, lists are always protected (this doesn't
+        cause a ref-cycle for reasons stated above).
+        (KJS::ActivationImp::createArgumentsObject): Clear arguments list.
+        * kjs/function.h:
+        * kjs/list.cpp:
+        (KJS::List::List): No more needsMarking boolean
+        (KJS::List::operator=): ditto
+        * kjs/list.h:
+        (KJS::List::List): ditto
+        (KJS::List::reset): ditto
+        (KJS::List::deref): ditto
+
+2007-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
         - shrink PropertyMap by 8 bytes and therefore shrink CELL_SIZE to 40 (for 32-bit; 
         similar shrinkage for 64-bit)
         http://bugs.webkit.org/show_bug.cgi?id=13384
