@@ -42,12 +42,40 @@ const unsigned sparseArrayCutoff = 10000;
 
 const ClassInfo ArrayInstance::info = {"Array", 0, 0, 0};
 
+static inline JSValue** allocateStorage(size_t capacity)
+{
+  if (capacity == 0)
+      return 0;
+
+  // store capacity in extra space before the beginning of the storage array to save space
+  JSValue** storage = static_cast<JSValue**>(fastCalloc(capacity + 1, sizeof(JSValue *))) + 1;
+  storage[-1] = reinterpret_cast<JSValue*>(capacity);
+  return storage;
+}
+
+static inline void reallocateStorage(JSValue**& storage, size_t newCapacity)
+{
+  if (!storage) {
+    storage =  allocateStorage(newCapacity);
+    return;
+  }
+
+  // store capacity in extra space before the beginning of the storage array to save space
+  storage = static_cast<JSValue**>(fastRealloc(storage - 1, (newCapacity + 1) * sizeof (JSValue*))) + 1;
+  storage[-1] = reinterpret_cast<JSValue*>(newCapacity);
+}
+
+static inline void freeStorage(JSValue** storage)
+{
+  if (storage)
+    fastFree(storage - 1);
+}
+
 ArrayInstance::ArrayInstance(JSObject *proto, unsigned initialLength)
   : JSObject(proto)
   , length(initialLength)
   , storageLength(initialLength < sparseArrayCutoff ? initialLength : 0)
-  , capacity(storageLength)
-  , storage(capacity ? (JSValue **)fastCalloc(capacity, sizeof(JSValue *)) : 0)
+  , storage(allocateStorage(storageLength))
 {
 }
 
@@ -55,8 +83,7 @@ ArrayInstance::ArrayInstance(JSObject *proto, const List &list)
   : JSObject(proto)
   , length(list.size())
   , storageLength(length)
-  , capacity(storageLength)
-  , storage(capacity ? (JSValue **)fastMalloc(sizeof(JSValue *) * capacity) : 0)
+  , storage(allocateStorage(storageLength))
 {
   ListIterator it = list.begin();
   unsigned l = length;
@@ -67,7 +94,7 @@ ArrayInstance::ArrayInstance(JSObject *proto, const List &list)
 
 ArrayInstance::~ArrayInstance()
 {
-  fastFree(storage);
+  freeStorage(storage);
 }
 
 JSValue* ArrayInstance::getItem(unsigned i) const
@@ -231,7 +258,8 @@ void ArrayInstance::resizeStorage(unsigned newLength)
     if (newLength < storageLength) {
       memset(storage + newLength, 0, sizeof(JSValue *) * (storageLength - newLength));
     }
-    if (newLength > capacity) {
+    size_t cap = capacity();
+    if (newLength > cap) {
       unsigned newCapacity;
       if (newLength > sparseArrayCutoff) {
         newCapacity = newLength;
@@ -241,9 +269,9 @@ void ArrayInstance::resizeStorage(unsigned newLength)
           newCapacity = sparseArrayCutoff;
         }
       }
-      storage = (JSValue **)fastRealloc(storage, newCapacity * sizeof (JSValue *));
-      memset(storage + capacity, 0, sizeof(JSValue *) * (newCapacity - capacity));
-      capacity = newCapacity;
+      
+      reallocateStorage(storage, newCapacity);
+      memset(storage + cap, 0, sizeof(JSValue*) * (newCapacity - cap));
     }
     storageLength = newLength;
 }
@@ -314,10 +342,10 @@ void ArrayInstance::sort(ExecState* exec)
     // values to string once up front, and then use a radix sort. That would be O(N) rather than 
     // O(N log N).
     if (lengthNotIncludingUndefined < sparseArrayCutoff) {
-        JSValue** storageCopy = static_cast<JSValue**>(fastMalloc(capacity * sizeof(JSValue*)));
-        memcpy(storageCopy, storage, capacity * sizeof(JSValue*));
+        JSValue** storageCopy = allocateStorage(capacity());
+        memcpy(storageCopy, storage, capacity() * sizeof(JSValue*));
         mergesort(storageCopy, lengthNotIncludingUndefined, sizeof(JSValue *), compareByStringForQSort);
-        fastFree(storage);
+        freeStorage(storage);
         storage = storageCopy;
         execForCompareByStringForQSort = oldExec;
         return;
@@ -381,10 +409,10 @@ void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
     // FIXME: a tree sort using a perfectly balanced tree (e.g. an AVL tree) could do an even
     // better job of minimizing compares
     if (lengthNotIncludingUndefined < sparseArrayCutoff) {
-        JSValue** storageCopy = static_cast<JSValue**>(fastMalloc(capacity * sizeof(JSValue*)));
-        memcpy(storageCopy, storage, capacity * sizeof(JSValue*));
+        JSValue** storageCopy = allocateStorage(capacity());
+        memcpy(storageCopy, storage, capacity() * sizeof(JSValue*));
         mergesort(storageCopy, lengthNotIncludingUndefined, sizeof(JSValue *), compareWithCompareFunctionForQSort);
-        fastFree(storage);
+        freeStorage(storage);
         storage = storageCopy;
         compareWithCompareFunctionArguments = oldArgs;
         return;

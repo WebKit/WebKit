@@ -1,3 +1,23 @@
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+       
+        - shrink ArrayInstance objects by 4 bytes
+        http://bugs.webkit.org/show_bug.cgi?id=13386
+        
+        I did this by storing the capacity before the beginning of the storage array. It turns out
+        it is rarely needed and is by definition 0 when the storage array is null.
+ 
+        * kjs/array_instance.h:
+        (KJS::ArrayInstance::capacity): Get it from the secret stash
+        * kjs/array_object.cpp:
+        (allocateStorage): New function to encapsulate allocating the storage with extra space ahead
+        for the capacity.
+        (reallocateStorage): ditto for realloc
+        (ArrayInstance::ArrayInstance):
+        (ArrayInstance::~ArrayInstance):
+        (ArrayInstance::resizeStorage):
+
 2007-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

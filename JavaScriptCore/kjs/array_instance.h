@@ -61,9 +61,11 @@ namespace KJS {
     
     void resizeStorage(unsigned);
 
+    // store capacity in extra space at the beginning of the storage array to save space
+    size_t capacity() { return storage ? reinterpret_cast<size_t>(storage[-1]) : 0; }
+
     unsigned length;
     unsigned storageLength;
-    unsigned capacity;
     JSValue **storage;
   };
 
