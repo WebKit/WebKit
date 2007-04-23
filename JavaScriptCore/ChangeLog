@@ -1,5 +1,11 @@
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Build fix, not reviewed.
+
+        * kjs/collector.h: Fix struct/class mismatch.
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - raise ALLOCATIONS_PER_COLLECTION to 4000, for 3.7% iBench speed improvement

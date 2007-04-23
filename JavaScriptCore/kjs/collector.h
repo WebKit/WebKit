@@ -121,7 +121,8 @@ namespace KJS {
     } u;
   };
 
-  struct CollectorBlock {
+  class CollectorBlock {
+  public:
     CollectorCell cells[CELLS_PER_BLOCK];
     uint32_t usedCells;
     CollectorCell* freeList;
