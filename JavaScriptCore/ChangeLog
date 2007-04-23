@@ -1,3 +1,15 @@
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fix some test failures
+
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::RuntimeMethod): inherit from InternalFunctionImp instead of FunctionImpl,
+        otherwise this is too big
+        (RuntimeMethod::getOwnPropertySlot):
+        * bindings/runtime_method.h:
+
 2007-04-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

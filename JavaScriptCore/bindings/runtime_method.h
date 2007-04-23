@@ -33,7 +33,7 @@
 namespace KJS {
 
 
-class RuntimeMethod : public FunctionImp 
+class RuntimeMethod : public InternalFunctionImp 
 {
 public:
     RuntimeMethod(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
