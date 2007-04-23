@@ -79,6 +79,45 @@ static int timerNestingLevel = 0;
 const int cMaxTimerNestingLevel = 5;
 const double cMinimumTimerInterval = 0.010;
 
+struct WindowPrivate {
+    WindowPrivate() 
+        : screen(0)
+        , history(0)
+        , frames(0)
+        , loc(0)
+        , m_selection(0)
+        , m_locationbar(0)
+        , m_menubar(0)
+        , m_personalbar(0)
+        , m_scrollbars(0)
+        , m_statusbar(0)
+        , m_toolbar(0)
+        , m_evt(0)
+        , m_returnValueSlot(0)
+    {
+    }
+
+    Window::ListenersMap jsEventListeners;
+    Window::ListenersMap jsHTMLEventListeners;
+    Window::UnprotectedListenersMap jsUnprotectedEventListeners;
+    Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
+    mutable Screen* screen;
+    mutable History* history;
+    mutable FrameArray* frames;
+    mutable Location* loc;
+    mutable Selection* m_selection;
+    mutable BarInfo* m_locationbar;
+    mutable BarInfo* m_menubar;
+    mutable BarInfo* m_personalbar;
+    mutable BarInfo* m_scrollbars;
+    mutable BarInfo* m_statusbar;
+    mutable BarInfo* m_toolbar;
+    WebCore::Event *m_evt;
+    JSValue **m_returnValueSlot;
+    typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
+    TimeoutsMap m_timeouts;
+};
+
 class DOMWindowTimer : public TimerBase {
 public:
     DOMWindowTimer(int timeoutId, int nestingLevel, Window* o, ScheduledAction* a)
@@ -331,19 +370,7 @@ KJS_IMPLEMENT_PROTOTYPE_FUNCTION(WindowFunc)
 
 Window::Window(DOMWindow* window)
   : m_frame(window->frame())
-  , screen(0)
-  , history(0)
-  , frames(0)
-  , loc(0)
-  , m_selection(0)
-  , m_locationbar(0)
-  , m_menubar(0)
-  , m_personalbar(0)
-  , m_scrollbars(0)
-  , m_statusbar(0)
-  , m_toolbar(0)
-  , m_evt(0)
-  , m_returnValueSlot(0)
+  , d(new WindowPrivate)
 {
 }
 
@@ -353,21 +380,21 @@ Window::~Window()
 
     // Clear any backpointers to the window
 
-    ListenersMap::iterator i2 = jsEventListeners.begin();
-    ListenersMap::iterator e2 = jsEventListeners.end();
+    ListenersMap::iterator i2 = d->jsEventListeners.begin();
+    ListenersMap::iterator e2 = d->jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindowObj();
-    i2 = jsHTMLEventListeners.begin();
-    e2 = jsHTMLEventListeners.end();
+    i2 = d->jsHTMLEventListeners.begin();
+    e2 = d->jsHTMLEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindowObj();
 
-    UnprotectedListenersMap::iterator i1 = jsUnprotectedEventListeners.begin();
-    UnprotectedListenersMap::iterator e1 = jsUnprotectedEventListeners.end();
+    UnprotectedListenersMap::iterator i1 = d->jsUnprotectedEventListeners.begin();
+    UnprotectedListenersMap::iterator e1 = d->jsUnprotectedEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindowObj();
-    i1 = jsUnprotectedHTMLEventListeners.begin();
-    e1 = jsUnprotectedHTMLEventListeners.end();
+    i1 = d->jsUnprotectedHTMLEventListeners.begin();
+    e1 = d->jsUnprotectedHTMLEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindowObj();
 }
@@ -408,16 +435,16 @@ JSValue *Window::retrieve(Frame *p)
 
 Location *Window::location() const
 {
-  if (!loc)
-    loc = new Location(m_frame);
-  return loc;
+  if (!d->loc)
+    d->loc = new Location(m_frame);
+  return d->loc;
 }
 
 Selection *Window::selection() const
 {
-  if (!m_selection)
-    m_selection = new Selection(m_frame);
-  return m_selection;
+  if (!d->m_selection)
+    d->m_selection = new Selection(m_frame);
+  return d->m_selection;
 }
 
 bool Window::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
@@ -428,72 +455,72 @@ bool Window::find(const String& string, bool caseSensitive, bool backwards, bool
 
 BarInfo *Window::locationbar(ExecState *exec) const
 {
-  if (!m_locationbar)
-    m_locationbar = new BarInfo(exec, m_frame, BarInfo::Locationbar);
-  return m_locationbar;
+  if (!d->m_locationbar)
+    d->m_locationbar = new BarInfo(exec, m_frame, BarInfo::Locationbar);
+  return d->m_locationbar;
 }
 
 BarInfo *Window::menubar(ExecState *exec) const
 {
-  if (!m_menubar)
-    m_menubar = new BarInfo(exec, m_frame, BarInfo::Menubar);
-  return m_menubar;
+  if (!d->m_menubar)
+    d->m_menubar = new BarInfo(exec, m_frame, BarInfo::Menubar);
+  return d->m_menubar;
 }
 
 BarInfo *Window::personalbar(ExecState *exec) const
 {
-  if (!m_personalbar)
-    m_personalbar = new BarInfo(exec, m_frame, BarInfo::Personalbar);
-  return m_personalbar;
+  if (!d->m_personalbar)
+    d->m_personalbar = new BarInfo(exec, m_frame, BarInfo::Personalbar);
+  return d->m_personalbar;
 }
 
 BarInfo *Window::statusbar(ExecState *exec) const
 {
-  if (!m_statusbar)
-    m_statusbar = new BarInfo(exec, m_frame, BarInfo::Statusbar);
-  return m_statusbar;
+  if (!d->m_statusbar)
+    d->m_statusbar = new BarInfo(exec, m_frame, BarInfo::Statusbar);
+  return d->m_statusbar;
 }
 
 BarInfo *Window::toolbar(ExecState *exec) const
 {
-  if (!m_toolbar)
-    m_toolbar = new BarInfo(exec, m_frame, BarInfo::Toolbar);
-  return m_toolbar;
+  if (!d->m_toolbar)
+    d->m_toolbar = new BarInfo(exec, m_frame, BarInfo::Toolbar);
+  return d->m_toolbar;
 }
 
 BarInfo *Window::scrollbars(ExecState *exec) const
 {
-  if (!m_scrollbars)
-    m_scrollbars = new BarInfo(exec, m_frame, BarInfo::Scrollbars);
-  return m_scrollbars;
+  if (!d->m_scrollbars)
+    d->m_scrollbars = new BarInfo(exec, m_frame, BarInfo::Scrollbars);
+  return d->m_scrollbars;
 }
 
 // reference our special objects during garbage collection
 void Window::mark()
 {
   JSObject::mark();
-  if (screen && !screen->marked())
-    screen->mark();
-  if (history && !history->marked())
-    history->mark();
-  if (frames && !frames->marked())
-    frames->mark();
-  if (loc && !loc->marked())
-    loc->mark();
-  if (m_selection && !m_selection->marked())
-    m_selection->mark();
-  if (m_locationbar && !m_locationbar->marked())
-    m_locationbar->mark();
-  if (m_menubar && !m_menubar->marked())
-    m_menubar->mark();
-  if (m_personalbar && !m_personalbar->marked())
-    m_personalbar->mark();
-  if (m_scrollbars && !m_scrollbars->marked())
-    m_scrollbars->mark();
-  if (m_statusbar && !m_statusbar->marked())
-    m_statusbar->mark();
-  if (m_toolbar && !m_toolbar->marked())
-    m_toolbar->mark();
+  if (d->screen && !d->screen->marked())
+    d->screen->mark();
+  if (d->history && !d->history->marked())
+    d->history->mark();
+  if (d->frames && !d->frames->marked())
+    d->frames->mark();
+  if (d->loc && !d->loc->marked())
+    d->loc->mark();
+  if (d->m_selection && !d->m_selection->marked())
+    d->m_selection->mark();
+  if (d->m_locationbar && !d->m_locationbar->marked())
+    d->m_locationbar->mark();
+  if (d->m_menubar && !d->m_menubar->marked())
+    d->m_menubar->mark();
+  if (d->m_personalbar && !d->m_personalbar->marked())
+    d->m_personalbar->mark();
+  if (d->m_scrollbars && !d->m_scrollbars->marked())
+    d->m_scrollbars->mark();
+  if (d->m_statusbar && !d->m_statusbar->marked())
+    d->m_statusbar->mark();
+  if (d->m_toolbar && !d->m_toolbar->marked())
+    d->m_toolbar->mark();
 }
 
 UString Window::toString(ExecState *) const
@@ -712,17 +739,17 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Status:
       return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
-      if (!frames)
-        frames = new FrameArray(exec, m_frame);
-      return frames;
+      if (!d->frames)
+        d->frames = new FrameArray(exec, m_frame);
+      return d->frames;
     case History_:
-      if (!history)
-        history = new History(exec, m_frame);
-      return history;
+      if (!d->history)
+        d->history = new History(exec, m_frame);
+      return d->history;
     case Event_:
-      if (!m_evt)
+      if (!d->m_evt)
         return jsUndefined();
-      return toJS(exec, m_evt);
+      return toJS(exec, d->m_evt);
     case InnerHeight:
       if (!m_frame->view())
         return jsUndefined();
@@ -803,9 +830,9 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Top:
       return retrieve(m_frame->page()->mainFrame());
     case Screen_:
-      if (!screen)
-        screen = new Screen(exec, m_frame);
-      return screen;
+      if (!d->screen)
+        d->screen = new Screen(exec, m_frame);
+      return d->screen;
     case Image:
       // FIXME: this property (and the few below) probably shouldn't create a new object every
       // time
@@ -1318,7 +1345,7 @@ JSEventListener* Window::findJSEventListener(JSValue* val, bool html)
     if (!val->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(val);
-    ListenersMap& listeners = html ? jsHTMLEventListeners : jsEventListeners;
+    ListenersMap& listeners = html ? d->jsHTMLEventListeners : d->jsEventListeners;
     return listeners.get(object);
 }
 
@@ -1341,7 +1368,7 @@ JSUnprotectedEventListener* Window::findJSUnprotectedEventListener(JSValue* val,
     if (!val->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(val);
-    UnprotectedListenersMap& listeners = html ? jsUnprotectedHTMLEventListeners : jsUnprotectedEventListeners;
+    UnprotectedListenersMap& listeners = html ? d->jsUnprotectedHTMLEventListeners : d->jsUnprotectedEventListeners;
     return listeners.get(object);
 }
 
@@ -1361,26 +1388,26 @@ JSUnprotectedEventListener *Window::findOrCreateJSUnprotectedEventListener(JSVal
 
 void Window::clearHelperObjectProperties()
 {
-  screen = 0;
-  history = 0;
-  frames = 0;
-  loc = 0;
-  m_selection = 0;
-  m_locationbar = 0;
-  m_menubar = 0;
-  m_personalbar = 0;
-  m_scrollbars = 0;
-  m_statusbar = 0;
-  m_toolbar = 0;
-  m_evt = 0;
+  d->screen = 0;
+  d->history = 0;
+  d->frames = 0;
+  d->loc = 0;
+  d->m_selection = 0;
+  d->m_locationbar = 0;
+  d->m_menubar = 0;
+  d->m_personalbar = 0;
+  d->m_scrollbars = 0;
+  d->m_statusbar = 0;
+  d->m_toolbar = 0;
+  d->m_evt = 0;
 }
 
 void Window::clear()
 {
   JSLock lock;
 
-  if (m_returnValueSlot && !*m_returnValueSlot)
-    *m_returnValueSlot = getDirect("returnValue");
+  if (d->m_returnValueSlot && !*d->m_returnValueSlot)
+    *d->m_returnValueSlot = getDirect("returnValue");
 
   clearAllTimeouts();
   clearProperties();
@@ -1398,7 +1425,7 @@ void Window::clear()
 
 void Window::setCurrentEvent(Event *evt)
 {
-  m_evt = evt;
+  d->m_evt = evt;
 }
 
 static void setWindowFeature(const String& keyString, const String& valueString, WindowFeatures& windowFeatures)
@@ -1859,6 +1886,11 @@ void Window::updateLayout() const
     docimpl->updateLayoutIgnorePendingStylesheets();
 }
 
+void Window::setReturnValueSlot(JSValue **slot)
+{ 
+    d->m_returnValueSlot = slot; 
+}
+
 ////////////////////// ScheduledAction ////////////////////////
 
 void ScheduledAction::execute(Window* window)
@@ -1912,8 +1944,8 @@ void ScheduledAction::execute(Window* window)
 
 void Window::clearAllTimeouts()
 {
-    deleteAllValues(m_timeouts);
-    m_timeouts.clear();
+    deleteAllValues(d->m_timeouts);
+    d->m_timeouts.clear();
 }
 
 int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
@@ -1921,8 +1953,8 @@ int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
     int timeoutId = ++lastUsedTimeoutId;
     int nestLevel = timerNestingLevel + 1;
     DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, nestLevel, this, a);
-    ASSERT(!m_timeouts.get(timeoutId));
-    m_timeouts.set(timeoutId, timer);
+    ASSERT(!d->m_timeouts.get(timeoutId));
+    d->m_timeouts.set(timeoutId, timer);
     // Use a minimum interval of 10 ms to match other browsers, but only once we've
     // nested enough to notice that we're repeating.
     // Faster timers might be "better", but they're incompatible.
@@ -1948,14 +1980,14 @@ int Window::installTimeout(JSValue* func, const List& args, int t, bool singleSh
 
 PausedTimeouts* Window::pauseTimeouts()
 {
-    size_t count = m_timeouts.size();
+    size_t count = d->m_timeouts.size();
     if (count == 0)
         return 0;
 
     PausedTimeout* t = new PausedTimeout [count];
     PausedTimeouts* result = new PausedTimeouts(t, count);
 
-    TimeoutsMap::iterator it = m_timeouts.begin();
+    WindowPrivate::TimeoutsMap::iterator it = d->m_timeouts.begin();
     for (size_t i = 0; i != count; ++i, ++it) {
         int timeoutId = it->first;
         DOMWindowTimer* timer = it->second;
@@ -1965,10 +1997,10 @@ PausedTimeouts* Window::pauseTimeouts()
         t[i].repeatInterval = timer->repeatInterval();
         t[i].action = timer->takeAction();
     }
-    ASSERT(it == m_timeouts.end());
+    ASSERT(it == d->m_timeouts.end());
 
-    deleteAllValues(m_timeouts);
-    m_timeouts.clear();
+    deleteAllValues(d->m_timeouts);
+    d->m_timeouts.clear();
 
     return result;
 }
@@ -1982,7 +2014,7 @@ void Window::resumeTimeouts(PausedTimeouts* timeouts)
     for (size_t i = 0; i != count; ++i) {
         int timeoutId = array[i].timeoutId;
         DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, array[i].nestingLevel, this, array[i].action);
-        m_timeouts.set(timeoutId, timer);
+        d->m_timeouts.set(timeoutId, timer);
         timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
     delete [] array;
@@ -1990,11 +2022,11 @@ void Window::resumeTimeouts(PausedTimeouts* timeouts)
 
 void Window::clearTimeout(int timeoutId, bool delAction)
 {
-    TimeoutsMap::iterator it = m_timeouts.find(timeoutId);
-    if (it == m_timeouts.end())
+    WindowPrivate::TimeoutsMap::iterator it = d->m_timeouts.find(timeoutId);
+    if (it == d->m_timeouts.end())
         return;
     DOMWindowTimer* timer = it->second;
-    m_timeouts.remove(it);
+    d->m_timeouts.remove(it);
     delete timer;
 }
 
@@ -2005,7 +2037,7 @@ void Window::timerFired(DOMWindowTimer* timer)
         int timeoutId = timer->timeoutId();
 
         timer->action()->execute(this);
-        if (m_timeouts.contains(timeoutId) && timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
+        if (d->m_timeouts.contains(timeoutId) && timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
             timer->setNestingLevel(timer->nestingLevel() + 1);
             if (timer->nestingLevel() >= cMaxTimerNestingLevel)
                 timer->augmentRepeatInterval(cMinimumTimerInterval - timer->repeatInterval());
@@ -2015,7 +2047,7 @@ void Window::timerFired(DOMWindowTimer* timer)
 
     // Delete timer before executing the action for one-shot timers.
     ScheduledAction* action = timer->takeAction();
-    m_timeouts.remove(timer->timeoutId());
+    d->m_timeouts.remove(timer->timeoutId());
     delete timer;
     action->execute(this);
     
@@ -2027,26 +2059,46 @@ void Window::disconnectFrame()
 {
     clearAllTimeouts();
     m_frame = 0;
-    if (loc)
-        loc->m_frame = 0;
-    if (m_selection)
-        m_selection->m_frame = 0;
-    if (m_locationbar)
-        m_locationbar->m_frame = 0;
-    if (m_menubar)
-        m_menubar->m_frame = 0;
-    if (m_personalbar)
-        m_personalbar->m_frame = 0;
-    if (m_statusbar)
-        m_statusbar->m_frame = 0;
-    if (m_toolbar)
-        m_toolbar->m_frame = 0;
-    if (m_scrollbars)
-        m_scrollbars->m_frame = 0;
-    if (frames)
-        frames->disconnectFrame();
-    if (history)
-        history->disconnectFrame();
+    if (d->loc)
+        d->loc->m_frame = 0;
+    if (d->m_selection)
+        d->m_selection->m_frame = 0;
+    if (d->m_locationbar)
+        d->m_locationbar->m_frame = 0;
+    if (d->m_menubar)
+        d->m_menubar->m_frame = 0;
+    if (d->m_personalbar)
+        d->m_personalbar->m_frame = 0;
+    if (d->m_statusbar)
+        d->m_statusbar->m_frame = 0;
+    if (d->m_toolbar)
+        d->m_toolbar->m_frame = 0;
+    if (d->m_scrollbars)
+        d->m_scrollbars->m_frame = 0;
+    if (d->frames)
+        d->frames->disconnectFrame();
+    if (d->history)
+        d->history->disconnectFrame();
+}
+
+Window::ListenersMap& Window::jsEventListeners()
+{
+    return d->jsEventListeners;
+}
+
+Window::ListenersMap& Window::jsHTMLEventListeners()
+{
+    return d->jsHTMLEventListeners;
+}
+
+Window::UnprotectedListenersMap& Window::jsUnprotectedEventListeners()
+{
+    return d->jsUnprotectedEventListeners;
+}
+
+Window::UnprotectedListenersMap& Window::jsUnprotectedHTMLEventListeners()
+{
+    return d->jsUnprotectedHTMLEventListeners;
 }
 
 const ClassInfo FrameArray::info = { "FrameArray", 0, &FrameArrayTable, 0 };

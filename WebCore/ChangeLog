@@ -1,3 +1,56 @@
+2007-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        - move most of Window's data members into a separate private object, to avoid needing
+        to use the oversize allocator for it
+        
+        It was the only remaining JSObject subclass to use the oversize
+        allocator on 32-bit platforms, and having oversize objects around
+        makes garbage collection slower so this would hurt performance
+        with many tabs/windows open.
+        
+        No significant effect on JS iBench.
+
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (KJS::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (KJS::JSEventListener::JSEventListener):
+        (KJS::JSEventListener::~JSEventListener):
+        (KJS::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::Window::Window):
+        (KJS::Window::~Window):
+        (KJS::Window::location):
+        (KJS::Window::selection):
+        (KJS::Window::locationbar):
+        (KJS::Window::menubar):
+        (KJS::Window::personalbar):
+        (KJS::Window::statusbar):
+        (KJS::Window::toolbar):
+        (KJS::Window::scrollbars):
+        (KJS::Window::mark):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::findJSEventListener):
+        (KJS::Window::findJSUnprotectedEventListener):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::Window::clear):
+        (KJS::Window::setCurrentEvent):
+        (KJS::Window::setReturnValueSlot):
+        (KJS::Window::clearAllTimeouts):
+        (KJS::Window::installTimeout):
+        (KJS::Window::pauseTimeouts):
+        (KJS::Window::resumeTimeouts):
+        (KJS::Window::clearTimeout):
+        (KJS::Window::timerFired):
+        (KJS::Window::disconnectFrame):
+        (KJS::Window::jsEventListeners):
+        (KJS::Window::jsHTMLEventListeners):
+        (KJS::Window::jsUnprotectedEventListeners):
+        (KJS::Window::jsUnprotectedHTMLEventListeners):
+        * bindings/js/kjs_window.h:
+
 2007-04-22  David Hyatt  <hyatt@apple.com>
 
         Fix 1% regression on the PLT.  Make sure roundToDevicePixels does no
@@ -2056,7 +2109,6 @@
           returns the rotated bounds now -- this is also save the old 
           FloatSize -> IntSize -> FloatSize conversions.
           
-
 2007-04-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
