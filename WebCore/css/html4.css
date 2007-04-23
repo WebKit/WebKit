@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -326,7 +326,7 @@ input, input[type="password"], input[type="search"], isindex {
 
 input[type="search"] {
     -webkit-appearance: searchfield;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 input[type="search"]::-webkit-search-cancel-button {
@@ -397,7 +397,7 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
-    box-sizing: border-box
+    -webkit-box-sizing: border-box
 }
 
 input[type="range"] {
@@ -435,17 +435,17 @@ area, param {
 
 input[type="checkbox"] {
     -webkit-appearance: checkbox;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 input[type="radio"] {
     -webkit-appearance: radio;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 keygen, select {
     -webkit-appearance: menulist;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
     -webkit-border-radius: 5px;
@@ -460,7 +460,7 @@ select[size],
 select[multiple],
 select[size][multiple] {
     -webkit-appearance: listbox;
-    box-sizing: initial;
+    -webkit-box-sizing: initial;
     -webkit-box-align: start;
     border: 1px inset gray;
     -webkit-border-radius: initial;
@@ -470,7 +470,7 @@ select[size][multiple] {
 select[size="0"],
 select[size="1"] {
     -webkit-appearance: menulist;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
     -webkit-border-radius: 5px;

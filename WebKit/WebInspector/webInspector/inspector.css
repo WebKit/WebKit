@@ -223,7 +223,7 @@ button {
     border-color: transparent;
     border-style: solid;
     -webkit-border-image: url(Images/button.png) 4 6 6 6;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     line-height: 5px;
     height: 20px;
     background-color: transparent;
@@ -266,7 +266,7 @@ select {
     border-color: transparent;
     border-style: solid;
     -webkit-border-image: url(Images/popup.png) 4 16 6 6;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     line-height: 5px;
     height: 20px;
     background-color: transparent;
@@ -791,7 +791,7 @@ ol#treeOutline {
     padding: 0px 5px 2px 18px;
     background-color: transparent;
     border: 2px solid transparent;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     color: white;
     font-weight: bold;
     text-shadow: black 2px 2px;

@@ -68,7 +68,7 @@ body { margin: 0; padding: 0; overflow: hidden; }
 
 #input {
     position: absolute;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     height: 50px;
     max-height: 150px;
     left: 0;
@@ -88,7 +88,7 @@ body { margin: 0; padding: 0; overflow: hidden; }
 #history .row {
     min-height: 38px;
     padding: 4px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     font-family: monospace;
     font-size: 12px;
 }

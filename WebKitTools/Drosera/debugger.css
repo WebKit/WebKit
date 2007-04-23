@@ -41,9 +41,9 @@ iframe { border: none; }
 #body { position: absolute; top: 175px; left: 0; right: 0; bottom: 0; }
 #sourcesContainer { position: absolute; top: 16px; left: 0; right: 0; bottom: 21px; background-color: white; }
 #sources { width: 100%; height: 100% }
-#header { vertical-align: top; height: 16px; box-sizing: border-box; border-bottom: 1px solid #aaa; background: url(glossyHeader.png) repeat-x; position: absolute; top: 0; left: 0; right: 0; }
+#header { vertical-align: top; height: 16px; -webkit-box-sizing: border-box; border-bottom: 1px solid #aaa; background: url(glossyHeader.png) repeat-x; position: absolute; top: 0; left: 0; right: 0; }
 #header > * { vertical-align: top; }
-.footer { height: 21px; box-sizing: border-box; border-top: 1px solid #aaa; background: url(glossyFooterFill.tif) repeat-x; position: absolute; bottom: 0; left: 0; right: 0; }
+.footer { height: 21px; -webkit-box-sizing: border-box; border-top: 1px solid #aaa; background: url(glossyFooterFill.tif) repeat-x; position: absolute; bottom: 0; left: 0; right: 0; }
 #infoDivider { position: absolute; z-index: 10; right: 0; left: 0; top: 0; bottom: 9px; width: 10px; cursor: col-resize; background: url(verticalSplitterDimple.tiff) 50% no-repeat, url(verticalSplitterBar.tiff) repeat-y; width: 10px; }
 
 #filesBrowserSites {
@@ -263,7 +263,7 @@ table {
 td {
     padding: 3px 7px 3px 9px;
     height: 15px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     -webkit-user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -304,7 +304,7 @@ tr.current {
     background: url(glossyHeader.png) repeat-x;
     border-right: 1px solid #d9d9d9;
     height: 15px;
-    box-sizing: border-box; 
+    -webkit-box-sizing: border-box; 
     border-bottom: 1px solid #aaa;
     font-weight: normal;
     vertical-align: middle;

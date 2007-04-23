@@ -3890,7 +3890,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return; // Error case.
         style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getFloatValue()));
         return;
-    case CSS_PROP_BOX_SIZING:
+    case CSS_PROP__WEBKIT_BOX_SIZING:
         HANDLE_INHERIT_AND_INITIAL(boxSizing, BoxSizing)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent() == CSS_VAL_CONTENT_BOX)

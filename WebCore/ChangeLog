@@ -1,3 +1,21 @@
+2007-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - rename box-sizing to -webkit-box-sizing
+          because of <rdar://problem/4667227> REGRESSION: Shifted table on page at
+          https://us.etrade.com/e/t/home (due to box-sizing)
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Rename.
+        * css/CSSPropertyNames.in: Ditto.
+        * css/cssparser.cpp: (WebCore::CSSParser::parseValue): Rename and take out comment
+        explaining why we aren't prefacing with -webkit.
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Rename.
+        * css/html4.css: Rename.
+        * css/quirks.css: Rename.
+
 2007-04-23  Alp Toker  <alp@atoker.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,12 @@
+2007-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - rename box-sizing to -webkit-box-sizing
+
+        * WebInspector/webInspector/inspector.css: Here.
+        * WebInspector/webInspector/inspector.js: And here, in the expected default CSS values list.
+
 2007-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

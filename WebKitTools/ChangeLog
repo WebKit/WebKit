@@ -1,3 +1,13 @@
+2007-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - rename box-sizing to -webkit-box-sizing
+
+        * Drosera/console.css: Here.
+        * Drosera/debugger.css: And here.
+        * Drosera/viewer.css: And here.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

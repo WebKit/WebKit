@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ body { background-image: url(gutter.png); background-repeat: repeat-y; margin: 0
 img { padding: 0; margin: 0; }
 
 table { border-spacing: 0; padding: 0; margin: 0; width: 100%; }
-.gutter { -webkit-user-select: none; cursor: default; width: 32px; min-width: 32px; max-width: 32px; box-sizing: border-box; font-size: 9px; font-family: Helvetica; color: #888; text-align: right; padding-right: 4px; }
+.gutter { -webkit-user-select: none; cursor: default; width: 32px; min-width: 32px; max-width: 32px; -webkit-box-sizing: border-box; font-size: 9px; font-family: Helvetica; color: #888; text-align: right; padding-right: 4px; }
 .source { font-family: Monaco, monospace; white-space: pre; padding-left: 4px; padding-right: 4px; font-size: 11px; line-height: 14px; }
 
 .keyword { color: #8b0053 }

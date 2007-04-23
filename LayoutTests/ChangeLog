@@ -1,3 +1,17 @@
+2007-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test changes for rename of box-sizing to -webkit-box-sizing
+
+        * fast/borders/border-fit.html: Rename.
+        * fast/box-sizing/box-sizing.html: Ditto.
+        * fast/box-sizing/panels-one.html: Added -webkit-box-sizing.
+        * fast/box-sizing/panels-two.html: Ditto.
+        * fast/box-sizing/percentage-height.html: Renamed -khtml-box-sizing to -webkit-box-sizing.
+        * fast/css/computed-style-expected.txt: Updated for different name and place in sorting order.
+        * tables/mozilla/core/box_sizing.html: Rename.
+
 2007-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
