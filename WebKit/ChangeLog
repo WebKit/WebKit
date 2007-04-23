@@ -1,5 +1,14 @@
 2007-04-23  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Remove the "No Selection" message after leaving search mode.
+        This was a regression caused by the inspector refresh.
+
+        * WebInspector/webInspector/inspector.js:
+
+2007-04-23  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Bug 6658: World leak when closing inspected window

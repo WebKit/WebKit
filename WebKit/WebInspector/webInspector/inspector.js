@@ -356,6 +356,7 @@ function refreshSearch()
     } else {
         // switch back to the DOM tree and reveal the focused node
         updateTreeOutline();
+        toggleNoSelection(false);
     }
 }
 
