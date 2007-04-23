@@ -1,5 +1,18 @@
 2007-04-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+        
+        - change blocks to 64k in size, and use various platform-specific calls to allocate at 64k-aligned addresses
+        http://bugs.webkit.org/show_bug.cgi?id=13383
+        
+        * kjs/collector.cpp:
+        (KJS::allocateBlock): New function to allocate 64k of 64k-aligned memory
+        (KJS::freeBlock): Corresponding free
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+
+2007-04-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin and Geoff.
         
         - remove the concept of oversize objects, now that there aren't any (for now
