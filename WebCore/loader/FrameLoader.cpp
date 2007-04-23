@@ -91,7 +91,7 @@ using namespace HTMLNames;
 using namespace EventNames;
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
-const unsigned int cMaxPenderingSourceLengthInLowBandwidthDisplay = 128 * 1024;
+const unsigned int cMaxPendingSourceLengthInLowBandwidthDisplay = 128 * 1024;
 #endif
 
 struct FormSubmission {
@@ -4485,7 +4485,7 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             m_finishedParsingDuringLowBandwidthDisplay = false;
             return;
         } else if (m_externalRequestsInLowBandwidthDisplay.isEmpty() || 
-            m_pendingSourceInLowBandwidthDisplay.length() > cMaxPenderingSourceLengthInLowBandwidthDisplay) {
+            m_pendingSourceInLowBandwidthDisplay.length() > cMaxPendingSourceLengthInLowBandwidthDisplay) {
             // clear the flag first
             oldDoc->setLowBandwidthDisplay(false);
             
