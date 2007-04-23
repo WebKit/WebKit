@@ -1505,7 +1505,7 @@
         incorrect logic in Dashboard branch - it didn't return in time if removeProperty() raised
         an exception (credit for noticing this bug goes to Geoff).
 
-2006-12-23  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+2006-12-23  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed by Geoff.
 
@@ -3016,7 +3016,7 @@
         (WebCore::Font::drawComplexText):
         (WebCore::Font::drawGlyphs):
 
-2006-12-17  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+2006-12-17  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed, tweaked and landed by Alexey.
 
@@ -7094,7 +7094,7 @@
         * html/HTMLSelectElement.cpp:
         (WebCore::HTMLSelectElement::reset):
 
-2006-12-05  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+2006-12-05  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed and landed by Alexey.
 
@@ -10079,7 +10079,7 @@
         (KJS::JSXMLHttpRequestProtoFunc::callAsFunction):
         Treat undefined credentials as missing ones.
 
-2006-11-17  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+2006-11-17  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed by Tim H.
 
@@ -11693,7 +11693,7 @@
 
         * CMakeLists.txt: PathQt.cpp is in graphics/qt now.
 
-2006-11-11  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+2006-11-11  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Tortured by Sam Weinig, Tim H., Maciej, Mitz and Alexey :-)
 
@@ -15594,7 +15594,7 @@
         (WebCore::RootInlineBox::nodeAtPoint):
         * rendering/RootInlineBox.h:
 
-2006-10-31  Lars Naesbye Christensen <larsnaesbye@stud.ku.dk>
+2006-10-31  Lars Naesbye Christensen <lars@naesbye.dk>
 
         Reviewed by Maciej.
 
@@ -20126,7 +20126,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         Patch for http://bugs.webkit.org/show_bug.cgi?id=11291
         PNG as cursor image format instead of TIFF
 
-        Original patch by Lars Naesbye Christensen (larsnaesbye@stud.ku.dk)
+        Original patch by Lars Naesbye Christensen (lars@naesbye.dk)
 
         - Convert cursor images from TIFF to PNG.
 
