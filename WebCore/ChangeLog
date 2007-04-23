@@ -1,5 +1,21 @@
 2007-04-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver.
+
+        - fix small things noticed while looking into a font subsitution bug
+
+        * platform/Font.h: (WebCore::Font::operator==): Corrected a misleading comment.
+
+        * platform/Font.cpp:
+        (WebCore::Font::Font): Initialize m_pageZero to 0 in the empty constructor instead
+        of leaving it uninitialized. Initialize m_fontList for tighter code. Remove unneeded
+        initialization of RefPtr members to 0. Changed the copy constructor to use initialization
+        for tighter code.
+        (WebCore::Font::operator=): Sorted to match the order from the header and the copy
+        constructor, and removed the uneeded self-assignment check.
+
+2007-04-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=5196

@@ -79,12 +79,13 @@ public:
     Font(const Font&);
     Font& operator=(const Font&);
 
-    bool operator==(const Font& other) const {
-        // Our FontData doesn't have to be checked, since
-        // checking the font description will be fine.
-        return (m_fontDescription == other.m_fontDescription &&
-                m_letterSpacing == other.m_letterSpacing &&
-                m_wordSpacing == other.m_wordSpacing);
+    bool operator==(const Font& other) const
+    {
+        // Our FontData doesn't have to be checked, since checking the font description will be fine.
+        // FIXME: This does not work if the font was made with the FontPlatformData constructor.
+        return m_fontDescription == other.m_fontDescription
+            && m_letterSpacing == other.m_letterSpacing
+            && m_wordSpacing == other.m_wordSpacing;
     }
 
     bool operator!=(const Font& other) const {
@@ -145,7 +146,6 @@ public:
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 
 private:
-    // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
     bool canUseGlyphCache(const TextRun&) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
