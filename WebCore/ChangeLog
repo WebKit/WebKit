@@ -1,3 +1,19 @@
+2007-04-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark.
+
+        Further implementation and checks. The opacity layer code is not so beautiful
+        but gets the job done with fewer complications than maintaining our own stack.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+
 2007-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
