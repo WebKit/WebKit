@@ -1,3 +1,40 @@
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Geoff.
+        
+        - move mark and collectOnMainThreadOnly bits into separate bitmaps
+        
+        This saves 4 bytes per cell, allowing shrink of cell size to 32,
+        which leads to a .8% speed improvement on iBench.
+        
+        This is only feasible because of all the previous changes on the branch.
+
+        * kjs/collector.cpp:
+        (KJS::allocateBlock): Adjust for some renames of constants. 
+        (KJS::Collector::markStackObjectsConservatively): Now that cells are 32 bytes (64 
+        bytes on 64-bit) the cell alignment check can be made much more strict, and also
+        obsoletes the need for a % sizeof(CollectorCell) check. Also, we can mask off the low
+        bits of the pointer to have a potential block pointer to look for.
+        (KJS::Collector::collectOnMainThreadOnly): Use bitmap.
+        (KJS::Collector::markMainThreadOnlyObjects): Use bitmap.
+        (KJS::Collector::collect): When sweeping, use bitmaps directly to find mark bits.
+        * kjs/collector.h:
+        (KJS::): Move needed constants and type declarations here.
+        (KJS::CollectorBitmap::get): Bit twiddling to get a bitmap value.
+        (KJS::CollectorBitmap::set): Bit twiddling to set a bitmap bit to true.
+        (KJS::CollectorBitmap::clear): Bit twiddling to set a bitmap bit to false.
+        (KJS::CollectorBitmap::clearAll): Clear whole bitmap at one go.
+        (KJS::Collector::cellBlock): New operation, compute the block pointer for
+        a cell by masking off low bits.
+        (KJS::Collector::cellOffset): New operation, compute the cell offset for a
+        cell by masking off high bits and dividing (actually a shift).
+        (KJS::Collector::isCellMarked): Check mark bit in bitmap
+        (KJS::Collector::markCell): Set mark bit in bitmap.
+        * kjs/value.h:
+        (KJS::JSCell::JSCell): No more bits.
+        (KJS::JSCell::marked): Let collector handle it.
+        (KJS::JSCell::mark): Let collector handle it.
+
 2007-04-23  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
