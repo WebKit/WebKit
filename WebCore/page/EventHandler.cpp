@@ -1198,14 +1198,18 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     HitTestRequest request(true, false);
     HitTestResult result(vPoint);
     doc->renderer()->layer()->hitTest(request, result);
-    Node* node = result.innerNode();    
-    Frame* subframe = subframeForTargetNode(node);
-    if (subframe && passWheelEventToSubframe(e, subframe)) {
-        e.accept();
-        return true;
-    }
-
+    Node* node = result.innerNode();
+    
     if (node) {
+        // Figure out which view to send the event to.
+        RenderObject* target = node->renderer();
+        
+        if (target && target->isWidget() &&
+            passWheelEventToWidget(e, static_cast<RenderWidget*>(target)->widget())) {
+            e.accept();
+            return true;
+        }
+
         node = node->shadowAncestorNode();
         EventTargetNodeCast(node)->dispatchWheelEvent(e);
         if (e.isAccepted())

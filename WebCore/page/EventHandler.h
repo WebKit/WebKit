@@ -222,7 +222,6 @@ private:
     bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
     bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
     bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
-    bool passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe);
 
     bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
 
@@ -232,7 +231,7 @@ private:
     bool passWidgetMouseDownEventToWidget(RenderWidget*);
 
     bool passMouseDownEventToWidget(Widget*);
-    bool passWheelEventToWidget(Widget*);
+    bool passWheelEventToWidget(PlatformWheelEvent&, Widget*);
 
     void defaultTabEventHandler(Event*, bool isBackTab);
 

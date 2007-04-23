@@ -424,7 +424,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(Widget* widget)
+bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
         
@@ -621,11 +621,6 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& me
 bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     return passSubframeEventToSubframe(mev, subframe);
-}
-
-bool EventHandler::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe)
-{
-    return passWheelEventToWidget(subframe->view());
 }
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar* scrollbar)
