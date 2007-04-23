@@ -1,5 +1,19 @@
 2007-04-23  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/5124364> IB3 crashes when loading a nib containing a WebView that has a WebHTMLView encoded inside
+
+        Since WebView's initWithCoder throws away all the decoded subviews, the WebHTMLView gets dealoced while it has a nil _private pointer.
+        Checking for a nil _private in WehHTMLView's close fixes this crash. No need to implement a full initWithCoder for WebHTMLView since
+        it will be thrown away by the WebView anyway.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]): Return earily if _priviate is nil.
+        (-[WebHTMLView initWithFrame:]): Unrelated change that removes an AppKit version check that predates Tiger.
+
+2007-04-23  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Mark Rowe.
 
         Remove the "No Selection" message after leaving search mode.

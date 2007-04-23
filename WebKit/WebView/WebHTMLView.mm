@@ -1783,7 +1783,9 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)close
 {
-    if (_private->closed)
+    // Check for a nil _private here incase we were created with initWithCoder. In that case, the WebView is just throwing
+    // out the archived WebHTMLView and recreating a new one if needed. So close dosen't need to do anything in that case.
+    if (!_private || _private->closed)
         return;
     [self _clearLastHitViewIfSelf];
     // FIXME: This is slow; should remove individual observers instead.
@@ -2023,9 +2025,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [self setFocusRingType:NSFocusRingTypeNone];
     
     // Make all drawing go through us instead of subviews.
-    if (NSAppKitVersionNumber >= 711) {
-        [self _setDrawsOwnDescendants:YES];
-    }
+    [self _setDrawsOwnDescendants:YES];
     
     _private = [[WebHTMLViewPrivate alloc] init];
 
