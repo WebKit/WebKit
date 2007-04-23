@@ -13,8 +13,8 @@ PASS y, x = 7; x is 7
 PASS ((x)) = 8; x is 8
 PASS ((window.x)) = 9; x is 9
 PASS ((window["x"])) = 10; x is 10
-PASS (y, x) = "FAIL"; threw exception SyntaxError: Parse error.
-PASS (true ? x : y) = "FAIL"; threw exception SyntaxError: Parse error.
+PASS (y, x) = "FAIL"; threw exception ReferenceError: Left side of assignment is not a reference..
+PASS (true ? x : y) = "FAIL"; threw exception ReferenceError: Left side of assignment is not a reference..
 PASS x++ = "FAIL"; threw exception SyntaxError: Parse error.
 PASS successfullyParsed is true
 

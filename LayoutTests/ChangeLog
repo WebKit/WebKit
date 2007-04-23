@@ -1,5 +1,20 @@
 2007-04-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - test for <rdar://problem/4840688> REGRESSION (r10588, r10621): JavaScript won't parse
+          modifications of non-references (breaks 300themovie.warnerbros.com, fedex.com)
+
+        * fast/js/modify-non-references-expected.txt: Added.
+        * fast/js/modify-non-references.html: Added.
+        * fast/js/resources/modify-non-references.js: Added.
+
+        * fast/js/assign-expected.txt: Updated for different exception text.
+        * fast/js/postfix-syntax-expected.txt: Ditto.
+        * fast/js/prefix-syntax-expected.txt: Ditto.
+
+2007-04-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - test changes for rename of box-sizing to -webkit-box-sizing

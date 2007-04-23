@@ -1,3 +1,41 @@
+2007-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/4840688> REGRESSION (r10588, r10621): JavaScript won't parse
+          modifications of non-references (breaks 300themovie.warnerbros.com, fedex.com)
+
+        Despite the ECMAScript specification's claim that you can treat these as syntax
+        errors, doing so creates some website incompatibilities. So this patch turns them back
+        into evaluation errors instead.
+
+        Test: fast/js/modify-non-references.html
+
+        * kjs/grammar.y: Change makeAssignNode, makePrefixNode, and makePostfixNode so that they
+        never fail to parse. Update rules that use them. Fix a little bit of indenting. Use
+        new PostfixErrorNode, PrefixErrorNode, and AssignErrorNode classes.
+
+        * kjs/nodes.h: Added an overload of throwError that takes a char* argument.
+        Replaced setExceptionDetailsIfNeeded and debugExceptionIfNeeded with handleException,
+        which does both. Added PostfixErrorNode, PrefixErrorNode, and AssignErrorNode classes.
+
+        * kjs/nodes.cpp: Changed exception macros to use handleException; simpler and smaller
+        code size than the two functions that we used before.
+        (Node::throwError): Added the overload mentioned above.
+        (Node::handleException): Added. Contains the code from both setExceptionDetailsIfNeeded
+        and debugExceptionIfNeeded.
+        (PostfixErrorNode::evaluate): Added. Throws an exception.
+        (PrefixErrorNode::evaluate): Ditto.
+        (AssignErrorNode::evaluate): Ditto.
+        (ThrowNode::execute): Call handleException instead of debugExceptionIfNeeded; this
+        effectively adds a call to setExceptionDetailsIfNeeded, which may help with getting
+        the correct file and line number for these exceptions.
+
+        * kjs/nodes2string.cpp:
+        (PostfixErrorNode::streamTo): Added.
+        (PrefixErrorNode::streamTo): Added.
+        (AssignErrorNode::streamTo): Added.
+
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
