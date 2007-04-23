@@ -1,8 +1,18 @@
 2007-04-23  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Adam.
+
+        Updating test from last checkin to include test case for select with and without a form element.
+
+        * fast/events/onchange-select-popup-expected.txt:
+        * fast/events/onchange-select-popup.html:
+
+2007-04-23  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt & Adam.
 
         Tests for <rdar://problem/4807799> REGRESSION: calling select() in onSearch handler doesn't work if you hit enter to trigger the event
+              and <rdar://problem/5153970> onChange doesn't fire when focusing a popup, using type-ahead to select, and leaving
 
         * fast/events/onchange-passwordfield-expected.txt:
         * fast/events/onchange-passwordfield.html:
