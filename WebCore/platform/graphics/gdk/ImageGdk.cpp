@@ -51,10 +51,4 @@ Image* Image::loadPlatformResource(const char *name)
     img->setData(buffer, true);
     return img;
 }
-
-void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
-                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
-{
-    notImplementedGdk();
-}
 }

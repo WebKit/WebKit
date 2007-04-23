@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -291,13 +292,16 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 
     if (fillColor().alpha()) {
         setColor(context, fillColor());
-        cairo_fill(context);
+        cairo_fill_preserve(context);
     }
+
     if (strokeStyle() != NoStroke) {
         setColor(context, strokeColor());
         cairo_set_line_width(context, strokeThickness());
         cairo_stroke(context);
     }
+
+    cairo_new_path(context);
 }
 
 // FIXME: This function needs to be adjusted to match the functionality on the Mac side.
@@ -347,7 +351,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (fillColor().alpha()) {
         setColor(context, fillColor());
         cairo_set_fill_rule(context, CAIRO_FILL_RULE_EVEN_ODD);
-        cairo_fill(context);
+        cairo_fill_preserve(context);
     }
 
     if (strokeStyle() != NoStroke) {
@@ -355,6 +359,8 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         cairo_set_line_width(context, strokeThickness());
         cairo_stroke(context);
     }
+
+    cairo_new_path(context);
     cairo_restore(context);
 }
 

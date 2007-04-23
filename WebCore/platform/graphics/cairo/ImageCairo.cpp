@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #if PLATFORM(CAIRO)
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include <cairo.h>
@@ -51,20 +53,6 @@ void FrameData::clear()
 
 // Drawing Routines
 
-static void setCompositingOperation(cairo_t* context, CompositeOperator op, bool hasAlpha)
-{
-    // FIXME: Add support for more operators.
-    // FIXME: This should really move to be a graphics context function once we have
-    // a C++ abstraction for GraphicsContext.
-    if (op == CompositeSourceOver && !hasAlpha)
-        op = CompositeCopy;
-
-    if (op == CompositeCopy)
-        cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    else
-        cairo_set_operator(context, CAIRO_OPERATOR_OVER);
-}
-
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
     cairo_t* context = ctxt->platformContext();
@@ -83,8 +71,11 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
     cairo_save(context);
 
     // Set the compositing operation.
-    setCompositingOperation(context, op, frameHasAlphaAtIndex(m_currentFrame));
-    
+    if (op == CompositeSourceOver && !frameHasAlphaAtIndex(m_currentFrame))
+        ctxt->setCompositeOperation(CompositeCopy);
+    else
+        ctxt->setCompositeOperation(op);
+
     // If we're drawing a sub portion of the image or scaling then create
     // a pattern transformation on the image and draw the transformed pattern.
     // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
@@ -105,6 +96,37 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
     startAnimation();
 
+}
+
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+{
+    cairo_surface_t* image = nativeImageForCurrentFrame();
+    if (!image) // If it's too early we won't have an image yet.
+        return;
+
+    cairo_t* context = ctxt->platformContext();
+    ctxt->save();
+
+    // TODO: Make use of tileRect.
+
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
+    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
+
+    cairo_matrix_t pattern_matrix = cairo_matrix_t(patternTransform);
+    cairo_matrix_t phase_matrix = {1, 0, 0, 1, phase.x(), phase.y()};
+    cairo_matrix_t combined;
+    cairo_matrix_multiply(&combined, &pattern_matrix, &phase_matrix);
+    cairo_matrix_invert(&combined);
+    cairo_pattern_set_matrix(pattern, &combined);
+
+    ctxt->setCompositeOperation(op);
+    cairo_set_source(context, pattern);
+    cairo_rectangle(context, destRect.x(), destRect.y(), destRect.width(), destRect.height());
+    cairo_fill(context);
+
+    cairo_pattern_destroy(pattern);
+    ctxt->restore();
 }
 
 void BitmapImage::checkForSolidColor()

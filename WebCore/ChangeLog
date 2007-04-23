@@ -1,3 +1,19 @@
+2007-04-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Hyatt.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        Fix stroking and filling of ellipses and polygons.
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw): Make use of a new GraphicsContext
+        function to simplify the code.
+        (WebCore::Image::drawPattern): Now implemented. This makes content
+        with tiled patterns (eg. CSS repeat) render correctly.
+        * platform/graphics/gdk/ImageGdk.cpp:
+        (WebCore::Image::drawPattern): Remove old stub.
+
 2007-04-22  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed by Tim Hatcher.
