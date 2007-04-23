@@ -1,3 +1,12 @@
+2007-04-23  Adele Peterson  <adele@apple.com>
+
+        Fixed and reviewed by Darin, Adele, and Oliver.
+
+        WebCore part of fix for <rdar://problem/5107538> REGRESSION: Page scroll when selecting characters from inline input candidate window by arrow buttons
+        http://bugs.webkit.org/show_bug.cgi?id=13263
+
+        * dom/KeyboardEvent.h: (WebCore::KeypressCommand::isEmpty): Added helper method.
+
 2007-04-23  Patti Hoa  <patti@apple.com>
         
         <rdar://problem/4938364> Attachment button has different string length between attributeStringForRange and stringForRange

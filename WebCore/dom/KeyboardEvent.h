@@ -35,6 +35,8 @@ namespace WebCore {
     struct KeypressCommand {
         Vector<String> commandNames;
         String text;
+        
+        bool isEmpty() const { return text.isEmpty() && commandNames.isEmpty(); }
     };
 #endif
     

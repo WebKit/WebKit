@@ -1,3 +1,14 @@
+2007-04-23  Adele Peterson  <adele@apple.com>
+
+        Fixed and reviewed by Darin, Adele, and Oliver.
+
+        WebKit part of fix for <rdar://problem/5107538> REGRESSION: Page scroll when selecting characters from inline input candidate window by arrow buttons
+        http://bugs.webkit.org/show_bug.cgi?id=13263
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):  If we have no command after calling interpretKeyEvents, we assume the input method handled the key.
+        (-[WebHTMLView doCommandBySelector:]): Add noop: to the command vector, but then when actually performing actions, ignore it.
+
 2007-04-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
