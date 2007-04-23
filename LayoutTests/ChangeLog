@@ -1,3 +1,19 @@
+2007-04-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt & Adam.
+
+        Tests for <rdar://problem/4807799> REGRESSION: calling select() in onSearch handler doesn't work if you hit enter to trigger the event
+
+        * fast/events/onchange-passwordfield-expected.txt:
+        * fast/events/onchange-passwordfield.html:
+        * fast/events/onchange-searchfield-expected.txt:
+        * fast/events/onchange-searchfield.html:
+        * fast/events/onchange-select-popup-expected.txt: Added.
+        * fast/events/onchange-select-popup.html: Added.
+        * fast/events/onchange-textfield-expected.txt:
+        * fast/events/onchange-textfield.html:
+        * fast/forms/onchange-enter-submit-expected.txt:
+
 2007-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

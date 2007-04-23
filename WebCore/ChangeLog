@@ -1,3 +1,28 @@
+2007-04-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt & Adam.
+
+        Fix for <rdar://problem/4807799> REGRESSION: calling select() in onSearch handler doesn't work if you hit enter to trigger the event
+        Fix for <rdar://problem/5153970> onChange doesn't fire when focusing a popup, using type-ahead to select, and leaving
+
+        This previous behavior to blur controls when hitting enter was added to achieve the result of firing the change event.  Firefox does not
+        fire blur- just the change event, so this fix will match Firefox behavior.
+
+        This also fixes a bug where we didn't fire the change event when using type-ahead selection with the popup menu.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler): Fire change event instead of blur event when hitting enter.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::dispatchFocusEvent): Now that we have type-ahead selection for popups that can be opened with the arrow keys,
+         we should always save the last selection when a popup gets focus, so it can be compared to the current selection when it loses focus.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): For the same reasons as above, we should fire onChange for all popups on blur.
+
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Fire change event instead of blur event when hitting enter.  Removed an unnecessary
+         check for form() before calling menuListOnChange().  Removed an unnecessary check for renderer() and usesMenuList().
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Remove call to blur.  Since list boxes fire the change event immediately after an
+         action is taken, we don't need to fire anything after hitting enter.
+        (WebCore::HTMLSelectElement::menuListOnChange): Reset m_lastOnChangeIndex after firing the change event.
+
 2007-04-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Ada.

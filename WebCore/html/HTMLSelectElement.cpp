@@ -575,22 +575,18 @@ void HTMLSelectElement::reset()
 
 void HTMLSelectElement::dispatchFocusEvent()
 {
-#if !ARROW_KEYS_POP_MENU
     if (usesMenuList())
         // Save the selection so it can be compared to the new selection when we call onChange during dispatchBlurEvent.
         saveLastSelection();
-#endif
     HTMLGenericFormElement::dispatchFocusEvent();
 }
 
 void HTMLSelectElement::dispatchBlurEvent()
 {
-#if !ARROW_KEYS_POP_MENU
     // We only need to fire onChange here for menu lists, because we fire onChange for list boxes whenever the selection change is actually made.
     // This matches other browsers' behavior.
     if (usesMenuList())
         menuListOnChange();
-#endif
     HTMLGenericFormElement::dispatchBlurEvent();
 }
 
@@ -630,14 +626,13 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         bool handled = false;
 #if ARROW_KEYS_POP_MENU
-        if (form() && keyIdentifier == "Enter") {
-            blur();
-            // Make sure the form hasn't been destroyed during the blur.
+        if (keyIdentifier == "Enter") {
+            menuListOnChange();
             if (form())
                 form()->submitClick(evt);
             handled = true;
         }
-        if ((keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") && renderer() && usesMenuList()) {
+        if (keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") {
             focus();
             // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
@@ -762,9 +757,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
-        if (form() && keyIdentifier == "Enter") {
-            blur();
-            // Make sure the form hasn't been destroyed during the blur.
+        if (keyIdentifier == "Enter") {
             if (form())
                 form()->submitClick(evt);
             evt->setDefaultHandled();
@@ -857,8 +850,11 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 void HTMLSelectElement::menuListOnChange()
 {
     ASSERT(usesMenuList());
-    if (m_lastOnChangeIndex != selectedIndex())
+    int selected = selectedIndex();
+    if (m_lastOnChangeIndex != selected) {
         onChange();
+        m_lastOnChangeIndex = selected;
+    }
 }
 
 void HTMLSelectElement::listBoxOnChange()

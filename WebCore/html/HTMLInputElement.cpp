@@ -1281,8 +1281,13 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             addSearchResult();
             onSearch();
         }
-        blur();
-        // Form may never have been present, or may have been destroyed by the blur event.
+        // Fire onChange for text fields.
+        RenderObject* r = renderer();
+        if (r && r->isTextField() && r->isEdited()) {
+            onChange();
+            r->setEdited(false);
+        }
+        // Form may never have been present, or may have been destroyed by the change event.
         if (form())
             form()->submitClick(evt);
         evt->setDefaultHandled();
