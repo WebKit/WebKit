@@ -48,7 +48,6 @@
 #endif
     BOOL webViewLoaded;
     BOOL preventHighlight;
-    BOOL isSharedInspector;
 }
 @end
 

@@ -48,17 +48,14 @@
 
 #pragma mark -
 
-@implementation WebInspector
+static WebInspector *sharedWebInspector = nil;
 
+@implementation WebInspector
 + (WebInspector *)sharedWebInspector
 {
-    static WebInspector *_sharedWebInspector = nil;
-    if (!_sharedWebInspector) {
-        _sharedWebInspector = [[self alloc] init];
-        _sharedWebInspector->_private->isSharedInspector = YES;
-    }
-
-    return _sharedWebInspector;
+    if (!sharedWebInspector)
+        sharedWebInspector = [[self alloc] init];
+    return sharedWebInspector;
 }
 
 #pragma mark -
@@ -154,6 +151,8 @@
         [window setContentView:_private->webView];
 
         [self setWindow:window];
+        [window release];
+
         return window;
     }
 
@@ -162,8 +161,11 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [_private->currentHighlight expire];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebNodeHighlightExpiredNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSSystemColorsDidChangeNotification object:nil];
@@ -172,8 +174,12 @@
     [self setFocusedDOMNode:nil];
     [self setWebFrame:nil];
 
-    if (!_private->isSharedInspector)
+    [[_private->webView windowScriptObject] setValue:[NSNull null] forKey:@"Inspector"];
+
+    if (self == sharedWebInspector) {
         [self release];
+        sharedWebInspector = nil;
+    }
 }
 
 - (IBAction)showWindow:(id)sender
@@ -182,6 +188,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_updateSystemColors) name:NSSystemColorsDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive) name:NSApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive) name:NSApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:nil];
+
+    [[_private->webView windowScriptObject] setValue:self forKey:@"Inspector"];
 
     [super showWindow:sender];
 }
@@ -396,6 +405,11 @@
 - (void)_applicationDidBecomeActive
 {
     [(NSPanel *)[self window] setFloatingPanel:YES];
+}
+
+- (void)_applicationWillTerminate
+{
+    [_private->webView close];
 }
 
 - (void)_webFrameDetached:(WebFrame *)frame

@@ -2123,7 +2123,10 @@ NS_ENDHANDLER
 
 - (WebScriptObject *)windowScriptObject
 {
-    return core([self mainFrame])->windowScriptObject();
+    Frame* coreFrame = core([self mainFrame]);
+    if (!coreFrame)
+        return nil;
+    return coreFrame->windowScriptObject();
 }
 
 // Get the appropriate user-agent string for a particular URL.

@@ -1,3 +1,22 @@
+2007-04-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 6658: World leak when closing inspected window
+        http://bugs.webkit.org/show_bug.cgi?id=6658 and <rdar://problem/4411863>
+
+        Removes over-retains of the inspector WebView, WebInspector and WebInspectorPanel.
+
+        * WebInspector/WebInspector.m:
+        (+[WebInspector sharedWebInspector]): Return the global sharedWebInspector variable.
+        (-[WebInspector window]): Release the window after calling setWindow:.
+        (-[WebInspector windowWillClose:]): Set the JavaScript Inspector variable to null and expire the current highlight.
+          Also clear the global sharedWebInspector variable and release it if self equals sharedWebInspector.
+        (-[WebInspector showWindow:]): Set the JavaScript Inspector variable back to self.
+        * WebInspector/WebInspectorInternal.h: Remove the isSharedInspector member variable.
+        * WebView/WebView.mm:
+        (-[WebView windowScriptObject]): Return nil if core([self mainFrame]) is NULL.
+
 2007-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
