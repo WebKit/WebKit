@@ -1,5 +1,16 @@
 2007-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        The fix for <rdar://problem/4976681> ASSERTION failure on quit @ talkcrunch.com in _NPN_ReleaseObject
+        was #ifdefed out in Production builds.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]): Move the #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM inside initialize around the specific code
+        (+[WebView _applicationWillTerminate]): Moved outside the #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM block
+
+2007-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Mitz.
 
         Bug 13436: Make Option-clicking a disclosure triangle expand the entire subtree
