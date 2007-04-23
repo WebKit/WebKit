@@ -1,3 +1,10 @@
+2007-04-22  David Hyatt  <hyatt@apple.com>
+
+        Fix 1% regression on the PLT.  Make sure roundToDevicePixels does no
+        work when no scale is in effect.
+
+        Reviewed by mjs
+
 2007-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

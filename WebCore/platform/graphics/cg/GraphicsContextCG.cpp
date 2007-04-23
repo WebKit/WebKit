@@ -744,6 +744,9 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     // rotating image like the hands of the world clock widget. We just need the scale, so 
     // we get the affine transform matrix and extract the scale.
     CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+    if (CGAffineTransformIsIdentity(deviceMatrix))
+        return rect;
+
     float deviceScaleX = sqrtf(deviceMatrix.a * deviceMatrix.a + deviceMatrix.b * deviceMatrix.b);
     float deviceScaleY = sqrtf(deviceMatrix.c * deviceMatrix.c + deviceMatrix.d * deviceMatrix.d);
 
