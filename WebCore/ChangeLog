@@ -2,7 +2,7 @@
 
         Reviewed by Hyatt.
 
-        <rdar://problem/5084400> [DOMRange lineBoxRects] returns an empty array when the DOM nodes have just been created
+        <rdar://problem/5024945> -[DOMRange lineBoxRects] doesn't include start and end nodes that have offsets
 
         Don't call selectionRect with a -1 end position, instead use the text length.
 
