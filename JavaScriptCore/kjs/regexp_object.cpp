@@ -180,9 +180,18 @@ const ClassInfo RegExpObjectImp::info = {"Function", &InternalFunctionImp::info,
 @end
 */
 
-RegExpObjectImp::RegExpObjectImp(ExecState* exec, FunctionPrototype* funcProto, RegExpPrototype* regProto)
+struct KJS::RegExpObjectImpPrivate {
+  // Global search cache / settings
+  RegExpObjectImpPrivate() : lastInput(""), lastNumSubPatterns(0), multiline(false) { }
+  UString lastInput;
+  OwnArrayPtr<int> lastOvector;
+  unsigned lastNumSubPatterns : 31;
+  bool multiline              : 1;
+};
 
-  : InternalFunctionImp(funcProto), lastInput(""), lastNumSubPatterns(0), multiline(false)
+RegExpObjectImp::RegExpObjectImp(ExecState* exec, FunctionPrototype* funcProto, RegExpPrototype* regProto)
+  : InternalFunctionImp(funcProto)
+  , d(new RegExpObjectImpPrivate)
 {
   // ECMA 15.10.5.1 RegExp.prototype
   putDirect(exec->propertyNames().prototype, regProto, DontEnum | DontDelete | ReadOnly);
@@ -210,9 +219,9 @@ UString RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffs
   if (!match.isNull()) {
     ASSERT(tmpOvector);
     
-    lastInput = s;
-    lastOvector.set(tmpOvector);
-    lastNumSubPatterns = r->subPatterns();
+    d->lastInput = s;
+    d->lastOvector.set(tmpOvector);
+    d->lastNumSubPatterns = r->subPatterns();
   }
   
   return match;
@@ -223,27 +232,27 @@ JSObject *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result
   List list;
   // The returned array contains 'result' as first item, followed by the list of matches
   list.append(jsString(result));
-  if ( lastOvector )
-    for ( unsigned i = 1 ; i < lastNumSubPatterns + 1 ; ++i )
+  if (d->lastOvector)
+    for (unsigned i = 1 ; i < d->lastNumSubPatterns + 1 ; ++i)
     {
-      int start = lastOvector[2*i];
+      int start = d->lastOvector[2*i];
       if (start == -1)
         list.append(jsUndefined());
       else {
-        UString substring = lastInput.substr( start, lastOvector[2*i+1] - start );
+        UString substring = d->lastInput.substr(start, d->lastOvector[2*i+1] - start);
         list.append(jsString(substring));
       }
     }
   JSObject *arr = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
-  arr->put(exec, "index", jsNumber(lastOvector[0]));
-  arr->put(exec, "input", jsString(lastInput));
+  arr->put(exec, "index", jsNumber(d->lastOvector[0]));
+  arr->put(exec, "input", jsString(d->lastInput));
   return arr;
 }
 
 JSValue *RegExpObjectImp::getBackref(unsigned i) const
 {
-  if (lastOvector && i < lastNumSubPatterns + 1) {
-    UString substring = lastInput.substr(lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i] );
+  if (d->lastOvector && i < d->lastNumSubPatterns + 1) {
+    UString substring = d->lastInput.substr(d->lastOvector[2*i], d->lastOvector[2*i+1] - d->lastOvector[2*i] );
     return jsString(substring);
   } 
 
@@ -252,8 +261,8 @@ JSValue *RegExpObjectImp::getBackref(unsigned i) const
 
 JSValue *RegExpObjectImp::getLastMatch() const
 {
-  if (lastOvector) {
-    UString substring = lastInput.substr(lastOvector[0], lastOvector[1] - lastOvector[0]);
+  if (d->lastOvector) {
+    UString substring = d->lastInput.substr(d->lastOvector[0], d->lastOvector[1] - d->lastOvector[0]);
     return jsString(substring);
   }
   
@@ -262,10 +271,10 @@ JSValue *RegExpObjectImp::getLastMatch() const
 
 JSValue *RegExpObjectImp::getLastParen() const
 {
-  int i = lastNumSubPatterns;
+  int i = d->lastNumSubPatterns;
   if (i > 0) {
-    ASSERT(lastOvector);
-    UString substring = lastInput.substr(lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i]);
+    ASSERT(d->lastOvector);
+    UString substring = d->lastInput.substr(d->lastOvector[2*i], d->lastOvector[2*i+1] - d->lastOvector[2*i]);
     return jsString(substring);
   }
     
@@ -274,8 +283,8 @@ JSValue *RegExpObjectImp::getLastParen() const
 
 JSValue *RegExpObjectImp::getLeftContext() const
 {
-  if (lastOvector) {
-    UString substring = lastInput.substr(0, lastOvector[0]);
+  if (d->lastOvector) {
+    UString substring = d->lastInput.substr(0, d->lastOvector[0]);
     return jsString(substring);
   }
   
@@ -284,9 +293,9 @@ JSValue *RegExpObjectImp::getLeftContext() const
 
 JSValue *RegExpObjectImp::getRightContext() const
 {
-  if (lastOvector) {
-    UString s = lastInput;
-    UString substring = s.substr(lastOvector[1], s.size() - lastOvector[1]);
+  if (d->lastOvector) {
+    UString s = d->lastInput;
+    UString substring = s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]);
     return jsString(substring);
   }
   
@@ -320,9 +329,9 @@ JSValue *RegExpObjectImp::getValueProperty(ExecState*, int token) const
     case Dollar9:
       return getBackref(9);
     case Input:
-      return jsString(lastInput);
+      return jsString(d->lastInput);
     case Multiline:
-      return jsBoolean(multiline);
+      return jsBoolean(d->multiline);
     case LastMatch:
       return getLastMatch();
     case LastParen:
@@ -347,10 +356,10 @@ void RegExpObjectImp::putValueProperty(ExecState *exec, int token, JSValue *valu
 {
   switch (token) {
     case Input:
-      lastInput = value->toString(exec);
+      d->lastInput = value->toString(exec);
       break;
     case Multiline:
-      multiline = value->toBoolean(exec);
+      d->multiline = value->toBoolean(exec);
       break;
     default:
       ASSERT(0);
