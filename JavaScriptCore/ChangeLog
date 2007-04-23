@@ -1,5 +1,15 @@
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+        
+        - change to 1-bit bitfields instead of 8-bit, this turns out to lead to a .51% speedup on JS iBench
+        
+        The 1-bit bitfields are actually faster than just plain bools, at least on Intel (go figure).
+
+        * kjs/property_map.h:
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
        
         - shrink ArrayInstance objects by 4 bytes
