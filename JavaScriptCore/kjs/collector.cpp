@@ -25,6 +25,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/FastMallocInternal.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/UnusedParam.h>
 #include "internal.h"
 #include "list.h"
 #include "value.h"
@@ -58,8 +59,14 @@ using std::max;
 
 namespace KJS {
 
+
+
 // tunable parameters
-const size_t MINIMUM_CELL_SIZE = 48;
+
+template<size_t bytesPerWord> struct CellSize;
+template<> struct CellSize<sizeof(uint32_t)> { static const size_t m_value = 48; }; // 32-bit
+template<> struct CellSize<sizeof(uint64_t)> { static const size_t m_value = 80; }; // 64-bit
+
 const size_t BLOCK_SIZE = (8 * 4096);
 const size_t SPARE_EMPTY_BLOCKS = 2;
 const size_t MIN_ARRAY_SIZE = 14;
@@ -68,10 +75,10 @@ const size_t LOW_WATER_FACTOR = 4;
 const size_t ALLOCATIONS_PER_COLLECTION = 1000;
 
 // derived constants
-const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
+const size_t MINIMUM_CELL_SIZE = CellSize<sizeof(void*)>::m_value;
+const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? 1 : 0);
 const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
-const size_t CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8) / (CELL_SIZE * 8));
-
+const size_t CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void*) * 8) / (CELL_SIZE * 8));
 
 
 struct CollectorCell {
@@ -97,15 +104,11 @@ struct CollectorHeap {
   size_t usedBlocks;
   size_t firstBlockWithPossibleSpace;
   
-  CollectorCell **oversizeCells;
-  size_t numOversizeCells;
-  size_t usedOversizeCells;
-
   size_t numLiveObjects;
   size_t numLiveObjectsAtLastCollect;
 };
 
-static CollectorHeap heap = {NULL, 0, 0, 0, NULL, 0, 0, 0, 0};
+static CollectorHeap heap = {NULL, 0, 0, 0, 0, 0};
 
 size_t Collector::mainThreadOnlyObjectCount = 0;
 bool Collector::memoryFull = false;
@@ -136,6 +139,8 @@ void* Collector::allocate(size_t s)
 {
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
+  ASSERT(s <= CELL_SIZE);
+  UNUSED_PARAM(s); // s is now only used for the above assert
 
   // collect if needed
   size_t numLiveObjects = heap.numLiveObjects;
@@ -150,25 +155,6 @@ void* Collector::allocate(size_t s)
 #ifndef NDEBUG
   GCLock lock;
 #endif
-  
-  if (s > CELL_SIZE) {
-    // oversize allocator
-    size_t usedOversizeCells = heap.usedOversizeCells;
-    size_t numOversizeCells = heap.numOversizeCells;
-
-    if (usedOversizeCells == numOversizeCells) {
-      numOversizeCells = max(MIN_ARRAY_SIZE, numOversizeCells * GROWTH_FACTOR);
-      heap.numOversizeCells = numOversizeCells;
-      heap.oversizeCells = static_cast<CollectorCell **>(fastRealloc(heap.oversizeCells, numOversizeCells * sizeof(CollectorCell *)));
-    }
-    
-    void *newCell = fastMalloc(s);
-    heap.oversizeCells[usedOversizeCells] = static_cast<CollectorCell *>(newCell);
-    heap.usedOversizeCells = usedOversizeCells + 1;
-    heap.numLiveObjects = numLiveObjects + 1;
-
-    return newCell;
-  }
   
   // slab allocator
   
@@ -386,8 +372,6 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   
   size_t usedBlocks = heap.usedBlocks;
   CollectorBlock **blocks = heap.blocks;
-  size_t usedOversizeCells = heap.usedOversizeCells;
-  CollectorCell **oversizeCells = heap.oversizeCells;
 
   const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
 
@@ -396,19 +380,14 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
     if (IS_CELL_ALIGNED(x) && x) {
       for (size_t block = 0; block < usedBlocks; block++) {
         size_t offset = x - reinterpret_cast<char *>(blocks[block]);
-        if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0)
-          goto gotGoodPointer;
-      }
-      for (size_t i = 0; i != usedOversizeCells; i++)
-        if (x == reinterpret_cast<char *>(oversizeCells[i]))
-          goto gotGoodPointer;
-      continue;
-
-gotGoodPointer:
-      if (((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
-        JSCell *imp = reinterpret_cast<JSCell *>(x);
-        if (!imp->marked())
-          imp->mark();
+        if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0) {
+          if (((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
+            JSCell *imp = reinterpret_cast<JSCell *>(x);
+            if (!imp->marked())
+              imp->mark();
+          }
+          break;
+        }
       }
     }
   }
@@ -701,18 +680,6 @@ void Collector::markMainThreadOnlyObjects()
             }
         }
     }
-
-    for (size_t cell = 0; cell < heap.usedOversizeCells; cell++) {
-        ASSERT(count < mainThreadOnlyObjectCount);
-
-        JSCell* imp = reinterpret_cast<JSCell*>(heap.oversizeCells[cell]);
-        if (imp->m_collectOnMainThreadOnly) {
-            if (!imp->marked())
-                imp->mark();
-            if (++count == mainThreadOnlyObjectCount)
-                return;
-        }
-    }
 }
 
 bool Collector::collect()
@@ -849,37 +816,6 @@ bool Collector::collect()
 
   if (heap.numLiveObjects != numLiveObjects)
     heap.firstBlockWithPossibleSpace = 0;
-  
-  size_t cell = 0;
-  while (cell < heap.usedOversizeCells) {
-    JSCell *imp = (JSCell *)heap.oversizeCells[cell];
-    
-    if (imp->m_marked) {
-      imp->m_marked = false;
-      cell++;
-    } else {
-      ASSERT(currentThreadIsMainThread || !imp->m_collectOnMainThreadOnly);
-      if (imp->m_collectOnMainThreadOnly)
-        --mainThreadOnlyObjectCount;
-      imp->~JSCell();
-#if DEBUG_COLLECTOR
-      heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
-#else
-      fastFree(imp);
-#endif
-
-      // swap with the last oversize cell so we compact as we go
-      heap.oversizeCells[cell] = heap.oversizeCells[heap.usedOversizeCells - 1];
-
-      heap.usedOversizeCells--;
-      numLiveObjects--;
-
-      if (heap.numOversizeCells > MIN_ARRAY_SIZE && heap.usedOversizeCells < heap.numOversizeCells / LOW_WATER_FACTOR) {
-        heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
-        heap.oversizeCells = (CollectorCell **)fastRealloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
-      }
-    }
-  }
   
   bool deleted = heap.numLiveObjects != numLiveObjects;
 

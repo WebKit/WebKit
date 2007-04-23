@@ -1,3 +1,22 @@
+2007-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Geoff.
+        
+        - remove the concept of oversize objects, now that there aren't any (for now
+        only enforced with an assert).
+        http://bugs.webkit.org/show_bug.cgi?id=13382
+
+        This change is a .66% speedup on JS iBench for 32-bit platforms, probably much more
+        for 64-bit since it finally gives a reasonable cell size, but I did not test that.
+        
+        * kjs/collector.cpp:
+        (KJS::): Use different cell size for 32-bit and 64-bit, now that there is no
+        oversize allocation.
+        (KJS::Collector::allocate): Remove oversize allocator.
+        (KJS::Collector::markStackObjectsConservatively): Don't check oversize objects.
+        (KJS::Collector::markMainThreadOnlyObjects): Ditto.
+        (KJS::Collector::collect): Ditto.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam.
