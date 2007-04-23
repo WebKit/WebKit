@@ -71,7 +71,7 @@ const size_t SPARE_EMPTY_BLOCKS = 2;
 const size_t MIN_ARRAY_SIZE = 14;
 const size_t GROWTH_FACTOR = 2;
 const size_t LOW_WATER_FACTOR = 4;
-const size_t ALLOCATIONS_PER_COLLECTION = 1000;
+const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 struct CollectorHeap {
   CollectorBlock **blocks;

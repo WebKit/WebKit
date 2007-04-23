@@ -1,5 +1,16 @@
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - raise ALLOCATIONS_PER_COLLECTION to 4000, for 3.7% iBench speed improvement
+         
+        Now that the cell size is smaller and the block size is bigger, we can fit 4000 objects in
+        the two spare cells the collector is willing to keep around, so collect a bit less often.
+        
+        * kjs/collector.cpp:
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin and Geoff.
         
         - move mark and collectOnMainThreadOnly bits into separate bitmaps
