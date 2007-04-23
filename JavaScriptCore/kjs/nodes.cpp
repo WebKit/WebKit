@@ -2392,7 +2392,32 @@ void FunctionBodyNode::processFuncDecl(ExecState *exec)
         source->processFuncDecl(exec);
 }
 
+void FunctionBodyNode::addParam(const Identifier& ident)
+{
+  m_parameters.append(Parameter(ident));
+}
+
+UString FunctionBodyNode::paramString() const
+{
+  UString s("");
+  size_t count = numParams();
+  for (size_t pos = 0; pos < count; ++pos) {
+    if (!s.isEmpty())
+        s += ", ";
+    s += paramName(pos).ustring();
+  }
+
+  return s;
+}
+
+
 // ------------------------------ FuncDeclNode ---------------------------------
+
+void FuncDeclNode::addParams() 
+{
+  for (ParameterNode *p = param.get(); p != 0L; p = p->nextParam())
+    body->addParam(p->ident());
+}
 
 // ECMA 13
 void FuncDeclNode::processFuncDecl(ExecState *exec)
@@ -2406,11 +2431,7 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
   func->put(exec, exec->propertyNames().prototype, proto, Internal|DontDelete);
 
-  int plen = 0;
-  for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
-    func->addParameter(p->ident());
-
-  func->put(exec, exec->propertyNames().length, jsNumber(plen), ReadOnly|DontDelete|DontEnum);
+  func->put(exec, exec->propertyNames().length, jsNumber(body->numParams()), ReadOnly|DontDelete|DontEnum);
 
   // ECMA 10.2.2
   context->variableObject()->put(exec, ident, func, Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
@@ -2435,6 +2456,12 @@ Completion FuncDeclNode::execute(ExecState *)
 // ------------------------------ FuncExprNode ---------------------------------
 
 // ECMA 13
+void FuncExprNode::addParams()
+{
+  for (ParameterNode *p = param.get(); p != 0L; p = p->nextParam())
+    body->addParam(p->ident());
+}
+
 JSValue *FuncExprNode::evaluate(ExecState *exec)
 {
   Context *context = exec->context();
@@ -2453,10 +2480,6 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
   JSObject* proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
   func->put(exec, exec->propertyNames().prototype, proto, Internal | DontDelete);
-
-  int plen = 0;
-  for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
-    func->addParameter(p->ident());
 
   if (named) {
     functionScopeObject->put(exec, ident, func, Internal | ReadOnly | (context->codeType() == EvalCode ? 0 : DontDelete));

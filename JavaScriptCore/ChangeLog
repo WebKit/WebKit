@@ -1,4 +1,38 @@
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - shrink FunctionImp / DeclaredFunctionImp by 4 bytes, by moving parameter list to function body
+        
+        I reconciled this with a similar change in KDE kjs by Maks Orlovich <maksim@kde.org>.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::passInParameters):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::getParameterName):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (FunctionProtoFunc::callAsFunction):
+        (FunctionObjectImp::construct):
+        * kjs/nodes.cpp:
+        (FunctionBodyNode::addParam):
+        (FunctionBodyNode::paramString):
+        (FuncDeclNode::addParams):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::addParams):
+        (FuncExprNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::Parameter::Parameter):
+        (KJS::FunctionBodyNode::numParams):
+        (KJS::FunctionBodyNode::paramName):
+        (KJS::FunctionBodyNode::parameters):
+        (KJS::FuncExprNode::FuncExprNode):
+        (KJS::FuncDeclNode::FuncDeclNode):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Disable 64-bit warnings because
+        they handle size_t badly.
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
  
         Reviewed by Darin.
 

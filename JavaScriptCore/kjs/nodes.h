@@ -28,6 +28,7 @@
 #include "Parser.h"
 #include "internal.h"
 #include <wtf/ListRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace KJS {
 
@@ -1003,6 +1004,13 @@ namespace KJS {
     ListRefPtr<ParameterNode> next;
   };
 
+  class Parameter {
+  public:
+    Parameter() { }
+    Parameter(const Identifier& n) : name(n) { }
+    Identifier name;
+  };
+
   // inherited by ProgramNode
   class FunctionBodyNode : public BlockNode {
   public:
@@ -1010,18 +1018,26 @@ namespace KJS {
     virtual void processFuncDecl(ExecState*);
     int sourceId() { return m_sourceId; }
     const UString& sourceURL() { return m_sourceURL; }
+
+    void addParam(const Identifier& ident);
+    size_t numParams() const { return m_parameters.size(); }
+    Identifier paramName(size_t pos) const { return m_parameters[pos].name; }
+    UString paramString() const;
+    Vector<Parameter>& parameters() { return m_parameters; }
   private:
     UString m_sourceURL;
     int m_sourceId;
+    Vector<Parameter> m_parameters;
   };
 
   class FuncExprNode : public Node {
   public:
     FuncExprNode(const Identifier &i, FunctionBodyNode *b, ParameterNode *p = 0)
-      : ident(i), param(p ? p->next.release() : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); } }
+      : ident(i), param(p ? p->next.release() : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); } addParams(); }
     virtual JSValue *evaluate(ExecState*);
     virtual void streamTo(SourceStream&) const;
   private:
+    void addParams();
     // Used for streamTo
     friend class PropertyNode;
     Identifier ident;
@@ -1032,13 +1048,14 @@ namespace KJS {
   class FuncDeclNode : public StatementNode {
   public:
     FuncDeclNode(const Identifier &i, FunctionBodyNode *b)
-      : ident(i), body(b) { }
+      : ident(i), body(b) { addParams(); }
     FuncDeclNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
-      : ident(i), param(p->next.release()), body(b) { Parser::removeNodeCycle(param.get()); }
+      : ident(i), param(p->next.release()), body(b) { Parser::removeNodeCycle(param.get()); addParams(); }
     virtual Completion execute(ExecState*);
     virtual void processFuncDecl(ExecState*);
     virtual void streamTo(SourceStream&) const;
   private:
+    void addParams();
     Identifier ident;
     RefPtr<ParameterNode> param;
     RefPtr<FunctionBodyNode> body;
