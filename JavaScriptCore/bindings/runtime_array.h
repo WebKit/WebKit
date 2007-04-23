@@ -31,7 +31,7 @@
 
 namespace KJS {
     
-class RuntimeArray : public ArrayInstance {
+class RuntimeArray : public JSObject {
 public:
     RuntimeArray(ExecState *exec, Bindings::Array *i);
     ~RuntimeArray();

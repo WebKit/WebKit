@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
         
+        - fix more test case failures
+
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::RuntimeArray): inherit from JSObject instead of ArrayInstance; it turns
+        out that this class only needs the prototype and classInfo from ArrayInstance, not the
+        actual class itself, and it was too big otherwise.
+        (RuntimeArray::getOwnPropertySlot):
+        * bindings/runtime_array.h:
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
         - fix some test failures
 
         * bindings/runtime_method.cpp:

@@ -31,7 +31,7 @@ using namespace KJS;
 const ClassInfo RuntimeArray::info = {"RuntimeArray", &ArrayInstance::info, 0, 0};
 
 RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
-    : ArrayInstance(exec->lexicalInterpreter()->builtinArrayPrototype(), a->getLength())
+    : JSObject(exec->lexicalInterpreter()->builtinArrayPrototype())
 {
     // Always takes ownership of concrete array.
     _array = a;
@@ -70,7 +70,7 @@ bool RuntimeArray::getOwnPropertySlot(ExecState* exec, const Identifier& propert
         }
     }
     
-    return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
@@ -80,7 +80,7 @@ bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertyS
         return true;
     }
     
-    return ArrayInstance::getOwnPropertySlot(exec, index, slot);
+    return JSObject::getOwnPropertySlot(exec, index, slot);
 }
 
 void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
