@@ -1,3 +1,10 @@
+2007-04-23  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+        
+        * kjs/regexp_object.h:
+        RegExpObjectImpPrivate is a struct, not a class.
+        
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

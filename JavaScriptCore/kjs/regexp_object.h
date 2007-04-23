@@ -60,7 +60,7 @@ namespace KJS {
     RegExp *reg;
   };
 
-  class RegExpObjectImpPrivate;
+  struct RegExpObjectImpPrivate;
 
   class RegExpObjectImp : public InternalFunctionImp {
   public:
