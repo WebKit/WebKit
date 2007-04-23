@@ -661,7 +661,8 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         setHTMLEventListener(searchEvent, attr);
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
-        m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
+        // Enforce a maximum of 256 saved results for the search field.
+        m_maxResults = !attr->isNull() ? min(attr->value().toInt(), 256) : -1;
         // FIXME: Detaching just for maxResults change is not ideal.  We should figure out the right
         // time to relayout for this change.
         if (m_maxResults != oldResults && (m_maxResults <= 0 || oldResults <= 0) && attached()) {
