@@ -2,6 +2,16 @@
 
         Reviewed by Mark.
 
+        Save and restore the context state when beginning and ending a transparency layer.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+
+2007-04-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark.
+
         Further implementation and checks. The opacity layer code is not so beautiful
         but gets the job done with fewer complications than maintaining our own stack.
 

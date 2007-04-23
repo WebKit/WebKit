@@ -577,6 +577,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     ASSERT(opacity >= 0 && opacity <= 1);
 
     cairo_t* context = m_data->context;
+    cairo_save(context);
     cairo_push_group(context);
     // We insert the opacity into a Cairo surface data slot.
     // Rather than passing a pointer, we store the opacity value directly.
@@ -597,6 +598,7 @@ void GraphicsContext::endTransparencyLayer()
 
     cairo_pop_group_to_source(context);
     cairo_paint_with_alpha(context, opacity);
+    cairo_restore(context);
 }
 
 void GraphicsContext::clearRect(const FloatRect&)
