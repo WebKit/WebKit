@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
         
+        - fix test failures / crashes on PPC
+
+        * kjs/property_map.h: Make the bool fields explicitly 8-bit bitfields, since bool is a full
+        word there otherwise :-(
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
         - fix more test case failures
 
         * bindings/runtime_array.cpp:
