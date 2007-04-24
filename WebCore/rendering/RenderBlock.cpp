@@ -1306,6 +1306,8 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     tx += m_x;
     ty += m_y;
+    
+    PaintPhase phase = paintInfo.phase;
 
     // Check if we need to do anything at all.
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
@@ -1318,9 +1320,17 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
     }
 
+    bool useControlClip = phase != PaintPhaseBlockBackground && phase != PaintPhaseSelfOutline && hasControlClip();
+
     // Push a clip.
-    bool useControlClip = paintInfo.phase == PaintPhaseForeground && hasControlClip();
     if (useControlClip) {
+        if (phase == PaintPhaseOutline)
+            paintInfo.phase = PaintPhaseChildOutlines;
+        else if (phase == PaintPhaseChildBlockBackground) {
+            paintInfo.phase = PaintPhaseBlockBackground;
+            paintObject(paintInfo, tx, ty);
+            paintInfo.phase = PaintPhaseChildBlockBackgrounds;
+        }
         IntRect clipRect(controlClipRect(tx, ty));
         if (clipRect.isEmpty())
             return;
@@ -1331,8 +1341,15 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     paintObject(paintInfo, tx, ty);
     
     // Pop the clip.
-    if (useControlClip)
+    if (useControlClip) {
         paintInfo.context->restore();
+        if (phase == PaintPhaseOutline) {
+            paintInfo.phase = PaintPhaseSelfOutline;
+            paintObject(paintInfo, tx, ty);
+            paintInfo.phase = phase;
+        } else if (phase == PaintPhaseChildBlockBackground)
+            paintInfo.phase = phase;
+    }
 }
 
 void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty, bool paintingFloats)

@@ -1,3 +1,21 @@
+2007-04-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13453
+          Control clip isn't applied to children's backgrounds, outlines and floats
+
+        Test: fast/forms/control-clip.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint): Apply the clip in all phases that paint
+        children. Split PaintPhaseOutline and PaintPhaseChildBlockBackground into
+        two phases each, applying the clip only to the children.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject): Treat the scrollbar as part of the
+        background rather than as a child's background, now that children are
+        clipped out.
+
 2007-04-24  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Mark Rowe.

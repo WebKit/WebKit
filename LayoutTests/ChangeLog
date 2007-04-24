@@ -1,3 +1,15 @@
+2007-04-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13453
+          Control clip isn't applied to children's backgrounds, outlines and floats
+
+        * fast/forms/control-clip-expected.checksum: Added.
+        * fast/forms/control-clip-expected.png: Added.
+        * fast/forms/control-clip-expected.txt: Added.
+        * fast/forms/control-clip.html: Added.
+
 2007-04-23  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber Stamped by Mark Rowe.
