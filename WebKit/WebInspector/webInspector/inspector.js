@@ -957,7 +957,7 @@ function updateStylePane()
         updateStyleProperties();
     } else {
         var noStyle = document.getElementById("noStyle");
-        noStyle.textContent = "Can't style " + nodeTypeName.call(styleNode) + " nodes.";
+        noStyle.textContent = "Can\u2019t style " + nodeTypeName.call(styleNode) + " nodes.";
         document.getElementById("styleRules").style.display = "none";
         document.getElementById("styleProperties").style.display = "none";
         noStyle.style.removeProperty("display");

@@ -1,5 +1,13 @@
 2007-04-24  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Changed an apostrophe (') into a right single quotation mark (U+2019).
+
+        * WebInspector/webInspector/inspector.js:
+
+2007-04-24  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13459
