@@ -44,6 +44,9 @@ using namespace Unicode;
 
 namespace WebCore {
 
+// We don't let our line box tree for a single line get any deeper than this.
+const unsigned cMaxLineDepth = 200;
+
 // an iterator which traverses all the objects within a block
 struct BidiIterator {
     BidiIterator() : block(0), obj(0), pos(0) {}
@@ -201,9 +204,10 @@ static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
 
 static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
 {
+    unsigned lineDepth = 1;
     int extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isInline() && !parent->isInlineBlockOrInlineTable()) {
+    while (parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
         if (start && parent->firstChild() == child)
             extraWidth += getBorderPaddingMargin(parent, false);
         if (end && parent->lastChild() == child)
@@ -842,36 +846,54 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
-    ASSERT(obj->isInlineFlow() || obj == this);
-    RenderFlow* flow = static_cast<RenderFlow*>(obj);
+    unsigned lineDepth = 1;
+    InlineFlowBox* childBox = 0;
+    InlineFlowBox* parentBox = 0;
+    InlineFlowBox* result = 0;
+    do {
+        ASSERT(obj->isInlineFlow() || obj == this);
+        RenderFlow* flow = static_cast<RenderFlow*>(obj);
 
-    // Get the last box we made for this render object.
-    InlineFlowBox* box = flow->lastLineBox();
+        // Get the last box we made for this render object.
+        parentBox = flow->lastLineBox();
 
-    // If this box is constructed then it is from a previous line, and we need
-    // to make a new box for our line.  If this box is unconstructed but it has
-    // something following it on the line, then we know we have to make a new box
-    // as well.  In this situation our inline has actually been split in two on
-    // the same line (this can happen with very fancy language mixtures).
-    if (!box || box->isConstructed() || box->nextOnLine()) {
-        // We need to make a new box for this render object.  Once
-        // made, we need to place it at the end of the current line.
-        InlineBox* newBox = obj->createInlineBox(false, obj == this);
-        ASSERT(newBox->isInlineFlowBox());
-        box = static_cast<InlineFlowBox*>(newBox);
-        box->setFirstLineStyleBit(m_firstLine);
-        
-        // We have a new box. Append it to the inline box we get by constructing our
-        // parent.  If we have hit the block itself, then |box| represents the root
+        // If this box is constructed then it is from a previous line, and we need
+        // to make a new box for our line.  If this box is unconstructed but it has
+        // something following it on the line, then we know we have to make a new box
+        // as well.  In this situation our inline has actually been split in two on
+        // the same line (this can happen with very fancy language mixtures).
+        bool constructedNewBox = false;
+        if (!parentBox || parentBox->isConstructed() || parentBox->nextOnLine()) {
+            // We need to make a new box for this render object.  Once
+            // made, we need to place it at the end of the current line.
+            InlineBox* newBox = obj->createInlineBox(false, obj == this);
+            ASSERT(newBox->isInlineFlowBox());
+            parentBox = static_cast<InlineFlowBox*>(newBox);
+            parentBox->setFirstLineStyleBit(m_firstLine);
+            constructedNewBox = true;
+        }
+                
+        if (!result)
+            result = parentBox;
+
+        // If we have hit the block itself, then |box| represents the root
         // inline box for the line, and it doesn't have to be appended to any parent
         // inline.
-        if (obj != this) {
-            InlineFlowBox* parentBox = createLineBoxes(obj->parent());
-            parentBox->addToLine(box);
-        }
-    }
+        if (childBox)
+            parentBox->addToLine(childBox);
+        
+        if (!constructedNewBox || obj == this)
+            break;
+        
+        childBox = parentBox;        
+        
+        // If we've exceeded our line depth, then jump straight to the root and skip all the remaining
+        // intermediate inline flows.
+        obj = (++lineDepth >= cMaxLineDepth) ? this : obj->parent();
 
-    return box;
+    } while (true);
+
+    return result;
 }
 
 RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiIterator& end)

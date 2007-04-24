@@ -445,6 +445,9 @@ bool RenderFlow::hitTestLines(const HitTestRequest& request, HitTestResult& resu
 IntRect RenderFlow::absoluteClippedOverflowRect()
 {
     if (isInlineFlow()) {
+        if (!firstLineBox())
+            return IntRect();
+
         // Find our leftmost position.
         int left = 0;
         int top = firstLineBox() ? firstLineBox()->yPos() : 0;

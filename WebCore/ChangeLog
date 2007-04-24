@@ -1,5 +1,50 @@
 2007-04-23  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 13337, deep tag nesting is slow.  This patch fixes a number of O(n^2) issues as well as making
+        a few performance optimizations based off profiling.  Details next to each change below.
+
+        Note that calcMinMaxWidth being slow is a critical separate piece of this puzzle.  Until bug 13430 is fixed,
+        render tree construction will be O(n^2) (because of the minmaxrecalc bit setting being stupid enough to
+        always crawl to the root of the tree) and calcMinMaxWidth will waste tons of unnecessary time.
+
+        When these fixes are combined with the calcMinMaxWidth fix in 13430, the penguin page specified in 13337
+        loads in < 2 seconds (down from an infinite hang before).
+
+        Reviewed by aroben, ollie
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        * css/csstyleselector.h
+        Cap the depth of cousin searching on the shared style optimization.  We will be willing to (at most) crawl
+        up the tree the same distance that we were willing to crawl backwards through sibling lists.  Leaving it
+        uncapped resulted in pathological style resolution for the case of an infinitely nested chain of singletons.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::popBlock):
+        Cap the number of residual style tags that we are willing to reopen.  We will reopen at most 200
+        residual style tags, since the assumption is that once that many tags are on the stack, you're probably already
+        every kind of bold, italic, and color of the rainbow.
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        absoluteClippedOverflowRect can just return the empty rect when the inline flow has no line boxes instead of
+        doing a bunch of work (and calling containingBlock()) for no reason.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildToFlow):
+        Remove the useless containingBlock() check from addChildToFlow.  Obviously every inline's containing block
+        is a block flow.
+
+        * rendering/bidi.cpp:
+        (WebCore::inlineWidth):
+        (WebCore::RenderBlock::createLineBoxes):
+        Cap the depth of individual line trees to 200.  Again the assumption is that once that many open inlines exist
+        all on one line that there's no way this would be intentional.
+
+2007-04-23  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 13430, cap inline splitting for continuations to a maximum depth of 200.
 
         Reviewed by olliej, antti
