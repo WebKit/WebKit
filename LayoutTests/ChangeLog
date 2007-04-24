@@ -1,3 +1,15 @@
+2007-04-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Test for <rdar://problem/5155507> REGRESSION: Crash in 
+        RenderLayer::setHasVisibleContent()
+
+        * fast/css-generated-content/visibleContentHiddenParent-expected.checksum: Added.
+        * fast/css-generated-content/visibleContentHiddenParent-expected.png: Added.
+        * fast/css-generated-content/visibleContentHiddenParent-expected.txt: Added.
+        * fast/css-generated-content/visibleContentHiddenParent.html: Added.
+
 2007-04-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

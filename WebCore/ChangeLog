@@ -1,3 +1,15 @@
+2007-04-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5155507> REGRESSION: Crash in 
+        RenderLayer::setHasVisibleContent()
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::appendChildNode): Must null-check 
+        enclosingLayer()
+        (WebCore::RenderContainer::insertChildNode): Same.
+
 2007-04-23  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13337, deep tag nesting is slow.  This patch fixes a number of O(n^2) issues as well as making

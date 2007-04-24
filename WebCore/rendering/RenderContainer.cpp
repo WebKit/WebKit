@@ -402,8 +402,10 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     // if the new child is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
     if (style()->visibility() != VISIBLE && newChild->style()->visibility() == VISIBLE && !newChild->layer()) {
-        if (!layer) layer = enclosingLayer();
-        layer->setHasVisibleContent(true);
+        if (!layer)
+            layer = enclosingLayer();
+        if (layer)
+            layer->setHasVisibleContent(true);
     }
     
     newChild->setNeedsLayoutAndMinMaxRecalc(); // Goes up the containing block hierarchy.
@@ -453,8 +455,10 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     // if the new child is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
     if (style()->visibility() != VISIBLE && child->style()->visibility() == VISIBLE && !child->layer()) {
-        if (!layer) layer = enclosingLayer();
-        layer->setHasVisibleContent(true);
+        if (!layer)
+            layer = enclosingLayer();
+        if (layer)
+            layer->setHasVisibleContent(true);
     }
 
     child->setNeedsLayoutAndMinMaxRecalc();
