@@ -1,3 +1,13 @@
+2007-04-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13459
+          The "mapped style" link next to an attribute doesn't work
+
+        * WebInspector/webInspector/inspector.js: Added a check that the rule is
+        mapped from an attribute.
+
 2007-04-23  Adele Peterson  <adele@apple.com>
 
         Fixed and reviewed by Darin, Adele, and Oliver.

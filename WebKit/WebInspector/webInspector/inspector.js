@@ -1113,7 +1113,7 @@ function selectMappedStyleRule(attrName)
 
     var attrName = attrName.toLowerCase();
     for (var i = 0; i < styleRules.length; ++i)
-        if (styleRules[i].attrName.toLowerCase() === attrName)
+        if (styleRules[i].attrName && styleRules[i].attrName.toLowerCase() === attrName)
             break;
 
     selectedStyleRuleIndex = i;
