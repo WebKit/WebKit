@@ -62,7 +62,7 @@ const int updateTimerDelay = 5;
 
 const String& IconDatabase::defaultDatabaseFilename()
 {
-    static String defaultDatabaseFilename = "icon.db";
+    static String defaultDatabaseFilename = "Icons.db";
     return defaultDatabaseFilename;
 }
 
@@ -82,6 +82,8 @@ IconDatabase::IconDatabase()
     , m_getIconIDForIconURLStatement(0)
     , m_addIconForIconURLStatement(0)
     , m_imageDataForIconURLStatement(0)
+    , m_importedStatement(0)
+    , m_setImportedStatement(0)
     , m_currentDB(&m_mainDB)
     , m_defaultIconDataCache(0)
     , m_isEnabled(false)
@@ -91,6 +93,8 @@ IconDatabase::IconDatabase()
     , m_initialPruningComplete(false)
     , m_initialPruningTransaction(0)
     , m_preparedPageRetainInsertStatement(0)
+    , m_imported(false)
+    , m_isImportedSet(false)
 {
     
 }
@@ -275,6 +279,10 @@ void IconDatabase::deleteAllPreparedStatements(bool withSync)
     m_addIconForIconURLStatement = 0;
     delete m_imageDataForIconURLStatement;
     m_imageDataForIconURLStatement = 0;
+    delete m_importedStatement;
+    m_importedStatement = 0;
+    delete m_setImportedStatement;
+    m_setImportedStatement = 0;
 }
 
 bool IconDatabase::isEmpty()
@@ -910,6 +918,22 @@ void IconDatabase::setEnabled(bool enabled)
     m_isEnabled = enabled;
 }
 
+bool IconDatabase::imported()
+{
+    if (!m_isImportedSet) {
+        m_imported = importedQuery(m_mainDB);
+        m_isImportedSet = true;
+    }
+    return m_imported;
+}
+
+void IconDatabase::setImported(bool import)
+{
+    m_imported = import;
+    m_isImportedSet = true;
+    setImportedQuery(m_mainDB, import);
+}
+    
 IconDatabase::~IconDatabase()
 {
     close();
@@ -1077,6 +1101,39 @@ bool IconDatabase::hasIconForIconURLQuery(SQLDatabase& db, const String& iconURL
 
     m_hasIconForIconURLStatement->reset();
     return result == SQLResultRow;
+}
+
+bool IconDatabase::importedQuery(SQLDatabase& db)
+{
+    readySQLStatement(m_importedStatement, db, "SELECT IconDatabaseInfo.value FROM IconDatabaseInfo WHERE IconDatabaseInfo.key = \"ImportedSafari2Icons\";");
+    
+    int result = m_importedStatement->step();
+
+    if (result == SQLResultRow)
+        result = m_importedStatement->getColumnInt(0);
+    else {
+        if (result != SQLResultDone)
+            LOG_ERROR("importedQuery failed");
+        result = 0;
+    }
+
+    m_importedStatement->reset();
+    return result;
+}
+
+void IconDatabase::setImportedQuery(SQLDatabase& db, bool imported)
+{
+    if (imported)
+        readySQLStatement(m_setImportedStatement, db, "INSERT INTO IconDatabaseInfo (key, value) VALUES (\"ImportedSafari2Icons\", 1);");
+    else
+        readySQLStatement(m_setImportedStatement, db, "INSERT INTO IconDatabaseInfo (key, value) VALUES (\"ImportedSafari2Icons\", 0);");
+
+    int result = m_setImportedStatement->step();
+
+    if (result != SQLResultDone)
+        LOG_ERROR("setImportedQuery failed");
+
+    m_setImportedStatement->reset();
 }
 
 } // namespace WebCore

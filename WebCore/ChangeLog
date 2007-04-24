@@ -1,3 +1,25 @@
+2007-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Beth, Hyatt, Ada, and Darin
+
+        <rdar://problem/5011477> and <rdar://problem/5011514>
+        Provide support for the icon.db to be moved to a different directory from the old WebKit-style
+        icons, and remove the old directory if that is the case
+
+        Support for this starts in WebCore, where we can use the metadata table in the icon.db to track
+        whether or not we've ever done the import
+
+        * WebCore.exp:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename): Changed to "Icons.db"
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::deleteAllPreparedStatements): Delete the new statements added
+        (WebCore::IconDatabase::imported): Grab this flag from the DB or return the cached flag
+        (WebCore::IconDatabase::setImported): Store this flag into the DB
+        (WebCore::IconDatabase::importedQuery): Actually do the DB query for this save
+        (WebCore::IconDatabase::setImportedQuery): Actually do the DB query for this retrieval
+        * loader/icon/IconDatabase.h:
+
 2007-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

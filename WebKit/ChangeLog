@@ -1,3 +1,22 @@
+2007-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Beth, Hyatt, Ada, and Darin
+
+        <rdar://problem/5011477> and <rdar://problem/5011514>
+        Provide support for the icon.db to be moved to a different directory from the old WebKit-style
+        icons, and remove the old directory if that is the case
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase _importToWebCoreFormat]): Check "imported()" to determine if a conversion is needed
+          - Look for WebIconDatabaseImportDirectoryDefaultsKey for the source location for the conversion
+          - Set "imported" to true in the Icons.db
+          - If the new Icons.db isn't in the same patch as the old icons, delete the entire directory when finished
+          - Move old icon.db to Icons.db to reflect rename
+        * Misc/WebIconDatabasePrivate.h: Add WebIconDatabaseImportDirectoryDefaultsKey so a WebKit client can tell WebKit
+          where to look for the old icons if their location is different from the icon.db
+        * WebKit.exp:
+
 2007-04-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Oliver Hunt.

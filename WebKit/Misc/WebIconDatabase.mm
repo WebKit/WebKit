@@ -39,7 +39,6 @@
 #import <WebCore/IntSize.h>
 #import <WebCore/ThreadCheck.h>
 
-
 using namespace WebCore;
 
 NSString * const WebIconDatabaseVersionKey =    @"WebIconDatabaseVersion";
@@ -50,6 +49,7 @@ NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotification
 NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidRemoveAllIconsNotification";
 
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
+NSString *WebIconDatabaseImportDirectoryDefaultsKey = @"WebIconDatabaseImportDirectoryDefaultsKey";
 NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
 
 NSString *WebIconDatabasePath = @"~/Library/Icons";
@@ -71,7 +71,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
 - (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
-- (void)_convertToWebCoreFormat; 
+- (void)_importToWebCoreFormat; 
 @end
 
 @implementation WebIconDatabase
@@ -111,12 +111,22 @@ NSSize WebIconLargeSize = {128, 128};
     }
     databaseDirectory = [[databaseDirectory stringByExpandingTildeInPath] stringByStandardizingPath];
     
-    // Open the WebCore icon database and convert the old WebKit icon database if we haven't done the initial conversion yet
+    // Rename legacy icon database files to the new icon database name
+    BOOL isDirectory = NO;
+    NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
+        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:IconDatabase::sharedIconDatabase()->defaultDatabaseFilename()];
+        if (![defaultManager fileExistsAtPath:newDB])
+            rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
+    }
+    
+    // Open the WebCore icon database and import the old WebKit icon database
     if (!IconDatabase::sharedIconDatabase()->open(databaseDirectory))
         LOG_ERROR("Unable to open icon database");
     else
         if ([self _isEnabled])
-            [self _convertToWebCoreFormat];
+            [self _importToWebCoreFormat];
 
     IconDatabase::sharedIconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
     
@@ -483,18 +493,21 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     return iconData;
 }
 
-- (void)_convertToWebCoreFormat
+- (void)_importToWebCoreFormat
 {
     ASSERT(_private);    
     
-    // If the WebCore Icon Database is not empty, we assume that this conversion has already
-    // taken place and skip the rest of the steps 
-    if (!IconDatabase::sharedIconDatabase()->isEmpty())
+    // If we've already performed the import once we shouldn't try to do it again
+    if (IconDatabase::sharedIconDatabase()->imported())
         return;
 
     // Get the directory the old icon database *should* be in
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseImportDirectoryDefaultsKey];
+    
+    if (!databaseDirectory)
+        databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+        
     if (!databaseDirectory) {
         databaseDirectory = WebIconDatabasePath;
         [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
@@ -505,7 +518,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     NSMutableDictionary *pageURLToIconURL = objectFromPathForKey(databaseDirectory, WebURLToIconURLKey);
 
     // If the retrieved object was not a valid NSMutableDictionary, then we have no valid
-    // icons to convert
+    // icons to import
     if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]])
         pageURLToIconURL = nil;
     
@@ -538,21 +551,30 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
         }
     }
 
-    // After we're done converting old style icons over to webcore icons, we delete the entire directory hierarchy 
-    // for the old icon DB (skipping the new iconDB, which will likely be in the same directory)
+    IconDatabase::sharedIconDatabase()->setImported(true);
+    
+    // After we're done importing old style icons over to webcore icons, we delete the entire directory hierarchy 
+    // for the old icon DB (skipping the new iconDB if it is in the same directory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
     enumerator = [[fileManager directoryContentsAtPath:databaseDirectory] objectEnumerator];
     
     NSString *databaseFilename = IconDatabase::sharedIconDatabase()->defaultDatabaseFilename();
 
+    BOOL foundIconDB = NO;
     NSString *file;
     while ((file = [enumerator nextObject]) != nil) {
-        if ([file isEqualTo:databaseFilename])
+        if ([file caseInsensitiveCompare:databaseFilename] == NSOrderedSame) {
+            foundIconDB = YES;
             continue;
+        }
         NSString *filePath = [databaseDirectory stringByAppendingPathComponent:file];
-        if (![fileManager  removeFileAtPath:filePath handler:nil])
+        if (![fileManager removeFileAtPath:filePath handler:nil])
             LOG_ERROR("Failed to delete %@ from old icon directory", filePath);
     }
+    
+    // If the new iconDB wasn't in that directory, we can delete the directory itself
+    if (!foundIconDB)
+        rmdir([databaseDirectory fileSystemRepresentation]);
 }
 
 @end
