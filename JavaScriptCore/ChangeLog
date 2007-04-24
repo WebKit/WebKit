@@ -1,3 +1,11 @@
+2007-04-24  Oliver Hunt  <oliver@apple.com>
+
+        GTK Build fix, ::findEntry->KJS::findEntry
+
+        * kjs/lookup.cpp:
+        (KJS::Lookup::findEntry):
+        (KJS::Lookup::find):
+
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

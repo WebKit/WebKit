@@ -71,14 +71,14 @@ static inline const HashEntry* findEntry(const struct HashTable *table, unsigned
 const HashEntry* Lookup::findEntry(const struct HashTable *table,
                                    const Identifier &s )
 {
-  const HashEntry* entry = ::findEntry(table, s.ustring().rep()->hash(), s.data(), s.size());
+  const HashEntry* entry = KJS::findEntry(table, s.ustring().rep()->hash(), s.data(), s.size());
   return entry;
 }
 
 int Lookup::find(const struct HashTable *table,
                  const UChar *c, unsigned int len)
 {
-  const HashEntry *entry = ::findEntry(table, UString::Rep::computeHash(c, len), c, len);
+  const HashEntry *entry = KJS::findEntry(table, UString::Rep::computeHash(c, len), c, len);
   if (entry)
     return entry->value;
   return -1;
@@ -86,8 +86,7 @@ int Lookup::find(const struct HashTable *table,
 
 int Lookup::find(const struct HashTable *table, const Identifier &s)
 {
-  //printf("looking for:%s\n", s.ascii());
-  const HashEntry *entry = ::findEntry(table, s.ustring().rep()->hash(), s.data(), s.size());
+  const HashEntry *entry = KJS::findEntry(table, s.ustring().rep()->hash(), s.data(), s.size());
   if (entry)
     return entry->value;
   return -1;
