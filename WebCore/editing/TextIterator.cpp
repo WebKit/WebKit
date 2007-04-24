@@ -241,7 +241,7 @@ bool TextIterator::handleTextNode()
             return false;
         }
         int strLength = str.length();
-        int end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
+        int end = (m_node == m_endContainer) ? m_endOffset : INT_MAX;
         int runEnd = min(strLength, end);
 
         if (runStart >= runEnd)
@@ -276,7 +276,7 @@ void TextIterator::handleTextBox()
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
     String str = renderer->text();
     int start = m_offset;
-    int end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
+    int end = (m_node == m_endContainer) ? m_endOffset : INT_MAX;
     while (m_textBox) {
         int textBoxStart = m_textBox->m_start;
         int runStart = max(textBoxStart, start);

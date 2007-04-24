@@ -583,7 +583,7 @@ static int headingLevel(RenderObject* renderer)
         
         // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
         VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates(0, 0);
-        VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates(LONG_MAX, LONG_MAX);
+        VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates(INT_MAX, INT_MAX);
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return nil;
             

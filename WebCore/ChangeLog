@@ -2,6 +2,21 @@
 
         Reviewed by Adam.
 
+        <rdar://problem/5133011> 64-bit: Attempting to paste copied text in a input field results in a crash at WebCore::Range::startPosition()
+
+        Change a couple incorrect uses of LONG_MAX to INT_MAX to match the variable type they are used in.
+        The LONG_MAX on 64-bit was overflowing the int variables, causing this crash on paste.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject value]):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+
+2007-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
         <rdar://problem/4966982> 64-bit: In a unordered list, TYPE=DISC and TYPE=CIRCLE attribute values are ignored
 
         We need to draw our full-circle arcs counter-clockwise, since a clockwise arc from 0 to 2π is no arc at all!
