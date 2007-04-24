@@ -1,3 +1,12 @@
+2007-04-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber Stamped by Mark Rowe.
+        
+        Disabling this test because it hangs all the time.
+        (http://bugs.webkit.org/show_bug.cgi?id=13370)
+
+        * http/tests/plugins/npapi-response-headers.html: Removed.
+
 2007-04-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
