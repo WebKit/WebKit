@@ -1,3 +1,12 @@
+2007-04-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5024945> -[DOMRange lineBoxRects] doesn't include start and end nodes that have offsets
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects): Use min(box->len(), end) instead of special-casing UINT_MAX.
+
 2007-04-23  Adele Peterson  <adele@apple.com>
 
         Fix by Darin, reviewed by me.
