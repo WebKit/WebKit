@@ -159,37 +159,47 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // Once we hit the containing block we're done.
     RenderFlow* curr = static_cast<RenderFlow*>(parent());
     RenderFlow* currChild = this;
+    
+    // FIXME: Because splitting is O(n^2) as tags nest pathologically, we cap the depth at which we're willing to clone.
+    // There will eventually be a better approach to this problem that will let us nest to a much
+    // greater depth (see bugzilla bug 13430) but for now we have a limit.  This *will* result in
+    // incorrect rendering, but the alternative is to hang forever.
+    unsigned splitDepth = 1;
+    const unsigned cMaxSplitDepth = 200; 
     while (curr && curr != fromBlock) {
-        // Create a new clone.
-        RenderInline* cloneChild = clone;
-        clone = cloneInline(curr);
+        if (splitDepth < cMaxSplitDepth) {
+            // Create a new clone.
+            RenderInline* cloneChild = clone;
+            clone = cloneInline(curr);
 
-        // Insert our child clone as the first child.
-        clone->addChildToFlow(cloneChild, 0);
+            // Insert our child clone as the first child.
+            clone->addChildToFlow(cloneChild, 0);
 
-        // Hook the clone up as a continuation of |curr|.
-        RenderFlow* oldCont = curr->continuation();
-        curr->setContinuation(clone);
-        clone->setContinuation(oldCont);
+            // Hook the clone up as a continuation of |curr|.
+            RenderFlow* oldCont = curr->continuation();
+            curr->setContinuation(clone);
+            clone->setContinuation(oldCont);
 
-        // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
-        // has to move into the inline continuation.  Call updatePseudoChild to ensure that the inline's :after
-        // content gets properly destroyed.
-        curr->updatePseudoChild(RenderStyle::AFTER);
+            // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
+            // has to move into the inline continuation.  Call updatePseudoChild to ensure that the inline's :after
+            // content gets properly destroyed.
+            curr->updatePseudoChild(RenderStyle::AFTER);
 
-        // Now we need to take all of the children starting from the first child
-        // *after* currChild and append them all to the clone.
-        o = currChild->nextSibling();
-        while (o) {
-            RenderObject* tmp = o;
-            o = tmp->nextSibling();
-            clone->addChildToFlow(curr->removeChildNode(tmp), 0);
-            tmp->setNeedsLayoutAndMinMaxRecalc();
+            // Now we need to take all of the children starting from the first child
+            // *after* currChild and append them all to the clone.
+            o = currChild->nextSibling();
+            while (o) {
+                RenderObject* tmp = o;
+                o = tmp->nextSibling();
+                clone->addChildToFlow(curr->removeChildNode(tmp), 0);
+                tmp->setNeedsLayoutAndMinMaxRecalc();
+            }
         }
-
+        
         // Keep walking up the chain.
         currChild = curr;
         curr = static_cast<RenderFlow*>(curr->parent());
+        splitDepth++;
     }
 
     // Now we are at the block level. We need to put the clone into the toBlock.
