@@ -20,13 +20,13 @@
         <!-- This causes a full rebuild everytime
             <is-phony />
         -->
-        <command>bash -c "cd ../..; ./move-js-headers.sh"</command>
         <command>
-            bash -c "cd ../..;\
-            export FEATURE_DEFINES=$(FEATURE_DEFINES);\
-            ./make-generated-sources.sh $(ENCODINGS_FILE)"
+            bash -c "cd ../..; ./move-js-headers.sh" &amp;&amp; \
+            bash -c "cd ../.. &amp;&amp; \
+            export FEATURE_DEFINES=$(FEATURE_DEFINES) &amp;&amp; \
+            ./make-generated-sources.sh $(ENCODINGS_FILE)" &amp;&amp; \
+            bash -c "touch .DerivedSources"
         </command>
-        <command>bash -c "touch .DerivedSources"</command>
     </action>
 
     <dll id="webcore-gdk" template="webcore_base,freetype,gtk,curl,cairo,sqlite3">
