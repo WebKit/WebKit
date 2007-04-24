@@ -1,5 +1,15 @@
 2007-04-23  Adele Peterson  <adele@apple.com>
 
+        Fix by Darin, reviewed by me.
+
+        Fix for REGRESSION: Can't upload attachments to bugzilla since the file upload control is reset immediately 
+        http://bugs.webkit.org/show_bug.cgi?id=13461
+
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::updateFromElement):
+        Only clear the FileChooser if the value is empty *and* (not or) the filename is empty.
+
+2007-04-23  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam.
 
         Updated fix for <rdar://problem/4887426> Set a reasonable maximum number of recent searches for search menu

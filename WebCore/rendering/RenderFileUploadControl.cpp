@@ -129,7 +129,7 @@ void RenderFileUploadControl::updateFromElement()
 
     // This only supports clearing out the filename, but that's OK because for
     // security reasons that's the only change the DOM is allowed to make.
-    if (inputElement->value().isEmpty() || !m_fileChooser->filename().isEmpty()) {
+    if (inputElement->value().isEmpty() && !m_fileChooser->filename().isEmpty()) {
         m_fileChooser->clear();
         repaint();
     }
