@@ -4,6 +4,14 @@
 
         Gdk build system improvements.
 
+        * make-generated-sources.sh: Exit with failure status if make fails.
+
+2007-04-24  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        Gdk build system improvements.
+
         * Projects/gdk/webcore-gdk.bkl:
         fail if running any of the commands failed. In particular
         make-generated-sources.sh
