@@ -55,7 +55,6 @@
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
 		146AAB2B0B66A84900E55F16 /* JSStringRefCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
-		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1482B74D0A43032800517CFC /* JSStringRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSStringRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
@@ -71,27 +70,24 @@
 		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD53F50A3E12D800BAF59C /* ExecState.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD53F30A3E12D800BAF59C /* ExecState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD53F40A3E12D800BAF59C /* ExecState.cpp */; };
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A310A3E91F600BAF59C /* JSContextRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14BD5A360A3E91F600BAF59C /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD5A2F0A3E91F600BAF59C /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		14F137590A3A727E00F26F90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F137580A3A727E00F26F90 /* Context.cpp */; };
 		14F137830A3A765B00F26F90 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F137820A3A765B00F26F90 /* context.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34890A6C421700ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34880A6C421700ABE06E /* WebScriptObject.h */; };
 		51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F648D60BB4E2CA0033D760 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65400C110A69BAF200509887 /* PropertyNameArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */; };
 		65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
 		6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
-		6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
 		6541BD7508E80A17002CBEE7 /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
-		65621E6D089E859700760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		657EB7460B708F540063461B /* ListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EB7450B708F540063461B /* ListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		657EEBC0094E445E008C9C7B /* HashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EEBBF094E445E008C9C7B /* HashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6580F796094070560082C219 /* PassRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6580F795094070560082C219 /* PassRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659126BC0BDD1728001921FB /* AllInOneFile.cpp */; };
+		659126C20BDD1802001921FB /* fpconst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9364B273045B7D6C00A9CAC1 /* fpconst.cpp */; };
 		6592C318098B7DE10003D4F6 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C316098B7DE10003D4F6 /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6592C319098B7DE10003D4F6 /* VectorTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C317098B7DE10003D4F6 /* VectorTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65B1749A09D0FEB700820339 /* array_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B1749909D0FEB700820339 /* array_object.lut.h */; };
@@ -99,7 +95,6 @@
 		65B174F609D100FA00820339 /* number_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F209D100FA00820339 /* number_object.lut.h */; };
 		65B174F809D100FA00820339 /* string_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F409D100FA00820339 /* string_object.lut.h */; };
 		65C647B4093EF8D60022C380 /* RefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C647B3093EF8D60022C380 /* RefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65C7A1730A8EAACB00FA37EA /* JSWrapperObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */; };
 		65C7A1740A8EAACB00FA37EA /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D87E09B5A32E0002E4D7 /* Platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
@@ -110,18 +105,14 @@
 		65DFC93408EA173A00F7300B /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92E08EA173A00F7300B /* HashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93508EA173A00F7300B /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E217BD08E7EECC0023E5F6 /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217B708E7EECC0023E5F6 /* Assertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65E217BE08E7EECC0023E5F6 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
-		65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
 		65EA4C9C092AF9E20093D800 /* JSLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EA4C9A092AF9E20093D800 /* JSLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65EA73640BAE35D1001BB560 /* CommonIdentifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */; };
 		65EA73650BAE35D1001BB560 /* CommonIdentifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FB3EB309D109F000F49DEB /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3EB209D109F000F49DEB /* lexer.lut.h */; };
 		65FB3F4F09D11B2400F49DEB /* date_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4709D11B2400F49DEB /* date_object.lut.h */; };
-		65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB3F4809D11B2400F49DEB /* grammar.cpp */; };
 		65FB3F5109D11B2400F49DEB /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4909D11B2400F49DEB /* grammar.h */; };
 		65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */; };
+		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
 		9302043B0B790750000C6115 /* FastMallocPCRE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302043A0B790750000C6115 /* FastMallocPCRE.cpp */; };
 		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -189,36 +180,6 @@
 		932F5B8C0822A1C700736975 /* npapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CA3B4F06CC2166005600E3 /* npapi.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B8D0822A1C700736975 /* npruntime_priv.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DFF2C906CC36F6006F1ECC /* npruntime_priv.h */; };
 		932F5B8E0822A1C700736975 /* npruntime_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 84ABF1DE070B628C00A3AC05 /* npruntime_impl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		932F5B920822A1C700736975 /* array_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A84D0255597D01FF60F7 /* array_object.cpp */; };
-		932F5B930822A1C700736975 /* bool_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8500255597D01FF60F7 /* bool_object.cpp */; };
-		932F5B940822A1C700736975 /* collector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8520255597D01FF60F7 /* collector.cpp */; };
-		932F5B950822A1C700736975 /* date_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8550255597D01FF60F7 /* date_object.cpp */; };
-		932F5B960822A1C700736975 /* debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8580255597D01FF60F7 /* debugger.cpp */; };
-		932F5B970822A1C700736975 /* error_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85A0255597D01FF60F7 /* error_object.cpp */; };
-		932F5B980822A1C700736975 /* function_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85C0255597D01FF60F7 /* function_object.cpp */; };
-		932F5B990822A1C700736975 /* function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85E0255597D01FF60F7 /* function.cpp */; };
-		932F5B9A0822A1C700736975 /* internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8610255597D01FF60F7 /* internal.cpp */; };
-		932F5B9B0822A1C700736975 /* interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8630255597D01FF60F7 /* interpreter.cpp */; };
-		932F5B9C0822A1C700736975 /* lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8650255597D01FF60F7 /* lexer.cpp */; };
-		932F5B9D0822A1C700736975 /* lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8680255597D01FF60F7 /* lookup.cpp */; };
-		932F5B9E0822A1C700736975 /* math_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86A0255597D01FF60F7 /* math_object.cpp */; };
-		932F5B9F0822A1C700736975 /* nodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86D0255597D01FF60F7 /* nodes.cpp */; };
-		932F5BA00822A1C700736975 /* number_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8700255597D01FF60F7 /* number_object.cpp */; };
-		932F5BA10822A1C700736975 /* object_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8730255597D01FF60F7 /* object_object.cpp */; };
-		932F5BA20822A1C700736975 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8750255597D01FF60F7 /* object.cpp */; };
-		932F5BA30822A1C700736975 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8770255597D01FF60F7 /* operations.cpp */; };
-		932F5BA40822A1C700736975 /* property_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8790255597D01FF60F7 /* property_map.cpp */; };
-		932F5BA50822A1C700736975 /* regexp_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A87B0255597D01FF60F7 /* regexp_object.cpp */; };
-		932F5BA60822A1C700736975 /* regexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A87D0255597D01FF60F7 /* regexp.cpp */; };
-		932F5BA70822A1C700736975 /* string_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A87F0255597D01FF60F7 /* string_object.cpp */; };
-		932F5BA80822A1C700736975 /* ustring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* ustring.cpp */; };
-		932F5BA90822A1C700736975 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8870255597D01FF60F7 /* value.cpp */; };
-		932F5BAB0822A1C700736975 /* nodes2string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FFE656026B47A6018635CA /* nodes2string.cpp */; };
-		932F5BAE0822A1C700736975 /* identifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A349D038AE80F008635CE /* identifier.cpp */; };
-		932F5BAF0822A1C700736975 /* scope_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9374D3A8038D9D74008635CE /* scope_chain.cpp */; };
-		932F5BB00822A1C700736975 /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931C6CF0038EE8DE008635CE /* list.cpp */; };
-		932F5BB10822A1C700736975 /* dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F6412039D5B5F0078395C /* dtoa.cpp */; };
-		932F5BB60822A1C700736975 /* fpconst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9364B273045B7D6C00A9CAC1 /* fpconst.cpp */; };
 		932F5BB70822A1C700736975 /* jni_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51856D8F0562EE95008B9D83 /* jni_utility.cpp */; };
 		932F5BB80822A1C700736975 /* jni_runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511B0877056468BB0080E486 /* jni_runtime.cpp */; };
 		932F5BB90822A1C700736975 /* runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 704FD44505698F17003DBED9 /* runtime.cpp */; };
@@ -263,10 +224,8 @@
 		93E26C1308B1523D00F85226 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 		93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26CF608B29A1C00F85226 /* pcre_get.c */; };
 		93E26DDC08B2A4F400F85226 /* pcre_printint.src in Headers */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.src */; };
-		93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
 		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		D212022A0AD4310D00ED79B6 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21202280AD4310C00ED79B6 /* DateMath.cpp */; };
 		D212022B0AD4310D00ED79B6 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateMath.h */; };
 		E11D51760B2E798D0056C188 /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51750B2E798D0056C188 /* StringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -536,6 +495,7 @@
 		657EB7450B708F540063461B /* ListHashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListHashSet.h; sourceTree = "<group>"; };
 		657EEBBF094E445E008C9C7B /* HashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashCountedSet.h; sourceTree = "<group>"; tabWidth = 8; };
 		6580F795094070560082C219 /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
+		659126BC0BDD1728001921FB /* AllInOneFile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AllInOneFile.cpp; sourceTree = "<group>"; };
 		6592C316098B7DE10003D4F6 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		6592C317098B7DE10003D4F6 /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
 		65B1749909D0FEB700820339 /* array_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = array_object.lut.h; sourceTree = "<group>"; };
@@ -976,6 +936,7 @@
 				65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
+				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
 				F692A84D0255597D01FF60F7 /* array_object.cpp */,
 				F692A84E0255597D01FF60F7 /* array_object.h */,
 				F692A8500255597D01FF60F7 /* bool_object.cpp */,
@@ -1488,36 +1449,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				932F5B920822A1C700736975 /* array_object.cpp in Sources */,
-				932F5B930822A1C700736975 /* bool_object.cpp in Sources */,
-				932F5B940822A1C700736975 /* collector.cpp in Sources */,
-				932F5B950822A1C700736975 /* date_object.cpp in Sources */,
-				932F5B960822A1C700736975 /* debugger.cpp in Sources */,
-				932F5B970822A1C700736975 /* error_object.cpp in Sources */,
-				932F5B980822A1C700736975 /* function_object.cpp in Sources */,
-				932F5B990822A1C700736975 /* function.cpp in Sources */,
-				932F5B9A0822A1C700736975 /* internal.cpp in Sources */,
-				932F5B9B0822A1C700736975 /* interpreter.cpp in Sources */,
-				932F5B9C0822A1C700736975 /* lexer.cpp in Sources */,
-				932F5B9D0822A1C700736975 /* lookup.cpp in Sources */,
-				932F5B9E0822A1C700736975 /* math_object.cpp in Sources */,
-				932F5B9F0822A1C700736975 /* nodes.cpp in Sources */,
-				932F5BA00822A1C700736975 /* number_object.cpp in Sources */,
-				932F5BA10822A1C700736975 /* object_object.cpp in Sources */,
-				932F5BA20822A1C700736975 /* object.cpp in Sources */,
-				932F5BA30822A1C700736975 /* operations.cpp in Sources */,
-				932F5BA40822A1C700736975 /* property_map.cpp in Sources */,
-				932F5BA50822A1C700736975 /* regexp_object.cpp in Sources */,
-				932F5BA60822A1C700736975 /* regexp.cpp in Sources */,
-				932F5BA70822A1C700736975 /* string_object.cpp in Sources */,
-				932F5BA80822A1C700736975 /* ustring.cpp in Sources */,
-				932F5BA90822A1C700736975 /* value.cpp in Sources */,
-				932F5BAB0822A1C700736975 /* nodes2string.cpp in Sources */,
-				932F5BAE0822A1C700736975 /* identifier.cpp in Sources */,
-				932F5BAF0822A1C700736975 /* scope_chain.cpp in Sources */,
-				932F5BB00822A1C700736975 /* list.cpp in Sources */,
-				932F5BB10822A1C700736975 /* dtoa.cpp in Sources */,
-				932F5BB60822A1C700736975 /* fpconst.cpp in Sources */,
 				932F5BB70822A1C700736975 /* jni_utility.cpp in Sources */,
 				932F5BB80822A1C700736975 /* jni_runtime.cpp in Sources */,
 				932F5BB90822A1C700736975 /* runtime.cpp in Sources */,
@@ -1539,7 +1470,6 @@
 				932F5BCA0822A1C700736975 /* c_class.cpp in Sources */,
 				932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */,
 				932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */,
-				65621E6D089E859700760F35 /* property_slot.cpp in Sources */,
 				930754C108B0F68000AB3056 /* pcre_compile.c in Sources */,
 				930754D008B0F74600AB3056 /* pcre_tables.c in Sources */,
 				930754E808B0F77700AB3056 /* pcre_fullinfo.c in Sources */,
@@ -1549,18 +1479,9 @@
 				93E26BD108B1513800F85226 /* pcre_try_flipped.c in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.c in Sources */,
 				93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */,
-				65E217BE08E7EECC0023E5F6 /* Assertions.cpp in Sources */,
-				65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */,
-				6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
-				65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */,
-				14760864099C633800437128 /* JSImmediate.cpp in Sources */,
-				93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */,
-				65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */,
-				14F137590A3A727E00F26F90 /* Context.cpp in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
-				14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
@@ -1568,12 +1489,11 @@
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
-				65400C110A69BAF200509887 /* PropertyNameArray.cpp in Sources */,
-				65C7A1730A8EAACB00FA37EA /* JSWrapperObject.cpp in Sources */,
-				D212022A0AD4310D00ED79B6 /* DateMath.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
 				9302043B0B790750000C6115 /* FastMallocPCRE.cpp in Sources */,
-				65EA73640BAE35D1001BB560 /* CommonIdentifiers.cpp in Sources */,
+				659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */,
+				659126C20BDD1802001921FB /* fpconst.cpp in Sources */,
+				65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

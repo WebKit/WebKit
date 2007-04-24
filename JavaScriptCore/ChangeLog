@@ -1,5 +1,19 @@
 2007-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff.
+        
+        - compile most of JavaScriptCore as one file for 4% JS iBench speed improvement 
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add AllInOneFile.cpp, and remove files it includes
+        from the build.
+        * kjs/AllInOneFile.cpp: Added.
+        * kjs/dtoa.cpp: Renamed CONST to CONST_ to avoid conflict.
+        (Bigint::):
+        (Bigint::nrv_alloc):
+        * kjs/lookup.cpp: Use "namspace KJS { ... }" instead of "using namespace KJS;" 
+
+2007-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Build fix, not reviewed.
 
         * kjs/collector.h: Fix struct/class mismatch.
