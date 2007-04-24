@@ -1,3 +1,38 @@
+2007-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - test for <rdar://problem/4356361> Selection after multiple delete
+          keypresses and undo selects only the last deleted character
+
+        * editing/undo/undo-combined-delete-boundary-expected.checksum: Added.
+        * editing/undo/undo-combined-delete-boundary-expected.png: Added.
+        * editing/undo/undo-combined-delete-boundary-expected.txt: Added.
+        * editing/undo/undo-combined-delete-boundary.html: Added.
+        * editing/undo/undo-combined-delete-expected.checksum: Added.
+        * editing/undo/undo-combined-delete-expected.png: Added.
+        * editing/undo/undo-combined-delete-expected.txt: Added.
+        * editing/undo/undo-combined-delete.html: Added.
+        * editing/undo/undo-delete-boundary-expected.checksum: Added.
+        * editing/undo/undo-delete-boundary-expected.png: Added.
+        * editing/undo/undo-delete-boundary-expected.txt: Added.
+        * editing/undo/undo-delete-boundary.html: Added.
+        * editing/undo/undo-delete-expected.checksum: Added.
+        * editing/undo/undo-delete-expected.png: Added.
+        * editing/undo/undo-delete-expected.txt: Added.
+        * editing/undo/undo-delete.html: Added.
+        * editing/undo/undo-forward-delete-boundary-expected.checksum: Added.
+        * editing/undo/undo-forward-delete-boundary-expected.png: Added.
+        * editing/undo/undo-forward-delete-boundary-expected.txt: Added.
+        * editing/undo/undo-forward-delete-boundary.html: Added.
+        * editing/undo/undo-forward-delete-expected.checksum: Added.
+        * editing/undo/undo-forward-delete-expected.png: Added.
+        * editing/undo/undo-forward-delete-expected.txt: Added.
+        * editing/undo/undo-forward-delete.html: Added.
+
+        * editing/deleting/delete-and-undo-expected.txt: One of the delegate callbacks has changed in
+        this test's result, because it reflects the selection after undoing a sequence of deletions.
+
 2007-04-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

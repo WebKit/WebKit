@@ -1,0 +1,38 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByWordCommand();
+    moveSelectionForwardByCharacterCommand();
+    forwardDeleteCommand();
+    forwardDeleteCommand();
+    forwardDeleteCommand();
+    forwardDeleteCommand();
+    undoCommand();
+}
+
+</script>
+
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">This word should be selected, since the test deleted it a character at a time and then did an undo.</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

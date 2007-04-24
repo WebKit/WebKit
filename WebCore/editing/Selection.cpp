@@ -333,6 +333,32 @@ void Selection::validate()
     }
 }
 
+// FIXME: This function breaks the invariant of this class.
+// But because we use Selection to store values in editing commands for use when
+// undoing the command, we need to be able to create a selection that while currently
+// invalid, will be valid once the changes are undone. This is a design problem.
+// To fix it we either need to change the invariants of Selection or create a new
+// class for editing to use that can manipulate selections that are not currently valid.
+void Selection::setWithoutValidation(const Position& base, const Position& extent)
+{
+    ASSERT(!base.isNull());
+    ASSERT(!extent.isNull());
+    ASSERT(base != extent);
+    ASSERT(m_affinity == DOWNSTREAM);
+    ASSERT(m_granularity == CharacterGranularity);
+    m_base = base;
+    m_extent = extent;
+    m_baseIsFirst = comparePositions(base, extent) <= 0;
+    if (m_baseIsFirst) {
+        m_start = base;
+        m_end = extent;
+    } else {
+        m_start = extent;
+        m_end = base;
+    }
+    m_state = RANGE;
+}
+
 void Selection::adjustForEditableContent()
 {
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())

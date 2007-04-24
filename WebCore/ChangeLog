@@ -1,3 +1,35 @@
+2007-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix <rdar://problem/4356361> Selection after multiple delete
+          keypresses and undo selects only the last deleted character
+
+        Test: editing/undo/undo-combined-delete-boundary.html
+        Test: editing/undo/undo-combined-delete.html
+        Test: editing/undo/undo-delete-boundary.html
+        Test: editing/undo/undo-delete.html
+        Test: editing/undo/undo-forward-delete-boundary.html
+        Test: editing/undo/undo-forward-delete.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText): Fix obviously-wrong code where there were missing
+        braces. I couldn't find any real symptom of this, but I think the fix should go in anyway.
+        All layout tests still pass.
+        (WebCore::TypingCommand::deleteKeyPressed): Added code to compute a selection that goes
+        back to the beginning of the composite editing operation.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+
+        * editing/Selection.h:
+        * editing/Selection.cpp: (WebCore::Selection::setWithoutValidation):
+        Added. Back door to allow setting the ends of a selection without revalidating,
+        because we need to use it on a selection where the endpoints may no longer be
+        valid due to mutations done by earlier pieces of the editing operation.
+
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::startingSelection): Return a const& for speed.
+        (WebCore::EditCommand::endingSelection): Ditto.
+
 2007-04-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

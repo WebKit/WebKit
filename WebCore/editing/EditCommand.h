@@ -48,8 +48,8 @@ public:
 
     virtual EditAction editingAction() const;
 
-    Selection startingSelection() const { return m_startingSelection; }
-    Selection endingSelection() const { return m_endingSelection; }
+    const Selection& startingSelection() const { return m_startingSelection; }
+    const Selection& endingSelection() const { return m_endingSelection; }
 
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
