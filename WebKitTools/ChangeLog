@@ -1,3 +1,11 @@
+2007-04-23  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Mark Rowe and David Kilzer.
+
+        * Scripts/build-webkit: Print the path to the run-safari script when
+        finished building so that users can copy-and-paste the command to
+        execute it.
+
 2007-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

@@ -29,11 +29,15 @@
 # Simplified build script for Web Kit Open Source Project.
 
 use strict;
+use File::Basename;
+use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
+
+my $originalWorkingDirectory = getcwd();
 
 my $svgSupport = 1;
 my $svgExperimentalSupport = 0;
@@ -122,10 +126,12 @@ for my $dir (@projects) {
 }
 
 # Write out congratulations message.
+
+my $runSafariPath = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), $originalWorkingDirectory), "run-safari");
 print "\n";
 print "===========================================================\n";
 print " WebKit is now built. To run Safari with this newly-built\n";
-print " code, use the \"run-safari\" script.\n";
+print " code, use the \"$runSafariPath\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " Safari will have SVG viewing capabilities.\n";
