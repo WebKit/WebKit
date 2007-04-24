@@ -1,3 +1,15 @@
+2007-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4966982> 64-bit: In a unordered list, TYPE=DISC and TYPE=CIRCLE attribute values are ignored
+
+        We need to draw our full-circle arcs counter-clockwise, since a clockwise arc from 0 to 2π is no arc at all!
+        This only worked on 32-bit due to a rounding error in CoreGraphics, causing it to draw a full circle anyway.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+
 2007-04-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Beth, Hyatt, Ada, and Darin
