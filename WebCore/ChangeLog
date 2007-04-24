@@ -1,3 +1,11 @@
+2007-04-23  Alp Toker  <alp@atoker.com>
+
+        Gdk build fix. Track EventHandler change made in r21042.
+
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+
 2007-04-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
