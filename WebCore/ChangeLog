@@ -1,3 +1,19 @@
+2007-04-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <rdar://problem/5156401> 
+        Crash when dragging text into a link inside a table cell
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        Don't avoid the anchor if doing so would skip over a line break, that
+        would put content in the wrong paragraph, which can throw ReplaceSelectionCommand,
+        which relies on moveParagraphs into infinite recursion.
+        Renamed the input position.
+        Don't need to re-fetch the enclosing anchor when preparing to push it down,
+        since it hasn't changed since the top of the function.
+
 2007-04-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

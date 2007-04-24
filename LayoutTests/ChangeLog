@@ -1,3 +1,23 @@
+2007-04-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <rdar://problem/5156401> 
+        Crash when dragging text into a link inside a table cell
+
+        Test for the crash:
+        * editing/pasteboard/5156401-1-expected.checksum: Added.
+        * editing/pasteboard/5156401-1-expected.png: Added.
+        * editing/pasteboard/5156401-1-expected.txt: Added.
+        * editing/pasteboard/5156401-1.html: Added.
+        
+        Test inserting at the end of a link where we would previously
+        insert in the wrong paragraph:
+        * editing/inserting/5156401-2-expected.checksum: Added.
+        * editing/inserting/5156401-2-expected.png: Added.
+        * editing/inserting/5156401-2-expected.txt: Added.
+        * editing/inserting/5156401-2.html: Added.
+
 2007-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

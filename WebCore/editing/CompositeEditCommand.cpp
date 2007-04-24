@@ -835,14 +835,14 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
 // that anchor, as in NSTextView.
 // FIXME: This is only an approximation of NSTextViews insertion behavior, which varies depending on how
 // the caret was made. 
-Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Position& p, bool alwaysAvoidAnchors)
+Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Position& original, bool alwaysAvoidAnchors)
 {
-    if (p.isNull())
-        return p;
+    if (original.isNull())
+        return original;
         
-    VisiblePosition visiblePos(p);
-    Node* enclosingAnchor = enclosingAnchorElement(p);
-    Position result = p;
+    VisiblePosition visiblePos(original);
+    Node* enclosingAnchor = enclosingAnchorElement(original);
+    Position result = original;
     // Don't avoid block level anchors, because that would insert content into the wrong paragraph.
     if (enclosingAnchor && !isBlock(enclosingAnchor)) {
         VisiblePosition firstInAnchor(Position(enclosingAnchor, 0));
@@ -852,11 +852,16 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
         if (visiblePos == lastInAnchor && (isEndOfDocument(visiblePos) || alwaysAvoidAnchors)) {
             // Make sure anchors are pushed down before avoiding them so that we don't
             // also avoid structural elements like lists and blocks (5142012).
-            if (Node* anchor = enclosingAnchorElement(p))
-                if (p.node() != anchor && p.node()->parentNode() != anchor) {
-                    pushAnchorElementDown(anchor);
-                    enclosingAnchor = enclosingAnchorElement(p);
-                }
+            if (original.node() != enclosingAnchor && original.node()->parentNode() != enclosingAnchor) {
+                pushAnchorElementDown(enclosingAnchor);
+                enclosingAnchor = enclosingAnchorElement(original);
+            }
+            // Don't insert outside an anchor if doing so would skip over a line break.  It would
+            // probably be safe to move the line break so that we could still avoid the anchor here.
+            Position downstream(visiblePos.deepEquivalent().downstream());
+            if (lineBreakExistsAtPosition(visiblePos) && downstream.node()->isDescendantOf(enclosingAnchor))
+                return original;
+            
             result = positionAfterNode(enclosingAnchor);
         }
         // If visually just before an anchor, insert *outside* the anchor unless it's the first
@@ -864,17 +869,16 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
         if (visiblePos == firstInAnchor && (!isStartOfParagraph(visiblePos) || alwaysAvoidAnchors)) {
             // Make sure anchors are pushed down before avoiding them so that we don't
             // also avoid structural elements like lists and blocks (5142012).
-            if (Node* anchor = enclosingAnchorElement(p))
-                if (p.node() != anchor && p.node()->parentNode() != anchor) {
-                    pushAnchorElementDown(anchor);
-                    enclosingAnchor = enclosingAnchorElement(p);
-                }
+            if (original.node() != enclosingAnchor && original.node()->parentNode() != enclosingAnchor) {
+                pushAnchorElementDown(enclosingAnchor);
+                enclosingAnchor = enclosingAnchorElement(original);
+            }
             result = positionBeforeNode(enclosingAnchor);
         }
     }
         
     if (result.isNull() || !editableRootForPosition(result))
-        result = p;
+        result = original;
     
     return result;
 }
