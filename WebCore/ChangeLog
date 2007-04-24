@@ -1,3 +1,15 @@
+2007-04-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=13448
+          REGRESSION: setting an input element's value to JavaScript null gives "null"
+
+        Test: fast/forms/input-null.html
+
+        * html/HTMLInputElement.idl: Convert JS null to the empty string on setting
+        DOMString attributes.
+
 2007-04-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

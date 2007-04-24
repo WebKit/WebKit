@@ -1,0 +1,55 @@
+<html>
+<head>
+    <style type="text/css">
+        .pass { color: green; }
+        .fail { color: red; }
+    </style>
+    <script>
+        function printOut(msg) {
+            var console = document.getElementById("console");
+            var span = document.createElement('span');
+            span.innerHTML = msg + '<br>';
+            console.appendChild(span);
+        }
+
+        function nullTest(attr)
+        {
+            var input = document.getElementById('input');
+
+            var expr = 'input.' + attr;
+
+            eval(expr + '= "before"');
+            eval(expr + '= null');
+
+            var result;
+            if (eval(expr)  == "")
+                result = "<span class='pass'>TEST SUCCEEDED:</span> The value was the empty string. [tested " + expr + "]";
+            else
+                result = "<span class='fail'>TEST FAILED:</span> The value should have been the empty string but was '" + eval(expr) + "'. [tested " + expr + "]";
+
+            printOut(result);
+        }
+
+        function runTests() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            nullTest('defaultValue');
+            nullTest('accept');
+            nullTest('accessKey');
+            nullTest('align');
+            nullTest('alt');
+            nullTest('name');
+            nullTest('useMap');
+            nullTest('value');
+            nullTest('src');
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    <p>This test setting various attributes of an input element to JavaScript null.</p>
+    <div id="console"></div>
+    <hr>
+    <input id="input">
+</body>
+</html>
