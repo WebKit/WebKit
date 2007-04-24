@@ -1,3 +1,12 @@
+2007-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        Setting the valid architectures to 32-bit only, so these projects
+        will ignore requests to build them 64-bit. Once they can be built 64-bit,
+        the valid architectures can be updated.
+
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-04-23  Adam Roben  <aroben@apple.com>
 
         Reviewed by Mark Rowe and David Kilzer.
