@@ -52,7 +52,7 @@ public:
         , m_extracted(false)
         , m_includeLeftEdge(false)
         , m_includeRightEdge(false)
-        , m_hasTextChildren(false)
+        , m_hasTextChildren(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)
         , m_hasEllipsisBox(false)
@@ -83,7 +83,7 @@ public:
         , m_extracted(extracted)
         , m_includeLeftEdge(false)
         , m_includeRightEdge(false)
-        , m_hasTextChildren(false)
+        , m_hasTextChildren(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)   
         , m_hasEllipsisBox(false)
@@ -185,7 +185,7 @@ public:
     void setBaseline(int b) { m_baseline = b; }
     int baseline() const { return m_baseline; }
 
-    virtual bool hasTextChildren() { return true; }
+    bool hasTextChildren() const { return m_hasTextChildren; }
 
     virtual int topOverflow() { return yPos(); }
     virtual int bottomOverflow() { return yPos() + height(); }

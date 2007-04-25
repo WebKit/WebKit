@@ -362,7 +362,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
     // in handleMousePressEvent
     
-    if (!m_frame->renderer() || !m_frame->renderer()->layer()
+    if (!m_frame->renderer() || !m_frame->renderer()->hasLayer()
         || event.button() != LeftButton || event.clickCount() != 1)
         return false;
     

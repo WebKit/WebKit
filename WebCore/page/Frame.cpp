@@ -1415,7 +1415,7 @@ void Frame::clearTimers(FrameView *view)
         view->unscheduleRelayout();
         if (view->frame()) {
             Document* document = view->frame()->document();
-            if (document && document->renderer() && document->renderer()->layer())
+            if (document && document->renderer() && document->renderer()->hasLayer())
                 document->renderer()->layer()->suspendMarquees();
         }
     }

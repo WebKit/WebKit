@@ -221,10 +221,14 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     if (!parent() || (selfNeedsLayout() && !isInlineFlow()) || isTable())
         return;
 
-    // For an empty inline, go ahead and propagate the check up to our parent.
-    if (isInline() && !firstLineBox())
-        return parent()->dirtyLinesFromChangedChild(this);
-    
+    // If we have no first line box, then just bail early.
+    if (!firstLineBox()) {
+        // For an empty inline, go ahead and propagate the check up to our parent.
+        if (isInline())
+            parent()->dirtyLinesFromChangedChild(this);
+        return;
+    }
+
     // Try to figure out which line box we belong in.  First try to find a previous
     // line box by examining our siblings.  If we didn't find a line box, then use our 
     // parent's first line box.
@@ -251,7 +255,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
         if (box)
             break;
     }
-    if (!box && firstLineBox())
+    if (!box)
         box = firstLineBox()->root();
 
     // If we found a line box, then dirty it.

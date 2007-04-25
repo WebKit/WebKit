@@ -534,7 +534,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     //
     // Start out by setting our margin values to our current margins.  Table cells have
     // no margins, so we don't fill in the values for table cells.
-    if (!isTableCell()) {
+    bool isCell = isTableCell();
+    if (!isCell) {
         initMaxMarginValues();
 
         m_topMarginQuirk = style()->marginTop().quirk();
@@ -594,7 +595,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_height += borderBottom() + paddingBottom();
     }
 
-    if ((isTableCell() || isInline() || isFloatingOrPositioned() || isRoot()) && !hasOverflowClip() && !hasControlClip())
+    if ((isCell || isInline() || isFloatingOrPositioned() || isRoot()) && !hasOverflowClip() && !hasControlClip())
         addVisualOverflow(floatRect());
 
     layoutPositionedObjects(relayoutChildren || isRoot());
@@ -1279,7 +1280,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
             // Only repaint the object if it is overhanging, is not in its own layer, and
             // is our responsibility to paint (noPaint isn't set). When paintAllDescendants is true, the latter
             // condition is replaced with being a descendant of us.
-            if (r->endY > m_height && (paintAllDescendants && r->node->isDescendantOf(this) || !r->noPaint) && !r->node->layer()) {                
+            if (r->endY > m_height && (paintAllDescendants && r->node->isDescendantOf(this) || !r->noPaint) && !r->node->hasLayer()) {                
                 r->node->repaint();
                 r->node->repaintOverhangingFloats();
             }
@@ -1449,7 +1450,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             return;
         }
 
-        if (!child->layer() && !child->isFloating())
+        if (!child->hasLayer() && !child->isFloating())
             child->paint(info, tx, ty);
 
         // Check for page-break-after: always, and if it's set, break and bail.
@@ -1548,7 +1549,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool paintSe
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
-        if (!r->noPaint && !r->node->layer()) {
+        if (!r->noPaint && !r->node->hasLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = paintSelection ? PaintPhaseSelection : PaintPhaseBlockBackground;
             int currentTX = tx + r->left - r->node->xPos() + r->node->marginLeft();
@@ -1765,7 +1766,7 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
         if (curr->isFloatingOrPositioned())
             continue; // We must be a normal flow object in order to even be considered.
 
-        if (curr->isRelPositioned() && curr->layer()) {
+        if (curr->isRelPositioned() && curr->hasLayer()) {
             // If the relposition offset is anything other than 0, then treat this just like an absolute positioned element.
             // Just disregard it completely.
             int x = 0;
@@ -2006,7 +2007,7 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
         newObj->startY = -1;
         newObj->endY = -1;
         newObj->width = o->width() + o->marginLeft() + o->marginRight();
-        newObj->noPaint = o->layer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
+        newObj->noPaint = o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
     }
     else {
         // We should never get here, as insertFloatingObject() should only ever be called with floating
@@ -2260,7 +2261,7 @@ IntRect RenderBlock::floatRect() const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
-        if (!r->noPaint && !r->node->layer()) {
+        if (!r->noPaint && !r->node->hasLayer()) {
             IntRect childRect = r->node->overflowRect(false);
             childRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
             result.unite(childRect);
@@ -2303,7 +2304,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
+            if (!r->noPaint || r->node->hasLayer()) {
                 int lp = r->startY + r->node->marginTop() + r->node->lowestPosition(false);
                 bottom = max(bottom, lp);
             }
@@ -2352,7 +2353,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
+            if (!r->noPaint || r->node->hasLayer()) {
                 int rp = r->left + r->node->marginLeft() + r->node->rightmostPosition(false);
                 right = max(right, rp);
             }
@@ -2406,7 +2407,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
+            if (!r->noPaint || r->node->hasLayer()) {
                 int lp = r->left + r->node->marginLeft() + r->node->leftmostPosition(false);
                 left = min(left, lp);
             }
@@ -2531,7 +2532,7 @@ void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
                 m_floatingObjects->append(floatingObj);
             }
         }
-        if (!r->noPaint && !r->node->layer()) {
+        if (!r->noPaint && !r->node->hasLayer()) {
             IntRect floatOverflowRect = r->node->overflowRect(false);
             floatOverflowRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
             floatsOverflowRect.unite(floatOverflowRect);
@@ -2726,7 +2727,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             FloatingObject* o;
             DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
             for (it.toLast(); (o = it.current()); --it) {
-                if (!o->noPaint && !o->node->layer()) {
+                if (!o->noPaint && !o->node->hasLayer()) {
                     int xoffset = scrolledX + o->left + o->node->marginLeft() - o->node->xPos();
                     int yoffset =  scrolledY + o->startY + o->node->marginTop() - o->node->yPos();
                     if (o->node->hitTest(request, result, _x, _y, xoffset, yoffset)) {
@@ -2801,7 +2802,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
-            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
+            if (!child->hasLayer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
                 updateHitTestResult(result, IntPoint(x - tx, y - ty));
                 return true;
             }
@@ -3250,10 +3251,6 @@ void RenderBlock::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderBlock)::calcPrefWidths() this=" << this << endl;
-#endif
-
     if (!isTableCell() && style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else {
@@ -3265,7 +3262,7 @@ void RenderBlock::calcPrefWidths()
         else
             calcBlockPrefWidths();
 
-        if(m_maxPrefWidth < m_minPrefWidth) m_maxPrefWidth = m_minPrefWidth;
+        m_maxPrefWidth = max(m_minPrefWidth, m_maxPrefWidth);
 
         if (!style()->autoWrap() && childrenInline()) {
             m_minPrefWidth = m_maxPrefWidth;
@@ -3299,8 +3296,6 @@ void RenderBlock::calcPrefWidths()
     m_maxPrefWidth += toAdd;
 
     setPrefWidthsDirty(false);
-
-    //kdDebug( 6040 ) << "Text::calcPrefWidths(" << this << "): min = " << m_minPrefWidth << " max = " << m_maxPrefWidth << endl;
 }
 
 struct InlineMinMaxIterator
@@ -3328,9 +3323,7 @@ RenderObject* InlineMinMaxIterator::next()
     RenderObject* result = 0;
     bool oldEndOfInline = endOfInline;
     endOfInline = false;
-    while (current != 0 || (current == parent))
-    {
-        //kdDebug( 6040 ) << "current = " << current << endl;
+    while (current || current == parent) {
         if (!oldEndOfInline &&
             (current == parent ||
              (!current->isFloating() && !current->isReplaced() && !current->isPositioned())))
@@ -3355,12 +3348,11 @@ RenderObject* InlineMinMaxIterator::next()
             }
         }
 
-        if (!result) break;
-
-        if (!result->isPositioned() && (result->isText() || result->isBR() ||
-            result->isFloating() || result->isReplaced() ||
-            result->isInlineFlow()))
+        if (!result)
             break;
+
+        if (!result->isPositioned() && (result->isText() || result->isFloating() || result->isReplaced() || result->isInlineFlow()))
+             break;
         
         current = result;
         result = 0;
@@ -3378,7 +3370,7 @@ static int getBPMWidth(int childValue, Length cssUnit)
     return 0;
 }
 
-static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
+static int getBorderPaddingMargin(const RenderObject* child, bool endOfInline)
 {
     RenderStyle* cstyle = child->style();
     int result = 0;
@@ -3433,8 +3425,8 @@ static bool shouldGrowTableCellForImage(RenderBlock* containingBlock, RenderObje
 
 void RenderBlock::calcInlinePrefWidths()
 {
-    int inlineMax=0;
-    int inlineMin=0;
+    int inlineMax = 0;
+    int inlineMin = 0;
 
     int cw = containingBlock()->contentWidth();
 
@@ -3551,8 +3543,7 @@ void RenderBlock::calcInlinePrefWidths()
                 
                 bool growForPrevious = shouldGrowTableCellForImage(this, child, previousLeaf);
                 if (!growForPrevious && (autoWrap || oldAutoWrap) || clearPreviousFloat) {
-                    if (m_minPrefWidth < inlineMin)
-                        m_minPrefWidth = inlineMin;
+                    m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                     inlineMin = 0;
                 }
 
@@ -3581,8 +3572,7 @@ void RenderBlock::calcInlinePrefWidths()
 
                 if (autoWrap && !shouldGrowTableCellForImage(this, child, nextLeaf)) {
                     // Now check our line.
-                    if (m_minPrefWidth < inlineMin)
-                        m_minPrefWidth = inlineMin;
+                    m_minPrefWidth = max(inlineMin, m_minPrefWidth);
 
                     // Now start a new line.
                     inlineMin = 0;
@@ -3640,13 +3630,12 @@ void RenderBlock::calcInlinePrefWidths()
                 else {
                     // We have a breakable character.  Now we need to know if
                     // we start and end with whitespace.
-                    if (beginWS) {
+                    if (beginWS)
                         // Go ahead and end the current line.
-                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
-                    }
+                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                     else {
                         inlineMin += beginMin;
-                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
+                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                         childMin -= ti;
                     }
 
@@ -3655,29 +3644,26 @@ void RenderBlock::calcInlinePrefWidths()
                     if (endWS) {
                         // We end in whitespace, which means we can go ahead
                         // and end our current line.
-                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
+                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                         inlineMin = 0;
-                    }
-                    else {
-                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
+                    } else {
+                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
                         inlineMin = endMin;
                     }
                 }
 
                 if (hasBreak) {
                     inlineMax += beginMax;
-                    if (m_maxPrefWidth < inlineMax) m_maxPrefWidth = inlineMax;
-                    if (m_maxPrefWidth < childMax) m_maxPrefWidth = childMax;
+                    m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
+                    m_maxPrefWidth = max(childMax, m_maxPrefWidth);
                     inlineMax = endMax;
                 }
                 else
                     inlineMax += childMax;
             }
-        }
-        else
-        {
-            if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
-            if(m_maxPrefWidth < inlineMax) m_maxPrefWidth = inlineMax;
+        } else {
+            m_minPrefWidth = max(inlineMin, m_minPrefWidth);
+            m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
             inlineMin = inlineMax = 0;
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
@@ -3750,11 +3736,11 @@ void RenderBlock::calcBlockPrefWidths()
         margin = marginLeft + marginRight;
 
         int w = child->minPrefWidth() + margin;
-        if (m_minPrefWidth < w) m_minPrefWidth = w;
+        m_minPrefWidth = max(w, m_minPrefWidth);
         
         // IE ignores tables for calculation of nowrap. Makes some sense.
-        if (nowrap && !child->isTable() && m_maxPrefWidth < w)
-            m_maxPrefWidth = w;
+        if (nowrap && !child->isTable())
+            m_maxPrefWidth = max(w, m_maxPrefWidth);
 
         w = child->maxPrefWidth() + margin;
 
@@ -3778,9 +3764,8 @@ void RenderBlock::calcBlockPrefWidths()
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;
-        }
-        else if (m_maxPrefWidth < w)
-            m_maxPrefWidth = w;
+        } else
+            m_maxPrefWidth = max(w, m_maxPrefWidth);
 
         // A very specific WinIE quirk.
         // Example:

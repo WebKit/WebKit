@@ -114,8 +114,7 @@ void RenderFlexibleBox::calcHorizontalPrefWidths()
     RenderObject *child = firstChild();
     while (child) {
         // positioned children don't affect the minmaxwidth
-        if (child->isPositioned() || child->style()->visibility() == COLLAPSE)
-        {
+        if (child->isPositioned() || child->style()->visibility() == COLLAPSE) {
             child = child->nextSibling();
             continue;
         }
@@ -193,10 +192,10 @@ void RenderFlexibleBox::calcVerticalPrefWidths()
         margin = max(margin, 0);
         
         int w = child->minPrefWidth() + margin;
-        m_minPrefWidth = max(m_minPrefWidth, w);
+        m_minPrefWidth = max(w, m_minPrefWidth);
         
         w = child->maxPrefWidth() + margin;
-        m_maxPrefWidth = max(m_maxPrefWidth, w);
+        m_maxPrefWidth = max(w, m_maxPrefWidth);
 
         child = child->nextSibling();
     }    

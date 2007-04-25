@@ -338,7 +338,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
     }
 
     for (RenderObject* child = o.firstChild(); child; child = child->nextSibling()) {
-        if (child->layer())
+        if (child->hasLayer())
             continue;
         write(ts, *child, indent + 1);
     }

@@ -1127,13 +1127,13 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
     }
     else if (element.hasLocalName(marqueeTag)) {
         if (id == JSHTMLElement::MarqueeStart && element.renderer() && 
-            element.renderer()->layer() &&
+            element.renderer()->hasLayer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->start();
             return jsUndefined();
         }
         if (id == JSHTMLElement::MarqueeStop && element.renderer() && 
-            element.renderer()->layer() &&
+            element.renderer()->hasLayer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->stop();
             return jsUndefined();

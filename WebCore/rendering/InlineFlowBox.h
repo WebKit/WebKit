@@ -39,6 +39,7 @@ public:
         , m_lastChild(0)
         , m_maxHorizontalVisualOverflow(0)
     {
+        m_hasTextChildren = false;
     }
 
     RenderFlow* flowObject();
@@ -97,8 +98,6 @@ public:
         m_includeLeftEdge = includeLeft;
         m_includeRightEdge = includeRight;
     }
-
-    virtual bool hasTextChildren() { return m_hasTextChildren; }
 
     // Helper functions used during line construction and placement.
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);

@@ -78,8 +78,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                     l.maxWidth = max(l.maxWidth, 1);
                     if (cell->prefWidthsDirty())
                         cell->calcPrefWidths();
-                    if (cell->minPrefWidth() > l.minWidth)
-                        l.minWidth = cell->minPrefWidth();
+                    l.minWidth = max(cell->minPrefWidth(), l.minWidth);
                     if (cell->maxPrefWidth() > l.maxWidth) {
                         l.maxWidth = cell->maxPrefWidth();
                         maxContributor = cell;

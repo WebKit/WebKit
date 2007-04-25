@@ -394,14 +394,14 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
     RenderLayer* layer = 0;
-    if (newChild->firstChild() || newChild->layer()) {
+    if (newChild->firstChild() || newChild->hasLayer()) {
         layer = enclosingLayer();
         newChild->addLayers(layer, newChild);
     }
 
     // if the new child is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (style()->visibility() != VISIBLE && newChild->style()->visibility() == VISIBLE && !newChild->layer()) {
+    if (style()->visibility() != VISIBLE && newChild->style()->visibility() == VISIBLE && !newChild->hasLayer()) {
         if (!layer)
             layer = enclosingLayer();
         if (layer)
@@ -447,14 +447,14 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
     RenderLayer* layer = 0;
-    if (child->firstChild() || child->layer()) {
+    if (child->firstChild() || child->hasLayer()) {
         layer = enclosingLayer();
         child->addLayers(layer, child);
     }
 
     // if the new child is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (style()->visibility() != VISIBLE && child->style()->visibility() == VISIBLE && !child->layer()) {
+    if (style()->visibility() != VISIBLE && child->style()->visibility() == VISIBLE && !child->hasLayer()) {
         if (!layer)
             layer = enclosingLayer();
         if (layer)

@@ -532,7 +532,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if (!curr->object()->layer() && curr->nodeAtPoint(request, result, x, y, tx, ty)) {
+        if (!curr->object()->hasLayer() && curr->nodeAtPoint(request, result, x, y, tx, ty)) {
             object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }

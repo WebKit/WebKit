@@ -1,3 +1,87 @@
+2007-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - second round of preparation for Hyatt's "lazy minMaxWidth" change
+          http://bugs.webkit.org/show_bug.cgi?id=13431
+
+        These are small changes that are either safe to do first, or unrelated to the main
+        change in Hyatt's patch.
+
+        - Preallocate 4 entries each in m_layoutStruct and m_spanCells to save allocation
+          in AutoTableLayout.
+        - Add an early exit to RenderFlow::dirtyLinesFromChangedChild.
+        - Change InlineBox::hasTextChildren() to use a bit directly and never a virtual function.
+        - Save a virtual function call by using a local bool variable for isTableCell().
+
+        - Fix containingBlock() so it returns 0 for table cells with no parent.
+
+        - Change all callers who are getting at layer() as a boolean to use hasLayer().
+        - Change if statements to max() function calls (only the ones Hyatt had in his patch).
+        - Remove some old kdDebug calls.
+        - Tweak formatting of some code.
+        - Add const in one place.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::callAsFunction):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/AutoTableLayout.h:
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::hasTextChildren):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::fillBlockSelectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::floatRect):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestContents):
+        (WebCore::RenderBlock::calcPrefWidths):
+        (WebCore::InlineMinMaxIterator::next):
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::calcBlockPrefWidths):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcVerticalPrefWidths):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::dirtyLinesFromChangedChild):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateVisibilityStatus):
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2007-04-24  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin, Oliver.

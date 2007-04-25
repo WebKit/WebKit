@@ -291,11 +291,11 @@ void RenderLayer::updateVisibilityStatus()
             m_hasVisibleContent = false;
             RenderObject* r = m_object->firstChild();
             while (r) {
-                if (r->style()->visibility() == VISIBLE && !r->layer()) {
+                if (r->style()->visibility() == VISIBLE && !r->hasLayer()) {
                     m_hasVisibleContent = true;
                     break;
                 }
-                if (r->firstChild() && !r->layer())
+                if (r->firstChild() && !r->hasLayer())
                     r = r->firstChild();
                 else if (r->nextSibling())
                     r = r->nextSibling();
@@ -326,7 +326,7 @@ void RenderLayer::updateLayerPosition()
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
         RenderObject* curr = m_object->parent();
-        while (curr && !curr->layer()) {
+        while (curr && !curr->hasLayer()) {
             if (!curr->isTableRow()) {
                 // Rows and cells share the same coordinate space (that of the section).
                 // Omit them when computing our xpos/ypos.

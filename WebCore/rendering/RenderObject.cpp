@@ -710,14 +710,18 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout)
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    if (isTableCell())
-        return static_cast<const RenderTableCell*>(this)->table();
+    if (isTableCell()) {
+        if (parent())
+            return static_cast<const RenderTableCell*>(this)->table();
+        return 0;
+    }
+
     if (isRenderView())
-        return (RenderBlock*)this;
+        return const_cast<RenderBlock*>(static_cast<const RenderBlock*>(this));
 
     RenderObject* o = parent();
     if (!isText() && m_style->position() == FixedPosition) {
-        while ( o && !o->isRenderView() )
+        while (o && !o->isRenderView())
             o = o->parent();
     } else if (!isText() && m_style->position() == AbsolutePosition) {
         while (o && (o->style()->position() == StaticPosition || (o->isInline() && !o->isReplaced())) && !o->isRenderView()) {

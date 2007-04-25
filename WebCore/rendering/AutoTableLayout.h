@@ -72,8 +72,8 @@ protected:
         int calcWidth;
     };
 
-    Vector<Layout> m_layoutStruct;
-    Vector<RenderTableCell*> m_spanCells;
+    Vector<Layout, 4> m_layoutStruct;
+    Vector<RenderTableCell*, 4> m_spanCells;
     bool m_hasPercent : 1;
     mutable bool m_percentagesDirty : 1;
     mutable bool m_effWidthDirty : 1;
