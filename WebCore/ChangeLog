@@ -1,3 +1,9 @@
+2007-04-25  Mitz Pettel  <mitz@webkit.org>
+
+        Build fix.
+
+        * rendering/RenderListMarker.h: Undeleted the m_text member.
+
 2007-04-25  David Hyatt  <hyatt@apple.com>
 
         Rearchitect calcPrefWidths.  The calculation is now done lazily only when minPrefWidth
