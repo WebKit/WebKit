@@ -79,7 +79,6 @@ void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
 void RenderHTMLCanvas::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     IntRect oldBounds;
     IntRect oldOutlineBox;

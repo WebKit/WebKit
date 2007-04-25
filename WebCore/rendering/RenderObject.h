@@ -153,7 +153,6 @@ public:
     RenderObject* lastLeafChild() const;
 
     virtual RenderLayer* layer() const { return 0; }
-    bool hasLayer() const { return !!layer(); }
     RenderLayer* enclosingLayer() const;
     void addLayers(RenderLayer* parentLayer, RenderObject* newObject);
     void removeLayers(RenderLayer* parentLayer);
@@ -177,7 +176,6 @@ public:
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;
-    virtual void updateFirstLetter();
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new
@@ -206,9 +204,12 @@ public:
     virtual bool createsAnonymousWrapper() const { return false; }
 
     // raw tree manipulation
-    virtual RenderObject* removeChildNode(RenderObject*);
-    virtual void appendChildNode(RenderObject*);
-    virtual void insertChildNode(RenderObject* child, RenderObject* before);
+    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
+    virtual void appendChildNode(RenderObject*, bool fullAppend = true);
+    virtual void insertChildNode(RenderObject* child, RenderObject* before, bool fullInsert = true);
+    // Designed for speed.  Don't waste time doing a bunch of work like layer updating and repainting when we know that our
+    // change in parentage is not going to affect anything.
+    virtual void moveChildNode(RenderObject*);
     //////////////////////////////////////////
 
 protected:
@@ -310,7 +311,9 @@ public:
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool isDragging() const { return m_isDragging; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
-
+    
+    bool hasLayer() const { return m_hasLayer; }
+    
     bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
 
@@ -320,7 +323,6 @@ public:
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
 
     bool prefWidthsDirty() const { return m_prefWidthsDirty; }
-    bool recalcMinMax() const { return m_recalcMinMax; }
 
     bool isSelectionBorder() const;
 
@@ -369,24 +371,13 @@ public:
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
 
-    void setPrefWidthsDirty(bool b)
-    {
-        m_prefWidthsDirty = b;
-        if (b) {
-            RenderObject* o = this;
-            RenderObject* root = this;
-            while(o) { // FIXME: && !o->m_recalcMinMax ) {
-                o->m_recalcMinMax = true;
-                root = o;
-                o = o->m_parent;
-            }
-        }
-    }
-
+    void setPrefWidthsDirty(bool, bool markParents = true);
+    void invalidateContainingBlockPrefWidths();
+    
     void setNeedsLayoutAndPrefWidthsRecalc()
     {
-        setPrefWidthsDirty(true);
         setNeedsLayout(true);
+        setPrefWidthsDirty(true);
     }
 
     void setPositioned(bool b = true)  { m_positioned = b;  }
@@ -397,6 +388,7 @@ public:
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b = true) { m_replaced = b; }
     void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
+    void setHasLayer(bool b = true) { m_hasLayer = b; }
 
     void scheduleRelayout();
 
@@ -459,26 +451,7 @@ public:
                                          int clipy, int cliph, int tx, int ty, int width, int height,
                                          bool includeLeftEdge = true, bool includeRightEdge = true) { }
 
-    /*
-     * This function calculates the minimum & maximum width that the object
-     * can be set to.
-     *
-     * when the Element calls setPrefWidthsDirty(false), calcPrefWidths() will
-     * be no longer called.
-     *
-     * when a element has a fixed size, m_minPrefWidth and m_maxPrefWidth should be
-     * set to the same value. This has the special meaning that m_width,
-     * contains the actual value.
-     *
-     * assumes calcPrefWidths has already been called for all children.
-     */
-    virtual void calcPrefWidths() { }
-
-    /*
-     * Does the min max width recalculations after changes.
-     */
-    void recalcMinMaxWidths();
-
+    
     /*
      * Calculates the actual width of the object (only for non inline
      * objects)
@@ -922,12 +895,12 @@ private:
                                           // background painting phase (background, border, etc)
 
     bool m_isAnonymous               : 1;
-    bool m_recalcMinMax              : 1;
     bool m_isText                    : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
     bool m_isDragging                : 1;
 
+    bool m_hasLayer                  : 1;
     bool m_hasOverflowClip           : 1;
 
     bool m_hasOverrideSize           : 1;

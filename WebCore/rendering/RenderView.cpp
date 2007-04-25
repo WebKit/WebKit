@@ -54,12 +54,13 @@ RenderView::RenderView(Node* node, FrameView* view)
     m_minPrefWidth = 0;
     m_maxPrefWidth = 0;
 
-    setPrefWidthsDirty(true);
+    setPrefWidthsDirty(true, false);
     
     setPositioned(true); // to 0,0 :)
 
     // Create a new root layer for our layer hierarchy.
     m_layer = new (node->document()->renderArena()) RenderLayer(this);
+    setHasLayer(true);
 }
 
 RenderView::~RenderView()
@@ -87,21 +88,16 @@ void RenderView::calcPrefWidths()
     RenderBlock::calcPrefWidths();
 
     m_maxPrefWidth = m_minPrefWidth;
-
-    setPrefWidthsDirty(false);
 }
 
 void RenderView::layout()
 {
     if (printing())
-        m_minPrefWidth = m_width;
+        m_minPrefWidth = m_maxPrefWidth = m_width;
 
     bool relayoutChildren = !printing() && (!m_frameView || m_width != m_frameView->visibleWidth() || m_height != m_frameView->visibleHeight());
     if (relayoutChildren)
         setChildNeedsLayout(true, false);
-
-    if (recalcMinMax())
-        recalcMinMaxWidths();
     
     if (needsLayout())
         RenderBlock::layout();

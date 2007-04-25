@@ -51,8 +51,6 @@ public:
 
     virtual void imageChanged(CachedImage*);
 
-    virtual void calcWidth();
-
     virtual InlineBox* createInlineBox(bool, bool, bool);
 
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
@@ -69,10 +67,11 @@ public:
     virtual IntRect selectionRect();
     virtual bool canBeSelectionLeaf() const { return true; }
 
+    void updateMargins();
+
 private:
     IntRect getRelativeMarkerRect();
 
-    String m_text;
     CachedImage* m_image;
     RenderListItem* m_listItem;
     SelectionState m_selectionState;

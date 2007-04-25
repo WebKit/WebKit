@@ -292,17 +292,6 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
                                       ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
-void RenderInline::calcPrefWidths()
-{
-    ASSERT(prefWidthsDirty());
-
-    // Irrelevant, since some enclosing block will actually measure us and our children.
-    m_minPrefWidth = 0;
-    m_maxPrefWidth = 0;
-
-    setPrefWidthsDirty(false);
-}
-
 bool RenderInline::requiresLayer()
 {
     return isRoot() || isRelPositioned() || style()->opacity() < 1.0f;

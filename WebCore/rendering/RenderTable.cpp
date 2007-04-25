@@ -233,7 +233,7 @@ void RenderTable::calcWidth()
     if (widthType > Relative && style()->width().isPositive()) {
         // Percent or fixed table
         m_width = style()->width().calcMinValue(availableWidth);
-        m_width = max(m_minPrefWidth, m_width);
+        m_width = max(minPrefWidth(), m_width);
     } else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
@@ -250,10 +250,10 @@ void RenderTable::calcWidth()
         int availContentWidth = max(0, availableWidth - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
-        m_width = min(availContentWidth, m_maxPrefWidth);
+        m_width = min(availContentWidth, maxPrefWidth());
     }
     
-    m_width = max(m_width, m_minPrefWidth);
+    m_width = max(m_width, minPrefWidth());
 
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;
@@ -264,8 +264,6 @@ void RenderTable::calcWidth()
 void RenderTable::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
-    ASSERT(!m_needsSectionRecalc);
 
     if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to do is lay out our positioned objects.
@@ -274,6 +272,8 @@ void RenderTable::layout()
         return;
     }
 
+    recalcSectionsIfNeeded();
+        
     IntRect oldBounds;
     IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
@@ -685,10 +685,10 @@ void RenderTable::recalcSections()
     setNeedsLayout(true);
 }
 
-RenderObject* RenderTable::removeChildNode(RenderObject* child)
+RenderObject* RenderTable::removeChildNode(RenderObject* child, bool fullRemove)
 {
     setNeedsSectionRecalc();
-    return RenderContainer::removeChildNode(child);
+    return RenderContainer::removeChildNode(child, fullRemove);
 }
 
 int RenderTable::calcBorderLeft() const

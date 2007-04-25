@@ -1004,10 +1004,10 @@ void RenderTableSection::splitColumn(int pos, int newSize)
     }
 }
 
-RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
+RenderObject* RenderTableSection::removeChildNode(RenderObject* child, bool fullRemove)
 {
     setNeedsCellRecalc();
-    return RenderContainer::removeChildNode(child);
+    return RenderContainer::removeChildNode(child, fullRemove);
 }
 
 // Hit Testing

@@ -35,7 +35,9 @@ public:
     virtual const char* renderName() const;
     virtual bool isRenderCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
-    virtual void calcPrefWidths();
+    
+    virtual void dirtyLineBoxes(bool, bool);
+    virtual void calcPrefWidths(int leadWidth);
 
     static void destroyCounterNodes(RenderObject*);
 

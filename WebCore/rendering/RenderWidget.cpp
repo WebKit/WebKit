@@ -150,7 +150,6 @@ void RenderWidget::setWidget(Widget* widget)
 void RenderWidget::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     setNeedsLayout(false);
 }

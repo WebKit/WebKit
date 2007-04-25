@@ -58,8 +58,6 @@ public:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual void calcPrefWidths();
-
     // overrides RenderObject
     virtual bool requiresLayer();
 

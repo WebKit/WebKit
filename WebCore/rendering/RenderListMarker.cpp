@@ -626,8 +626,25 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 void RenderListMarker::layout()
 {
     ASSERT(needsLayout());
-    if (prefWidthsDirty())
-        calcPrefWidths();
+    ASSERT(!prefWidthsDirty());
+
+    if (isImage()) {
+        m_width = m_image->image()->width();
+        m_height = m_image->image()->height();
+    } else {
+        m_width = minPrefWidth();
+        m_height = style()->font().height();
+    }
+
+    m_marginLeft = m_marginRight = 0;
+
+    Length leftMargin = style()->marginLeft();
+    Length rightMargin = style()->marginRight();
+    if (leftMargin.isFixed())
+        m_marginLeft = leftMargin.value();
+    if (rightMargin.isFixed())
+        m_marginRight = rightMargin.value();
+
     setNeedsLayout(false);
 }
 
@@ -650,10 +667,9 @@ void RenderListMarker::calcPrefWidths()
     m_text = "";
 
     if (isImage()) {
-        m_width = m_image->image()->width();
-        m_height = m_image->image()->height();
-        m_minPrefWidth = m_maxPrefWidth = m_width;
+        m_minPrefWidth = m_maxPrefWidth = m_image->image()->width();
         setPrefWidthsDirty(false);
+        updateMargins();
         return;
     }
 
@@ -699,86 +715,83 @@ void RenderListMarker::calcPrefWidths()
             break;
     }
 
-    m_width = width;
     m_minPrefWidth = width;
     m_maxPrefWidth = width;
 
-    // FIXME: A little strange to set the height in calcPrefWidths.
-    m_height = font.height();
-
     setPrefWidthsDirty(false);
+    
+    updateMargins();
 }
 
-void RenderListMarker::calcWidth()
+void RenderListMarker::updateMargins()
 {
-    // m_width is set in calcPrefWidths()
     const Font& font = style()->font();
+
+    int marginLeft = 0;
+    int marginRight = 0;
 
     if (isInside()) {
         if (isImage()) {
-            if (style()->direction() == LTR) {
-                m_marginLeft = 0;
-                m_marginRight = cMarkerPadding;
-            } else {
-                m_marginLeft = cMarkerPadding;
-                m_marginRight = 0;
-            }
+            if (style()->direction() == LTR)
+                marginRight = cMarkerPadding;
+            else
+                marginLeft = cMarkerPadding;
         } else switch (style()->listStyleType()) {
             case DISC:
             case CIRCLE:
             case SQUARE:
                 if (style()->direction() == LTR) {
-                    m_marginLeft = -1;
-                    m_marginRight = font.ascent() - m_width + 1;
+                    marginLeft = -1;
+                    marginRight = font.ascent() - minPrefWidth() + 1;
                 } else {
-                    m_marginLeft = font.ascent() - m_width + 1;
-                    m_marginRight = -1;
+                    marginLeft = font.ascent() - minPrefWidth() + 1;
+                    marginRight = -1;
                 }
                 break;
             default:
-                m_marginLeft = 0;
-                m_marginRight = 0;
+                break;
         }
     } else {
         if (style()->direction() == LTR) {
             if (isImage())
-                m_marginLeft = -m_width - cMarkerPadding;
+                marginLeft = -minPrefWidth() - cMarkerPadding;
             else {
                 int offset = font.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
                     case DISC:
                     case CIRCLE:
                     case SQUARE:
-                        m_marginLeft = -offset - cMarkerPadding - 1;
+                        marginLeft = -offset - cMarkerPadding - 1;
                         break;
                     case LNONE:
-                        m_marginLeft = 0;
                         break;
                     default:
-                        m_marginLeft = m_text.isEmpty() ? 0 : -m_width - offset / 2;
+                        marginLeft = m_text.isEmpty() ? 0 : -minPrefWidth() - offset / 2;
                 }
             }
         } else {
             if (isImage())
-                m_marginLeft = cMarkerPadding;
+                marginLeft = cMarkerPadding;
             else {
                 int offset = font.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
                     case DISC:
                     case CIRCLE:
                     case SQUARE:
-                        m_marginLeft = offset + cMarkerPadding + 1 - m_width;
+                        marginLeft = offset + cMarkerPadding + 1 - minPrefWidth();
                         break;
                     case LNONE:
-                        m_marginLeft = 0;
                         break;
                     default:
-                        m_marginLeft = m_text.isEmpty() ? 0 : offset / 2;
+                        marginLeft = m_text.isEmpty() ? 0 : offset / 2;
                 }
             }
         }
-        m_marginRight = -m_marginLeft - m_width;
+        marginRight = -marginLeft - minPrefWidth();
     }
+
+    style()->setMarginLeft(Length(marginLeft, Fixed));
+    style()->setMarginRight(Length(marginRight, Fixed));
 }
 
 short RenderListMarker::lineHeight(bool, bool) const

@@ -176,17 +176,17 @@ RenderObject::RenderObject(Node* node)
     , m_needsLayout(false)
     , m_normalChildNeedsLayout(false)
     , m_posChildNeedsLayout(false)
-    , m_prefWidthsDirty(true)
+    , m_prefWidthsDirty(false)
     , m_floating(false)
     , m_positioned(false)
     , m_relPositioned(false)
     , m_paintBackground(false)
     , m_isAnonymous(node == node->document())
-    , m_recalcMinMax(false)
     , m_isText(false)
     , m_inline(true)
     , m_replaced(false)
     , m_isDragging(false)
+    , m_hasLayer(false)
     , m_hasOverflowClip(false)
     , m_hasOverrideSize(false)
     , m_hasCounterNodeMap(false)
@@ -252,7 +252,7 @@ void RenderObject::addChild(RenderObject*, RenderObject*)
     ASSERT_NOT_REACHED();
 }
 
-RenderObject* RenderObject::removeChildNode(RenderObject*)
+RenderObject* RenderObject::removeChildNode(RenderObject*, bool)
 {
     ASSERT_NOT_REACHED();
     return 0;
@@ -263,12 +263,17 @@ void RenderObject::removeChild(RenderObject*)
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::appendChildNode(RenderObject*)
+void RenderObject::moveChildNode(RenderObject*)
 {
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::insertChildNode(RenderObject*, RenderObject*)
+void RenderObject::appendChildNode(RenderObject*, bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void RenderObject::insertChildNode(RenderObject*, RenderObject*, bool)
 {
     ASSERT_NOT_REACHED();
 }
@@ -499,10 +504,6 @@ RenderBlock* RenderObject::firstLineBlock() const
     return 0;
 }
 
-void RenderObject::updateFirstLetter()
-{
-}
-
 int RenderObject::offsetLeft() const
 {
     RenderObject* offsetPar = offsetParent();
@@ -652,6 +653,27 @@ bool RenderObject::hasStaticY() const
 
 void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 {
+}
+
+void RenderObject::setPrefWidthsDirty(bool b, bool markParents)
+{
+    bool alreadyDirty = m_prefWidthsDirty;
+    m_prefWidthsDirty = b;
+    if (b && !alreadyDirty && markParents && (style()->position() != FixedPosition && style()->position() != AbsolutePosition))
+        invalidateContainingBlockPrefWidths();
+}
+
+void RenderObject::invalidateContainingBlockPrefWidths()
+{
+    RenderObject* o = containingBlock();
+    while (o && !o->m_prefWidthsDirty) {
+        o->m_prefWidthsDirty = true;
+        if (o->style()->position() == FixedPosition || o->style()->position() == AbsolutePosition)
+            // A positioned object has no effect on the min/max width of its containing block ever.
+            // We can optimize this case and not go up any further.
+            break;
+        o = o->containingBlock();
+    }
 }
 
 void RenderObject::setNeedsLayout(bool b, bool markParents)
@@ -1917,8 +1939,6 @@ DeprecatedString RenderObject::information() const
         ts << "ps ";
     if (needsLayout())
         ts << "nl ";
-    if (m_recalcMinMax)
-        ts << "rmm ";
     if (style() && style()->zIndex())
         ts << "zI: " << style()->zIndex();
     if (element()) {
@@ -2704,42 +2724,6 @@ void RenderObject::invalidateVerticalPositions()
         child->invalidateVerticalPositions();
         child = child->nextSibling();
     }
-}
-
-void RenderObject::recalcMinMaxWidths()
-{
-    ASSERT(m_recalcMinMax);
-
-    m_recalcMinMax = false;
-    updateFirstLetter();
-
-    RenderObject* child = firstChild();
-    while (child) {
-        int cmin = 0;
-        int cmax = 0;
-        bool test = false;
-        if ((!m_prefWidthsDirty && child->m_recalcMinMax) || child->m_prefWidthsDirty) {
-            cmin = child->minPrefWidth();
-            cmax = child->maxPrefWidth();
-            test = true;
-        }
-        if (child->m_recalcMinMax)
-            child->recalcMinMaxWidths();
-        if (child->m_prefWidthsDirty)
-            child->calcPrefWidths();
-        if (!m_prefWidthsDirty && test && (cmin != child->minPrefWidth() || cmax != child->maxPrefWidth()))
-            m_prefWidthsDirty = true;
-        child = child->nextSibling();
-    }
-
-    // we need to recalculate, if the contains inline children, as the change could have
-    // happened somewhere deep inside the child tree. Also do this for blocks or tables that
-    // are inline (i.e., inline-block and inline-table).
-    if ((!isInline() || isInlineBlockOrInlineTable()) && childrenInline())
-        m_prefWidthsDirty = true;
-
-    if (m_prefWidthsDirty)
-        calcPrefWidths();
 }
 
 void RenderObject::scheduleRelayout()

@@ -41,10 +41,14 @@ public:
     virtual void destroy();
     void destroyLeftoverChildren();
 
-    virtual RenderObject* removeChildNode(RenderObject*);
-    virtual void appendChildNode(RenderObject*);
-    virtual void insertChildNode(RenderObject* child, RenderObject* before);
-
+    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
+    virtual void appendChildNode(RenderObject*, bool fullAppend = true);
+    virtual void insertChildNode(RenderObject* child, RenderObject* before, bool fullInsert = true);
+    
+    // Designed for speed.  Don't waste time doing a bunch of work like layer updating and repainting when we know that our
+    // change in parentage is not going to affect anything.
+    virtual void moveChildNode(RenderObject* child) { appendChildNode(child->parent()->removeChildNode(child, false), false); }
+    
     virtual void layout();
     virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
 

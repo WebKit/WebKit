@@ -54,13 +54,6 @@ short RenderSVGHiddenContainer::baselinePosition(bool b, bool isRootLineBox) con
     return 0;
 }
 
-void RenderSVGHiddenContainer::calcPrefWidths()
-{
-    ASSERT(prefWidthsDirty());
-    m_minPrefWidth = m_maxPrefWidth = 0;
-    setPrefWidthsDirty(false);
-}
-
 void RenderSVGHiddenContainer::layout()
 {
     ASSERT(needsLayout());

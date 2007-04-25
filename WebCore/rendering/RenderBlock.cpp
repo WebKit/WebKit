@@ -325,9 +325,9 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
         {
             RenderObject* no = o;
             o = no->nextSibling();
-            box->appendChildNode(removeChildNode(no));
+            box->moveChildNode(no);
         }
-        box->appendChildNode(removeChildNode(inlineRunEnd));
+        box->moveChildNode(inlineRunEnd);
     }
 
 #ifndef NDEBUG
@@ -355,8 +355,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            prev->appendChildNode(next->removeChildNode(no));
-            no->setNeedsLayoutAndPrefWidthsRecalc();
+            prev->moveChildNode(no);
         }
  
         RenderBlock* nextBlock = static_cast<RenderBlock*>(next);
@@ -380,8 +379,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            appendChildNode(anonBlock->removeChildNode(no));
-            no->setNeedsLayoutAndPrefWidthsRecalc();
+            moveChildNode(no);
         }
 
         // Delete the now-empty block's lines and nuke it.
@@ -464,6 +462,9 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
 void RenderBlock::layout()
 {
+    // Update our first letter info now.
+    updateFirstLetter();
+
     // Table cells call layoutBlock directly, so don't add any logic here.  Put code into
     // layoutBlock().
     layoutBlock(false);
@@ -481,7 +482,6 @@ void RenderBlock::layout()
 void RenderBlock::layoutBlock(bool relayoutChildren)
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
         return;                                      // cause us to come in here.  Just bail.
@@ -3251,6 +3251,8 @@ void RenderBlock::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
+    updateFirstLetter();
+
     if (!isTableCell() && style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else {
@@ -3273,7 +3275,7 @@ void RenderBlock::calcPrefWidths()
         }
 
         if (isTableCell()) {
-            Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
+            Length w = static_cast<const RenderTableCell*>(this)->styleOrColWidth();
             if (w.isFixed() && w.value() > 0)
                 m_maxPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(w.value()));
         }
@@ -3312,8 +3314,8 @@ struct InlineMinMaxIterator
     RenderObject* current;
     bool endOfInline;
 
-    InlineMinMaxIterator(RenderObject* p, RenderObject* o, bool end = false)
-        :parent(p), current(o), endOfInline(end) {}
+    InlineMinMaxIterator(RenderObject* p, bool end = false)
+        :parent(p), current(p), endOfInline(end) {}
 
     RenderObject* next();
 };
@@ -3403,7 +3405,7 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
 // and Opera will allow a table cell to grow to fit an image inside it under
 // very specific cirucumstances. Not supporting the quirk has caused us to
 // mis-render some real sites. (See Bugzilla 10517.) 
-static bool shouldGrowTableCellForImage(RenderBlock* containingBlock, RenderObject* image, RenderObject* adjacentLeaf)
+static bool shouldGrowTableCellForImage(const RenderBlock* containingBlock, const RenderObject* image, const RenderObject* adjacentLeaf)
 {
     if (!containingBlock->style()->htmlHacks())
         return false;
@@ -3438,12 +3440,11 @@ void RenderBlock::calcInlinePrefWidths()
     bool autoWrap, oldAutoWrap;
     autoWrap = oldAutoWrap = style()->autoWrap();
 
-    InlineMinMaxIterator childIterator(this, this);
+    InlineMinMaxIterator childIterator(this);
     bool addedTextIndent = false; // Only gets added in once.
     RenderObject* prevFloat = 0;
     RenderObject* previousLeaf = 0;
-    while (RenderObject* child = childIterator.next())
-    {
+    while (RenderObject* child = childIterator.next()) {
         InlineMinMaxIterator leafIterator = childIterator;
         RenderObject* nextLeaf = leafIterator.next();
         while (nextLeaf && nextLeaf->isInlineFlow())
@@ -3509,16 +3510,9 @@ void RenderBlock::calcInlinePrefWidths()
                     int margins = 0;
                     Length leftMargin = cstyle->marginLeft();
                     Length rightMargin = cstyle->marginRight();
-                    bool useCalculatedWidths = child->isListMarker();
-                    if (leftMargin.isPercent() || rightMargin.isPercent() || useCalculatedWidths)
-                        child->calcWidth();
-                    if (useCalculatedWidths || leftMargin.isPercent())
-                        margins += child->marginLeft();
-                    else if (leftMargin.isFixed())
+                    if (leftMargin.isFixed())
                         margins += leftMargin.value();
-                    if (useCalculatedWidths || rightMargin.isPercent())
-                        margins += child->marginRight();
-                    else if (rightMargin.isFixed())
+                    if (rightMargin.isFixed())
                         margins += rightMargin.value();
                     childMin += margins;
                     childMax += margins;
@@ -3709,30 +3703,16 @@ void RenderBlock::calcBlockPrefWidths()
             }
         }
 
+        // A margin basically has three types: fixed, percentage, and auto (variable).
+        // Auto and percentage margins simply become 0 when computing min/max width.
+        // Fixed margins can be added in as is.
         Length ml = child->style()->marginLeft();
         Length mr = child->style()->marginRight();
-
-        // Call calcWidth on the child to ensure that our margins are
-        // up to date.  This method can be called before the child has actually
-        // calculated its margins (which are computed inside calcWidth).
-        if (ml.isPercent() || mr.isPercent())
-            calcWidth();
-
-        // A margin basically has three types: fixed, percentage, and auto (variable).
-        // Auto margins simply become 0 when computing min/max width.
-        // Fixed margins can be added in as is.
-        // Percentage margins are computed as a percentage of the width we calculated in
-        // the calcWidth call above.  In this case we use the actual cached margin values on
-        // the RenderObject itself.
         int margin = 0, marginLeft = 0, marginRight = 0;
         if (ml.isFixed())
             marginLeft += ml.value();
-        else if (ml.isPercent())
-            marginLeft += child->marginLeft();
         if (mr.isFixed())
             marginRight += mr.value();
-        else if (mr.isPercent())
-            marginRight += child->marginRight();
         margin = marginLeft + marginRight;
 
         int w = child->minPrefWidth() + margin;

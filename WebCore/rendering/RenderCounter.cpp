@@ -244,10 +244,17 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
     return text.impl();
 }
 
-void RenderCounter::calcPrefWidths()
+void RenderCounter::dirtyLineBoxes(bool fullLayout, bool dummy)
+{
+    if (prefWidthsDirty())
+        calcPrefWidths(0);
+    RenderText::dirtyLineBoxes(fullLayout, dummy);
+}
+
+void RenderCounter::calcPrefWidths(int lead)
 {
     setTextInternal(originalText());
-    RenderText::calcPrefWidths();
+    RenderText::calcPrefWidths(lead);
 }
 
 static void destroyCounterNodeChildren(AtomicStringImpl* identifier, CounterNode* node)

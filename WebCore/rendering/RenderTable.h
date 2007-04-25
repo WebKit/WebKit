@@ -165,7 +165,7 @@ public:
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc() { m_needsSectionRecalc = true; }
 
-    virtual RenderObject* removeChildNode(RenderObject*);
+    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
 
     RenderTableSection* sectionAbove(const RenderTableSection*, bool skipEmptySections = false) const;
     RenderTableSection* sectionBelow(const RenderTableSection*, bool skipEmptySections = false) const;

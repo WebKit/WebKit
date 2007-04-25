@@ -303,7 +303,6 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
 void RenderImage::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     IntRect oldBounds;
     IntRect oldOutlineBox;

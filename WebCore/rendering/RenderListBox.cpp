@@ -118,6 +118,14 @@ void RenderListBox::updateFromElement()
         }
         m_optionsWidth = static_cast<int>(ceilf(width));
         m_optionsChanged = false;
+        
+        if (!m_vBar && Scrollbar::hasPlatformScrollbars())
+            if (FrameView* view = node()->document()->view()) {
+                RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, VerticalScrollbar, SmallScrollbar);
+                view->addChild(widget.get());
+                m_vBar = widget.release();
+            }
+        
         setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
@@ -153,15 +161,7 @@ void RenderListBox::scrollToRevealSelection()
 
 void RenderListBox::calcPrefWidths()
 {
-    if (!m_vBar && Scrollbar::hasPlatformScrollbars())
-        if (FrameView* view = node()->document()->view()) {
-            RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, VerticalScrollbar, SmallScrollbar);
-            view->addChild(widget.get());
-            m_vBar = widget.release();
-        }
-
-    if (m_optionsChanged)
-        updateFromElement();
+    ASSERT(!m_optionsChanged);
 
     m_minPrefWidth = 0;
     m_maxPrefWidth = 0;

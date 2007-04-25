@@ -85,17 +85,9 @@ short RenderSVGContainer::baselinePosition(bool b, bool isRootLineBox) const
     return height() + marginTop() + marginBottom();
 }
 
-void RenderSVGContainer::calcPrefWidths()
-{
-    ASSERT(prefWidthsDirty());
-    m_minPrefWidth = m_maxPrefWidth = 0;
-    setPrefWidthsDirty(false);
-}
-
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     calcViewport();
 

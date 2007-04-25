@@ -1,3 +1,132 @@
+2007-04-25  David Hyatt  <hyatt@apple.com>
+
+        Rearchitect calcPrefWidths.  The calculation is now done lazily only when minPrefWidth
+        or maxPrefWidth are asked for.  The result of the calculation is cached.
+
+        The new invalidation scheme for pref width invalidation follows the
+        containing block hierarchy and knows to halt at positioned objects, since
+        they cannot influence the size of their containers.
+
+        Reviewed by darin
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::layout):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::calcPrefWidths):
+        (WebCore::InlineMinMaxIterator::endOfInline):
+        (WebCore::shouldGrowTableCellForImage):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::calcBlockPrefWidths):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::minPrefWidth):
+        (WebCore::RenderBox::maxPrefWidth):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        (WebCore::RenderContainer::layout):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::moveChildNode):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::dirtyLineBoxes):
+        (WebCore::RenderCounter::calcPrefWidths):
+        * rendering/RenderCounter.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::calcPrefWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcPrefWidths):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout):
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::calcPrefWidths):
+        * rendering/RenderListItem.cpp:
+        (WebCore::firstNonMarkerChild):
+        (WebCore::RenderListItem::updateMarkerLocation):
+        (WebCore::RenderListItem::calcPrefWidths):
+        (WebCore::RenderListItem::layout):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::calcPrefWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::removeChildNode):
+        (WebCore::RenderObject::moveChildNode):
+        (WebCore::RenderObject::appendChildNode):
+        (WebCore::RenderObject::insertChildNode):
+        (WebCore::RenderObject::setPrefWidthsDirty):
+        (WebCore::RenderObject::invalidateContainingBlockPrefWidths):
+        (WebCore::RenderObject::information):
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::layer):
+        (WebCore::RenderObject::hasLayer):
+        (WebCore::RenderObject::prefWidthsDirty):
+        (WebCore::RenderObject::setNeedsLayoutAndPrefWidthsRecalc):
+        (WebCore::RenderObject::setHasLayer):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::removeChildNode):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::removeChildNode):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::isSpaceAccordingToStyle):
+        (WebCore::RenderText::minPrefWidth):
+        (WebCore::RenderText::maxPrefWidth):
+        (WebCore::RenderText::calcPrefWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::calcPrefWidths):
+        (WebCore::RenderView::layout):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::layout):
+
 2007-04-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
@@ -493,7 +622,7 @@
 
         <rdar://problem/4966982> 64-bit: In a unordered list, TYPE=DISC and TYPE=CIRCLE attribute values are ignored
 
-        We need to draw our full-circle arcs counter-clockwise, since a clockwise arc from 0 to 2π is no arc at all!
+        We need to draw our full-circle arcs counter-clockwise, since a clockwise arc from 0 to 2Ï is no arc at all!
         This only worked on 32-bit due to a rounding error in CoreGraphics, causing it to draw a full circle anyway.
 
         * platform/graphics/cg/GraphicsContextCG.cpp:

@@ -410,10 +410,6 @@ void FrameView::layout(bool allowSubtree)
         root->repaintObjectsBeforeLayout();
     }
 
-    if (subtree) {
-        if (root->recalcMinMax())
-            root->recalcMinMaxWidths();
-    }
     pauseScheduledEvents();
     root->layout();
     d->layoutRoot = 0;

@@ -119,31 +119,17 @@ void RenderFlexibleBox::calcHorizontalPrefWidths()
             continue;
         }
 
-        int margin=0;
-        //  auto margins don't affect minwidth
-
+        // A margin basically has three types: fixed, percentage, and auto (variable).
+        // Auto and percentage margins simply become 0 when computing min/max width.
+        // Fixed margins can be added in as is.
         Length ml = child->style()->marginLeft();
         Length mr = child->style()->marginRight();
-
-        // Call calcWidth on the child to ensure that our margins are
-        // up to date.  This method can be called before the child has actually
-        // calculated its margins (which are computed inside calcWidth).
-        child->calcWidth();
-
-        if (!ml.isAuto() && !mr.isAuto()) {
-            if (!child->style()->width().isAuto()) {
-                if (child->style()->direction()==LTR)
-                    margin = child->marginLeft();
-                else
-                    margin = child->marginRight();
-            } else
-                margin = child->marginLeft()+child->marginRight();
-        } else if (!ml.isAuto())
-            margin = child->marginLeft();
-        else if (!mr.isAuto())
-            margin = child->marginRight();
-
-        margin = max(margin, 0);
+        int margin = 0, marginLeft = 0, marginRight = 0;
+        if (ml.isFixed())
+            marginLeft += ml.value();
+        if (mr.isFixed())
+            marginRight += mr.value();
+        margin = marginLeft + marginRight;
 
         m_minPrefWidth += child->minPrefWidth() + margin;
         m_maxPrefWidth += child->maxPrefWidth() + margin;
@@ -163,33 +149,16 @@ void RenderFlexibleBox::calcVerticalPrefWidths()
             continue;
         }
 
+        // A margin basically has three types: fixed, percentage, and auto (variable).
+        // Auto/percentage margins simply become 0 when computing min/max width.
+        // Fixed margins can be added in as is.
         Length ml = child->style()->marginLeft();
         Length mr = child->style()->marginRight();
-
-        // Call calcWidth on the child to ensure that our margins are
-        // up to date.  This method can be called before the child has actually
-        // calculated its margins (which are computed inside calcWidth).
-        if (ml.isPercent() || mr.isPercent())
-            calcWidth();
-
-        // A margin basically has three types: fixed, percentage, and auto (variable).
-        // Auto margins simply become 0 when computing min/max width.
-        // Fixed margins can be added in as is.
-        // Percentage margins are computed as a percentage of the width we calculated in
-        // the calcWidth call above.  In this case we use the actual cached margin values on
-        // the RenderObject itself.
         int margin = 0;
         if (ml.isFixed())
             margin += ml.value();
-        else if (ml.isPercent())
-            margin += child->marginLeft();
-
         if (mr.isFixed())
             margin += mr.value();
-        else if (mr.isAuto())
-            margin += child->marginRight();
-
-        margin = max(margin, 0);
         
         int w = child->minPrefWidth() + margin;
         m_minPrefWidth = max(w, m_minPrefWidth);
@@ -205,19 +174,19 @@ void RenderFlexibleBox::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
-    m_minPrefWidth = 0;
-    m_maxPrefWidth = 0;
-
-    if (hasMultipleLines() || isVertical())
-        calcVerticalPrefWidths();
-    else
-        calcHorizontalPrefWidths();
-
-    m_maxPrefWidth = max(m_maxPrefWidth, m_minPrefWidth);
-
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
-   
+    else {
+        m_minPrefWidth = m_maxPrefWidth = 0;
+
+        if (hasMultipleLines() || isVertical())
+            calcVerticalPrefWidths();
+        else
+            calcHorizontalPrefWidths();
+
+        m_maxPrefWidth = max(m_minPrefWidth, m_maxPrefWidth);
+    }
+
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
         m_minPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
@@ -238,7 +207,6 @@ void RenderFlexibleBox::calcPrefWidths()
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 {
     ASSERT(needsLayout());
-    ASSERT(!prefWidthsDirty());
 
     if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.

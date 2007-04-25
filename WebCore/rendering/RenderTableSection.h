@@ -121,7 +121,7 @@ public:
 
     int getBaseline(int row) { return m_grid[row].baseLine; }
 
-    virtual RenderObject* removeChildNode(RenderObject*);
+    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
