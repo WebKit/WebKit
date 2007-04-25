@@ -405,7 +405,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         if (contentType.isEmpty()) {
             ExceptionCode ec = 0;
             if (m_doc->frame() && m_doc->frame()->settings()->usesDashboardBackwardCompatibilityMode())
-                setRequestHeader("Content-Type", "application/x-form-urlencoded", ec);
+                setRequestHeader("Content-Type", "application/x-www-form-urlencoded", ec);
             else
                 setRequestHeader("Content-Type", "application/xml", ec);
             ASSERT(ec == 0);

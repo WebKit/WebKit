@@ -1,3 +1,17 @@
+2007-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Add a setUseDashboardCompatibilityMode method to LayoutTestController which is used to toggle
+        the dashboard compatibility mode.
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setUseDashboardCompatibilityMode:]):
+        (runTest):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-04-24  Timothy Hatcher  <timothy@apple.com>
 
         Setting the valid architectures to 32-bit only, so these projects

@@ -1,3 +1,13 @@
+2007-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/4869095> 
+        default content type for XMLHttpRequest POSTs changed (breaks Flickrator 0.1 widget)
+
+        * http/tests/xmlhttprequest/default-content-type-dashboard-expected.txt: Added.
+        * http/tests/xmlhttprequest/default-content-type-dashboard.html: Added.
+
 2007-04-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver

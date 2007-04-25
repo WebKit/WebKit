@@ -1,3 +1,15 @@
+2007-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/4869095> 
+        default content type for XMLHttpRequest POSTs changed (breaks Flickrator 0.1 widget)
+        
+        Use the right MIME type.
+        
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2007-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

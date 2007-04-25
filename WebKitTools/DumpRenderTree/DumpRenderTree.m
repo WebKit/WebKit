@@ -164,7 +164,6 @@ static NSMutableArray *workQueue = nil;
 // to prevent infinite loops, only the first page of a test can add to a work queue
 // (since we may well come back to that same page)
 static BOOL workQueueFrozen;
-
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
@@ -1058,7 +1057,8 @@ static void dump(void)
             || aSelector == @selector(addDisallowedURL:)    
             || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCallCloseOnWebViews:)
-            || aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
+            || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
+            || aSelector == @selector(setUseDashboardCompatibilityMode:))
         return NO;
     return YES;
 }
@@ -1095,7 +1095,9 @@ static void dump(void)
         return @"setCallCloseOnWebViews";
     if (aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
         return @"setCloseRemainingWindowsWhenComplete";
-
+    if (aSelector == @selector(setUseDashboardCompatibilityMode:))
+        return @"setUseDashboardCompatiblityMode";
+    
     return nil;
 }
 
@@ -1112,6 +1114,11 @@ static void dump(void)
     [backForwardList addItem:item];
     [backForwardList goToItem:item];
     [item release];
+}
+
+- (void)setUseDashboardCompatibilityMode:(BOOL)flag
+{
+    [[frame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
 }
 
 - (void)setCloseRemainingWindowsWhenComplete:(BOOL)closeWindows
@@ -1406,6 +1413,7 @@ static void runTest(const char *pathOrURL)
     readFromWindow = NO;
     canOpenWindows = NO;
     closeWebViews = YES;
+    [[frame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if ([WebHistory optionalSharedHistory])
