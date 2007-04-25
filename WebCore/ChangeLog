@@ -1,3 +1,10 @@
+2007-04-25  David Harrison  <harrison@apple.com>
+
+        Comment change. Correct the header name in the endif comment.
+        
+        * editing/FormatBlockCommand.h:
+        Change InsertListCommand_h to FormatBlockCommand_h.
+
 2007-04-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
