@@ -42,8 +42,8 @@ public:
 
     virtual void destroy();
 
-    virtual int minWidth() const { return m_minWidth; }
-    virtual int maxWidth() const { return m_maxWidth; }
+    virtual int minPrefWidth() const { return m_minPrefWidth; }
+    virtual int maxPrefWidth() const { return m_maxPrefWidth; }
 
     virtual int overrideSize() const;
     virtual int overrideWidth() const;
@@ -195,15 +195,13 @@ protected:
     int m_marginTop;
     int m_marginBottom;
 
-    // The minimum width the element needs to be able to render
-    // its content without clipping.
-    int m_minWidth;
-    // The maximum width the element can fill horizontally
-    // (the width of the element with line breaking disabled).
-    int m_maxWidth;
+    // The preferred width of the element if it were to break its lines at every possible opportunity.
+    int m_minPrefWidth;
+    
+    // The preferred width of the element if it never breaks any lines at all.
+    int m_maxPrefWidth;
 
-    // A pointer to our layer if we have one.  Currently only positioned elements
-    // and floaters have layers.
+    // A pointer to our layer if we have one.
     RenderLayer* m_layer;
 
     // For inline replaced elements, the inline box that owns us.

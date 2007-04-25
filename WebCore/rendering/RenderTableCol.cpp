@@ -55,7 +55,7 @@ void RenderTableCol::updateFromElement()
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
     if (m_span != oldSpan && style() && parent())
-        setNeedsLayoutAndMinMaxRecalc();
+        setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 bool RenderTableCol::isChildAllowed(RenderObject* child, RenderStyle* style) const

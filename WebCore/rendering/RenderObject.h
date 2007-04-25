@@ -153,6 +153,7 @@ public:
     RenderObject* lastLeafChild() const;
 
     virtual RenderLayer* layer() const { return 0; }
+    bool hasLayer() const { return !!layer(); }
     RenderLayer* enclosingLayer() const;
     void addLayers(RenderLayer* parentLayer, RenderObject* newObject);
     void removeLayers(RenderLayer* parentLayer);
@@ -318,7 +319,7 @@ public:
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
 
-    bool minMaxKnown() const { return m_minMaxKnown; }
+    bool prefWidthsDirty() const { return m_prefWidthsDirty; }
     bool recalcMinMax() const { return m_recalcMinMax; }
 
     bool isSelectionBorder() const;
@@ -368,10 +369,10 @@ public:
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
 
-    void setMinMaxKnown(bool b = true)
+    void setPrefWidthsDirty(bool b)
     {
-        m_minMaxKnown = b;
-        if (!b) {
+        m_prefWidthsDirty = b;
+        if (b) {
             RenderObject* o = this;
             RenderObject* root = this;
             while(o) { // FIXME: && !o->m_recalcMinMax ) {
@@ -382,9 +383,9 @@ public:
         }
     }
 
-    void setNeedsLayoutAndMinMaxRecalc()
+    void setNeedsLayoutAndPrefWidthsRecalc()
     {
-        setMinMaxKnown(false);
+        setPrefWidthsDirty(true);
         setNeedsLayout(true);
     }
 
@@ -462,16 +463,16 @@ public:
      * This function calculates the minimum & maximum width that the object
      * can be set to.
      *
-     * when the Element calls setMinMaxKnown(true), calcMinMaxWidth() will
+     * when the Element calls setPrefWidthsDirty(false), calcPrefWidths() will
      * be no longer called.
      *
-     * when a element has a fixed size, m_minWidth and m_maxWidth should be
+     * when a element has a fixed size, m_minPrefWidth and m_maxPrefWidth should be
      * set to the same value. This has the special meaning that m_width,
      * contains the actual value.
      *
-     * assumes calcMinMaxWidth has already been called for all children.
+     * assumes calcPrefWidths has already been called for all children.
      */
-    virtual void calcMinMaxWidth() { }
+    virtual void calcPrefWidths() { }
 
     /*
      * Does the min max width recalculations after changes.
@@ -685,8 +686,8 @@ public:
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
-    virtual int minWidth() const { return 0; }
-    virtual int maxWidth() const { return 0; }
+    virtual int minPrefWidth() const { return 0; }
+    virtual int maxPrefWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style; }
     RenderStyle* firstLineStyle() const;
@@ -912,7 +913,7 @@ private:
     bool m_needsLayout               : 1;
     bool m_normalChildNeedsLayout    : 1;
     bool m_posChildNeedsLayout       : 1;
-    bool m_minMaxKnown               : 1;
+    bool m_prefWidthsDirty           : 1;
     bool m_floating                  : 1;
 
     bool m_positioned                : 1;

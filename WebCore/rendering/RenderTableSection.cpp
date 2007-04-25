@@ -891,6 +891,8 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
                 if (!cell || (r > startrow && (cellAt(r - 1, c).cell == cell)))
                     continue;
 
+                RenderTableRow* row = static_cast<RenderTableRow*>(cell->parent());
+
                 if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) {
                     // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
                     // the column group, column, row group, row, and then the cell.
@@ -898,8 +900,6 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
                     RenderObject* colGroup = 0;
                     if (col && col->parent()->style()->display() == TABLE_COLUMN_GROUP)
                         colGroup = col->parent();
-
-                    RenderObject* row = cell->parent();
 
                     // Column groups and columns first.
                     // FIXME: Columns and column groups do not currently support opacity, and they are being painted "too late" in
@@ -914,11 +914,11 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 
                     // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
                     // painting the row background for the cell.
-                    if (!row->layer())
+                    if (!row->hasLayer())
                         cell->paintBackgroundsBehindCell(paintInfo, tx, ty, row);
                 }
 
-                if ((!cell->layer() && !cell->parent()->layer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
+                if ((!cell->hasLayer() && !row->hasLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
                     cell->paint(paintInfo, tx, ty);
             }
         }

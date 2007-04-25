@@ -95,7 +95,7 @@ void RenderApplet::createWidgetIfNecessary()
 void RenderApplet::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     calcWidth();
     calcHeight();

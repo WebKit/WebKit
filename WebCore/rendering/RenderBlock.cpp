@@ -350,13 +350,13 @@ void RenderBlock::removeChild(RenderObject *oldChild)
     if (canDeleteAnonymousBlocks && prev && next) {
         // Take all the children out of the |next| block and put them in
         // the |prev| block.
-        prev->setNeedsLayoutAndMinMaxRecalc();
+        prev->setNeedsLayoutAndPrefWidthsRecalc();
         RenderObject* o = next->firstChild();
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
             prev->appendChildNode(next->removeChildNode(no));
-            no->setNeedsLayoutAndMinMaxRecalc();
+            no->setNeedsLayoutAndPrefWidthsRecalc();
         }
  
         RenderBlock* nextBlock = static_cast<RenderBlock*>(next);
@@ -373,7 +373,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
-        setNeedsLayoutAndMinMaxRecalc();
+        setNeedsLayoutAndPrefWidthsRecalc();
         RenderBlock* anonBlock = static_cast<RenderBlock*>(removeChildNode(child));
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
@@ -381,7 +381,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             RenderObject* no = o;
             o = no->nextSibling();
             appendChildNode(anonBlock->removeChildNode(no));
-            no->setNeedsLayoutAndMinMaxRecalc();
+            no->setNeedsLayoutAndPrefWidthsRecalc();
         }
 
         // Delete the now-empty block's lines and nuke it.
@@ -481,7 +481,7 @@ void RenderBlock::layout()
 void RenderBlock::layoutBlock(bool relayoutChildren)
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
         return;                                      // cause us to come in here.  Just bail.
@@ -754,7 +754,7 @@ RenderObject* RenderBlock::handleCompactChild(RenderObject* child, CompactInfo& 
             child->calcWidth();
             int childMargins = child->marginLeft() + child->marginRight();
             int margin = style()->direction() == LTR ? curr->marginLeft() : curr->marginRight();
-            if (margin >= (childMargins + child->maxWidth())) {
+            if (margin >= (childMargins + child->maxPrefWidth())) {
                 // The compact will fit in the margin.
                 handled = true;
                 compactInfo.set(child, curr);
@@ -2653,7 +2653,7 @@ int RenderBlock::getClearDelta(RenderObject *child)
     // (ebay on the PLT, finance.yahoo.com in the real world, versiontracker.com forces even almost strict mode not to work)
     int result = clearSet ? max(0, bottom - child->yPos()) : 0;
     if (!result && child->avoidsFloats() && child->style()->width().isFixed() && 
-        child->minWidth() > lineWidth(child->yPos()) && child->minWidth() <= availableWidth() && 
+        child->minPrefWidth() > lineWidth(child->yPos()) && child->minPrefWidth() <= availableWidth() && 
         document()->inStrictMode())   
         result = max(0, floatBottom() - child->yPos());
     return result;
@@ -3246,61 +3246,61 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     r = result;
 }
 
-void RenderBlock::calcMinMaxWidth()
+void RenderBlock::calcPrefWidths()
 {
-    ASSERT( !minMaxKnown() );
+    ASSERT(prefWidthsDirty());
 
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderBlock)::calcMinMaxWidth() this=" << this << endl;
+    kdDebug( 6040 ) << renderName() << "(RenderBlock)::calcPrefWidths() this=" << this << endl;
 #endif
 
     if (!isTableCell() && style()->width().isFixed() && style()->width().value() > 0)
-        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
+        m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else {
-        m_minWidth = 0;
-        m_maxWidth = 0;
+        m_minPrefWidth = 0;
+        m_maxPrefWidth = 0;
 
         if (childrenInline())
-            calcInlineMinMaxWidth();
+            calcInlinePrefWidths();
         else
-            calcBlockMinMaxWidth();
+            calcBlockPrefWidths();
 
-        if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
+        if(m_maxPrefWidth < m_minPrefWidth) m_maxPrefWidth = m_minPrefWidth;
 
         if (!style()->autoWrap() && childrenInline()) {
-            m_minWidth = m_maxWidth;
+            m_minPrefWidth = m_maxPrefWidth;
             
             // A horizontal marquee with inline children has no minimum width.
             if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal())
-                m_minWidth = 0;
+                m_minPrefWidth = 0;
         }
 
         if (isTableCell()) {
             Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
             if (w.isFixed() && w.value() > 0)
-                m_maxWidth = max(m_minWidth, calcContentBoxWidth(w.value()));
+                m_maxPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(w.value()));
         }
     }
     
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
-        m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
-        m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_minPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
-        m_maxWidth = min(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
-        m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_maxPrefWidth = min(m_maxPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
     int toAdd = 0;
     toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
 
-    m_minWidth += toAdd;
-    m_maxWidth += toAdd;
+    m_minPrefWidth += toAdd;
+    m_maxPrefWidth += toAdd;
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 
-    //kdDebug( 6040 ) << "Text::calcMinMaxWidth(" << this << "): min = " << m_minWidth << " max = " << m_maxWidth << endl;
+    //kdDebug( 6040 ) << "Text::calcPrefWidths(" << this << "): min = " << m_minPrefWidth << " max = " << m_maxPrefWidth << endl;
 }
 
 struct InlineMinMaxIterator
@@ -3431,7 +3431,7 @@ static bool shouldGrowTableCellForImage(RenderBlock* containingBlock, RenderObje
     return true;
 }
 
-void RenderBlock::calcInlineMinMaxWidth()
+void RenderBlock::calcInlinePrefWidths()
 {
     int inlineMax=0;
     int inlineMin=0;
@@ -3537,8 +3537,8 @@ void RenderBlock::calcInlineMinMaxWidth()
                 // Case (2). Inline replaced elements and floats.
                 // Go ahead and terminate the current line as far as
                 // minwidth is concerned.
-                childMin += child->minWidth();
-                childMax += child->maxWidth();
+                childMin += child->minPrefWidth();
+                childMax += child->maxPrefWidth();
 
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
@@ -3551,14 +3551,14 @@ void RenderBlock::calcInlineMinMaxWidth()
                 
                 bool growForPrevious = shouldGrowTableCellForImage(this, child, previousLeaf);
                 if (!growForPrevious && (autoWrap || oldAutoWrap) || clearPreviousFloat) {
-                    if (m_minWidth < inlineMin)
-                        m_minWidth = inlineMin;
+                    if (m_minPrefWidth < inlineMin)
+                        m_minPrefWidth = inlineMin;
                     inlineMin = 0;
                 }
 
                 // If we're supposed to clear the previous float, then terminate maxwidth as well.
                 if (clearPreviousFloat) {
-                    m_maxWidth = max(inlineMax, m_maxWidth);
+                    m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
                     inlineMax = 0;
                 }
                 
@@ -3581,8 +3581,8 @@ void RenderBlock::calcInlineMinMaxWidth()
 
                 if (autoWrap && !shouldGrowTableCellForImage(this, child, nextLeaf)) {
                     // Now check our line.
-                    if (m_minWidth < inlineMin)
-                        m_minWidth = inlineMin;
+                    if (m_minPrefWidth < inlineMin)
+                        m_minPrefWidth = inlineMin;
 
                     // Now start a new line.
                     inlineMin = 0;
@@ -3609,9 +3609,9 @@ void RenderBlock::calcInlineMinMaxWidth()
                 int beginMin, endMin;
                 bool beginWS, endWS;
                 int beginMax, endMax;
-                t->trimmedMinMaxWidth(inlineMax, beginMin, beginWS, endMin, endWS,
-                                      hasBreakableChar, hasBreak, beginMax, endMax,
-                                      childMin, childMax, stripFrontSpaces);
+                t->trimmedPrefWidths(inlineMax, beginMin, beginWS, endMin, endWS,
+                                     hasBreakableChar, hasBreak, beginMax, endMax,
+                                     childMin, childMax, stripFrontSpaces);
 
                 // This text object is insignificant and will not be rendered.  Just
                 // continue.
@@ -3642,11 +3642,11 @@ void RenderBlock::calcInlineMinMaxWidth()
                     // we start and end with whitespace.
                     if (beginWS) {
                         // Go ahead and end the current line.
-                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
                     }
                     else {
                         inlineMin += beginMin;
-                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
                         childMin -= ti;
                     }
 
@@ -3655,19 +3655,19 @@ void RenderBlock::calcInlineMinMaxWidth()
                     if (endWS) {
                         // We end in whitespace, which means we can go ahead
                         // and end our current line.
-                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
                         inlineMin = 0;
                     }
                     else {
-                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
                         inlineMin = endMin;
                     }
                 }
 
                 if (hasBreak) {
                     inlineMax += beginMax;
-                    if (m_maxWidth < inlineMax) m_maxWidth = inlineMax;
-                    if (m_maxWidth < childMax) m_maxWidth = childMax;
+                    if (m_maxPrefWidth < inlineMax) m_maxPrefWidth = inlineMax;
+                    if (m_maxPrefWidth < childMax) m_maxPrefWidth = childMax;
                     inlineMax = endMax;
                 }
                 else
@@ -3676,8 +3676,8 @@ void RenderBlock::calcInlineMinMaxWidth()
         }
         else
         {
-            if(m_minWidth < inlineMin) m_minWidth = inlineMin;
-            if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
+            if(m_minPrefWidth < inlineMin) m_minPrefWidth = inlineMin;
+            if(m_maxPrefWidth < inlineMax) m_maxPrefWidth = inlineMax;
             inlineMin = inlineMax = 0;
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
@@ -3691,14 +3691,14 @@ void RenderBlock::calcInlineMinMaxWidth()
     if (style()->collapseWhiteSpace())
         stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
     
-    m_minWidth = max(inlineMin, m_minWidth);
-    m_maxWidth = max(inlineMax, m_maxWidth);
+    m_minPrefWidth = max(inlineMin, m_minPrefWidth);
+    m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
 }
 
 // Use a very large value (in effect infinite).
 #define BLOCK_MAX_WIDTH 15000
 
-void RenderBlock::calcBlockMinMaxWidth()
+void RenderBlock::calcBlockPrefWidths()
 {
     bool nowrap = style()->whiteSpace() == NOWRAP;
 
@@ -3714,11 +3714,11 @@ void RenderBlock::calcBlockMinMaxWidth()
         if (child->isFloating() || child->avoidsFloats()) {
             int floatTotalWidth = floatLeftWidth + floatRightWidth;
             if (child->style()->clear() & CLEFT) {
-                m_maxWidth = max(floatTotalWidth, m_maxWidth);
+                m_maxPrefWidth = max(floatTotalWidth, m_maxPrefWidth);
                 floatLeftWidth = 0;
             }
             if (child->style()->clear() & CRIGHT) {
-                m_maxWidth = max(floatTotalWidth, m_maxWidth);
+                m_maxPrefWidth = max(floatTotalWidth, m_maxPrefWidth);
                 floatRightWidth = 0;
             }
         }
@@ -3749,14 +3749,14 @@ void RenderBlock::calcBlockMinMaxWidth()
             marginRight += child->marginRight();
         margin = marginLeft + marginRight;
 
-        int w = child->minWidth() + margin;
-        if (m_minWidth < w) m_minWidth = w;
+        int w = child->minPrefWidth() + margin;
+        if (m_minPrefWidth < w) m_minPrefWidth = w;
         
         // IE ignores tables for calculation of nowrap. Makes some sense.
-        if (nowrap && !child->isTable() && m_maxWidth < w)
-            m_maxWidth = w;
+        if (nowrap && !child->isTable() && m_maxPrefWidth < w)
+            m_maxPrefWidth = w;
 
-        w = child->maxWidth() + margin;
+        w = child->maxPrefWidth() + margin;
 
         if (!child->isFloating()) {
             if (child->avoidsFloats()) {
@@ -3765,11 +3765,11 @@ void RenderBlock::calcBlockMinMaxWidth()
                 // is smaller than the float width.
                 int maxLeft = marginLeft > 0 ? max(floatLeftWidth, marginLeft) : floatLeftWidth + marginLeft;
                 int maxRight = marginRight > 0 ? max(floatRightWidth, marginRight) : floatRightWidth + marginRight;
-                w = child->maxWidth() + maxLeft + maxRight;
+                w = child->maxPrefWidth() + maxLeft + maxRight;
                 w = max(w, floatLeftWidth + floatRightWidth);
             }
             else
-                m_maxWidth = max(floatLeftWidth + floatRightWidth, m_maxWidth);
+                m_maxPrefWidth = max(floatLeftWidth + floatRightWidth, m_maxPrefWidth);
             floatLeftWidth = floatRightWidth = 0;
         }
         
@@ -3779,8 +3779,8 @@ void RenderBlock::calcBlockMinMaxWidth()
             else
                 floatRightWidth += w;
         }
-        else if (m_maxWidth < w)
-            m_maxWidth = w;
+        else if (m_maxPrefWidth < w)
+            m_maxPrefWidth = w;
 
         // A very specific WinIE quirk.
         // Example:
@@ -3796,22 +3796,22 @@ void RenderBlock::calcBlockMinMaxWidth()
         // We can achieve this effect by making the maxwidth of blocks that contain tables
         // with percentage widths be infinite (as long as they are not inside a table cell).
         if (style()->htmlHacks() && child->style()->width().isPercent() &&
-            !isTableCell() && child->isTable() && m_maxWidth < BLOCK_MAX_WIDTH) {
+            !isTableCell() && child->isTable() && m_maxPrefWidth < BLOCK_MAX_WIDTH) {
             RenderBlock* cb = containingBlock();
             while (!cb->isRenderView() && !cb->isTableCell())
                 cb = cb->containingBlock();
             if (!cb->isTableCell())
-                m_maxWidth = BLOCK_MAX_WIDTH;
+                m_maxPrefWidth = BLOCK_MAX_WIDTH;
         }
         
         child = child->nextSibling();
     }
 
     // Always make sure these values are non-negative.
-    m_minWidth = max(0, m_minWidth);
-    m_maxWidth = max(0, m_maxWidth);
+    m_minPrefWidth = max(0, m_minPrefWidth);
+    m_maxPrefWidth = max(0, m_maxPrefWidth);
 
-    m_maxWidth = max(floatLeftWidth + floatRightWidth, m_maxWidth);
+    m_maxPrefWidth = max(floatLeftWidth + floatRightWidth, m_maxPrefWidth);
 }
 
 bool RenderBlock::hasLineIfEmpty() const

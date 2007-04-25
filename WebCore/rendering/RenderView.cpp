@@ -51,10 +51,10 @@ RenderView::RenderView(Node* node, FrameView* view)
     // try to contrain the width to the views width
     m_width = 0;
     m_height = 0;
-    m_minWidth = 0;
-    m_maxWidth = 0;
+    m_minPrefWidth = 0;
+    m_maxPrefWidth = 0;
 
-    setMinMaxKnown(false);
+    setPrefWidthsDirty(true);
     
     setPositioned(true); // to 0,0 :)
 
@@ -80,21 +80,21 @@ void RenderView::calcWidth()
     m_marginRight = 0;
 }
 
-void RenderView::calcMinMaxWidth()
+void RenderView::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
+    ASSERT(prefWidthsDirty());
 
-    RenderBlock::calcMinMaxWidth();
+    RenderBlock::calcPrefWidths();
 
-    m_maxWidth = m_minWidth;
+    m_maxPrefWidth = m_minPrefWidth;
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 void RenderView::layout()
 {
     if (printing())
-        m_minWidth = m_width;
+        m_minPrefWidth = m_width;
 
     bool relayoutChildren = !printing() && (!m_frameView || m_width != m_frameView->visibleWidth() || m_height != m_frameView->visibleHeight());
     if (relayoutChildren)

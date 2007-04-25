@@ -1,8 +1,6 @@
 /*
- * This file is part of the html renderer for KDE.
- *
  * Copyright (C) 2001 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,7 +46,7 @@ public:
     virtual void insertChildNode(RenderObject* child, RenderObject* before);
 
     virtual void layout();
-    virtual void calcMinMaxWidth() { setMinMaxKnown(true); }
+    virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
 
     virtual void removeLeftoverAnonymousBoxes();
 

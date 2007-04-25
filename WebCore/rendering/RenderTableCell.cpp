@@ -70,14 +70,14 @@ void RenderTableCell::updateFromElement()
         m_columnSpan = tc->colSpan();
         m_rowSpan = tc->rowSpan();
         if ((oldRSpan != m_rowSpan || oldCSpan != m_columnSpan) && style() && parent()) {
-            setNeedsLayoutAndMinMaxRecalc();
+            setNeedsLayoutAndPrefWidthsRecalc();
             if (section())
                 section()->setNeedsCellRecalc();
         }
     }
 }
 
-Length RenderTableCell::styleOrColWidth()
+Length RenderTableCell::styleOrColWidth() const
 {
     Length w = style()->width();
     if (colSpan() > 1 || !w.isAuto())
@@ -95,15 +95,14 @@ Length RenderTableCell::styleOrColWidth()
     return w;
 }
 
-void RenderTableCell::calcMinMaxWidth()
+void RenderTableCell::calcPrefWidths()
 {
-    // recalcMinMaxWidths works depth first.  However, the child cells rely on the grids up in the
-    // sections to do their calcMinMaxWidths work.  Normally the sections are set up early, as table
-    // cells are added, but relayout can cause the cells to be freed, leaving stale ptrs in the sections'
+    // The child cells rely on the grids up in the sections to do their calcPrefWidths work.  Normally the sections are set up early, as table
+    // cells are added, but relayout can cause the cells to be freed, leaving stale pointers in the sections'
     // grids.  We must refresh those grids before the child cells try to use them.
     table()->recalcSectionsIfNeeded();
 
-    RenderBlock::calcMinMaxWidth();
+    RenderBlock::calcPrefWidths();
     if (element() && style()->autoWrap()) {
         // See if nowrap was set.
         Length w = styleOrColWidth();
@@ -114,8 +113,7 @@ void RenderTableCell::calcMinMaxWidth()
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            if (m_minWidth < w.value())
-                m_minWidth = w.value();
+            m_minPrefWidth = max(w.value(), m_minPrefWidth);
     }
 }
 

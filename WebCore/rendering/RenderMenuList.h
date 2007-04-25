@@ -57,7 +57,7 @@ public:
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 
-    virtual void calcMinMaxWidth();
+    virtual void calcPrefWidths();
 
     bool popupIsVisible() const { return m_popupIsVisible; }
     void showPopup();

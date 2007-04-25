@@ -53,7 +53,7 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual void layout();
-    virtual void calcMinMaxWidth();
+    virtual void calcPrefWidths();
 
     virtual void positionListMarker();
 

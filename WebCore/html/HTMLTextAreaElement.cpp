@@ -133,11 +133,11 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == rowsAttr) {
         m_rows = !attr->isNull() ? attr->value().toInt() : 3;
         if (renderer())
-            renderer()->setNeedsLayoutAndMinMaxRecalc();
+            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (attr->name() == colsAttr) {
         m_cols = !attr->isNull() ? attr->value().toInt() : 60;
         if (renderer())
-            renderer()->setNeedsLayoutAndMinMaxRecalc();
+            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (attr->name() == wrapAttr) {
         // virtual / physical is Netscape extension of HTML 3.0, now deprecated
         // soft/ hard / off is recommendation for HTML 4 extension by IE and NS 4
@@ -150,7 +150,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
         else if (equalIgnoringCase(attr->value(), "off"))
             m_wrap = ta_NoWrap;
         if (renderer())
-            renderer()->setNeedsLayoutAndMinMaxRecalc();
+            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (attr->name() == accesskeyAttr) {
         // ignore for the moment
     } else if (attr->name() == alignAttr) {

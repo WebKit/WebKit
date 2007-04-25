@@ -85,17 +85,17 @@ short RenderSVGContainer::baselinePosition(bool b, bool isRootLineBox) const
     return height() + marginTop() + marginBottom();
 }
 
-void RenderSVGContainer::calcMinMaxWidth()
+void RenderSVGContainer::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
-    m_minWidth = m_maxWidth = 0;
-    setMinMaxKnown();
+    ASSERT(prefWidthsDirty());
+    m_minPrefWidth = m_maxPrefWidth = 0;
+    setPrefWidthsDirty(false);
 }
 
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     calcViewport();
 

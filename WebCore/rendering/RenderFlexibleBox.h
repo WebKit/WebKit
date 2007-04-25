@@ -34,9 +34,9 @@ public:
 
     virtual const char* renderName() const;
 
-    virtual void calcMinMaxWidth();
-    void calcHorizontalMinMaxWidth();
-    void calcVerticalMinMaxWidth();
+    virtual void calcPrefWidths();
+    void calcHorizontalPrefWidths();
+    void calcVerticalPrefWidths();
 
     virtual void layoutBlock(bool relayoutChildren);
     void layoutHorizontalBox(bool relayoutChildren);
@@ -53,9 +53,9 @@ public:
 protected:
     int allowedChildFlex(RenderObject* child, bool expanding, unsigned group);
 
-    bool hasMultipleLines() { return style()->boxLines() == MULTIPLE; }
-    bool isVertical() { return style()->boxOrient() == VERTICAL; }
-    bool isHorizontal() { return style()->boxOrient() == HORIZONTAL; }
+    bool hasMultipleLines() const { return style()->boxLines() == MULTIPLE; }
+    bool isVertical() const { return style()->boxOrient() == VERTICAL; }
+    bool isHorizontal() const { return style()->boxOrient() == HORIZONTAL; }
 
     bool m_flexingChildren : 1;
     bool m_stretchingChildren : 1;

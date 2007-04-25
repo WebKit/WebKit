@@ -482,8 +482,8 @@ RenderListMarker::~RenderListMarker()
 
 void RenderListMarker::setStyle(RenderStyle* s)
 {
-    if (s && style() && (s->listStylePosition() != style()->listStylePosition() || s->listStyleType() != style()->listStyleType()))
-        setNeedsLayoutAndMinMaxRecalc();
+    if (style() && (s->listStylePosition() != style()->listStylePosition() || s->listStyleType() != style()->listStyleType()))
+        setNeedsLayoutAndPrefWidthsRecalc();
     
     RenderBox::setStyle(s);
 
@@ -626,8 +626,8 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 void RenderListMarker::layout()
 {
     ASSERT(needsLayout());
-    if (!minMaxKnown())
-        calcMinMaxWidth();
+    if (prefWidthsDirty())
+        calcPrefWidths();
     setNeedsLayout(false);
 }
 
@@ -638,22 +638,22 @@ void RenderListMarker::imageChanged(CachedImage* o)
         return;
 
     if (m_width != m_image->imageSize().width() || m_height != m_image->imageSize().height() || m_image->errorOccurred())
-        setNeedsLayoutAndMinMaxRecalc();
+        setNeedsLayoutAndPrefWidthsRecalc();
     else
         repaint();
 }
 
-void RenderListMarker::calcMinMaxWidth()
+void RenderListMarker::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
+    ASSERT(prefWidthsDirty());
 
     m_text = "";
 
     if (isImage()) {
         m_width = m_image->image()->width();
         m_height = m_image->image()->height();
-        m_minWidth = m_maxWidth = m_width;
-        setMinMaxKnown();
+        m_minPrefWidth = m_maxPrefWidth = m_width;
+        setPrefWidthsDirty(false);
         return;
     }
 
@@ -700,18 +700,18 @@ void RenderListMarker::calcMinMaxWidth()
     }
 
     m_width = width;
-    m_minWidth = width;
-    m_maxWidth = width;
+    m_minPrefWidth = width;
+    m_maxPrefWidth = width;
 
-    // FIXME: A little strange to set the height in calcMinMaxWidth.
+    // FIXME: A little strange to set the height in calcPrefWidths.
     m_height = font.height();
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 void RenderListMarker::calcWidth()
 {
-    // m_width is set in calcMinMaxWidth()
+    // m_width is set in calcPrefWidths()
     const Font& font = style()->font();
 
     if (isInside()) {

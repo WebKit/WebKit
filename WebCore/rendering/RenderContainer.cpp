@@ -164,7 +164,7 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
     if (!documentBeingDestroyed()) {
-        oldChild->setNeedsLayoutAndMinMaxRecalc();
+        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
         oldChild->repaint();
     }
         
@@ -174,13 +174,13 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     if (!documentBeingDestroyed()) {
         // if we remove visible child from an invisible parent, we don't know the layer visibility any more
         RenderLayer* layer = 0;
-        if (m_style->visibility() != VISIBLE && oldChild->style()->visibility() == VISIBLE && !oldChild->layer()) {
+        if (m_style->visibility() != VISIBLE && oldChild->style()->visibility() == VISIBLE && !oldChild->hasLayer()) {
             layer = enclosingLayer();
             layer->dirtyVisibleContentStatus();
         }
 
          // Keep our layer hierarchy updated.
-        if (oldChild->firstChild() || oldChild->layer()) {
+        if (oldChild->firstChild() || oldChild->hasLayer()) {
             if (!layer) layer = enclosingLayer();            
             oldChild->removeLayers(layer);
         }
@@ -408,7 +408,7 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
             layer->setHasVisibleContent(true);
     }
     
-    newChild->setNeedsLayoutAndMinMaxRecalc(); // Goes up the containing block hierarchy.
+    newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!normalChildNeedsLayout())
         setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
     
@@ -461,7 +461,7 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
             layer->setHasVisibleContent(true);
     }
 
-    child->setNeedsLayoutAndMinMaxRecalc();
+    child->setNeedsLayoutAndPrefWidthsRecalc();
     if (!normalChildNeedsLayout())
         setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
     
@@ -475,7 +475,7 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
 void RenderContainer::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     RenderObject* child = m_firstChild;
     while (child) {

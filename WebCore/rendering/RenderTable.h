@@ -102,7 +102,7 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void layout();
-    virtual void calcMinMaxWidth();
+    virtual void calcPrefWidths();
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();

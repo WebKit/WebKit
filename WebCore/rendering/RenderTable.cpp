@@ -233,8 +233,7 @@ void RenderTable::calcWidth()
     if (widthType > Relative && style()->width().isPositive()) {
         // Percent or fixed table
         m_width = style()->width().calcMinValue(availableWidth);
-        if (m_minWidth > m_width)
-            m_width = m_minWidth;
+        m_width = max(m_minPrefWidth, m_width);
     } else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
@@ -251,10 +250,10 @@ void RenderTable::calcWidth()
         int availContentWidth = max(0, availableWidth - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
-        m_width = min(availContentWidth, m_maxWidth);
+        m_width = min(availContentWidth, m_maxPrefWidth);
     }
     
-    m_width = max(m_width, m_minWidth);
+    m_width = max(m_width, m_minPrefWidth);
 
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;
@@ -265,7 +264,7 @@ void RenderTable::calcWidth()
 void RenderTable::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
     ASSERT(!m_needsSectionRecalc);
 
     if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
@@ -528,19 +527,19 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
 }
 
-void RenderTable::calcMinMaxWidth()
+void RenderTable::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
+    ASSERT(prefWidthsDirty());
 
     recalcSectionsIfNeeded();
     recalcHorizontalBorders();
 
-    m_tableLayout->calcMinMaxWidth(m_minWidth, m_maxWidth);
+    m_tableLayout->calcPrefWidths(m_minPrefWidth, m_maxPrefWidth);
 
     if (m_caption)
-        m_minWidth = max(m_minWidth, m_caption->minWidth());
+        m_minPrefWidth = max(m_minPrefWidth, m_caption->minPrefWidth());
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 void RenderTable::splitColumn(int pos, int firstSpan)
@@ -561,7 +560,7 @@ void RenderTable::splitColumn(int pos, int firstSpan)
     }
 
     m_columnPos.resize(numEffCols() + 1);
-    setNeedsLayoutAndMinMaxRecalc();
+    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderTable::appendColumn(int span)
@@ -579,7 +578,7 @@ void RenderTable::appendColumn(int span)
     }
 
     m_columnPos.resize(numEffCols() + 1);
-    setNeedsLayoutAndMinMaxRecalc();
+    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 RenderTableCol* RenderTable::colElement(int col) const

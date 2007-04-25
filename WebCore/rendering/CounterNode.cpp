@@ -66,7 +66,7 @@ void CounterNode::recount()
         if (oldCount == newCount)
             break;
         if (c->m_renderer->isCounter())
-            c->m_renderer->setNeedsLayoutAndMinMaxRecalc();
+            c->m_renderer->setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
 

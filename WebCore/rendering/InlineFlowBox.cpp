@@ -578,7 +578,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     // 3. Paint our children.
     if (paintPhase != PaintPhaseSelfOutline) {
         for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
-            if (!curr->object()->layer())
+            if (!curr->object()->hasLayer())
                 curr->paint(childInfo, tx, ty);
         }
     }

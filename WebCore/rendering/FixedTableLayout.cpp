@@ -180,7 +180,7 @@ int FixedTableLayout::calcWidthArray(int tableWidth)
     return usedWidth;
 }
 
-void FixedTableLayout::calcMinMaxWidth(int& minWidth, int& maxWidth)
+void FixedTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
 {
     // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
     

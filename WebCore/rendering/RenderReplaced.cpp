@@ -75,18 +75,18 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     return true;
 }
 
-void RenderReplaced::calcMinMaxWidth()
+void RenderReplaced::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
+    ASSERT(prefWidthsDirty());
 
     int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
-        m_minWidth = 0;
-        m_maxWidth = width;
+        m_minPrefWidth = 0;
+        m_maxPrefWidth = width;
     } else
-        m_minWidth = m_maxWidth = width;
+        m_minPrefWidth = m_maxPrefWidth = width;
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 short RenderReplaced::lineHeight(bool, bool) const

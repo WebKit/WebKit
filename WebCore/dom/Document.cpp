@@ -1961,7 +1961,7 @@ void Document::updateStyleSelector()
 #endif
 
     if (renderer()) {
-        renderer()->setNeedsLayoutAndMinMaxRecalc();
+        renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         if (view())
             view()->scheduleRelayout();
     }

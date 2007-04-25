@@ -58,7 +58,7 @@ bool RenderSVGText::requiresLayer()
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     IntRect oldBounds;
     IntRect oldOutlineBox;

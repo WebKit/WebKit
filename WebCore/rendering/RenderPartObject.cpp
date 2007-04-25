@@ -107,7 +107,7 @@ void RenderPartObject::updateWidget()
   Vector<String> paramValues;
   Frame* frame = m_view->frame();
 
-  setNeedsLayoutAndMinMaxRecalc();
+  setNeedsLayoutAndPrefWidthsRecalc();
 
   if (element()->hasTagName(objectTag)) {
 
@@ -245,7 +245,7 @@ void RenderPartObject::updateWidget()
 void RenderPartObject::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
 
     calcWidth();
     calcHeight();

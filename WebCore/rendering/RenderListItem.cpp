@@ -170,7 +170,7 @@ void RenderListItem::updateValue()
     if (!m_hasExplicitValue) {
         m_isValueUpToDate = false;
         if (m_marker)
-            m_marker->setNeedsLayoutAndMinMaxRecalc();
+            m_marker->setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
 
@@ -191,30 +191,30 @@ void RenderListItem::updateMarkerLocation()
                 lineBoxParent = this;
         }
 
-        if (markerPar != lineBoxParent || !m_marker->minMaxKnown()) {
+        if (markerPar != lineBoxParent || m_marker->prefWidthsDirty()) {
             m_marker->remove();
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, lineBoxParent->firstChild());
-            if (!m_marker->minMaxKnown())
-                m_marker->calcMinMaxWidth();
+            if (m_marker->prefWidthsDirty())
+                m_marker->calcPrefWidths();
             recalcMinMaxWidths();
         }
     }
 }
 
-void RenderListItem::calcMinMaxWidth()
+void RenderListItem::calcPrefWidths()
 {
     // Make sure our marker is in the correct location.
     updateMarkerLocation();
-    if (!minMaxKnown())
-        RenderBlock::calcMinMaxWidth();
+    if (prefWidthsDirty())
+        RenderBlock::calcPrefWidths();
 }
 
 void RenderListItem::layout()
 {
     ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
+    ASSERT(!prefWidthsDirty());
     
     updateMarkerLocation();    
     RenderBlock::layout();
@@ -285,7 +285,7 @@ const String& RenderListItem::markerText() const
 void RenderListItem::explicitValueChanged()
 {
     if (m_marker)
-        m_marker->setNeedsLayoutAndMinMaxRecalc();
+        m_marker->setNeedsLayoutAndPrefWidthsRecalc();
     Node* listNode = enclosingList(node());
     RenderObject* listRenderer = 0;
     if (listNode)
@@ -296,7 +296,7 @@ void RenderListItem::explicitValueChanged()
             if (!item->m_hasExplicitValue) {
                 item->m_isValueUpToDate = false;
                 if (RenderListMarker* marker = item->m_marker)
-                    marker->setNeedsLayoutAndMinMaxRecalc();
+                    marker->setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
 }

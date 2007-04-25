@@ -176,7 +176,7 @@ RenderObject::RenderObject(Node* node)
     , m_needsLayout(false)
     , m_normalChildNeedsLayout(false)
     , m_posChildNeedsLayout(false)
-    , m_minMaxKnown(false)
+    , m_prefWidthsDirty(true)
     , m_floating(false)
     , m_positioned(false)
     , m_relPositioned(false)
@@ -385,7 +385,7 @@ RenderObject* RenderObject::lastLeafChild() const
 static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*& newObject,
                       RenderLayer*& beforeChild)
 {
-    if (obj->layer()) {
+    if (obj->hasLayer()) {
         if (!beforeChild && newObject) {
             // We need to figure out the layer that follows newObject.  We only do
             // this the first time we find a child layer, and then we update the
@@ -416,7 +416,7 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
     if (!parentLayer)
         return;
 
-    if (layer()) {
+    if (hasLayer()) {
         parentLayer->removeChild(layer());
         return;
     }
@@ -430,7 +430,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
     if (!newParent)
         return;
 
-    if (layer()) {
+    if (hasLayer()) {
         if (oldParent)
             oldParent->removeChild(layer());
         newParent->addChild(layer());
@@ -1601,7 +1601,7 @@ IntRect RenderObject::absoluteBoundingBoxRect()
 
 void RenderObject::addAbsoluteRectForLayer(IntRect& result)
 {
-    if (layer())
+    if (hasLayer())
         result.unite(absoluteBoundingBoxRect());
     for (RenderObject* current = firstChild(); current; current = current->nextSibling())
         current->addAbsoluteRectForLayer(result);
@@ -1834,7 +1834,7 @@ void RenderObject::repaintOverhangingFloats(bool paintAllDescendants)
 
 bool RenderObject::checkForRepaintDuringLayout() const
 {
-    return !document()->view()->needsFullRepaint() && !layer();
+    return !document()->view()->needsFullRepaint() && !hasLayer();
 }
 
 void RenderObject::repaintObjectsBeforeLayout()
@@ -1954,8 +1954,8 @@ void RenderObject::dump(TextStream* stream, DeprecatedString ind) const
         *stream << " paintBackground";
     if (needsLayout())
         *stream << " needsLayout";
-    if (minMaxKnown())
-        *stream << " minMaxKnown";
+    if (prefWidthsDirty())
+        *stream << " prefWidthsDirty";
     *stream << endl;
 
     RenderObject* child = firstChild();
@@ -2141,7 +2141,7 @@ void RenderObject::setStyle(RenderStyle* style)
 
             if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
                     m_style->zIndex() != style->zIndex() ||
-                    m_style->visibility() != style->visibility()) && layer()) {
+                    m_style->visibility() != style->visibility()) && hasLayer()) {
                 layer()->stackingContext()->dirtyZOrderLists();
                 if (m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
                         m_style->visibility() != style->visibility())
@@ -2161,7 +2161,7 @@ void RenderObject::setStyle(RenderStyle* style)
         d = m_style->diff(style);
 
         // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
-        if (d == RenderStyle::RepaintLayer && !layer())
+        if (d == RenderStyle::RepaintLayer && !hasLayer())
             d = RenderStyle::Repaint;
 
         // The background of the root element or the body element could propagate up to
@@ -2182,7 +2182,7 @@ void RenderObject::setStyle(RenderStyle* style)
 
         // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
         // end up being destroyed.
-        if (d == RenderStyle::Layout && layer() &&
+        if (d == RenderStyle::Layout && hasLayer() &&
                 (m_style->position() != style->position() ||
                  m_style->zIndex() != style->zIndex() ||
                  m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
@@ -2273,7 +2273,7 @@ void RenderObject::setStyle(RenderStyle* style)
     // We do have to schedule layouts, though, since a style change can force us to
     // need to relayout.
     if (d == RenderStyle::Layout && m_parent)
-        setNeedsLayoutAndMinMaxRecalc();
+        setNeedsLayoutAndPrefWidthsRecalc();
     else if (m_parent && !isText() && (d == RenderStyle::RepaintLayer || d == RenderStyle::Repaint))
         // Do a repaint with the new style now, e.g., for example if we go from
         // not having an outline to having an outline.
@@ -2492,7 +2492,8 @@ void RenderObject::destroy()
     if (m_hasCounterNodeMap)
         RenderCounter::destroyCounterNodes(this);
 
-    document()->axObjectCache()->remove(this);
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->remove(this);
 
     // By default no ref-counting. RenderWidget::destroy() doesn't call
     // this function because it needs to do ref-counting. If anything
@@ -2713,17 +2714,17 @@ void RenderObject::recalcMinMaxWidths()
         int cmin = 0;
         int cmax = 0;
         bool test = false;
-        if ((m_minMaxKnown && child->m_recalcMinMax) || !child->m_minMaxKnown) {
-            cmin = child->minWidth();
-            cmax = child->maxWidth();
+        if ((!m_prefWidthsDirty && child->m_recalcMinMax) || child->m_prefWidthsDirty) {
+            cmin = child->minPrefWidth();
+            cmax = child->maxPrefWidth();
             test = true;
         }
         if (child->m_recalcMinMax)
             child->recalcMinMaxWidths();
-        if (!child->m_minMaxKnown)
-            child->calcMinMaxWidth();
-        if (m_minMaxKnown && test && (cmin != child->minWidth() || cmax != child->maxWidth()))
-            m_minMaxKnown = false;
+        if (child->m_prefWidthsDirty)
+            child->calcPrefWidths();
+        if (!m_prefWidthsDirty && test && (cmin != child->minPrefWidth() || cmax != child->maxPrefWidth()))
+            m_prefWidthsDirty = true;
         child = child->nextSibling();
     }
 
@@ -2731,10 +2732,10 @@ void RenderObject::recalcMinMaxWidths()
     // happened somewhere deep inside the child tree. Also do this for blocks or tables that
     // are inline (i.e., inline-block and inline-table).
     if ((!isInline() || isInlineBlockOrInlineTable()) && childrenInline())
-        m_minMaxKnown = false;
+        m_prefWidthsDirty = true;
 
-    if (!m_minMaxKnown)
-        calcMinMaxWidth();
+    if (m_prefWidthsDirty)
+        calcPrefWidths();
 }
 
 void RenderObject::scheduleRelayout()

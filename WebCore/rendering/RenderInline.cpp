@@ -122,7 +122,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
 
     RenderContainer::addChild(newChild, beforeChild);
 
-    newChild->setNeedsLayoutAndMinMaxRecalc();
+    newChild->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 RenderInline* RenderInline::cloneInline(RenderFlow* src)
@@ -148,7 +148,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         RenderObject* tmp = o;
         o = tmp->nextSibling();
         clone->addChildToFlow(removeChildNode(tmp), 0);
-        tmp->setNeedsLayoutAndMinMaxRecalc();
+        tmp->setNeedsLayoutAndPrefWidthsRecalc();
     }
 
     // Hook |clone| up as the continuation of the middle block.
@@ -192,7 +192,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
                 RenderObject* tmp = o;
                 o = tmp->nextSibling();
                 clone->addChildToFlow(curr->removeChildNode(tmp), 0);
-                tmp->setNeedsLayoutAndMinMaxRecalc();
+                tmp->setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
         
@@ -246,7 +246,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
             RenderObject* no = o;
             o = no->nextSibling();
             pre->appendChildNode(block->removeChildNode(no));
-            no->setNeedsLayoutAndMinMaxRecalc();
+            no->setNeedsLayoutAndPrefWidthsRecalc();
         }
     }
 
@@ -266,9 +266,9 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
     // get deleted properly.  Because objects moves from the pre block into the post block, we want to
     // make new line boxes instead of leaving the old line boxes around.
-    pre->setNeedsLayoutAndMinMaxRecalc();
-    block->setNeedsLayoutAndMinMaxRecalc();
-    post->setNeedsLayoutAndMinMaxRecalc();
+    pre->setNeedsLayoutAndPrefWidthsRecalc();
+    block->setNeedsLayoutAndPrefWidthsRecalc();
+    post->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
@@ -292,15 +292,15 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
                                       ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
-void RenderInline::calcMinMaxWidth()
+void RenderInline::calcPrefWidths()
 {
-    ASSERT(!minMaxKnown());
+    ASSERT(prefWidthsDirty());
 
     // Irrelevant, since some enclosing block will actually measure us and our children.
-    m_minWidth = 0;
-    m_maxWidth = 0;
+    m_minPrefWidth = 0;
+    m_maxPrefWidth = 0;
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 bool RenderInline::requiresLayer()

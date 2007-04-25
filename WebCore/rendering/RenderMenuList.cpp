@@ -130,7 +130,7 @@ void RenderMenuList::updateOptionsWidth()
         return;
 
     m_optionsWidth = width;
-    setNeedsLayoutAndMinMaxRecalc();
+    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderMenuList::updateFromElement()
@@ -198,34 +198,34 @@ IntRect RenderMenuList::controlClipRect(int tx, int ty) const
                    contentWidth(), contentHeight());
 }
 
-void RenderMenuList::calcMinMaxWidth()
+void RenderMenuList::calcPrefWidths()
 {
-    m_minWidth = 0;
-    m_maxWidth = 0;
+    m_minPrefWidth = 0;
+    m_maxPrefWidth = 0;
 
     if (style()->width().isFixed() && style()->width().value() > 0)
-        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
+        m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else
-        m_maxWidth = max(m_optionsWidth, theme()->minimumMenuListSize(style()));
+        m_maxPrefWidth = max(m_optionsWidth, theme()->minimumMenuListSize(style()));
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
-        m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
-        m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_minPrefWidth = max(m_minPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
     } else if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent()))
-        m_minWidth = 0;
+        m_minPrefWidth = 0;
     else
-        m_minWidth = m_maxWidth;
+        m_minPrefWidth = m_maxPrefWidth;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
-        m_maxWidth = min(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
-        m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_maxPrefWidth = min(m_maxPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
     int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
-    m_minWidth += toAdd;
-    m_maxWidth += toAdd;
+    m_minPrefWidth += toAdd;
+    m_maxPrefWidth += toAdd;
 
-    setMinMaxKnown();
+    setPrefWidthsDirty(false);
 }
 
 void RenderMenuList::showPopup()

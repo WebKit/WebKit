@@ -169,6 +169,28 @@ protected:
     WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
 };
 
+inline void RootInlineBox::setHorizontalOverflowPositions(int left, int right) 
+{ 
+    if (!m_overflow) {
+        if (left == m_x && right == m_x + m_width)
+            return;
+        m_overflow = new (m_object->renderArena()) Overflow(this);       
+    }
+    m_overflow->m_leftOverflow = left; 
+    m_overflow->m_rightOverflow = right; 
+}
+
+inline void RootInlineBox::setVerticalSelectionPositions(int top, int bottom) 
+{ 
+    if (!m_overflow) {
+        if (top == m_y && bottom == m_y + m_height)
+            return;
+        m_overflow = new (m_object->renderArena()) Overflow(this);
+    }
+    m_overflow->m_selectionTop = top; 
+    m_overflow->m_selectionBottom = bottom; 
+}
+
 } // namespace WebCore
 
 #endif // RootInlineBox_h

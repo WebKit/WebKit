@@ -42,7 +42,7 @@ public:
     virtual const char* renderName() const { return "RenderTextControl"; }
 
     virtual void calcHeight();
-    virtual void calcMinMaxWidth();
+    virtual void calcPrefWidths();
     virtual void removeLeftoverAnonymousBoxes() { }
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();

@@ -42,7 +42,7 @@ public:
     virtual void layout();
     virtual void calcWidth();
     virtual void calcHeight();
-    virtual void calcMinMaxWidth();
+    virtual void calcPrefWidths();
     virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false) const;
 
     int docHeight() const;

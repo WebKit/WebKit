@@ -75,16 +75,16 @@ public:
 
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    virtual void calcMinMaxWidth();
-    virtual int minWidth() const { return m_minWidth; }
-    virtual int maxWidth() const { return m_maxWidth; }
+    virtual void calcPrefWidths();
+    virtual int minPrefWidth() const { return m_minWidth; }
+    virtual int maxPrefWidth() const { return m_maxWidth; }
 
-    void trimmedMinMaxWidth(int leadWidth,
-                            int& beginMinW, bool& beginWS,
-                            int& endMinW, bool& endWS,
-                            bool& hasBreakableChar, bool& hasBreak,
-                            int& beginMaxW, int& endMaxW,
-                            int& minW, int& maxW, bool& stripFrontSpaces);
+    void trimmedPrefWidths(int leadWidth,
+                           int& beginMinW, bool& beginWS,
+                           int& endMinW, bool& endWS,
+                           bool& hasBreakableChar, bool& hasBreak,
+                           int& beginMaxW, int& endMaxW,
+                           int& minW, int& maxW, bool& stripFrontSpaces);
 
     // returns the minimum x position of all runs relative to the parent.
     // defaults to 0.
@@ -138,7 +138,7 @@ private:
 
     void deleteTextBoxes();
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
-    void calcMinMaxWidthInternal(int leadWidth);
+    void calcPrefWidthsInternal(int leadWidth);
 
     int widthFromCache(const Font&, int start, int len, int xPos) const;
     bool isAllASCII() const { return m_isAllASCII; }

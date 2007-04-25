@@ -1,3 +1,239 @@
+2007-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - first round of preparation for Hyatt's "lazy minMaxWidth" change
+          http://bugs.webkit.org/show_bug.cgi?id=13431
+
+        This patch limits itself to renaming and making other super-simple
+        changes so that the above change will be smaller and easier to review
+        and understand.
+
+        Rename:
+
+            calcHorizontalMinMaxWidth -> calcHorizontalPrefWidths
+            calcMinMaxWidth -> calcPrefWidths
+            calcMinMaxWidthInternal -> calcPrefWidthsInternal
+            calcVerticalMinMaxWidth -> calcVerticalPrefWidths
+            setNeedsLayoutAndMinMaxRecalc -> setNeedsLayoutAndPrefWidthsRecalc
+            trimmedMinMaxWidth -> trimmedPrefWidths
+
+            RenderObject::m_maxWidth -> RenderObject::m_maxPrefWidth
+            RenderObject::m_minWidth -> RenderObject::m_minPrefWidth
+            RenderObject::maxWidth() -> RenderObject::maxPrefWidth()
+            RenderObject::minWidth() -> RenderObject::minPrefWidth()
+
+        Replace m_minMaxKnown, minMaxKnown(), and setMinMaxKnown() with
+        m_prefWidthsDirty, prefWidthsDirty(), and setPrefWidthsDirty(),
+        a boolean with the opposite sense.
+
+        Convert some uses of if statements into "max".
+
+        Change many uses of layer() to hasLayer(). For now it's just a boolean
+        version of layer(), but Hyatt's patch makes it faster by using a bit.
+
+        Added a guard to use of axObjectCache() to make RenderObject destruction
+        a little faster for the normal case.
+
+        Removed some assertions that will be removed in Hyatt's patch.
+
+        Made some functions const that will be const in Hyatt's patch.
+
+        Put in some revised comments from Hyatt's patch.
+
+        Removed an unneeded nil check from RenderListMarker::setStyle.
+
+        Moved RootInlineBox::setHorizontalOverflowPositions and
+        RootInlineBox::setVerticalSelectionPositions to the RootInlineBox.h
+        header and marked them inline.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateStyleSelector):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * page/Frame.cpp:
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcPrefWidths):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        * rendering/AutoTableLayout.h:
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::recount):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcPrefWidths):
+        * rendering/FixedTableLayout.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::handleCompactChild):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::calcPrefWidths):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::calcBlockPrefWidths):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::minPrefWidth):
+        (WebCore::RenderBox::maxPrefWidth):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        (WebCore::RenderContainer::layout):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::calcPrefWidths):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::calcPrefWidths):
+        * rendering/RenderCounter.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::calcPrefWidths):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::calcPrefWidths):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderFlexibleBox::calcPrefWidths):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlexibleBox.h:
+        (WebCore::RenderFlexibleBox::hasMultipleLines):
+        (WebCore::RenderFlexibleBox::isVertical):
+        (WebCore::RenderFlexibleBox::isHorizontal):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::calcPrefWidths):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::calcPrefWidths):
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::calcPrefWidths):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateValue):
+        (WebCore::RenderListItem::updateMarkerLocation):
+        (WebCore::RenderListItem::calcPrefWidths):
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::explicitValueChanged):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::setStyle):
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::imageChanged):
+        (WebCore::RenderListMarker::calcPrefWidths):
+        (WebCore::RenderListMarker::calcWidth):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::calcPrefWidths):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::addLayers):
+        (WebCore::RenderObject::removeLayers):
+        (WebCore::RenderObject::moveLayers):
+        (WebCore::RenderObject::addAbsoluteRectForLayer):
+        (WebCore::RenderObject::checkForRepaintDuringLayout):
+        (WebCore::RenderObject::dump):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::recalcMinMaxWidths):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasLayer):
+        (WebCore::RenderObject::prefWidthsDirty):
+        (WebCore::RenderObject::setPrefWidthsDirty):
+        (WebCore::RenderObject::setNeedsLayoutAndPrefWidthsRecalc):
+        (WebCore::RenderObject::calcPrefWidths):
+        (WebCore::RenderObject::minPrefWidth):
+        (WebCore::RenderObject::maxPrefWidth):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::setWidget):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        (WebCore::RenderPartObject::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::calcPrefWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::calcPrefWidths):
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::calcPrefWidths):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::calcPrefWidths):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::calcPrefWidths):
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::appendColumn):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::updateFromElement):
+        (WebCore::RenderTableCell::styleOrColWidth):
+        (WebCore::RenderTableCell::calcPrefWidths):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::calcPrefWidths):
+        (WebCore::RenderText::calcPrefWidthsInternal):
+        (WebCore::RenderText::setText):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::minPrefWidth):
+        (WebCore::RenderText::maxPrefWidth):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::calcPrefWidths):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::layout):
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::setHorizontalOverflowPositions):
+        (WebCore::RootInlineBox::setVerticalSelectionPositions):
+        * rendering/TableLayout.h:
+
 2007-04-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver

@@ -244,10 +244,10 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
     return text.impl();
 }
 
-void RenderCounter::calcMinMaxWidth()
+void RenderCounter::calcPrefWidths()
 {
     setTextInternal(originalText());
-    RenderText::calcMinMaxWidth();
+    RenderText::calcPrefWidths();
 }
 
 static void destroyCounterNodeChildren(AtomicStringImpl* identifier, CounterNode* node)

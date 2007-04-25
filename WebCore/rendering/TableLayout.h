@@ -36,7 +36,7 @@ public:
 
     virtual ~TableLayout() { }
 
-    virtual void calcMinMaxWidth(int& minWidth, int& maxWidth) = 0;
+    virtual void calcPrefWidths(int& minWidth, int& maxWidth) = 0;
     virtual void layout() = 0;
 
 protected:

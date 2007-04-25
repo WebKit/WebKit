@@ -76,12 +76,12 @@ void AutoTableLayout::recalcColumn(int effCol)
                     // a min/max width of at least 1px for this column now.
                     l.minWidth = max(l.minWidth, 1);
                     l.maxWidth = max(l.maxWidth, 1);
-                    if (!cell->minMaxKnown())
-                        cell->calcMinMaxWidth();
-                    if (cell->minWidth() > l.minWidth)
-                        l.minWidth = cell->minWidth();
-                    if (cell->maxWidth() > l.maxWidth) {
-                        l.maxWidth = cell->maxWidth();
+                    if (cell->prefWidthsDirty())
+                        cell->calcPrefWidths();
+                    if (cell->minPrefWidth() > l.minWidth)
+                        l.minWidth = cell->minPrefWidth();
+                    if (cell->maxPrefWidth() > l.maxWidth) {
+                        l.maxWidth = cell->maxPrefWidth();
                         maxContributor = cell;
                     }
 
@@ -244,7 +244,7 @@ static bool shouldScaleColumns(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::calcMinMaxWidth(int& minWidth, int& maxWidth)
+void AutoTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
 {
     fullRecalc();
 
@@ -319,8 +319,8 @@ int AutoTableLayout::calcEffectiveWidth()
 
         int col = m_table->colToEffCol(cell->col());
         unsigned int lastCol = col;
-        int cMinWidth = cell->minWidth() + hspacing;
-        int cMaxWidth = cell->maxWidth() + hspacing;
+        int cMinWidth = cell->minPrefWidth() + hspacing;
+        int cMaxWidth = cell->maxPrefWidth() + hspacing;
         int totalPercent = 0;
         int minWidth = 0;
         int maxWidth = 0;
