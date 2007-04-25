@@ -1611,6 +1611,11 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 if (relayoutChildren || o->style()->width().isPercent() || o->style()->height().isPercent())
                     o->setChildNeedsLayout(true, false);
+                    
+                // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
+                if (relayoutChildren && (o->style()->paddingLeft().isPercent() || o->style()->paddingRight().isPercent()))
+                    o->setPrefWidthsDirty(true, false);
+            
                 if (o->isPositioned())
                     o->containingBlock()->insertPositionedObject(o);
                 else {

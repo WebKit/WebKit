@@ -1131,6 +1131,10 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         if (relayoutChildren || (child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent()))
             child->setChildNeedsLayout(true, false);
 
+        // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
+        if (relayoutChildren && (child->style()->paddingLeft().isPercent() || child->style()->paddingRight().isPercent()))
+            child->setPrefWidthsDirty(true, false);
+
         // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
         // run-ins.  When we encounter these four types of objects, we don't actually lay them out as normal flow blocks.
         bool handled = false;
@@ -1249,6 +1253,11 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             // positioned explicitly) this should not incur a performance penalty.
             if (relayoutChildren || (r->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
                 r->setChildNeedsLayout(true, false);
+                
+            // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
+            if (relayoutChildren && (r->style()->paddingLeft().isPercent() || r->style()->paddingRight().isPercent()))
+                r->setPrefWidthsDirty(true, false);
+                    
             r->layoutIfNeeded();
         }
     }

@@ -1,3 +1,16 @@
+2007-04-25  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13373, make sure to invalidate the pref widths for objects
+        with percentage padding.
+
+        Reviewed by beth
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2007-04-25  David Harrison  <harrison@apple.com>
 
         Comment change. Correct the header name in the endif comment.
