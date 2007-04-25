@@ -263,7 +263,7 @@ static NSArray *additionalWebPlugInPaths;
     }
     [MIMETypes release];
     
-    [pool release];
+    [pool drain];
 }
 
 - (BOOL)isMIMETypeRegistered:(NSString *)MIMEType

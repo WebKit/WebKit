@@ -82,7 +82,7 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
             unsigned currentNumPools = WKGetNSAutoreleasePoolCount()-1;            
             if (currentNumPools == numPools){
-                [sPool release];
+                [sPool drain];
                 
                 sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
                 numPools = WKGetNSAutoreleasePoolCount();

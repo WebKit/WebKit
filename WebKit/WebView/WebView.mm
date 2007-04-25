@@ -2850,10 +2850,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
                 // Convert rect to our coordinate system
                 r = [htmlView convertRect:r toView:self];
                 [result addObject:[NSValue valueWithRect:r]];
-                if (rectIndex % 10 == 0)
+                if (rectIndex % 10 == 0) {
                     [pool drain];
+                    pool = [[NSAutoreleasePool alloc] init];
+                }
             }
-            [pool release];
+            [pool drain];
         }
         
         frame = incrementFrame(frame, YES, NO);

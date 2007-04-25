@@ -138,9 +138,7 @@ static NSMutableDictionary *descriptions = nil;
 
 static void registerErrors()
 {
-    NSAutoreleasePool *pool;
-
-    pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         // Policy errors

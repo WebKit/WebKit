@@ -1,3 +1,13 @@
+2007-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Tim Hatcher.
+
+        Fixed a few NSAutoreleasePool issues I noticed while reviewing Brady's patch.
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::setCompositeOperation): Call -drain instead of 
+        -release, since -release is a no-op in a GC world.
+
 2007-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

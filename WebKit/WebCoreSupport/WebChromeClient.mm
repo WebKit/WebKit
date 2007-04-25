@@ -335,7 +335,7 @@ void WebChromeClient::setStatusbarText(const WebCore::String& status)
     
         [wd webView:m_webView setStatusText:status];
         
-        [localPool release];
+        [localPool drain];
     }
 }
 

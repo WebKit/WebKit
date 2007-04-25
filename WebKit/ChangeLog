@@ -1,3 +1,34 @@
+2007-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Tim Hatcher.
+
+        Fixed a few NSAutoreleasePool issues I noticed while reviewing Brady's patch.
+
+        * Carbon/CarbonUtils.m:
+        (PoolCleaner): Call -drain instead of -release, since -release is a 
+        no-op in a GC world.
+
+        * Misc/WebKitErrors.m:
+        (registerErrors): Condensed onto one line.
+
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]): Call -drain instead of -release, since
+        -release is a no-op in a GC world.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setStatusbarText):
+
+        * WebInspector/WebNodeHighlightView.m:
+        (-[WebNodeHighlightView initWithHighlight:andRects:forView:]): Don't drain
+        and then release because drain deallocates the receiver, so the release
+        is an over-release.
+
+        * WebView/WebView.mm:
+        (-[WebView rectsForTextMatches]): Re-allocate the pool after draining it,
+        because drain deallocates the receiver, so the drain would leave you without
+        any autorelease pool, causing a leak and then an over-release at the bottom
+        of the loop.
+
 2007-04-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Beth, Hyatt, Ada, and Darin

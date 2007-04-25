@@ -89,7 +89,6 @@
         }
 
         [pool drain];
-        [pool release];
 
         rect = [path bounds];
 

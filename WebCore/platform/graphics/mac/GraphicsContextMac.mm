@@ -96,7 +96,7 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     [[NSGraphicsContext graphicsContextWithGraphicsPort:platformContext() flipped:YES]
         setCompositingOperation:(NSCompositingOperation)op];
-    [pool release];
+    [pool drain];
 }
 
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
