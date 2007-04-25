@@ -1,3 +1,16 @@
+2007-04-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12163
+        SVG text does not appear in a scrolling <div>
+
+        * svg/custom/invisible-text-after-scrolling-expected.checksum: Added.
+        * svg/custom/invisible-text-after-scrolling-expected.png: Added.
+        * svg/custom/invisible-text-after-scrolling-expected.txt: Added.
+        * svg/custom/invisible-text-after-scrolling.xhtml: Added.
+
 2007-04-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

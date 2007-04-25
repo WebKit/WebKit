@@ -1,3 +1,15 @@
+2007-04-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12163
+        SVG text does not appear in a scrolling <div>
+
+        Make sure SVG text is painted when scrolling by taking into account the relative offset of the non-SVG parent in the paintInfo rect.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+
 2007-04-26  Mark Rowe  <mrowe@apple.com>
 
         Fix non-Mac builds after r21081.
