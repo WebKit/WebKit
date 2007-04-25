@@ -285,7 +285,7 @@ static size_t class_to_pages[kNumClasses];
 
 // Return floor(log2(n)) for n > 0.
 #if PLATFORM(X86) && COMPILER(GCC)
-static inline int LgFloor(size_t n) {
+static ALWAYS_INLINE int LgFloor(size_t n) {
   // "ro" for the input spec means the input can come from either a
   // register ("r") or offsetable memory ("o").
   int result;
@@ -298,7 +298,7 @@ static inline int LgFloor(size_t n) {
 }
 
 #elif PLATFORM(PPC) && COMPILER(GCC)
-static inline int LgFloor(size_t n) {
+static ALWAYS_INLINE int LgFloor(size_t n) {
   // "r" for the input spec means the input must come from a
   // register ("r")
   int result;
@@ -328,15 +328,15 @@ static inline int LgFloor(size_t n) {
 }
 #endif
 
-static inline size_t SizeClass(size_t size) {
-  if (size == 0) size = 1;
+static ALWAYS_INLINE size_t SizeClass(size_t size) {
+  size += !size; // change 0 to 1 (with no branches)
   const int lg = LgFloor(size);
   const int align = size_shift[lg];
   return size_base[lg] + ((size-1) >> align);
 }
 
 // Get the byte-size for a specified class
-static inline size_t ByteSizeForClass(size_t cl) {
+static ALWAYS_INLINE size_t ByteSizeForClass(size_t cl) {
   return class_to_size[cl];
 }
 

@@ -1,3 +1,17 @@
+2007-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - tweak the allocator for a small speedup -- Shark showed this was a win, but I can't
+          measure an improvement right now, but it's also clear these changes do no harm
+
+        * wtf/FastMalloc.cpp:
+        (WTF::LgFloor): Use ALWAYS_INLINE here; in testing I did a while back this was necessary
+        to get this single-instruction function to be inlined.
+        (WTF::SizeClass): Use ALWAYS_INLINE here too for the same reason. Also change the special
+        case for a size of 0 to work without a branch for a bit of extra speed.
+        (WTF::ByteSizeForClass): Use ALWAYS_INLINE here too for the same reason.
+
 2007-04-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
