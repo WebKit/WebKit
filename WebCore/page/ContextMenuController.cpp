@@ -243,6 +243,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagSearchInSpotlight:
             m_client->searchWithSpotlight();
             break;
+#endif
         case ContextMenuItemTagShowSpellingPanel:
             frame->editor()->showSpellingGuessPanel();
             break;
@@ -257,6 +258,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             frame->editor()->toggleGrammarChecking();
             break;
 #endif
+#if PLATFORM(MAC)
         case ContextMenuItemTagShowFonts:
             frame->editor()->showFontPanel();
             break;

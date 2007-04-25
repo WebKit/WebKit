@@ -28,8 +28,10 @@
 #define EditorClient_h
 
 #include "EditorInsertAction.h"
+#include "PlatformString.h"
 #include "TextAffinity.h"
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 class NSArray;
@@ -48,7 +50,16 @@ class HTMLElement;
 class KeyboardEvent;
 class Node;
 class Range;
+class Selection;
 class String;
+class VisiblePosition;
+
+struct GrammarDetail {
+    int location;
+    int length;
+    Vector<String> guesses;
+    String userDescription;
+};
 
 class EditorClient {
 public:
@@ -117,6 +128,16 @@ public:
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(Frame*) = 0;
 #endif
+#else
+    virtual void ignoreWordInSpellDocument(const String&) = 0;
+    virtual void learnWord(const String&) = 0;
+    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) = 0;
+    virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
+    virtual void udpateSpellingUIWithGrammarString(const String&, const Vector<String>& guesses) = 0;
+    virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;
+    virtual void showSpellingUI(bool show) = 0;
+    virtual bool spellingUIIsShowing() = 0;
+    virtual void getGuessesForWord(const String&, Vector<String>& guesses) = 0;
 #endif
 
 };

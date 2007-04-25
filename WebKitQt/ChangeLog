@@ -1,3 +1,21 @@
+2007-04-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+        
+        Spelling and grammar stubs
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::ignoreWordInSpellDocument):
+        (WebCore::EditorClientQt::learnWord):
+        (WebCore::EditorClientQt::checkSpellingOfString):
+        (WebCore::EditorClientQt::checkGrammarOfString):
+        (WebCore::EditorClientQt::udpateSpellingUIWithGrammarString):
+        (WebCore::EditorClientQt::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientQt::showSpellingUI):
+        (WebCore::EditorClientQt::spellingUIIsShowing):
+        (WebCore::EditorClientQt::getGuessesForWord):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-04-11  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.

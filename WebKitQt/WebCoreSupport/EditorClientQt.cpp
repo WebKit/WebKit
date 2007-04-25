@@ -301,6 +301,52 @@ void EditorClientQt::textDidChangeInTextArea(Element*)
 {
 }
 
+void EditorClientQt::ignoreWordInSpellDocument(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientQt::learnWord(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientQt::checkSpellingOfString(const UChar*, int, int*, int*)
+{
+    notImplemented();
+}
+
+void EditorClientQt::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+{
+    notImplemented();
+}
+
+void EditorClientQt::udpateSpellingUIWithGrammarString(const String&, const Vector<String>&)
+{
+    notImplemented();
+}
+
+void EditorClientQt::updateSpellingUIWithMisspelledWord(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientQt::showSpellingUI(bool)
+{
+    notImplemented();
+}
+
+bool EditorClientQt::spellingUIIsShowing()
+{
+    notImplemented();
+    return false;
+}
+
+void EditorClientQt::getGuessesForWord(const String&, Vector<String>&)
+{
+    notImplemented();
+}
+
 bool EditorClientQt::isEditing() const
 {
     return m_editing;

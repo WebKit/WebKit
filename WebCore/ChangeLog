@@ -1,3 +1,27 @@
+2007-04-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin, Oliver.
+
+        Refactor spelling codepaths
+
+        * bridge/EditorClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::ignoreWordInSpellDocument):
+        (WebCore::EditorClientGdk::learnWord):
+        (WebCore::EditorClientGdk::checkSpellingOfString):
+        (WebCore::EditorClientGdk::checkGrammarOfString):
+        (WebCore::EditorClientGdk::udpateSpellingUIWithGrammarString):
+        (WebCore::EditorClientGdk::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientGdk::showSpellingUI):
+        (WebCore::EditorClientGdk::spellingUIIsShowing):
+        (WebCore::EditorClientGdk::getGuessesForWord):
+        * platform/gdk/EditorClientGdk.h:
+
 2007-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

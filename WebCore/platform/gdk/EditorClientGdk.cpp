@@ -295,6 +295,52 @@ void EditorClientGdk::textDidChangeInTextArea(Element*)
     notImplementedGdk();
 }
 
+void EditorClientGdk::ignoreWordInSpellDocument(const String&)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::learnWord(const String&)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::checkSpellingOfString(const UChar*, int, int*, int*)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::udpateSpellingUIWithGrammarString(const String&, const Vector<String>&)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::updateSpellingUIWithMisspelledWord(const String&)
+{
+    notImplementedGdk();
+}
+
+void EditorClientGdk::showSpellingUI(bool)
+{
+    notImplementedGdk();
+}
+
+bool EditorClientGdk::spellingUIIsShowing()
+{
+    notImplementedGdk();
+    return false;
+}
+
+void EditorClientGdk::getGuessesForWord(const String&, Vector<String>&)
+{
+    notImplementedGdk();
+}
+
 }
 
 // vim: ts=4 sw=4 et

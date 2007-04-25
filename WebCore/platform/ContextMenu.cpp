@@ -336,7 +336,6 @@ void ContextMenu::populate()
 
         if (!inPasswordField) {
             appendItem(*separatorItem());
-#if PLATFORM(MAC)
 #ifndef BUILDING_ON_TIGER
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
                 contextMenuItemTagSpellingMenu());
@@ -347,7 +346,6 @@ void ContextMenu::populate()
                 contextMenuItemTagSpellingMenu());
             createAndAppendSpellingSubMenu(m_hitTestResult, SpellingMenuItem);
             appendItem(SpellingMenuItem);
-#endif
 #endif
             ContextMenuItem  FontMenuItem(SubmenuType, ContextMenuItemTagFontMenu, 
                 contextMenuItemTagFontMenu());
@@ -452,7 +450,6 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagOutline:
             shouldEnable = false;
             break;
-#if PLATFORM(MAC)
         case ContextMenuItemTagShowSpellingPanel:
 #ifndef BUILDING_ON_TIGER
             if (frame->editor()->spellingPanelIsShowing())
@@ -462,7 +459,6 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
             shouldEnable = frame->editor()->canEdit();
             break;
-#endif
         case ContextMenuItemTagNoGuessesFound:
             shouldEnable = false;
             break;
