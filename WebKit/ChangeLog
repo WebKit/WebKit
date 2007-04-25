@@ -1,3 +1,21 @@
+2007-04-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam.
+
+        Mac callbacks for new spelling methods in WebEditorClient.
+        Not used yet.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::ignoreWordInSpellDocument):
+        (WebEditorClient::learnWord):
+        (WebEditorClient::checkSpellingOfString):
+        (WebEditorClient::checkGrammarOfString):
+        (WebEditorClient::updateSpellingUIWithGrammarString):
+        (WebEditorClient::updateSpellingUIWithMisspelledWord):
+        (WebEditorClient::showSpellingUI):
+        (WebEditorClient::spellingUIIsShowing):
+        (WebEditorClient::getGuessesForWord):
+
 2007-04-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Tim Hatcher.

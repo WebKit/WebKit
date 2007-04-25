@@ -30,6 +30,7 @@
 #import <WebCore/EditorClient.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Forward.h>
+#import <wtf/Vector.h>
 
 @class WebView;
 @class WebEditorUndoTarget;
@@ -97,6 +98,16 @@ public:
     virtual void textWillBeDeletedInTextField(WebCore::Element*);
     virtual void textDidChangeInTextArea(WebCore::Element*);
     
+    virtual void ignoreWordInSpellDocument(const WebCore::String&) { }
+    virtual void learnWord(const WebCore::String&) { }
+    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) { }
+    virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) { }
+    virtual void updateSpellingUIWithGrammarString(const WebCore::String&, const WTF::Vector<WebCore::String>& guesses) { }
+    virtual void updateSpellingUIWithMisspelledWord(const WebCore::String&) { }
+    virtual void showSpellingUI(bool show) { }
+    virtual bool spellingUIIsShowing() { return false; }
+    virtual void getGuessesForWord(const WebCore::String&, WTF::Vector<WebCore::String>& guesses) { }
+
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();

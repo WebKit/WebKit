@@ -1,3 +1,13 @@
+2007-04-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam.
+        
+        Fix spelling error in spelling method name.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::updateSpellingUIWithGrammarString):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-04-24  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.
