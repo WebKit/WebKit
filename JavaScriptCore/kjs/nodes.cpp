@@ -184,6 +184,7 @@ void Node::clearNewNodes()
     newNodes = 0;
 }
 
+static void substitute(UString &string, const UString &substring) KJS_FAST_CALL;
 static void substitute(UString &string, const UString &substring)
 {
     int position = string.find("%s");
@@ -191,11 +192,13 @@ static void substitute(UString &string, const UString &substring)
     string = string.substr(0, position) + substring + string.substr(position + 2);
 }
 
+static inline int currentSourceId(ExecState* exec) KJS_FAST_CALL;
 static inline int currentSourceId(ExecState* exec)
 {
     return exec->context()->currentBody()->sourceId();
 }
 
+static inline const UString& currentSourceURL(ExecState* exec) KJS_FAST_CALL;
 static inline const UString& currentSourceURL(ExecState* exec)
 {
     return exec->context()->currentBody()->sourceURL();
@@ -745,12 +748,14 @@ JSValue *FunctionCallBracketNode::evaluate(ExecState *exec)
   return func->call(exec, thisObj, argList);
 }
 
+static const char *dotExprNotAnObjectString() KJS_FAST_CALL;
 static const char *dotExprNotAnObjectString()
 {
   return "Value %s (result of expression %s.%s) is not object.";
 }
 
-static const char *dotExprDoesNotAllowCallsString() 
+static const char *dotExprDoesNotAllowCallsString() KJS_FAST_CALL;
+static const char *dotExprDoesNotAllowCallsString()
 {
   return "Object %s (result of expression %s.%s) does not allow calls.";
 }
@@ -968,6 +973,7 @@ JSValue *VoidNode::evaluate(ExecState *exec)
 
 // ------------------------------ TypeOfValueNode -----------------------------------
 
+static JSValue *typeStringForValue(JSValue *v) KJS_FAST_CALL;
 static JSValue *typeStringForValue(JSValue *v)
 {
     switch (v->type()) {
@@ -1361,6 +1367,7 @@ JSValue *ConditionalNode::evaluate(ExecState *exec)
 
 // ECMA 11.13
 
+static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper) KJS_FAST_CALL;
 static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper)
 {
   JSValue *v;

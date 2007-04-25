@@ -1,3 +1,104 @@
+2007-04-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - use custom calling convention for everything in nodes.cpp on intel gcc for 1.5% speed boost
+
+        Nearly all functions in nodes.cpp were marked up to use the
+        regparm(3) calling convention under GCC for x86, since this is
+        faster and they are all guaranteed to be called only internally to
+        kjs.
+        
+        The only exception is destructors, since delete doesn't know how to use a custom calling convention.
+        
+        * kjs/nodes.cpp:
+        (dotExprDoesNotAllowCallsString):
+        * kjs/nodes.h:
+        (KJS::Node::):
+        (KJS::StatementNode::):
+        (KJS::NullNode::):
+        (KJS::BooleanNode::):
+        (KJS::NumberNode::):
+        (KJS::StringNode::):
+        (KJS::RegExpNode::):
+        (KJS::ThisNode::):
+        (KJS::ResolveNode::):
+        (KJS::GroupNode::):
+        (KJS::ElementNode::):
+        (KJS::ArrayNode::):
+        (KJS::PropertyNameNode::):
+        (KJS::PropertyNode::):
+        (KJS::PropertyListNode::):
+        (KJS::ObjectLiteralNode::):
+        (KJS::BracketAccessorNode::):
+        (KJS::DotAccessorNode::):
+        (KJS::ArgumentListNode::):
+        (KJS::ArgumentsNode::):
+        (KJS::NewExprNode::):
+        (KJS::FunctionCallValueNode::):
+        (KJS::FunctionCallResolveNode::):
+        (KJS::FunctionCallBracketNode::):
+        (KJS::FunctionCallParenBracketNode::):
+        (KJS::FunctionCallDotNode::):
+        (KJS::FunctionCallParenDotNode::):
+        (KJS::PostfixResolveNode::):
+        (KJS::PostfixBracketNode::):
+        (KJS::PostfixDotNode::):
+        (KJS::PostfixErrorNode::):
+        (KJS::DeleteResolveNode::):
+        (KJS::DeleteBracketNode::):
+        (KJS::DeleteDotNode::):
+        (KJS::DeleteValueNode::):
+        (KJS::VoidNode::):
+        (KJS::TypeOfResolveNode::):
+        (KJS::TypeOfValueNode::):
+        (KJS::PrefixResolveNode::):
+        (KJS::PrefixBracketNode::):
+        (KJS::PrefixDotNode::):
+        (KJS::PrefixErrorNode::):
+        (KJS::UnaryPlusNode::):
+        (KJS::NegateNode::):
+        (KJS::BitwiseNotNode::):
+        (KJS::LogicalNotNode::):
+        (KJS::MultNode::):
+        (KJS::AddNode::):
+        (KJS::ShiftNode::):
+        (KJS::RelationalNode::):
+        (KJS::EqualNode::):
+        (KJS::BitOperNode::):
+        (KJS::BinaryLogicalNode::):
+        (KJS::ConditionalNode::):
+        (KJS::AssignResolveNode::):
+        (KJS::AssignBracketNode::):
+        (KJS::AssignDotNode::):
+        (KJS::AssignErrorNode::):
+        (KJS::CommaNode::):
+        (KJS::AssignExprNode::):
+        (KJS::VarDeclListNode::):
+        (KJS::VarStatementNode::):
+        (KJS::EmptyStatementNode::):
+        (KJS::ExprStatementNode::):
+        (KJS::IfNode::):
+        (KJS::DoWhileNode::):
+        (KJS::WhileNode::):
+        (KJS::ForNode::):
+        (KJS::ContinueNode::):
+        (KJS::BreakNode::):
+        (KJS::ReturnNode::):
+        (KJS::WithNode::):
+        (KJS::LabelNode::):
+        (KJS::ThrowNode::):
+        (KJS::TryNode::):
+        (KJS::ParameterNode::):
+        (KJS::Parameter::):
+        (KJS::FunctionBodyNode::):
+        (KJS::FuncExprNode::):
+        (KJS::FuncDeclNode::):
+        (KJS::SourceElementsNode::):
+        (KJS::CaseClauseNode::):
+        (KJS::ClauseListNode::):
+        (KJS::SwitchNode::):
+
 2007-04-24  Oliver Hunt  <oliver@apple.com>
 
         GTK Build fix, ::findEntry->KJS::findEntry
