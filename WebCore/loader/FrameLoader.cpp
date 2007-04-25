@@ -889,7 +889,8 @@ void FrameLoader::write(const char* str, int len, bool flush)
 
     Tokenizer* tokenizer = m_frame->document()->tokenizer();
     if (tokenizer && tokenizer->wantsRawData()) {
-        tokenizer->writeRawData(str, len);
+        if (len > 0)
+            tokenizer->writeRawData(str, len);
         return;
     }
     

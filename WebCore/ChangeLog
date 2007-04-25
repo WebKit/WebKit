@@ -1,3 +1,15 @@
+2007-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Ada.
+
+        <rdar://problem/5122153>
+        Crash occurs at WebCore::Frame::loader() when switching to Bookmarks view while loading standalone image
+
+        Don't call writeRawData if the data length is 0. (This is checked by the decoder for the non-raw case).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write):
+
 2007-04-26  Mark Rowe  <mrowe@apple.com>
 
         Gdk build fix courtesy of Alp Toker.
