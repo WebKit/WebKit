@@ -285,6 +285,7 @@ void CachedPage::close() { notImplementedGdk(); }
 void Editor::ignoreSpelling() { notImplementedGdk(); }
 void Editor::learnSpelling() { notImplementedGdk(); }
 bool Editor::isSelectionUngrammatical() { notImplementedGdk(); return false; }
+void Editor::advanceToNextMisspelling(bool startBeforeSelection) { notImplementedGdk(); return false; }
 bool Editor::isSelectionMisspelled() { notImplementedGdk(); return false; }
 Vector<String> Editor::guessesForMisspelledSelection() { notImplementedGdk(); return Vector<String>(); }
 Vector<String> Editor::guessesForUngrammaticalSelection() { notImplementedGdk(); return Vector<String>(); }
