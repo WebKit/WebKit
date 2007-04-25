@@ -96,4 +96,14 @@ void Editor::markBadGrammar(const Selection& selection)
 
 }
 
+void Editor::showSpellingGuessPanel()
+{
+
+}
+
+bool Editor::spellingPanelIsShowing()
+{
+    return false;
+}
+
 } // namespace WebCore

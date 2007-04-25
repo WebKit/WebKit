@@ -292,6 +292,8 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition&) { not
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy) { notImplementedGdk(); return 0; }
 void Editor::markMisspellings(const Selection&) { notImplementedGdk(); }
 void Editor::markBadGrammar(const Selection&) { notImplementedGdk(); }
+void Editor::showSpellingGuessPanel() { notImplementedGdk(); }
+bool Editor::spellingPanelIsShowing() { notImplementedGdk(); return false; }
 
 Pasteboard* Pasteboard::generalPasteboard() { notImplementedGdk(); return 0; }
 void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplementedGdk(); }

@@ -1,3 +1,30 @@
+2007-04-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix non-Mac builds after r21081.
+
+        Stub out new Editor methods for Qt and Gdk, and new SVGEmptyEditorClient methods
+        for all non-Mac builds.
+
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::showSpellingGuessPanel):
+        (WebCore::Editor::spellingPanelIsShowing):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Editor::showSpellingGuessPanel):
+        (Editor::spellingPanelIsShowing):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::ignoreWordInSpellDocument):
+        (WebCore::SVGEmptyEditorClient::learnWord):
+        (WebCore::SVGEmptyEditorClient::checkSpellingOfString):
+        (WebCore::SVGEmptyEditorClient::checkGrammarOfString):
+        (WebCore::SVGEmptyEditorClient::udpateSpellingUIWithGrammarString):
+        (WebCore::SVGEmptyEditorClient::updateSpellingUIWithMisspelledWord):
+        (WebCore::SVGEmptyEditorClient::showSpellingUI):
+        (WebCore::SVGEmptyEditorClient::spellingUIIsShowing):
+        (WebCore::SVGEmptyEditorClient::getGuessesForWord):
+
 2007-04-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Ada.
