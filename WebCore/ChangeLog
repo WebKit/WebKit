@@ -1,3 +1,15 @@
+2007-04-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13445
+        NodeList access by index is slow
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::item): Support iterating backwards from the last accessed node
+        or from the last child.
+        * dom/NodeList.h: Make cachedLength unsigned.
+
 2007-04-26  Mark Rowe  <mrowe@apple.com>
 
         Gdk build fix.  Add missing stub.
