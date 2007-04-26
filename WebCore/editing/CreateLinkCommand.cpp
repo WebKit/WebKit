@@ -43,9 +43,9 @@ void CreateLinkCommand::doApply()
         
     pushPartiallySelectedAnchorElementsDown();
 
-    HTMLAnchorElement* anchorElement = new HTMLAnchorElement(document());
+    RefPtr<HTMLAnchorElement> anchorElement = new HTMLAnchorElement(document());
     anchorElement->setHref(m_url);
-    applyStyledElement(anchorElement);
+    applyStyledElement(anchorElement.get());
 }
 
 }

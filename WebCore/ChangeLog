@@ -1,3 +1,15 @@
+2007-04-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5120591> 
+        Crash when creating a link in Leopard wiki server
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): Use a RefPtr,
+        setting the anchor's href can destroy it if there is
+        an ancestor with a subtree modified event listener.
+
 2007-04-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by hyatt
