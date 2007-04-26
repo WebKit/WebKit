@@ -60,7 +60,8 @@ Node* ChildNodeList::item(unsigned index) const
         if (index == m_caches->lastItemOffset)
             return m_caches->lastItem;
         
-        unsigned dist = abs(index - m_caches->lastItemOffset);
+        int diff = index - m_caches->lastItemOffset;
+        unsigned dist = abs(diff);
         if (dist < index) {
             n = m_caches->lastItem;
             pos = m_caches->lastItemOffset;
@@ -71,7 +72,8 @@ Node* ChildNodeList::item(unsigned index) const
         if (index >= m_caches->cachedLength)
             return 0;
 
-        unsigned dist = abs(index - pos);
+        int diff = index - pos;
+        unsigned dist = abs(diff);
         if (dist > m_caches->cachedLength - 1 - index) {
             n = m_rootNode->lastChild();
             pos = m_caches->cachedLength - 1;
