@@ -375,28 +375,14 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 {
     DOMDocumentFragment *fragment;
     NSEnumerator *enumerator = [paths objectEnumerator];
-    WebDataSource *dataSource = [self _dataSource];
     NSMutableArray *domNodes = [[NSMutableArray alloc] init];
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
-        NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if (MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType)) {
-            WebResource *resource = [[WebResource alloc] initWithData:[NSData dataWithContentsOfFile:path]
-                                                                  URL:[NSURL fileURLWithPath:path]
-                                                             MIMEType:MIMEType 
-                                                     textEncodingName:nil
-                                                            frameName:nil];
-            if (resource) {
-                [domNodes addObject:[dataSource _imageElementWithImageResource:resource]];
-                [resource release];
-            }
-        } else {
-            // Non-image file types; _web_userVisibleString is appropriate here because this will
-            // be pasted as visible text.
-            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
-            [domNodes addObject:[[[self _frame] DOMDocument] createTextNode: url]];
-        }
+        // Non-image file types; _web_userVisibleString is appropriate here because this will
+        // be pasted as visible text.
+        NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
+        [domNodes addObject:[[[self _frame] DOMDocument] createTextNode: url]];
     }
     
     fragment = [[self _bridge] documentFragmentWithNodesAsParagraphs:domNodes]; 

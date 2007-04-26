@@ -1,3 +1,17 @@
+2007-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix <rdar://problem/5061252> REGRESSION: In Gmail, image fails 
+        to be inserted into message field after dragging
+
+        Don't try to create <img> tags for local image files as it results
+        in the potential to submit forms that look like they have an image,
+        when in reality they don't.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
