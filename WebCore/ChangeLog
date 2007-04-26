@@ -1,5 +1,12 @@
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
+        ... and fix the build.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
         Revert the previous change - activeDocumentLoader never returns the policy document loader.
         Instead, add a null check for the policy document loader.
         
