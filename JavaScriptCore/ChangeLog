@@ -1,3 +1,13 @@
+2007-04-25  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Maciej.
+
+        Add assertions for debug builds.
+
+        * kjs/JSLock.cpp:
+        (KJS::JSLock::lock): Assert the return value of pthread_mutex_lock() in debug builds.
+        (KJS::JSLock::unlock): Assert the return value of pthread_mutex_unlock() in debug builds.
+
 2007-04-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

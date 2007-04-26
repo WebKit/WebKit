@@ -52,7 +52,9 @@ void JSLock::lock()
     pthread_once(&createDidLockJSMutexOnce, createDidLockJSMutex);
 
     if (!pthread_getspecific(didLockJSMutex)) {
-        pthread_mutex_lock(&JSMutex);
+        int result;
+        result = pthread_mutex_lock(&JSMutex);
+        ASSERT(!result);
         pthread_setspecific(didLockJSMutex, &didLockJSMutex);
     }
     ++JSLockCount;
@@ -66,7 +68,9 @@ void JSLock::unlock()
     --JSLockCount;
     if (!JSLockCount) {
         pthread_setspecific(didLockJSMutex, 0);
-        pthread_mutex_unlock(&JSMutex);
+        int result;
+        result = pthread_mutex_unlock(&JSMutex);
+        ASSERT(!result);
     }
 }
 
