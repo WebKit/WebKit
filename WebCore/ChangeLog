@@ -1,3 +1,18 @@
+2007-04-26  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13503, invalidateContainingBlockPrefWidths is 15% of the
+        nesting PLT.  Avoid O(n^2) behavior by including inlines in the minmax
+        dirty chain.
+
+        Reviewed by kevin
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setPrefWidthsDirty):
+        (WebCore::RenderObject::invalidateContainerPrefWidths):
+        * rendering/RenderObject.h:
+
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

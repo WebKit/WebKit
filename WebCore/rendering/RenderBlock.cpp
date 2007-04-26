@@ -3513,6 +3513,8 @@ void RenderBlock::calcInlinePrefWidths()
 
                     inlineMin += childMin;
                     inlineMax += childMax;
+                    
+                    child->setPrefWidthsDirty(false);
                 }
                 else {
                     // Inline replaced elts add in their margins to their min/max values.

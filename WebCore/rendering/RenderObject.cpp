@@ -660,19 +660,21 @@ void RenderObject::setPrefWidthsDirty(bool b, bool markParents)
     bool alreadyDirty = m_prefWidthsDirty;
     m_prefWidthsDirty = b;
     if (b && !alreadyDirty && markParents && (style()->position() != FixedPosition && style()->position() != AbsolutePosition))
-        invalidateContainingBlockPrefWidths();
+        invalidateContainerPrefWidths();
 }
 
-void RenderObject::invalidateContainingBlockPrefWidths()
+void RenderObject::invalidateContainerPrefWidths()
 {
-    RenderObject* o = containingBlock();
+    // In order to avoid pathological behavior when inlines are deeply nested, we do include them
+    // in the chain that we mark dirty (even though they're kind of irrelevant).
+    RenderObject* o = isTableCell() ? containingBlock() : container();
     while (o && !o->m_prefWidthsDirty) {
         o->m_prefWidthsDirty = true;
         if (o->style()->position() == FixedPosition || o->style()->position() == AbsolutePosition)
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
             break;
-        o = o->containingBlock();
+        o = o->isTableCell() ? o->containingBlock() : o->container();
     }
 }
 

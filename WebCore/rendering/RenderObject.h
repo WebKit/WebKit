@@ -372,7 +372,7 @@ public:
     void setChildNeedsLayout(bool b, bool markParents = true);
 
     void setPrefWidthsDirty(bool, bool markParents = true);
-    void invalidateContainingBlockPrefWidths();
+    void invalidateContainerPrefWidths();
     
     void setNeedsLayoutAndPrefWidthsRecalc()
     {
