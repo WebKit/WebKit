@@ -1236,9 +1236,6 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleBottomOfBlock(top, bottom, marginInfo);
-
-    // Finished. Clear the dirty layout bits.
-    setNeedsLayout(false);
 }
 
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
@@ -1294,21 +1291,6 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
                 r->node->repaintOverhangingFloats();
             }
         }
-    }
-}
-
-void RenderBlock::repaintObjectsBeforeLayout()
-{
-    RenderFlow::repaintObjectsBeforeLayout();
-    if (!needsLayout())
-        return;
-
-    // Walk our positioned objects.
-    if (m_positionedObjects) {
-        RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for ( ; (r = it.current()); ++it )
-            r->repaintObjectsBeforeLayout();
     }
 }
 

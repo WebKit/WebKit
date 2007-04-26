@@ -1865,24 +1865,6 @@ bool RenderObject::checkForRepaintDuringLayout() const
     return !document()->view()->needsFullRepaint() && !hasLayer();
 }
 
-void RenderObject::repaintObjectsBeforeLayout()
-{
-    if (!needsLayout() || isText())
-        return;
-
-    bool blockWithInlineChildren = (isRenderBlock() && !isTable() && normalChildNeedsLayout() && childrenInline());
-    if (selfNeedsLayout()) {
-        repaint();
-        if (blockWithInlineChildren)
-            return;
-    }
-
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
-        if (!current->isPositioned()) // RenderBlock subclass method handles walking the positioned objects.
-            current->repaintObjectsBeforeLayout();
-    }
-}
-
 IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
 {
     IntRect r(absoluteClippedOverflowRect());

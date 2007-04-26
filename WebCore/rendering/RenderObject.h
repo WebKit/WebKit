@@ -699,9 +699,6 @@ public:
     // Called to repaint a block's floats.
     virtual void repaintOverhangingFloats(bool paintAllDescendants = false);
 
-    // Called before layout to repaint all dirty children (with selfNeedsLayout() set).
-    virtual void repaintObjectsBeforeLayout();
-
     bool checkForRepaintDuringLayout() const;
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's

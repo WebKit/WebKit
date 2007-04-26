@@ -282,10 +282,9 @@ void RenderTableSection::setCellWidths()
             int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
             int oldWidth = cell->width();
             if (w != oldWidth) {
-                bool neededLayout = cell->selfNeedsLayout();
                 cell->setNeedsLayout(true);
-                if (!neededLayout && !selfNeedsLayout() && cell->checkForRepaintDuringLayout())
-                    cell->repaintObjectsBeforeLayout();
+                if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
+                    cell->repaint();
                 cell->setWidth(w);
             }
         }

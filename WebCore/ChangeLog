@@ -1,3 +1,29 @@
+2007-04-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by hyatt
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13496
+          Eliminate repaintObjectsBeforeLayout
+
+        No tests added since there is no change to functionality. Several
+        tests in fast/repaint test repainting of objects that move during layout.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Removed an early
+        setNeedsLayout(false). Resetting the bit here prevents the full repaint
+        that we rely on when we decide not to repaint children that move.
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellWidths): Replaced the call to
+        repaintObjectsBeforeLayout() if the cell didn't need layout with
+        an unconditional repaint(). We don't bother with repainting only the
+        delta between the old and new widths, since by marking the cell for
+        layout results in a full repaint with the new width anyway.
+
 2007-04-26  David Hyatt  <hyatt@apple.com>
 
         Fix for 13509.  Don't recur to parent inline flows if they have been
