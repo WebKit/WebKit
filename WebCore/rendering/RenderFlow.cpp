@@ -223,8 +223,9 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
 
     // If we have no first line box, then just bail early.
     if (!firstLineBox()) {
-        // For an empty inline, go ahead and propagate the check up to our parent.
-        if (isInline())
+        // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
+        // is already dirty.
+        if (isInline() && !parent()->selfNeedsLayout())
             parent()->dirtyLinesFromChangedChild(this);
         return;
     }
