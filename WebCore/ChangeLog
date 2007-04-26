@@ -1,5 +1,23 @@
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/5067925>
+        Reproducible crash (infinite recursion) with a layout test that submits on unload (13078)
+        
+        Ask the document loader whether it's loading the main resource, since there are cases where the frame 
+        loader's variable isn't updated correctly.
+        
+        In the distant future, the frame loader shouldn't have an instance variable but this is the least intrusive fix for now.
+        
+        I couldn't come up with a good test case for this since it requires running three tests in a row and scheduleLoad didn't work. Also,
+        calling submit in the onunload prevents any new tests from loading!
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isLoading):
+
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
         ... and fix the build.
         
         * loader/FrameLoader.cpp:

@@ -2234,12 +2234,10 @@ DocumentLoader* FrameLoader::activeDocumentLoader() const
 
 bool FrameLoader::isLoading() const
 {
-    if (m_isLoadingMainResource)
-        return true;
     DocumentLoader* docLoader = activeDocumentLoader();
     if (!docLoader)
         return false;
-    return docLoader->isLoadingSubresources() || docLoader->isLoadingPlugIns();
+    return docLoader->isLoadingMainResource() || docLoader->isLoadingSubresources() || docLoader->isLoadingPlugIns();
 }
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)
