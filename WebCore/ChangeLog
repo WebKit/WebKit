@@ -1,3 +1,11 @@
+2007-04-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectAll):
+        adding null check
+
 2007-04-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
