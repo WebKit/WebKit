@@ -1,3 +1,15 @@
+2007-04-26  Matt Perry  <mpComplete@gmail.com>
+
+        Reviewed and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13495
+        Crash when referencing an undefined entity in an XHTML document
+
+        Test: fast/parser/badentity.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::getEntityHandler): Check for a NULL returned from getXHTMLEntity
+
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Hyatt.

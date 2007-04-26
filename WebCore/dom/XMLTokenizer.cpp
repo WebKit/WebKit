@@ -1086,7 +1086,8 @@ static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
     ent = xmlGetDocEntity(ctxt->myDoc, name);
     if (!ent && getTokenizer(closure)->isXHTMLDocument()) {
         ent = getXHTMLEntity(name);
-        ent->etype = XML_INTERNAL_GENERAL_ENTITY;
+        if (ent)
+            ent->etype = XML_INTERNAL_GENERAL_ENTITY;
     }
     
     return ent;
