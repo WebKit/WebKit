@@ -1,3 +1,12 @@
+2007-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fix build problems
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Disable warning that
+        gives often downright incorrect results based on guessing what will happen in 64-bit.
+
 2007-04-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
