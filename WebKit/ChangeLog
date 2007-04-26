@@ -1,3 +1,14 @@
+2007-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Rubber stamped by Adele.
+
+        Roll out WebKit changes from from r21052 to fix regression noted in
+        <rdar://problem/5159556> REGRESSION: In Mail, pressing option-command- ' doesn't decrease block quote in selection
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+        (-[WebHTMLView doCommandBySelector:]):
+
 2007-04-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
