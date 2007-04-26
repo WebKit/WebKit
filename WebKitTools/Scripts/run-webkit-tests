@@ -217,7 +217,12 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 my %testType = ();
 
-system "ln -s $testDirectory /tmp/LayoutTests" unless -x "/tmp/LayoutTests";
+if (-e "/tmp/LayoutTests")
+{
+        print "symlink exists before creation.\n";
+}
+#system "ln -s $testDirectory /tmp/LayoutTests" unless -x "/tmp/LayoutTests";
+
 
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
@@ -670,6 +675,10 @@ printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
 closeHTTPD();
 
+if (!(-e "/tmp/LayoutTests"))
+{
+        print "Symlink does not exist before deletion.\n";
+}
 system "rm /tmp/LayoutTests";
 
 # FIXME: Do we really want to check the image-comparison tool for leaks every time?

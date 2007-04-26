@@ -1,3 +1,9 @@
+2007-04-26  Kevin McCullough  <kmccullough@apple.com>
+
+        - Adding debugging statements to see why these tests fail.  These will be removed.
+
+        * Scripts/run-webkit-tests:
+
 2007-04-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
