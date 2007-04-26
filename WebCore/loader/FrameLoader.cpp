@@ -3357,7 +3357,7 @@ void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
             
             // Don't call canHandleRequest for applewebdata URLs if there is valid substitute data.
             // Data loads without a base URL get an applewebdata URL for backward compat reasons.
-            bool isLoadingData = m_policyDocumentLoader->substituteData().isValid() && equalIgnoringCase(String(request.url().protocol()), "applewebdata");
+            bool isLoadingData = activeDocumentLoader()->substituteData().isValid() && equalIgnoringCase(String(request.url().protocol()), "applewebdata");
             if (!isLoadingData && !m_client->canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_client->cannotShowURLError(check.request()));
                 check.clearRequest();

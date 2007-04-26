@@ -1,5 +1,12 @@
 2007-04-26  Anders Carlsson  <andersca@apple.com>
 
+        Use the active document loader instead of the policy document loader.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/5049099> documents no longer have a default base URL
