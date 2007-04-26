@@ -37,12 +37,12 @@
 
 namespace WebCore
 {
-static WTF::HashSet<String> *supportedImageResourceMIMETypes;
-static WTF::HashSet<String> *supportedImageMIMETypes;
-static WTF::HashSet<String> *supportedNonImageMIMETypes;
+static WTF::HashSet<String>* supportedImageResourceMIMETypes;
+static WTF::HashSet<String>* supportedImageMIMETypes;
+static WTF::HashSet<String>* supportedNonImageMIMETypes;
     
 #if PLATFORM(CG)
-extern String getMIMETypeForUTI(const String & uti);
+extern String getMIMETypeForUTI(const String& uti);
 #endif
 
 static void initialiseSupportedImageMIMETypes()
@@ -61,15 +61,19 @@ static void initialiseSupportedImageMIMETypes()
     }
     CFRelease(supportedTypes);
     
-    //We only get one MIME type per UTI, hence our need to add these manually
+    // On Tiger, com.microsoft.bmp doesn't have a MIME type in the registry.
+    supportedImageMIMETypes->add("image/bmp");
+    supportedImageResourceMIMETypes->add("image/bmp");
+    
+    //  We only get one MIME type per UTI, hence our need to add these manually
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
     
-    //We don't want to try to treat all binary data as an image
+    //  We don't want to try to treat all binary data as an image
     supportedImageMIMETypes->remove("application/octet-stream");
     supportedImageResourceMIMETypes->remove("application/octet-stream");
     
-    //Don't treat pdf/postscript as images directly
+    //  Don't treat pdf/postscript as images directly
     supportedImageMIMETypes->remove("application/pdf");
     supportedImageMIMETypes->remove("application/postscript");
 

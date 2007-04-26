@@ -1,3 +1,15 @@
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/4851944>
+        REGRESSION: With TOT, BMP images can no longer be opened in the browser window
+        
+        On Tiger, the MIME type for the com.microsoft.bmp UTI isn't in the registry, so add it manually.
+        
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedImageMIMETypes):
+
 2007-04-26  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13503, invalidateContainingBlockPrefWidths is 15% of the
