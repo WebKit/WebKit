@@ -747,10 +747,20 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     [self _frameLoader]->load(request);
 }
 
+static NSURL *createUniqueWebDataURL()
+{
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"applewebdata://%@", UUIDString]];
+    CFRelease(UUIDString);
+    return URL;
+}
+
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     if (!URL)
-        URL = [NSURL URLWithString:@""];
+        URL = createUniqueWebDataURL();
     ResourceRequest request(URL);
 
     // hack because Mail checks for this property to detect data / archive loads

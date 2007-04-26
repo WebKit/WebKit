@@ -1,3 +1,15 @@
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5049099> documents no longer have a default base URL
+        
+        If the base URL is nil, then create a unique applewebdata URL to match what Tiger WebKit does.
+        
+        * WebView/WebFrame.mm:
+        (createUniqueWebDataURL):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+
 2007-04-25  Oliver Hunt  <oliver@apple.com>
 
         Rubber stamped by Adele.

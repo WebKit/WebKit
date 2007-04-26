@@ -1,3 +1,14 @@
+2007-04-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5049099> documents no longer have a default base URL
+
+        Don't call canHandleRequest if we have valid substitute data and the protocol is "applewebdata".
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+
 2007-04-25  Stephanie Lewis <slewis@apple.com>
 
         Reviewed by Darin.
