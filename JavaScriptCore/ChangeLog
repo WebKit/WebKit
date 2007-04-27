@@ -1,3 +1,19 @@
+2007-04-27  Christopher Brichford  <chrisb@adobe.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix for: Bug 13211: Move JavaScriptCore mac project files for apollo port
+        http://bugs.webkit.org/show_bug.cgi?id=13211
+
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore.Debug.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore.Release.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore.xcodeproj/project.pbxproj: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Debug.xcconfig: Removed.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Release.xcconfig: Removed.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcconfig: Removed.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj: Removed.
+
 2007-04-27  Holger Freyther <freyther@kde.org>
 
         Reviewed by Maciej.
