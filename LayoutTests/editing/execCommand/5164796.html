@@ -1,0 +1,11 @@
+<p>This tests CreateLink for caret selections.  A link containing the url text should be inserted.</p>
+<div contenteditable="true" id="div">There should be a link between these two braces: {}</div>
+
+<script>
+var div = document.getElementById("div");
+var text = div.firstChild;
+var selection = window.getSelection();
+selection.setPosition(text, text.length - 1);
+
+document.execCommand("CreateLink", false, "http://www.apple.com/");
+</script>

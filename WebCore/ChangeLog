@@ -1,3 +1,17 @@
+2007-04-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5164796> 
+        Enable execCommand("CreateLink", ...) for caret selections
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): For a caret
+        selection, insert a link at the caret position
+        with the url as the link text.
+        * editing/JSEditor.cpp: Enable CreateLink for caret 
+        selections.
+
 2007-04-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin, Hyatt.

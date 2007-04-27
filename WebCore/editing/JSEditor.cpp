@@ -655,7 +655,7 @@ CommandMap* createCommandDictionary()
         { "BackColor", { execBackColor, enabledAnyRichlyEditableRangeSelection, stateNone, valueBackColor } },
         { "Bold", { execBold, enabledAnyRichlyEditableSelection, stateBold, valueNull } },
         { "Copy", { execCopy, enabledCopy, stateNone, valueNull } },
-        { "CreateLink", { execCreateLink, enabledAnyRichlyEditableRangeSelection, stateNone, valueNull } },
+        { "CreateLink", { execCreateLink, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "Cut", { execCut, enabledAnyEditableRangeSelection, stateNone, valueNull } },
         { "Delete", { execDelete, enabledAnyEditableSelection, stateNone, valueNull } },
         { "FindString", { execFindString, enabled, stateNone, valueNull } },

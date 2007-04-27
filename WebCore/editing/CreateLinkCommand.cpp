@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "CreateLinkCommand.h"
+#include "htmlediting.h"
+#include "Text.h"
 
 #include "HTMLAnchorElement.h"
 
@@ -38,14 +40,21 @@ CreateLinkCommand::CreateLinkCommand(Document* document, const String& url)
 
 void CreateLinkCommand::doApply()
 {
-    if (!endingSelection().isRange())
+    if (endingSelection().isNone())
         return;
         
-    pushPartiallySelectedAnchorElementsDown();
-
     RefPtr<HTMLAnchorElement> anchorElement = new HTMLAnchorElement(document());
     anchorElement->setHref(m_url);
-    applyStyledElement(anchorElement.get());
+    
+    if (endingSelection().isRange()) {
+        pushPartiallySelectedAnchorElementsDown();
+        applyStyledElement(anchorElement.get());
+    } else {
+        insertNodeAt(anchorElement.get(), endingSelection().start());
+        RefPtr<Text> textNode = new Text(document(), m_url);
+        appendNode(textNode.get(), anchorElement.get());
+        setEndingSelection(Selection(positionBeforeNode(anchorElement.get()), positionAfterNode(anchorElement.get()), DOWNSTREAM));
+    }
 }
 
 }
