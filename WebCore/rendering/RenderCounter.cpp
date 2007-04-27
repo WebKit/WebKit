@@ -202,7 +202,7 @@ static CounterNode* counter(RenderObject* object, const AtomicString& counterNam
 }
 
 RenderCounter::RenderCounter(Document* node, const CounterContent& counter)
-    : RenderText(node, 0)
+    : RenderText(node, StringImpl::empty())
     , m_counter(counter)
     , m_counterNode(0)
 {

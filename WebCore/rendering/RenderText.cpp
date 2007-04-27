@@ -63,12 +63,11 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_selectionState(SelectionNone)
      , m_linesDirty(false)
      , m_containsReversedText(false)
-     , m_isAllASCII(m_text ? charactersAreAllASCII(m_text.get()) : true)
+     , m_isAllASCII(charactersAreAllASCII(m_text.get()))
 {
+    ASSERT(m_text);
     setRenderText();
-    if (m_text)
-        m_text = m_text->replace('\\', backslashAsCurrencySymbol());
-    ASSERT(!m_text || !textLength() || characters());
+    m_text = m_text->replace('\\', backslashAsCurrencySymbol());
 }
 
 void RenderText::setStyle(RenderStyle* newStyle)
@@ -428,15 +427,15 @@ void RenderText::trimmedPrefWidths(int leadWidth,
     if (!collapseWhiteSpace)
         stripFrontSpaces = false;
 
+    if (m_hasTab || prefWidthsDirty())
+        calcPrefWidths(leadWidth);
+
     int len = textLength();
     if (!len || (stripFrontSpaces && m_text->containsOnlyWhitespace())) {
         maxW = 0;
         hasBreak = false;
         return;
     }
-
-    if (m_hasTab || prefWidthsDirty())
-        calcPrefWidths(leadWidth);
 
     minW = m_minWidth;
     maxW = m_maxWidth;
@@ -744,8 +743,8 @@ void RenderText::setSelectionState(SelectionState state)
 
 void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset, unsigned len, bool force)
 {
-    unsigned oldLen = m_text ? textLength() : 0;
-    unsigned newLen = text ? text->length() : 0;
+    unsigned oldLen = textLength();
+    unsigned newLen = text->length();
     int delta = newLen - oldLen;
     unsigned end = len ? offset + len - 1 : offset;
 
@@ -821,97 +820,92 @@ static inline bool isInlineFlowOrEmptyText(RenderObject* o)
 
 void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 {
-    bool isAllASCII = true;
-
     m_text = text;
+    ASSERT(m_text);
 
-    if (m_text) {
-        m_text = m_text->replace('\\', backslashAsCurrencySymbol());
+    m_text = m_text->replace('\\', backslashAsCurrencySymbol());
 
 #if ENABLE(SVG)
-        if (isSVGText()) {
-            if (style() && style()->whiteSpace() == PRE) {
-                // Spec: When xml:space="preserve", the SVG user agent will do the following using a
-                // copy of the original character data content. It will convert all newline and tab
-                // characters into space characters. Then, it will draw all space characters, including
-                // leading, trailing and multiple contiguous space characters.
+    if (isSVGText()) {
+        if (style() && style()->whiteSpace() == PRE) {
+            // Spec: When xml:space="preserve", the SVG user agent will do the following using a
+            // copy of the original character data content. It will convert all newline and tab
+            // characters into space characters. Then, it will draw all space characters, including
+            // leading, trailing and multiple contiguous space characters.
 
-                m_text = m_text->replace('\n', ' ');
+            m_text = m_text->replace('\n', ' ');
 
-                // If xml:space="preserve" is set, white-space is set to "pre", which
-                // preserves leading, trailing & contiguous space character for us.
-           } else {
-                // Spec: When xml:space="default", the SVG user agent will do the following using a
-                // copy of the original character data content. First, it will remove all newline
-                // characters. Then it will convert all tab characters into space characters.
-                // Then, it will strip off all leading and trailing space characters.
-                // Then, all contiguous space characters will be consolidated.    
+            // If xml:space="preserve" is set, white-space is set to "pre", which
+            // preserves leading, trailing & contiguous space character for us.
+       } else {
+            // Spec: When xml:space="default", the SVG user agent will do the following using a
+            // copy of the original character data content. First, it will remove all newline
+            // characters. Then it will convert all tab characters into space characters.
+            // Then, it will strip off all leading and trailing space characters.
+            // Then, all contiguous space characters will be consolidated.    
 
-                static StringImpl empty("", 0);
-                m_text = m_text->replace('\n', &empty);
-    
-                // If xml:space="default" is set, white-space is set to "nowrap", which handles
-                // leading, trailing & contiguous space character removal for us.
-            }
+            static StringImpl empty("", 0);
+            m_text = m_text->replace('\n', &empty);
 
-            m_text = m_text->replace('\t', ' ');
+            // If xml:space="default" is set, white-space is set to "nowrap", which handles
+            // leading, trailing & contiguous space character removal for us.
         }
+
+        m_text = m_text->replace('\t', ' ');
+    }
 #endif
 
-        if (style()) {
-            switch (style()->textTransform()) {
-                case TTNONE:
-                    break;
-                case CAPITALIZE: {
-                    // find previous text renderer if one exists
-                    RenderObject* previousText = this;
-                    while ((previousText = previousText->previousInPreOrder()))
-                        if (!isInlineFlowOrEmptyText(previousText))
-                            break;
-                    UChar previousCharacter = ' ';
-                    if (previousText && previousText->isText())
-                        if (StringImpl* previousString = static_cast<RenderText*>(previousText)->text())
-                            previousCharacter = (*previousString)[previousString->length() - 1];
-                    m_text = m_text->capitalize(previousCharacter);
-                    break;
-                }
-                case UPPERCASE:
-                    m_text = m_text->upper();
-                    break;
-                case LOWERCASE:
-                    m_text = m_text->lower();
-                    break;
+    if (style()) {
+        switch (style()->textTransform()) {
+            case TTNONE:
+                break;
+            case CAPITALIZE: {
+                // find previous text renderer if one exists
+                RenderObject* previousText = this;
+                while ((previousText = previousText->previousInPreOrder()))
+                    if (!isInlineFlowOrEmptyText(previousText))
+                        break;
+                UChar previousCharacter = ' ';
+                if (previousText && previousText->isText())
+                    if (StringImpl* previousString = static_cast<RenderText*>(previousText)->text())
+                        previousCharacter = (*previousString)[previousString->length() - 1];
+                m_text = m_text->capitalize(previousCharacter);
+                break;
             }
-
-            // We use the same characters here as for list markers.
-            // See the listMarkerText function in RenderListMarker.cpp.
-            switch (style()->textSecurity()) {
-                case TSNONE:
-                    break;
-                case TSCIRCLE:
-                    m_text = m_text->secure(whiteBullet);
-                    break;
-                case TSDISC:
-                    m_text = m_text->secure(bullet);
-                    break;
-                case TSSQUARE:
-                    m_text = m_text->secure(blackSquare);
-            }
+            case UPPERCASE:
+                m_text = m_text->upper();
+                break;
+            case LOWERCASE:
+                m_text = m_text->lower();
+                break;
         }
 
-        isAllASCII = charactersAreAllASCII(m_text.get());
+        // We use the same characters here as for list markers.
+        // See the listMarkerText function in RenderListMarker.cpp.
+        switch (style()->textSecurity()) {
+            case TSNONE:
+                break;
+            case TSCIRCLE:
+                m_text = m_text->secure(whiteBullet);
+                break;
+            case TSDISC:
+                m_text = m_text->secure(bullet);
+                break;
+            case TSSQUARE:
+                m_text = m_text->secure(blackSquare);
+        }
     }
 
-    m_isAllASCII = isAllASCII;
-
+    ASSERT(m_text);
     ASSERT(!isBR() || (textLength() == 1 && (*m_text)[0] == '\n'));
-    ASSERT(!textLength() || characters());
+
+    m_isAllASCII = charactersAreAllASCII(m_text.get());
 }
 
 void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
 {
-    if (!text)
-        return;
+    ASSERT(text);
+
     if (!force && equal(m_text.get(), text.get()))
         return;
 

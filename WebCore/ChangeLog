@@ -1,3 +1,28 @@
+2007-04-26  David Hyatt  <hyatt@apple.com>
+
+        Fix for 13511, crash on a counters page.  Make sure that RenderTexts
+        never get a null StringImpl.  I would have added an assert that the length
+        had to be nonzero also, but unfortunately editing creates empty RenderTexts
+        because of its EditingText DOM subclass that always forces renderers to be
+        made.  I suppose there is a good reason for this...
+
+        Reviewed by aroben
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData):
+        (WebCore::CharacterData::appendData):
+        (WebCore::CharacterData::insertData):
+        (WebCore::CharacterData::deleteData):
+        (WebCore::CharacterData::replaceData):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::RenderCounter):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::setTextWithOffset):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::setText):
+
 2007-04-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.
