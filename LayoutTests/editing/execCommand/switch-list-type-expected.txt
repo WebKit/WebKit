@@ -85,7 +85,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 170x18
             text run at (0,0) width 170: "This should not be in a list."
           RenderBR {BR} at (170,14) size 0x0
-          RenderText {#text} at (0,0) size 0x0
         RenderBlock {OL} at (0,316) size 784x18
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-20,0) size 16x18: "1"
