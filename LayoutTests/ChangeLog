@@ -1,5 +1,11 @@
 2007-04-27  Antti Koivisto  <antti@apple.com>
 
+        Forgot this png from previous commit.
+
+        * fast/table/empty-cells-expected.png: Added.
+
+2007-04-27  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin, Hyatt.
         
         Test for http://bugs.webkit.org/show_bug.cgi?id=13081
