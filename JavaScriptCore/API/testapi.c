@@ -24,16 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "JavaScriptCore.h"
-#include <wtf/UnusedParam.h>
-
 #if defined(__APPLE__)
-#include <CoreFoundation/CoreFoundation.h>
+#include "JSStringRefCF.h"
 #endif
 
+#include "JavaScriptCore.h"
 #include <assert.h>
 #include <math.h>
 #include <setjmp.h>
+#include <wtf/UnusedParam.h>
 
 static JSGlobalContextRef context = 0;
 

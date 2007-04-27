@@ -27,6 +27,7 @@
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "UnusedParam.h"
+#include <assert.h>
 
 static JSValueRef JSNodeList_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {

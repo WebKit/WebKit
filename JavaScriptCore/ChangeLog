@@ -1,5 +1,15 @@
 2007-04-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix -- added #includes that we used to get implicitly through
+        JSStringRef.h.
+
+        * API/JSNode.c:
+        * API/JSNodeList.c:
+        * API/minidom.c:
+        * API/testapi.c:
+
+2007-04-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak, Adam Roben.
         
         Fixed 
