@@ -10,17 +10,17 @@ layer at (0,0) size 785x2496
         RenderTable {TABLE} at (0,18) size 100x0 [bgcolor=#FFA500]
           RenderTableSection {TBODY} at (0,0) size 100x0
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=1 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=2 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=2 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=3 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=3 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=4 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=4 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,0) size 100x0
-              RenderTableCell {TD} at (0,0) size 100x0 [r=5 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 0x0 [r=5 c=0 rs=1 cs=1]
         RenderBlock (anonymous) at (0,18) size 769x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,52) size 769x50
@@ -50,17 +50,17 @@ layer at (0,0) size 785x2496
         RenderTable {TABLE} at (0,18) size 100x12 [bgcolor=#FFA500]
           RenderTableSection {TBODY} at (0,0) size 100x12
             RenderTableRow {TR} at (0,0) size 100x2
-              RenderTableCell {TD} at (0,1) size 100x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,1) size 0x0 [r=0 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,2) size 100x2
-              RenderTableCell {TD} at (0,3) size 100x0 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,3) size 0x0 [r=1 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,4) size 100x2
-              RenderTableCell {TD} at (0,5) size 100x0 [r=2 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,5) size 0x0 [r=2 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,6) size 100x2
-              RenderTableCell {TD} at (0,7) size 100x0 [r=3 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,7) size 0x0 [r=3 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,8) size 100x2
-              RenderTableCell {TD} at (0,9) size 100x0 [r=4 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,9) size 0x0 [r=4 c=0 rs=1 cs=1]
             RenderTableRow {TR} at (0,10) size 100x2
-              RenderTableCell {TD} at (0,11) size 100x0 [r=5 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,11) size 0x0 [r=5 c=0 rs=1 cs=1]
         RenderBlock (anonymous) at (0,30) size 769x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,182) size 769x50
@@ -229,12 +229,12 @@ layer at (0,0) size 785x2496
                 RenderTable {TABLE} at (1,1) size 6x0 [bgcolor=#FFA500]
                   RenderTableSection {TBODY} at (0,0) size 6x0
                     RenderTableRow {TR} at (0,0) size 6x0
-                      RenderTableCell {TD} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
-                      RenderTableCell {TD} at (1,0) size 1x0 [r=0 c=1 rs=1 cs=1]
-                      RenderTableCell {TD} at (2,0) size 1x0 [r=0 c=2 rs=1 cs=1]
-                      RenderTableCell {TD} at (3,0) size 1x0 [r=0 c=3 rs=1 cs=1]
-                      RenderTableCell {TD} at (4,0) size 1x0 [r=0 c=4 rs=1 cs=1]
-                      RenderTableCell {TD} at (5,0) size 1x0 [r=0 c=5 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=3 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=4 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=5 rs=1 cs=1]
         RenderBlock (anonymous) at (0,22) size 769x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,528) size 769x18

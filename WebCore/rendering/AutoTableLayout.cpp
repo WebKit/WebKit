@@ -69,12 +69,16 @@ void AutoTableLayout::recalcColumn(int effCol)
                 RenderTableSection::CellStruct current = section->cellAt(i, effCol);
                 RenderTableCell* cell = current.cell;
                 
+                bool cellHasContent = cell && (cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding());
+                if (cellHasContent)
+                    l.emptyCellsOnly = false;
+                    
                 if (current.inColSpan)
                     continue;
                 if (cell && cell->colSpan() == 1) {
                     // A cell originates in this column.  Ensure we have
                     // a min/max width of at least 1px for this column now.
-                    l.minWidth = max(l.minWidth, 1);
+                    l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);
                     l.maxWidth = max(l.maxWidth, 1);
                     if (cell->prefWidthsDirty())
                         cell->calcPrefWidths();
@@ -125,7 +129,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                     if (cell && (!effCol || section->cellAt(i, effCol-1).cell != cell)) {
                         // This spanning cell originates in this column.  Ensure we have
                         // a min/max width of at least 1px for this column now.
-                        l.minWidth = max(l.minWidth, 1);
+                        l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);
                         l.maxWidth = max(l.maxWidth, 1);
                         insertSpanCell(cell);
                     }
@@ -326,6 +330,7 @@ int AutoTableLayout::calcEffectiveWidth()
         bool allColsArePercent = true;
         bool allColsAreFixed = true;
         bool haveAuto = false;
+        bool spanHasEmptyCellsOnly = true;
         int fixedWidth = 0;
         while (lastCol < nEffCols && span > 0) {
             switch (m_layoutStruct[lastCol].width.type()) {
@@ -361,6 +366,8 @@ int AutoTableLayout::calcEffectiveWidth()
                     totalPercent += m_layoutStruct[lastCol].effWidth.rawValue();
                 allColsAreFixed = false;
             }
+            if (!m_layoutStruct[lastCol].emptyCellsOnly)
+                spanHasEmptyCellsOnly = false;
             span -= m_table->spanOfEffCol(lastCol);
             minWidth += m_layoutStruct[lastCol].effMinWidth;
             maxWidth += m_layoutStruct[lastCol].effMaxWidth;
@@ -453,6 +460,10 @@ int AutoTableLayout::calcEffectiveWidth()
             for (unsigned int pos = col; pos < lastCol; pos++)
                 m_layoutStruct[pos].maxWidth = max(m_layoutStruct[pos].maxWidth, m_layoutStruct[pos].minWidth);
         }
+        // treat span ranges consisting of empty cells only as if they had content
+        if (spanHasEmptyCellsOnly)
+            for (unsigned int pos = col; pos < lastCol; pos++)
+                m_layoutStruct[pos].emptyCellsOnly = false;
     }
     m_effWidthDirty = false;
 
@@ -524,6 +535,7 @@ void AutoTableLayout::layout()
     int totalFixed = 0;
     int totalPercent = 0;
     int allocAuto = 0;
+    int numAutoEmptyCellsOnly = 0;
 
     // fill up every cell with its minWidth
     for (int i = 0; i < nEffCols; i++) {
@@ -547,9 +559,14 @@ void AutoTableLayout::layout()
             break;
         case Auto:
         case Static:
-            numAuto++;
-            totalAuto += m_layoutStruct[i].effMaxWidth;
-            allocAuto += w;
+            if (m_layoutStruct[i].emptyCellsOnly) 
+                numAutoEmptyCellsOnly++;            
+            else {
+                numAuto++;
+                totalAuto += m_layoutStruct[i].effMaxWidth;
+                allocAuto += w;
+            }
+            break;
         default:
             break;
         }
@@ -617,7 +634,7 @@ void AutoTableLayout::layout()
         available += allocAuto; // this gets redistributed
         for (int i = 0; i < nEffCols; i++) {
             Length &width = m_layoutStruct[i].effWidth;
-            if (width.isAuto() && totalAuto != 0) {
+            if (width.isAuto() && totalAuto != 0 && !m_layoutStruct[i].emptyCellsOnly) {
                 int w = max(int(m_layoutStruct[i].calcWidth), available * m_layoutStruct[i].effMaxWidth / totalAuto);
                 available -= w;
                 totalAuto -= m_layoutStruct[i].effMaxWidth;
@@ -667,11 +684,14 @@ void AutoTableLayout::layout()
 #endif
 
     // spread over the rest
-    if (available > 0) {
-        int total = nEffCols;
+    if (available > 0 && nEffCols > numAutoEmptyCellsOnly) {
+        int total = nEffCols - numAutoEmptyCellsOnly;
         // still have some width to spread
         int i = nEffCols;
-        while ( i--) {
+        while (i--) {
+            // variable columns with empty cells only don't get any width
+            if (m_layoutStruct[i].width.isAuto() && m_layoutStruct[i].emptyCellsOnly)
+                continue;
             int w = available / total;
             available -= w;
             total--;

@@ -1,3 +1,23 @@
+2007-04-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin, Hyatt.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13081
+        Empty table cells not handled correctly
+        <rdar://problem/5067926>
+        
+        To match Firefox and IE, empty table cells with variable width need to be
+        treated as special case. They generally get zero width.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/AutoTableLayout.h:
+        (WebCore::AutoTableLayout::Layout::Layout):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::hasPadding):
+
 2007-04-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

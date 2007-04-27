@@ -1,3 +1,51 @@
+2007-04-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin, Hyatt.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13081
+        Empty table cells not handled correctly
+        <rdar://problem/5067926>
+        
+        Added test case and checked in updated results for others. Changes represent
+        progressions or are not visible in rendering output.
+
+        * fast/block/positioning/negative-right-pos-expected.txt:
+        * fast/css/acid2-expected.txt:
+        * fast/css/acid2-pixel-expected.txt:
+        * fast/css/percentage-non-integer-expected.checksum:
+        * fast/css/percentage-non-integer-expected.png:
+        * fast/css/percentage-non-integer-expected.txt:
+        * fast/repaint/table-cell-move-expected.checksum:
+        * fast/repaint/table-cell-move-expected.png:
+        * fast/repaint/table-cell-move-expected.txt:
+        * fast/table/012-expected.txt:
+        * fast/table/032-expected.txt:
+        * fast/table/empty-cells-expected.checksum: Added.
+        * fast/table/empty-cells-expected.txt: Added.
+        * fast/table/empty-cells.html: Added.
+        * fast/table/empty-section-crash-expected.txt:
+        * http/tests/misc/acid2-expected.txt:
+        * http/tests/misc/acid2-pixel-expected.txt:
+        * tables/mozilla/bugs/bug100334-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug16012-expected.checksum:
+        * tables/mozilla/bugs/bug16012-expected.png:
+        * tables/mozilla/bugs/bug16012-expected.txt:
+        * tables/mozilla/bugs/bug1818-6-expected.txt:
+        * tables/mozilla/bugs/bug222336-expected.txt:
+        * tables/mozilla/bugs/bug222467-expected.txt:
+        * tables/mozilla/bugs/bug78162-expected.txt:
+        * tables/mozilla/core/misc-expected.checksum:
+        * tables/mozilla/core/misc-expected.png:
+        * tables/mozilla/core/misc-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug14007-1-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug14007-1-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug14007-1-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug72393-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug72393-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug72393-expected.txt:
+        * tables/mozilla_expected_failures/other/empty_cells-expected.txt:
+
 2007-04-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.
