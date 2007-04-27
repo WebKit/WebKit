@@ -512,7 +512,11 @@ static WebInspector *sharedWebInspector = nil;
 @implementation WebInspectorPrivate
 - (void)dealloc
 {
-    [webView release];
+    // Releasing our WebView will trigger a garbage collection, but this dealloc is
+    // likely going to happen inside GC and we don't want to re-enter the collector.
+    // Just autorelease is not good enough, because the ObjC bindings code drains the
+    // autorelease pool.
+    [webView performSelector:@selector(release) withObject:nil afterDelay:0];
     [inspectedWebFrame release];
     [currentHighlight release];
 #ifndef NDEBUG

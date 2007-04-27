@@ -1,3 +1,13 @@
+2007-04-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        <rdar://problem/5154113> Repro ASSERT (would be crash) in KJS::GCLock::GCLock (13462)
+        http://bugs.webkit.org/show_bug.cgi?id=13462
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspectorPrivate dealloc]): Delay release of WebView to avoid GC re-entrancy.
+
 2007-04-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
