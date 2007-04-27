@@ -24,15 +24,15 @@
 
 using namespace WebCore;
 
-static GtkWidget* gUrlBarEntry;
-static FrameGdk*  gFrame;
+static GtkWidget* gURLBarEntry;
+static FrameGdk* gFrame;
 
-static bool strEmpty(const char* str)
+static bool stringIsEmpty(const char* str)
 {
     return !str || !*str;
 }
 
-static bool strEq(const char* str1, const char* str2)
+static bool stringIsEqual(const char* str1, const char* str2)
 {
     return 0 == strcmp(str1, str2);
 }
@@ -42,23 +42,23 @@ static void handleGdkEvent(GtkWidget* widget, GdkEvent* event)
     gFrame->handleGdkEvent(event);
 }
 
-static void goToUrlBarText(GtkWidget* urlBarEntry)
+static void goToURLBarText(GtkWidget* urlBarEntry)
 {
     const gchar* url = gtk_entry_get_text(GTK_ENTRY(urlBarEntry));
-    if (strEmpty(url))
+    if (stringIsEmpty(url))
         return;
     // FIXME: append "http://" if doesn't have a scheme
     gFrame->loader()->load(url, 0);
 }
 
-static void goButtonClickedCb(GtkWidget* widget, GtkWidget* entry)
+static void goButtonClickedCallback(GtkWidget* widget, GtkWidget* entry)
 {
-    goToUrlBarText(entry);
+    goToURLBarText(entry);
 }
 
-static void urlBarEnterCb(GtkWidget* widget, GtkWidget* entry)
+static void urlBarEnterCallback(GtkWidget* widget, GtkWidget* entry)
 {
-    goToUrlBarText(entry);
+    goToURLBarText(entry);
 }
 
 static void registerRenderingAreaEvents(GtkWidget* win)
@@ -83,29 +83,29 @@ static void registerRenderingAreaEvents(GtkWidget* win)
     g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(handleGdkEvent), NULL);
 }
 
-static void frameResizeCb(GtkWidget* widget, gpointer data)
+static void frameResizeCallback(GtkWidget* widget, gpointer data)
 {
     // FIXME: resize the area?
 }
 
-static void frameDestroyCb(GtkWidget* widget, gpointer data)
+static void frameDestroyCallback(GtkWidget* widget, gpointer data)
 {
     gtk_main_quit();
 }
 
-static void menuMainBackCb(gpointer data)
+static void menuMainBackCallback(gpointer data)
 {
     ASSERT(!data);
     gFrame->loader()->goBackOrForward(-1);
 }
 
-static void menuMainForwardCb(gpointer data)
+static void menuMainForwardCallback(gpointer data)
 {
     ASSERT(!data);
     gFrame->loader()->goBackOrForward(1);
 }
 
-static void menuMainQuitCb(gpointer data)
+static void menuMainQuitCallback(gpointer data)
 {
     gtk_main_quit();
 }
@@ -119,19 +119,19 @@ int main(int argc, char* argv[])
     bool dumpRenderTree = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
         char *currArg = argv[argPos];
-        if (strEq(currArg, "-exit-after-loading"))
+        if (stringIsEqual(currArg, "-exit-after-loading"))
             exitAfterLoading = true;
-        else if (strEq(currArg, "-exitafterloading"))
+        else if (stringIsEqual(currArg, "-exitafterloading"))
             exitAfterLoading = true;
-        else if (strEq(currArg, "-exitafterload"))
+        else if (stringIsEqual(currArg, "-exitafterload"))
             exitAfterLoading = true;
-        else if (strEq(currArg, "-exit-after-load"))
+        else if (stringIsEqual(currArg, "-exit-after-load"))
             exitAfterLoading = true;
-        else if (strEq(currArg, "-drt"))
+        else if (stringIsEqual(currArg, "-drt"))
             dumpRenderTree = true;
-        else if (strEq(currArg, "-dump-render-tree"))
+        else if (stringIsEqual(currArg, "-dump-render-tree"))
             dumpRenderTree = true;
-        else if (strEq(currArg, "-dumprendertree"))
+        else if (stringIsEqual(currArg, "-dumprendertree"))
             dumpRenderTree = true;
         else
             url = currArg;
@@ -140,17 +140,17 @@ int main(int argc, char* argv[])
     GtkWidget* menuMain = gtk_menu_new();
     GtkWidget* menuMainBack = gtk_menu_item_new_with_label("Back");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainBack);
-    g_signal_connect_swapped(G_OBJECT(menuMainBack), "activate", G_CALLBACK(menuMainBackCb), NULL);
+    g_signal_connect_swapped(G_OBJECT(menuMainBack), "activate", G_CALLBACK(menuMainBackCallback), NULL);
     gtk_widget_show(menuMainBack);
 
     GtkWidget* menuMainForward = gtk_menu_item_new_with_label("Forward");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainForward);
-    g_signal_connect_swapped(G_OBJECT(menuMainForward), "activate", G_CALLBACK(menuMainForwardCb), NULL);
+    g_signal_connect_swapped(G_OBJECT(menuMainForward), "activate", G_CALLBACK(menuMainForwardCallback), NULL);
     gtk_widget_show(menuMainForward);
 
     GtkWidget* menuMainQuit = gtk_menu_item_new_with_label("Quit");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainQuit);
-    g_signal_connect_swapped(G_OBJECT(menuMainQuit), "activate", G_CALLBACK(menuMainQuitCb), NULL);
+    g_signal_connect_swapped(G_OBJECT(menuMainQuit), "activate", G_CALLBACK(menuMainQuitCallback), NULL);
     gtk_widget_show(menuMainQuit);
 
     GtkWidget* menuMainRoot = gtk_menu_item_new_with_label("Main");
@@ -165,20 +165,20 @@ int main(int argc, char* argv[])
     gtk_widget_set_name(topLevelWindow, "GdkLauncher");
     GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(topLevelWindow), vbox);
-    g_signal_connect(G_OBJECT(topLevelWindow), "destroy", G_CALLBACK(frameDestroyCb), NULL);
-    g_signal_connect(GTK_OBJECT(topLevelWindow), "size-request", G_CALLBACK(frameResizeCb), NULL);
+    g_signal_connect(G_OBJECT(topLevelWindow), "destroy", G_CALLBACK(frameDestroyCallback), NULL);
+    g_signal_connect(GTK_OBJECT(topLevelWindow), "size-request", G_CALLBACK(frameResizeCallback), NULL);
 
     GtkWidget* hbox = gtk_hbox_new(FALSE, 2);
     gtk_box_pack_start(GTK_BOX(vbox), menuBar, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-    gUrlBarEntry = gtk_entry_new();
-    g_signal_connect(G_OBJECT(gUrlBarEntry), "activate", G_CALLBACK(urlBarEnterCb), (gpointer)gUrlBarEntry);
-    gtk_box_pack_start(GTK_BOX(hbox), gUrlBarEntry, TRUE, TRUE, 0);
+    gURLBarEntry = gtk_entry_new();
+    g_signal_connect(G_OBJECT(gURLBarEntry), "activate", G_CALLBACK(urlBarEnterCallback), (gpointer)gURLBarEntry);
+    gtk_box_pack_start(GTK_BOX(hbox), gURLBarEntry, TRUE, TRUE, 0);
 
     GtkWidget* urlBarSubmitButton = gtk_button_new_with_label("Go");  
     gtk_box_pack_start(GTK_BOX(hbox), urlBarSubmitButton, FALSE, FALSE, 0);
-    g_signal_connect(G_OBJECT(urlBarSubmitButton), "clicked", G_CALLBACK(goButtonClickedCb), (gpointer)gUrlBarEntry);
+    g_signal_connect(G_OBJECT(urlBarSubmitButton), "clicked", G_CALLBACK(goButtonClickedCallback), (gpointer)gURLBarEntry);
     gtk_widget_show(vbox);
 
     GtkWidget* frameWindow = gtk_drawing_area_new();
