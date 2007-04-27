@@ -36,10 +36,6 @@
 extern "C" {
 #endif
 
-#if defined(__APPLE__)
-#include <JavaScriptCore/JSStringRefCF.h>
-#endif
-
 /*!
 @typedef JSChar
 @abstract A Unicode character.
