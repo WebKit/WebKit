@@ -1,3 +1,15 @@
+2007-04-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13500
+          REGRESSION: Listbox scrollbar does not reflect actual scrolled position when selected option is added after layout
+
+        * fast/forms/listbox-scrollbar-incremental-load-expected.checksum: Added.
+        * fast/forms/listbox-scrollbar-incremental-load-expected.png: Added.
+        * fast/forms/listbox-scrollbar-incremental-load-expected.txt: Added.
+        * fast/forms/listbox-scrollbar-incremental-load.html: Added.
+
 2007-04-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver

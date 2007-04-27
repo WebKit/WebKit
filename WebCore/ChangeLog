@@ -1,3 +1,20 @@
+2007-04-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13500
+          REGRESSION: Listbox scrollbar does not reflect actual scrolled position when selected option is added after layout
+
+        Test: fast/forms/listbox-scrollbar-incremental-load.html
+
+        The scroller position was not updated correctly during insertion, since
+        scrollbar proportions are updated only during layout
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::selectionChanged): Delay scrolling to reveal the
+        selection until after layout if m_optionsChanged is set. Layout is
+        guaranteed to happen soon when the flag is set.
+
 2007-04-26  David Hyatt  <hyatt@apple.com>
 
         Fix for 13511, crash on a counters page.  Make sure that RenderTexts

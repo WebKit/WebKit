@@ -134,7 +134,7 @@ void RenderListBox::selectionChanged()
 {
     repaint();
     if (!m_inAutoscroll) {
-        if (needsLayout())
+        if (m_optionsChanged || needsLayout())
             m_scrollToRevealSelectionAfterLayout = true;
         else
             scrollToRevealSelection();
