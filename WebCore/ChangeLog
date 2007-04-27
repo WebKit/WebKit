@@ -1,3 +1,19 @@
+2007-04-25  Lars Naesbye Christensen <lars@naesbye.dk>
+
+        Reviewed by Timothy Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13477
+        Bug 13477: Help and context menu cursors need dropshadows.
+
+        * Resources/cellCursor.png:
+        * Resources/contextMenuCursor.png:
+        * Resources/helpCursor.png:
+        * platform/mac/CursorMac.mm:
+        (WebCore::contextMenuCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+
 2007-04-27  Holger Freyther <freyther@kde.org>
 
         Reviewed by Maciej.

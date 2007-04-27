@@ -141,7 +141,7 @@ const Cursor& cellCursor()
 
 const Cursor& contextMenuCursor()
 {
-    static Cursor c = leakNamedCursor("contextMenuCursor", 1, 1);
+    static Cursor c = leakNamedCursor("contextMenuCursor", 3, 2);
     return c;
 }
 
@@ -153,7 +153,7 @@ const Cursor& aliasCursor()
 
 const Cursor& copyCursor()
 {
-    static Cursor c = leakNamedCursor("copyCursor", 1, 1);
+    static Cursor c = leakNamedCursor("copyCursor", 3, 2);
     return c;
 }
 
@@ -165,13 +165,13 @@ const Cursor& noneCursor()
 
 const Cursor& progressCursor()
 {
-    static Cursor c = leakNamedCursor("progressCursor", 1, 1);
+    static Cursor c = leakNamedCursor("progressCursor", 3, 2);
     return c;
 }
 
 const Cursor& noDropCursor()
 {
-    static Cursor c = leakNamedCursor("noDropCursor", 1, 1);
+    static Cursor c = leakNamedCursor("noDropCursor", 3, 1);
     return c;
 }
 
