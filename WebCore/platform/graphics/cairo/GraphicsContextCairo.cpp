@@ -65,7 +65,7 @@ public:
     ~GraphicsContextPlatformPrivate();
 
     cairo_t* context;
-    cairo_user_data_key_t opacityKey;
+    Vector<float> layers;
 };
 
 static inline void setColor(cairo_t* cr, const Color& col)
@@ -574,15 +574,10 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     if (paintingDisabled())
         return;
 
-    ASSERT(opacity >= 0 && opacity <= 1);
-
     cairo_t* context = m_data->context;
     cairo_save(context);
     cairo_push_group(context);
-    // We insert the opacity into a Cairo surface data slot.
-    // Rather than passing a pointer, we store the opacity value directly.
-    void* odata = reinterpret_cast<void*>(static_cast<unsigned int>(opacity * UINT_MAX));
-    cairo_surface_set_user_data(cairo_get_target(context), &m_data->opacityKey, odata, NULL);
+    m_data->layers.append(opacity);
 }
 
 void GraphicsContext::endTransparencyLayer()
@@ -591,13 +586,10 @@ void GraphicsContext::endTransparencyLayer()
         return;
 
     cairo_t* context = m_data->context;
-    void* odata = cairo_surface_get_user_data(cairo_get_target(context), &m_data->opacityKey);
-    float opacity = static_cast<float>(reinterpret_cast<unsigned int>(odata)) / UINT_MAX;
-
-    ASSERT(opacity >= 0 && opacity <= 1);
 
     cairo_pop_group_to_source(context);
-    cairo_paint_with_alpha(context, opacity);
+    cairo_paint_with_alpha(context, m_data->layers.last());
+    m_data->layers.removeLast();
     cairo_restore(context);
 }
 

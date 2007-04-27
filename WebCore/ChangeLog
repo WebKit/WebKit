@@ -1,3 +1,15 @@
+2007-04-26  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13505
+        Cast loses precision on x86_64
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        Use a stack of opacity values instead of Cairo user data.
+
 2007-04-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
