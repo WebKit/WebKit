@@ -178,10 +178,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     // FIXME: We want a default here, but that would add localized strings.
 }
 
-- (void)webViewPrint:(WebView *)sender
-{
-}
-
 - (void)webView:(WebView *)sender printFrameView:(WebFrameView *)frameView
 {
 }

@@ -1,3 +1,16 @@
+2007-04-27  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark
+
+        Remove default implementation of UIDelegate method that was removed
+
+        I have also been instructed to give Tim a hard time about this one - apparently
+        it was his job to clean it out and he failed...  failed miserably.
+
+        :)
+
+        * DefaultDelegates/WebDefaultUIDelegate.m: Removed webViewPrint:
+
 2007-04-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
