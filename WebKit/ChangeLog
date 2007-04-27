@@ -1,3 +1,15 @@
+2007-04-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5165755>
+        View Source is broken; empty window is shown
+        
+        Return YES for applewebdata URLs.
+        
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:]):
+
 2007-04-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
