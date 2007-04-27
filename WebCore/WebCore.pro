@@ -80,12 +80,10 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/xml \
                 $$PWD/html \
                 $$PWD/bindings/js \
-                $$PWD/kcanvas $$PWD/kcanvas/device $$PWD/kcanvas/device/qt \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
                 $$PWD/platform/image-decoders \
                 $$PWD/../WebKitQt/WebCoreSupport \
-                $$PWD/../WebKitQt/Api \
-                $$PWD/WebCore+SVG
+                $$PWD/../WebKitQt/Api
 QT += network
 LIBS += -lsqlite3
 

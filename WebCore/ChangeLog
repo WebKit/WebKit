@@ -1,3 +1,9 @@
+2007-04-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        * WebCore.pro: Remove non-existent paths from qmake files.
+
 2007-04-25  Lars Naesbye Christensen <lars@naesbye.dk>
 
         Reviewed by Timothy Hatcher.
