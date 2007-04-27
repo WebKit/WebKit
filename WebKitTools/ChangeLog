@@ -1,3 +1,13 @@
+2007-04-27  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Maciej.
+
+        Remove unmaintained CMake build system.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/CMakeLists.txt: Removed.
+        * Scripts/build-webkit: Remove references to CMake.
+        * Scripts/webkitdirs.pm: Remove references to CMake.
+
 2007-04-26  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

@@ -352,8 +352,7 @@ sub isQt()
 
 sub isQtWithQMake()
 {
-    our @cmakeBuild;
-    return (isQt() and (@cmakeBuild eq 0))
+    return isQt();
 }
 
 sub isCygwin()
@@ -436,38 +435,6 @@ sub buildVisualStudioProject($)
 
     print "$vcBuildPath $project.sln /build $config";
     my $result = system $vcBuildPath, "$project.sln", "/build", $config;
-    chdir ".." or die;
-    return $result;
-}
-
-sub buildCMakeProject($$)
-{
-    my ($project, $colorize) = @_;
-
-    if ($project ne "WebKit") { 
-        die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
-    }
-
-    my $config = configuration();
-    my $prefix = $ENV{"WebKitInstallationPrefix"};
- 
-    my @buildArgs = ("-DCMAKE_BUILD_TYPE=$config");
-    push @buildArgs, "-DCMAKE_INSTALL_PREFIX=" . $prefix if(defined($prefix));
-    push @buildArgs, "-DWEBKIT_DO_NOT_USE_COLORFUL_OUTPUT=" . ($colorize ? "OFF" : "ON");
-    push @buildArgs, "../../";
-
-    print "Calling 'cmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
-    print "Installation directory: $prefix\n" if(defined($prefix));
-
-    system "mkdir -p " . baseProductDir() . "/$config";
-    chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
-
-    my $result = system "cmake", @buildArgs;
-    if($result ne 0) {
-       die "Failed to setup build environment using cmake!\n";
-    }
-
-    $result = system "make";
     chdir ".." or die;
     return $result;
 }

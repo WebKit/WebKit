@@ -1,3 +1,11 @@
+2007-04-27  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Maciej.
+
+        Remove unmaintained CMake build system.
+
+        * CMakeLists.txt: Removed.
+
 2007-01-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

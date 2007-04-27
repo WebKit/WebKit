@@ -1,3 +1,12 @@
+2007-04-27  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Maciej.
+
+        Remove unmaintained CMake build system.
+
+        * QtLauncher/CMakeLists.txt: Removed.
+        * WebKitPart/CMakeLists.txt: Removed.
+
 2007-04-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.

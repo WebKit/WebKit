@@ -45,14 +45,11 @@ my $xpathSupport = 1;
 my $xsltSupport = 1;
 my $colorSupport = 1; # Default: colorize make output
 
-our @cmakeBuild;
-
 GetOptions('svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
            'xpath!' => \$xpathSupport,
            'xslt!' => \$xsltSupport,
-           'color!' => \$colorSupport,
-           'cmake!' => \@cmakeBuild);
+           'color!' => \$colorSupport);
 
 checkRequiredSystemConfig();
 setConfiguration();
