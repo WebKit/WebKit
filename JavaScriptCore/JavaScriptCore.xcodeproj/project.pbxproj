@@ -13,6 +13,9 @@
 			buildPhases = (
 				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
 			);
+			dependencies = (
+				5D2F21D80BDFAB1D0082B294 /* PBXTargetDependency */,
+			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
 		};
@@ -351,6 +354,13 @@
 			remoteGlobalIDString = 14BD59BE0A3E8F9000BAF59C;
 			remoteInfo = testapi;
 		};
+		5D2F21D70BDFAB1D0082B294 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 935F69F508244FEA003D1A45;
+			remoteInfo = dftables;
+		};
 		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -371,13 +381,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 932F5BDA0822A1C700736975;
 			remoteInfo = "testkjs (Upgraded)";
-		};
-		93396B9C082450C500AB803D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 935F69F508244FEA003D1A45;
-			remoteInfo = dftables;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1297,7 +1300,6 @@
 				1CFE4BEC0B0BA1EB00CC444D /* PBXBuildRule */,
 			);
 			dependencies = (
-				93396B9D082450C500AB803D /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
 			name = JavaScriptCore;
@@ -1350,11 +1352,13 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
@@ -1541,6 +1545,11 @@
 			target = 14BD59BE0A3E8F9000BAF59C /* testapi */;
 			targetProxy = 14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */;
 		};
+		5D2F21D80BDFAB1D0082B294 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 935F69F508244FEA003D1A45 /* dftables */;
+			targetProxy = 5D2F21D70BDFAB1D0082B294 /* PBXContainerItemProxy */;
+		};
 		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
@@ -1555,11 +1564,6 @@
 			isa = PBXTargetDependency;
 			target = 932F5BDA0822A1C700736975 /* testkjs */;
 			targetProxy = 932F5BE80822A1C700736975 /* PBXContainerItemProxy */;
-		};
-		93396B9D082450C500AB803D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 935F69F508244FEA003D1A45 /* dftables */;
-			targetProxy = 93396B9C082450C500AB803D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

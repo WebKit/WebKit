@@ -1,3 +1,11 @@
+2007-04-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Improve dependencies in Xcode project
+        by marking dftables as a dependency of Generate Derived Sources rather than of
+        JavaScriptCore itself.
+
 2007-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix -- added #includes that we used to get implicitly through

@@ -93,6 +93,13 @@
 			remoteGlobalIDString = DD66F3B908F73ED700C75FD7;
 			remoteInfo = JavaScriptGlue;
 		};
+		5D2F21E20BDFAB9D0082B294 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD66F3B908F73ED700C75FD7;
+			remoteInfo = JavaScriptGlue;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -280,6 +287,7 @@
 				5D89690E0BB521EE009477BE /* PBXBuildRule */,
 			);
 			dependencies = (
+				5D2F21E30BDFAB9D0082B294 /* PBXTargetDependency */,
 			);
 			name = testjsglue;
 			productName = testjsglue;
@@ -392,6 +400,11 @@
 			isa = PBXTargetDependency;
 			target = DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */;
 			targetProxy = 1422E8C909DE3EB100749B87 /* PBXContainerItemProxy */;
+		};
+		5D2F21E30BDFAB9D0082B294 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */;
+			targetProxy = 5D2F21E20BDFAB9D0082B294 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
