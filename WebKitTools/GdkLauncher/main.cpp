@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuMainRoot), menuMain);
 
     GtkWidget* menuBar = gtk_menu_bar_new();
-    gtk_menu_bar_append(GTK_MENU_BAR(menuBar), menuMainRoot);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuMainRoot);
 
     GtkWidget* topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(topLevelWindow), 800, 600);

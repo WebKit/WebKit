@@ -1,3 +1,10 @@
+2007-04-26  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        * GdkLauncher/main.cpp:
+        (main): Avoid use of deprecated API.
+
 2007-04-26  Kevin McCullough  <kmccullough@apple.com>
 
         - Changed debugging statements for more information.
