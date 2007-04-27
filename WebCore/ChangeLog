@@ -1,3 +1,16 @@
+2007-04-26  Christopher Brichford  <chrisb@adobe.com>
+
+        Reviewed by Timothy Hatcher.
+
+        - Fix for Bug 13204: Submit initial version of mac project files for apollo
+          port of WebCore
+          http://bugs.webkit.org/show_bug.cgi?id=13204
+
+        * WebCore.apolloproj/mac/WebCore.Debug.xcconfig: Added.
+        * WebCore.apolloproj/mac/WebCore.Release.xcconfig: Added.
+        * WebCore.apolloproj/mac/WebCore.xcconfig: Added.
+        * WebCore.apolloproj/mac/WebCore.xcodeproj/project.pbxproj: Added.
+
 2007-04-26  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.
