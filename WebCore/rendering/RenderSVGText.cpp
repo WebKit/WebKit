@@ -122,11 +122,11 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int)
     rects.append(absoluteClippedOverflowRect());
 }
 
-void RenderSVGText::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
 {   
     RenderObject::PaintInfo pi(paintInfo);
     pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
-    RenderBlock::paint(pi, tx, ty);
+    RenderBlock::paint(pi, 0, 0);
 }
 
 FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
