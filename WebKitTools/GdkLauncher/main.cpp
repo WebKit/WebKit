@@ -27,11 +27,6 @@ using namespace WebCore;
 static GtkWidget* gURLBarEntry;
 static FrameGdk* gFrame;
 
-static bool stringIsEmpty(const char* str)
-{
-    return !str || !*str;
-}
-
 static bool stringIsEqual(const char* str1, const char* str2)
 {
     return 0 == strcmp(str1, str2);
@@ -42,13 +37,23 @@ static void handleGdkEvent(GtkWidget* widget, GdkEvent* event)
     gFrame->handleGdkEvent(event);
 }
 
+static String autocorrectURL(const String& url)
+{
+    String parsedURL = url;
+    if (!url.startsWith("http://") && !url.startsWith("https://")
+        && !url.startsWith("file://") && !url.startsWith("ftp://"))
+        parsedURL = String("http://") + url;
+    return parsedURL;
+}
+
 static void goToURLBarText(GtkWidget* urlBarEntry)
 {
-    const gchar* url = gtk_entry_get_text(GTK_ENTRY(urlBarEntry));
-    if (stringIsEmpty(url))
+    String url(gtk_entry_get_text(GTK_ENTRY(urlBarEntry)));
+    if (url.isEmpty())
         return;
-    // FIXME: append "http://" if doesn't have a scheme
-    gFrame->loader()->load(url, 0);
+
+    String parsedURL = autocorrectURL(url);
+    gFrame->loader()->load(ResourceRequest(parsedURL));
 }
 
 static void goButtonClickedCallback(GtkWidget* widget, GtkWidget* entry)
@@ -114,7 +119,7 @@ int main(int argc, char* argv[])
 {
     gtk_init(&argc, &argv);
 
-    const char* url = "http://www.google.com";
+    String url("http://www.google.com");
     bool exitAfterLoading = false;
     bool dumpRenderTree = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
@@ -134,7 +139,7 @@ int main(int argc, char* argv[])
         else if (stringIsEqual(currArg, "-dumprendertree"))
             dumpRenderTree = true;
         else
-            url = currArg;
+            url = autocorrectURL(currArg);
     }
 
     GtkWidget* menuMain = gtk_menu_new();
@@ -202,8 +207,7 @@ int main(int argc, char* argv[])
     gFrame->setView(frameView);
     frameView->ScrollView::setDrawable(frameWindow->window);
 
-    printf("OPENING URL == %s \n", url);
-    gFrame->loader()->load(ResourceRequest(KURL(url)));
+    gFrame->loader()->load(ResourceRequest(url));
     gtk_main();
 #if 0 // FIXME: this crashes at the moment. needs to provide DragClient
     delete page;

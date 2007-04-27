@@ -1,3 +1,14 @@
+2007-04-27  Nazar Kulyk  <schamane@myeburg.net>
+
+        Reviewed by Mark Rowe.
+
+        Basic auto-correction of user-entered URLs.
+
+        * GdkLauncher/main.cpp:
+        (autocorrectURL):
+        (goToURLBarText):
+        (main):
+
 2007-04-28  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders.
