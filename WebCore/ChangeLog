@@ -1,3 +1,13 @@
+2007-04-27  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5134254>, toolbar buttons don't work in gmail after double-click.  Make sure
+        to clear out the capturing frame, since you don't get a second up when a double-click happens.
+
+        Reviewed by mjs
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+
 2007-04-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
