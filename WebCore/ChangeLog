@@ -1,3 +1,22 @@
+2007-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13514
+        REGRESSION (r20997-21003): Crash in WebCore::Node::document
+
+        Test: fast/dom/NodeList/childNodes-reset-cache.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged): Reset the common caches for child node
+        lists. We cannot rely on notifications, since there may be no list objects left around.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::rootNodeChildrenChanged):
+        * dom/ChildNodeList.h:
+        Override rootNodeChildrenChanged() with an empty implementation, now that caches are reset
+        in Node::notifyLocalNodeListsChildrenChanged().
+
 2007-04-28  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Change use of nil to 0 in C++ source file.

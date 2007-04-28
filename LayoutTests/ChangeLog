@@ -1,3 +1,13 @@
+2007-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13514
+        REGRESSION (r20997-21003): Crash in WebCore::Node::document
+
+        * fast/dom/NodeList/childNodes-reset-cache-expected.txt: Added.
+        * fast/dom/NodeList/childNodes-reset-cache.html: Added.
+
 2007-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

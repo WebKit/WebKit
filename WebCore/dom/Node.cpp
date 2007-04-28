@@ -464,6 +464,8 @@ void Node::notifyLocalNodeListsChildrenChanged()
     if (!m_nodeLists)
         return;
 
+    m_nodeLists->m_childNodeListCaches.reset();
+
     NodeListSet::iterator end = m_nodeLists->m_registeredLists.end();
     for (NodeListSet::iterator i = m_nodeLists->m_registeredLists.begin(); i != end; ++i)
         (*i)->rootNodeChildrenChanged();
