@@ -1,5 +1,20 @@
 2007-04-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6216
+          REGRESSION: getElementsByTagNameNS with empty namespace doesn't work
+
+        * dom/Node.cpp:
+        (WebCore::TagNodeList::TagNodeList): Changed parameter to PassRefPtr, tweaked formatting.
+        (WebCore::TagNodeList::item): Tweaked formatting.
+        (WebCore::TagNodeList::nodeMatches): Tweaked formatting.
+        (WebCore::Node::setPrefix): Tweaked formatting.
+        (WebCore::Node::getElementsByTagNameNS): Added special case to turn empty namespaces into
+        null namespaces.
+
+2007-04-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin Decker.
 
         - fix <rdar://problem/5148271> Chinese numbers are incorrect in numbered lists

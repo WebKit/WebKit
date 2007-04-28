@@ -1,5 +1,15 @@
 2007-04-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=6216
+          REGRESSION: getElementsByTagNameNS with empty namespace doesn't work
+
+        * fast/dom/namespaces-1-expected.txt: Added.
+        * fast/dom/namespaces-1.html: Added.
+
+2007-04-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin Decker.
 
         - update test result for fix for <rdar://problem/5148271> Chinese numbers

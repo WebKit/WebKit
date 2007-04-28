@@ -53,33 +53,25 @@ struct NodeListsNodeData {
     NodeList::Caches m_childNodeListCaches;
 };
 
-
-/**
- * NodeList which lists all Nodes in a document with a given tag name
- */
-class TagNodeList : public NodeList
-{
+// NodeList that limits to a particular tag.
+class TagNodeList : public NodeList {
 public:
-    TagNodeList(Node *n, const AtomicString& namespaceURI, const AtomicString& localName);
+    TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
 
-    // DOM methods overridden from  parent classes
     virtual unsigned length() const;
-    virtual Node *item (unsigned index) const;
+    virtual Node* item(unsigned index) const;
 
-    // Other methods (not part of DOM)
-
-protected:
-    virtual bool nodeMatches(Node *testNode) const;
+private:
+    virtual bool nodeMatches(Node*) const;
 
     AtomicString m_namespaceURI;
     AtomicString m_localName;
 };
 
-TagNodeList::TagNodeList(Node *n, const AtomicString& namespaceURI, const AtomicString& localName)
-    : NodeList(n), 
-      m_namespaceURI(namespaceURI), 
-      m_localName(localName)
+inline TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+    : NodeList(rootNode), m_namespaceURI(namespaceURI), m_localName(localName)
 {
+    ASSERT(m_namespaceURI.isNull() || !m_namespaceURI.isEmpty());
 }
 
 unsigned TagNodeList::length() const
@@ -87,19 +79,19 @@ unsigned TagNodeList::length() const
     return recursiveLength();
 }
 
-Node *TagNodeList::item(unsigned index) const
+Node* TagNodeList::item(unsigned index) const
 {
     return recursiveItem(index);
 }
 
-bool TagNodeList::nodeMatches(Node *testNode) const
+bool TagNodeList::nodeMatches(Node* testNode) const
 {
     if (!testNode->isElementNode())
         return false;
 
     if (m_namespaceURI != starAtom && m_namespaceURI != testNode->namespaceURI())
         return false;
-    
+
     return m_localName == starAtom || m_localName == testNode->localName();
 }
 
@@ -355,11 +347,11 @@ const AtomicString& Node::prefix() const
     return nullAtom;
 }
 
-void Node::setPrefix(const AtomicString &/*_prefix*/, ExceptionCode& ec)
+void Node::setPrefix(const AtomicString& /*prefix*/, ExceptionCode& ec)
 {
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
-    // node, however mozilla throws a NAMESPACE_ERR exception
+    // node, however Mozilla throws a NAMESPACE_ERR exception.
     ec = NAMESPACE_ERR;
 }
 
@@ -1202,15 +1194,15 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const String& name)
     return getElementsByTagNameNS("*", name);
 }
  
-PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String &namespaceURI, const String &localName)
+PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, const String& localName)
 {
     if (localName.isNull())
-        return 0; // FIXME: Who relies on getting 0 instead of a node list in this case?
-    
+        return 0;
+
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
-    return new TagNodeList(this, AtomicString(namespaceURI), AtomicString(name));
+    return new TagNodeList(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name);
 }
 
 Document *Node::ownerDocument() const
