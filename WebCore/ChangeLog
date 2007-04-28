@@ -1,3 +1,15 @@
+2007-04-27  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5153017> REPRODUCIBLE ASSERT: range != nil in WebViewFactory.mm:415 -[WebViewFactory startOfTextMarkerRange:] (13354)
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject textMarkerRangeForRange:]):
+        Fix the range length check.  It was incorrectly assuming that the max range requested cannot be equal
+        to the length of the string.  Since NSRange location is index based, it's perfectly valid to have the max
+        range equal to the the text length.
+
 2007-04-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

@@ -2044,7 +2044,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 {
     ASSERT(m_renderer->isTextField() || m_renderer->isTextArea());
     RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
-    if (range.location + range.length >= textControl->text().length())
+    if (range.location + range.length > textControl->text().length())
         return nil;
     
     VisiblePosition startPosition = textControl->visiblePositionForIndex(range.location);
