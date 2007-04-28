@@ -76,8 +76,10 @@ static NSImage *image = nil;
         WebFrame *webFrame = kit(core(element)->document()->frame());
         WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame dataSource];
-        
-        [[webView _resourceLoadDelegateForwarder] webView:webView plugInFailedWithError:error dataSource:dataSource];
+
+        id resourceLoadDelegate = [webView resourceLoadDelegate];
+        if ([resourceLoadDelegate respondsToSelector:@selector(webView:plugInFailedWithError:dataSource:)])
+            [resourceLoadDelegate webView:webView plugInFailedWithError:error dataSource:dataSource];
     }
 }
 

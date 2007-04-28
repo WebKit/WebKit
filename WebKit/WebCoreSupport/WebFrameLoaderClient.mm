@@ -38,7 +38,6 @@
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebPolicyDelegatePrivate.h"
-#import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
@@ -209,7 +208,6 @@ void WebFrameLoaderClient::setCopiesOnScroll()
 
 void WebFrameLoaderClient::detachedFromParent2()
 {
-    [m_webFrame->_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:m_webFrame.get()];
     [m_webFrame->_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 }
 
@@ -369,7 +367,11 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsi
 void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const WebCore::ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _resourceLoadDelegateForwarder] webView:webView resource:[webView _objectForIdentifier:identifier] didFailLoadingWithError:error fromDataSource:dataSource(loader)];
+    id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
+    WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+
+    if (implementations.delegateImplementsDidFailLoadingWithErrorFromDataSource)
+        implementations.didFailLoadingWithErrorFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFailLoadingWithError:fromDataSource:), webView, [webView _objectForIdentifier:identifier], error, dataSource(loader));
     [webView _removeObjectForIdentifier:identifier];
 
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);

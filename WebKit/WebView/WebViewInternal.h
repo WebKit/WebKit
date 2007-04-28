@@ -71,7 +71,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;
-- (id)_resourceLoadDelegateForwarder;
 - (id)_frameLoadDelegateForwarder;
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;

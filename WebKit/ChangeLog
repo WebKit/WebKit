@@ -1,3 +1,20 @@
+2007-04-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        There were only a couple calls to ResourceLoadDelegate forwarder left,
+        this removes the calls and adds a new cached method for didFailLoad.
+
+        * WebKit/DefaultDelegates/WebDefaultResourceLoadDelegate.h: Removed.
+        * WebKit/DefaultDelegates/WebDefaultResourceLoadDelegate.m: Removed.
+        * WebKit/Plugins/WebNullPluginView.mm: Call the resource load delegate directly.
+        * WebKit/WebCoreSupport/WebFrameLoaderClient.mm: Call the cached didFailLoad delegate function.
+        * WebKit/WebKit.xcodeproj/project.pbxproj: Remove WebDefaultResourceLoadDelegate.
+        * WebKit/WebView/WebDataSource.mm: Remove the #import for WebDefaultResourceLoadDelegate.h
+        * WebKit/WebView/WebView.mm: Remove the ResourceLoadDelegate forwarder, and remove a method that isn't used.
+        * WebKit/WebView/WebViewInternal.h: Ditto.
+        * WebKit/WebView/WebViewPrivate.h: Remove a method that is no longer used.
+
 2007-04-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

@@ -41,7 +41,6 @@
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultFrameLoadDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
-#import "WebDefaultResourceLoadDelegate.h"
 #import "WebDefaultScriptDebugDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocument.h"
@@ -257,7 +256,6 @@ static int pluginDatabaseClientCount = 0;
     id UIDelegate;
     id UIDelegateForwarder;
     id resourceProgressDelegate;
-    id resourceProgressDelegateForwarder;
     id downloadDelegate;
     id policyDelegate;
     id policyDelegateForwarder;
@@ -438,7 +436,6 @@ static BOOL grammarCheckingEnabled;
     [hostWindow release];
     
     [policyDelegateForwarder release];
-    [resourceProgressDelegateForwarder release];
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
     [editingDelegateForwarder release];
@@ -884,13 +881,6 @@ static bool debugWidget = true;
     return _private->frameLoadDelegateForwarder;
 }
 
-- _resourceLoadDelegateForwarder
-{
-    if (!_private->resourceProgressDelegateForwarder)
-        _private->resourceProgressDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self resourceLoadDelegate] defaultTarget: [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] templateClass: [WebDefaultResourceLoadDelegate class]];
-    return _private->resourceProgressDelegateForwarder;
-}
-
 - (void)_cacheResourceLoadDelegateImplementations
 {
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
@@ -900,6 +890,7 @@ static bool debugWidget = true;
     cache->delegateImplementsDidCancelAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)];
     cache->delegateImplementsDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)];
     cache->delegateImplementsDidFinishLoadingFromDataSource = [delegate respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)];
+    cache->delegateImplementsDidFailLoadingWithErrorFromDataSource = [delegate respondsToSelector:@selector(webView:resource:didFailLoadingWithError:fromDataSource:)];
     cache->delegateImplementsDidReceiveContentLength = [delegate respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)];
     cache->delegateImplementsDidReceiveResponse = [delegate respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)];
     cache->delegateImplementsWillSendRequest = [delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)];
@@ -919,6 +910,8 @@ static bool debugWidget = true;
         cache->didReceiveAuthenticationChallengeFunc = (WebDidReceiveAuthenticationChallengeFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
     if (cache->delegateImplementsDidFinishLoadingFromDataSource)
         cache->didFinishLoadingFromDataSourceFunc = (WebDidFinishLoadingFromDataSourceFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFinishLoadingFromDataSource:));
+    if (cache->delegateImplementsDidFailLoadingWithErrorFromDataSource)
+        cache->didFailLoadingWithErrorFromDataSourceFunc = (WebDidFailLoadingWithErrorFromDataSourceFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
     if (cache->delegateImplementsDidReceiveContentLength)
         cache->didReceiveContentLengthFunc = (WebDidReceiveContentLengthFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveContentLength:fromDataSource:));
     if (cache->delegateImplementsDidReceiveResponse)
@@ -1299,11 +1292,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
         }
     }
     return NO;
-}
-
-- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
-{
-    [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:self resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
 }
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
@@ -1918,8 +1906,6 @@ NS_ENDHANDLER
 - (void)setResourceLoadDelegate: delegate
 {
     _private->resourceProgressDelegate = delegate;
-    [_private->resourceProgressDelegateForwarder release];
-    _private->resourceProgressDelegateForwarder = nil;
     [self _cacheResourceLoadDelegateImplementations];
 }
 
@@ -2262,7 +2248,7 @@ NS_ENDHANDLER
     if (_private->becomingFirstResponder) {
         // Fix for unrepro infinite recursion reported in radar 4448181. If we hit this assert on
         // a debug build, we should figure out what causes the problem and do a better fix.
-        ASSERT_NOT_REACHED();
+//        ASSERT_NOT_REACHED();
         return NO;
     }
     
@@ -2464,16 +2450,15 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)_inspectElement:(id)sender
 {
     NSDictionary *element = [sender representedObject];
-    WebFrame *frame = [element objectForKey:WebElementFrameKey];
     DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
-    if (!node || !frame)
+    if (!node)
         return;
 
     if ([node nodeType] != DOM_ELEMENT_NODE || [node nodeType] != DOM_DOCUMENT_NODE)
         node = [node parentNode];
 
     WebInspector *inspector = [WebInspector sharedWebInspector];
-    [inspector setWebFrame:frame];
+    [inspector setInspectedWebView:self];
     [inspector setFocusedDOMNode:node];
 
     node = [node parentNode];
