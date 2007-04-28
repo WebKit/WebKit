@@ -1,3 +1,13 @@
+2007-04-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/4806988> REGRESSION: history.go(0) doesn't reload page (affects buttons at facebook.com)
+
+        * fast/history/history_reload-expected.txt: Added.
+        * fast/history/history_reload.html: Added.
+        * fast/history/resources/history_reload_window.html: Added.
+
 2007-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

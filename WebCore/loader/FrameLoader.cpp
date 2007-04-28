@@ -1289,9 +1289,9 @@ void FrameLoader::scheduleHistoryNavigation(int steps)
         return;
     }
 
-    // If the URL we're going to navigate to is the same as the current one, except for the
-    // fragment part, we don't need to schedule the navigation.
-    if (equalIgnoringRef(m_URL, historyURL(steps))) {
+    // If the steps to navigate is not zero (which needs to force a reload), and if the URL we're going to navigate 
+    // to is the same as the current one, except for the fragment part, we don't need to schedule the navigation.
+    if (steps != 0 && equalIgnoringRef(m_URL, historyURL(steps))) {
         goBackOrForward(steps);
         return;
     }
