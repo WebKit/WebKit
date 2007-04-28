@@ -208,6 +208,7 @@ void WebFrameLoaderClient::setCopiesOnScroll()
 
 void WebFrameLoaderClient::detachedFromParent2()
 {
+    [m_webFrame->_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:m_webFrame.get()];
     [m_webFrame->_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 }
 

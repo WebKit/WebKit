@@ -2248,7 +2248,7 @@ NS_ENDHANDLER
     if (_private->becomingFirstResponder) {
         // Fix for unrepro infinite recursion reported in radar 4448181. If we hit this assert on
         // a debug build, we should figure out what causes the problem and do a better fix.
-//        ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
         return NO;
     }
     
@@ -2450,15 +2450,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)_inspectElement:(id)sender
 {
     NSDictionary *element = [sender representedObject];
+    WebFrame *frame = [element objectForKey:WebElementFrameKey];
     DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
-    if (!node)
+    if (!node || !frame)
         return;
 
     if ([node nodeType] != DOM_ELEMENT_NODE || [node nodeType] != DOM_DOCUMENT_NODE)
         node = [node parentNode];
 
     WebInspector *inspector = [WebInspector sharedWebInspector];
-    [inspector setInspectedWebView:self];
+    [inspector setWebFrame:frame];
     [inspector setFocusedDOMNode:node];
 
     node = [node parentNode];
