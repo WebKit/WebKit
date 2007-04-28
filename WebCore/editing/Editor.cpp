@@ -54,8 +54,10 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
+#include "InsertListCommand.h"
 #include "KeyboardEvent.h"
 #include "KURL.h"
+#include "ModifySelectionListLevel.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "Range.h"
@@ -217,16 +219,12 @@ bool Editor::canDeleteRange(Range* range) const
 
 bool Editor::smartInsertDeleteEnabled()
 {   
-    if (client())
-        return client()->smartInsertDeleteEnabled();
-    return false;
+    return client() && client()->smartInsertDeleteEnabled();
 }
     
 bool Editor::canSmartCopyOrDelete()
 {
-    if (client())
-        return client()->smartInsertDeleteEnabled() && m_frame->selectionGranularity() == WordGranularity;
-    return false;
+    return client() && client()->smartInsertDeleteEnabled() && m_frame->selectionGranularity() == WordGranularity;
 }
 
 void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction deletionAction, TextGranularity granularity)
@@ -346,20 +344,19 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 
 bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
 {
-    if (client())
-        return client()->smartInsertDeleteEnabled() && pasteboard->canSmartReplace();
-    return false;
+    return client() && client()->smartInsertDeleteEnabled() && pasteboard->canSmartReplace();
 }
 
 bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction)
 {
-    if (client()) {
-        Node* child = fragment->firstChild();
-        if (child && fragment->lastChild() == child && child->isCharacterDataNode())
-            return client()->shouldInsertText(static_cast<CharacterData*>(child)->data(), replacingDOMRange.get(), givenAction);
-        return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
-    }
-    return false;
+    if (!client())
+        return false;
+        
+    Node* child = fragment->firstChild();
+    if (child && fragment->lastChild() == child && child->isCharacterDataNode())
+        return client()->shouldInsertText(static_cast<CharacterData*>(child)->data(), replacingDOMRange.get(), givenAction);
+
+    return client()->shouldInsertNode(fragment.get(), replacingDOMRange.get(), givenAction);
 }
 
 void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle)
@@ -392,9 +389,7 @@ bool Editor::shouldDeleteRange(Range* range) const
     if (!canDeleteRange(range))
         return false;
 
-    if (client())
-        return client()->shouldDeleteRange(range);
-    return false;
+    return client() && client()->shouldDeleteRange(range);
 }
 
 bool Editor::tryDHTMLCopy()
@@ -433,16 +428,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
-    if (client())
-        return client()->shouldInsertText(text, range, action);
-    return false;
+    return client() && client()->shouldInsertText(text, range, action);
 }
 
 bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 {
-    if (client())
-        return client()->shouldShowDeleteInterface(element);
-    return false;
+    return client() && client()->shouldShowDeleteInterface(element);
 }
 
 void Editor::respondToChangedSelection(const Selection& oldSelection)
@@ -545,6 +536,75 @@ Frame::TriState Editor::selectionOrderedListState() const
     }
 
     return Frame::falseTriState;
+}
+
+PassRefPtr<Node> Editor::insertOrderedList()
+{
+    if (!canEditRichly())
+        return 0;
+        
+    RefPtr<Node> newList = InsertListCommand::insertList(m_frame->document(), InsertListCommand::OrderedList);
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return newList;
+}
+
+PassRefPtr<Node> Editor::insertUnorderedList()
+{
+    if (!canEditRichly())
+        return 0;
+        
+    RefPtr<Node> newList = InsertListCommand::insertList(m_frame->document(), InsertListCommand::UnorderedList);
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return newList;
+}
+
+bool Editor::canIncreaseSelectionListLevel()
+{
+    return canEditRichly() && IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(m_frame->document());
+}
+
+bool Editor::canDecreaseSelectionListLevel()
+{
+    return canEditRichly() && DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel(m_frame->document());
+}
+
+PassRefPtr<Node> Editor::increaseSelectionListLevel()
+{
+    if (!canEditRichly() || m_frame->selectionController()->isNone())
+        return nil;
+    
+    RefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return newList;
+}
+
+PassRefPtr<Node> Editor::increaseSelectionListLevelOrdered()
+{
+    if (!canEditRichly() || m_frame->selectionController()->isNone())
+        return nil;
+    
+    PassRefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return newList;
+}
+
+PassRefPtr<Node> Editor::increaseSelectionListLevelUnordered()
+{
+    if (!canEditRichly() || m_frame->selectionController()->isNone())
+        return nil;
+    
+    PassRefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return newList;
+}
+
+void Editor::decreaseSelectionListLevel()
+{
+    if (!canEditRichly() || m_frame->selectionController()->isNone())
+        return;
+    
+    DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
 void Editor::removeFormattingAndStyle()
@@ -657,16 +717,12 @@ void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditActi
 
 bool Editor::selectWordBeforeMenuEvent() const
 {
-    if (client())
-        return client()->selectWordBeforeMenuEvent();
-    return false;
+    return client() && client()->selectWordBeforeMenuEvent();
 }
 
 bool Editor::clientIsEditable() const
 {
-    if (client())
-        return client()->isEditable();
-    return false;
+    return client() && client()->isEditable();
 }
 
 bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
@@ -1505,9 +1561,7 @@ void Editor::copyImage(const HitTestResult& result)
 
 bool Editor::isContinuousSpellCheckingEnabled()
 {
-    if (client())
-        return client()->isContinuousSpellCheckingEnabled();
-    return false;
+    return client() && client()->isContinuousSpellCheckingEnabled();
 }
 
 void Editor::toggleContinuousSpellChecking()
@@ -1518,9 +1572,7 @@ void Editor::toggleContinuousSpellChecking()
 
 bool Editor::isGrammarCheckingEnabled()
 {
-    if (client())
-        return client()->isGrammarCheckingEnabled();
-    return false;
+    return client() && client()->isGrammarCheckingEnabled();
 }
 
 void Editor::toggleGrammarChecking()
@@ -1531,23 +1583,17 @@ void Editor::toggleGrammarChecking()
 
 int Editor::spellCheckerDocumentTag()
 {
-    if (client())
-        return client()->spellCheckerDocumentTag();
-    return 0;
+    return client() ? client()->spellCheckerDocumentTag() : 0;
 }
 
 bool Editor::shouldEndEditing(Range* range)
 {
-    if (client())
-        return client()->shouldEndEditing(range);
-    return false;
+    return client() && client()->shouldEndEditing(range);
 }
 
 bool Editor::shouldBeginEditing(Range* range)
 {
-    if (client())
-        return client()->shouldBeginEditing(range);
-    return false;
+    return client() && client()->shouldBeginEditing(range);
 }
 
 void Editor::clearUndoRedoOperations()
@@ -1558,9 +1604,7 @@ void Editor::clearUndoRedoOperations()
 
 bool Editor::canUndo()
 {
-    if (client())
-        return client()->canUndo();
-    return false;
+    return client() && client()->canUndo();
 }
 
 void Editor::undo()
@@ -1571,9 +1615,7 @@ void Editor::undo()
 
 bool Editor::canRedo()
 {
-    if (client())
-        return client()->canRedo();
-    return false;
+    return client() && client()->canRedo();
 }
 
 void Editor::redo()

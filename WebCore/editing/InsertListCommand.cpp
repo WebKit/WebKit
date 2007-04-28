@@ -36,12 +36,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+PassRefPtr<Node> InsertListCommand::insertList(Document* document, Type type)
+{
+    RefPtr<InsertListCommand> insertCommand = new InsertListCommand(document, type, "");
+    insertCommand->apply();
+    return insertCommand->m_listElement;
+}
+
 Node* InsertListCommand::fixOrphanedListChild(Node* node)
 {
     RefPtr<Element> listElement = createUnorderedListElement(document());
     insertNodeBefore(listElement.get(), node);
     removeNode(node);
     appendNode(node, listElement.get());
+    m_listElement = listElement;
     return listElement.get();
 }
 
@@ -186,7 +194,9 @@ void InsertListCommand::doApply()
         else {
             // Create the list.
             RefPtr<Element> listElement = m_type == OrderedList ? createOrderedListElement(document()) : createUnorderedListElement(document());
-            static_cast<HTMLElement*>(listElement.get())->setId(m_id);
+            m_listElement = listElement;
+            if (!m_id.isEmpty())
+                static_cast<HTMLElement*>(listElement.get())->setId(m_id);
             appendNode(listItemElement.get(), listElement.get());
             
             if (start == end && isBlock(start.deepEquivalent().node())) {

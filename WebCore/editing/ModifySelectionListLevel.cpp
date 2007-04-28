@@ -207,7 +207,7 @@ bool IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(Document* 
     return canIncreaseListLevel(document->frame()->selectionController()->selection(), startListChild, endListChild);
 }
 
-Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType(Document* document, Type listType)
+PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType(Document* document, Type listType)
 {
     ASSERT(document);
     ASSERT(document->frame());
@@ -216,17 +216,17 @@ Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType(Docu
     return modCommand->m_listElement.get();
 }
 
-Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document)
+PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document)
 {
     return increaseSelectionListLevelWithType(document, InheritedListType);
 }
 
-Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(Document* document)
+PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(Document* document)
 {
     return increaseSelectionListLevelWithType(document, OrderedList);
 }
 
-Node* IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(Document* document)
+PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(Document* document)
 {
     return increaseSelectionListLevelWithType(document, UnorderedList);
 }

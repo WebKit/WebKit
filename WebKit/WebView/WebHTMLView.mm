@@ -595,17 +595,13 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (DOMRange *)_selectedRange
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return nil;
-    return kit(coreFrame->selectionController()->toRange().get());
+    return coreFrame ? kit(coreFrame->selectionController()->toRange().get()) : nil;
 }
 
 - (BOOL)_shouldDeleteRange:(DOMRange *)range
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return nil;
-    return coreFrame->editor()->shouldDeleteRange(core(range));
+    return coreFrame && coreFrame->editor()->shouldDeleteRange(core(range));
 }
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
@@ -1549,17 +1545,13 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (BOOL)_canEdit
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return false;
-    return coreFrame->editor()->canEdit();
+    return coreFrame && coreFrame->editor()->canEdit();
 }
 
 - (BOOL)_canEditRichly
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->editor()->canEditRichly();
+    return coreFrame && coreFrame->editor()->canEditRichly();
 }
 
 - (BOOL)_canAlterCurrentSelection
@@ -1570,33 +1562,25 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (BOOL)_hasSelection
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->selectionController()->isRange();
+    return coreFrame && coreFrame->selectionController()->isRange();
 }
 
 - (BOOL)_hasSelectionOrInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->selectionController()->isCaretOrRange();
+    return coreFrame && coreFrame->selectionController()->isCaretOrRange();
 }
 
 - (BOOL)_hasInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->selectionController()->isCaret();
+    return coreFrame && coreFrame->selectionController()->isCaret();
 }
 
 - (BOOL)_isEditable
 {
     Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->selectionController()->isContentEditable();
+    return coreFrame && coreFrame->selectionController()->isContentEditable();
 }
 
 - (BOOL)_transparentBackground
@@ -1625,50 +1609,53 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return [self selectionImageRect];
 }
 
+- (DOMNode *)_insertOrderedList
+{
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame ? kit(coreFrame->editor()->insertOrderedList().get()) : nil;
+}
+
+- (DOMNode *)_insertUnorderedList
+{
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame ? kit(coreFrame->editor()->insertUnorderedList().get()) : nil;
+}
+
 - (BOOL)_canIncreaseSelectionListLevel
 {
-    return [self _canEditRichly] && [[self _bridge] canIncreaseSelectionListLevel];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->editor()->canIncreaseSelectionListLevel();
 }
 
 - (BOOL)_canDecreaseSelectionListLevel
 {
-    return [self _canEditRichly] && [[self _bridge] canDecreaseSelectionListLevel];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->editor()->canDecreaseSelectionListLevel();
 }
 
 - (DOMNode *)_increaseSelectionListLevel
 {
-    if (![self _canEditRichly])
-        return nil;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    return [bridge increaseSelectionListLevel];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame ? kit(coreFrame->editor()->increaseSelectionListLevel().get()) : nil;
 }
 
 - (DOMNode *)_increaseSelectionListLevelOrdered
 {
-    if (![self _canEditRichly])
-        return nil;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    return [bridge increaseSelectionListLevelOrdered];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame ? kit(coreFrame->editor()->increaseSelectionListLevelOrdered().get()) : nil;
 }
 
 - (DOMNode *)_increaseSelectionListLevelUnordered
 {
-    if (![self _canEditRichly])
-        return nil;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    return [bridge increaseSelectionListLevelUnordered];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame ? kit(coreFrame->editor()->increaseSelectionListLevelUnordered().get()) : nil;
 }
 
 - (void)_decreaseSelectionListLevel
 {
-    if (![self _canEditRichly])
-        return;
-        
-    WebFrameBridge *bridge = [self _bridge];
-    [bridge decreaseSelectionListLevel];
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->editor()->decreaseSelectionListLevel();
 }
 
 - (void)_setHighlighter:(id<WebHTMLHighlighter>)highlighter ofType:(NSString*)type

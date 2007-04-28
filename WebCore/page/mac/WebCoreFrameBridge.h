@@ -213,13 +213,6 @@ typedef enum ObjectElementType {
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
-- (bool)canIncreaseSelectionListLevel;
-- (bool)canDecreaseSelectionListLevel;
-- (DOMNode *)increaseSelectionListLevel;
-- (DOMNode *)increaseSelectionListLevelOrdered;
-- (DOMNode *)increaseSelectionListLevelUnordered;
-- (void)decreaseSelectionListLevel;
-
 - (void)insertParagraphSeparatorInQuotedContent;
 
 - (void)setSelectionToDragCaret;

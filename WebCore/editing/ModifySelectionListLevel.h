@@ -49,13 +49,13 @@ private:
 class IncreaseSelectionListLevelCommand : public ModifySelectionListLevelCommand {
 public:
     static bool canIncreaseSelectionListLevel(Document*);
-    static Node* increaseSelectionListLevel(Document*);
-    static Node* increaseSelectionListLevelOrdered(Document*);
-    static Node* increaseSelectionListLevelUnordered(Document*);
+    static PassRefPtr<Node> increaseSelectionListLevel(Document*);
+    static PassRefPtr<Node> increaseSelectionListLevelOrdered(Document*);
+    static PassRefPtr<Node> increaseSelectionListLevelUnordered(Document*);
 
 private:
     enum Type { InheritedListType, OrderedList, UnorderedList };
-    static Node* increaseSelectionListLevelWithType(Document*, Type listType);
+    static PassRefPtr<Node> increaseSelectionListLevelWithType(Document*, Type listType);
 
     IncreaseSelectionListLevelCommand(Document*, Type);
     virtual void doApply();

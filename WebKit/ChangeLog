@@ -1,3 +1,37 @@
+2007-04-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5160627> Export JS list creation support as ObjC SPI for Mail
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectedRange]):
+        (-[WebHTMLView _shouldDeleteRange:]):
+        (-[WebHTMLView _canEdit]):
+        (-[WebHTMLView _canEditRichly]):
+        (-[WebHTMLView _hasSelection]):
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]):
+        (-[WebHTMLView _hasInsertionPoint]):
+        (-[WebHTMLView _isEditable]):
+        Condense the check for nil [self frame].
+        Remove canEditRichly checks and rely on the editor to do the check instead.
+        
+        (-[WebHTMLView _insertOrderedList]):
+        (-[WebHTMLView _insertUnorderedList]):
+        New.
+        
+        (-[WebHTMLView _canIncreaseSelectionListLevel]):
+        (-[WebHTMLView _canDecreaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevelOrdered]):
+        (-[WebHTMLView _increaseSelectionListLevelUnordered]):
+        (-[WebHTMLView _decreaseSelectionListLevel]):
+        Moved from bridge to frame editor.
+
+        * WebView/WebHTMLViewPrivate.h:
+        Add _insertOrderedList and _insertUnorderedList to WebHTMLView(WebPrivate)
+
 2007-04-27  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark
