@@ -1,3 +1,17 @@
+2007-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/5138250> REGRESSION (r18245): Changing any one aspect
+          of a font applies all the aspects to selected text
+
+        Since this bug is only visible with the font panel, I don't
+        think there's any way to make a DumpRenderTree-driven test.
+
+        * editing/Editor.cpp: (WebCore::Editor::fontForSelection):
+        Set hasMultipleFonts properly. The old code had an early exit
+        that was left over from when hasMultipleFonts was a pointer.
+
 2007-04-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

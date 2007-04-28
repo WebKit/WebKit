@@ -458,8 +458,7 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
 
 const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
-    if (hasMultipleFonts)
-        hasMultipleFonts = false;
+    hasMultipleFonts = false;
 
     if (!m_frame->selectionController()->isRange()) {
         Node* nodeToRemove;
@@ -492,11 +491,9 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
             const FontData* f = renderer->style()->font().primaryFont();
-            if (!font) {
+            if (!font)
                 font = f;
-                if (!hasMultipleFonts)
-                    break;
-            } else if (font != f) {
+            else if (font != f) {
                 hasMultipleFonts = true;
                 break;
             }
