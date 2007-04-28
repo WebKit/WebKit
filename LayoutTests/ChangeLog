@@ -1,3 +1,15 @@
+2007-04-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Antti.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13521
+          Update fast/css/percentage-non-integer for the new empty table cell behavior
+
+        * fast/css/percentage-non-integer-expected.checksum:
+        * fast/css/percentage-non-integer-expected.png:
+        * fast/css/percentage-non-integer-expected.txt:
+        * fast/css/percentage-non-integer.html:
+
 2007-04-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
