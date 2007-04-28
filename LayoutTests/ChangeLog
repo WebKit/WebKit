@@ -1,3 +1,13 @@
+2007-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - update test result for fix for <rdar://problem/5148271> Chinese numbers
+          are incorrect in numbered lists (including pasting from TextEdit to Mail)
+
+        * fast/lists/w3-list-styles-expected.txt: Updated. The new test results match
+        the behavior of Firefox.
+
 2007-04-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Antti.

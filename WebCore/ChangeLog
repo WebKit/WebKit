@@ -1,5 +1,24 @@
 2007-04-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        - fix <rdar://problem/5148271> Chinese numbers are incorrect in numbered lists
+          (including pasting from TextEdit to Mail)
+
+        Covered by an existing regression test, which had wrong results checked in.
+
+        Hyatt told me not to use the algorithm in the CSS 3 specification, but I didn't listen!
+        This corrects mistakes there and makes our results match current Firefox.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toCJKIdeographic): Added code to strip off trailing zero digits.
+        Added special case for zero, since that's the one case where we don't want
+        to strip off trailing zero digits. Fixed mixed-up logic that would put the
+        digits in each group backwards.
+        (WebCore::listMarkerText): Corrected character values for the CJK_IDEOGRAPHIC case.
+
+2007-04-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver.
 
         - fix <rdar://problem/5138250> REGRESSION (r18245): Changing any one aspect

@@ -101,6 +101,7 @@ static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
 static int toHebrewUnder1000(int number, UChar letters[5])
 {
     // FIXME: CSS3 mentions various refinements not implemented here.
+    // FIXME: Should take a look at Mozilla's HebrewToText function (in nsBulletFrame).
     ASSERT(number >= 0 && number < 1000);
     int length = 0;
     int fourHundreds = number / 400;
@@ -268,6 +269,9 @@ static String toCJKIdeographic(int number, const UChar table[16])
         digit5, digit6, digit7, digit8, digit9
     };
 
+    if (number == 0)
+        return String(&table[digit0 - 1], 1);
+
     const int groupLength = 8; // 4 digits, 3 digit markers, and a group marker
     const int bufferLength = 4 * groupLength;
     AbstractCJKChar buffer[bufferLength] = { noChar };
@@ -283,38 +287,39 @@ static String toCJKIdeographic(int number, const UChar table[16])
             group[7] = static_cast<AbstractCJKChar>(secondGroupMarker - 1 + i);
 
         // Put in the four digits and digit markers for any non-zero digits.
-        group[0] = static_cast<AbstractCJKChar>(digit0 + (groupValue % 10));
+        group[6] = static_cast<AbstractCJKChar>(digit0 + (groupValue % 10));
         if (number != 0 || groupValue > 9) {
             int digitValue = ((groupValue / 10) % 10);
-            group[1] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[4] = static_cast<AbstractCJKChar>(digit0 + digitValue);
             if (digitValue)
-                group[2] = secondDigitMarker;
+                group[5] = secondDigitMarker;
         }
         if (number != 0 || groupValue > 99) {
             int digitValue = ((groupValue / 100) % 10);
-            group[3] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[2] = static_cast<AbstractCJKChar>(digit0 + digitValue);
             if (digitValue)
-                group[4] = thirdDigitMarker;
+                group[3] = thirdDigitMarker;
         }
         if (number != 0 || groupValue > 999) {
             int digitValue = groupValue / 1000;
-            group[5] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            group[0] = static_cast<AbstractCJKChar>(digit0 + digitValue);
             if (digitValue)
-                group[6] = fourthDigitMarker;
+                group[1] = fourthDigitMarker;
         }
 
         // Remove the tens digit, but leave the marker, for any group that has
         // a value of less than 20.
         if (groupValue < 20) {
-            ASSERT(group[1] == noChar || group[1] == digit0 || group[1] == digit1);
-            group[1] = noChar;
+            ASSERT(group[4] == noChar || group[4] == digit0 || group[4] == digit1);
+            group[4] = noChar;
         }
 
         if (number == 0)
             break;
     }
 
-    // Convert into characters, omitting consecutive runs of digit0.
+    // Convert into characters, omitting consecutive runs of digit0 and
+    // any trailing digit0.
     int length = 0;
     UChar characters[bufferLength];
     AbstractCJKChar last = noChar;
@@ -326,6 +331,9 @@ static String toCJKIdeographic(int number, const UChar table[16])
             last = a;
         }
     }
+    if (last == digit0)
+        --length;
+
     return String(characters, length);
 }
 
@@ -436,8 +444,8 @@ String listMarkerText(EListStyleType type, int value)
         case CJK_IDEOGRAPHIC: {
             static const UChar traditionalChineseInformalTable[16] = {
                 0x842C, 0x5104, 0x5146,
-                0x842C, 0x5104, 0x5146,
-                0x96F6, 0x4E00, 0x4EBC, 0x4E09, 0x56DB,
+                0x5341, 0x767E, 0x5343,
+                0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
                 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D
             };
             return toCJKIdeographic(value, traditionalChineseInformalTable);

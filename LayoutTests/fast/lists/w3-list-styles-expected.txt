@@ -740,7 +740,7 @@ layer at (0,0) size 785x6291
               text run at (0,0) width 23: "one"
           RenderListItem {LI} at (40,18) size 729x80
             RenderBlock (anonymous) at (0,0) size 729x18
-              RenderListMarker at (-28,0) size 24x18: "\x{4EBC}"
+              RenderListMarker at (-28,0) size 24x18: "\x{4E8C}"
               RenderText {#text} at (0,0) size 24x18
                 text run at (0,0) width 24: "two"
             RenderBlock {OL} at (0,26) size 729x54
@@ -749,7 +749,7 @@ layer at (0,0) size 785x6291
                 RenderText {#text} at (0,0) size 23x18
                   text run at (0,0) width 23: "one"
               RenderListItem {LI} at (40,18) size 689x18
-                RenderListMarker at (-28,0) size 24x18: "\x{4EBC}"
+                RenderListMarker at (-28,0) size 24x18: "\x{4E8C}"
                 RenderText {#text} at (0,0) size 24x18
                   text run at (0,0) width 24: "two"
               RenderListItem {LI} at (40,36) size 689x18
@@ -770,28 +770,28 @@ layer at (0,0) size 785x6291
               text run at (0,0) width 24: "five"
         RenderBlock {OL} at (0,184) size 769x54
           RenderListItem {LI} at (40,0) size 729x18
-            RenderListMarker at (-60,0) size 56x18: "\x{96F6}\x{4EBC}\x{842C}"
+            RenderListMarker at (-44,0) size 40x18: "\x{4E8C}\x{5341}"
             RenderText {#text} at (0,0) size 114x18
               text run at (0,0) width 114: "twenty, undefined"
           RenderListItem {LI} at (40,18) size 729x18
-            RenderListMarker at (-60,0) size 56x18: "\x{4E00}\x{4EBC}\x{842C}"
+            RenderListMarker at (-60,0) size 56x18: "\x{4E8C}\x{5341}\x{4E00}"
             RenderText {#text} at (0,0) size 141x18
               text run at (0,0) width 141: "twenty one, undefined"
           RenderListItem {LI} at (40,36) size 729x18
-            RenderListMarker at (-60,0) size 56x18: "\x{4EBC}\x{4EBC}\x{842C}"
+            RenderListMarker at (-60,0) size 56x18: "\x{4E8C}\x{5341}\x{4E8C}"
             RenderText {#text} at (0,0) size 142x18
               text run at (0,0) width 142: "twenty two, undefined"
         RenderBlock {OL} at (0,270) size 769x54
           RenderListItem {LI} at (40,0) size 729x18
-            RenderListMarker at (-60,0) size 56x18: "\x{96F6}\x{4E00}\x{5104}"
+            RenderListMarker at (-44,0) size 40x18: "\x{4E00}\x{767E}"
             RenderText {#text} at (0,0) size 134x18
               text run at (0,0) width 134: "a hundred, undefined"
           RenderListItem {LI} at (40,18) size 729x18
-            RenderListMarker at (-76,0) size 72x18: "\x{4E00}\x{96F6}\x{4E00}\x{5104}"
+            RenderListMarker at (-76,0) size 72x18: "\x{4E00}\x{767E}\x{96F6}\x{4E00}"
             RenderText {#text} at (0,0) size 188x18
               text run at (0,0) width 188: "a hundred and one, undefined"
           RenderListItem {LI} at (40,36) size 729x18
-            RenderListMarker at (-76,0) size 72x18: "\x{4EBC}\x{96F6}\x{4E00}\x{5104}"
+            RenderListMarker at (-76,0) size 72x18: "\x{4E00}\x{767E}\x{96F6}\x{4E8C}"
             RenderText {#text} at (0,0) size 189x18
               text run at (0,0) width 189: "a hundred and two, undefined"
         RenderBlock {OL} at (0,356) size 769x36
