@@ -1,3 +1,26 @@
+2007-04-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13525
+          Repainting a listbox schedules a relayout
+
+        No test possible as there is no change to functionality.
+
+        - fix the root cause of http://bugs.webkit.org/show_bug.cgi?id=10862
+          REGRESSION: Collapsing form input on www.myspace.com
+
+        No test possible since text fields are no longer implemented as flexboxes.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scheduleRelayout): Added a check that the subtree
+        root is in the tree and not free-floating.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::bidiReorderCharacters): Changed addChild and removeChild
+        to appendChildNode and removeChildNode to save some unnecessary overhead.
+        These calls still mark the tree for relayout, but the change in scheduleRelayout 
+        ensures that a layout won't be scheduled.
+
 2007-04-27  Patti Hoa  <patti@apple.com>
 
         Reviewed by Darin.

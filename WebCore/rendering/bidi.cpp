@@ -134,7 +134,7 @@ void RenderBlock::bidiReorderCharacters(Document* document, RenderStyle* style, 
     // Create RenderText
     RenderText* text = new (document->renderArena()) RenderText(document, string.impl());
     text->setStyle(blockStyle);
-    block->addChild(text);
+    block->appendChildNode(text, false);
     
     // Call bidiReorderLine
     BidiState bidi;
@@ -174,7 +174,7 @@ void RenderBlock::bidiReorderCharacters(Document* document, RenderStyle* style, 
     }
 
     // Tear down temporary RenderBlock, RenderText, and BidiRuns
-    block->removeChild(text);
+    block->removeChildNode(text, false);
     text->destroy();
     block->destroy();
     deleteBidiRuns(document->renderArena());

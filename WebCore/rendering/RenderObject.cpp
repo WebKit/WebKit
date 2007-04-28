@@ -2716,7 +2716,7 @@ void RenderObject::scheduleRelayout()
         FrameView* view = static_cast<RenderView*>(this)->frameView();
         if (view)
             view->scheduleRelayout();
-    } else {
+    } else if (parent()) {
         FrameView* v = view() ? view()->frameView() : 0;
         if (v)
             v->scheduleRelayoutOfSubtree(node());
