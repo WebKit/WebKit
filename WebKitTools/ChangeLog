@@ -1,3 +1,12 @@
+2007-04-27  Adam Roben <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Cleaned up prepare-ChangeLog
+        
+        * Scripts/prepare-ChangeLog: No code changes, but style now matches
+        the prevalent style of our perl scripts.
+
 2007-04-27  Nazar Kulyk  <schamane@myeburg.net>
 
         Reviewed by Mark Rowe.
