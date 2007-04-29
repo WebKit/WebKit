@@ -1,3 +1,16 @@
+2007-04-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla 13535, regression from positioning cleanup a while
+        back.  Some code got added to compute available width for a relpositioned
+        inline, only the code meant to be used for inline flows and not inline blocks.
+
+        Reviewed by mjs
+
+        fast/block/positioning/inline-block-relposition.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+
 2007-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Zack.

@@ -1513,7 +1513,7 @@ void RenderBox::setStaticY(int staticY)
 
 int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingBlock) const
 {
-    if (containingBlock->isInline()) {
+    if (containingBlock->isInlineFlow()) {
         ASSERT(containingBlock->isRelPositioned());
 
         const RenderFlow* flow = static_cast<const RenderFlow*>(containingBlock);
