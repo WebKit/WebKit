@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLButtonElement_h
 #define HTMLButtonElement_h
 
@@ -29,13 +28,10 @@
 
 namespace WebCore {
 
-class HTMLButtonElement : public HTMLGenericFormElement
-{
+class HTMLButtonElement : public HTMLGenericFormElement {
 public:
     HTMLButtonElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLButtonElement();
-
-    enum typeEnum { SUBMIT, RESET, BUTTON };
 
     virtual const AtomicString& type() const;
         
@@ -59,12 +55,11 @@ public:
     String value() const;
     void setValue(const String&);
     
-protected:
-    String m_value;
-    String m_currValue;
-    unsigned m_type : 2; // typeEnum
-    bool m_dirty : 1;
-    bool m_activeSubmit : 1;
+private:
+    enum Type { SUBMIT, RESET, BUTTON };
+
+    Type m_type;
+    bool m_activeSubmit;
 };
 
 } // namespace

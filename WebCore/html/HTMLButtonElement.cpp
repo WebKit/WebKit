@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -28,11 +26,11 @@
 #include "config.h"
 #include "HTMLButtonElement.h"
 
-#include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "RenderButton.h"
 
 namespace WebCore {
@@ -40,10 +38,9 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLButtonElement::HTMLButtonElement(Document* doc, HTMLFormElement* f)
-    : HTMLGenericFormElement(buttonTag, doc, f)
+HTMLButtonElement::HTMLButtonElement(Document* doc, HTMLFormElement* form)
+    : HTMLGenericFormElement(buttonTag, doc, form)
     , m_type(SUBMIT)
-    , m_dirty(true)
     , m_activeSubmit(false)
 {
 }
@@ -62,20 +59,15 @@ const AtomicString& HTMLButtonElement::type() const
     return getAttribute(typeAttr);
 }
 
-void HTMLButtonElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLButtonElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() ==  typeAttr) {
+    if (attr->name() == typeAttr) {
         if (equalIgnoringCase(attr->value(), "submit"))
             m_type = SUBMIT;
         else if (equalIgnoringCase(attr->value(), "reset"))
             m_type = RESET;
         else if (equalIgnoringCase(attr->value(), "button"))
             m_type = BUTTON;
-    } else if (attr->name() == valueAttr) {
-        m_value = attr->value();
-        m_currValue = m_value;
-    } else if (attr->name() == accesskeyAttr) {
-        // Do nothing.
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
         // See http://bugs.webkit.org/show_bug.cgi?id=12071
@@ -87,9 +79,9 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
-void HTMLButtonElement::defaultEventHandler(Event *evt)
+void HTMLButtonElement::defaultEventHandler(Event* evt)
 {
-    if (m_type != BUTTON && (evt->type() == DOMActivateEvent) && !disabled()) {
+    if (evt->type() == DOMActivateEvent && !disabled()) {
         if (form() && m_type == SUBMIT) {
             m_activeSubmit = true;
             form()->prepareSubmit(evt);
@@ -98,18 +90,32 @@ void HTMLButtonElement::defaultEventHandler(Event *evt)
         if (form() && m_type == RESET)
             form()->reset();
     }
+
+    if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
+        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
+
+        // Do the same things <input type=button/reset/submit> would do.
+        if (key == "Enter" && m_type == BUTTON) {
+            blur();
+            if (form())
+                form()->submitClick(evt);
+            evt->setDefaultHandled();
+            return;
+        }
+        if (key == "Enter" || key == "U+000020") {
+            dispatchSimulatedClick(evt);
+            evt->setDefaultHandled();
+            return;
+        }
+    }
+
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
 
 bool HTMLButtonElement::isSuccessfulSubmitButton() const
 {
-    // HTML spec says that buttons must have names
-    // to be considered successful. However, other browsers
-    // do not impose this constraint. Therefore, we behave
-    // differently and can use different buttons than the 
-    // author intended. 
-    // Remove the name constraint for now.
-    // Was: m_type == SUBMIT && !disabled() && !name().isEmpty()
+    // HTML spec says that buttons must have names to be considered successful.
+    // However, other browsers do not impose this constraint.
     return m_type == SUBMIT && !disabled();
 }
 
@@ -123,11 +129,11 @@ void HTMLButtonElement::setActivatedSubmit(bool flag)
     m_activeSubmit = flag;
 }
 
-bool HTMLButtonElement::appendFormData(FormDataList& encoding, bool /*multipart*/)
+bool HTMLButtonElement::appendFormData(FormDataList& formData, bool)
 {
     if (m_type != SUBMIT || name().isEmpty() || !m_activeSubmit)
         return false;
-    encoding.appendData(name(), m_currValue);
+    formData.appendData(name(), value());
     return true;
 }
 

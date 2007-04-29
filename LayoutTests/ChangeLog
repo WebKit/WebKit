@@ -1,3 +1,12 @@
+2007-04-28  Adele Peterson  <adele@apple.com>
+
+        Tests for <rdar://problem/5152299> REGRESSION: <button> elements do not respond to space and return key as similar <input> elements do
+
+        * fast/forms/button-enter-click-expected.txt: Added.
+        * fast/forms/button-enter-click.html: Added.
+        * fast/forms/button-spacebar-click-expected.txt: Added.
+        * fast/forms/button-spacebar-click.html: Added.
+
 2007-04-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

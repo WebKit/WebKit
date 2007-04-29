@@ -1,3 +1,23 @@
+2007-04-28  Adele Peterson  <adele@apple.com>
+
+        Fix by Darin, reviewed by me.
+
+        Fix for <rdar://problem/5152299> REGRESSION: <button> elements do not respond to space and return key as similar <input> elements do
+
+        Tests:
+        fast/forms/button-spacebar-click.html
+        fast/forms/button-enter-click.html
+
+        * html/HTMLButtonElement.h: (WebCore::HTMLButtonElement::): Made type enum private.
+        Removed unnecessary m_value and m_currValue, and unused m_dirty.
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement): Removed initialization of m_dirty.
+        (WebCore::HTMLButtonElement::parseMappedAttribute): Removed case to parse value and accesskey attributes, which don't do anything.
+        (WebCore::HTMLButtonElement::defaultEventHandler): Removed unnecessary check for button type.
+         Added cases to handle spacebar and enter keys in the same way that they're handled for <input type=button/reset/submit> buttons.
+        (WebCore::HTMLButtonElement::isSuccessfulSubmitButton): Shortened comment.
+        (WebCore::HTMLButtonElement::appendFormData): Use value() instead of m_currValue.  Renamed encoding argument to formData.
+
 2007-04-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
