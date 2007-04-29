@@ -1,3 +1,32 @@
+2007-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5154144> Hamachi test fails: assertion failure in ListHashSet
+
+        Test: fast/forms/add-remove-form-elements-stress-test.html
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetNodeAllocator::ListHashSetNodeAllocator): Initialize
+        m_isDoneWithInitialFreeList to false.
+        (WTF::ListHashSetNodeAllocator::allocate): Added assertions based on a debug-only
+        m_isAllocated flag that make sure we don't allocate a block that's already allocated.
+        These assertions helped pinpoint the bug. Set m_isDoneWithInitialFreeList when we
+        allocate the last block of the initial free list. Once we're done with the initial
+        free list, turn off the rule that says that the next node in the pool after the last
+        node in the free list is also free. This rule works because any free nodes are added
+        to the head of the free list, so a node that hasn't been allocated even once is always
+        at the tail of the free list. But it doesn't work any longer once the entire pool
+        has been used at least once.
+        (WTF::ListHashSetNodeAllocator::deallocate): Set the node's m_isAllocated to false.
+        (WTF::ListHashSetNodeAllocator::pastPool): Added. Used above.
+        (WTF::ListHashSetNodeAllocator::inPool): Changed to use the pastPool function.
+        (WTF::ListHashSetNode::ListHashSetNode): Initialize m_isAllocated to true.
+        (WTF::ListHashSetNode::operator new): Removed variable name for unused size
+        parameter.
+        (WTF::ListHashSetNode::destroy): Changed to call the destructor rather than
+        delete -- this gets rid of the need to define an operator delete.
+
 2007-04-27  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed by Timothy Hatcher.

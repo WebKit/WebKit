@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,12 +22,13 @@
 #ifndef WTF_ListHashSet_h
 #define WTF_ListHashSet_h
 
+#include "Assertions.h"
 #include "HashSet.h"
 #include "OwnPtr.h"
 
 namespace WTF {
 
-    // ListHashSet: just like HashSet, this class provides a Set
+    // ListHashSet: Just like HashSet, this class provides a Set
     // interface - a collection of unique objects with O(1) insertion,
     // removal and test for containership. However, it also has an
     // order - iterating it will always give back values in the order
@@ -119,6 +120,7 @@ namespace WTF {
 
         ListHashSetNodeAllocator() 
             : m_freeList(pool())
+            , m_isDoneWithInitialFreeList(false)
         { 
             memset(m_pool.pool, 0, sizeof(m_pool.pool));
         }
@@ -130,17 +132,31 @@ namespace WTF {
             if (!result)
                 return static_cast<Node*>(fastMalloc(sizeof(Node)));
 
+            ASSERT(!result->m_isAllocated);
+
             Node* next = result->m_next;
-            if (!next && inPool(result + 1))
+            ASSERT(!next || !next->m_isAllocated);
+            if (!next && !m_isDoneWithInitialFreeList) {
                 next = result + 1;
+                if (next == pastPool()) {
+                    m_isDoneWithInitialFreeList = true;
+                    next = 0;
+                } else {
+                    ASSERT(inPool(next));
+                    ASSERT(!next->m_isAllocated);
+                }
+            }
             m_freeList = next;
-            
+
             return result;
         }
 
         void deallocate(Node* node) 
         {
             if (inPool(node)) {
+#ifndef NDEBUG
+                node->m_isAllocated = false;
+#endif
                 node->m_next = m_freeList;
                 m_freeList = node;
                 return;
@@ -151,13 +167,15 @@ namespace WTF {
 
     private:
         Node* pool() { return reinterpret_cast<Node*>(m_pool.pool); }
+        Node* pastPool() { return pool() + m_poolSize; }
 
         bool inPool(Node* node)
         {
-            return node >= pool() && node < pool() + m_poolSize;
+            return node >= pool() && node < pastPool();
         }
 
         Node* m_freeList;
+        bool m_isDoneWithInitialFreeList;
         static const size_t m_poolSize = 256;
         union {
             char pool[sizeof(Node) * m_poolSize];
@@ -168,15 +186,33 @@ namespace WTF {
     template<typename ValueArg> struct ListHashSetNode {
         typedef ListHashSetNodeAllocator<ValueArg> NodeAllocator;
 
-        ListHashSetNode(ValueArg value) : m_value(value), m_prev(0), m_next(0) {}
+        ListHashSetNode(ValueArg value)
+            : m_value(value)
+            , m_prev(0)
+            , m_next(0)
+#ifndef NDEBUG
+            , m_isAllocated(true)
+#endif
+        {
+        }
 
-        void* operator new(size_t s, NodeAllocator* allocator) { return allocator->allocate(); }
-        void operator delete(void* p) { }
-        void destroy(NodeAllocator* allocator) { delete this; allocator->deallocate(this); }
-        
+        void* operator new(size_t, NodeAllocator* allocator)
+        {
+            return allocator->allocate();
+        }
+        void destroy(NodeAllocator* allocator)
+        {
+            this->~ListHashSetNode();
+            allocator->deallocate(this);
+        }
+
         ValueArg m_value;
         ListHashSetNode* m_prev;
         ListHashSetNode* m_next;
+
+#ifndef NDEBUG
+        bool m_isAllocated;
+#endif
     };
 
     template<typename ValueArg, typename HashArg> struct ListHashSetNodeHashFunctions {

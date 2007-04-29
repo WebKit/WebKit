@@ -1,3 +1,12 @@
+2007-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for <rdar://problem/5154144> Hamachi test fails: assertion failure in ListHashSet
+
+        * fast/forms/add-remove-form-elements-stress-test-expected.txt: Added.
+        * fast/forms/add-remove-form-elements-stress-test.html: Added.
+
 2007-04-28  Adele Peterson  <adele@apple.com>
 
         Tests for <rdar://problem/5152299> REGRESSION: <button> elements do not respond to space and return key as similar <input> elements do
