@@ -34,7 +34,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class Document;
 class DocumentType;
-class FrameView;
+class Frame;
 class HTMLDocument;
 class String;
 
@@ -58,9 +58,9 @@ public:
     PassRefPtr<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
-    PassRefPtr<Document> createDocument(const String& MIMEType, FrameView*, bool inViewSourceMode);
-    PassRefPtr<Document> createDocument(FrameView*);
-    PassRefPtr<HTMLDocument> createHTMLDocument(FrameView*);
+    PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, bool inViewSourceMode);
+    PassRefPtr<Document> createDocument(Frame*);
+    PassRefPtr<HTMLDocument> createHTMLDocument(Frame*);
 
     // Returns the static instance of this class - only one instance of this class should
     // ever be present, and is used as a factory method for creating Document objects

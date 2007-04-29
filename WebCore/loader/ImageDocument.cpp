@@ -124,8 +124,8 @@ bool ImageTokenizer::isWaitingForScripts() const
     return false;
 }
     
-ImageDocument::ImageDocument(DOMImplementation *_implementation, FrameView *v)
-    : HTMLDocument(_implementation, v)
+ImageDocument::ImageDocument(DOMImplementation* implementation, Frame* frame)
+    : HTMLDocument(implementation, frame)
 {
 }
     

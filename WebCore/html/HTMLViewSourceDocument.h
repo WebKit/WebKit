@@ -28,15 +28,12 @@
 
 namespace WebCore {
 
-class DOMImplementation;
-class FrameView;
 class Token;
-class Attribute;
 
 class HTMLViewSourceDocument : public HTMLDocument
 {
 public:
-    HTMLViewSourceDocument(DOMImplementation*, FrameView* = 0);
+    HTMLViewSourceDocument(DOMImplementation*, Frame*);
     
     virtual Tokenizer* createTokenizer();
     

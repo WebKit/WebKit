@@ -34,7 +34,7 @@ class FrameView;
 class ImageDocument : public HTMLDocument
 {
 public:
-    ImageDocument(DOMImplementation*, FrameView* = 0);
+    ImageDocument(DOMImplementation*, Frame*);
 
     virtual bool isImageDocument() const { return true; }
     

@@ -1,3 +1,69 @@
+2007-04-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Oliver.
+
+        - change Document to hold onto Frame* instead of FrameView*
+        
+        This is an architectural cleanup and a prerequisite to fixing citibank login
+        in an architecturally sound way.
+
+        Some fixups for the page cache:
+        
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore): Add an assert that the document's view
+        matches the cached page's view - this needs to be true by the time this
+        function is called.
+        (WebCore::CachedPage::clear): Change assert to require frame matching, not
+        view matching.
+        * history/CachedPage.h:
+        (WebCore::CachedPage::view): Add a way to get the view out.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): pass Frame, not FrameView, when creating document
+        (WebCore::FrameLoader::open): restore view based on CachedPage, not Document. 
+
+        Remaining changes are just straightforward updates based on which
+        pointer is held or passed:
+        
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::view):
+        (WebCore::Document::frame):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        (WebCore::Document::createTokenizer):
+        (WebCore::Document::recalcStyleSelector):
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::applyXSLTransform):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        * html/HTMLViewSourceDocument.h:
+        * ksvg2/svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * ksvg2/svg/SVGDocument.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * loader/ImageDocument.h:
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * loader/PluginDocument.h:
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocument::TextDocument):
+        * loader/TextDocument.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        (WebCore::XSLTProcessor::transformToDocument):
+        * xml/XSLTProcessor.h:
+
 2007-04-28  Adele Peterson  <adele@apple.com>
 
         RS by Darin.

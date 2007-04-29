@@ -95,6 +95,8 @@ CachedPage::~CachedPage()
 
 void CachedPage::restore(Page* page)
 {
+    ASSERT(m_document->view() == m_view);
+
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
     Window* window = Window::retrieveWindow(mainFrame);
@@ -130,7 +132,7 @@ void CachedPage::clear()
         return;
 
     ASSERT(m_view);
-    ASSERT(m_document->view() == m_view);
+    ASSERT(m_document->frame() == m_view->frame());
 
     if (m_document->inPageCache()) {
         Frame::clearTimers(m_view.get());

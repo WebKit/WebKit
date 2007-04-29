@@ -58,6 +58,7 @@ public:
     
     void clear();
     Document* document() const { return m_document.get(); }
+    FrameView* view() const { return m_view.get(); }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
     const KURL& URL() const { return m_URL; }
     void restore(Page*);

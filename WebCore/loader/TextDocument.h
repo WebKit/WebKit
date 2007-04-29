@@ -34,7 +34,7 @@ class FrameView;
 class TextDocument : public HTMLDocument
 {
 public:
-    TextDocument(DOMImplementation*, FrameView* = 0);
+    TextDocument(DOMImplementation*, Frame*);
     
     virtual Tokenizer* createTokenizer();
 };

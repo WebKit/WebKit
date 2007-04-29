@@ -74,8 +74,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(DOMImplementation* implementation, FrameView* view)
-    : Document(implementation, view)
+HTMLDocument::HTMLDocument(DOMImplementation* implementation, Frame* frame)
+    : Document(implementation, frame)
 {
     m_xmlVersion = String();
 }

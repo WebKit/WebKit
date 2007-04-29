@@ -838,8 +838,7 @@ void FrameLoader::begin(const KURL& url)
     if (!m_URL.isEmpty())
         baseurl = m_URL;
 
-    RefPtr<Document> document = DOMImplementation::instance()->
-        createDocument(m_responseMIMEType, m_frame->view(), m_frame->inViewSourceMode());
+    RefPtr<Document> document = DOMImplementation::instance()->createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
     m_frame->setDocument(document.get());
 
     document->setURL(m_URL.url());
@@ -2554,7 +2553,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     m_wasLoadEventEmitted = false;
     m_outgoingReferrer = URL.url();
     
-    m_frame->setView(document->view());
+    m_frame->setView(cachedPage.view());
     
     m_frame->setDocument(document);
     m_decoder = document->decoder();

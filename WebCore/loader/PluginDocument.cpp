@@ -127,8 +127,8 @@ bool PluginTokenizer::isWaitingForScripts() const
     return false;
 }
     
-PluginDocument::PluginDocument(DOMImplementation* _implementation, FrameView* v)
-    : HTMLDocument(_implementation, v)
+PluginDocument::PluginDocument(DOMImplementation* implementation, Frame* frame)
+    : HTMLDocument(implementation, frame)
 {
     setParseMode(Compat);
 }

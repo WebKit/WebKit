@@ -133,7 +133,7 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
 
 class Document : public ContainerNode {
 public:
-    Document(DOMImplementation*, FrameView*);
+    Document(DOMImplementation*, Frame*);
     ~Document();
 
     virtual void removedLastRef();
@@ -642,7 +642,7 @@ public:
 
 protected:
     CSSStyleSelector* m_styleSelector;
-    FrameView* m_view;
+    Frame* m_frame;
 
     DocLoader* m_docLoader;
     Tokenizer* m_tokenizer;

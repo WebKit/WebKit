@@ -36,8 +36,9 @@ namespace WebCore
 
 using namespace HTMLNames;
 
-HTMLViewSourceDocument::HTMLViewSourceDocument(DOMImplementation* implementation, FrameView* v)
-    : HTMLDocument(implementation, v), m_current(0)
+HTMLViewSourceDocument::HTMLViewSourceDocument(DOMImplementation* implementation, Frame* frame)
+    : HTMLDocument(implementation, frame)
+    , m_current(0)
 {
 }
 

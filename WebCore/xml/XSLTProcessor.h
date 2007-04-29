@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class FrameView;
+class Frame;
 class Node;
 class Document;
 class DocumentFragment;
@@ -43,7 +43,7 @@ class XSLTProcessor : public Shared<XSLTProcessor>
 public:
     void setXSLStylesheet(XSLStyleSheet *styleSheet) { m_stylesheet = styleSheet; }
     bool transformToString(Node *source, DeprecatedString &resultMIMEType, DeprecatedString &resultString, DeprecatedString &resultEncoding);
-    RefPtr<Document> createDocumentFromSource(const DeprecatedString &source, const DeprecatedString &sourceEncoding, const DeprecatedString &sourceMIMEType, Node *sourceNode, FrameView *view = 0);
+    RefPtr<Document> createDocumentFromSource(const DeprecatedString& source, const DeprecatedString& sourceEncoding, const DeprecatedString& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
     void importStylesheet(Node *style) { m_stylesheetRootNode = style; }

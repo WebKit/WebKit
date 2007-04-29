@@ -33,7 +33,7 @@ class HTMLElement;
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    HTMLDocument(DOMImplementation*, FrameView* = 0);
+    HTMLDocument(DOMImplementation*, Frame*);
     virtual ~HTMLDocument();
 
     virtual bool isHTMLDocument() const { return true; }
