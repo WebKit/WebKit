@@ -1,3 +1,15 @@
+2007-04-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13501
+          REGRESSION (r21093): Pasting into text field fails and makes the caret disappear
+
+        * fast/dynamic/anonymous-block-layer-lost-expected.checksum: Added.
+        * fast/dynamic/anonymous-block-layer-lost-expected.png: Added.
+        * fast/dynamic/anonymous-block-layer-lost-expected.txt: Added.
+        * fast/dynamic/anonymous-block-layer-lost.html: Added.
+
 2007-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

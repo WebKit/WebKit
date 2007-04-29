@@ -373,7 +373,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // box.  We can go ahead and pull the content right back up into our
         // box.
         setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock* anonBlock = static_cast<RenderBlock*>(removeChildNode(child));
+        RenderBlock* anonBlock = static_cast<RenderBlock*>(removeChildNode(child, false));
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
         while (o) {
