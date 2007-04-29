@@ -46,10 +46,10 @@ void deleteDragImage(DragImageRef image)
     //DragImageRef is a RetainPtr, so we don't need to explicitly delete it
 }
 
-DragImageRef scaleDragImage(DragImageRef image, float scale)
+DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
     NSSize originalSize = [image.get() size];
-    NSSize newSize = NSMakeSize((originalSize.width * scale), (originalSize.height * scale));
+    NSSize newSize = NSMakeSize((originalSize.width * scale.width()), (originalSize.height * scale.height()));
     newSize.width = roundf(newSize.width);
     newSize.height = roundf(newSize.height);
     [image.get() setScalesWhenResized:YES];

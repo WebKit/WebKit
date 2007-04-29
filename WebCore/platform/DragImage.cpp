@@ -31,28 +31,36 @@
 
 namespace WebCore {
     
-DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& size)
+DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& srcSize, const IntSize& size)
 {
     float heightResizeRatio = 0.0f;
     float widthResizeRatio = 0.0f;
-    float resizeRatio = 0.0f;
+    float resizeRatio = -1.0f;
     IntSize originalSize = dragImageSize(image);
     
-    if (originalSize.width() > size.width()) {
-        widthResizeRatio = size.width() / (float)originalSize.width();
+    if (srcSize.width() > size.width()) {
+        widthResizeRatio = size.width() / (float)srcSize.width();
         resizeRatio = widthResizeRatio;
     }
     
-    if (originalSize.height() > size.height()) {
-        heightResizeRatio = size.height() / (float)originalSize.height();
-        if ((resizeRatio == 0.0) || (resizeRatio > heightResizeRatio))
+    if (srcSize.height() > size.height()) {
+        heightResizeRatio = size.height() / (float)srcSize.height();
+        if ((resizeRatio < 0.0f) || (resizeRatio > heightResizeRatio))
             resizeRatio = heightResizeRatio;
     }
     
-    if (resizeRatio > 0.0)
-        return scaleDragImage(image, resizeRatio);
-    return image;
+    if (srcSize == originalSize)
+        return resizeRatio > 0.0f ? scaleDragImage(image, FloatSize(resizeRatio, resizeRatio)) : image;
     
+    // The image was scaled in the webpage so at minimum we must account for that scaling
+    float scalex = srcSize.width() / (float)originalSize.width();
+    float scaley = srcSize.height() / (float)originalSize.height();
+    if (resizeRatio > 0.0f) {
+        scalex *= resizeRatio;
+        scaley *= resizeRatio;
+    }
+    
+    return scaleDragImage(image, FloatSize(scalex, scaley));
 }
     
 DragImageRef createDragImageForSelection(Frame* frame)

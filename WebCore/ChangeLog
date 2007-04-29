@@ -1,3 +1,36 @@
+2007-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve.
+
+        Fix for <rdar://problem/5126393> REGRESSION (r19672-19697): Safari drag image drags at original size (13261)
+
+        Added logic to ensure that when we create the drag image
+        we're looking at the rendered image size.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+          Pass the rendered image size to fitDragImageToMaxSize
+
+        * platform/DragImage.cpp:
+        (WebCore::fitDragImageToMaxSize):
+           Need to do scaling relative to rendered image size
+
+        * platform/DragImage.h:
+           scaleDragImage needs x and y scales to allow for them to be
+           scaled seperately on a page
+
+        * platform/gdk/DragImageGdk.cpp:
+        (WebCore::scaleDragImage):
+           Prevent build bustage
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::scaleDragImage):
+           scale width and height independently
+
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::scaleDragImage):
+           Prevent build bustage
+
 2007-04-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
