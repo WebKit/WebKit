@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +28,7 @@
 #include "ChildNodeList.h"
 #include "DOMImplementation.h"
 #include "Document.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -149,7 +148,7 @@ Node::Node(Document *doc)
       m_hasChangedChild(false),
       m_inDocument(false),
       m_isLink(false),
-      m_specified(false),
+      m_attrWasSpecifiedOrElementHasRareData(false),
       m_focused(false),
       m_active(false),
       m_hovered(false),
@@ -797,7 +796,6 @@ void Node::dump(TextStream* stream, DeprecatedString ind) const
     if (m_hasId) { *stream << " hasId"; }
     if (m_hasClass) { *stream << " hasClass"; }
     if (m_hasStyle) { *stream << " hasStyle"; }
-    if (m_specified) { *stream << " specified"; }
     if (m_focused) { *stream << " focused"; }
     if (m_active) { *stream << " active"; }
     if (m_implicit) { *stream << " implicit"; }

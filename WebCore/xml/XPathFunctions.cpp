@@ -31,6 +31,7 @@
 #if ENABLE(XPATH)
 
 #include "Document.h"
+#include "Element.h"
 #include "NamedAttrMap.h"
 #include "XMLNames.h"
 #include "XPathUtil.h"

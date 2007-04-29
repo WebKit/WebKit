@@ -1,3 +1,73 @@
+2007-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix the Gmail part of http://bugs.webkit.org/show_bug.cgi?id=12798
+          and <rdar://problem/4118559>
+
+        This patch changes things so that resizing can make things larger than their
+        initial size, but not smaller. I believe this resolves the problem for Gmail,
+        but you can still get strange behavior if you have a small right-aligned <textarea>.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize): Rewrote to use more IntPoint and IntSize and add
+        in a new minimum-size algorithm. This function now has the side effect of storing
+        a new minimumSizeForResizing in the element being resized, and respects any existing
+        minimum as well.
+        (WebCore::RenderLayer::offsetFromResizeCorner): Reversed this so it converts the
+        point into coordinates relative to the resize corner, hence negative numbers mean
+        the point is above and to the left. This is used only in the algorithm above.
+
+        * dom/Element.h: Removed unneeded include of Attr.h, and added forward declarations
+        as needed. Removed all friend declarations; there was no need for any of them.
+        Tweaked formatting of various declarations and removed unneeded parameter names.
+        Made as much as possible private, and a couple things public to avoid the need for
+        friend classes. Added minimumSizeForResizing, setMinimumSizeForResizing, rareData,
+        and createRareData functions.
+
+        * dom/Element.cpp:
+        (WebCore::rareDataMap): Added. Function to return the single global map.
+        (WebCore::rareDataFromMap): Added. For use by inlined functions to get the
+        data from the map in the case where it's present.
+        (WebCore::ElementRareData::ElementRareData): Added.
+        (WebCore::Element::~Element): Added code to delete the element from the rare
+        data map when appropriate.
+        (WebCore::Element::rareData): Added.
+        (WebCore::Element::createRareData): Added.
+        (WebCore::Element::setAttributeNodeNS): Got rid of the old inline version of this,
+        since it was the sole reason we had to include Attr.h in Element.h.
+        (WebCore::Element::minimumSizeForResizing): Added. Accesses rare data.
+        (WebCore::Element::setMinimumSizeForResizing): Ditto.
+
+        * dom/Node.h: Renamed the m_specified bit since it's now used for two purposes.
+        Its new long name is m_attrWasSpecifiedOrElementHasRareData.
+
+        * dom/Attr.cpp: (WebCore::Attr::Attr): Updated for bit name change.
+        * dom/Attr.h:
+        (WebCore::Attr::specified): Ditto.
+        (WebCore::Attr::setSpecified): Added, since setting the bit directly is pretty ugly now.
+        * dom/Document.cpp: (WebCore::Document::adoptNode): Updated for bit name change.
+        * dom/Node.cpp:
+        (WebCore::Node::Node): Ditto.
+        (WebCore::Node::dump): Ditto.
+
+        * dom/NamedAttrMap.cpp: (WebCore::NamedAttrMap::isReadOnlyNode): Moved out of line,
+        since this was the sole reason we had to include Element.h in NamedAttrMap.h.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName): Changed to use tagQName() since that's a public
+        way to do something that's now private.
+        (WebCore::HTMLElement::cloneNode): Ditto.
+
+        * dom/Attribute.cpp:
+        * dom/NamedAttrMap.h:
+        * dom/NamedMappedAttrMap.cpp:
+        * dom/StyledElement.h:
+        * html/HTMLTokenizer.h:
+        * xml/XPathFunctions.cpp:
+        * xml/XPathStep.cpp:
+        Updated includes, and other administrivia.
+
 2007-04-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin and Hyatt.

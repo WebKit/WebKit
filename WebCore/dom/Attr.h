@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +30,6 @@
 
 namespace WebCore {
 
-
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.
 // the actual Attr (Attr) with its value as textchild
@@ -58,7 +55,7 @@ public:
     
     // DOM methods & attributes for Attr
     String name() const { return qualifiedName().toString(); }
-    bool specified() const { return m_specified; }
+    bool specified() const { return m_attrWasSpecifiedOrElementHasRareData; }
     Element* ownerElement() const { return m_element; }
 
     String value() const { return m_attribute->value(); }
@@ -88,6 +85,8 @@ public:
 
     // An extension to get presentational information for attributes.
     CSSStyleDeclaration* style() { return m_attribute->style(); }
+
+    void setSpecified(bool specified) { m_attrWasSpecifiedOrElementHasRareData = specified; }
 
 private:
     Element* m_element;

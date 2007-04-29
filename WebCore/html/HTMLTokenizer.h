@@ -1,6 +1,4 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1997 Martin Jones (mjones@kde.org)
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1998 Waldo Bastian (bastian@kde.org)
@@ -114,7 +112,7 @@ private:
     State parseEntity(SegmentedString&, UChar*& dest, State, unsigned& _cBufferPos, bool start, bool parsingTag);
     State parseProcessingInstruction(SegmentedString&, State);
     State scriptHandler(State);
-    State scriptExecution(const DeprecatedString& script, State state, DeprecatedString scriptURL = DeprecatedString(), int baseLine = 0);
+    State scriptExecution(const DeprecatedString& script, State, DeprecatedString scriptURL, int baseLine = 0);
     void setSrc(const SegmentedString&);
 
     // check if we have enough space in the buffer.

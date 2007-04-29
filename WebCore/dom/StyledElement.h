@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +25,7 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
+#include "Element.h"
 #include "NamedMappedAttrMap.h"
 
 namespace WebCore {
@@ -34,8 +33,7 @@ namespace WebCore {
 class CSSMappedAttributeDeclaration;
 class MappedAttribute;
 
-class StyledElement : public Element
-{
+class StyledElement : public Element {
 public:
     StyledElement(const QualifiedName&, Document*);
     virtual ~StyledElement();

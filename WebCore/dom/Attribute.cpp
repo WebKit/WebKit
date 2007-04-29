@@ -1,11 +1,9 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +24,7 @@
 #include "config.h"
 #include "Attribute.h"
 
+#include "Attr.h"
 #include "Element.h"
 
 namespace WebCore {
@@ -37,7 +36,7 @@ Attribute* Attribute::clone(bool) const
 
 PassRefPtr<Attr> Attribute::createAttrIfNeeded(Element* e)
 {
-    RefPtr<Attr> r(m_impl);
+    RefPtr<Attr> r = m_impl;
     if (!r) {
         r = new Attr(e, e->document(), this);
         r->createTextChild();

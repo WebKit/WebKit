@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -864,61 +864,63 @@ void RenderLayer::autoscroll()
     scrollRectToVisible(IntRect(currentPos, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
 }
 
-void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFromResizeCorner)
+void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)
 {
-    if (!inResizeMode() || !renderer()->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE)
+    if (!inResizeMode() || !m_object->hasOverflowClip())
         return;
 
-    if (!m_object->document()->frame()->eventHandler()->mousePressed())
+    // Set the width and height of the shadow ancestor node if there is one.
+    // This is necessary for textarea elements since the resizable layer is in the shadow content.
+    Element* element = static_cast<Element*>(m_object->node()->shadowAncestorNode());
+    RenderBox* renderer = static_cast<RenderBox*>(element->renderer());
+
+    EResize resize = renderer->style()->resize();
+    if (resize == RESIZE_NONE)
         return;
 
-    // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
-    // to drag the bottom-right corner to make the bottom-left corner move.
-    // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
-    // the cursor in view.
+    Document* document = element->document();
+    if (!document->frame()->eventHandler()->mousePressed())
+        return;
 
-    IntPoint currentPoint = m_object->document()->view()->windowToContents(evt.pos());
-    currentPoint += offsetFromResizeCorner;
+    IntSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.pos()));
 
-    int x;
-    int y;
-    m_object->absolutePosition(x, y);
-    int right = x + m_object->width();
-    int bottom = y + m_object->height();
-    int diffWidth =  max(currentPoint.x() - right, min(0, MinimumWidthWhileResizing - m_object->width()));
-    int diffHeight = max(currentPoint.y() - bottom, min(0, MinimumHeightWhileResizing - m_object->height()));
-    
-    ExceptionCode ec = 0;
-    // Set the width and height for the shadow ancestor node.  This is necessary for textareas since the resizable layer is on the inner div.
-    // For non-shadow content, this will set the width and height on the original node.
-    RenderObject* renderer = m_object->node()->shadowAncestorNode()->renderer();
-    if (diffWidth && (m_object->style()->resize() == RESIZE_HORIZONTAL || m_object->style()->resize() == RESIZE_BOTH)) {
-        CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
-        if (renderer->element() && renderer->element()->isControl()) {
+    IntSize currentSize = IntSize(renderer->width(), renderer->height());
+
+    IntSize minimumSize = element->minimumSizeForResizing().shrunkTo(currentSize);
+    element->setMinimumSizeForResizing(minimumSize);
+
+    IntSize difference = (currentSize + newOffset - oldOffset).expandedTo(minimumSize) - currentSize;
+
+    CSSStyleDeclaration* style = element->style();
+    bool isBoxSizingBorder = renderer->style()->boxSizing() == BORDER_BOX;
+
+    ExceptionCode ec;
+
+    if (difference.width()) {
+        if (element && element->isControl()) {
+            // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             style->setProperty(CSS_PROP_MARGIN_LEFT, String::number(renderer->marginLeft()) + "px", false, ec);
             style->setProperty(CSS_PROP_MARGIN_RIGHT, String::number(renderer->marginRight()) + "px", false, ec);
         }
-        int baseWidth = renderer->width() - (renderer->style()->boxSizing() == BORDER_BOX ? 0 : renderer->borderLeft() + renderer->paddingLeft() + renderer->borderRight() + renderer->paddingRight());
-        style->setProperty(CSS_PROP_WIDTH, String::number(baseWidth + diffWidth) + "px", false, ec);
+        int baseWidth = renderer->width() - (isBoxSizingBorder ? 0
+            : renderer->borderLeft() + renderer->paddingLeft() + renderer->borderRight() + renderer->paddingRight());
+        style->setProperty(CSS_PROP_WIDTH, String::number(baseWidth + difference.width()) + "px", false, ec);
     }
 
-    if (diffHeight && (m_object->style()->resize() == RESIZE_VERTICAL || m_object->style()->resize() == RESIZE_BOTH)) {
-        CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
-        if (renderer->element() && renderer->element()->isControl()) {
+    if (difference.height()) {
+        if (element && element->isControl()) {
+            // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             style->setProperty(CSS_PROP_MARGIN_TOP, String::number(renderer->marginTop()) + "px", false, ec);
             style->setProperty(CSS_PROP_MARGIN_BOTTOM, String::number(renderer->marginBottom()) + "px", false, ec);
         }
-        int baseHeight = renderer->height() - (renderer->style()->boxSizing() == BORDER_BOX ? 0 : renderer->borderTop() + renderer->paddingTop() + renderer->borderBottom() + renderer->paddingBottom());
-        style->setProperty(CSS_PROP_HEIGHT, String::number(baseHeight + diffHeight) + "px", false, ec);
+        int baseHeight = renderer->height() - (isBoxSizingBorder ? 0
+            : renderer->borderTop() + renderer->paddingTop() + renderer->borderBottom() + renderer->paddingBottom());
+        style->setProperty(CSS_PROP_HEIGHT, String::number(baseHeight + difference.height()) + "px", false, ec);
     }
-    
-    ASSERT(ec == 0);
 
-    if (m_object->style()->resize() != RESIZE_NONE) {
-        m_object->setNeedsLayout(true);
-        m_object->node()->shadowAncestorNode()->renderer()->setNeedsLayout(true);
-        m_object->document()->updateLayout();
-    }
+    document->updateLayout();
+
+    // FIXME (Radar 4118564): We should also autoscroll the window as necessary to keep the point under the cursor in view.
 }
 
 PlatformScrollbar* RenderLayer::horizontalScrollbarWidget() const
@@ -1043,7 +1045,7 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& p) const
     int x = width();
     int y = height();
     convertToLayerCoords(root(), x, y);
-    return IntSize(x - p.x(), y - p.y());
+    return p - IntPoint(x, y);
 }
 
 static IntRect scrollCornerRect(RenderObject* renderer, const IntRect& absBounds)

@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -471,7 +469,7 @@ protected:
     bool m_inDocument : 1;
 
     bool m_isLink : 1;
-    bool m_specified : 1; // used in Attr; accessor functions there
+    bool m_attrWasSpecifiedOrElementHasRareData : 1; // used in Attr for one thing and Element for another
     bool m_focused : 1;
     bool m_active : 1;
     bool m_hovered : 1;
