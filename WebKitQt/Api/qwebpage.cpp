@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2007 Trolltech ASA
     Copyright (C) 2007 Staikos Computing Services Inc.
+    Copyright (C) 2007 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,6 +33,8 @@
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
 #include "DragClientQt.h"
+#include "DragController.h"
+#include "DragData.h"
 #include "EditorClientQt.h"
 #include "Settings.h"
 #include "Page.h"
@@ -39,6 +42,10 @@
 #include "KURL.h"
 
 #include <QDebug>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -52,7 +59,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     contextMenuClient = new ContextMenuClientQt();
     editorClient = new EditorClientQt(q);
     page = new Page(chromeClient, contextMenuClient, editorClient,
-                    new DragClientQt());
+                    new DragClientQt(q));
 
     Settings *settings = page->settings();
     settings->setLoadsImagesAutomatically(true);
@@ -99,6 +106,7 @@ QWebPage::QWebPage(QWidget *parent)
     d->layout = new QVBoxLayout(this);
     d->layout->setMargin(0);
     d->layout->setSpacing(0);
+    setAcceptDrops(true);
 }
 
 QWebPage::~QWebPage()
@@ -212,6 +220,63 @@ QUndoStack *QWebPage::undoStack()
         d->undoStack = new QUndoStack(this);
 
     return d->undoStack;
+}
+
+static inline DragOperation dropActionToDragOp(Qt::DropActions actions)
+{
+    unsigned result = 0;
+    if (actions & Qt::CopyAction)
+        result |= DragOperationCopy;
+    if (actions & Qt::MoveAction)
+        result |= DragOperationMove;
+    if (actions & Qt::LinkAction)
+        result |= DragOperationLink;
+    return (DragOperation)result;    
+}
+
+static inline Qt::DropAction dragOpToDropAction(unsigned actions)
+{
+    Qt::DropAction result = Qt::IgnoreAction;
+    if (actions & DragOperationCopy)
+        result = Qt::CopyAction;
+    else if (actions & DragOperationMove)
+        result = Qt::MoveAction;
+    else if (actions & DragOperationLink)
+        result = Qt::LinkAction;
+    return result;    
+}
+
+void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
+{
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+                      dropActionToDragOp(ev->possibleActions()));
+    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragEntered(&dragData));
+    ev->setDropAction(action);
+    ev->accept();
+}
+
+void QWebPage::dragLeaveEvent(QDragLeaveEvent *ev)
+{
+    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
+    d->page->dragController()->dragExited(&dragData);
+    ev->accept();
+}
+
+void QWebPage::dragMoveEvent(QDragMoveEvent *ev)
+{
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+                      dropActionToDragOp(ev->possibleActions()));
+    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragUpdated(&dragData));
+    ev->setDropAction(action);
+    ev->accept();
+}
+
+void QWebPage::dropEvent(QDropEvent *ev)
+{
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+                      dropActionToDragOp(ev->possibleActions()));
+    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->performDrag(&dragData));
+    ev->accept();
 }
 
 #include "qwebpage.moc"

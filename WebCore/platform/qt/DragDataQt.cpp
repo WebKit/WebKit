@@ -26,9 +26,14 @@
 #include "config.h"
 #include "DragData.h"
 
+#include "ClipboardQt.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "ClipboardQt.h"
+#include "markup.h"
+
+#include <QList>
+#include <QMimeData>
+#include <QUrl>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -36,7 +41,6 @@ namespace WebCore {
 
 bool DragData::canSmartReplace() const
 {
-    notImplemented();
     return false;
 }
     
@@ -48,14 +52,18 @@ bool DragData::containsColor() const
 
 bool DragData::containsPlainText() const
 {
-    notImplemented();
-    return false;
+    return m_platformDragData->hasText() || m_platformDragData->hasUrls();
 }
 
 String DragData::asPlainText() const
 {
-    notImplemented();
-    return String();
+    String text = m_platformDragData->text();
+    if (!text.isEmpty())
+        return text;
+    
+    // FIXME: Should handle rich text here
+    
+    return asURL(0);
 }
     
 Color DragData::asColor() const
@@ -66,31 +74,31 @@ Color DragData::asColor() const
 
 Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return new ClipboardQt(policy, true);
+    return new ClipboardQt(policy, m_platformDragData, true);
 }
     
 bool DragData::containsCompatibleContent() const
 {
-    notImplemented();
-    return false;
+    return containsColor() || containsURL() || containsColor() || m_platformDragData->hasHtml() || m_platformDragData->hasText();
 }
     
 bool DragData::containsURL() const
 {
-    notImplemented();
-    return false;
+    return m_platformDragData->hasUrls();
 }
     
 String DragData::asURL(String* title) const
 {
-    notImplemented();
-    return String();
+    QList<QUrl> urls = m_platformDragData->urls();
+    return urls.first().toString();
 }
     
     
-PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 {
-    notImplemented();
+    if (m_platformDragData->hasHtml())
+        return createFragmentFromMarkup(doc, m_platformDragData->html(), "");
+    
     return 0;
 }
     

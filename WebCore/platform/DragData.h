@@ -42,7 +42,8 @@ typedef id <NSDraggingInfo> DragDataRef;
 typedef void* DragDataRef;
 #endif
 #elif PLATFORM(QT)
-typedef class QMimeData* DragDataRef;
+class QMimeData;
+typedef const QMimeData* DragDataRef;
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
 #elif PLATFORM(GDK)

@@ -25,6 +25,13 @@
 
 #include "DragClientQt.h"
 
+#include "ClipboardQt.h"
+#include "qwebpage.h"
+
+#include <QDrag>
+#include <QMimeData>
+
+
 namespace WebCore {
 
 DragDestinationAction DragClientQt::actionMaskForDrag(DragData*)
@@ -49,8 +56,13 @@ void DragClientQt::willPerformDragSourceAction(DragSourceAction, const IntPoint&
 {
 }
 
-void DragClientQt::startDrag(DragImageRef dragImage, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
+void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame*, bool)
 {
+    QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
+    static_cast<ClipboardQt*>(clipboard)->invalidateWritableData();
+    QDrag drag(m_webPage);
+    drag.setMimeData(clipboardData);
+    drag.start();
 }
 
 DragImageRef DragClientQt::createDragImageForLink(KURL&, const String&, Frame*)

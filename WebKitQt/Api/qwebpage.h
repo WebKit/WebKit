@@ -73,6 +73,11 @@ public:
     virtual void runJavaScriptAlert(QWebFrame *frame, const QString& msg);
 
     QUndoStack *undoStack();
+    
+    virtual void dragEnterEvent(QDragEnterEvent *);
+    virtual void dragLeaveEvent(QDragLeaveEvent *);
+    virtual void dragMoveEvent(QDragMoveEvent *);
+    virtual void dropEvent(QDropEvent *);
 
 public slots:
     /**

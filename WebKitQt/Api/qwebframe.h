@@ -71,11 +71,8 @@ protected:
     virtual void wheelEvent(QWheelEvent*);
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
-    virtual void dragEnterEvent(QDragEnterEvent *);
-    virtual void dragLeaveEvent(QDragLeaveEvent *);
-    virtual void dragMoveEvent(QDragMoveEvent *);
     virtual void scrollContentsBy(int dx, int dy);
-
+    
 private:
     friend class QWebPage;
     friend class WebCore::FrameLoaderClientQt;

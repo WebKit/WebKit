@@ -1,3 +1,28 @@
+2007-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Zack.
+
+        Tie QT drag events to the DragController logic
+        to allow drag and drop events to be handled by
+        webkit.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::QWebPage):
+        (dropActionToDragOp):
+        (dragOpToDropAction):
+        (QWebPage::dragEnterEvent):
+        (QWebPage::dragLeaveEvent):
+        (QWebPage::dragMoveEvent):
+        (QWebPage::dropEvent):
+        * Api/qwebpage.h:
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+        * WebCoreSupport/DragClientQt.h:
+        (WebCore::DragClientQt::DragClientQt):
+
 2007-04-27  Holger Freyther <freyther@kde.org>
 
         Reviewed by Maciej.

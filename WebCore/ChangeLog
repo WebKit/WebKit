@@ -1,3 +1,35 @@
+2007-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Zack.
+
+        Implement basic drag and drop support for qt
+        this allows content and link dragging but does not
+        provide the DOM data access methods.
+
+        * platform/DragData.h:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::~ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::hasData):
+        * platform/qt/ClipboardQt.h:
+        (WebCore::ClipboardQt::clipboardData):
+        (WebCore::ClipboardQt::invalidateWritableData):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+
 2007-04-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Oliver.

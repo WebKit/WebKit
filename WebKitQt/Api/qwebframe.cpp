@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -40,6 +41,7 @@
 #include "RenderTreeAsText.h"
 #include "Element.h"
 #include "Document.h"
+#include "DragData.h"
 #include "RenderObject.h"
 
 #include "bindings/runtime.h"
@@ -311,18 +313,6 @@ void QWebFrame::keyPressEvent(QKeyEvent *ev)
 void QWebFrame::keyReleaseEvent(QKeyEvent *ev)
 {
     d->_q_handleKeyEvent(ev, true);
-}
-
-void QWebFrame::dragEnterEvent(QDragEnterEvent *)
-{
-}
-
-void QWebFrame::dragLeaveEvent(QDragLeaveEvent *)
-{
-}
-
-void QWebFrame::dragMoveEvent(QDragMoveEvent *)
-{
 }
 
 /*!\reimp
