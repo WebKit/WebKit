@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004, Apple Computer, Inc. and The Mozilla Foundation. 
+ * Copyright (C) 2004, Apple Computer, Inc. and The Mozilla Foundation. 
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
