@@ -1,3 +1,16 @@
+2007-04-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13379
+          REGRESSION: Cannot add an option to a selected popup
+
+        * manual-tests/update-empty-popup.html: Added.
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show): Added a call to the client's hidePopup()
+        callback before returning in the case that the menu is empty. Otherwise
+        the client thinks that the menu stayed open.
+
 2007-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
