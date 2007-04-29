@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "RenderTableCell.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -113,6 +114,9 @@ void RenderTableRow::layout()
 {
     ASSERT(needsLayout());
 
+    // Table rows do not add translation.
+    view()->pushLayoutState(this, IntSize());
+
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCell()) {
             RenderTableCell* cell = static_cast<RenderTableCell*>(child);
@@ -122,6 +126,8 @@ void RenderTableRow::layout()
             }
         }
     }
+
+    view()->popLayoutState();
     setNeedsLayout(false);
 }
 

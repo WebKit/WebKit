@@ -199,11 +199,15 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     updateVisibilityStatus();
         
     if (m_hasVisibleContent) {
+        RenderView* view = m_object->view();
+        ASSERT(view);
+        // FIXME: Optimize using LayoutState and remove the disableLayoutState() call
+        // from updateScrollInfoAfterLayout().
+        ASSERT(!view->layoutState());
+
         IntRect newRect = m_object->absoluteClippedOverflowRect();
         IntRect newOutlineBox = m_object->absoluteOutlineBox();
         if (checkForRepaint) {
-            RenderView* view = m_object->view();
-            ASSERT(view);
             if (view && !view->printing()) {
                 bool didMove = newOutlineBox.location() != m_outlineBox.location();
                 if (!didMove && !m_repaintOverflowOnResize)
@@ -357,39 +361,12 @@ void RenderLayer::updateLayerPosition()
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
         positionedParent->subtractScrollOffset(x, y);
         
-        if (m_object->isPositioned() && positionedParent->renderer()->isRelPositioned() &&
-            positionedParent->renderer()->isInlineFlow()) {
-            // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
-            // box from the rest of the content, but only in the cases where we know we're positioned
-            // relative to the inline itself.
-            RenderFlow* flow = static_cast<RenderFlow*>(positionedParent->renderer());
-            int sx = 0, sy = 0;
-            if (flow->firstLineBox()) {
-                sx = flow->firstLineBox()->xPos();
-                sy = flow->firstLineBox()->yPos();
-            }
-            else {
-                sx = flow->staticX();
-                sy = flow->staticY();
-            }
-            bool isInlineType = m_object->style()->isOriginalDisplayInlineType();
-            
-            if (!m_object->hasStaticX())
-                x += sx;
-            
-            // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
-            // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
-            // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
-            // do.
-            if (m_object->hasStaticX() && !isInlineType)
-                // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
-                x += sx - (m_object->containingBlock()->borderLeft() + m_object->containingBlock()->paddingLeft());
-            
-            if (!m_object->hasStaticY())
-                y += sy;
+        if (m_object->isPositioned()) {
+            IntSize offset = static_cast<RenderBox*>(m_object)->offsetForPositionedInContainer(positionedParent->renderer());
+            x += offset.width();
+            y += offset.height();
         }
-    }
-    else if (parent())
+    } else if (parent())
         parent()->subtractScrollOffset(x, y);
     
     setPos(x,y);
@@ -1183,8 +1160,18 @@ RenderLayer::updateScrollInfoAfterLayout()
         // to pull our scroll offsets back to the max (or push them up to the min).
         int newX = max(0, min(scrollXOffset(), scrollWidth() - m_object->clientWidth()));
         int newY = max(0, min(m_scrollY, scrollHeight() - m_object->clientHeight()));
-        if (newX != scrollXOffset() || newY != m_scrollY)
+        if (newX != scrollXOffset() || newY != m_scrollY) {
+            RenderView* view = m_object->view();
+            ASSERT(view);
+            // scrollToOffset() may call updateLayerPositions(), which doesn't work
+            // with LayoutState.
+            // FIXME: Remove the disableLayoutState/enableLayoutState if the above changes.
+            if (view)
+                view->disableLayoutState();
             scrollToOffset(newX, newY);
+            if (view)
+                view->enableLayoutState();
+        }
     }
 
     bool haveHorizontalBar = m_hBar;

@@ -409,7 +409,12 @@ void FrameView::layout(bool allowSubtree)
         layer->checkForRepaintOnResize();
 
     pauseScheduledEvents();
+
+    if (subtree)
+        root->view()->pushLayoutState(root);
     root->layout();
+    if (subtree)
+        root->view()->popLayoutState();
     d->layoutRoot = 0;
 
     m_frame->invalidateSelection();

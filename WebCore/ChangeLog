@@ -1,3 +1,122 @@
+2007-04-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13487
+          Implement O(1) absoluteClippedOverflowRect and absoluteOutlineBox during layout for a possible speed gain
+
+        Test for a bug fixed by this patch: fast/repaint/intermediate-layout-position-clip.html
+
+        By keeping track of the total translation and clip during layout, absolutePosition and
+        computeAbsoluteRepaintRect become O(1).
+
+        * WebCore.pro: Added LayoutState.cpp
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added LayoutState.{cpp,h}
+        * WebCore.xcodeproj/project.pbxproj: Added LayoutState.{cpp,h}
+        * WebCoreSources.bkl: Added LayoutState.cpp
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): When doing subtree layout, push an initial layout state for the
+        layout root.
+        * rendering/LayoutState.cpp: Added. A LayoutState corresponding to a box consists of the origin of
+        its coordinate system in view coordinates and possibly the clip rect, in view coordinates, which
+        applies to its children.
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::destroy):
+        (WebCore::throw):
+        (WebCore::LayoutState::operator delete):
+        * rendering/LayoutState.h: Added.
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Factored out the "only positioned objects" case into
+        layoutOnlyPositionedObjects(). Added code to push/pop LayoutState, unless we have columns, in
+        which case we disable/enable LayoutState. Removed the translation by the layout delta
+        of the old absolute rects, since that is now integral to absoluteClippedOverflowRect() and
+        absoluteOutlineBox().
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects): Added this helper function that checks for
+        and handles the case where only positioned objects need layout. Returns true in that case.
+        (WebCore::RenderBlock::repaintOverhangingFloats): Disabled LayoutState when repainting floats, since
+        they may belong to other containers.
+        (WebCore::RenderBlock::updateFirstLetter): Disabled LayoutState when adding and removing from the
+        first letter container, since it may be different than ourselves.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle): Minor cleanup: changed element()->document() to the equivalent document().
+        (WebCore::RenderBox::offsetForPositionedInContainer): Added. Factored out common code from
+        absolutePosition, computeAbsoluteRepaintRect and RenderLayer::updateLayerPosition into this function.
+        (WebCore::RenderBox::absolutePosition): Added an O(1) code path when this function is called during
+        layout (and LayoutState has not been disabled). Factored out some code into
+        offsetForPositionedInContainer.
+        (WebCore::RenderBox::absoluteClippedOverflowRect): Added the layout delta here, so callers don't need
+        to.
+        (WebCore::RenderBox::computeAbsoluteRepaintRect): Added an O(1) code path when this function is called
+        during layout (and LayoutState has not been disabled). Factored out some code into
+        offsetForPositionedInContainer.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::layout): Added LayoutState push/pop.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Factored out the "only positioned objects" case into
+        layoutOnlyPositionedObjects(). Added LayoutState push/pop. Removed the translation by the layout delta
+        of the old absolute rects, since that is now integral to absoluteClippedOverflowRect() and
+        absoluteOutlineBox().
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect): Added an ASSERT.
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout): Disabled LayoutState because it is incompatible with arbitrary
+        affine transforms.
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout): Removed the translation by the layout delta of the old absolute
+        rects, since that is now integral to absoluteClippedOverflowRect() and absoluteOutlineBox().
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions): Added ASSERTs. Factored out some code into
+        RenderBox::offsetForPositionedInContainer.
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Disabled LayoutState around the call to
+        scrollToOffset.
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation): Disabled LayoutState when moving the list marker, since
+        it can trigger repainting in other containers.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isRoot): Minor cleanup: changed element()->document() to the equivalent
+        document().
+        (WebCore::RenderObject::computeAbsoluteRepaintRect): Removed 'return' at the end of the function.
+        (WebCore::RenderObject::container): Reordered to avoid calling isText() twice.
+        (WebCore::RenderObject::absoluteOutlineBox): Added the layout delta here, so callers don't need to.
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): Disabled LayoutState because it is incompatible with arbitrary
+        affine transforms.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):  Factored out the "only positioned objects" case into
+        layoutOnlyPositionedObjects(). Added LayoutState push/pop. Removed the translation by the layout delta
+        of the old absolute rects, since that is now integral to absoluteClippedOverflowRect() and
+        absoluteOutlineBox().
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::absoluteClippedOverflowRect): Added the layout delta here, so callers
+        don't need to.
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect): For the O(1) code path, skipped the correction
+        for the parent row, because RenderTableRow doesn't push a translation into LayoutState.
+        (WebCore::RenderTableCell::absolutePosition): Ditto.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout): Added LayoutState push/pop.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellWidths): Added LayoutState push/pop if cells are repainted or
+        receive layout.
+        (WebCore::RenderTableSection::calcRowHeight): Ditto.
+        (WebCore::RenderTableSection::layoutRows): Added LayoutState push/pop.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::layout): Added initial LayoutState setup for the layout.
+        (WebCore::RenderView::paintBoxDecorations): Minor cleanup: changed element()->document() to the
+        equivalent document().
+        (WebCore::RenderView::repaintViewRectangle): Ditto.
+        (WebCore::RenderView::pushLayoutState): Added. Pushes initial layout state for subtree layout.
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::popLayoutState):
+        (WebCore::RenderView::layoutState):
+        (WebCore::RenderView::disableLayoutState):
+        (WebCore::RenderView::enableLayoutState):
+
 2007-04-29  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla 13535, regression from positioning cleanup a while

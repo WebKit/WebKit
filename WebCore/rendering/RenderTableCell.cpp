@@ -29,6 +29,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "RenderTableCol.h"
+#include "RenderView.h"
 #include "TextStream.h"
 
 using namespace std;
@@ -175,6 +176,10 @@ IntRect RenderTableCell::absoluteClippedOverflowRect()
         left = max(left, -overflowLeft(false));
         top = max(top, -overflowTop(false) - borderTopExtra());
         IntRect r(-left, -borderTopExtra() - top, left + max(width() + right, overflowWidth(false)), borderTopExtra() + top + max(height() + bottom + borderBottomExtra(), overflowHeight(false)));
+
+        if (RenderView* v = view())
+            r.move(v->layoutDelta());
+
         computeAbsoluteRepaintRect(r);
         return r;
     }
@@ -184,15 +189,20 @@ IntRect RenderTableCell::absoluteClippedOverflowRect()
 void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
 {
     r.setY(r.y() + m_topExtra);
-    r.move(-parent()->xPos(), -parent()->yPos()); // Rows are in the same coordinate space, so don't add their offset in.
+    RenderView* v = view();
+    if (!v || !v->layoutState())
+        r.move(-parent()->xPos(), -parent()->yPos()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeAbsoluteRepaintRect(r, fixed);
 }
 
 bool RenderTableCell::absolutePosition(int& xPos, int& yPos, bool fixed) const
 {
     bool result = RenderBlock::absolutePosition(xPos, yPos, fixed);
-    xPos -= parent()->xPos(); // Rows are in the same coordinate space, so don't add their offset in.
-    yPos -= parent()->yPos();
+    RenderView* v = view();
+    if (!v || !v->layoutState()) {
+        xPos -= parent()->xPos(); // Rows are in the same coordinate space, so don't add their offset in.
+        yPos -= parent()->yPos();
+    }
     return result;
 }
 

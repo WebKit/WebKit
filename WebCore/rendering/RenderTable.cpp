@@ -32,6 +32,7 @@
 #include "FixedTableLayout.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "RenderLayer.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
@@ -265,12 +266,8 @@ void RenderTable::layout()
 {
     ASSERT(needsLayout());
 
-    if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
-        // All we have to do is lay out our positioned objects.
-        layoutPositionedObjects(false);
-        setNeedsLayout(false);
+    if (layoutOnlyPositionedObjects())
         return;
-    }
 
     recalcSectionsIfNeeded();
         
@@ -279,11 +276,11 @@ void RenderTable::layout()
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
-        oldBounds.move(view()->layoutDelta());
         oldOutlineBox = absoluteOutlineBox();
-        oldOutlineBox.move(view()->layoutDelta());
     }
     
+    view()->pushLayoutState(this, IntSize(m_x, m_y));
+
     m_height = 0;
     m_overflowHeight = 0;
     m_overflowTop = 0;
@@ -423,6 +420,8 @@ void RenderTable::layout()
     // table can be containing block of positioned elements.
     // FIXME: Only pass true if width or height changed.
     layoutPositionedObjects(true);
+
+    view()->popLayoutState();
 
     bool didFullRepaint = true;
     // Repaint with our new bounds if they are different from our old bounds.

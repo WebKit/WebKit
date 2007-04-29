@@ -40,6 +40,8 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_selectionEndPos(-1)
     , m_printImages(true)
     , m_maximalOutlineSize(0)
+    , m_layoutState(0)
+    , m_layoutStateDisableCount(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes
     // any renderer with document as the node is anonymous.
@@ -99,6 +101,12 @@ void RenderView::layout()
     if (relayoutChildren)
         setChildNeedsLayout(true, false);
     
+    ASSERT(!m_layoutState);
+    LayoutState state;
+    // FIXME: May be better to push a clip and avoid issuing offscreen repaints.
+    state.m_clipped = false;
+    m_layoutState = &state;
+
     if (needsLayout())
         RenderBlock::layout();
 
@@ -109,6 +117,9 @@ void RenderView::layout()
     setOverflowWidth(docWidth());
     setOverflowHeight(docHeight());
 
+    ASSERT(m_layoutStateDisableCount == 0);
+    ASSERT(m_layoutState == &state);
+    m_layoutState = 0;
     setNeedsLayout(false);
 }
 
@@ -139,7 +150,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.
-    Element* elt = element()->document()->ownerElement();
+    Element* elt = document()->ownerElement();
     if (view() && elt && elt->renderer()) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
         if (layer->isTransparent() || layer->transparentAncestor())
@@ -176,7 +187,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 
     // We always just invalidate the root view, since we could be an iframe that is clipped out
     // or even invisible.
-    Element* elt = element()->document()->ownerElement();
+    Element* elt = document()->ownerElement();
     if (!elt)
         m_frameView->repaintRectangle(ur, immediate);
     else if (RenderObject* obj = elt->renderer()) {
@@ -522,6 +533,15 @@ void RenderView::setBestTruncatedAt(int y, RenderObject* forRenderer, bool force
         m_truncatorWidth = width;
         m_bestTruncatedAt = y;
     }
+}
+
+void RenderView::pushLayoutState(RenderObject* root)
+{
+    ASSERT(!m_frameView->needsFullRepaint());
+    ASSERT(m_layoutStateDisableCount == 0);
+    ASSERT(m_layoutState == 0);
+
+    m_layoutState = new (renderArena()) LayoutState(root);
 }
 
 } // namespace WebCore

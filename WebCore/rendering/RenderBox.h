@@ -98,6 +98,7 @@ public:
 
     virtual IntRect absoluteClippedOverflowRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
+    IntSize offsetForPositionedInContainer(RenderObject*) const;
 
     virtual void repaintDuringLayoutIfMoved(const IntRect&);
 

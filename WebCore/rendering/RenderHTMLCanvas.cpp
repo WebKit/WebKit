@@ -85,9 +85,7 @@ void RenderHTMLCanvas::layout()
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
-        oldBounds.move(view()->layoutDelta());
         oldOutlineBox = absoluteOutlineBox();
-        oldOutlineBox.move(view()->layoutDelta());
     }
     calcWidth();
     calcHeight();

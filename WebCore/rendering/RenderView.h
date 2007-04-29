@@ -24,11 +24,11 @@
 #ifndef RenderView_h
 #define RenderView_h
 
+#include "FrameView.h"
+#include "LayoutState.h"
 #include "RenderBlock.h"
 
 namespace WebCore {
-
-class FrameView;
 
 class RenderView : public RenderBlock {
 public:
@@ -93,6 +93,32 @@ public:
     const IntSize& layoutDelta() const { return m_layoutDelta; }
     void addLayoutDelta(const IntSize& delta) { m_layoutDelta += delta; }
 
+    void pushLayoutState(RenderBox* renderer, const IntSize& offset)
+    {
+        if (m_layoutStateDisableCount || m_frameView->needsFullRepaint())
+            return;
+        m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset);
+    }
+
+    void pushLayoutState(RenderObject*);
+
+    void popLayoutState()
+    {
+        if (m_layoutStateDisableCount || m_frameView->needsFullRepaint())
+            return;
+        LayoutState* state = m_layoutState;
+        m_layoutState = state->m_next;
+        state->destroy(renderArena());
+    }
+
+    LayoutState* layoutState() const { return m_layoutStateDisableCount ? 0 : m_layoutState; }
+
+    // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
+    // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
+    // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
+    void disableLayoutState() { m_layoutStateDisableCount++; }
+    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
+
 protected:
     FrameView* m_frameView;
 
@@ -117,6 +143,8 @@ private:
     int m_truncatorWidth;
     bool m_forcedPageBreak;
     IntSize m_layoutDelta;
+    LayoutState* m_layoutState;
+    unsigned m_layoutStateDisableCount;
 };
 
 } // namespace WebCore

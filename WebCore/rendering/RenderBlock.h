@@ -294,6 +294,7 @@ private:
 protected:
     void newLine();
     virtual bool hasLineIfEmpty() const;
+    bool layoutOnlyPositionedObjects();
 
 private:
     Position positionForBox(InlineBox*, bool start = true) const;

@@ -208,24 +208,18 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 {
     ASSERT(needsLayout());
 
-    if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
-        // All we have to is lay out our positioned objects.
-        layoutPositionedObjects(false);
-        if (hasOverflowClip())
-            m_layer->updateScrollInfoAfterLayout();
-        setNeedsLayout(false);
+    if (!relayoutChildren && layoutOnlyPositionedObjects())
         return;
-    }
 
     IntRect oldBounds;
     IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
-        oldBounds.move(view()->layoutDelta());
         oldOutlineBox = absoluteOutlineBox();
-        oldOutlineBox.move(view()->layoutDelta());
     }
+
+    view()->pushLayoutState(this, IntSize(m_x, m_y));
 
     int previousWidth = m_width;
     int previousHeight = m_height;
@@ -293,6 +287,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     // Always ensure our overflow width is at least as large as our width.
     if (m_overflowWidth < m_width)
         m_overflowWidth = m_width;
+
+    view()->popLayoutState();
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.

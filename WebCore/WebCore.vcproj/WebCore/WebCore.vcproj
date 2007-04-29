@@ -3371,6 +3371,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\LayoutState.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\LayoutState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\Length.h"
 				>
 			</File>

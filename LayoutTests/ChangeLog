@@ -1,3 +1,19 @@
+2007-04-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and Hyatt.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=13487
+          Implement O(1) absoluteClippedOverflowRect and absoluteOutlineBox during layout for a possible speed gain
+
+        * fast/repaint/bugzilla-3509-expected.checksum:
+        * fast/repaint/bugzilla-3509-expected.png:
+        * fast/repaint/intermediate-layout-position-clip-expected.checksum: Added.
+        * fast/repaint/intermediate-layout-position-clip-expected.png: Added.
+        * fast/repaint/intermediate-layout-position-clip-expected.txt: Added.
+        * fast/repaint/intermediate-layout-position-clip.html: Added.
+        * fast/repaint/intermediate-layout-position-expected.checksum:
+        * fast/repaint/intermediate-layout-position-expected.png:
+
 2007-04-28  Adele Peterson  <adele@apple.com>
 
         Added test to cover updated fix for <rdar://problem/5152299>
