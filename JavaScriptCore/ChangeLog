@@ -16,8 +16,9 @@
         free list, turn off the rule that says that the next node in the pool after the last
         node in the free list is also free. This rule works because any free nodes are added
         to the head of the free list, so a node that hasn't been allocated even once is always
-        at the tail of the free list. But it doesn't work any longer once the entire pool
-        has been used at least once.
+        at the tail of the free list and all the nodes after it also haven't been allocated
+        even once. But it doesn't work any longer once the entire pool has been used at least
+        once, because there's nothing special about the last node on the free list any more.
         (WTF::ListHashSetNodeAllocator::deallocate): Set the node's m_isAllocated to false.
         (WTF::ListHashSetNodeAllocator::pastPool): Added. Used above.
         (WTF::ListHashSetNodeAllocator::inPool): Changed to use the pastPool function.
