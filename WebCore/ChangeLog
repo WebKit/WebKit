@@ -1,5 +1,24 @@
 2007-04-28  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13471
+          REGRESSION (r21045): Secure keyboard entry mode remains in effect after leaving a password field by submitting
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Replaced direct access to Frame's d->m_doc
+        with a call to Frame::setDocument.
+        (WebCore::FrameLoader::begin): Ditto.
+        (WebCore::FrameLoader::open): Ditto.
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady): Ditto.
+        (WebCore::FrameLoader::canCachePage): Added a comment.
+        * manual-tests/secure-keyboard-enabled-after-submit.html: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Reset secure keyboard entry, in case the
+        old document's focused node has set it.
+
+2007-04-28  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Adele.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13379

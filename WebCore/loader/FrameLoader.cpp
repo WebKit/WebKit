@@ -760,7 +760,7 @@ void FrameLoader::clear(bool clearWindowProperties)
 
     // Do not drop the document before the script proxy and view are cleared, as some destructors
     // might still try to access the document.
-    m_frame->d->m_doc = 0;
+    m_frame->setDocument(0);
     m_decoder = 0;
 
     m_containsPlugIns = false;
@@ -840,10 +840,8 @@ void FrameLoader::begin(const KURL& url)
 
     RefPtr<Document> document = DOMImplementation::instance()->
         createDocument(m_responseMIMEType, m_frame->view(), m_frame->inViewSourceMode());
-    m_frame->d->m_doc = document;
+    m_frame->setDocument(document.get());
 
-    if (!document->attached())
-        document->attach();
     document->setURL(m_URL.url());
     // We prefer m_baseURL over m_URL because m_URL changes when we are
     // about to load a new page.
@@ -1619,6 +1617,9 @@ bool FrameLoader::canCachePage()
         && !m_URL.protocol().startsWith("https")
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
+        // If you change the following to allow caching of documents with password fields,
+        // you also need to make sure that Frame::setDocument turns on secure keyboard
+        // entry mode if the document's focused node requires it.
         && !m_frame->document()->hasPasswordField();
 }
 
@@ -2555,7 +2556,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     
     m_frame->setView(document->view());
     
-    m_frame->d->m_doc = document;
+    m_frame->setDocument(document);
     m_decoder = document->decoder();
 
     updatePolicyBaseURL();
@@ -4503,9 +4504,7 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             // similar to begin(), should be refactored to share more code
             RefPtr<Document> newDoc = DOMImplementation::instance()->
                 createDocument(m_responseMIMEType, m_frame->view(), m_frame->inViewSourceMode());
-            m_frame->d->m_doc = newDoc;
-            if (!newDoc->attached())
-                newDoc->attach();
+            m_frame->setDocument(newDoc);
             newDoc->setURL(m_URL.url());
             newDoc->setBaseURL(m_URL.url());
             if (m_decoder)

@@ -303,10 +303,17 @@ Document *Frame::document() const
 void Frame::setDocument(Document* newDoc)
 {
     if (d) {
-        if (d->m_doc)
-            d->m_doc->detach();
+        if (d->m_doc) {
+            if (d->m_doc->attached())
+                d->m_doc->detach();
+            // The old document's focused node may have turned on secure keyboard entry.
+            // Now that it's going away, turn it off. Documents containing a password
+            // field cannot enter the page cache, therefore |newDoc| cannot contain a
+            // focused password field, and hence we can always set to false.
+            setUseSecureKeyboardEntryWhenActive(false);
+        }
         d->m_doc = newDoc;
-        if (newDoc)
+        if (newDoc && !newDoc->attached())
             newDoc->attach();
     }
 }
