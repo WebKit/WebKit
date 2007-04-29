@@ -1,5 +1,16 @@
 2007-04-28  Adele Peterson  <adele@apple.com>
 
+        RS by Darin.
+
+        Update to fix for <rdar://problem/5152299>
+
+        Test: fast/events/no-blur-on-enter-button.html
+
+        * html/HTMLButtonElement.cpp: (WebCore::HTMLButtonElement::defaultEventHandler):
+        Don't blur the button when handling the enter key.  This matches our new behavior for input elements.
+
+2007-04-28  Adele Peterson  <adele@apple.com>
+
         Fix by Darin, reviewed by me.
 
         Fix for <rdar://problem/5152299> REGRESSION: <button> elements do not respond to space and return key as similar <input> elements do

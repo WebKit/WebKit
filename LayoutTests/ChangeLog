@@ -1,3 +1,10 @@
+2007-04-28  Adele Peterson  <adele@apple.com>
+
+        Added test to cover updated fix for <rdar://problem/5152299>
+
+        * fast/events/no-blur-on-enter-button-expected.txt: Added.
+        * fast/events/no-blur-on-enter-button.html: Added.
+
 2007-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

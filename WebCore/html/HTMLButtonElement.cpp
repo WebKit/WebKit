@@ -96,7 +96,6 @@ void HTMLButtonElement::defaultEventHandler(Event* evt)
 
         // Do the same things <input type=button/reset/submit> would do.
         if (key == "Enter" && m_type == BUTTON) {
-            blur();
             if (form())
                 form()->submitClick(evt);
             evt->setDefaultHandled();
