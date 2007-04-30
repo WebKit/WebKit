@@ -1,5 +1,17 @@
 2007-04-29  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13544
+          REGRESSION (r21120): Member profile frame not erased at Yahoo! Answers
+
+        * fast/repaint/layer-hide-when-needs-layout-expected.checksum: Added.
+        * fast/repaint/layer-hide-when-needs-layout-expected.png: Added.
+        * fast/repaint/layer-hide-when-needs-layout-expected.txt: Added.
+        * fast/repaint/layer-hide-when-needs-layout.html: Added.
+
+2007-04-29  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin and Hyatt.
 
         - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=13487

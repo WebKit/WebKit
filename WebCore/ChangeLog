@@ -1,3 +1,18 @@
+2007-04-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13544
+          REGRESSION (r21120): Member profile frame not erased at Yahoo! Answers
+
+        Test: fast/repaint/layer-hide-when-needs-layout.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): If we get a layout hint, we count on
+        layout() or updateLayerPositions() to repaint. In the case of a layer
+        going invisible, however, we need to repaint here since neither of the
+        above will do it.
+
 2007-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Steve.

@@ -2139,6 +2139,8 @@ void RenderObject::setStyle(RenderStyle* style)
     bool affectsParentBlock = false;
     RenderStyle::Diff d = RenderStyle::Equal;
     if (m_style) {
+        d = m_style->diff(style);
+
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         if (style) {
@@ -2157,16 +2159,17 @@ void RenderObject::setStyle(RenderStyle* style)
             }
             // keep layer hierarchy visibility bits up to date if visibility changes
             if (m_style->visibility() != style->visibility()) {
-                RenderLayer* l = enclosingLayer();
-                if (style->visibility() == VISIBLE && l)
-                    l->setHasVisibleContent(true);
-                else if (l && l->hasVisibleContent() &&
-                            (this == l->renderer() || l->renderer()->style()->visibility() != VISIBLE))
-                    l->dirtyVisibleContentStatus();
+                if (RenderLayer* l = enclosingLayer()) {
+                    if (style->visibility() == VISIBLE)
+                        l->setHasVisibleContent(true);
+                    else if (l->hasVisibleContent() && (this == l->renderer() || l->renderer()->style()->visibility() != VISIBLE)) {
+                        l->dirtyVisibleContentStatus();
+                        if (d > RenderStyle::RepaintLayer)
+                            repaint();
+                    }
+                }
             }
         }
-
-        d = m_style->diff(style);
 
         // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
         if (d == RenderStyle::RepaintLayer && !hasLayer())
