@@ -34,6 +34,8 @@ namespace WebCore {
 PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
     : m_position(pointForEvent(event))
     , m_globalPosition(globalPointForEvent(event))
+    , m_deltaX([event deltaX])
+    , m_deltaY([event deltaY])
     , m_isAccepted(false)
     , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
     , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
@@ -41,7 +43,7 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
 {
     BOOL continuous;
-    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
+    wkGetWheelEventDeltas(event, &m_continuousDeltaX, &m_continuousDeltaY, &continuous);
     m_isContinuous = continuous;
 }
 

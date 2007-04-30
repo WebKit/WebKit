@@ -1,3 +1,23 @@
+2007-04-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix <rdar://problem/5169261>
+        REGRESSION: Google Maps zooming too sensitive when using two fingers on trackpad
+        
+        Use line based delta values when generating DOM wheel events, use pixel deltas
+        for scrolling only.
+        
+        No test case, requires user interaction and specific hardware.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::continuousDeltaX):
+        (WebCore::PlatformWheelEvent::continuousDeltaY):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-04-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.

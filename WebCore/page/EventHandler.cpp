@@ -1220,11 +1220,13 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         if (node->renderer()) {
             // Just break up into two scrolls if we need to.  Diagonal movement on 
             // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-            if (e.deltaX() && node->renderer()->scroll(e.deltaX() < 0 ? ScrollRight : ScrollLeft, e.isContinuous() ? ScrollByPixel : ScrollByLine,
-                                                       e.deltaX() < 0 ? -e.deltaX() : e.deltaX()))
+            float deltaX = e.isContinuous() ? e.continuousDeltaX() : e.deltaX();
+            float deltaY = e.isContinuous() ? e.continuousDeltaY() : e.deltaY();
+            if (deltaX && node->renderer()->scroll(deltaX < 0 ? ScrollRight : ScrollLeft, e.isContinuous() ? ScrollByPixel : ScrollByLine,
+                                                       deltaX < 0 ? -deltaX : deltaX))
                 e.accept();
-            if (e.deltaY() && node->renderer()->scroll(e.deltaY() < 0 ? ScrollDown : ScrollUp, e.isContinuous() ? ScrollByPixel : ScrollByLine,
-                                                       e.deltaY() < 0 ? -e.deltaY() : e.deltaY()))
+            if (deltaY && node->renderer()->scroll(deltaY < 0 ? ScrollDown : ScrollUp, e.isContinuous() ? ScrollByPixel : ScrollByLine,
+                                                       deltaY < 0 ? -deltaY : deltaY))
                 e.accept();
         }
     }
