@@ -167,6 +167,7 @@ public:
     Vector<String> guessesForUngrammaticalSelection();
     void markMisspellingsAfterTypingToPosition(const VisiblePosition&);
     void markMisspellings(const Selection&);
+    void markBadGrammar(const Selection&);
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();

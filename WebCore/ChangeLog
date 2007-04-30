@@ -1,5 +1,23 @@
 2007-04-30  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by ggaren
+        
+        Buildfix.  Leave in grammar checking machinery to 
+        keep WebKit building on other platforms but don't
+        operate on sentence sized chunks so that we don't
+        re-introduce 5157329.
+
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::markMisspellings):
+        (WebCore::Editor::markBadGrammar):
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
 
         <rdar://problem/5168598> 
