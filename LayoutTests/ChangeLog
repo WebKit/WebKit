@@ -2,6 +2,27 @@
 
         Reviewed by darin
         
+        <rdar://problem/4875189> List gets deleted when replacing contents
+
+        Replacing the contents of a list:
+        * editing/inserting/4875189-1-expected.checksum: Added.
+        * editing/inserting/4875189-1-expected.png: Added.
+        * editing/inserting/4875189-1-expected.txt: Added.
+        * editing/inserting/4875189-1.html: Added.
+        Of a floating div:
+        * editing/inserting/4875189-2-expected.checksum: Added.
+        * editing/inserting/4875189-2-expected.png: Added.
+        * editing/inserting/4875189-2-expected.txt: Added.
+        * editing/inserting/4875189-2.html: Added.
+        Pasting a list on top of itself now creates a nested list:
+        * editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * editing/pasteboard/paste-4039777-fix-expected.png:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
         <rdar://problem/5168598> Crash when deleting a link inside an input field
 
         * editing/deleting/5168598-expected.checksum: Added.

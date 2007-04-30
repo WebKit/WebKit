@@ -1,5 +1,16 @@
 2007-04-30  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by darin
+
+        <rdar://problem/4875189> List gets deleted when replacing contents
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Don't expand
+        to include elements, like lists, when deleting a selection 
+        to replace it.
+
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by ggaren
         
         Buildfix.  Leave in grammar checking machinery to 

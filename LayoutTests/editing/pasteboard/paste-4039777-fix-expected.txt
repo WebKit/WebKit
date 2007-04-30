@@ -5,7 +5,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 5 of #text > LI > UL > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > LI > UL > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > LI > UL > DIV > LI > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -51,26 +51,30 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (0,28) size 16x28
                   text run at (0,28) width 16: "C"
-      RenderBlock {DIV} at (0,364) size 784x188
-        RenderBlock {DIV} at (0,0) size 784x188 [border: (2px solid #FF0000)]
-          RenderBlock {UL} at (2,26) size 780x28
-            RenderListItem {LI} at (40,0) size 740x28
-              RenderListMarker at (-22,0) size 9x28: bullet
-              RenderText {#text} at (723,0) size 17x28
-                text run at (723,0) width 17: "A"
-          RenderBlock {DIV} at (2,78) size 780x56
-            RenderBlock {UL} at (0,0) size 780x56
-              RenderListItem {LI} at (40,0) size 740x56
+      RenderBlock {DIV} at (0,364) size 784x164
+        RenderBlock {DIV} at (0,0) size 784x164 [border: (2px solid #FF0000)]
+          RenderBlock {UL} at (2,26) size 780x112
+            RenderListItem {LI} at (40,0) size 740x112
+              RenderBlock (anonymous) at (0,0) size 740x28
                 RenderListMarker at (-22,0) size 9x28: bullet
-                RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
-                  RenderText {#text} at (718,0) size 16x28
-                    text run at (718,0) width 16: "B"
-                RenderText {#text} at (734,0) size 6x28
-                  text run at (734,0) width 6: " "
-                RenderBR {BR} at (740,22) size 0x0
-                RenderText {#text} at (724,28) size 16x28
-                  text run at (724,28) width 16: "C"
-          RenderBlock (anonymous) at (2,158) size 780x28
-            RenderBR {BR} at (780,0) size 0x28
-          RenderBlock {DIV} at (2,186) size 780x0
-caret: position 1 of child 3 {#text} of child 0 {LI} of child 0 {UL} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+              RenderBlock {UL} at (0,28) size 740x28
+                RenderListItem {LI} at (40,0) size 700x28
+                  RenderListMarker at (-22,0) size 9x28: white bullet
+                  RenderText {#text} at (683,0) size 17x28
+                    text run at (683,0) width 17: "A"
+              RenderBlock {DIV} at (0,56) size 740x56
+                RenderBlock {UL} at (0,0) size 740x56
+                  RenderListItem {LI} at (40,0) size 700x56
+                    RenderListMarker at (-22,0) size 9x28: white bullet
+                    RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
+                      RenderText {#text} at (678,0) size 16x28
+                        text run at (678,0) width 16: "B"
+                    RenderText {#text} at (694,0) size 6x28
+                      text run at (694,0) width 6: " "
+                    RenderBR {BR} at (700,22) size 0x0
+                    RenderText {#text} at (684,28) size 16x28
+                      text run at (684,28) width 16: "C"
+              RenderBlock (anonymous) at (0,112) size 740x0
+          RenderBlock {DIV} at (2,162) size 780x0
+            RenderBlock {UL} at (0,0) size 780x0
+caret: position 1 of child 3 {#text} of child 0 {LI} of child 0 {UL} of child 1 {DIV} of child 0 {LI} of child 1 {UL} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
