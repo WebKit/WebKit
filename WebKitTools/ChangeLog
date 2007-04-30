@@ -1,3 +1,10 @@
+2007-04-27  Kevin McCullough  <kmccullough@apple.com>
+
+        - Removed debugging statements and took out the removal of the deletion
+          of the symlink.  This is because multiple instances of run-webkit-tests
+          can be running at the same time.
+        * Scripts/run-webkit-tests:
+
 2007-04-27  Adam Roben <aroben@apple.com>
 
         Reviewed by Maciej.

@@ -217,16 +217,7 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 my %testType = ();
 
-print "FOR KEVIN: Make sure we get here.\n";
-if (-e "/tmp/LayoutTests")
-{
-        print "FOR KEVIN: symlink exists before creation.\n";
-}
 system "ln -s $testDirectory /tmp/LayoutTests" unless -x "/tmp/LayoutTests";
-if (!(-e "/tmp/LayoutTests"))
-{
-        print "FOR KEVIN: symlink does not exist after creation.\n";
-}
 
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
@@ -679,11 +670,9 @@ printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
 closeHTTPD();
 
-if (!(-e "/tmp/LayoutTests"))
-{
-        print "FOR KEVIN: Symlink does not exist before deletion.\n";
-}
-system "rm /tmp/LayoutTests";
+# Because multiple instances of this script are running concurrently we cannot 
+# safely delete this symlink.
+# system "rm /tmp/LayoutTests";
 
 # FIXME: Do we really want to check the image-comparison tool for leaks every time?
 if ($shouldCheckLeaks && $pixelTests) {
