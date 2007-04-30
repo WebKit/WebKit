@@ -573,14 +573,12 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
     if (!isContinuousSpellCheckingEnabled())
         return;
     
-    // Check spelling of one word
+    // FIXME 4859132: We currently only check the adjacent words. This is fine for spelling, where each
+    // misspelling is fully contained within a word. But this isn't good enough for grammar checking,
+    // where more context must be taken into account. We'll have to reconsider the grammar in the entire
+    // "conceptual grammar block", which is not well-defined but must be at least a sentence long, and
+    // perhaps a paragraph in some languages.
     markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
-    
-    if (!isGrammarCheckingEnabled())
-        return;
-    
-    // Check grammar of entire sentence
-    markBadGrammar(Selection(startOfSentence(p), endOfSentence(p)));
 }
 
 static void markAllMisspellingsInRange(NSSpellChecker *checker, int tag, Range* searchRange)
@@ -601,15 +599,13 @@ static void markAllBadGrammarInRange(NSSpellChecker *checker, int tag, Range* se
     findFirstBadGrammarInRange(checker, tag, searchRange, ignoredGrammarDetail, ignoredOffset, true);
 }
 #endif
-    
-static void markMisspellingsOrBadGrammar(Editor* editor, const Selection& selection, bool checkSpelling)
+
+void Editor::markMisspellings(const Selection& selection)
 {
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
     
-    // This function is used only for as-you-type checking, so if that's off we do nothing. Note that
-    // grammar checking can only be on if spell checking is also on.
-    if (!editor->isContinuousSpellCheckingEnabled())
+    if (!isContinuousSpellCheckingEnabled())
         return;
     
     RefPtr<Range> searchRange(selection.toRange());
@@ -627,27 +623,11 @@ static void markMisspellingsOrBadGrammar(Editor* editor, const Selection& select
     if (checker == nil)
         return;
     
-    if (checkSpelling)
-        markAllMisspellingsInRange(checker, editor->spellCheckerDocumentTag(), searchRange.get());
-    else {
-#ifdef BUILDING_ON_TIGER
-        ASSERT_NOT_REACHED();
-#else
-        if (editor->isGrammarCheckingEnabled())
-            markAllBadGrammarInRange(checker, editor->spellCheckerDocumentTag(), searchRange.get());
-#endif
-    }    
-}
-
-void Editor::markMisspellings(const Selection& selection)
-{
-    markMisspellingsOrBadGrammar(this, selection, true);
-}
+    markAllMisspellingsInRange(checker, spellCheckerDocumentTag(), searchRange.get());
     
-void Editor::markBadGrammar(const Selection& selection)
-{
 #ifndef BUILDING_ON_TIGER
-    markMisspellingsOrBadGrammar(this, selection, false);
+    if (isGrammarCheckingEnabled())
+        markAllBadGrammarInRange(checker, spellCheckerDocumentTag(), searchRange.get());
 #endif
 }
 

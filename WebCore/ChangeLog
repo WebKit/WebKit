@@ -1,3 +1,19 @@
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/5157329> 
+        REGRESSION: Crash at WTF::fastFree() when arrowing or deleting backward through editable text (13493)
+        
+        Backing out the changes for 4859132.
+
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::Editor::markMisspellings):
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+
 2007-04-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
