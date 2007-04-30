@@ -27,6 +27,7 @@
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
+#include "RenderView.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGLength.h"
 

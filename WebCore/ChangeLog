@@ -1,3 +1,11 @@
+2007-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        Build fix for experimental features build
+
+        * rendering/RenderForeignObject.cpp:
+
 2007-04-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
