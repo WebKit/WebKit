@@ -1,3 +1,31 @@
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5168598> 
+        Crash when deleting a link inside an input field
+        
+        Deletion code tries to update one of its positions to keep 
+        it valid and nullifies it.  Later in mergeParagraphs we try 
+        to find out if it's valid by checking to see if it's still in 
+        the document and crash.
+        
+        The fix is just to not bother keeping the position, 
+        m_upstreamStart, valid, since after the point in the code 
+        under examination, it doesn't need to be valid anymore.  
+        Besides, code to update DeleteSelectionCommand's positions 
+        should go in the functions that handle the content removal 
+        that might invalid them (there are already FIXMEs about this).
+        
+        Also, users shouldn't be able to insert links (or any rich content)
+        into plaintext-only regions like text fields, even if those
+        text fields are inside richly editable regions.  This is a 
+        separate bug and is filed as 5171552.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Don't
+        bother updating m_upstreamStart.
+
 2007-04-30  Patti Hoa  <patti@apple.com>
 
         Reviewed by Dave Hyatt.

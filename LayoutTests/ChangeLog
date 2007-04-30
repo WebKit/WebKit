@@ -1,3 +1,14 @@
+2007-04-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5168598> Crash when deleting a link inside an input field
+
+        * editing/deleting/5168598-expected.checksum: Added.
+        * editing/deleting/5168598-expected.png: Added.
+        * editing/deleting/5168598-expected.txt: Added.
+        * editing/deleting/5168598.html: Added.
+
 2007-04-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
