@@ -162,6 +162,7 @@ namespace WebCore {
 
         void addToSuperview(NSView* superview);
         void removeFromSuperview();
+        IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
 #endif
 
         // To be deleted.

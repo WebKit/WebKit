@@ -32,6 +32,7 @@
 #import "Font.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
+#import "PlatformMouseEvent.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
@@ -357,6 +358,13 @@ WidgetClient* Widget::client() const
 
 void Widget::removeFromParent()
 {
+}
+
+IntPoint Widget::convertToScreenCoordinate(NSView *view, const IntPoint& point)
+{
+    NSPoint conversionPoint = { point.x(), point.y() };
+    conversionPoint = [view convertPoint:conversionPoint toView:nil];
+    return globalPoint(conversionPoint, [view window]);
 }
 
 }

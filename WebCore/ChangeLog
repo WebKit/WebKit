@@ -1,3 +1,24 @@
+2007-04-30  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        <rdar://problem/5108546> REGRESSION: Zoom follows keyboard focus does not work
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new file SelectionControllerMac.mm
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        Move the code to fire off AXSelectedTextChanged notification to a new method notifyAccessibilityForSelectionChange in SelectionControllerMac.mm
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        call notifyAccessibilityForSelectionChange to handle firing of accessibility notification and zoomFocusChange
+        * editing/SelectionController.h:
+        Add notifyAccessibilityForSelectionChange method for Mac platform
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertToScreenCoordinate):
+        Add a helper routine that takes IntPoint in local coordinate and convert that to screen coordinate
+
 2007-04-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

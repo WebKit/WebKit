@@ -1254,15 +1254,6 @@ void Document::updateSelection()
             static_cast<RenderView*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
         }
     }
-    
-#if PLATFORM(MAC)
-    // FIXME: We shouldn't post this AX notification here since updateSelection() is called far too often: every time Safari gains
-    // or loses focus, and once for every low level change to the selection during an editing operation.
-    // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
-    // longer a correct way to check for user-level selection changes.
-    if (AXObjectCache::accessibilityEnabled() && selection.start().isNotNull() && selection.end().isNotNull())
-        axObjectCache()->postNotification(selection.start().node()->renderer(), "AXSelectedTextChanged");
-#endif
 }
 
 Tokenizer* Document::createTokenizer()

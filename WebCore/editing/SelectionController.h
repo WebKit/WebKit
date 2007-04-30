@@ -167,6 +167,12 @@ private:
     IntRect caretRepaintRect() const;
 
     int xPosForVerticalArrowNavigation(EPositionType);
+    
+#if PLATFORM(MAC)
+    void notifyAccessibilityForSelectionChange();
+#else
+    void notifyAccessibilityForSelectionChange() {};
+#endif
 
     Selection m_sel;
 
