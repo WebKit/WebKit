@@ -1,3 +1,15 @@
+2007-05-01  David Hyatt  <hyatt@apple.com>
+
+        Fix for 13558, crash when using absolutely positioned generated content
+        inside an inline.
+
+        Reviewed by darin
+
+        fast/css-generated-content/absolute-position-inside-inline.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+
 2007-05-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
