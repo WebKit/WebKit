@@ -1,3 +1,118 @@
+2007-05-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - added a test for <rdar://problem/5172596> HTML-parser-created tbody elements
+          are being ignored when processing CSS child rules
+
+        * fast/css/child-selector-implicit-tbody.html: Added.
+        * fast/css/child-selector-implicit-tbody-expected.txt: Added.
+
+        - updated test results for <rdar://problem/5172607> XML parser is creating
+          implicit tbody elements; the only change is the tag name that's dumped
+
+        * fast/table/037-expected.txt:
+        * tables/mozilla/marvin/x_caption_align_bottom-expected.txt:
+        * tables/mozilla/marvin/x_caption_align_top-expected.txt:
+        * tables/mozilla/marvin/x_caption_class-expected.txt:
+        * tables/mozilla/marvin/x_caption_id-expected.txt:
+        * tables/mozilla/marvin/x_caption_style-expected.txt:
+        * tables/mozilla/marvin/x_col_align_center-expected.txt:
+        * tables/mozilla/marvin/x_col_align_char-expected.txt:
+        * tables/mozilla/marvin/x_col_align_justify-expected.txt:
+        * tables/mozilla/marvin/x_col_align_left-expected.txt:
+        * tables/mozilla/marvin/x_col_align_right-expected.txt:
+        * tables/mozilla/marvin/x_col_span-expected.txt:
+        * tables/mozilla/marvin/x_col_valign_baseline-expected.txt:
+        * tables/mozilla/marvin/x_col_valign_bottom-expected.txt:
+        * tables/mozilla/marvin/x_col_valign_middle-expected.txt:
+        * tables/mozilla/marvin/x_col_valign_top-expected.txt:
+        * tables/mozilla/marvin/x_col_width_pct-expected.txt:
+        * tables/mozilla/marvin/x_col_width_px-expected.txt:
+        * tables/mozilla/marvin/x_col_width_rel-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_align_center-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_align_char-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_align_justify-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_align_left-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_align_right-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_span-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_valign_baseline-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_valign_bottom-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_valign_middle-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_valign_top-expected.txt:
+        * tables/mozilla/marvin/x_colgroup_width_rel-expected.txt:
+        * tables/mozilla/marvin/x_table_align_center-expected.txt:
+        * tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * tables/mozilla/marvin/x_table_align_right-expected.txt:
+        * tables/mozilla/marvin/x_table_bgcolor_name-expected.txt:
+        * tables/mozilla/marvin/x_table_bgcolor_rgb-expected.txt:
+        * tables/mozilla/marvin/x_table_cellpadding-expected.txt:
+        * tables/mozilla/marvin/x_table_cellpadding_pct-expected.txt:
+        * tables/mozilla/marvin/x_table_cellspacing-expected.txt:
+        * tables/mozilla/marvin/x_table_cellspacing_pct-expected.txt:
+        * tables/mozilla/marvin/x_table_class-expected.txt:
+        * tables/mozilla/marvin/x_table_id-expected.txt:
+        * tables/mozilla/marvin/x_table_style-expected.txt:
+        * tables/mozilla/marvin/x_table_width_pct-expected.txt:
+        * tables/mozilla/marvin/x_table_width_px-expected.txt:
+        * tables/mozilla/marvin/x_td_align_center-expected.txt:
+        * tables/mozilla/marvin/x_td_align_char-expected.txt:
+        * tables/mozilla/marvin/x_td_align_justify-expected.txt:
+        * tables/mozilla/marvin/x_td_align_left-expected.txt:
+        * tables/mozilla/marvin/x_td_align_right-expected.txt:
+        * tables/mozilla/marvin/x_td_bgcolor_name-expected.txt:
+        * tables/mozilla/marvin/x_td_bgcolor_rgb-expected.txt:
+        * tables/mozilla/marvin/x_td_class-expected.txt:
+        * tables/mozilla/marvin/x_td_colspan-expected.txt:
+        * tables/mozilla/marvin/x_td_height-expected.txt:
+        * tables/mozilla/marvin/x_td_id-expected.txt:
+        * tables/mozilla/marvin/x_td_nowrap-expected.txt:
+        * tables/mozilla/marvin/x_td_rowspan-expected.txt:
+        * tables/mozilla/marvin/x_td_style-expected.txt:
+        * tables/mozilla/marvin/x_td_valign_baseline-expected.txt:
+        * tables/mozilla/marvin/x_td_valign_bottom-expected.txt:
+        * tables/mozilla/marvin/x_td_valign_middle-expected.txt:
+        * tables/mozilla/marvin/x_td_valign_top-expected.txt:
+        * tables/mozilla/marvin/x_td_width-expected.txt:
+        * tables/mozilla/marvin/x_th_align_center-expected.txt:
+        * tables/mozilla/marvin/x_th_align_char-expected.txt:
+        * tables/mozilla/marvin/x_th_align_justify-expected.txt:
+        * tables/mozilla/marvin/x_th_align_left-expected.txt:
+        * tables/mozilla/marvin/x_th_align_right-expected.txt:
+        * tables/mozilla/marvin/x_th_bgcolor_name-expected.txt:
+        * tables/mozilla/marvin/x_th_bgcolor_rgb-expected.txt:
+        * tables/mozilla/marvin/x_th_class-expected.txt:
+        * tables/mozilla/marvin/x_th_colspan-expected.txt:
+        * tables/mozilla/marvin/x_th_height-expected.txt:
+        * tables/mozilla/marvin/x_th_id-expected.txt:
+        * tables/mozilla/marvin/x_th_nowrap-expected.txt:
+        * tables/mozilla/marvin/x_th_rowspan-expected.txt:
+        * tables/mozilla/marvin/x_th_style-expected.txt:
+        * tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * tables/mozilla/marvin/x_th_valign_bottom-expected.txt:
+        * tables/mozilla/marvin/x_th_valign_middle-expected.txt:
+        * tables/mozilla/marvin/x_th_valign_top-expected.txt:
+        * tables/mozilla/marvin/x_th_width-expected.txt:
+        * tables/mozilla/marvin/x_tr_align_center-expected.txt:
+        * tables/mozilla/marvin/x_tr_align_char-expected.txt:
+        * tables/mozilla/marvin/x_tr_align_justify-expected.txt:
+        * tables/mozilla/marvin/x_tr_align_left-expected.txt:
+        * tables/mozilla/marvin/x_tr_align_right-expected.txt:
+        * tables/mozilla/marvin/x_tr_bgcolor_name-expected.txt:
+        * tables/mozilla/marvin/x_tr_bgcolor_rgb-expected.txt:
+        * tables/mozilla/marvin/x_tr_class-expected.txt:
+        * tables/mozilla/marvin/x_tr_id-expected.txt:
+        * tables/mozilla/marvin/x_tr_style-expected.txt:
+        * tables/mozilla/marvin/x_tr_valign_baseline-expected.txt:
+        * tables/mozilla/marvin/x_tr_valign_bottom-expected.txt:
+        * tables/mozilla/marvin/x_tr_valign_middle-expected.txt:
+        * tables/mozilla/marvin/x_tr_valign_top-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug178855-expected.txt:
+        * tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.txt:
+        * tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.txt:
+        * tables/mozilla_expected_failures/marvin/x_colgroup_width_pct-expected.txt:
+        * tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.txt:
+
 2007-04-30  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 12691, generated content and display: table-cell duplicates

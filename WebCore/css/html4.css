@@ -192,6 +192,11 @@ tfoot {
     border-color: inherit
 }
 
+/* for tables without table section elements (can happen with XHTML or dynamically created tables) */
+table > tr {
+    vertical-align: middle;
+}
+
 col {
     display: table-column
 }

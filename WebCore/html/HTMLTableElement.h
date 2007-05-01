@@ -83,7 +83,7 @@ public:
     void deleteTFoot();
     HTMLElement* createCaption();
     void deleteCaption();
-    HTMLElement* insertRow(int index, ExceptionCode&);
+    PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
     PassRefPtr<HTMLCollection> rows();

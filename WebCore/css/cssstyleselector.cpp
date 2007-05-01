@@ -1257,9 +1257,6 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e)
         case CSSSelector::Child:
         {
             n = n->parentNode();
-            if (!strictParsing)
-                while (n && n->implicitNode())
-                    n = n->parentNode();
             if (!n || !n->isElementNode())
                 return false;
             if (!checkOneSelector(sel, static_cast<Element*>(n)))

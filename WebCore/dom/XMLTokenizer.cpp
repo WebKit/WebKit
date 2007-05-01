@@ -673,17 +673,6 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         return;
     }
 
-    // FIXME: This hack ensures implicit table bodies get constructed in XHTML and XML files.
-    // We want to consolidate this with the HTML parser and HTML DOM code at some point.
-    // For now, it's too risky to rip that code up.
-    if (m_currentNode->hasTagName(tableTag) && newElement->hasTagName(trTag)) {
-        RefPtr<Node> implicitTBody = new HTMLTableSectionElement(tbodyTag, m_doc, true /* implicit */);
-        m_currentNode->addChild(implicitTBody.get());
-        setCurrentNode(implicitTBody.get());
-        if (m_view && !implicitTBody->attached())
-            implicitTBody->attach();
-    }
-
     if (newElement->hasTagName(scriptTag))
         static_cast<HTMLScriptElement*>(newElement.get())->setCreatedByParser(true);
     
@@ -717,8 +706,6 @@ void XMLTokenizer::endElementNs()
     exitText();
 
     Node* n = m_currentNode;
-    while (n->implicitNode())
-        n = n->parentNode();
     RefPtr<Node> parent = n->parentNode();
     n->closeRenderer();
     

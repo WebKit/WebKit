@@ -1,3 +1,55 @@
+2007-05-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - removed the m_implicit bit from Node, freeing up a bit
+
+        - fixed <rdar://problem/5172607> XML parser is creating implicit tbody elements
+        - fixed <rdar://problem/5172596> HTML-parser-created tbody elements are being
+          ignored when processing CSS child rules
+
+        Test: fast/css/child-selector-implicit-tbody.html
+
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::checkSelector):
+        Removed code that used to look at implicitNode(), which no longer exists.
+
+        * css/html4.css: Added a style rule to handle cases where we have a tr
+        inside a table with no intervening table section.
+
+        * dom/Node.h: Removed the bit.
+        * dom/Node.cpp:
+        (WebCore::Node::Node): Don't initialize the bit.
+        (WebCore::Node::dump): Don't dump the bit.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs): Remove the code that made a
+        table body element. This is handled in the render tree, the DOM tree
+        should not be mangled.
+        (WebCore::XMLTokenizer::endElementNs): Removed code that used to look at
+        implicitNode(), which no longer exists.
+
+        * html/HTMLElementFactory.cpp: (WebCore::tableSectionConstructor):
+        Removed boolean parameter that was passed to the HTMLTableSectionElement
+        constructor.
+        * html/HTMLParser.cpp: (WebCore::HTMLParser::handleError): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::createTHead): Ditto.
+        (WebCore::HTMLTableElement::createTFoot): Ditto.
+        (WebCore::HTMLTableElement::insertRow): Changed to return a PassRefPtr,
+        because it's possible the row could be removed from the table by JavaScript
+        code responding to DOM mutation events before the function returns. Just
+        something I noticed by code inspection.
+
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::HTMLTableSectionElement): Removed
+        boolean "implicit" parameter to the constructor.
+        (WebCore::HTMLTableSectionElement::insertRow): Changed to return a
+        PassRefPtr for the same reason cited above.
+
+        * html/HTMLTableElement.h: Changed the return value of insertRow to be
+        a PassRefPtr.
+        * html/HTMLTableSectionElement.h: Ditto.
+
 2007-04-30  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 12691, generated content and display: table-cell duplicates

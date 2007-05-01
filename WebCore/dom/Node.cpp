@@ -153,7 +153,6 @@ Node::Node(Document *doc)
       m_active(false),
       m_hovered(false),
       m_inActiveChain(false),
-      m_implicit(false),
       m_inDetach(false),
       m_inSubtreeMark(false)
 {
@@ -798,7 +797,6 @@ void Node::dump(TextStream* stream, DeprecatedString ind) const
     if (m_hasStyle) { *stream << " hasStyle"; }
     if (m_focused) { *stream << " focused"; }
     if (m_active) { *stream << " active"; }
-    if (m_implicit) { *stream << " implicit"; }
 
     *stream << " tabIndex=" << m_tabIndex;
     *stream << endl;

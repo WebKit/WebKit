@@ -129,7 +129,7 @@ HTMLElement *HTMLTableElement::createTHead()
 {
     if (!m_head) {
         ExceptionCode ec = 0;
-        m_head = new HTMLTableSectionElement(theadTag, document(), true /* implicit */);
+        m_head = new HTMLTableSectionElement(theadTag, document());
         if (m_foot)
             insertBefore(m_head, m_foot, ec);
         else if (m_firstBody)
@@ -155,7 +155,7 @@ HTMLElement *HTMLTableElement::createTFoot()
 {
     if (!m_foot) {
         ExceptionCode ec = 0;
-        m_foot = new HTMLTableSectionElement(tfootTag, document(), true /*implicit */);
+        m_foot = new HTMLTableSectionElement(tfootTag, document());
         if (m_firstBody)
             insertBefore(m_foot, m_firstBody, ec);
         else
@@ -196,14 +196,14 @@ void HTMLTableElement::deleteCaption()
     m_caption = 0;
 }
 
-HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
+PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
 {
     // The DOM requires that we create a tbody if the table is empty
     // (cf DOM2TS HTMLTableElement31 test)
     // (note: this is different from "if the table has no sections", since we can have
     // <TABLE><TR>)
     if (!m_firstBody && !m_head && !m_foot)
-        setTBody(new HTMLTableSectionElement(tbodyTag, document(), true /* implicit */));
+        setTBody(new HTMLTableSectionElement(tbodyTag, document()));
 
     // IE treats index=-1 as default value meaning 'append after last'
     // This isn't in the DOM. So, not implemented yet.
@@ -243,7 +243,7 @@ HTMLElement *HTMLTableElement::insertRow(int index, ExceptionCode& ec)
     else {
         // No more sections => index is too big
         ec = INDEX_SIZE_ERR;
-        return 0L;
+        return 0;
     }
 }
 

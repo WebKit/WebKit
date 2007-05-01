@@ -37,10 +37,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tagName, Document *doc, bool implicit)
-    : HTMLTablePartElement(tagName, doc)
+HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tagName, Document* document)
+    : HTMLTablePartElement(tagName, document)
 {
-    m_implicit = implicit;
 }
 
 bool HTMLTableSectionElement::checkDTD(const Node* newChild)
@@ -75,27 +74,27 @@ CSSMutableStyleDeclaration* HTMLTableSectionElement::additionalAttributeStyleDec
 
 // these functions are rather slow, since we need to get the row at
 // the index... but they aren't used during usual HTML parsing anyway
-HTMLElement* HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
+PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
 {
-    HTMLTableRowElement* r = 0L;
+    RefPtr<HTMLTableRowElement> r;
     RefPtr<NodeList> children = childNodes();
     int numRows = children ? (int)children->length() : 0;
     if (index < -1 || index > numRows)
         ec = INDEX_SIZE_ERR; // per the DOM
     else {
         r = new HTMLTableRowElement(document());
-        if ( numRows == index || index == -1 )
+        if (numRows == index || index == -1)
             appendChild(r, ec);
         else {
-            Node *n;
+            Node* n;
             if (index < 1)
                 n = firstChild();
             else
                 n = children->item(index);
-            insertBefore(r, n, ec );
+            insertBefore(r, n, ec);
         }
     }
-    return r;
+    return r.release();
 }
 
 void HTMLTableSectionElement::deleteRow( int index, ExceptionCode& ec)
