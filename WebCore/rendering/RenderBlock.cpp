@@ -148,7 +148,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.
-    if (!isAnonymous()) {
+    if (!isAnonymous() && canHaveChildren()) {
         updateBeforeAfterContent(RenderStyle::BEFORE);
         updateBeforeAfterContent(RenderStyle::AFTER);
     }

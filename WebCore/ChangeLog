@@ -1,3 +1,17 @@
+2007-05-01  David Hyatt  <hyatt@apple.com>
+
+        Fix for hang when incorrectly trying to add before/after content to
+        a <select>.  Disallow generated content in all selects and also turn it
+        off for <input> buttons.
+
+        Reviewed by aroben
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setStyle):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::canHaveChildren):
+        * rendering/RenderButton.h:
+
 2007-05-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

@@ -50,6 +50,8 @@ public:
     virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const;
 
     void setText(const String&);
+    
+    virtual bool canHaveChildren() const;
 
 protected:
     virtual bool hasLineIfEmpty() const { return true; }

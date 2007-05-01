@@ -82,6 +82,14 @@ void RenderButton::updateFromElement()
     }
 }
 
+bool RenderButton::canHaveChildren() const
+{
+    // Input elements can't have children, but button elements can.  We'll
+    // write the code assuming any other button types that might emerge in the future
+    // can also have children.
+    return !element()->hasTagName(inputTag);
+}
+
 void RenderButton::setText(const String& str)
 {
     if (str.isEmpty()) {
