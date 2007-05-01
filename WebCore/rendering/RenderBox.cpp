@@ -1410,7 +1410,7 @@ int RenderBox::calcReplacedWidthUsing(Length width) const
         }
         // fall through
         default:
-            return intrinsicWidth();
+            return intrinsicSize().width();
      }
  }
 
@@ -1449,7 +1449,7 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
             return calcContentBoxHeight(height.calcValue(cb->availableHeight()));
         }
         default:
-            return intrinsicHeight();
+            return intrinsicSize().height();
     }
 }
 

@@ -1,8 +1,6 @@
 /*
- * This file is part of the HTML widget for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,8 +39,7 @@ namespace WebCore {
         virtual bool isApplet() const { return true; }
 
         virtual void layout();
-        virtual int intrinsicWidth() const;
-        virtual int intrinsicHeight() const;
+        virtual IntSize intrinsicSize() const;
 
         void createWidgetIfNecessary();
 

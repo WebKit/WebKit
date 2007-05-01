@@ -112,6 +112,8 @@ public:
         return style()->htmlHacks() && style()->height().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
     }
 
+    virtual IntSize intrinsicSize() const { return IntSize(); }
+
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
     bool sizesToIntrinsicWidth(WidthType) const;

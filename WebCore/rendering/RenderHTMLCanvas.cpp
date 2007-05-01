@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderHTMLCanvas::RenderHTMLCanvas(Node* node)
-    : RenderReplaced(node)
+RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement* element)
+    : RenderReplaced(element, element->size())
 {
 }
 
@@ -68,9 +68,8 @@ void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
         drawSelectionTint = false;
     }
 
-    if (element() && element()->hasTagName(canvasTag))
-        static_cast<HTMLCanvasElement*>(element())->paint(paintInfo.context,
-            IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
+    static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context,
+        IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
 
     if (drawSelectionTint)
         paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
@@ -93,6 +92,27 @@ void RenderHTMLCanvas::layout()
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     setNeedsLayout(false);
+}
+
+void RenderHTMLCanvas::canvasSizeChanged()
+{
+    IntSize size = static_cast<HTMLCanvasElement*>(node())->size();
+    if (size == intrinsicSize())
+        return;
+
+    setIntrinsicSize(size);
+
+    if (!prefWidthsDirty())
+        setPrefWidthsDirty(true);
+
+    IntSize oldSize = IntSize(m_width, m_height);
+    calcWidth();
+    calcHeight();
+    if (oldSize == IntSize(m_width, m_height))
+        return;
+
+    if (!selfNeedsLayout())
+        setNeedsLayout(true);
 }
 
 } // namespace WebCore

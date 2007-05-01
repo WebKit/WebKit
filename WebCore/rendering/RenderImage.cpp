@@ -46,12 +46,10 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderImage::RenderImage(Node* node)
-    : RenderReplaced(node)
+    : RenderReplaced(node, IntSize(0, 0))
     , m_cachedImage(0)
     , m_isAnonymousImage(false)
 {
-    setIntrinsicWidth(0);
-    setIntrinsicHeight(0);
     updateAltText();
 }
 
@@ -109,18 +107,12 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
         imageHeight = max(imageHeight, min(font.height(), maxAltTextHeight));
     }
   
-    bool imageSizeChanged = false;
-  
-    if (imageWidth != intrinsicWidth()) {
-        setIntrinsicWidth(imageWidth);
-        imageSizeChanged = true;
-    }
-    if (imageHeight != intrinsicHeight()) {
-        setIntrinsicHeight(imageHeight);
-        imageSizeChanged = true;
-    }
-  
-    return imageSizeChanged;
+    IntSize imageSize = IntSize(imageWidth, imageHeight);
+    if (imageSize == intrinsicSize())
+        return false;
+
+    setIntrinsicSize(imageSize);
+    return true;
 }
 
 void RenderImage::imageChanged(CachedImage* newImage)
@@ -143,11 +135,9 @@ void RenderImage::imageChanged(CachedImage* newImage)
     bool ensureLayout = false;
 
     // Image dimensions have been changed, see what needs to be done
-    if (newImage->imageSize().width() != intrinsicWidth() || newImage->imageSize().height() != intrinsicHeight() || imageSizeChanged) {
-        if (!newImage->errorOccurred()) {
-            setIntrinsicWidth(newImage->imageSize().width());
-            setIntrinsicHeight(newImage->imageSize().height());
-        }
+    if (newImage->imageSize() != intrinsicSize() || imageSizeChanged) {
+        if (!newImage->errorOccurred())
+            setIntrinsicSize(newImage->imageSize());
 
         // In the case of generated image content using :before/:after, we might not be in the
         // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a
@@ -313,7 +303,7 @@ void RenderImage::layout()
     }
 
     // minimum height
-    m_height = m_cachedImage && m_cachedImage->errorOccurred() ? intrinsicHeight() : 0;
+    m_height = m_cachedImage && m_cachedImage->errorOccurred() ? intrinsicSize().height() : 0;
 
     calcWidth();
     calcHeight();
@@ -416,20 +406,22 @@ int RenderImage::calcReplacedHeight() const
 
 int RenderImage::calcAspectRatioWidth() const
 {
-    if (!intrinsicHeight())
+    IntSize size = intrinsicSize();
+    if (!size.height())
         return 0;
     if (!m_cachedImage || m_cachedImage->errorOccurred())
-        return intrinsicWidth(); // Don't bother scaling.
-    return RenderReplaced::calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
+        return size.width(); // Don't bother scaling.
+    return RenderReplaced::calcReplacedHeight() * size.width() / size.height();
 }
 
 int RenderImage::calcAspectRatioHeight() const
 {
-    if (!intrinsicWidth())
+    IntSize size = intrinsicSize();
+    if (!size.width())
         return 0;
     if (!m_cachedImage || m_cachedImage->errorOccurred())
-        return intrinsicHeight(); // Don't bother scaling.
-    return RenderReplaced::calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
+        return size.height(); // Don't bother scaling.
+    return RenderReplaced::calcReplacedWidth() * size.height() / size.width();
 }
 
 void RenderImage::calcPrefWidths()

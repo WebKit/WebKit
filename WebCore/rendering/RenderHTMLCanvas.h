@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,18 @@
 
 namespace WebCore {
 
+    class HTMLCanvasElement;
+
     class RenderHTMLCanvas : public RenderReplaced {
     public:
-        RenderHTMLCanvas(Node*);
+        RenderHTMLCanvas(HTMLCanvasElement*);
 
         virtual const char* renderName() const { return "RenderHTMLCanvas"; }
 
         virtual void paint(PaintInfo&, int tx, int ty);
         virtual void layout();
+
+        void canvasSizeChanged();
     };
 
 } // namespace WebCore

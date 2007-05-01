@@ -1,9 +1,7 @@
-/**
- * This file is part of the HTML widget for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006,2 007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "RenderReplaced.h"
 
@@ -33,8 +32,15 @@ namespace WebCore {
 
 RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
-    , m_intrinsicWidth(300)
-    , m_intrinsicHeight(150)
+    , m_intrinsicSize(300, 150)
+    , m_selectionState(SelectionNone)
+{
+    setReplaced(true);
+}
+
+RenderReplaced::RenderReplaced(Node* node, const IntSize& intrinsicSize)
+    : RenderBox(node)
+    , m_intrinsicSize(intrinsicSize)
     , m_selectionState(SelectionNone)
 {
     setReplaced(true);
@@ -207,6 +213,16 @@ bool RenderReplaced::isSelected() const
         
     ASSERT(0);
     return false;
+}
+
+IntSize RenderReplaced::intrinsicSize() const
+{
+    return m_intrinsicSize;
+}
+
+void RenderReplaced::setIntrinsicSize(const IntSize& size)
+{
+    m_intrinsicSize = size;
 }
 
 }

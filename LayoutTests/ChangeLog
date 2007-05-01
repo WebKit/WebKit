@@ -2,6 +2,18 @@
 
         Reviewed by Hyatt.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13559
+          REGRESSION: Canvas aspect ratio is incorrect
+
+        * fast/canvas/canvas-size-change-after-layout-expected.checksum: Added.
+        * fast/canvas/canvas-size-change-after-layout-expected.png: Added.
+        * fast/canvas/canvas-size-change-after-layout-expected.txt: Added.
+        * fast/canvas/canvas-size-change-after-layout.html: Added.
+
+2007-05-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
         - added a test for <rdar://problem/5172596> HTML-parser-created tbody elements
           are being ignored when processing CSS child rules
 

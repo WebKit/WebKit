@@ -98,10 +98,7 @@ RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle*
 {
     if (document()->frame() && document()->frame()->settings()->isJavaScriptEnabled()) {
         m_rendererIsCanvas = true;
-        RenderHTMLCanvas* r = new (arena) RenderHTMLCanvas(this);
-        r->setIntrinsicWidth(width());
-        r->setIntrinsicHeight(height());
-        return r;
+        return new (arena) RenderHTMLCanvas(this);
     }
 
     m_rendererIsCanvas = false;
@@ -147,21 +144,24 @@ void HTMLCanvasElement::reset()
     int h = getAttribute(heightAttr).toInt(&ok);
     if (!ok)
         h = defaultHeight;
+
+    IntSize oldSize = m_size;
     m_size = IntSize(w, h);
 
-    if (RenderObject* ro = renderer())
-        if (m_rendererIsCanvas) {
-            RenderHTMLCanvas* r = static_cast<RenderHTMLCanvas*>(ro);
-            r->setIntrinsicWidth(w);
-            r->setIntrinsicHeight(h);
-            r->repaint();
-        }
-
+    bool hadDrawingContext = m_createdDrawingContext;
     m_createdDrawingContext = false;
     fastFree(m_data);
     m_data = 0;
     delete m_drawingContext;
     m_drawingContext = 0;
+
+    if (RenderObject* ro = renderer())
+        if (m_rendererIsCanvas) {
+            if (oldSize != m_size)
+                static_cast<RenderHTMLCanvas*>(ro)->canvasSizeChanged();
+            if (hadDrawingContext)
+                ro->repaint();
+        }
 }
 
 void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)

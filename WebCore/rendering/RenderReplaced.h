@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@ namespace WebCore {
 class RenderReplaced : public RenderBox {
 public:
     RenderReplaced(Node*);
+    RenderReplaced(Node*, const IntSize& intrinsicSize);
 
     virtual const char* renderName() const { return "RenderReplaced"; }
 
@@ -39,11 +40,7 @@ public:
 
     virtual void paint(PaintInfo&, int tx, int ty) = 0;
 
-    virtual int intrinsicWidth() const { return m_intrinsicWidth; }
-    virtual int intrinsicHeight() const { return m_intrinsicHeight; }
-
-    void setIntrinsicWidth(int w) { m_intrinsicWidth = w; }
-    void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
+    virtual IntSize intrinsicSize() const;
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -58,11 +55,12 @@ public:
     bool isSelected() const;
 
 protected:
+    void setIntrinsicSize(const IntSize&);
+
     bool shouldPaint(PaintInfo&, int& tx, int& ty);
 
 private:
-    int m_intrinsicWidth;
-    int m_intrinsicHeight;
+    IntSize m_intrinsicSize;
     
     unsigned m_selectionState : 3; // SelectionState
 };

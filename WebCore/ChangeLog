@@ -1,3 +1,79 @@
+2007-05-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13559
+          REGRESSION: Canvas aspect ratio is incorrect
+
+        - remove intrinsicWidth/Height functions from RenderObject
+
+        Test: fast/canvas/canvas-size-change-after-layout.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createRenderer): Removed code to set
+        the intrinsic size, because the renderer now takes care of this
+        in its constructor.
+        (WebCore::HTMLCanvasElement::reset): Instead of calling the
+        setIntrinsicWidth/Height functions, call canvasSizeChanged, which
+        takes care of layout, but only if the size actually changed. Also
+        call repaint if the contents of the canvas changed.
+
+        * rendering/RenderApplet.h:
+        * rendering/RenderApplet.cpp: (WebCore::RenderApplet::intrinsicSize):
+        Override the new intrinsicSize function. This override still doesn't
+        make sense, so left a FIXME in here.
+
+        * rendering/RenderBox.h: Added an intrinsicSize function here to replace
+        the intrinsicWidth/Height functions removed from RenderObject.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedWidthUsing): Use intrinsicSize instead
+        of intrinsicWidth.
+        (WebCore::RenderBox::calcReplacedHeightUsing): Ditto, but for height.
+
+        * rendering/RenderHTMLCanvas.h: Changed the constructor parameter to be
+        an HTMLCanvasElement* instead of Node*. Also added a canvasSizeChanged
+        function.
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas): Pass an initial intrinsic
+        size based on the current size of the canvas element. This is now the
+        responsibility of the renderer and the DOM element calls the canvasSizeChanged
+        function when the size changes.
+        (WebCore::RenderHTMLCanvas::paint): Removed checks of the type of the element,
+        and used the node() function because we don't have to worry about the anonymous
+        case in this class.
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged): Added. Changes the size and
+        then calls setNeedsLayout and setPrefWidthsDirty as needed. I based the logic
+        here on careful reading of RenderImage::imageChanged.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage): Pass a default intrinsic size of 0,0
+        instead of calling setIntrinsicWidth/Height.
+        (WebCore::RenderImage::setImageSizeForAltText): Call the new intrinsic size
+        functions instead of the width/height ones. Simplifies the logic since we
+        handle both dimensions at once.
+        (WebCore::RenderImage::imageChanged): Ditto.
+        (WebCore::RenderImage::layout): Ditto.
+        (WebCore::RenderImage::calcAspectRatioWidth): Ditto.
+        (WebCore::RenderImage::calcAspectRatioHeight): Ditto.
+
+        * rendering/RenderObject.h: Removed intrinsicWidth/Height virtual functions.
+
+        * rendering/RenderReplaced.h: Replaced intrinsicWidth, intrinsicHeight,
+        setIntrinsicWidth, setIntrinsicHeight, m_intrinsicWidth, and m_intrinsicHeight
+        with intrinsicSize, setIntrinsicSize, and m_intrinsicSize.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced): Added a second contructor that takes
+        an intrinsic size parameter. Also updated constructor since the intrinsic size
+        is now an IntSize instead of two integers.
+        (WebCore::RenderReplaced::intrinsicSize): Added. No point in making this inline
+        because it's a virtual function.
+        (WebCore::RenderReplaced::setIntrinsicSize): Added. Didn't make this inline,
+        partly because in the future we might want this to be more than just a simple
+        setter function, factoring in common code used in both RenderImage and
+        RenderHTMLCanvas.
+
+        * rendering/RenderWidget.h: Removed a stray using declaration that wasn't needed.
+
 2007-05-01  David Hyatt  <hyatt@apple.com>
 
         Fix for hang when incorrectly trying to add before/after content to
