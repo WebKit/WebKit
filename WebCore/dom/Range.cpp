@@ -327,7 +327,7 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
 short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
 {
     // http://developer.mozilla.org/en/docs/DOM:range.comparePoint
-    // This method returns Ð1, 0 or 1 depending on if the point described by the 
+    // This method returns -1, 0 or 1 depending on if the point described by the 
     // refNode node and an offset within the node is before, same as, or after the range respectively.
 
     if (!refNode) {

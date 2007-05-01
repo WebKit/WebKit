@@ -1,3 +1,14 @@
+2007-04-30  Jungshik Shin <jungshik.shin@gmail.com>
+
+        Reviewed by justin
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=13552>
+        comment to Range::comparePoint in dom/Range.cpp has 
+        '0xD0' in place of '-': leading to a compiler warning
+
+        * dom/Range.cpp:
+        (WebCore::Range::comparePoint):
+
 2007-04-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
