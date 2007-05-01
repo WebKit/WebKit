@@ -100,12 +100,12 @@ void RenderButton::setText(const String& str)
     }
 }
 
-void RenderButton::updatePseudoChild(RenderStyle::PseudoId type)
+void RenderButton::updateBeforeAfterContent(RenderStyle::PseudoId type)
 {
     if (m_inner)
-        m_inner->updatePseudoChildForObject(type, this);
+        m_inner->updateBeforeAfterContentForContainer(type, this);
     else
-        updatePseudoChildForObject(type, this);
+        updateBeforeAfterContentForContainer(type, this);
 }
 
 IntRect RenderButton::controlClipRect(int tx, int ty) const

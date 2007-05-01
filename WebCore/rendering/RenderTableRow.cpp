@@ -64,6 +64,10 @@ void RenderTableRow::setStyle(RenderStyle* newStyle)
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 {
+    // Make sure we don't append things after :after-generated content if we have it.
+    if (!beforeChild && isAfterContent(lastChild()))
+        beforeChild = lastChild();
+
     bool isTableRow = element() && element()->hasTagName(trTag);
     
     if (!child->isTableCell()) {
@@ -102,7 +106,9 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
     RenderTableCell* cell = static_cast<RenderTableCell*>(child);
 
-    section()->addCell(cell, this);
+    // Generated content can result in us having a null section so make sure to null check our parent.
+    if (parent())
+        section()->addCell(cell, this);
 
     RenderContainer::addChild(cell, beforeChild);
 

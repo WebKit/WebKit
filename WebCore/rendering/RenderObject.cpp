@@ -88,13 +88,14 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 
 RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 {
-    RenderArena* arena = node->document()->renderArena();
+    Document* doc = node->document();
+    RenderArena* arena = doc->renderArena();
 
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style->contentData();
-    if (contentData && !contentData->m_next && contentData->m_type == CONTENT_OBJECT) {
+    if (contentData && !contentData->m_next && contentData->m_type == CONTENT_OBJECT && doc != node) {
         RenderImage* image = new (arena) RenderImage(node);
         image->setStyle(style);
         if (CachedResource* resource = contentData->m_content.m_object)
@@ -735,8 +736,9 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout)
 RenderBlock* RenderObject::containingBlock() const
 {
     if (isTableCell()) {
-        if (parent())
-            return static_cast<const RenderTableCell*>(this)->table();
+        const RenderTableCell* cell = static_cast<const RenderTableCell*>(this);
+        if (parent() && cell->section())
+            return cell->table();
         return 0;
     }
 

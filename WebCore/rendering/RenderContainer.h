@@ -54,9 +54,10 @@ public:
 
     virtual void removeLeftoverAnonymousBoxes();
 
-    RenderObject* pseudoChild(RenderStyle::PseudoId) const;
-    virtual void updatePseudoChild(RenderStyle::PseudoId);
-    void updatePseudoChildForObject(RenderStyle::PseudoId, RenderObject*);
+    RenderObject* beforeAfterContainer(RenderStyle::PseudoId);
+    virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
+    void updateBeforeAfterContentForContainer(RenderStyle::PseudoId, RenderContainer*);
+    bool isAfterContent(RenderObject* child) const;
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 

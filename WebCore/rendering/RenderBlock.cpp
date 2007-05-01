@@ -148,20 +148,10 @@ void RenderBlock::setStyle(RenderStyle* _style)
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.
-    updatePseudoChild(RenderStyle::BEFORE);
-    updatePseudoChild(RenderStyle::AFTER);
-}
-
-static inline bool isAfterContent(RenderObject* child)
-{
-    if (!child)
-        return false;
-    if (child->style()->styleType() != RenderStyle::AFTER)
-        return false;
-    // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (child->isText() && !child->isBR())
-        return false;
-    return true;
+    if (!isAnonymous()) {
+        updateBeforeAfterContent(RenderStyle::BEFORE);
+        updateBeforeAfterContent(RenderStyle::AFTER);
+    }
 }
 
 void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)

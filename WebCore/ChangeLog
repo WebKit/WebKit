@@ -1,3 +1,29 @@
+2007-04-30  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 12691, generated content and display: table-cell duplicates
+        content on a size change.  Make sure that the code to update before/after
+        content is smart enough to drill into anonymous containers to find the
+        old child.
+
+        Reviewed by olliej
+
+        Added fast/css-generated-content/table-cell-before-content.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setStyle):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateBeforeAfterContent):
+        * rendering/RenderButton.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::beforeAfterContainer):
+        (WebCore::RenderContainer::updateBeforeAfterContent):
+        (WebCore::RenderContainer::updateBeforeAfterContentForObject):
+        * rendering/RenderContainer.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::setStyle):
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::splitInlines):
+
 2007-04-30  Jungshik Shin <jungshik.shin@gmail.com>
 
         Reviewed by justin

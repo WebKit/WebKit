@@ -93,6 +93,10 @@ void RenderTableSection::setStyle(RenderStyle* newStyle)
 
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
 {
+    // Make sure we don't append things after :after-generated content if we have it.
+    if (!beforeChild && isAfterContent(lastChild()))
+        beforeChild = lastChild();
+
     bool isTableSection = element() && (element()->hasTagName(theadTag) || element()->hasTagName(tbodyTag) || element()->hasTagName(tfootTag));
 
     if (!child->isTableRow()) {
