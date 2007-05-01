@@ -1,3 +1,27 @@
+2007-05-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5002441> 
+        Pressing space key does nothing above quoted content or a signature
+        
+        Inserting a space under these circumstances inserts a single 
+        text node containing a regular space and then does a layout. 
+        That space isn't rendered (which is correct).  Whitespace 
+        rebalancing is supposed to correct it but failed.  It replaces 
+        the space with a non-breaking space, but that change doesn't 
+        dirty line boxes (9441) and so the space isn't rendered.
+        
+        This workaround turns all incoming spaces into non-breaking 
+        spaces before they're inserted (they're rebalanced after 
+        insertion and turned back into regular spaces if possible).
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::prepareForTextInsertion): Removed
+        an old irrelevant FIXME.
+        (WebCore::InsertTextCommand::input): Turn incoming spaces into
+        non breaking spaces before inserting them.
+        
 2007-05-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

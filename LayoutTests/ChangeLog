@@ -1,3 +1,28 @@
+2007-05-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5002441> 
+        Pressing space key does nothing above quoted content or a signature
+
+        Demonstrates the bug:
+        * editing/inserting/5002441-expected.checksum: Added.
+        * editing/inserting/5002441-expected.png: Added.
+        * editing/inserting/5002441-expected.txt: Added.
+        * editing/inserting/5002441.html: Added.
+        
+        Fixed.  Spaces passed to execCommand("InsertText", ...)
+        are no longer collapsed:
+        * editing/inserting/editable-html-element-expected.checksum:
+        * editing/inserting/editable-html-element-expected.png:
+        * editing/inserting/editable-html-element-expected.txt:
+        * editing/pasteboard/4989774-expected.checksum:
+        * editing/pasteboard/4989774-expected.png:
+        * editing/pasteboard/4989774-expected.txt:
+        * editing/selection/4983858-expected.checksum:
+        * editing/selection/4983858-expected.png:
+        * editing/selection/4983858-expected.txt:
+
 2007-05-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

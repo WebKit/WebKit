@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
+#include "CharacterNames.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "Document.h"
@@ -63,15 +64,9 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     }
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
-    // FIXME: What is the rootEditable() check about?  Seems like it
-    // assumes that the content before (or after) pos.node() is editable
-    // (i.e. pos is at an editable/non-editable boundary).  That seems
-    // like a bad assumption.
     if (!pos.node()->isTextNode()) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
-
         insertNodeAt(textNode.get(), pos);
-        
         return Position(textNode.get(), 0);
     }
 
@@ -84,12 +79,21 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     return pos;
 }
 
-void InsertTextCommand::input(const String &text, bool selectInsertedText)
+void InsertTextCommand::input(const String& originalText, bool selectInsertedText)
 {
+    String text = originalText;
+    
     ASSERT(text.find('\n') == -1);
 
     if (endingSelection().isNone())
         return;
+        
+    if (RenderObject* renderer = endingSelection().start().node()->renderer())
+        if (renderer->style()->collapseWhiteSpace())
+            // Turn all spaces into non breaking spaces, to make sure that they are treated
+            // literally, and aren't collapsed after insertion. They will be rebalanced 
+            // (turned into a sequence of regular and non breaking spaces) below.
+            text.replace(' ', noBreakSpace);
     
     // Delete the current selection.
     // FIXME: This delete operation blows away the typing style.
@@ -127,7 +131,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
         // The insertion may require adjusting adjacent whitespace, if it is present.
         rebalanceWhitespaceAt(endPosition);
         // Rebalancing on both sides isn't necessary if we've inserted a space.
-        if (text != " ") 
+        if (originalText != " ") 
             rebalanceWhitespaceAt(startPosition);
             
         m_charactersAdded += text.length();
