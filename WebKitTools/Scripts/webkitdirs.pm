@@ -350,11 +350,6 @@ sub isQt()
     return defined($ENV{'QTDIR'})
 }
 
-sub isQtWithQMake()
-{
-    return isQt();
-}
-
 sub isCygwin()
 {
     return ($^O eq "cygwin");

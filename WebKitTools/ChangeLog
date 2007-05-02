@@ -1,3 +1,11 @@
+2007-05-02  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/build-webkit: Remove the CMake call.
+        * Scripts/webkitdirs.pm: Remove isQtWithQMake as QMake is now the only
+        buildsystem for the Qt port.
+
 2007-04-27  Kevin McCullough  <kmccullough@apple.com>
 
         - Removed debugging statements and took out the removal of the deletion
