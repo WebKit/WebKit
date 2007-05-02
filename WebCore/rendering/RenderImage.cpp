@@ -132,7 +132,7 @@ void RenderImage::imageChanged(CachedImage* newImage)
     if (newImage->errorOccurred())
         imageSizeChanged = setImageSizeForAltText(newImage);
     
-    bool ensureLayout = false;
+    bool shouldRepaint = true;
 
     // Image dimensions have been changed, see what needs to be done
     if (newImage->imageSize() != intrinsicSize() || imageSizeChanged) {
@@ -146,26 +146,26 @@ void RenderImage::imageChanged(CachedImage* newImage)
             // lets see if we need to relayout at all..
             int oldwidth = m_width;
             int oldheight = m_height;
+            if (!prefWidthsDirty())
+                setPrefWidthsDirty(true);
             calcWidth();
             calcHeight();
-    
-            if (imageSizeChanged || m_width != oldwidth || m_height != oldheight)
-                ensureLayout = true;
+
+            if (imageSizeChanged || m_width != oldwidth || m_height != oldheight) {
+                shouldRepaint = false;
+                if (!selfNeedsLayout())
+                    setNeedsLayout(true);
+            }
 
             m_width = oldwidth;
             m_height = oldheight;
         }
     }
 
-    if (ensureLayout) {
-        if (!selfNeedsLayout())
-            setNeedsLayout(true);
-        if (!prefWidthsDirty())
-            setPrefWidthsDirty(true);
-    } else
+    if (shouldRepaint)
         // FIXME: We always just do a complete repaint, since we always pass in the full image
         // rect at the moment anyway.
-        repaintRectangle(IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()));
+        repaintRectangle(contentBox());
 }
 
 void RenderImage::resetAnimation()

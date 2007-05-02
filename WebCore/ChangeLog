@@ -1,3 +1,16 @@
+2007-05-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9276
+          Quirksmode: Image swap resize bug
+
+        Test: fast/replaced/image-resize-width.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged): Moved the call to dirtyPrefWidths()
+        before the call to calcWidth().
+
 2007-05-02  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13566, broken Dashboard widgets.  setPrefWidthsDirty did
