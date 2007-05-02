@@ -2148,6 +2148,22 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!URL) 
         return NPERR_INVALID_URL;
 
+    NSString *target = nil;
+    if (cTarget) {
+        // Find the frame given the target string.
+        target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
+    }
+    WebFrame *frame = [self webFrame];
+
+    // don't let a plugin start any loads if it is no longer part of a document that is being 
+    // displayed unless the loads are in the same frame as the plugin.
+    if ([[self dataSource] _documentLoader] != [[self webFrame] _frameLoader]->activeDocumentLoader() &&
+        (!cTarget || [frame findFrameNamed:target] != frame)) {
+        if (target)
+            CFRelease(target);
+        return NPERR_GENERIC_ERROR; 
+    }
+    
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString != nil) {
         if (![[[self webView] preferences] isJavaScriptEnabled]) {
@@ -2163,13 +2179,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (cTarget || JSString) {
         // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
         // want to potentially kill the plug-in inside of its URL request.
-        NSString *target = nil;
-        if (cTarget) {
-            // Find the frame given the target string.
-            target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-        }
         
-        WebFrame *frame = [self webFrame];
         if (JSString != nil && target != nil && [frame findFrameNamed:target] != frame) {
             // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
             CFRelease(target);

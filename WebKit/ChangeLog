@@ -1,3 +1,17 @@
+2007-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5151113> Assertion firing in [FrameProgressEntry addChild:forDataSource:] when navigating cnn.com
+        
+        The assertion fired because a plug-in was trying to load a subresource when a new load had started but not yet
+        committed. The check that would have prevented this was removed in order to fix <rdar://problem/5085897>.
+        
+        This puts back the check but changes it to allow loads where the target is the same frame as the plugin's parent frame.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+
 2007-04-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
