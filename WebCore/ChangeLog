@@ -2,6 +2,25 @@
 
         Reviewed by Antti.
 
+        <rdar://problem/4859132> Grammar must always be checked in entire-sentence chunks, and shouldn't show markers for current sentence
+
+        Restore the remainder of the original fix now that blocking bug rdar://5174862 is addressed.
+
+        John made the original patch on 2007-04-10, but this fell prey to rdar://5157329.
+        Justin backed out the whole patch on 2007-04-30 to avoid the crash.
+        Justin then restored most of the original patch, but used word granularity instead, to keep the build working.
+        I just addressed the root cause of rdar://5157329 in rdar://5174862.
+        This patch switches the temp uses of word granularity back to sentence granularity.
+        
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+
+2007-05-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Antti.
+
         <rdar://problem/5174862> Crash resulting from DeprecatedString::insert()
         
         Test added: editing/selection/move-by-sentence-001.html

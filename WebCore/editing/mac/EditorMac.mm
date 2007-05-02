@@ -580,8 +580,7 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
         return;
     
     // Check grammar of entire sentence
-    // FIXME(4859132): Use startOfSentence here.
-    markBadGrammar(Selection(startOfWord(p), endOfWord(p)));
+    markBadGrammar(Selection(startOfSentence(p), endOfSentence(p)));
 }
 
 static void markAllMisspellingsInRange(NSSpellChecker *checker, int tag, Range* searchRange)
