@@ -148,7 +148,6 @@ public:
     RenderObject* renderer() const; // root renderer for the document contained in this frame
     RenderPart* ownerRenderer(); // renderer for the element that contains this frame
 
-    friend class FrameLoader;
     friend class FramePrivate;
 
     DragImageRef dragImageForSelection();
@@ -200,7 +199,7 @@ public:
 #endif
     NPObject* windowScriptNPObject();
     
-    void setDocument(Document*);
+    void setDocument(PassRefPtr<Document>);
 
     KJSProxy* scriptProxy();
 
@@ -232,8 +231,9 @@ public:
 
     void dashboardRegionsChanged();
 
-private:
     void cleanupScriptObjects();
+
+private:
     void cleanupPlatformScriptObjects();
 
     void lifeSupportTimerFired(Timer<Frame>*);

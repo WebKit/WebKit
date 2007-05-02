@@ -210,7 +210,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString&
         if (FrameView* view = frame->view())
             view->clear();
         result->setTransformSourceDocument(frame->document());
-        frame->setDocument(result.get());
+        frame->setDocument(result);
     }
     
     result->open();

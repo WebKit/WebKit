@@ -1,5 +1,25 @@
 2007-05-02  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Brady.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13564
+          Remove friend class FrameLoader from Frame
+
+        No test added since there is no change in functionality.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::open):
+        * loader/FrameLoader.h: Made clear() private.
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Changed the argument into a PassRefPtr.
+        * page/Frame.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
+2007-05-02  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=9276

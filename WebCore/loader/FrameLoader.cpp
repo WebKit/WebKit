@@ -656,8 +656,8 @@ bool FrameLoader::didOpenURL(const KURL& url)
     m_isLoadingMainResource = true;
     m_wasLoadEventEmitted = false;
 
-    m_frame->d->m_kjsStatusBarText = String();
-    m_frame->d->m_kjsDefaultStatusBarText = String();
+    m_frame->setJSStatusBarText(String());
+    m_frame->setJSDefaultStatusBarText(String());
 
     m_URL = url;
     if (m_URL.protocol().startsWith("http") && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
@@ -839,7 +839,7 @@ void FrameLoader::begin(const KURL& url)
         baseurl = m_URL;
 
     RefPtr<Document> document = DOMImplementation::instance()->createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
-    m_frame->setDocument(document.get());
+    m_frame->setDocument(document);
 
     document->setURL(m_URL.url());
     // We prefer m_baseURL over m_URL because m_URL changes when we are
@@ -2528,8 +2528,8 @@ void FrameLoader::open(CachedPage& cachedPage)
     
     // Delete old status bar messages (if it _was_ activated on last URL).
     if (m_frame->settings()->isJavaScriptEnabled()) {
-        m_frame->d->m_kjsStatusBarText = String();
-        m_frame->d->m_kjsDefaultStatusBarText = String();
+        m_frame->setJSStatusBarText(String());
+        m_frame->setJSDefaultStatusBarText(String());
     }
 
     KURL URL = cachedPage.URL();
