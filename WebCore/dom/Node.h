@@ -235,7 +235,7 @@ public:
     void setHasChangedChild( bool b = true ) { m_hasChangedChild = b; }
     void setInDocument(bool b = true) { m_inDocument = b; }
     void setInActiveChain(bool b = true) { m_inActiveChain = b; }
-    void setChanged(StyleChangeType b = FullStyleChange);
+    void setChanged(StyleChangeType changeType = FullStyleChange);
 
     virtual void setFocus(bool b = true) { m_focused = b; }
     virtual void setActive(bool b = true, bool pause=false) { m_active = b; }

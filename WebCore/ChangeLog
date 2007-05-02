@@ -1,5 +1,10 @@
 2007-05-02  Beth Dakin  <bdakin@apple.com>
 
+        * dom/Node.h: Just fixing a variable name because it's driving me 
+        mad.
+
+2007-05-02  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Hyatt.
 
         Fix for <rdar://problem/4513966> Never-ending identical repaint @ 
