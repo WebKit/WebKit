@@ -660,7 +660,7 @@ void RenderObject::setPrefWidthsDirty(bool b, bool markParents)
 {
     bool alreadyDirty = m_prefWidthsDirty;
     m_prefWidthsDirty = b;
-    if (b && !alreadyDirty && markParents && (style()->position() != FixedPosition && style()->position() != AbsolutePosition))
+    if (b && !alreadyDirty && markParents && (isText() || (style()->position() != FixedPosition && style()->position() != AbsolutePosition)))
         invalidateContainerPrefWidths();
 }
 

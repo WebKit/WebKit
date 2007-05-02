@@ -1,3 +1,15 @@
+2007-05-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13566, broken Dashboard widgets.  setPrefWidthsDirty did
+        the wrong thing for text children of a positioned element.
+
+        Reviewed by mitz
+
+        fast/block/positioning/pref-width-change.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setPrefWidthsDirty):
+
 2007-05-01  Darin Adler  <darin@apple.com>
 
         * rendering/RenderReplaced.cpp: Fix typo in a comment.
