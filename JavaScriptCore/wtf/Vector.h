@@ -444,7 +444,13 @@ namespace WTF {
         template<typename U> void append(const U&);
         template<typename U, size_t c> void append(const Vector<U, c>&);
 
+        template<typename U> void insert(size_t position, const U*, size_t);
         template<typename U> void insert(size_t position, const U&);
+        template<typename U, size_t c> void insert(size_t position, const Vector<U, c>&);
+
+        template<typename U> void prepend(const U*, size_t);
+        template<typename U> void prepend(const U&);
+        template<typename U, size_t c> void prepend(const Vector<U, c>&);
 
         void remove(size_t position);
 
@@ -636,20 +642,58 @@ namespace WTF {
     {
         append(val.begin(), val.size());
     }
-    
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    void Vector<T, inlineCapacity>::insert(size_t position, const U* data, size_t dataSize)
+    {
+        ASSERT(position <= size());
+        size_t newSize = m_size + dataSize;
+        if (newSize > capacity())
+            data = expandCapacity(newSize, data);
+        T* spot = begin() + position;
+        TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
+        for (size_t i = 0; i < dataSize; ++i)
+            new (&spot[i]) T(data[i]);
+        m_size = newSize;
+    }
+     
     template<typename T, size_t inlineCapacity> template<typename U>
     inline void Vector<T, inlineCapacity>::insert(size_t position, const U& val)
     {
         ASSERT(position <= size());
-        const U* ptr = &val;
+        const U* data = &val;
         if (size() == capacity())
-            ptr = expandCapacity(size() + 1, ptr);
+            data = expandCapacity(size() + 1, data);
         T* spot = begin() + position;
         TypeOperations::moveOverlapping(spot, end(), spot + 1);
-        new (spot) T(*ptr);
+        new (spot) T(*data);
         ++m_size;
     }
+   
+    template<typename T, size_t inlineCapacity> template<typename U, size_t c>
+    inline void Vector<T, inlineCapacity>::insert(size_t position, const Vector<U, c>& val)
+    {
+        insert(position, val.begin(), val.size());
+    }
 
+    template<typename T, size_t inlineCapacity> template<typename U>
+    void Vector<T, inlineCapacity>::prepend(const U* data, size_t dataSize)
+    {
+        insert(0, data, dataSize);
+    }
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    inline void Vector<T, inlineCapacity>::prepend(const U& val)
+    {
+        insert(0, val);
+    }
+   
+    template<typename T, size_t inlineCapacity> template<typename U, size_t c>
+    inline void Vector<T, inlineCapacity>::prepend(const Vector<U, c>& val)
+    {
+        insert(0, val.begin(), val.size());
+    }
+    
     template<typename T, size_t inlineCapacity>
     inline void Vector<T, inlineCapacity>::remove(size_t position)
     {

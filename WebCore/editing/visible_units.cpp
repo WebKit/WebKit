@@ -69,17 +69,21 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
         return VisiblePosition();
         
     SimplifiedBackwardsTextIterator it(searchRange.get());
-    DeprecatedString string;
+    Vector<UChar, 1024> string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd()) {
         // iterate to get chunks until the searchFunction returns a non-zero value.
-        String iteratorString(it.characters(), it.length());
-        // Treat bullets used in the text security mode as regular characters when looking for boundaries
-        if (inTextSecurityMode)
+        if (!inTextSecurityMode) 
+            string.prepend(it.characters(), it.length());
+        else {
+            // Treat bullets used in the text security mode as regular characters when looking for boundaries
+            String iteratorString(it.characters(), it.length());
             iteratorString = iteratorString.impl()->secure('x');
-        string.prepend(iteratorString.deprecatedString());
-        next = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
+            string.prepend(iteratorString.characters(), iteratorString.length());
+        }
+        
+        next = searchFunction(string.data(), string.size());
         if (next != 0)
             break;
         it.advance();
@@ -130,24 +134,28 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     searchRange->selectNodeContents(boundary, ec);
     searchRange->setStart(start.node(), start.offset(), ec);
     TextIterator it(searchRange.get(), true);
-    DeprecatedString string;
+    Vector<UChar, 1024> string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;
     while (!it.atEnd()) {
         // Keep asking the iterator for chunks until the search function
         // returns an end value not equal to the length of the string passed to it.
-        String iteratorString(it.characters(), it.length());
-        // Treat bullets used in the text security mode as regular characters when looking for boundaries
-        if (inTextSecurityMode)
+        if (!inTextSecurityMode)
+            string.append(it.characters(), it.length());
+        else {
+            // Treat bullets used in the text security mode as regular characters when looking for boundaries
+            String iteratorString(it.characters(), it.length());
             iteratorString = iteratorString.impl()->secure('x');
-        string.append(iteratorString.deprecatedString());
-        next = searchFunction(reinterpret_cast<const UChar*>(string.unicode()), string.length());
-        if (next != string.length())
+            string.append(iteratorString.characters(), iteratorString.length());
+        }
+
+        next = searchFunction(string.data(), string.size());
+        if (next != string.size())
             break;
         it.advance();
     }
     
-    if (it.atEnd() && next == string.length()) {
+    if (it.atEnd() && next == string.size()) {
         pos = it.range()->startPosition();
     } else if (next != 0) {
         // Use the character iterator to translate the next value into a DOM position.

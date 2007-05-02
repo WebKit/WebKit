@@ -1,3 +1,14 @@
+2007-05-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Antti.
+
+        - test for <rdar://problem/5174862> Crash resulting from DeprecatedString::insert()
+        
+        * editing/selection/move-by-sentence-001-expected.checksum: Added.
+        * editing/selection/move-by-sentence-001-expected.png: Added.
+        * editing/selection/move-by-sentence-001-expected.txt: Added.
+        * editing/selection/move-by-sentence-001.html: Added.
+
 2007-05-02  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

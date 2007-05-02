@@ -1903,11 +1903,12 @@ DeprecatedString &DeprecatedString::insert(unsigned index, const DeprecatedStrin
     else {
         unsigned insertLength = qs.dataHandle[0]->_length;
         unsigned originalLength = dataHandle[0]->_length;
-        DeprecatedChar *targetChars;
+
+        forceUnicode();
         
         // Ensure that we have enough space.
         setLength (originalLength + insertLength);
-        targetChars = forceUnicode();
+        DeprecatedChar *targetChars = const_cast<DeprecatedChar *>(unicode());
         
         // Move tail to make space for inserted characters.
         memmove (targetChars+(index+insertLength), targetChars+index, (originalLength-index)*sizeof(DeprecatedChar));
@@ -1977,11 +1978,12 @@ DeprecatedString &DeprecatedString::insert(unsigned index, DeprecatedChar qc)
     }
     else {
         unsigned originalLength = dataHandle[0]->_length;
-        DeprecatedChar *targetChars;
         
+        forceUnicode();
+
         // Ensure that we have enough space.
         setLength (originalLength + 1);
-        targetChars = forceUnicode();
+        DeprecatedChar *targetChars = const_cast<DeprecatedChar *>(unicode());
         
         // Move tail to make space for inserted character.
         memmove (targetChars+(index+1), targetChars+index, (originalLength-index)*sizeof(DeprecatedChar));
@@ -2230,13 +2232,12 @@ void DeprecatedString::setLength(unsigned newLen)
         // bytes contain garbage.
         dataHandle[0]->_ascii[newLen] = 0;
     }
-    else if (dataHandle[0]->_isUnicodeValid){
+
+    if (dataHandle[0]->_isUnicodeValid){
         if (newLen > dataHandle[0]->_maxUnicode) {
             dataHandle[0]->increaseUnicodeSize(newLen);
         }
     }
-    else
-        FATAL("invalid character cache");
 
     dataHandle[0]->_length = newLen;
 }

@@ -1,3 +1,24 @@
+2007-05-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5174862> Crash resulting from DeprecatedString::insert()
+        
+        Test added: editing/selection/move-by-sentence-001.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        Use a UChar Vector instead of DeprecatedString.
+        Avoid creating an extra string for secure bullet replacement unless it is actually needed.
+        
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::insert):
+        Call forceUnicode() before setLength(), so that only the unicode buffer is resized.
+
+       (WebCore::DeprecatedString::setLength):
+        Adjust the unicode buffer even if the ascii buffer is valid.
+        
 2007-05-02  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Brady.

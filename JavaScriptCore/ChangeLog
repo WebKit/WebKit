@@ -1,3 +1,18 @@
+2007-05-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5174862> Crash resulting from DeprecatedString::insert()
+
+        Added insertion support for more than one value.
+        
+        * wtf/Vector.h:
+        (WTF::::insert):
+        Added support for inserting multiple values.
+        
+        (WTF::::prepend):
+        New. Insert at the start of vectors. Convenient for vectors used as strings.
+
 2007-05-01  Jungshik Shin  <jungshik.shin@gmail.com>
 
         Reviewed by Alexey.
