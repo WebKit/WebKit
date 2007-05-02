@@ -177,7 +177,7 @@ void Text::recalcStyle( StyleChange change )
             renderer()->setStyle(parentNode()->renderer()->style());
     if (changed() && renderer() && renderer()->isText())
         static_cast<RenderText*>(renderer())->setText(str);
-    setChanged(false);
+    setChanged(NoStyleChange);
 }
 
 // DOM Section 1.1.1

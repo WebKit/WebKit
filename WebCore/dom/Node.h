@@ -56,6 +56,8 @@ class TextStream;
 
 typedef int ExceptionCode;
 
+enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange };
+
 // this class implements nodes, which can have a parent but no children:
 class Node : public TreeShared<Node> {
     friend class Document;
@@ -217,7 +219,6 @@ public:
 
     bool hasID() const { return m_hasId; }
     bool hasClass() const { return m_hasClass; }
-    bool hasStyle() const { return m_hasStyle; }
     bool active() const { return m_active; }
     bool inActiveChain() const { return m_inActiveChain; }
     bool inDetach() const { return m_inDetach; }
@@ -225,16 +226,16 @@ public:
     bool focused() const { return m_focused; }
     bool attached() const { return m_attached; }
     void setAttached(bool b = true) { m_attached = b; }
-    bool changed() const { return m_changed; }
+    bool changed() const { return m_styleChange != NoStyleChange; }
+    StyleChangeType styleChangeType() const { return m_styleChange; }
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }
     void setHasID(bool b = true) { m_hasId = b; }
     void setHasClass(bool b = true) { m_hasClass = b; }
-    void setHasStyle(bool b = true) { m_hasStyle = b; }
     void setHasChangedChild( bool b = true ) { m_hasChangedChild = b; }
     void setInDocument(bool b = true) { m_inDocument = b; }
     void setInActiveChain(bool b = true) { m_inActiveChain = b; }
-    void setChanged(bool b = true);
+    void setChanged(StyleChangeType b = FullStyleChange);
 
     virtual void setFocus(bool b = true) { m_focused = b; }
     virtual void setActive(bool b = true, bool pause=false) { m_active = b; }
@@ -462,9 +463,8 @@ protected:
 
     bool m_hasId : 1;
     bool m_hasClass : 1;
-    bool m_hasStyle : 1;
     bool m_attached : 1;
-    bool m_changed : 1;
+    StyleChangeType m_styleChange : 2;
     bool m_hasChangedChild : 1;
     bool m_inDocument : 1;
 

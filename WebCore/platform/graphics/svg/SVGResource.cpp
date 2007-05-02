@@ -66,7 +66,7 @@ void SVGResource::repaintClients(HashSet<SVGStyledElement*> clients)
 
     for (; it != end; ++it) {
         SVGStyledElement* cur = *it;
-        cur->setChanged(true);
+        cur->setChanged();
 
         if (cur->renderer())
             cur->renderer()->repaint();

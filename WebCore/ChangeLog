@@ -1,3 +1,59 @@
+2007-05-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4513966> Never-ending identical repaint @ 
+        orbitz.com (Safari eating 85% CPU)
+
+        We need to be a little bit more savvy about when we do a FULL style 
+        recalc since it can be unnecessary and expensive.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setChanged): Now takes a 
+        StyleChangeType as a parameter.
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Send 
+        InlineStyleChange as the paramter. This is the optimization!
+        * css/CSSMutableStyleDeclaration.h: setChanged takes a 
+        StyleChangeType as a parameter.
+        * dom/Document.cpp: setChanged now takes a StyleChangeType instead 
+        of a bool.
+        (WebCore::Document::recalcStyle): Same.
+        * dom/Element.cpp: 
+        (WebCore::Element::recalcStyle): This is the fix!! Only set change 
+        to Force is we use descendant rules AND it's a FullStyleChange.
+        * dom/Node.cpp: m_hasStyle was an unused bit on Node, so this patch 
+        gets rid of it and uses that extra bit for m_changed to be a 
+        StyleChangeType instead of a bool.
+        (WebCore::Node::Node):
+        (WebCore::Node::setChanged):
+        (WebCore::Node::dump):
+        * dom/Node.h: Same.
+        (WebCore::): Define the StyleChangeType enum.
+        (WebCore::Node::hasClass):
+        (WebCore::Node::changed):
+        (WebCore::Node::styleChangeType):
+        (WebCore::Node::setHasClass):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute): Don't bother 
+        calling setHasStyle() since m_hasStyle is gone now. It was never 
+        used, and this was the only place it was set.
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle): setChanged now takes a 
+        StyleChangeType instead of a bool.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::recalcStyle): Same.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::restoreState): Same.
+        (WebCore::HTMLSelectElement::reset): Same.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue): Same.
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::applyAnimations): Same.
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle): Same.
+        * platform/graphics/svg/SVGResource.cpp:
+        (WebCore::SVGResource::repaintClients): Same.
+
 2007-05-02  David Harrison  <harrison@apple.com>
 
         Reviewed by Antti.

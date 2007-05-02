@@ -220,7 +220,6 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
             mappedAttributes()->parseClassAttribute(attr->value());
         setChanged();
     } else if (attr->name() == styleAttr) {
-        setHasStyle(!attr->isNull());
         if (attr->isNull())
             destroyInlineStyleDecl();
         else

@@ -680,7 +680,7 @@ void Element::recalcStyle(StyleChange change)
             // ### Suboptimal. Style gets calculated again.
             attach();
             // attach recalulates the style for all children. No need to do it twice.
-            setChanged(false);
+            setChanged(NoStyleChange);
             setHasChangedChild(false);
             newStyle->deref(document()->renderArena());
             return;
@@ -703,7 +703,7 @@ void Element::recalcStyle(StyleChange change)
         newStyle->deref(document()->renderArena());
 
         if (change != Force) {
-            if (document()->usesDescendantRules())
+            if (document()->usesDescendantRules() && styleChangeType() == FullStyleChange)
                 change = Force;
             else
                 change = ch;
@@ -715,7 +715,7 @@ void Element::recalcStyle(StyleChange change)
             n->recalcStyle(change);
     }
 
-    setChanged(false);
+    setChanged(NoStyleChange);
     setHasChangedChild(false);
 }
 

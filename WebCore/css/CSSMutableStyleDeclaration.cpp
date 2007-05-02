@@ -30,7 +30,6 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "Node.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -390,10 +389,10 @@ void CSSMutableStyleDeclaration::clear()
     setChanged();
 }
 
-void CSSMutableStyleDeclaration::setChanged()
+void CSSMutableStyleDeclaration::setChanged(StyleChangeType changeType)
 {
     if (m_node) {
-        m_node->setChanged();
+        m_node->setChanged(changeType);
         // FIXME: Ideally, this should be factored better and there
         // should be a subclass of CSSMutableStyleDeclaration just
         // for inline style declarations that handles this
@@ -469,7 +468,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
         // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
     } else if (notifyChanged)
-        setChanged();
+        setChanged(InlineStyleChange);
     ASSERT(!ec);
     return success;
 }

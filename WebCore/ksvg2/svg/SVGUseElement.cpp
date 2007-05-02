@@ -187,7 +187,7 @@ void SVGUseElement::recalcStyle(StyleChange change)
             attachShadowTree();
 
             // attach recalulates the style for all children. No need to do it twice.
-            m_shadowTreeRootElement->setChanged(false);
+            m_shadowTreeRootElement->setChanged(NoStyleChange);
             m_shadowTreeRootElement->setHasChangedChild(false);
             newStyle->deref(document()->renderArena());
             return;

@@ -120,7 +120,7 @@ void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnim
     for (targetIterator = targetMap.begin(); targetIterator != tend; ++targetIterator) {
         SVGElement* key = targetIterator->first;
         if (key && key->isStyled())
-            static_cast<SVGStyledElement*>(key)->setChanged(true);
+            static_cast<SVGStyledElement*>(key)->setChanged();
     }
 }
 

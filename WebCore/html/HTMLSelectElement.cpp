@@ -299,7 +299,7 @@ void HTMLSelectElement::restoreState(const String& state)
         if (items[i]->hasLocalName(optionTag))
             static_cast<HTMLOptionElement*>(items[i])->setSelectedState(state[i] == 'X');
             
-    setChanged(true);
+    setChanged();
 }
 
 bool HTMLSelectElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
@@ -570,7 +570,7 @@ void HTMLSelectElement::reset()
     if (!optionSelected && firstOption && usesMenuList())
         firstOption->setSelectedState(true);
     
-    setChanged(true);
+    setChanged();
 }
 
 void HTMLSelectElement::dispatchFocusEvent()

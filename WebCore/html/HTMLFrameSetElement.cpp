@@ -187,7 +187,7 @@ void HTMLFrameSetElement::recalcStyle(StyleChange ch)
 {
     if (changed() && renderer()) {
         renderer()->setNeedsLayout(true);
-        setChanged(false);
+        setChanged(NoStyleChange);
     }
     HTMLElement::recalcStyle(ch);
 }
