@@ -1,3 +1,16 @@
+2007-05-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Geoff and Kevin.
+
+        <rdar://problem/5141290> WebAssertions.h is still needed by some internal clients
+
+        Second shot at fixing this error.  Stub out the macros rather than forwarding to JavaScriptCore, which would
+        leave clients using this header trying to resolve JavaScriptCore symbols against WebKit when linking.  This
+        should only happen in production builds when assertions should be disabled anyway as anyone building a
+        development configuration should be in a position to move away from using this header.
+
+        * Misc/WebAssertions.h: 
+
 2007-05-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin.
