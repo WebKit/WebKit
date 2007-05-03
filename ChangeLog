@@ -1,3 +1,13 @@
+2007-05-03  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Zack, landed by Simon.
+        This is bugzilla bug 13499.
+
+        * WebKit.pri: Place Qt into a scope, start sharing qmake with the Gdk
+        port
+        * WebKit.pro: Place Qt into a scope, start sharing qmake with the Gdk
+        port
+
 2007-04-27  Holger Freyther <freyther@kde.org>
 
         Reviewed by Maciej.

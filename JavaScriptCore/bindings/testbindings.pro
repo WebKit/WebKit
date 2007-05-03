@@ -1,7 +1,8 @@
 QT -= gui
 
 include(../../WebKit.pri)
-INCLUDEPATH += .. ../kjs . bindings/qt
+INCLUDEPATH += .. ../kjs .
+qt-port:INCLUDEPATH += bindings/qt
 
 SOURCES += testqtbindings.cpp
 

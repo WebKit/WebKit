@@ -100,7 +100,14 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
-    if (isQt()) {
+    if (isGdk()) {
+        if ($dir ne "WebKit") {
+            chdir ".." or die;
+            next;
+        }
+
+        $result = buildQMakeGdkProject($dir, $colorSupport);
+    } elsif (isQt()) {
         if ($dir ne "WebKit") {
             chdir ".." or die;
             next;

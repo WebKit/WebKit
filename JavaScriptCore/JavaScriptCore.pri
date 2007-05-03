@@ -2,9 +2,10 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/bindings/qt $$PWD/wtf
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
-DEFINES += BUILDING_QT__
+qt-port:INCLUDEPATH += $$PWD/bindings/qt
+qt-port:DEFINES += BUILDING_QT__
 
 include(pcre/pcre.pri)
 
@@ -38,9 +39,6 @@ SOURCES += \
     bindings/c/c_instance.cpp \
     bindings/c/c_runtime.cpp \
     bindings/c/c_utility.cpp \
-    bindings/qt/qt_class.cpp \
-    bindings/qt/qt_instance.cpp \
-    bindings/qt/qt_runtime.cpp \
     kjs/DateMath.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/PropertyNameArray.cpp \
@@ -81,6 +79,11 @@ SOURCES += \
     kjs/string_object.cpp \
     kjs/ustring.cpp \
     kjs/value.cpp
+
+qt-port:SOURCES += \
+    bindings/qt/qt_class.cpp \
+    bindings/qt/qt_instance.cpp \
+    bindings/qt/qt_runtime.cpp
 
 
 # GENERATOR 1-A: LUT creator
