@@ -1,3 +1,17 @@
+2007-05-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Some more minor cleanup that resolves a FIXME and ditches another pointless method
+
+        No change in functionality == no layout test
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):  Updated a comment
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm): Folded startLoading() into this method
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): continueAfterWillSubmitForm becomes continueLoadAfterWillSubmitForm
+        * loader/FrameLoader.h: Removed startLoading()
+
 2007-05-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.
