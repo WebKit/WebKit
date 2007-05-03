@@ -1,3 +1,16 @@
+2007-05-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin.
+
+        <rdar://problem/5067707> REGRESSION: "Open Link" contextual menu item appears twice in Mail
+
+        Remove the check for Mail in fixMenusToSendToOldClients and fixMenusReceivedFromOldClients
+        when linked on or after Leopard. The isAppleMail() function is still used for Tiger Mail fixups.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients):
+        (fixMenusReceivedFromOldClients):
+
 2007-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

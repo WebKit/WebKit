@@ -59,7 +59,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-// FIXME 4950029: This function can be removed when 4950029 is addressed.
 static BOOL isAppleMail(void)
 {
     return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
@@ -68,15 +67,10 @@ static BOOL isAppleMail(void)
 static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 {
     BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
-    BOOL isMail = isAppleMail();
-
-    // FIXME 4950029: The isAppleMail() check is a temporary solution to make Leopard Mail's context menus 
-    // continue working until they've updated their code to expect the new tags. We'll have to coordinate 
-    // a WebKit submission with that Mail submission to start sending the new tags again. At that point, 
-    // this code should be changed to only check preVersion3Client.
-    if (!preVersion3Client && !isMail)
+    if (!preVersion3Client)
         return;
         
+    BOOL isMail = isAppleMail();
     unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
@@ -127,12 +121,7 @@ static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems)
 {   
     BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
-    
-    // FIXME 4950029: The isAppleMail() check is a temporary solution to make Leopard Mail's context menus 
-    // continue working until they've updated their code to expect the new tags. We'll have to coordinate 
-    // a WebKit submission with that Mail submission to start sending the new tags again. At that point, 
-    // this code should be changed to only check preVersion3Client.
-    if (!preVersion3Client && !isAppleMail())
+    if (!preVersion3Client)
         return;
     
     // Restore the modern tags to the menu items whose tags we altered in fixMenusToSendToOldClients. 
