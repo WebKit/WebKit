@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,8 +36,11 @@ namespace WebCore {
 
     class TextCodecICU : public TextCodec {
     public:
-        static void registerEncodingNames(EncodingNameRegistrar);
-        static void registerCodecs(TextCodecRegistrar);
+        static void registerBaseEncodingNames(EncodingNameRegistrar);
+        static void registerBaseCodecs(TextCodecRegistrar);
+
+        static void registerExtendedEncodingNames(EncodingNameRegistrar);
+        static void registerExtendedCodecs(TextCodecRegistrar);
 
         TextCodecICU(const TextEncoding&);
         virtual ~TextCodecICU();

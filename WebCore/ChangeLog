@@ -1,3 +1,45 @@
+2007-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - make ICU initialization lazy to speed up application start-up time
+          (when it includes an initial webpage load)
+
+        * platform/TextCodecICU.h: Replaced registerEncodingNames and
+        registerCodecs with registerBaseEncodingNames, registerBaseCodecs,
+        registerExtendedEncodingNames, and registerExtendedCodecs.
+        * platform/TextCodecICU.cpp:
+        (WebCore::newTextCodecICU): Moved up to the top of the file.
+        (WebCore::TextCodecICU::registerBaseEncodingNames): Added. Registers
+        just UTF-8.
+        (WebCore::TextCodecICU::registerBaseCodecs): Ditto.
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Renamed.
+        (WebCore::TextCodecICU::registerExtendedCodecs): Ditto.
+        (WebCore::TextCodecICU::createICUConverter): Compare with the name
+        "GBK" in a way that does not require extending the maps.
+
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::usesVisualOrdering): Added code so this will
+        just return false if we haven't used any extended encoding names yet.
+        The result will be correct, and we won't ask for an encoding name that
+        will require registering the extended encoding names.
+        (WebCore::TextEncoding::isJapanese): Ditto.
+        (WebCore::TextEncoding::backslashAsCurrencySymbol): Ditto, but return
+        a backslash instead of false.
+
+        * platform/TextEncodingRegistry.h: Added a new function named
+         noExtendedTextEncodingNameUsed.
+        * platform/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps): Added. Registers the base encodings,
+        including Latin-1 because it's the default, and the UTF encodings.
+        (WebCore::extendTextCodecMaps): Added. Registers all the other encodings.
+        (WebCore::newTextCodec): Removed the all to buildTextCodecMap because
+        we always build the map when making the canonical encoding name.
+        (WebCore::atomicCanonicalTextEncodingName): Changed code to build only
+        the base maps at first, then extend the maps the first time we run into
+        a name we don't know.
+        (WebCore::noExtendedTextEncodingNameUsed): Added.
+
 2007-05-03  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.  In r21185 the Qt version of WebCore::scaleDragImage was

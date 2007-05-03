@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,12 +110,18 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
 
 bool TextEncoding::usesVisualOrdering() const
 {
+    if (noExtendedTextEncodingNameUsed())
+        return false;
+
     static const char* const a = atomicCanonicalTextEncodingName("ISO-8859-8");
     return m_name == a;
 }
 
 bool TextEncoding::isJapanese() const
 {
+    if (noExtendedTextEncodingNameUsed())
+        return false;
+
     static HashSet<const char*> set;
     if (set.isEmpty()) {
         addEncodingName(set, "x-mac-japanese");
@@ -138,6 +144,9 @@ bool TextEncoding::isJapanese() const
 
 UChar TextEncoding::backslashAsCurrencySymbol() const
 {
+    if (noExtendedTextEncodingNameUsed())
+        return '\\';
+
     // The text encodings below treat backslash as a currency symbol.
     // See http://blogs.msdn.com/michkap/archive/2005/09/17/469941.aspx for more information.
     static const char* const a = atomicCanonicalTextEncodingName("Shift_JIS_X0213-2000");
