@@ -42,6 +42,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/KURL.h>
+#import <WebKit/DOMPrivate.h>
 
 using namespace WebCore;
 
@@ -64,9 +65,15 @@ static BOOL isAppleMail(void)
     return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
 }
 
+static BOOL isPreVersion3Client(void)
+{
+    static BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
+    return preVersion3Client;
+}
+
 static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 {
-    BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
+    BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
         return;
         
@@ -120,7 +127,7 @@ static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 
 static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems)
 {   
-    BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
+    BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
         return;
     
@@ -215,8 +222,18 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
     id delegate = [m_webView UIDelegate];
     if (![delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
         return defaultMenu->platformDescription();
-    
+
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
+
+    BOOL preVersion3Client = isPreVersion3Client();
+    if (preVersion3Client) {
+        DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
+        if ([node isKindOfClass:[DOMHTMLInputElement class]] && [(DOMHTMLInputElement *)node _isTextField])
+            return defaultMenu->platformDescription();
+        if ([node isKindOfClass:[DOMHTMLTextAreaElement class]])
+            return defaultMenu->platformDescription();
+    }
+
     NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
     
     unsigned defaultItemsCount = [defaultMenuItems count];

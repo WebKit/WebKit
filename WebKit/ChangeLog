@@ -1,3 +1,20 @@
+2007-05-03  TImothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin.
+
+        <rdar://problem/4975212> REGRESSION: With NetNewsWire 2.1.1, the contextual menu shows extra menu items when focus
+        is placed in input or textarea field
+
+        The NetNewsWire UI delegate isn't expecting calls for form controls, so we need to do a linked-on-or-after check.
+        If the application was linked against Tiger or earlier and the element is a text form control, just return the
+        default menu items and bypass the delegate call completely.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (isPreVersion3Client): Cache the result of the WebKitLinkedOnOrAfter call
+        (fixMenusToSendToOldClients): Call the new isPreVersion3Client()
+        (fixMenusReceivedFromOldClients): Ditto.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Return the default menu items if the element is a text form control.
+
 2007-05-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff and Kevin.
