@@ -1,3 +1,11 @@
+2007-05-03  Mark Rowe  <mrowe@apple.com>
+
+        Qt build fix.  In r21185 the Qt version of WebCore::scaleDragImage was
+        updated to have the incorrect signature.
+
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::scaleDragImage):
+
 2007-05-02  Beth Dakin  <bdakin@apple.com>
 
         * dom/Node.h: Just fixing a variable name because it's driving me 

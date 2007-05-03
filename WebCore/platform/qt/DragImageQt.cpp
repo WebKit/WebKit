@@ -40,7 +40,7 @@ void deleteDragImage(DragImageRef)
 {
 }
 
-DragImageRef scaleDragImage(DragImageRef image, float, float)
+DragImageRef scaleDragImage(DragImageRef image, FloatSize)
 {
     return image;
 }
