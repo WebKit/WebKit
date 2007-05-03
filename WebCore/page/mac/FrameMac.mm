@@ -512,7 +512,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
         return;
     if (enable) {
         EnableSecureEventInput();
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#ifdef BUILDING_ON_TIGER
         KeyScript(enableRomanKeyboardsOnly);
 #else
         CFArrayRef inputSources = TISCreateASCIICapableInputSourceList();
@@ -521,7 +521,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
 #endif
     } else {
         DisableSecureEventInput();
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#ifdef BUILDING_ON_TIGER
         KeyScript(smKeyEnableKybds);
 #else
         TSMRemoveDocumentProperty(TSMGetActiveDocument(), kTSMDocumentEnabledInputSourcesPropertyTag);
