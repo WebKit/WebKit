@@ -317,6 +317,18 @@ void ContextMenu::populate()
             }
         }
 
+        FrameLoader* loader = frame->loader();
+        KURL linkURL = result.absoluteLinkURL();
+        if (!linkURL.isEmpty()) {
+            if (loader->canHandleRequest(ResourceRequest(linkURL))) {
+                appendItem(OpenLinkItem);
+                appendItem(OpenLinkInNewWindowItem);
+                appendItem(DownloadFileItem);
+            }
+            appendItem(CopyLinkItem);
+            appendItem(*separatorItem());
+        }
+
         if (result.isSelected() && !inPasswordField && selectionContainsPossibleWord(frame)) {
 #if PLATFORM(MAC)
             appendItem(SearchSpotlightItem);
