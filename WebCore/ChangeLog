@@ -1,3 +1,12 @@
+2007-05-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix for <rdar://problem/4727607> REGRESSION: KeyScript is deprecated, need a new solution for forcing Roman input for password fields on Leopard
+
+        * page/mac/FrameMac.mm: (WebCore::Frame::setUseSecureKeyboardEntry):
+        Use TSMSetDocumentProperty and TSMRemoveDocumentProperty on Leopard disable and enable non-ascii input sources.
+
 2007-05-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
