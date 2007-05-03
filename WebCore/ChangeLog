@@ -1,3 +1,17 @@
+2007-05-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        commitProvisionalLoad() was the name of two methods.
+        One of them was private and only called from one other private place.
+        This was driving me crazy.  I had to change that.
+
+        No change in functionality == no layout test
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): roll commitProvisionalLoad() into this method
+        * loader/FrameLoader.h: Removed commitProvisionalLoad()
+
 2007-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
