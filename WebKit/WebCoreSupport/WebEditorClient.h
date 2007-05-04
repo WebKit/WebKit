@@ -102,7 +102,7 @@ public:
     virtual void learnWord(const WebCore::String&) { }
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) { }
     virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) { }
-    virtual void updateSpellingUIWithGrammarString(const WebCore::String&, const WTF::Vector<WebCore::String>& guesses) { }
+    virtual void updateSpellingUIWithGrammarString(const WebCore::String&, const WebCore::String&, const WTF::Vector<WebCore::String>& guesses) { }
     virtual void updateSpellingUIWithMisspelledWord(const WebCore::String&) { }
     virtual void showSpellingUI(bool show) { }
     virtual bool spellingUIIsShowing() { return false; }

@@ -1,3 +1,16 @@
+2007-05-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+
+        Add missing user description parameter to spelling-related editor client method.
+
+        * bridge/EditorClient.h:
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::updateSpellingUIWithGrammarString):
+        * platform/gdk/EditorClientGdk.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::updateSpellingUIWithGrammarString):
+
 2007-05-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

@@ -315,7 +315,7 @@ void EditorClientGdk::checkGrammarOfString(const UChar*, int, Vector<GrammarDeta
     notImplementedGdk();
 }
 
-void EditorClientGdk::updateSpellingUIWithGrammarString(const String&, const Vector<String>&)
+void EditorClientGdk::updateSpellingUIWithGrammarString(const String&, const String&, const Vector<String>&)
 {
     notImplementedGdk();
 }
