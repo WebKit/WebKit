@@ -51,9 +51,7 @@ namespace WebCore {
 
         void load(DocLoader*, CachedResource*, bool incremental = true, bool skipCanLoadCheck = false);
 
-        int numRequests(DocLoader*) const;
         void cancelRequests(DocLoader*);
-
     private:
         virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
         virtual void didReceiveData(SubresourceLoader*, const char*, int);

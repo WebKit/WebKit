@@ -1,4 +1,41 @@
-<<<<<<< .mine
+2007-05-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Resolve an outstanding FIXME in Loader::numRequests()
+
+        Before, numRequests() would iterate through the list of requests pending load and the list of currently
+        loading requests and tally up a count matching the current DocLoader.
+
+        I noticed while studying and cleaning up the loader code that numRequests() is potentially very hot!
+        Indeed load a complex site with many resources and multiple frames, and this method gets called very often,
+        tallying up this number every time.
+
+        The FIXME was to keep a collection of Requests mapped to each DocLoader.  In reality, since this map would
+        simply be used for retrieving a count, that was overkill.  Keeping a request count in the DocLoader itself
+        along with maintaining that count in Loader as requests come and go is a much better way to do this.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::incrementRequestCount):
+        (WebCore::DocLoader::decrementRequestCount):
+        (WebCore::DocLoader::requestCount): Emulate the defunct Loader::numRequests()
+        * loader/DocLoader.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::numRequests): Call DocLoader::requestCount() directly
+        (WebCore::FrameLoader::checkCompleted): Use numRequests()
+
+        * loader/loader.cpp:
+        (WebCore::Loader::load): Increment the DocLoader's request count
+        (WebCore::Loader::servePendingRequests): If the SubresourceLoader failed to create, decrement the count
+        (WebCore::Loader::didFinishLoading): If the Request is not Multipart, decrement the count
+        (WebCore::Loader::didFail): If the Request is not Multipart, decrement the count
+        (WebCore::Loader::didReceiveResponse): If the Request becomes Multipart, decrement the count
+        (WebCore::Loader::cancelRequests): Decrement the count for the pending requests being tossed, and ASSERT the
+          count is zero after all requests have been cancelled
+        * loader/loader.h:
+
 2007-05-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady Eidson.
@@ -18,7 +55,6 @@
         the function name.
         * loader/FrameLoader.h:
 
-=======
 2007-05-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison.
@@ -31,7 +67,6 @@
         (WebCore::createMarkup):
         Nil-check checkAncestor and lastClosed.
 
->>>>>>> .r21243
 2007-05-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin.
