@@ -964,6 +964,7 @@ sub openDumpTool()
     my $libraryPath = $ENV{'LD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
     my $display = $ENV{'DISPLAY'};
+    my $testfonts = $ENV{'WEBKIT_TESTFONTS'};
 
     my $isQt = isQt();
     local %ENV;
@@ -973,6 +974,7 @@ sub openDumpTool()
         } else {
             $ENV{DISPLAY} = ":1";
         }
+        $ENV{'WEBKIT_TESTFONTS'} = $testfonts;
         $ENV{HOME} = $homeDir;
         if (defined $libraryPath) {
             $ENV{LD_LIBRARY_PATH} = $libraryPath;

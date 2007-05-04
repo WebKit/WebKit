@@ -1,3 +1,119 @@
+2007-05-04  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
+        Updated results for css1 to work with the new set of fonts.
+        Will update the other results once I see this works on all
+        machines we have.
+
+        * qt/css1/basic/class_as_selector-expected.txt:
+        * qt/css1/basic/comments-expected.txt:
+        * qt/css1/basic/containment-expected.txt:
+        * qt/css1/basic/contextual_selectors-expected.txt:
+        * qt/css1/basic/grouping-expected.txt:
+        * qt/css1/basic/id_as_selector-expected.txt:
+        * qt/css1/basic/inheritance-expected.txt:
+        * qt/css1/box_properties/acid_test-expected.txt:
+        * qt/css1/box_properties/border-expected.txt:
+        * qt/css1/box_properties/border_bottom-expected.txt:
+        * qt/css1/box_properties/border_bottom_inline-expected.txt:
+        * qt/css1/box_properties/border_bottom_width-expected.txt:
+        * qt/css1/box_properties/border_bottom_width_inline-expected.txt:
+        * qt/css1/box_properties/border_color-expected.txt:
+        * qt/css1/box_properties/border_color_inline-expected.txt:
+        * qt/css1/box_properties/border_inline-expected.txt:
+        * qt/css1/box_properties/border_left-expected.txt:
+        * qt/css1/box_properties/border_left_inline-expected.txt:
+        * qt/css1/box_properties/border_left_width-expected.txt:
+        * qt/css1/box_properties/border_left_width_inline-expected.txt:
+        * qt/css1/box_properties/border_right-expected.txt:
+        * qt/css1/box_properties/border_right_inline-expected.txt:
+        * qt/css1/box_properties/border_right_width-expected.txt:
+        * qt/css1/box_properties/border_right_width_inline-expected.txt:
+        * qt/css1/box_properties/border_style-expected.txt:
+        * qt/css1/box_properties/border_style_inline-expected.txt:
+        * qt/css1/box_properties/border_top-expected.txt:
+        * qt/css1/box_properties/border_top_inline-expected.txt:
+        * qt/css1/box_properties/border_top_width-expected.txt:
+        * qt/css1/box_properties/border_top_width_inline-expected.txt:
+        * qt/css1/box_properties/border_width-expected.txt:
+        * qt/css1/box_properties/border_width_inline-expected.txt:
+        * qt/css1/box_properties/clear-expected.txt:
+        * qt/css1/box_properties/clear_float-expected.txt:
+        * qt/css1/box_properties/float-expected.txt:
+        * qt/css1/box_properties/float_elements_in_series-expected.txt:
+        * qt/css1/box_properties/float_margin-expected.txt:
+        * qt/css1/box_properties/float_on_text_elements-expected.txt:
+        * qt/css1/box_properties/height-expected.txt:
+        * qt/css1/box_properties/margin-expected.txt:
+        * qt/css1/box_properties/margin_bottom-expected.txt:
+        * qt/css1/box_properties/margin_bottom_inline-expected.txt:
+        * qt/css1/box_properties/margin_inline-expected.txt:
+        * qt/css1/box_properties/margin_left-expected.txt:
+        * qt/css1/box_properties/margin_left_inline-expected.txt:
+        * qt/css1/box_properties/margin_right-expected.txt:
+        * qt/css1/box_properties/margin_right_inline-expected.txt:
+        * qt/css1/box_properties/margin_top-expected.txt:
+        * qt/css1/box_properties/margin_top_inline-expected.txt:
+        * qt/css1/box_properties/padding-expected.txt:
+        * qt/css1/box_properties/padding_bottom-expected.txt:
+        * qt/css1/box_properties/padding_bottom_inline-expected.txt:
+        * qt/css1/box_properties/padding_inline-expected.txt:
+        * qt/css1/box_properties/padding_left-expected.txt:
+        * qt/css1/box_properties/padding_left_inline-expected.txt:
+        * qt/css1/box_properties/padding_right-expected.txt:
+        * qt/css1/box_properties/padding_right_inline-expected.txt:
+        * qt/css1/box_properties/padding_top-expected.txt:
+        * qt/css1/box_properties/padding_top_inline-expected.txt:
+        * qt/css1/box_properties/width-expected.txt:
+        * qt/css1/cascade/cascade_order-expected.txt:
+        * qt/css1/cascade/important-expected.txt:
+        * qt/css1/classification/display-expected.txt:
+        * qt/css1/classification/list_style-expected.txt:
+        * qt/css1/classification/list_style_image-expected.txt:
+        * qt/css1/classification/list_style_position-expected.txt:
+        * qt/css1/classification/list_style_type-expected.txt:
+        * qt/css1/classification/white_space-expected.txt:
+        * qt/css1/color_and_background/background-expected.txt:
+        * qt/css1/color_and_background/background_attachment-expected.txt:
+        * qt/css1/color_and_background/background_color-expected.txt:
+        * qt/css1/color_and_background/background_image-expected.txt:
+        * qt/css1/color_and_background/background_position-expected.txt:
+        * qt/css1/color_and_background/background_repeat-expected.txt:
+        * qt/css1/color_and_background/color-expected.txt:
+        * qt/css1/conformance/forward_compatible_parsing-expected.txt:
+        * qt/css1/font_properties/font-expected.txt:
+        * qt/css1/font_properties/font_family-expected.txt:
+        * qt/css1/font_properties/font_size-expected.txt:
+        * qt/css1/font_properties/font_style-expected.txt:
+        * qt/css1/font_properties/font_variant-expected.txt:
+        * qt/css1/font_properties/font_weight-expected.txt:
+        * qt/css1/formatting_model/canvas-expected.txt:
+        * qt/css1/formatting_model/floating_elements-expected.txt:
+        * qt/css1/formatting_model/height_of_lines-expected.txt:
+        * qt/css1/formatting_model/horizontal_formatting-expected.txt:
+        * qt/css1/formatting_model/inline_elements-expected.txt:
+        * qt/css1/formatting_model/replaced_elements-expected.txt:
+        * qt/css1/formatting_model/vertical_formatting-expected.txt:
+        * qt/css1/pseudo/anchor-expected.txt:
+        * qt/css1/pseudo/firstletter-expected.txt:
+        * qt/css1/pseudo/firstline-expected.txt:
+        * qt/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * qt/css1/pseudo/pseudo_elements_in_selectors-expected.txt:
+        * qt/css1/text_properties/letter_spacing-expected.txt:
+        * qt/css1/text_properties/line_height-expected.txt:
+        * qt/css1/text_properties/text-transCapitalize-expected.txt:
+        * qt/css1/text_properties/text_align-expected.txt:
+        * qt/css1/text_properties/text_decoration-expected.txt:
+        * qt/css1/text_properties/text_indent-expected.txt:
+        * qt/css1/text_properties/text_transform-expected.txt:
+        * qt/css1/text_properties/vertical_align-expected.txt:
+        * qt/css1/text_properties/word_spacing-expected.txt:
+        * qt/css1/units/color_units-expected.txt:
+        * qt/css1/units/length_units-expected.txt:
+        * qt/css1/units/percentage_units-expected.txt:
+        * qt/css1/units/urls-expected.txt:
+
 2007-03-13  Lars Knoll <lars@trolltech.com>
 
         Add a test that currently crashes the Qt build.

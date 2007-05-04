@@ -3,94 +3,94 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 352x16
-          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x48
-        RenderText {#text} at (0,0) size 208x48
-          text run at (0,0) width 208: ".one {border-left-width: 25px; border-style: solid;}"
-          text run at (208,0) width 0: " "
-          text run at (0,16) width 208: ".two {border-left-width: thin; border-style: solid;}"
-          text run at (208,16) width 0: " "
-          text run at (0,32) width 132: ".three {border-left-width: 25px;}"
-          text run at (132,32) width 0: " "
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,108) size 784x70 [border: (3px solid #000000) (25px solid #000000)]
-        RenderText {#text} at (25,3) size 176x16
-          text run at (25,3) width 176: "This element has a class of "
-        RenderInline {TT} at (0,0) size 12x16
-          RenderText {#text} at (201,3) size 12x16
-            text run at (201,3) width 12: "one"
-        RenderText {#text} at (213,3) size 158x16
-          text run at (213,3) width 7: ". "
-          text run at (220,3) width 151: "However, it contains an "
-        RenderInline {SPAN} at (0,0) size 159x22 [border: (3px solid #000000) (1px solid #000000)]
-          RenderText {#text} at (372,3) size 143x16
-            text run at (372,3) width 143: "inline element of class "
-          RenderInline {TT} at (0,0) size 12x16
-            RenderText {#text} at (515,3) size 12x16
-              text run at (515,3) width 12: "two"
-        RenderText {#text} at (530,3) size 718x32
-          text run at (530,3) width 213: ", which should result in a thin solid"
-          text run at (25,19) width 182: "border on the left side of the "
-        RenderInline {STRONG} at (0,0) size 27x16
-          RenderText {#text} at (207,19) size 27x16
-            text run at (207,19) width 27: "first"
-        RenderText {#text} at (234,19) size 751x32
-          text run at (234,19) width 504: " box in the inline element (and the UA's default border on the other three sides). "
-          text run at (738,19) width 38: "There"
-          text run at (25,35) width 64: "is also an "
-        RenderInline {SPAN} at (0,0) size 163x16
-          RenderText {#text} at (89,35) size 143x16
-            text run at (89,35) width 143: "inline element of class "
-          RenderInline {TT} at (0,0) size 20x16
-            RenderText {#text} at (232,35) size 20x16
-              text run at (232,35) width 20: "three"
-        RenderText {#text} at (252,35) size 733x32
-          text run at (252,35) width 506: ", which should have no left border width or visible border because no border style"
-          text run at (25,51) width 51: "was set."
-      RenderTable {TABLE} at (0,192) size 784x104 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x102
-          RenderTableRow {TR} at (0,0) size 782x24
-            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 157x16
-                RenderText {#text} at (4,4) size 157x16
-                  text run at (4,4) width 157: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,24) size 782x78
-            RenderTableCell {TD} at (0,51) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x16
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,33) size 784x57
+        RenderText {#text} at (0,1) size 416x55
+          text run at (0,1) width 416: ".one {border-left-width: 25px; border-style: solid;}"
+          text run at (416,1) width 0: " "
+          text run at (0,20) width 416: ".two {border-left-width: thin; border-style: solid;}"
+          text run at (416,20) width 0: " "
+          text run at (0,39) width 264: ".three {border-left-width: 25px;}"
+          text run at (264,39) width 0: " "
+      RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,120) size 784x85 [border: (3px solid #000000) (25px solid #000000)]
+        RenderText {#text} at (25,3) size 177x19
+          text run at (25,3) width 177: "This element has a class of "
+        RenderInline {TT} at (0,0) size 24x17
+          RenderText {#text} at (202,5) size 24x17
+            text run at (202,5) width 24: "one"
+        RenderText {#text} at (226,3) size 160x19
+          text run at (226,3) width 8: ". "
+          text run at (234,3) width 152: "However, it contains an "
+        RenderInline {SPAN} at (0,0) size 172x25 [border: (3px solid #000000) (1px solid #000000)]
+          RenderText {#text} at (387,3) size 144x19
+            text run at (387,3) width 144: "inline element of class "
+          RenderInline {TT} at (0,0) size 24x17
+            RenderText {#text} at (531,5) size 24x17
+              text run at (531,5) width 24: "two"
+        RenderText {#text} at (558,3) size 749x39
+          text run at (558,3) width 216: ", which should result in a thin solid"
+          text run at (25,23) width 183: "border on the left side of the "
+        RenderInline {STRONG} at (0,0) size 27x20
+          RenderText {#text} at (208,23) size 27x20
+            text run at (208,23) width 27: "first"
+        RenderText {#text} at (235,23) size 715x39
+          text run at (235,23) width 505: " box in the inline element (and the UA's default border on the other three sides)."
+          text run at (25,43) width 106: "There is also an "
+        RenderInline {SPAN} at (0,0) size 184x19
+          RenderText {#text} at (131,43) size 144x19
+            text run at (131,43) width 144: "inline element of class "
+          RenderInline {TT} at (0,0) size 40x17
+            RenderText {#text} at (275,45) size 40x17
+              text run at (275,45) width 40: "three"
+        RenderText {#text} at (315,43) size 725x39
+          text run at (315,43) width 435: ", which should have no left border width or visible border because no"
+          text run at (25,63) width 131: "border style was set."
+      RenderTable {TABLE} at (0,219) size 784x123 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x121
+          RenderTableRow {TR} at (0,0) size 782x28
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x20
+                RenderText {#text} at (4,4) size 159x20
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 782x93
+            RenderTableCell {TD} at (0,61) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,24) size 770x78 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x70 [border: (3px solid #000000) (25px solid #000000)]
-                RenderText {#text} at (25,3) size 176x16
-                  text run at (25,3) width 176: "This element has a class of "
-                RenderInline {TT} at (0,0) size 12x16
-                  RenderText {#text} at (201,3) size 12x16
-                    text run at (201,3) width 12: "one"
-                RenderText {#text} at (213,3) size 158x16
-                  text run at (213,3) width 7: ". "
-                  text run at (220,3) width 151: "However, it contains an "
-                RenderInline {SPAN} at (0,0) size 159x22 [border: (3px solid #000000) (1px solid #000000)]
-                  RenderText {#text} at (372,3) size 143x16
-                    text run at (372,3) width 143: "inline element of class "
-                  RenderInline {TT} at (0,0) size 12x16
-                    RenderText {#text} at (515,3) size 12x16
-                      text run at (515,3) width 12: "two"
-                RenderText {#text} at (530,3) size 718x32
-                  text run at (530,3) width 213: ", which should result in a thin solid"
-                  text run at (25,19) width 182: "border on the left side of the "
-                RenderInline {STRONG} at (0,0) size 27x16
-                  RenderText {#text} at (207,19) size 27x16
-                    text run at (207,19) width 27: "first"
-                RenderText {#text} at (234,19) size 709x32
-                  text run at (234,19) width 500: " box in the inline element (and the UA's default border on the other three sides)."
-                  text run at (25,35) width 106: "There is also an "
-                RenderInline {SPAN} at (0,0) size 163x16
-                  RenderText {#text} at (131,35) size 143x16
-                    text run at (131,35) width 143: "inline element of class "
-                  RenderInline {TT} at (0,0) size 20x16
-                    RenderText {#text} at (274,35) size 20x16
-                      text run at (274,35) width 20: "three"
-                RenderText {#text} at (294,35) size 697x32
-                  text run at (294,35) width 428: ", which should have no left border width or visible border because no"
-                  text run at (25,51) width 129: "border style was set."
+            RenderTableCell {TD} at (12,28) size 770x93 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x85 [border: (3px solid #000000) (25px solid #000000)]
+                RenderText {#text} at (25,3) size 177x19
+                  text run at (25,3) width 177: "This element has a class of "
+                RenderInline {TT} at (0,0) size 24x17
+                  RenderText {#text} at (202,5) size 24x17
+                    text run at (202,5) width 24: "one"
+                RenderText {#text} at (226,3) size 160x19
+                  text run at (226,3) width 8: ". "
+                  text run at (234,3) width 152: "However, it contains an "
+                RenderInline {SPAN} at (0,0) size 172x25 [border: (3px solid #000000) (1px solid #000000)]
+                  RenderText {#text} at (387,3) size 144x19
+                    text run at (387,3) width 144: "inline element of class "
+                  RenderInline {TT} at (0,0) size 24x17
+                    RenderText {#text} at (531,5) size 24x17
+                      text run at (531,5) width 24: "two"
+                RenderText {#text} at (558,3) size 716x39
+                  text run at (558,3) width 183: ", which should result in a thin"
+                  text run at (25,23) width 216: "solid border on the left side of the "
+                RenderInline {STRONG} at (0,0) size 27x20
+                  RenderText {#text} at (241,23) size 27x20
+                    text run at (241,23) width 27: "first"
+                RenderText {#text} at (268,23) size 702x39
+                  text run at (268,23) width 459: " box in the inline element (and the UA's default border on the other three"
+                  text run at (25,43) width 46: "sides). "
+                  text run at (71,43) width 106: "There is also an "
+                RenderInline {SPAN} at (0,0) size 184x19
+                  RenderText {#text} at (177,43) size 144x19
+                    text run at (177,43) width 144: "inline element of class "
+                  RenderInline {TT} at (0,0) size 40x17
+                    RenderText {#text} at (321,45) size 40x17
+                      text run at (321,45) width 40: "three"
+                RenderText {#text} at (361,43) size 693x39
+                  text run at (361,43) width 357: ", which should have no left border width or visible border"
+                  text run at (25,63) width 209: "because no border style was set."

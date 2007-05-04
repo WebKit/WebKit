@@ -1,3 +1,40 @@
+2007-05-04  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Remove the old bitmap fonts I tried using to get reliable results from
+        DumpRenderTree on X11. Instead we now use the URW Type1 fonts from 
+        ghostscript. I've added a mirror to simply check them out at 
+        svn://labs.trolltech.com/svn/webkit/testfonts.
+
+        Fixed DumpRenderTree to make sure these fonts are the only ones we use
+        on X11 and added a fonts.conf file to get a well defined fontconfig
+        configuration.
+
+        Made sure run-webkit-tests forwards the WEBKIT_TESTFONTS environment variable
+        I use to find the fonts to DumpRenderTree.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+        * DumpRenderTree/DumpRenderTree.qtproj/fontoverload.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/COPYING: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierBold.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierBoldOblique.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierMedium.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/CourierMediumOblique.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaBold.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaBoldOblique.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaMedium.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/HelveticaMediumOblique.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/SymbolMedium.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesBold.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesBoldItalic.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesMedium.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts/TimesMediumItalic.ttf: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts.conf: Added.
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+        * Scripts/run-webkit-tests:
+
 2007-05-03  Holger Freyther <freyther@kde.org>
 
         Reviewed by Zack, landed by Simon.

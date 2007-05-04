@@ -1,173 +1,173 @@
-layer at (0,0) size 800x1460
+layer at (0,0) size 800x1754
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1460
-  RenderBlock {HTML} at (0,0) size 800x1460
-    RenderBody {BODY} at (8,8) size 784x1444 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 352x16
-          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x176
-        RenderText {#text} at (0,0) size 312x176
-          text run at (0,0) width 92: ".zero {margin-left: 0;}"
-          text run at (92,0) width 0: " "
-          text run at (0,16) width 96: ".one {margin-left: 3em;}"
-          text run at (96,16) width 0: " "
-          text run at (0,32) width 96: ".two {margin-left: 3ex;}"
-          text run at (96,32) width 0: " "
-          text run at (0,48) width 108: ".three {margin-left: 36px;}"
-          text run at (108,48) width 0: " "
-          text run at (0,64) width 108: ".four {margin-left: 0.5in;}"
-          text run at (108,64) width 0: " "
-          text run at (0,80) width 112: ".five {margin-left: 1.27cm;}"
-          text run at (112,80) width 0: " "
-          text run at (0,96) width 108: ".six {margin-left: 12.7mm;}"
-          text run at (108,96) width 0: " "
-          text run at (0,112) width 108: ".seven {margin-left: 36pt;}"
-          text run at (108,112) width 0: " "
-          text run at (0,128) width 104: ".eight {margin-left: 3pc;}"
-          text run at (104,128) width 0: " "
-          text run at (0,144) width 104: ".nine {margin-left: +3pc;}"
-          text run at (104,144) width 0: " "
-          text run at (0,160) width 312: ".ten {font-size: 40px; border-left: 1ex solid purple; background-color: aqua;}"
-          text run at (312,160) width 0: " "
-      RenderBlock {HR} at (0,220) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,236) size 784x32
-        RenderText {#text} at (0,0) size 762x32
-          text run at (0,0) width 762: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer) edges"
-          text run at (0,16) width 347: "should therefore be appropriately shifted to the right of "
-        RenderInline {EM} at (0,0) size 22x16
-          RenderText {#text} at (347,16) size 22x16
-            text run at (347,16) width 22: "this"
-        RenderText {#text} at (369,16) size 142x16
-          text run at (369,16) width 142: " paragraph's left edge."
-      RenderBlock {P} at (42,282) size 742x16
-        RenderText {#text} at (0,0) size 309x16
-          text run at (0,0) width 309: "This paragraph should have a left margin of 3em."
-      RenderBlock {P} at (24,312) size 760x16
-        RenderText {#text} at (0,0) size 305x16
-          text run at (0,0) width 305: "This paragraph should have a left margin of 3ex."
-      RenderBlock {P} at (36,342) size 748x16
-        RenderText {#text} at (0,0) size 338x16
-          text run at (0,0) width 338: "This paragraph should have a left margin of 36 pixels."
-      RenderBlock {P} at (48,372) size 736x16
-        RenderText {#text} at (0,0) size 355x16
-          text run at (0,0) width 355: "This paragraph should have a left margin of half an inch."
-      RenderBlock {P} at (48,402) size 736x16
-        RenderText {#text} at (0,0) size 327x16
-          text run at (0,0) width 327: "This paragraph should have a left margin of 1.27cm."
-      RenderBlock {P} at (48,432) size 736x16
-        RenderText {#text} at (0,0) size 331x16
-          text run at (0,0) width 331: "This paragraph should have a left margin of 12.7mm."
-      RenderBlock {P} at (48,462) size 736x16
-        RenderText {#text} at (0,0) size 340x16
-          text run at (0,0) width 340: "This paragraph should have a left margin of 36 points."
-      RenderBlock {P} at (48,492) size 736x16
-        RenderText {#text} at (0,0) size 327x16
-          text run at (0,0) width 327: "This paragraph should have a left margin of 3 picas."
-      RenderBlock {P} at (48,522) size 736x16
-        RenderText {#text} at (0,0) size 590x16
-          text run at (0,0) width 590: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-      RenderBlock {P} at (0,578) size 784x225 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,1) size 346x42
-          text run at (0,1) width 346: "This element has a "
-        RenderInline {CODE} at (0,0) size 99x42
-          RenderText {#text} at (346,1) size 99x42
-            text run at (346,1) width 99: "font-size"
-        RenderText {#text} at (445,1) size 55x42
-          text run at (445,1) width 55: " of "
-        RenderInline {CODE} at (0,0) size 44x42
-          RenderText {#text} at (500,1) size 44x42
-            text run at (500,1) width 44: "40px"
-        RenderText {#text} at (544,1) size 121x42
-          text run at (544,1) width 121: " and a "
-        RenderInline {CODE} at (0,0) size 742x87
-          RenderText {#text} at (665,1) size 742x87
-            text run at (665,1) width 77: "border-"
-            text run at (0,46) width 44: "left"
-        RenderText {#text} at (44,46) size 55x42
-          text run at (44,46) width 55: " of "
-        RenderInline {CODE} at (0,0) size 176x42
-          RenderText {#text} at (99,46) size 176x42
-            text run at (99,46) width 176: "1ex solid purple"
-        RenderText {#text} at (275,46) size 755x177
-          text run at (275,46) width 22: ". "
-          text run at (297,46) width 441: "This should make the left"
-          text run at (0,91) width 709: "border the same number of pixels as the"
-          text run at (0,136) width 755: "lower-case 'x' in this element's font, as well"
-          text run at (0,181) width 267: "as solid purple."
-      RenderTable {TABLE} at (0,843) size 784x601 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x599
-          RenderTableRow {TR} at (0,0) size 782x24
-            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 157x16
-                RenderText {#text} at (4,4) size 157x16
-                  text run at (4,4) width 157: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,24) size 782x575
-            RenderTableCell {TD} at (0,299) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x16
+layer at (0,0) size 800x1754
+  RenderBlock {HTML} at (0,0) size 800x1754
+    RenderBody {BODY} at (8,8) size 784x1738 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,33) size 784x209
+        RenderText {#text} at (0,1) size 624x207
+          text run at (0,1) width 184: ".zero {margin-left: 0;}"
+          text run at (184,1) width 0: " "
+          text run at (0,20) width 192: ".one {margin-left: 3em;}"
+          text run at (192,20) width 0: " "
+          text run at (0,39) width 192: ".two {margin-left: 3ex;}"
+          text run at (192,39) width 0: " "
+          text run at (0,58) width 216: ".three {margin-left: 36px;}"
+          text run at (216,58) width 0: " "
+          text run at (0,77) width 216: ".four {margin-left: 0.5in;}"
+          text run at (216,77) width 0: " "
+          text run at (0,96) width 224: ".five {margin-left: 1.27cm;}"
+          text run at (224,96) width 0: " "
+          text run at (0,115) width 216: ".six {margin-left: 12.7mm;}"
+          text run at (216,115) width 0: " "
+          text run at (0,134) width 216: ".seven {margin-left: 36pt;}"
+          text run at (216,134) width 0: " "
+          text run at (0,153) width 208: ".eight {margin-left: 3pc;}"
+          text run at (208,153) width 0: " "
+          text run at (0,172) width 208: ".nine {margin-left: +3pc;}"
+          text run at (208,172) width 0: " "
+          text run at (0,191) width 624: ".ten {font-size: 40px; border-left: 1ex solid purple; background-color: aqua;}"
+          text run at (624,191) width 0: " "
+      RenderBlock {HR} at (0,256) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,272) size 784x39
+        RenderText {#text} at (0,0) size 767x38
+          text run at (0,0) width 767: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer) edges"
+          text run at (0,19) width 349: "should therefore be appropriately shifted to the right of "
+        RenderInline {EM} at (0,0) size 22x19
+          RenderText {#text} at (349,19) size 22x19
+            text run at (349,19) width 22: "this"
+        RenderText {#text} at (371,19) size 143x19
+          text run at (371,19) width 143: " paragraph's left edge."
+      RenderBlock {P} at (42,325) size 742x19
+        RenderText {#text} at (0,0) size 313x19
+          text run at (0,0) width 313: "This paragraph should have a left margin of 3em."
+      RenderBlock {P} at (21,358) size 763x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "This paragraph should have a left margin of 3ex."
+      RenderBlock {P} at (36,391) size 748x19
+        RenderText {#text} at (0,0) size 341x19
+          text run at (0,0) width 341: "This paragraph should have a left margin of 36 pixels."
+      RenderBlock {P} at (48,424) size 736x19
+        RenderText {#text} at (0,0) size 358x19
+          text run at (0,0) width 358: "This paragraph should have a left margin of half an inch."
+      RenderBlock {P} at (48,457) size 736x19
+        RenderText {#text} at (0,0) size 332x19
+          text run at (0,0) width 332: "This paragraph should have a left margin of 1.27cm."
+      RenderBlock {P} at (48,490) size 736x19
+        RenderText {#text} at (0,0) size 337x19
+          text run at (0,0) width 337: "This paragraph should have a left margin of 12.7mm."
+      RenderBlock {P} at (48,523) size 736x19
+        RenderText {#text} at (0,0) size 343x19
+          text run at (0,0) width 343: "This paragraph should have a left margin of 36 points."
+      RenderBlock {P} at (48,556) size 736x19
+        RenderText {#text} at (0,0) size 330x19
+          text run at (0,0) width 330: "This paragraph should have a left margin of 3 picas."
+      RenderBlock {P} at (48,589) size 736x19
+        RenderText {#text} at (0,0) size 596x19
+          text run at (0,0) width 596: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
+      RenderBlock {P} at (0,648) size 784x318 [bgcolor=#00FFFF] [border: (21px solid #800080)]
+        RenderText {#text} at (21,0) size 346x52
+          text run at (21,0) width 346: "This element has a "
+        RenderInline {CODE} at (0,0) size 216x45
+          RenderText {#text} at (367,6) size 216x45
+            text run at (367,6) width 216: "font-size"
+        RenderText {#text} at (583,0) size 55x52
+          text run at (583,0) width 55: " of "
+        RenderInline {CODE} at (0,0) size 96x45
+          RenderText {#text} at (638,6) size 96x45
+            text run at (638,6) width 96: "40px"
+        RenderText {#text} at (21,54) size 110x52
+          text run at (21,54) width 110: "and a "
+        RenderInline {CODE} at (0,0) size 264x45
+          RenderText {#text} at (131,60) size 264x45
+            text run at (131,60) width 264: "border-left"
+        RenderText {#text} at (395,54) size 55x52
+          text run at (395,54) width 55: " of "
+        RenderInline {CODE} at (0,0) size 645x99
+          RenderText {#text} at (450,60) size 645x99
+            text run at (450,60) width 216: "1ex solid"
+            text run at (21,114) width 144: "purple"
+        RenderText {#text} at (165,108) size 732x210
+          text run at (165,108) width 22: ". "
+          text run at (187,108) width 566: "This should make the left border"
+          text run at (21,162) width 703: "the same number of pixels as the lower-"
+          text run at (21,214) width 700: "case 'x' in this element's font, as well as"
+          text run at (21,266) width 214: "solid purple."
+      RenderTable {TABLE} at (0,1006) size 784x732 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x730
+          RenderTableRow {TR} at (0,0) size 782x28
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x20
+                RenderText {#text} at (4,4) size 159x20
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 782x702
+            RenderTableCell {TD} at (0,365) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,24) size 770x575 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x32
-                RenderText {#text} at (0,0) size 762x32
-                  text run at (0,0) width 762: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer) edges"
-                  text run at (0,16) width 347: "should therefore be appropriately shifted to the right of "
-                RenderInline {EM} at (0,0) size 22x16
-                  RenderText {#text} at (347,16) size 22x16
-                    text run at (347,16) width 22: "this"
-                RenderText {#text} at (369,16) size 142x16
-                  text run at (369,16) width 142: " paragraph's left edge."
-              RenderBlock {P} at (46,50) size 720x16
-                RenderText {#text} at (0,0) size 309x16
-                  text run at (0,0) width 309: "This paragraph should have a left margin of 3em."
-              RenderBlock {P} at (28,80) size 738x16
-                RenderText {#text} at (0,0) size 305x16
-                  text run at (0,0) width 305: "This paragraph should have a left margin of 3ex."
-              RenderBlock {P} at (40,110) size 726x16
-                RenderText {#text} at (0,0) size 338x16
-                  text run at (0,0) width 338: "This paragraph should have a left margin of 36 pixels."
-              RenderBlock {P} at (52,140) size 714x16
-                RenderText {#text} at (0,0) size 355x16
-                  text run at (0,0) width 355: "This paragraph should have a left margin of half an inch."
-              RenderBlock {P} at (52,170) size 714x16
-                RenderText {#text} at (0,0) size 327x16
-                  text run at (0,0) width 327: "This paragraph should have a left margin of 1.27cm."
-              RenderBlock {P} at (52,200) size 714x16
-                RenderText {#text} at (0,0) size 331x16
-                  text run at (0,0) width 331: "This paragraph should have a left margin of 12.7mm."
-              RenderBlock {P} at (52,230) size 714x16
-                RenderText {#text} at (0,0) size 340x16
-                  text run at (0,0) width 340: "This paragraph should have a left margin of 36 points."
-              RenderBlock {P} at (52,260) size 714x16
-                RenderText {#text} at (0,0) size 327x16
-                  text run at (0,0) width 327: "This paragraph should have a left margin of 3 picas."
-              RenderBlock {P} at (52,290) size 714x16
-                RenderText {#text} at (0,0) size 590x16
-                  text run at (0,0) width 590: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-              RenderBlock {P} at (4,346) size 762x225 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,1) size 346x42
-                  text run at (0,1) width 346: "This element has a "
-                RenderInline {CODE} at (0,0) size 99x42
-                  RenderText {#text} at (346,1) size 99x42
-                    text run at (346,1) width 99: "font-size"
-                RenderText {#text} at (445,1) size 55x42
-                  text run at (445,1) width 55: " of "
-                RenderInline {CODE} at (0,0) size 44x42
-                  RenderText {#text} at (500,1) size 44x42
-                    text run at (500,1) width 44: "40px"
-                RenderText {#text} at (544,1) size 121x42
-                  text run at (544,1) width 121: " and a "
-                RenderInline {CODE} at (0,0) size 742x87
-                  RenderText {#text} at (665,1) size 742x87
-                    text run at (665,1) width 77: "border-"
-                    text run at (0,46) width 44: "left"
-                RenderText {#text} at (44,46) size 55x42
-                  text run at (44,46) width 55: " of "
-                RenderInline {CODE} at (0,0) size 176x42
-                  RenderText {#text} at (99,46) size 176x42
-                    text run at (99,46) width 176: "1ex solid purple"
-                RenderText {#text} at (275,46) size 755x177
-                  text run at (275,46) width 22: ". "
-                  text run at (297,46) width 441: "This should make the left"
-                  text run at (0,91) width 709: "border the same number of pixels as the"
-                  text run at (0,136) width 755: "lower-case 'x' in this element's font, as well"
-                  text run at (0,181) width 267: "as solid purple."
+            RenderTableCell {TD} at (12,28) size 770x702 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x39
+                RenderText {#text} at (0,0) size 724x38
+                  text run at (0,0) width 724: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer)"
+                  text run at (0,19) width 392: "edges should therefore be appropriately shifted to the right of "
+                RenderInline {EM} at (0,0) size 22x19
+                  RenderText {#text} at (392,19) size 22x19
+                    text run at (392,19) width 22: "this"
+                RenderText {#text} at (414,19) size 143x19
+                  text run at (414,19) width 143: " paragraph's left edge."
+              RenderBlock {P} at (46,57) size 720x19
+                RenderText {#text} at (0,0) size 313x19
+                  text run at (0,0) width 313: "This paragraph should have a left margin of 3em."
+              RenderBlock {P} at (25,90) size 741x19
+                RenderText {#text} at (0,0) size 308x19
+                  text run at (0,0) width 308: "This paragraph should have a left margin of 3ex."
+              RenderBlock {P} at (40,123) size 726x19
+                RenderText {#text} at (0,0) size 341x19
+                  text run at (0,0) width 341: "This paragraph should have a left margin of 36 pixels."
+              RenderBlock {P} at (52,156) size 714x19
+                RenderText {#text} at (0,0) size 358x19
+                  text run at (0,0) width 358: "This paragraph should have a left margin of half an inch."
+              RenderBlock {P} at (52,189) size 714x19
+                RenderText {#text} at (0,0) size 332x19
+                  text run at (0,0) width 332: "This paragraph should have a left margin of 1.27cm."
+              RenderBlock {P} at (52,222) size 714x19
+                RenderText {#text} at (0,0) size 337x19
+                  text run at (0,0) width 337: "This paragraph should have a left margin of 12.7mm."
+              RenderBlock {P} at (52,255) size 714x19
+                RenderText {#text} at (0,0) size 343x19
+                  text run at (0,0) width 343: "This paragraph should have a left margin of 36 points."
+              RenderBlock {P} at (52,288) size 714x19
+                RenderText {#text} at (0,0) size 330x19
+                  text run at (0,0) width 330: "This paragraph should have a left margin of 3 picas."
+              RenderBlock {P} at (52,321) size 714x19
+                RenderText {#text} at (0,0) size 596x19
+                  text run at (0,0) width 596: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
+              RenderBlock {P} at (4,380) size 762x318 [bgcolor=#00FFFF] [border: (21px solid #800080)]
+                RenderText {#text} at (21,0) size 346x52
+                  text run at (21,0) width 346: "This element has a "
+                RenderInline {CODE} at (0,0) size 216x45
+                  RenderText {#text} at (367,6) size 216x45
+                    text run at (367,6) width 216: "font-size"
+                RenderText {#text} at (583,0) size 55x52
+                  text run at (583,0) width 55: " of "
+                RenderInline {CODE} at (0,0) size 96x45
+                  RenderText {#text} at (638,6) size 96x45
+                    text run at (638,6) width 96: "40px"
+                RenderText {#text} at (21,54) size 110x52
+                  text run at (21,54) width 110: "and a "
+                RenderInline {CODE} at (0,0) size 264x45
+                  RenderText {#text} at (131,60) size 264x45
+                    text run at (131,60) width 264: "border-left"
+                RenderText {#text} at (395,54) size 55x52
+                  text run at (395,54) width 55: " of "
+                RenderInline {CODE} at (0,0) size 645x99
+                  RenderText {#text} at (450,60) size 645x99
+                    text run at (450,60) width 216: "1ex solid"
+                    text run at (21,114) width 144: "purple"
+                RenderText {#text} at (165,108) size 732x210
+                  text run at (165,108) width 22: ". "
+                  text run at (187,108) width 566: "This should make the left border"
+                  text run at (21,162) width 703: "the same number of pixels as the lower-"
+                  text run at (21,214) width 700: "case 'x' in this element's font, as well as"
+                  text run at (21,266) width 214: "solid purple."

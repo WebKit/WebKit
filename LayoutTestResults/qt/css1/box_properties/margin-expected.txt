@@ -1,163 +1,163 @@
-layer at (0,0) size 802x2458
+layer at (0,0) size 802x2618
   RenderView at (0,0) size 800x600
-layer at (0,0) size 802x2458
-  RenderBlock {HTML} at (0,0) size 800x2458
-    RenderBody {BODY} at (8,8) size 784x2442 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 352x16
-          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x112
-        RenderText {#text} at (0,0) size 180x112
-          text run at (0,0) width 176: ".zero {background-color: silver; margin: 0;}"
-          text run at (176,0) width 0: " "
-          text run at (0,16) width 180: ".one {margin: 0.5in; background-color: aqua;}"
-          text run at (180,16) width 0: " "
-          text run at (0,32) width 176: ".two {margin: 25px; background-color: aqua;}"
-          text run at (176,32) width 0: " "
-          text run at (0,48) width 180: ".three {margin: 5em; background-color: aqua;}"
-          text run at (180,48) width 0: " "
-          text run at (0,64) width 176: ".four {margin: 25%; background-color: aqua;}"
-          text run at (176,64) width 0: " "
-          text run at (0,80) width 84: ".five {margin: 25px;}"
-          text run at (84,80) width 0: " "
-          text run at (0,96) width 180: ".six {margin: -10px; background-color: aqua;}"
-          text run at (180,96) width 0: " "
-      RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,172) size 784x32
-        RenderText {#text} at (0,0) size 742x32
-          text run at (0,0) width 742: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in"
-          text run at (0,16) width 244: "section 4.1.1 of the CSS1 specification."
-      RenderBlock {P} at (0,218) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {P} at (48,282) size 688x16 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 651x16
-          text run at (0,0) width 651: "This sentence should have an overall margin of half an inch, which will require extra text in order to test."
-      RenderBlock {P} at (0,346) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {P} at (25,387) size 734x16 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 634x16
-          text run at (0,0) width 634: "This sentence should have an overall margin of 25 pixels, which will require extra text in order to test."
-      RenderBlock {P} at (0,428) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {P} at (70,514) size 644x16 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 609x16
-          text run at (0,0) width 609: "This sentence should have an overall margin of 5 em, which will require extra text in order to test."
-      RenderBlock {P} at (0,600) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {P} at (196,812) size 392x48 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 387x48
-          text run at (0,0) width 387: "This sentence should have an overall margin of 25%, which is"
-          text run at (0,16) width 362: "calculated with respect to the width of the parent element."
-          text run at (0,32) width 260: "This will require extra text in order to test."
-      RenderBlock {P} at (0,1056) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {UL} at (25,1097) size 734x114 [bgcolor=#00FFFF]
-        RenderListItem {LI} at (40,0) size 694x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 367x16
-            text run at (0,0) width 367: "This list has a margin of 25px, and a light blue background."
-        RenderListItem {LI} at (40,16) size 694x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 262x16
-            text run at (0,0) width 262: "Therefore, it ought to have such a margin."
-        RenderListItem {LI} at (65,57) size 644x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 535x16
-            text run at (0,0) width 535: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
-        RenderListItem {LI} at (40,98) size 694x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 293x16
-            text run at (0,0) width 293: "This list item has no special styles applied to it."
-      RenderBlock {P} at (0,1236) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderBlock {P} at (-10,1242) size 804x48 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 804x48
-          text run at (0,0) width 745: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
-          text run at (0,16) width 361: "subsequent text up toward it, and a light blue background. "
-          text run at (361,16) width 385: "In all other respects, however, the element should be normal. "
-          text run at (746,16) width 58: "No styles"
-          text run at (0,32) width 491: "have been applied to it besides the negative margin and the background color."
-      RenderBlock {P} at (0,1280) size 784x16 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 207x16
-          text run at (0,0) width 207: "This element has a class of zero."
-      RenderTable {TABLE} at (0,1296) size 784x1146 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x1144
-          RenderTableRow {TR} at (0,0) size 782x24
-            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 157x16
-                RenderText {#text} at (4,4) size 157x16
-                  text run at (4,4) width 157: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,24) size 782x1120
-            RenderTableCell {TD} at (0,572) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x16
+layer at (0,0) size 802x2618
+  RenderBlock {HTML} at (0,0) size 800x2618
+    RenderBody {BODY} at (8,8) size 784x2602 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,33) size 784x133
+        RenderText {#text} at (0,1) size 360x131
+          text run at (0,1) width 352: ".zero {background-color: silver; margin: 0;}"
+          text run at (352,1) width 0: " "
+          text run at (0,20) width 360: ".one {margin: 0.5in; background-color: aqua;}"
+          text run at (360,20) width 0: " "
+          text run at (0,39) width 352: ".two {margin: 25px; background-color: aqua;}"
+          text run at (352,39) width 0: " "
+          text run at (0,58) width 360: ".three {margin: 5em; background-color: aqua;}"
+          text run at (360,58) width 0: " "
+          text run at (0,77) width 352: ".four {margin: 25%; background-color: aqua;}"
+          text run at (352,77) width 0: " "
+          text run at (0,96) width 168: ".five {margin: 25px;}"
+          text run at (168,96) width 0: " "
+          text run at (0,115) width 360: ".six {margin: -10px; background-color: aqua;}"
+          text run at (360,115) width 0: " "
+      RenderBlock {HR} at (0,180) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,196) size 784x38
+        RenderText {#text} at (0,0) size 749x38
+          text run at (0,0) width 749: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in"
+          text run at (0,19) width 247: "section 4.1.1 of the CSS1 specification."
+      RenderBlock {P} at (0,248) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {P} at (48,315) size 688x19 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 656x19
+          text run at (0,0) width 656: "This sentence should have an overall margin of half an inch, which will require extra text in order to test."
+      RenderBlock {P} at (0,382) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {P} at (25,426) size 734x19 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 639x19
+          text run at (0,0) width 639: "This sentence should have an overall margin of 25 pixels, which will require extra text in order to test."
+      RenderBlock {P} at (0,470) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {P} at (70,559) size 644x19 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 615x19
+          text run at (0,0) width 615: "This sentence should have an overall margin of 5 em, which will require extra text in order to test."
+      RenderBlock {P} at (0,648) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {P} at (196,863) size 392x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 390x57
+          text run at (0,0) width 390: "This sentence should have an overall margin of 25%, which is"
+          text run at (0,19) width 365: "calculated with respect to the width of the parent element."
+          text run at (0,38) width 262: "This will require extra text in order to test."
+      RenderBlock {P} at (0,1116) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {UL} at (25,1160) size 734x126 [bgcolor=#00FFFF]
+        RenderListItem {LI} at (40,0) size 694x19
+          RenderListMarker at (-17,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 374x19
+            text run at (0,0) width 374: "This list has a margin of 25px, and a light blue background."
+        RenderListItem {LI} at (40,19) size 694x19
+          RenderListMarker at (-17,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 267x19
+            text run at (0,0) width 267: "Therefore, it ought to have such a margin."
+        RenderListItem {LI} at (65,63) size 644x19
+          RenderListMarker at (-17,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 543x19
+            text run at (0,0) width 543: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
+        RenderListItem {LI} at (40,107) size 694x19
+          RenderListMarker at (-17,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 295x19
+            text run at (0,0) width 295: "This list item has no special styles applied to it."
+      RenderBlock {P} at (0,1311) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderBlock {P} at (-10,1320) size 804x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 781x57
+          text run at (0,0) width 754: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
+          text run at (0,19) width 371: "subsequent text up toward it, and a light blue background. "
+          text run at (371,19) width 392: "In all other respects, however, the element should be normal. "
+          text run at (763,19) width 18: "No"
+          text run at (0,38) width 537: "styles have been applied to it besides the negative margin and the background color."
+      RenderBlock {P} at (0,1367) size 784x19 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This element has a class of zero."
+      RenderTable {TABLE} at (0,1386) size 784x1216 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x1214
+          RenderTableRow {TR} at (0,0) size 782x28
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x20
+                RenderText {#text} at (4,4) size 159x20
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 782x1186
+            RenderTableCell {TD} at (0,607) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,24) size 770x1120 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x32
-                RenderText {#text} at (0,0) size 742x32
-                  text run at (0,0) width 742: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in"
-                  text run at (0,16) width 244: "section 4.1.1 of the CSS1 specification."
-              RenderBlock {P} at (4,50) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {P} at (52,114) size 666x16 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 651x16
-                  text run at (0,0) width 651: "This sentence should have an overall margin of half an inch, which will require extra text in order to test."
-              RenderBlock {P} at (4,178) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {P} at (29,219) size 712x16 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 634x16
-                  text run at (0,0) width 634: "This sentence should have an overall margin of 25 pixels, which will require extra text in order to test."
-              RenderBlock {P} at (4,260) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {P} at (74,346) size 622x16 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 609x16
-                  text run at (0,0) width 609: "This sentence should have an overall margin of 5 em, which will require extra text in order to test."
-              RenderBlock {P} at (4,432) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {P} at (194,638) size 382x48 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 376x48
-                  text run at (0,0) width 373: "This sentence should have an overall margin of 25%, which"
-                  text run at (0,16) width 376: "is calculated with respect to the width of the parent element."
-                  text run at (0,32) width 260: "This will require extra text in order to test."
-              RenderBlock {P} at (4,876) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {UL} at (29,917) size 712x114 [bgcolor=#00FFFF]
-                RenderListItem {LI} at (40,0) size 672x16
-                  RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderText {#text} at (0,0) size 367x16
-                    text run at (0,0) width 367: "This list has a margin of 25px, and a light blue background."
-                RenderListItem {LI} at (40,16) size 672x16
-                  RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderText {#text} at (0,0) size 262x16
-                    text run at (0,0) width 262: "Therefore, it ought to have such a margin."
-                RenderListItem {LI} at (65,57) size 622x16
-                  RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderText {#text} at (0,0) size 535x16
-                    text run at (0,0) width 535: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
-                RenderListItem {LI} at (40,98) size 672x16
-                  RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderText {#text} at (0,0) size 293x16
-                    text run at (0,0) width 293: "This list item has no special styles applied to it."
-              RenderBlock {P} at (4,1056) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
-              RenderBlock {P} at (-6,1062) size 782x48 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 764x48
-                  text run at (0,0) width 745: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
-                  text run at (0,16) width 361: "subsequent text up toward it, and a light blue background. "
-                  text run at (361,16) width 385: "In all other respects, however, the element should be normal. "
-                  text run at (746,16) width 18: "No"
-                  text run at (0,32) width 531: "styles have been applied to it besides the negative margin and the background color."
-              RenderBlock {P} at (4,1100) size 762x16 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 207x16
-                  text run at (0,0) width 207: "This element has a class of zero."
+            RenderTableCell {TD} at (12,28) size 770x1186 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x38
+                RenderText {#text} at (0,0) size 749x38
+                  text run at (0,0) width 749: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in"
+                  text run at (0,19) width 247: "section 4.1.1 of the CSS1 specification."
+              RenderBlock {P} at (4,56) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {P} at (52,123) size 666x19 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 656x19
+                  text run at (0,0) width 656: "This sentence should have an overall margin of half an inch, which will require extra text in order to test."
+              RenderBlock {P} at (4,190) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {P} at (29,234) size 712x19 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 639x19
+                  text run at (0,0) width 639: "This sentence should have an overall margin of 25 pixels, which will require extra text in order to test."
+              RenderBlock {P} at (4,278) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {P} at (74,367) size 622x19 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 615x19
+                  text run at (0,0) width 615: "This sentence should have an overall margin of 5 em, which will require extra text in order to test."
+              RenderBlock {P} at (4,456) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {P} at (194,665) size 382x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 379x57
+                  text run at (0,0) width 376: "This sentence should have an overall margin of 25%, which"
+                  text run at (0,19) width 379: "is calculated with respect to the width of the parent element."
+                  text run at (0,38) width 262: "This will require extra text in order to test."
+              RenderBlock {P} at (4,912) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {UL} at (29,956) size 712x126 [bgcolor=#00FFFF]
+                RenderListItem {LI} at (40,0) size 672x19
+                  RenderListMarker at (-17,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 374x19
+                    text run at (0,0) width 374: "This list has a margin of 25px, and a light blue background."
+                RenderListItem {LI} at (40,19) size 672x19
+                  RenderListMarker at (-17,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 267x19
+                    text run at (0,0) width 267: "Therefore, it ought to have such a margin."
+                RenderListItem {LI} at (65,63) size 622x19
+                  RenderListMarker at (-17,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 543x19
+                    text run at (0,0) width 543: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
+                RenderListItem {LI} at (40,107) size 672x19
+                  RenderListMarker at (-17,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 295x19
+                    text run at (0,0) width 295: "This list item has no special styles applied to it."
+              RenderBlock {P} at (4,1107) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."
+              RenderBlock {P} at (-6,1116) size 782x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 781x57
+                  text run at (0,0) width 754: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
+                  text run at (0,19) width 371: "subsequent text up toward it, and a light blue background. "
+                  text run at (371,19) width 392: "In all other respects, however, the element should be normal. "
+                  text run at (763,19) width 18: "No"
+                  text run at (0,38) width 537: "styles have been applied to it besides the negative margin and the background color."
+              RenderBlock {P} at (4,1163) size 762x19 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 209x19
+                  text run at (0,0) width 209: "This element has a class of zero."

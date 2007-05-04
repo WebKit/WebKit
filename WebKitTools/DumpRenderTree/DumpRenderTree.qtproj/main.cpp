@@ -34,6 +34,11 @@
 #include <qdir.h>
 #include <qdebug.h>
 
+#ifdef Q_WS_X11
+#include <qx11info_x11.h>
+#include <fontconfig/fontconfig.h>
+#endif
+
 #include <signal.h>
 
 void messageHandler(QtMsgType, const char *)
@@ -49,7 +54,37 @@ static void crashHandler(int sig)
 
 int main(int argc, char* argv[])
 {
+#ifdef Q_WS_X11
+    FcInit();
+    FcConfig *config = FcConfigCreate();
+    QByteArray fontDir = getenv("WEBKIT_TESTFONTS");
+    if (fontDir.isEmpty()) {
+        fprintf(stderr,
+                "\n\n"
+                "--------------------------------------------------------------------\n"
+                "WEBKIT_TESTFONTS environment variable is not set.\n"
+                "This variable has to point to the directory containing the fonts\n"
+                "you can checkout from svn://labs.trolltech.com/svn/webkit/testfonts\n"
+                "--------------------------------------------------------------------\n"
+);
+        exit(1);
+    }
+    char currentPath[PATH_MAX+1];
+    getcwd(currentPath, PATH_MAX);
+    QByteArray configFile = currentPath;
+    configFile += "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/fonts.conf";
+    if (!FcConfigParseAndLoad (config, (FcChar8*) configFile.data(), true)) 
+        qFatal("Couldn't load font configuration file");
+    if (!FcConfigAppFontAddDir (config, (FcChar8*) fontDir.data()))
+        qFatal("Couldn't add font dir!");
+    FcConfigSetCurrent(config);
+#endif
     QApplication app(argc, argv);
+
+#ifdef Q_WS_X11
+    QX11Info::setAppDpiY(0, 96);
+    QX11Info::setAppDpiX(0, 96);
+#endif
 
     signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
     signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */

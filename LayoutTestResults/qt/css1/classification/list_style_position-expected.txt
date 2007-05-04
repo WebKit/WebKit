@@ -3,50 +3,50 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 352x16
-          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,30) size 784x48
-        RenderText {#text} at (0,0) size 144x48
-          text run at (0,0) width 144: ".one {list-style-position: outside;}"
-          text run at (144,0) width 0: " "
-          text run at (0,16) width 140: ".two {list-style-position: inside;}"
-          text run at (140,16) width 0: " "
-          text run at (0,32) width 0: " "
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {UL} at (0,108) size 784x32
-        RenderListItem {LI} at (40,0) size 744x32
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 714x32
-            text run at (0,0) width 714: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving blank"
-            text run at (0,16) width 156: "space beneath the bullet."
-      RenderBlock {UL} at (0,154) size 784x32
-        RenderListItem {LI} at (40,0) size 744x32
-          RenderListMarker at (-1,0) size 6x16: bullet
-          RenderText {#text} at (13,0) size 741x32
-            text run at (13,0) width 728: "The text in this item should not behave as expected; that is, it should line up with the bullet on the left margin, leaving"
-            text run at (0,16) width 213: "no blank space beneath the bullet."
-      RenderTable {TABLE} at (0,200) size 784x126 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x124
-          RenderTableRow {TR} at (0,0) size 782x24
-            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 157x16
-                RenderText {#text} at (4,4) size 157x16
-                  text run at (4,4) width 157: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,24) size 782x100
-            RenderTableCell {TD} at (0,62) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x16
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,33) size 784x57
+        RenderText {#text} at (0,1) size 288x55
+          text run at (0,1) width 288: ".one {list-style-position: outside;}"
+          text run at (288,1) width 0: " "
+          text run at (0,20) width 280: ".two {list-style-position: inside;}"
+          text run at (280,20) width 0: " "
+          text run at (0,39) width 0: " "
+      RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,120) size 784x38
+        RenderListItem {LI} at (40,0) size 744x38
+          RenderListMarker at (-17,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 723x38
+            text run at (0,0) width 723: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving blank"
+            text run at (0,19) width 160: "space beneath the bullet."
+      RenderBlock {UL} at (0,172) size 784x38
+        RenderListItem {LI} at (40,0) size 744x38
+          RenderListMarker at (-1,0) size 7x19: bullet
+          RenderText {#text} at (14,0) size 703x38
+            text run at (14,0) width 689: "The text in this item should not behave as expected; that is, it should line up with the bullet on the left margin,"
+            text run at (0,19) width 267: "leaving no blank space beneath the bullet."
+      RenderTable {TABLE} at (0,224) size 784x142 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x140
+          RenderTableRow {TR} at (0,0) size 782x28
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x20
+                RenderText {#text} at (4,4) size 159x20
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 782x112
+            RenderTableCell {TD} at (0,70) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,24) size 770x100 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {UL} at (4,4) size 762x32
-                RenderListItem {LI} at (40,0) size 722x32
-                  RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderText {#text} at (0,0) size 714x32
-                    text run at (0,0) width 714: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving blank"
-                    text run at (0,16) width 156: "space beneath the bullet."
-              RenderBlock {UL} at (4,50) size 762x32
-                RenderListItem {LI} at (40,0) size 722x32
-                  RenderListMarker at (-1,0) size 6x16: bullet
-                  RenderText {#text} at (13,0) size 692x32
-                    text run at (13,0) width 679: "The text in this item should not behave as expected; that is, it should line up with the bullet on the left margin,"
-                    text run at (0,16) width 262: "leaving no blank space beneath the bullet."
+            RenderTableCell {TD} at (12,28) size 770x112 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 762x38
+                RenderListItem {LI} at (40,0) size 722x38
+                  RenderListMarker at (-17,0) size 7x19: bullet
+                  RenderText {#text} at (0,0) size 685x38
+                    text run at (0,0) width 685: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving"
+                    text run at (0,19) width 198: "blank space beneath the bullet."
+              RenderBlock {UL} at (4,56) size 762x38
+                RenderListItem {LI} at (40,0) size 722x38
+                  RenderListMarker at (-1,0) size 7x19: bullet
+                  RenderText {#text} at (14,0) size 703x38
+                    text run at (14,0) width 689: "The text in this item should not behave as expected; that is, it should line up with the bullet on the left margin,"
+                    text run at (0,19) width 267: "leaving no blank space beneath the bullet."
