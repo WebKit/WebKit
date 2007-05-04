@@ -2759,6 +2759,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)drawRect:(NSRect)rect
 {
+    ASSERT_MAIN_THREAD();
     LOG(View, "%@ drawing", self);
 
     const NSRect *rects;

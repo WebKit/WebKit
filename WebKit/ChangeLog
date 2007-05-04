@@ -1,3 +1,13 @@
+2007-05-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Added main thread assertion to WebHTMLView to help make sure 3rd party clients aren't trying
+        to draw on secondary threads
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]): Added ASSERT_MAIN_THREAD()
+
 2007-05-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Antti.
