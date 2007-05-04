@@ -3694,22 +3694,22 @@ void FrameLoader::purgePageCache()
 
     HistoryItemVector items;
     bfList->backListWithLimit(INT_MAX, items);
-    RefPtr<HistoryItem> oldestNonSnapbackItem;
+    RefPtr<HistoryItem> oldestItem;
     
     unsigned int i = 0;
     
     for (; i < items.size(); ++i) {
         if (items[i]->cachedPage()) {
-            if (!oldestNonSnapbackItem && !items[i]->alwaysAttemptToUseCachedPage())
-                oldestNonSnapbackItem = items[i];
+            if (!oldestItem)
+                oldestItem = items[i];
             pagesCached++;
         }
     }
     
     // Snapback items are never directly purged here.
-    if (pagesCached >= sizeLimit && oldestNonSnapbackItem) {
-        LOG(PageCache, "Purging back/forward cache, %s\n", oldestNonSnapbackItem->url().url().ascii());
-        oldestNonSnapbackItem->setCachedPage(0);
+    if (pagesCached >= sizeLimit && oldestItem) {
+        LOG(PageCache, "Purging back/forward cache, %s\n", oldestItem->url().url().ascii());
+        oldestItem->setCachedPage(0);
     }
 }
 

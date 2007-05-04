@@ -461,9 +461,9 @@ static WebWindowWatcher *_windowWatcher = nil;
     return result;
 }
 
-- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
+- (void)setAlwaysAttemptToUsePageCache:(BOOL)flag
 {
-    core(_private)->setAlwaysAttemptToUseCachedPage(flag);
+    // Safari 2.0 uses this for SnapBack, so we stub it out to avoid a crash.
 }
 
 - (NSURL *)URL

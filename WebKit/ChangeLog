@@ -1,5 +1,22 @@
 2007-05-04  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        First step in fixing <rdar://problem/5055182> The back cache has no global cap
+
+        Stop giving SnapBack infinite cache-ability. Instead, make SnapBack rely
+        on the underlying back cache.
+        
+        I left -setAlwaysAttemptToUsePageCache: as an empty stub because we don't 
+        want to break Safari 2.0, but I removed its header declaration so nobody 
+        else starts using it.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem setAlwaysAttemptToUsePageCache:]):
+        * History/WebHistoryItemPrivate.h:
+
+2007-05-04  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Brady Eidson.
         
         Some cleanup in preparation for fixing <rdar://problem/5055182> The 
