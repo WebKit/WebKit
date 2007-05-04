@@ -1,3 +1,15 @@
+2007-05-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison.
+
+        <rdar://problem/5120281> CrashTracer: [USER] 1 crash in Mail at WebCore::CSSComputedStyleDeclaration::copyInheritableProperties() const
+
+        Problem is that checkAncestor and lastClosed can be nil when createMarkup is called unrendered nodes, and that was not checked for.
+        
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        Nil-check checkAncestor and lastClosed.
+
 2007-05-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin.
