@@ -2,6 +2,15 @@
 
         Reviewed by Zack
 
+        Revert on line of the last commit. We still want to keep the RPATH
+        support in the pro file.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+
+2007-05-04  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
         Remove the old bitmap fonts I tried using to get reliable results from
         DumpRenderTree on X11. Instead we now use the URW Type1 fonts from 
         ghostscript. I've added a mirror to simply check them out at 
