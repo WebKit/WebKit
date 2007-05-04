@@ -1,3 +1,12 @@
+2007-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5007921> Number.toExponential doesn't work for negative numbers
+
+        * kjs/number_object.cpp: (NumberProtoFunc::callAsFunction):
+        Added a call to fabs before calling log10.
+
 2007-05-03  Holger Freyther <freyther@kde.org>
 
         Reviewed by Zack, landed by Simon.
