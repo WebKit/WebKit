@@ -39,6 +39,9 @@ typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
 class BackForwardList : public Shared<BackForwardList> {
 public: 
+    static void setDefaultPageCacheSize(unsigned);
+    static unsigned defaultPageCacheSize();
+
     BackForwardList();
     ~BackForwardList();
     
@@ -63,11 +66,8 @@ public:
     int forwardListCount();
     bool containsItem(HistoryItem*);
 
-    static void setDefaultPageCacheSize(unsigned);
-    static unsigned defaultPageCacheSize();
     void setPageCacheSize(unsigned);
     unsigned pageCacheSize();
-    bool usesPageCache();
     
     void close();
     bool closed();

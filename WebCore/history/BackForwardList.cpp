@@ -224,11 +224,6 @@ void BackForwardList::clearPageCache()
     HistoryItem::performPendingReleaseOfCachedPages();
 }
 
-bool BackForwardList::usesPageCache()
-{
-    return m_pageCacheSize != 0;
-}
-
 int BackForwardList::backListCount()
 {
     return m_current == NoCurrentItemIndex ? 0 : m_current;

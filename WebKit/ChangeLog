@@ -1,3 +1,25 @@
+2007-05-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Some cleanup in preparation for fixing <rdar://problem/5055182> The 
+        back/forward cache has no global cap
+        
+        Unified naming of WebKit/WebCore b/f lists -- instead of the potpourri 
+        of webBackForwardList, backForwardList, list, kitList, coreList, listWrapper, 
+        and webCoreBackForwardList, we use webBackForwardList for WebKit and 
+        backForwardList for WebCore, matching their respective class names.
+        
+        Removed "private" versions of kit() and core() -- kit() and core() are
+        canonically used for converting between WebKit API objects and WebCore
+        API objects. I think it's clearer to have only one way to do this.
+
+        Removed COMPUTE_DEFAULT_PAGE_CACHE_SIZE, since it was unused.
+        
+        Removed _clearPageCache, since it was unused and it duplicated -setPageCacheSize:0.
+
+        Removed _usesPageCache, since it was unused and it duplicated -pageCacheSize.
+
 2007-05-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

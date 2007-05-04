@@ -1,3 +1,18 @@
+2007-05-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Removed export of clearPageCache(), since it was unused externally. I plan
+        to remove its use from WebCore eventually, too.
+
+        Removed usesPageCache(), since it was unused and it duplicated pageCacheSize().
+
+        * WebCore.exp:
+        * history/BackForwardList.cpp:
+        * history/BackForwardList.h: Moved statics to the top of the class definition.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+
 2007-05-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Antti.

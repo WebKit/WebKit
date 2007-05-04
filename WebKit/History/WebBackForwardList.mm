@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,59 +25,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import <JavaScriptCore/Assertions.h>
+
 #import "WebBackForwardList.h"
 #import "WebBackForwardListInternal.h"
 
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
+#import "WebKitSystemBits.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferencesPrivate.h"
-#import "WebKitSystemBits.h"
-
 #import "WebTypesInternal.h"
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
-
 #import <wtf/RetainPtr.h>
-
-#define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 
 using WebCore::BackForwardList;
 using WebCore::HistoryItem;
 using WebCore::HistoryItemVector;
 
-static inline WebBackForwardListPrivate* kitPrivate(BackForwardList* list) { return (WebBackForwardListPrivate*)list; }
-static inline BackForwardList* core(WebBackForwardListPrivate* list) { return (BackForwardList*)list; }
-
-HashMap<BackForwardList*, WebBackForwardList*>& backForwardListWrappers()
+static HashMap<BackForwardList*, WebBackForwardList*>& backForwardLists()
 {
-    static HashMap<BackForwardList*, WebBackForwardList*> backForwardListWrappers;
-    return backForwardListWrappers;
+    static HashMap<BackForwardList*, WebBackForwardList*> staticBackForwardLists;
+    return staticBackForwardLists;
 }
 
 @implementation WebBackForwardList (WebBackForwardListInternal)
 
-BackForwardList* core(WebBackForwardList *list)
+BackForwardList* core(WebBackForwardList *webBackForwardList)
 {
-    if (!list)
+    if (!webBackForwardList)
         return 0;
-    return core(list->_private);
+
+    return reinterpret_cast<BackForwardList*>(webBackForwardList->_private);
 }
 
-WebBackForwardList *kit(BackForwardList* list)
+WebBackForwardList *kit(BackForwardList* backForwardList)
 {
-    if (!list)
+    if (!backForwardList)
         return nil;
-        
-    WebBackForwardList *kitList = backForwardListWrappers().get(list);
-    if (kitList)
-        return kitList;
-    
-    return [[[WebBackForwardList alloc] initWithWebCoreBackForwardList:list] autorelease];
+
+    if (WebBackForwardList *webBackForwardList = backForwardLists().get(backForwardList))
+        return webBackForwardList;
+
+    return [[[WebBackForwardList alloc] initWithBackForwardList:backForwardList] autorelease];
 }
 
 + (void)setDefaultPageCacheSizeIfNecessary
@@ -85,7 +79,7 @@ WebBackForwardList *kit(BackForwardList* list)
     static bool initialized = false;
     if (initialized)
         return;
-        
+
     vm_size_t memSize = WebSystemMainMemory();
     unsigned s = [[WebPreferences standardPreferences] _pageCacheSize];
     if (memSize >= 1024 * 1024 * 1024)
@@ -98,15 +92,15 @@ WebBackForwardList *kit(BackForwardList* list)
     initialized = true;
 }
 
-- (id)initWithWebCoreBackForwardList:(PassRefPtr<BackForwardList>)list
+- (id)initWithBackForwardList:(PassRefPtr<BackForwardList>)backForwardList
 {   
     WebCoreThreadViolationCheck();
     self = [super init];
     if (!self)
         return nil;
-    
-    _private = kitPrivate(list.releaseRef());
-    backForwardListWrappers().set(core(_private), self);
+
+    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList.releaseRef());
+    backForwardLists().set(core(self), self);
     return self;
 }
 
@@ -123,28 +117,16 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (id)init
 {
-    WebCoreThreadViolationCheck();
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-    
-    BackForwardList* coreList = new BackForwardList;
-    _private = kitPrivate(coreList);
-    coreList->ref();
-    
-    backForwardListWrappers().set(coreList, self);
-    
-    return self;
+    return [self initWithBackForwardList:new BackForwardList];
 }
 
 - (void)dealloc
 {
     WebCoreThreadViolationCheck();
-    BackForwardList* coreList = core(_private);
-    ASSERT(coreList->closed());
-    backForwardListWrappers().remove(coreList);
-    coreList->deref();
+    BackForwardList* backForwardList = core(self);
+    ASSERT(backForwardList->closed());
+    backForwardLists().remove(backForwardList);
+    backForwardList->deref();
         
     [super dealloc];
 }
@@ -152,22 +134,22 @@ WebBackForwardList *kit(BackForwardList* list)
 - (void)finalize
 {
     WebCoreThreadViolationCheck();
-    BackForwardList* coreList = core(_private);
-    ASSERT(coreList->closed());
-    backForwardListWrappers().remove(coreList);
-    coreList->deref();
+    BackForwardList* backForwardList = core(self);
+    ASSERT(backForwardList->closed());
+    backForwardLists().remove(backForwardList);
+    backForwardList->deref();
         
     [super finalize];
 }
 
 - (void)_close
 {
-    core(_private)->close();
+    core(self)->close();
 }
 
 - (void)addItem:(WebHistoryItem *)entry;
 {
-    core(_private)->addItem(core(entry));
+    core(self)->addItem(core(entry));
     
     // Since the assumed contract with WebBackForwardList is that it retains its WebHistoryItems,
     // the following line prevents a whole class of problems where a history item will be created in
@@ -177,42 +159,42 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (void)removeItem:(WebHistoryItem *)item
 {
-    core(_private)->removeItem(core(item));
+    core(self)->removeItem(core(item));
 }
 
 - (BOOL)containsItem:(WebHistoryItem *)item
 {
-    return core(_private)->containsItem(core(item));
+    return core(self)->containsItem(core(item));
 }
 
 - (void)goBack
 {
-    core(_private)->goBack();
+    core(self)->goBack();
 }
 
 - (void)goForward
 {
-    core(_private)->goForward();
+    core(self)->goForward();
 }
 
 - (void)goToItem:(WebHistoryItem *)item
 {
-    core(_private)->goToItem(core(item));
+    core(self)->goToItem(core(item));
 }
 
 - (WebHistoryItem *)backItem
 {
-    return [[kit(core(_private)->backItem()) retain] autorelease];
+    return [[kit(core(self)->backItem()) retain] autorelease];
 }
 
 - (WebHistoryItem *)currentItem
 {
-    return [[kit(core(_private)->currentItem()) retain] autorelease];
+    return [[kit(core(self)->currentItem()) retain] autorelease];
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    return [[kit(core(_private)->forwardItem()) retain] autorelease];
+    return [[kit(core(self)->forwardItem()) retain] autorelease];
 }
 
 static NSArray* vectorToNSArray(HistoryItemVector& list)
@@ -228,25 +210,25 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
 - (NSArray *)backListWithLimit:(int)limit;
 {
     HistoryItemVector list;
-    core(_private)->backListWithLimit(limit, list);
+    core(self)->backListWithLimit(limit, list);
     return vectorToNSArray(list);
 }
 
 - (NSArray *)forwardListWithLimit:(int)limit;
 {
     HistoryItemVector list;
-    core(_private)->forwardListWithLimit(limit, list);
+    core(self)->forwardListWithLimit(limit, list);
     return vectorToNSArray(list);
 }
 
 - (int)capacity
 {
-    return core(_private)->capacity();
+    return core(self)->capacity();
 }
 
 - (void)setCapacity:(int)size
 {
-    core(_private)->setCapacity(size);
+    core(self)->setCapacity(size);
 }
 
 
@@ -259,12 +241,12 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    BackForwardList* coreList = core(_private);
-    HistoryItemVector& entries = coreList->entries();
+    BackForwardList* backForwardList = core(self);
+    HistoryItemVector& entries = backForwardList->entries();
     
     unsigned size = entries.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (entries[i] == coreList->currentItem()) {
+        if (entries[i] == backForwardList->currentItem()) {
             [result appendString:@" >>>"]; 
         } else {
             [result appendString:@"    "]; 
@@ -285,39 +267,29 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
     return result;
 }
 
-- (void)_clearPageCache
+- (void)setPageCacheSize:(unsigned)size
 {
-    core(_private)->clearPageCache();
-}
-
-- (void)setPageCacheSize: (unsigned)size
-{
-    core(_private)->setPageCacheSize(size);
+    core(self)->setPageCacheSize(size);
 }
 
 - (unsigned)pageCacheSize
 {
-    return core(_private)->pageCacheSize();
-}
-
-- (BOOL)_usesPageCache
-{
-    return core(_private)->usesPageCache();
+    return core(self)->pageCacheSize();
 }
 
 - (int)backListCount
 {
-    return core(_private)->backListCount();
+    return core(self)->backListCount();
 }
 
 - (int)forwardListCount
 {
-    return core(_private)->forwardListCount();
+    return core(self)->forwardListCount();
 }
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return [[kit(core(_private)->itemAtIndex(index)) retain] autorelease];
+    return [[kit(core(self)->itemAtIndex(index)) retain] autorelease];
 }
 
 @end
