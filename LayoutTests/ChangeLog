@@ -2,7 +2,8 @@
 
         Reviewed by Adele.
 
-        - test for <rdar://problem/5007921> Number.toExponential doesn't work for negative numbers
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12821
+          <rdar://problem/5007921> Number.toExponential doesn't work for negative numbers
 
         * fast/js/kde/resources/Number.js: Added negative number versions of some tests of
         toFixed, toExponential, toPrecision, etc.
