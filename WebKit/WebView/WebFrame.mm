@@ -764,14 +764,18 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
-    if (!URL)
-        URL = createUniqueWebDataURL();
+    KURL responseURL;
+    if (!URL) {
+        URL = [NSURL URLWithString:@"about:blank"];
+        responseURL = createUniqueWebDataURL();
+    }
+    
     ResourceRequest request(URL);
 
     // hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest()];
 
-    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, unreachableURL);
+    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, unreachableURL, responseURL);
 
     [self _frameLoader]->load(request, substituteData);
 }

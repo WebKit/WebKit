@@ -1,3 +1,31 @@
+2007-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5179977> Use the correct URLs when dispatching delegate methods for data loads.
+
+        Restore behavior to matching release WebKit by adding a response URL to SubstituteData. If a nil base URL is
+        passed, set the _request_ URL to "about:blank", but the response URL to a generated "applewebdata" URL.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        First, check for the SubstituteData's response URL.
+
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        No need to special case applewebdata URLs here, they're only used in the response.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::handleDataLoadNow):
+        If the substitute data has a response URL, use it.
+
+        (WebCore::MainResourceLoader::loadNow):
+        Only load "about:blank" as an empty document if there's no substitute data.
+
+        * loader/SubstituteData.h:
+        (WebCore::SubstituteData::SubstituteData):
+        (WebCore::SubstituteData::responseURL):
+        Add responseURL member to SubstituteData.
+
 2007-05-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.

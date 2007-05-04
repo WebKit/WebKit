@@ -1,3 +1,17 @@
+2007-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5179977> Use the correct URLs when dispatching delegate methods for data loads.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        If the base URL is nil, set it to "about:blank", and set the response URL to a generated applewebdata URL.
+        
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:]):
+        No need to special-case applewebdata URLs here anymore, they're only used in responses.
+
 2007-05-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.

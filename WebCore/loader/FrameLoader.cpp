@@ -2350,7 +2350,9 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
         open(*cachedPage);
         cachedPage->clear();
     } else {        
-        KURL url = pdl->URL();
+        KURL url = pdl->substituteData().responseURL();
+        if (url.isEmpty())
+            url = pdl->URL();
         if (url.isEmpty())
             url = pdl->responseURL();
         if (url.isEmpty())
@@ -3339,10 +3341,7 @@ void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
         case PolicyUse: {
             ResourceRequest request(check.request());
             
-            // Don't call canHandleRequest for applewebdata URLs if there is valid substitute data.
-            // Data loads without a base URL get an applewebdata URL for backward compat reasons.
-            bool isLoadingData = m_policyDocumentLoader && m_policyDocumentLoader->substituteData().isValid() && equalIgnoringCase(String(request.url().protocol()), "applewebdata");
-            if (!isLoadingData && !m_client->canHandleRequest(request)) {
+            if (!m_client->canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_client->cannotShowURLError(check.request()));
                 check.clearRequest();
             }

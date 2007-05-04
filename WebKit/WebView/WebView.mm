@@ -1009,10 +1009,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
         return YES;
     }
 
-    // applewebdata URLs are used for data loads where no base URL has been specified.
-    if ([[[[request URL] scheme] lowercaseString] isEqualToString:@"applewebdata"])
-        return YES;
-    
     return [self _representationExistsForURLScheme:[[request URL] scheme]];
 }
 
