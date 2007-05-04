@@ -1,3 +1,24 @@
+<<<<<<< .mine
+2007-05-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+        
+        Some cleanup in preparation for fixing <rdar://problem/5055182> The 
+        back/forward cache has no global cap
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::provisionalLoadStarted): Moved "Can I cache this
+        page?" logic to canCachePage(). Moved "I am caching this page" logic to
+        cachePageToHistoryItem().
+        (WebCore::FrameLoader::canCachePage): Moved above logic here.
+        (WebCore::FrameLoader::cachePageToHistoryItem): Removed bogus NULL check
+        and failure return value. Moved above logic here. Don't call setCachedPage()
+        until the CachedPage is fully constructed.
+        (WebCore::FrameLoader::purgePageCache): Removed comment that duplicated
+        the function name.
+        * loader/FrameLoader.h:
+
+=======
 2007-05-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison.
@@ -10,6 +31,7 @@
         (WebCore::createMarkup):
         Nil-check checkAncestor and lastClosed.
 
+>>>>>>> .r21243
 2007-05-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin.

@@ -1528,35 +1528,13 @@ void FrameLoader::provisionalLoadStarted()
 {
     m_firstLayoutDone = false;
     cancelRedirection(true);
-    FrameLoadType loadType = this->loadType();
     m_client->provisionalLoadStarted();
 
-    // Cache the page, if possible.
-    // Don't write to the cache if in the middle of a redirect, since we will want to
-    // store the final page we end up on.
-    // No point writing to the cache on a reload or loadSame, since we will just write
-    // over it again when we leave that page.
-    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
-    // are the most interesting pages on the web, and often those that would benefit the most from caching!
-    if (m_frame->page() && m_frame->page()->backForwardList()->usesPageCache() 
-        && canCachePage()
-        && m_currentHistoryItem
-        && !isQuickRedirectComing()
-        && loadType != FrameLoadTypeReload 
-        && loadType != FrameLoadTypeReloadAllowingStaleData
-        && loadType != FrameLoadTypeSame
-        && !documentLoader()->isLoadingInAPISense()
-        && !documentLoader()->isStopping()) {
+    if (canCachePage()) {
         if (m_client->canCachePage()) {
             if (!m_currentHistoryItem->cachedPage()) {
-                // Add the items to this page's cache.
-                if (cachePageToHistoryItem(m_currentHistoryItem.get())) {
-                    LOG(PageCache, "WebCorePageCache: CachedPage %p created for HistoryItem %p (%s)", m_currentHistoryItem->cachedPage(), m_currentHistoryItem.get(), 
-                        m_currentHistoryItem->urlString().ascii().data());
-                        
-                    // See if any cached pages need to be purged after the addition of this new cached page.
-                    purgePageCache();
-                }
+                cachePageToHistoryItem(m_currentHistoryItem.get());
+                purgePageCache();
             }
         } else {
             // Put the document into a null state, so it can be restored correctly. 
@@ -1606,20 +1584,37 @@ void FrameLoader::addData(const char* bytes, int length)
 
 bool FrameLoader::canCachePage()
 {    
-    if (documentLoader() && !documentLoader()->mainDocumentError().isNull())
-        return false;
+    // Cache the page, if possible.
+    // Don't write to the cache if in the middle of a redirect, since we will want to
+    // store the final page we end up on.
+    // No point writing to the cache on a reload or loadSame, since we will just write
+    // over it again when we leave that page.
+    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
+    // are the most interesting pages on the web, and often those that would benefit the most from caching!
+    FrameLoadType loadType = this->loadType();
 
-    return m_frame->document()
+    return m_documentLoader
+        && m_documentLoader->mainDocumentError().isNull()
         && !m_frame->tree()->childCount()
         && !m_frame->tree()->parent()
         && !m_containsPlugIns
         && !m_URL.protocol().startsWith("https")
+        && m_frame->document()
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
         // If you change the following to allow caching of documents with password fields,
         // you also need to make sure that Frame::setDocument turns on secure keyboard
         // entry mode if the document's focused node requires it.
-        && !m_frame->document()->hasPasswordField();
+        && !m_frame->document()->hasPasswordField()
+        && m_frame->page() 
+        && m_frame->page()->backForwardList()->usesPageCache() 
+        && m_currentHistoryItem
+        && !isQuickRedirectComing()
+        && loadType != FrameLoadTypeReload 
+        && loadType != FrameLoadTypeReloadAllowingStaleData
+        && loadType != FrameLoadTypeSame
+        && !m_documentLoader->isLoadingInAPISense()
+        && !m_documentLoader->isStopping();
 }
 
 void FrameLoader::updatePolicyBaseURL()
@@ -3547,22 +3542,18 @@ bool FrameLoader::loadProvisionalItemFromCachedPage()
     return true;
 }
 
-bool FrameLoader::cachePageToHistoryItem(HistoryItem* item)
+void FrameLoader::cachePageToHistoryItem(HistoryItem* item)
 {
     RefPtr<CachedPage> cachedPage = CachedPage::create(m_frame->page());
-    
-    if (!cachedPage) {
-        item->setCachedPage(0);
-        return false;
-    }
-    
-    item->setCachedPage(cachedPage);
-
     cachedPage->setTimeStampToNow();
     cachedPage->setDocumentLoader(documentLoader());
     m_client->saveDocumentViewToCachedPage(cachedPage.get());
 
-    return true;
+    item->setCachedPage(cachedPage);
+
+    LOG(PageCache, "WebCorePageCache: CachedPage %p created for HistoryItem %p (%s)", 
+        m_currentHistoryItem->cachedPage(), m_currentHistoryItem.get(), 
+        m_currentHistoryItem->urlString().ascii().data());
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& URL) const
@@ -3694,7 +3685,6 @@ void FrameLoader::restoreScrollPositionAndViewState()
 
 void FrameLoader::purgePageCache()
 {
-    // This method implements the rule for purging the page cache.
     if (!m_frame->page())
         return;
         

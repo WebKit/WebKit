@@ -467,7 +467,7 @@ namespace WebCore {
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
         
         bool loadProvisionalItemFromCachedPage();
-        bool cachePageToHistoryItem(HistoryItem*);
+        void cachePageToHistoryItem(HistoryItem*);
 
         void emitLoadEvent();
 
