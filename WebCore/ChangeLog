@@ -1,3 +1,31 @@
+2007-05-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+
+        Use TextBreakIterator for sentence breaking instead of TextBoundaries.
+
+        * WebCore.xcodeproj/project.pbxproj: Added TextBreakIeratorInternalICUMac.mm
+        * editing/visible_units.cpp:
+        (WebCore::startSentenceBoundary): Call TextBreakIterator instead of TextBoundaries.
+        (WebCore::endSentenceBoundary): Call TextBreakIterator instead of TextBoundaries.
+        (WebCore::previousSentencePositionBoundary): Call TextBreakIterator instead of TextBoundaries.
+        (WebCore::nextSentencePositionBoundary): Call TextBreakIterator instead of TextBoundaries.
+        * platform/TextBoundaries.h: Removed findSentenceBoundary, findNextSentenceFromIndex.
+        * platform/TextBreakIterator.h: Added sentenceBreakIterator.
+        * platform/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIterator): Add locale parameter (needed to maintain functionality that TextBoundaries code had).
+        (WebCore::characterBreakIterator): Pass en_us for locale (same as old code).
+        (WebCore::wordBreakIterator): Pass en_us for locale (same as old code).
+        (WebCore::lineBreakIterator): Pass en_us for locale (same as old code).
+        (WebCore::sentenceBreakIterator): Added.
+        * platform/TextBreakIteratorInternalICU.h: Added.
+        * platform/gdk/TemporaryLinkStubs.cpp: Removed findNextSentenceFromIndex, findSentenceBoundary.
+        (WebCore::currentTextBreakLocaleID): Added stub.
+        * platform/mac/TextBoundaries.mm: Removed currentTextBreakLocaleID, findSentenceBoundary, findNextSentenceFromIndex.
+        * platform/mac/TextBreakIteratorInternalICUMac.mm: Added.
+        (WebCore::currentTextBreakLocaleID): Moved from TextBoundaries.mm
+        * platform/qt/TextBoundaries.cpp: Removed findNextSentenceFromIndex, findSentenceBoundary.
+
 2007-05-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

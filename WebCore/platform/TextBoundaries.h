@@ -33,9 +33,6 @@ namespace WebCore {
     void findWordBoundary(const UChar*, int len, int position, int* start, int* end);
     int findNextWordFromIndex(const UChar*, int len, int position, bool forward);
 
-    void findSentenceBoundary(const UChar*, int len, int position, int* start, int* end);
-    int findNextSentenceFromIndex(const UChar*, int len, int position, bool forward);
-
 }
 
 #endif

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
  * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -19,29 +18,14 @@
  *
  */
 
-#ifndef TextBreakIterator_h
-#define TextBreakIterator_h
+#ifndef TextBreakIteratorInternalICU_h
+#define TextBreakIteratorInternalICU_h
 
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-    class TextBreakIterator;
-
-    // Note: The returned iterator is good only until you get another iterator.
-    TextBreakIterator* characterBreakIterator(const UChar*, int length);
-    TextBreakIterator* wordBreakIterator(const UChar*, int length);
-    TextBreakIterator* lineBreakIterator(const UChar*, int length);
-    TextBreakIterator* sentenceBreakIterator(const UChar*, int length);
-
-    int textBreakFirst(TextBreakIterator*);
-    int textBreakNext(TextBreakIterator*);
-    int textBreakCurrent(TextBreakIterator*);
-    int textBreakPreceding(TextBreakIterator*, int);
-    int textBreakFollowing(TextBreakIterator*, int);
-    bool isTextBreak(TextBreakIterator*, int);
-
-    const int TextBreakDone = -1;
+    const char* currentTextBreakLocaleID();
 
 }
 

@@ -43,19 +43,6 @@
 namespace WebCore
 {
 
-int findNextSentenceFromIndex(UChar const* buffer, int len, int position, bool forward)
-{
-    QString str(reinterpret_cast<QChar const*>(buffer), len);
-    notImplemented();
-    return 0;
-}
-
-void findSentenceBoundary(UChar const* buffer, int len, int position, int* start, int* end)
-{
-    QString str(reinterpret_cast<QChar const*>(buffer), len);
-    notImplemented();
-}
-
 int findNextWordFromIndex(UChar const* buffer, int len, int position, bool forward)
 {
     QString str(reinterpret_cast<QChar const*>(buffer), len);

@@ -98,10 +98,9 @@ void Widget::setIsSelected(bool) { notImplementedGdk(); }
 void Widget::invalidate() { notImplementedGdk(); }
 void Widget::invalidateRect(const IntRect&) { notImplementedGdk(); }
 
-int WebCore::findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplementedGdk(); return 0; }
-void WebCore::findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplementedGdk(); }
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplementedGdk(); return 0; }
 void WebCore::findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }
+const char* WebCore::currentTextBreakLocaleID() { notImplementedGdk(); return "en_us"; }
 
 void ChromeClientGdk::chromeDestroyed() { notImplementedGdk(); }
 FloatRect ChromeClientGdk::windowRect() { notImplementedGdk(); return FloatRect(); }

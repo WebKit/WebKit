@@ -2261,6 +2261,7 @@
 		AA882B300B4EF5EB006D26D1 /* PointerEventsHitRules.h in Headers */ = {isa = PBXBuildFile; fileRef = AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */; };
 		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
 		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
+		AACF144D0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AACF144C0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm */; };
 		AACF7C4E0B42EE6000080BD8 /* SVGParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */; };
 		AACF7C4F0B42EE6000080BD8 /* SVGParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF7C4D0B42EE6000080BD8 /* SVGParserUtilities.cpp */; };
 		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */; };
@@ -5341,6 +5342,7 @@
 		AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PointerEventsHitRules.h; sourceTree = "<group>"; };
 		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
+		AACF144C0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBreakIteratorInternalICUMac.mm; sourceTree = "<group>"; };
 		AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGParserUtilities.h; sourceTree = "<group>"; };
 		AACF7C4D0B42EE6000080BD8 /* SVGParserUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGParserUtilities.cpp; sourceTree = "<group>"; };
 		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElement.cpp; sourceTree = "<group>"; };
@@ -6889,6 +6891,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				AACF144C0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */,
@@ -12621,6 +12624,7 @@
 				51AA3F6F0BD5AA9E00892971 /* ResourceLoaderMac.mm in Sources */,
 				2D9066060BE141D400956998 /* LayoutState.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
+				AACF144D0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
