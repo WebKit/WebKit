@@ -1,3 +1,13 @@
+2007-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        Initialise default fill with Color::black rather than parsing
+        the string "black"
+
+        * ksvg2/svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::defaultFill):
+
 2007-05-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.

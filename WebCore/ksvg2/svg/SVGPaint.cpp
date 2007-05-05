@@ -64,7 +64,7 @@ SVGPaint::~SVGPaint()
 
 SVGPaint* SVGPaint::defaultFill()
 {
-    static SVGPaint* _defaultFill = new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, String(), "black");
+    static SVGPaint* _defaultFill = new SVGPaint(Color::black);
     return _defaultFill;
 }
 
