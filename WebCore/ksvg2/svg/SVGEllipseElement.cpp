@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -54,17 +54,16 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Ry, 
 
 void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(this, LengthModeWidth, value));
+        setCxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(this, LengthModeHeight, value));
+        setCyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::rxAttr) {
-        setRxBaseValue(SVGLength(this, LengthModeWidth, value));
+        setRxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
         if (rx().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <rx> is not allowed");
     } else if (attr->name() == SVGNames::ryAttr) {
-        setRyBaseValue(SVGLength(this, LengthModeHeight, value));
+        setRyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
         if (ry().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <ry> is not allowed");
     } else {

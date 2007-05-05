@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -51,13 +51,12 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, R, r,
 
 void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(this, LengthModeWidth, value));       
+        setCxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));       
     else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(this, LengthModeHeight, value));
+        setCyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::rAttr) {
-        setRBaseValue(SVGLength(this, LengthModeOther, value));
+        setRBaseValue(SVGLength(this, LengthModeOther, attr->value()));
         if (r().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for circle <r> is not allowed");
     } else {

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
@@ -242,86 +242,85 @@ void SVGAnimationElement::parseBeginOrEndValue(double& number, const String& val
 
 void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
     if (attr->name().matches(XLinkNames::hrefAttr))
-        m_href = value;
+        m_href = attr->value();
     else if (attr->name() == SVGNames::attributeNameAttr)
-        m_attributeName = value;
+        m_attributeName = attr->value();
     else if (attr->name() == SVGNames::attributeTypeAttr) {
-        if (value == "CSS")
+        if (attr->value() == "CSS")
             m_attributeType = ATTRIBUTETYPE_CSS;
-        else if (value == "XML")
+        else if (attr->value() == "XML")
             m_attributeType = ATTRIBUTETYPE_XML;
-        else if (value == "auto")
+        else if (attr->value() == "auto")
             m_attributeType = ATTRIBUTETYPE_AUTO;
     } else if (attr->name() == SVGNames::beginAttr)
-        parseBeginOrEndValue(m_begin, value);
+        parseBeginOrEndValue(m_begin, attr->value());
     else if (attr->name() == SVGNames::endAttr)
-        parseBeginOrEndValue(m_end, value);
+        parseBeginOrEndValue(m_end, attr->value());
     else if (attr->name() == SVGNames::durAttr) {
-        m_simpleDuration = parseClockValue(value);
+        m_simpleDuration = parseClockValue(attr->value());
         if (!isIndefinite(m_simpleDuration))
             m_simpleDuration *= 1000.0;
     } else if (attr->name() == SVGNames::minAttr) {
-        m_min = parseClockValue(value);
+        m_min = parseClockValue(attr->value());
         if (!isIndefinite(m_min))
             m_min *= 1000.0;
     } else if (attr->name() == SVGNames::maxAttr) {
-        m_max = parseClockValue(value);
+        m_max = parseClockValue(attr->value());
         if (!isIndefinite(m_max))
             m_max *= 1000.0;
     } else if (attr->name() == SVGNames::restartAttr) {
-        if (value == "whenNotActive")
+        if (attr->value() == "whenNotActive")
             m_restart = RESTART_WHENNOTACTIVE;
-        else if (value == "never")
+        else if (attr->value() == "never")
             m_restart = RESTART_NEVER;
-        else if (value == "always")
+        else if (attr->value() == "always")
             m_restart = RESTART_ALWAYS;
     } else if (attr->name() == SVGNames::repeatCountAttr) {
-        if (value == "indefinite")
+        if (attr->value() == "indefinite")
             m_repeatCount = DBL_MAX;
         else
-            m_repeatCount = value.toDouble();
+            m_repeatCount = attr->value().toDouble();
     } else if (attr->name() == SVGNames::repeatDurAttr)
-        m_repeatDur = value;
+        m_repeatDur = attr->value();
     else if (attr->name() == SVGNames::fillAttr) {
-        if (value == "freeze")
+        if (attr->value() == "freeze")
             m_fill = FILL_FREEZE;
-        else if (value == "remove")
+        else if (attr->value() == "remove")
             m_fill = FILL_REMOVE;
     } else if (attr->name() == SVGNames::calcModeAttr) {
-        if (value == "discrete")
+        if (attr->value() == "discrete")
             m_calcMode = CALCMODE_DISCRETE;
-        else if (value == "linear")
+        else if (attr->value() == "linear")
             m_calcMode = CALCMODE_LINEAR;
-        else if (value == "spline")
+        else if (attr->value() == "spline")
             m_calcMode = CALCMODE_SPLINE;
-        else if (value == "paced")
+        else if (attr->value() == "paced")
             m_calcMode = CALCMODE_PACED;
     } else if (attr->name() == SVGNames::valuesAttr) {
         m_values.clear();
-        parseValues(m_values, value);
+        parseValues(m_values, attr->value());
     } else if (attr->name() == SVGNames::keyTimesAttr) {
         m_keyTimes.clear();
-        parseKeyNumbers(m_keyTimes, value);
+        parseKeyNumbers(m_keyTimes, attr->value());
     } else if (attr->name() == SVGNames::keySplinesAttr) {
         m_keySplines.clear();
-        parseKeySplines(m_keySplines, value);
+        parseKeySplines(m_keySplines, attr->value());
     } else if (attr->name() == SVGNames::fromAttr)
-        m_from = value;
+        m_from = attr->value();
     else if (attr->name() == SVGNames::toAttr)
-        m_to = value;
+        m_to = attr->value();
     else if (attr->name() == SVGNames::byAttr)
-        m_by = value;
+        m_by = attr->value();
     else if (attr->name() == SVGNames::additiveAttr) {
-        if (value == "sum")
+        if (attr->value() == "sum")
             m_additive = ADDITIVE_SUM;
-        else if (value == "replace")
+        else if (attr->value() == "replace")
             m_additive = ADDITIVE_REPLACE;
     } else if (attr->name() == SVGNames::accumulateAttr) {
-        if (value == "sum")
+        if (attr->value() == "sum")
             m_accumulate = ACCUMULATE_SUM;
-        else if (value == "none")
+        else if (attr->value() == "none")
             m_accumulate = ACCUMULATE_NONE;
     } else {
         if (SVGTests::parseMappedAttribute(attr))

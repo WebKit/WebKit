@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -98,12 +98,11 @@ void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long
 
 void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     //if (attr->name() == SVGNames::lengthAdjustAttr)
-    //    setXBaseValue(SVGLength(this, LengthModeWidth, value));
+    //    setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     //else
     if (attr->name() == SVGNames::textLengthAttr) {
-        setTextLengthBaseValue(SVGLength(this, LengthModeOther, value));
+        setTextLengthBaseValue(SVGLength(this, LengthModeOther, attr->value()));
         if (textLength().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for text attribute <textLength> is not allowed");
     } else {

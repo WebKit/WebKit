@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
@@ -58,16 +58,15 @@ bool SVGAnimateTransformElement::hasValidTarget() const
 void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::typeAttr) {
-        const String& value = attr->value();
-        if (value == "translate")
+        if (attr->value() == "translate")
             m_type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
-        else if (value == "scale")
+        else if (attr->value() == "scale")
             m_type = SVGTransform::SVG_TRANSFORM_SCALE;
-        else if (value == "rotate")
+        else if (attr->value() == "rotate")
             m_type = SVGTransform::SVG_TRANSFORM_ROTATE;
-        else if (value == "skewX")
+        else if (attr->value() == "skewX")
             m_type = SVGTransform::SVG_TRANSFORM_SKEWX;
-        else if (value == "skewY")
+        else if (attr->value() == "skewY")
             m_type = SVGTransform::SVG_TRANSFORM_SKEWY;
     } else
         SVGAnimationElement::parseMappedAttribute(attr);

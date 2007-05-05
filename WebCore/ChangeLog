@@ -1,3 +1,67 @@
+2007-05-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13592
+        parseMappedAttribute inconsistency
+
+        Do not use local vars in parseMappedAttribute for attr name and value.
+
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::parseMappedAttribute):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::parseMappedAttribute):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseMappedAttribute):
+        * ksvg2/svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::parseMappedAttribute):
+
 2007-05-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

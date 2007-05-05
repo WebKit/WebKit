@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -178,7 +178,6 @@ void SVGSVGElement::addSVGWindowEventListener(const AtomicString& eventType, con
 
 void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (!nearestViewportElement()) {
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
@@ -195,17 +194,17 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
             addSVGWindowEventListener(zoomEvent, attr);
     }
     if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, value));
+        setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, value));
+        setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
-        addCSSProperty(attr, CSS_PROP_WIDTH, value);
+        setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        addCSSProperty(attr, CSS_PROP_WIDTH, attr->value());
         if (width().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for svg attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
-        addCSSProperty(attr, CSS_PROP_HEIGHT, value);
+        setHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        addCSSProperty(attr, CSS_PROP_HEIGHT, attr->value());
         if (height().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for svg attribute <height> is not allowed");
     } else {

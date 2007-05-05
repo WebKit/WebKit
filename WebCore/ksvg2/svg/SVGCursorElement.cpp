@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -57,11 +57,10 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, Y, y,
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(0, LengthModeWidth, value));
+        setXBaseValue(SVGLength(0, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(0, LengthModeHeight, value));
+        setYBaseValue(SVGLength(0, LengthModeHeight, attr->value()));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

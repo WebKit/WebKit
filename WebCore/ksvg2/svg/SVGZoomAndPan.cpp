@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -50,11 +50,10 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
 
 bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
     if (attr->name() == SVGNames::zoomAndPanAttr) {
-        if (value == "disable")
+        if (attr->value() == "disable")
             setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
-        else if (value == "magnify")
+        else if (attr->value() == "magnify")
             setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
         return true;
     }

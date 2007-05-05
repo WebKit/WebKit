@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -50,11 +50,10 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGClipPathElement, int, Enumeration, enumeration,
 
 void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
     if (attr->name() == SVGNames::clipPathUnitsAttr) {
-        if (value == "userSpaceOnUse")
+        if (attr->value() == "userSpaceOnUse")
             setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (value == "objectBoundingBox")
+        else if (attr->value() == "objectBoundingBox")
             setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else {
         if (SVGTests::parseMappedAttribute(attr))

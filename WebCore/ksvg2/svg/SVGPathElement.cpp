@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -268,14 +268,13 @@ void SVGPathElement::svgClosePath()
 
 void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::dAttr) {
         ExceptionCode ec;
         pathSegList()->clear(ec);
-        if (!parseSVG(value, true))
-            document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + value + "\"");
+        if (!parseSVG(attr->value(), true))
+            document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + attr->value() + "\"");
     } else if (attr->name() == SVGNames::pathLengthAttr) {
-        m_pathLength = value.toDouble();
+        m_pathLength = attr->value().toDouble();
         if (m_pathLength < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed");
     } else {

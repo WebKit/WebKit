@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+              (C) 2007 Rob Buis <buis@kde.org>
 
     This file is part of the WebKit project
 
@@ -73,21 +74,19 @@ bool SVGAnimateMotionElement::hasValidTarget() const
 
 void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const QualifiedName& name = attr->name();
-    const String& value = attr->value();
-    if (name == SVGNames::rotateAttr) {
-        if (value == "auto")
+    if (attr->name() == SVGNames::rotateAttr) {
+        if (attr->value() == "auto")
             m_rotateMode = AutoMode;
-        else if (value == "auto-reverse")
+        else if (attr->value() == "auto-reverse")
             m_rotateMode = AutoReverseMode;
         else {
             m_rotateMode = AngleMode;
-            m_angle = value.toDouble();
+            m_angle = attr->value().toDouble();
         }
-    } else if (name == SVGNames::keyPointsAttr) {
+    } else if (attr->name() == SVGNames::keyPointsAttr) {
         m_keyPoints.clear();
-        parseKeyNumbers(m_keyPoints, value);
-    } else if (name == SVGNames::dAttr) {
+        parseKeyNumbers(m_keyPoints, attr->value());
+    } else if (attr->name() == SVGNames::dAttr) {
         // FIXME: This dummy object is necessary until path parsing is untangled from SVGPathElement, see bug 12122
         RefPtr<SVGPathElement> dummyPath = new SVGPathElement(SVGNames::pathTag, document());
         if (dummyPath->parseSVG(attr->value(), true))

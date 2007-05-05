@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -68,24 +68,23 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGAngle*, Angle, angle, OrientA
 
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::markerUnitsAttr) {
-        if (value == "userSpaceOnUse")
+        if (attr->value() == "userSpaceOnUse")
             setMarkerUnitsBaseValue(SVG_MARKERUNITS_USERSPACEONUSE);
     } else if (attr->name() == SVGNames::refXAttr)
-        setRefXBaseValue(SVGLength(this, LengthModeWidth, value));
+        setRefXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::refYAttr)
-        setRefYBaseValue(SVGLength(this, LengthModeHeight, value));
+        setRefYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::markerWidthAttr)
-        setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, value));
+        setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::markerHeightAttr)
-        setMarkerHeightBaseValue(SVGLength(this, LengthModeHeight, value));
+        setMarkerHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::orientAttr) {
-        if (value == "auto")
+        if (attr->value() == "auto")
             setOrientToAuto();
         else {
             SVGAngle* angle = new SVGAngle(0);
-            angle->setValueAsString(value);
+            angle->setValueAsString(attr->value());
             setOrientToAngle(angle);
         }
     } else {

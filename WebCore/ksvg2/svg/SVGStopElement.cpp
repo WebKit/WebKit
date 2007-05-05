@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -45,8 +45,8 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, double, Number, number, Offset, of
 
 void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
     if (attr->name() == SVGNames::offsetAttr) {
+        const String& value = attr->value();
         if (value.endsWith("%"))
             setOffsetBaseValue(value.left(value.length() - 1).toDouble() / 100.);
         else

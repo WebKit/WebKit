@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -62,19 +62,18 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, lengt
 
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(this, LengthModeWidth, value));
+        setCxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(this, LengthModeHeight, value));
+        setCyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::rAttr) {
-        setRBaseValue(SVGLength(this, LengthModeOther, value));
+        setRBaseValue(SVGLength(this, LengthModeOther, attr->value()));
         if (r().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
     } else if (attr->name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength(this, LengthModeWidth, value));
+        setFxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength(this, LengthModeHeight, value));
+        setFyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }

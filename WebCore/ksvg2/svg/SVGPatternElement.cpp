@@ -78,33 +78,32 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformLis
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::patternUnitsAttr) {
-        if (value == "userSpaceOnUse")
+        if (attr->value() == "userSpaceOnUse")
             setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (value == "objectBoundingBox")
+        else if (attr->value() == "objectBoundingBox")
             setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
-        if (value == "userSpaceOnUse")
+        if (attr->value() == "userSpaceOnUse")
             setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (value == "objectBoundingBox")
+        else if (attr->value() == "objectBoundingBox")
             setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
         SVGTransformList* patternTransforms = patternTransformBaseValue();
-        if (!SVGTransformable::parseTransformAttribute(patternTransforms, value)) {
+        if (!SVGTransformable::parseTransformAttribute(patternTransforms, attr->value())) {
             ExceptionCode ec = 0;
             patternTransforms->clear(ec);
         }
     } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, value));
+        setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, value));
+        setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
+        setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
         if (width().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for pattern attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
+        setHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
         if (width().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for pattern attribute <height> is not allowed");
     } else {

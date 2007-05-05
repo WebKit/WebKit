@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -54,15 +54,14 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y2, y2,
 
 void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength(this, LengthModeWidth, value));
+        setX1BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength(this, LengthModeHeight, value));
+        setY1BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength(this, LengthModeWidth, value));
+        setX2BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength(this, LengthModeHeight, value));
+        setY2BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else
     {
         if (SVGTests::parseMappedAttribute(attr))

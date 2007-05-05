@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob, 2006 Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -95,15 +95,14 @@ bool SVGTests::isValid() const
 
 bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
-        requiredFeatures()->reset(value);
+        requiredFeatures()->reset(attr->value());
         return true;
     } else if (attr->name() == SVGNames::requiredExtensionsAttr) {
-        requiredExtensions()->reset(value);
+        requiredExtensions()->reset(attr->value());
         return true;
     } else if (attr->name() == SVGNames::systemLanguageAttr) {
-        systemLanguage()->reset(value);
+        systemLanguage()->reset(attr->value());
         return true;
     }
     

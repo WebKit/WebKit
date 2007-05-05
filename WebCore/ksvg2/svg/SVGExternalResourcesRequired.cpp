@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -43,9 +43,8 @@ ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, B
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
-        setExternalResourcesRequiredBaseValue(value == "true");
+        setExternalResourcesRequiredBaseValue(attr->value() == "true");
         return true;
     }
 

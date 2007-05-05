@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -52,18 +52,16 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGNumberList*, NumberL
 
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
-    
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->parse(value, this, LengthModeWidth);
+        xBaseValue()->parse(attr->value(), this, LengthModeWidth);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->parse(value, this, LengthModeHeight);
+        yBaseValue()->parse(attr->value(), this, LengthModeHeight);
     else if (attr->name() == SVGNames::dxAttr)
-        dxBaseValue()->parse(value, this, LengthModeWidth);
+        dxBaseValue()->parse(attr->value(), this, LengthModeWidth);
     else if (attr->name() == SVGNames::dyAttr)
-        dyBaseValue()->parse(value, this, LengthModeHeight);
+        dyBaseValue()->parse(attr->value(), this, LengthModeHeight);
     else if (attr->name() == SVGNames::rotateAttr)
-        rotateBaseValue()->parse(value);
+        rotateBaseValue()->parse(attr->value());
     else
         SVGTextContentElement::parseMappedAttribute(attr);
 }

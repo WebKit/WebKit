@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -55,7 +55,7 @@ void SVGScriptElement::setType(const String& type)
 void SVGScriptElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::typeAttr)
-            setType(attr->value());
+        setType(attr->value());
     else {
         if(SVGURIReference::parseMappedAttribute(attr))
             return;
