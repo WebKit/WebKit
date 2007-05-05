@@ -1,3 +1,16 @@
+2007-05-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5116871> REGRESSION: Can't select options in widget's listbox
+
+        Don't use user-select to determine whether or not options can be selected in listboxes.
+        This will match Firefox behavior for -moz-user-select.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::canSelectAll):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+
 2007-05-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.
