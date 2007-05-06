@@ -1,0 +1,9 @@
+Test for bug 13584: <script> code wrongly assumes requests can't fail.
+
+No crash == SUCCESS.
+
+onerror called (good!)
+
+onerror called (good!)
+
+

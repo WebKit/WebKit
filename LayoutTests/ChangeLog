@@ -1,3 +1,13 @@
+2007-05-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13584
+        <script> code wrongly assumes requests can't fail
+
+        * fast/loader/unloadable-script-expected.txt: Added.
+        * fast/loader/unloadable-script.html: Added.
+
 2007-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

@@ -81,7 +81,10 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
         const AtomicString& url = attr->value();
         if (!url.isEmpty()) {
             m_cachedScript = document()->docLoader()->requestScript(url, getAttribute(charsetAttr));
-            m_cachedScript->ref(this);
+            if (m_cachedScript)
+                m_cachedScript->ref(this);
+            else
+                dispatchHTMLEvent(errorEvent, true, false);
         }
     } else if (attrName == onloadAttr)
         setHTMLEventListener(loadEvent, attr);
@@ -116,7 +119,10 @@ void HTMLScriptElement::insertedIntoDocument()
     const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
         m_cachedScript = document()->docLoader()->requestScript(url, getAttribute(charsetAttr));
-        m_cachedScript->ref(this);
+        if (m_cachedScript)
+            m_cachedScript->ref(this);
+        else
+            dispatchHTMLEvent(errorEvent, true, false);
         return;
     }
 

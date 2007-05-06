@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=13584
+        <script> code wrongly assumes requests can't fail
+
+        Test: fast/loader/unloadable-script.html
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        Check the return value of requestScript().
+
+2007-05-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=13304
         REGRESSION(14784): WebKit doesn't dynamically reflect changes to the highlight color in System Preferences
 
