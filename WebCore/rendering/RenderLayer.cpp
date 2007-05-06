@@ -1572,6 +1572,16 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
     return insideLayer;
 }
 
+Node* RenderLayer::enclosingElement() const
+{
+    for (RenderObject* r = renderer(); r; r = r->parent()) {
+        if (Node* e = r->element())
+            return e;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequest& request,
     HitTestResult& result, const IntRect& hitTestRect)
 {
@@ -1615,27 +1625,18 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
                             layerBounds.x() - renderer()->xPos(),
                             layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(), 
                             HitTestDescendants)) {
-        // for positioned generated content, we might still not have a
+        // For positioned generated content, we might still not have a
         // node by the time we get to the layer level, since none of
         // the content in the layer has an element. So just walk up
         // the tree.
-        if (!result.innerNode()) {
-            for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
-                if (r->element()) {
-                    result.setInnerNode(r->element());
-                    break;
-                }
-            }
+        if (!result.innerNode() || !result.innerNonSharedNode()) {
+            Node* e = enclosingElement();
+            if (!result.innerNode())
+                result.setInnerNode(e);
+            if (!result.innerNonSharedNode())
+                result.setInnerNonSharedNode(e);
         }
 
-        if (!result.innerNonSharedNode()) {
-             for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
-                 if (r->element()) {
-                     result.setInnerNonSharedNode(r->element());
-                     break;
-                 }
-             }
-        }
         return this;
     }
         
@@ -1653,8 +1654,17 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
         renderer()->hitTest(request, result, result.point().x(), result.point().y(),
                             layerBounds.x() - renderer()->xPos(),
                             layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(),
-                            HitTestSelf))
+                            HitTestSelf)) {
+        if (!result.innerNode() || !result.innerNonSharedNode()) {
+            Node* e = enclosingElement();
+            if (!result.innerNode())
+                result.setInnerNode(e);
+            if (!result.innerNonSharedNode())
+                result.setInnerNonSharedNode(e);
+        }
+
         return this;
+    }
 
     // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
     // return ourselves. We do this so mouse events continue getting delivered after a drag has 

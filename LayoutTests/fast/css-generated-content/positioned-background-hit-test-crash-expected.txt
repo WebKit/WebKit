@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x79
+  RenderBlock {HTML} at (0,0) size 800x79
+    RenderBody {BODY} at (8,21) size 784x37
+layer at (8,21) size 784x37
+  RenderBlock (relative positioned) {H1} at (0,0) size 784x37
+    RenderText {#text} at (0,0) size 184x37
+      text run at (0,0) width 184: "Webpage test"
+layer at (8,21) size 202x202
+  RenderBlock (positioned) at (0,0) size 202x202 [border: (1px solid #FF0000)]
+    RenderText at (0,0) size 0x0
+caret: position 0 of child 0 {#text} of child 1 {H1} of child 1 {BODY} of child 0 {HTML} of document

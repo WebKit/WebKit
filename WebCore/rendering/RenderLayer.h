@@ -383,6 +383,8 @@ private:
     void dirtyVisibleDescendantStatus();
     void updateVisibilityStatus();
 
+    Node* enclosingElement() const;
+
 protected:   
     RenderObject* m_object;
 

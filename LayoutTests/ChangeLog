@@ -1,3 +1,15 @@
+2007-05-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13557
+          Crash when dragging selection over absolutely positioned generated content on block element
+
+        * fast/css-generated-content/positioned-background-hit-test-crash-expected.checksum: Added.
+        * fast/css-generated-content/positioned-background-hit-test-crash-expected.png: Added.
+        * fast/css-generated-content/positioned-background-hit-test-crash-expected.txt: Added.
+        * fast/css-generated-content/positioned-background-hit-test-crash.html: Added.
+
 2007-05-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,19 @@
+2007-05-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13557
+          Crash when dragging selection over absolutely positioned generated content on block element
+
+        Test: fast/css-generated-content/positioned-background-hit-test-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingElement): Added. Factored out of hitTestLayer().
+        (WebCore::RenderLayer::hitTestLayer): Implemented the fix for <rdar://problem/3552346>
+        from r6106 to the self hit test as well, namely: return the enclosing element
+        for generated positioned content.
+        * rendering/RenderLayer.h:
+
 2007-05-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
