@@ -218,18 +218,16 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
 
 Color RenderTheme::activeSelectionBackgroundColor() const
 {
-    static Color activeSelectionColor;
-    if (!activeSelectionColor.isValid())
-        activeSelectionColor = platformActiveSelectionBackgroundColor().blendWithWhite();
-    return activeSelectionColor;
+    if (!m_activeSelectionColor.isValid())
+        m_activeSelectionColor = platformActiveSelectionBackgroundColor().blendWithWhite();
+    return m_activeSelectionColor;
 }
 
 Color RenderTheme::inactiveSelectionBackgroundColor() const
 {
-    static Color inactiveSelectionColor;
-    if (!inactiveSelectionColor.isValid())
-        inactiveSelectionColor = platformInactiveSelectionBackgroundColor().blendWithWhite();
-    return inactiveSelectionColor;
+    if (!m_inactiveSelectionColor.isValid())
+        m_inactiveSelectionColor = platformInactiveSelectionBackgroundColor().blendWithWhite();
+    return m_inactiveSelectionColor;
 }
 
 Color RenderTheme::platformActiveSelectionBackgroundColor() const
@@ -467,6 +465,12 @@ void RenderTheme::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* sele
 
 void RenderTheme::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
+}
+
+void RenderTheme::platformColorsDidChange()
+{
+    m_activeSelectionColor = Color();
+    m_inactiveSelectionColor = Color();
 }
 
 } // namespace WebCore

@@ -1,3 +1,34 @@
+2007-05-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13304
+        REGRESSION(14784): WebKit doesn't dynamically reflect changes to the highlight color in System Preferences
+
+        Implemented a notification observer that invalidates cached system colors.
+
+        No automated test possible.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformColorsDidChange):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver initWithTheme:WebCore::]):
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]):
+        (WebCore::theme):
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::~RenderThemeMac):
+        (WebCore::RenderThemeMac::checkbox):
+        (WebCore::RenderThemeMac::radio):
+        (WebCore::RenderThemeMac::button):
+        (WebCore::RenderThemeMac::popupButton):
+        (WebCore::RenderThemeMac::search):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeMac::sliderThumbVertical):
+
 2007-05-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

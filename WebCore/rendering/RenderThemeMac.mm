@@ -41,6 +41,34 @@
 
 // The methods in this file are specific to the Mac OS X platform.
 
+@interface WebCoreRenderThemeNotificationObserver : NSObject
+{
+    WebCore::RenderTheme *_theme;
+}
+
+- (id)initWithTheme:(WebCore::RenderTheme *)theme;
+- (void)systemColorsDidChange:(NSNotification *)notification;
+
+@end
+
+@implementation WebCoreRenderThemeNotificationObserver
+
+- (id)initWithTheme:(WebCore::RenderTheme *)theme
+{
+    [super init];
+    _theme = theme;
+    
+    return self;
+}
+
+- (void)systemColorsDidChange:(NSNotification *)notification
+{
+    ASSERT([[notification name] isEqualToString:NSSystemColorsDidChangeNotification]);
+    _theme->platformColorsDidChange();
+}
+
+@end
+
 namespace WebCore {
 
 enum {
@@ -59,22 +87,26 @@ enum {
 
 RenderTheme* theme()
 {
-    static RenderThemeMac macTheme;
-    return &macTheme;
+    static RenderThemeMac* macTheme = new RenderThemeMac;
+    return macTheme;
 }
 
 RenderThemeMac::RenderThemeMac()
-    : m_checkbox(nil)
-    , m_radio(nil)
-    , m_button(nil)
-    , m_popupButton(nil)
-    , m_search(nil)
-    , m_sliderThumbHorizontal(nil)
-    , m_sliderThumbVertical(nil)
-    , m_resizeCornerImage(0)
+    : m_resizeCornerImage(0)
     , m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
+    , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
 {
+    [[NSNotificationCenter defaultCenter] addObserver:m_notificationObserver.get()
+                                                        selector:@selector(systemColorsDidChange:)
+                                                            name:NSSystemColorsDidChangeNotification
+                                                          object:nil];
+}
+
+RenderThemeMac::~RenderThemeMac()
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
+    delete m_resizeCornerImage;
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
@@ -1207,85 +1239,85 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
 NSButtonCell* RenderThemeMac::checkbox() const
 {
     if (!m_checkbox) {
-        m_checkbox = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
-        [m_checkbox setButtonType:NSSwitchButton];
-        [m_checkbox setTitle:nil];
-        [m_checkbox setAllowsMixedState:YES];
+        m_checkbox.adoptNS([[NSButtonCell alloc] init]);
+        [m_checkbox.get() setButtonType:NSSwitchButton];
+        [m_checkbox.get() setTitle:nil];
+        [m_checkbox.get() setAllowsMixedState:YES];
     }
     
-    return m_checkbox;
+    return m_checkbox.get();
 }
 
 NSButtonCell* RenderThemeMac::radio() const
 {
     if (!m_radio) {
-        m_radio = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
-        [m_radio setButtonType:NSRadioButton];
-        [m_radio setTitle:nil];
+        m_radio.adoptNS([[NSButtonCell alloc] init]);
+        [m_radio.get() setButtonType:NSRadioButton];
+        [m_radio.get() setTitle:nil];
     }
     
-    return m_radio;
+    return m_radio.get();
 }
 
 NSButtonCell* RenderThemeMac::button() const
 {
     if (!m_button) {
-        m_button = HardRetainWithNSRelease([[NSButtonCell alloc] init]);
-        [m_button setTitle:nil];
-        [m_button setButtonType:NSMomentaryPushInButton];
+        m_button.adoptNS([[NSButtonCell alloc] init]);
+        [m_button.get() setTitle:nil];
+        [m_button.get() setButtonType:NSMomentaryPushInButton];
     }
     
-    return m_button;
+    return m_button.get();
 }
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {
     if (!m_popupButton) {
-        m_popupButton = HardRetainWithNSRelease([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popupButton setUsesItemFromMenu:NO];
+        m_popupButton.adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        [m_popupButton.get() setUsesItemFromMenu:NO];
     }
     
-    return m_popupButton;
+    return m_popupButton.get();
 }
 
 NSSearchFieldCell* RenderThemeMac::search() const
 {
     if (!m_search) {
-        m_search = HardRetainWithNSRelease([[NSSearchFieldCell alloc] initTextCell:@""]);
-        [m_search setBezelStyle:NSTextFieldRoundedBezel];
-        [m_search setBezeled:YES];
-        [m_search setEditable:YES];
+        m_search.adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
+        [m_search.get() setBezelStyle:NSTextFieldRoundedBezel];
+        [m_search.get() setBezeled:YES];
+        [m_search.get() setEditable:YES];
         
         NSMenu* searchMenuTemplate = [[NSMenu alloc] initWithTitle:@""];
-        [m_search setSearchMenuTemplate:searchMenuTemplate];
+        [m_search.get() setSearchMenuTemplate:searchMenuTemplate];
         [searchMenuTemplate release];
     }
 
-    return m_search;
+    return m_search.get();
 }
 
 NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
 {
     if (!m_sliderThumbHorizontal) {
-        m_sliderThumbHorizontal = HardRetainWithNSRelease([[NSSliderCell alloc] init]);
-        [m_sliderThumbHorizontal setTitle:nil];
-        [m_sliderThumbHorizontal setSliderType:NSLinearSlider];
-        [m_sliderThumbHorizontal setControlSize:NSSmallControlSize];
+        m_sliderThumbHorizontal.adoptNS([[NSSliderCell alloc] init]);
+        [m_sliderThumbHorizontal.get() setTitle:nil];
+        [m_sliderThumbHorizontal.get() setSliderType:NSLinearSlider];
+        [m_sliderThumbHorizontal.get() setControlSize:NSSmallControlSize];
     }
     
-    return m_sliderThumbHorizontal;
+    return m_sliderThumbHorizontal.get();
 }
 
 NSSliderCell* RenderThemeMac::sliderThumbVertical() const
 {
     if (!m_sliderThumbVertical) {
-        m_sliderThumbVertical = HardRetainWithNSRelease([[NSSliderCell alloc] init]);
-        [m_sliderThumbVertical setTitle:nil];
-        [m_sliderThumbVertical setSliderType:NSLinearSlider];
-        [m_sliderThumbVertical setControlSize:NSSmallControlSize];
+        m_sliderThumbVertical.adoptNS([[NSSliderCell alloc] init]);
+        [m_sliderThumbVertical.get() setTitle:nil];
+        [m_sliderThumbVertical.get() setSliderType:NSLinearSlider];
+        [m_sliderThumbVertical.get() setControlSize:NSSmallControlSize];
     }
     
-    return m_sliderThumbVertical;
+    return m_sliderThumbVertical.get();
 }
 
 Image* RenderThemeMac::resizeCornerImage() const

@@ -115,6 +115,8 @@ public:
     virtual Color inactiveListBoxSelectionBackgroundColor() const;
     virtual Color inactiveListBoxSelectionForegroundColor() const;
 
+    void platformColorsDidChange();
+
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const = 0;
 
@@ -177,6 +179,10 @@ protected:
 
     virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
+
+private:
+    mutable Color m_activeSelectionColor;
+    mutable Color m_inactiveSelectionColor;
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

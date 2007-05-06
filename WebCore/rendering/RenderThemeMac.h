@@ -24,6 +24,13 @@
 #define RenderThemeMac_h
 
 #import "RenderTheme.h"
+#import <wtf/RetainPtr.h>
+
+#ifdef __OBJC__
+@class WebCoreRenderThemeNotificationObserver;
+#else
+class WebCoreRenderThemeNotificationObserver;
+#endif
 
 namespace WebCore {
 
@@ -32,7 +39,7 @@ class RenderStyle;
 class RenderThemeMac : public RenderTheme {
 public:
     RenderThemeMac();
-    virtual ~RenderThemeMac() { /* Have to just leak the cells, since statics are destroyed with no autorelease pool available */ }
+    virtual ~RenderThemeMac();
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
@@ -160,17 +167,19 @@ private:
     Image* resizeCornerImage() const;
 
 private:
-    mutable NSButtonCell* m_checkbox;
-    mutable NSButtonCell* m_radio;
-    mutable NSButtonCell* m_button;
-    mutable NSPopUpButtonCell* m_popupButton;
-    mutable NSSearchFieldCell* m_search;
-    mutable NSSliderCell* m_sliderThumbHorizontal;
-    mutable NSSliderCell* m_sliderThumbVertical;
+    mutable RetainPtr<NSButtonCell> m_checkbox;
+    mutable RetainPtr<NSButtonCell> m_radio;
+    mutable RetainPtr<NSButtonCell> m_button;
+    mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
+    mutable RetainPtr<NSSearchFieldCell> m_search;
+    mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
+    mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
     mutable Image* m_resizeCornerImage;
 
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;
+
+    RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 };
 
 } // namespace WebCore
