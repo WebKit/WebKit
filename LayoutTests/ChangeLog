@@ -1,3 +1,14 @@
+2007-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4895428> Can't drag selected To Do if it is not showing a due date
+
+        * editing/selection/4895428-1-expected.checksum: Added.
+        * editing/selection/4895428-1-expected.png: Added.
+        * editing/selection/4895428-1-expected.txt: Added.
+        * editing/selection/4895428-1.html: Added.
+
 2007-05-07  Darin Adler  <darin@apple.com>
 
         - rolling out setInnerHTML optimization until I can figure out why tests are failing

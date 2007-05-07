@@ -1,3 +1,17 @@
+2007-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4895428> Can't drag selected To Do if it is not showing a due date
+        
+        The code in SelectionController::contains returned false 
+        incorrectly if the selection end just after a table 
+        and the position was inside that table.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::contains): Compare the position with the
+        ends of the selection and then use Range::comparePoint.
+
 2007-05-07  Darin Adler  <darin@apple.com>
 
         - rolling out setInnerHTML optimization until I can figure out why tests are failing
