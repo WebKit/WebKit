@@ -1,5 +1,12 @@
 2007-05-06  Darin Adler  <darin@apple.com>
 
+        - blind try at fixing the Qt build
+
+        * platform/qt/TextBreakIteratorQt.cpp: (WebCore::sentenceBreakIterator):
+        Added a placeholder.
+
+2007-05-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13537
