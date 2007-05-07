@@ -48,9 +48,8 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 macx {
-    INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
     INCLUDEPATH += /usr/include/libxml2
-    LIBS += -L/opt/local/lib -lxml2 -lxslt
+    LIBS += -lxml2 -lxslt
 }
 qt-port:INCLUDEPATH += \
                 $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/ \

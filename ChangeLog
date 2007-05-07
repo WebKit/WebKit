@@ -1,3 +1,10 @@
+2007-05-06  Erik Bunce  <kde@bunce.us>
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.pri:
+        Removed unnecessary dependency on MacPorts (/opt/local)
+
 2007-05-03  Holger Freyther <freyther@kde.org>
 
         Reviewed by Zack, landed by Simon.
