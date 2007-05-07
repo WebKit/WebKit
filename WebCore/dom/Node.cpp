@@ -198,7 +198,7 @@ String Node::nodeValue() const
   return String();
 }
 
-void Node::setNodeValue( const String &/*_nodeValue*/, ExceptionCode& ec)
+void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
     if (isReadOnlyNode()) {
@@ -206,7 +206,7 @@ void Node::setNodeValue( const String &/*_nodeValue*/, ExceptionCode& ec)
         return;
     }
 
-    // be default nodeValue is null, so setting it has no effect
+    // by default nodeValue is null, so setting it has no effect
 }
 
 PassRefPtr<NodeList> Node::childNodes()
@@ -217,14 +217,14 @@ PassRefPtr<NodeList> Node::childNodes()
     return new ChildNodeList(this, &m_nodeLists->m_childNodeListCaches);
 }
 
-Node *Node::firstChild() const
+Node* Node::virtualFirstChild() const
 {
-  return 0;
+    return 0;
 }
 
-Node *Node::lastChild() const
+Node* Node::virtualLastChild() const
 {
-  return 0;
+    return 0;
 }
 
 Node *Node::lastDescendant() const

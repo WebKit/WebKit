@@ -1,3 +1,50 @@
+2007-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13606
+          some functions are virtual that don't need to be
+
+        * dom/Node.h: Made first/lastChild be inline functions that call virtual functions.
+        This lets us hide the functions with another inline function in a derived class,
+        yet still override the behavior here in the base class by overriding the virtual
+        functions too.
+        * dom/Node.cpp:
+        (WebCore::Node::virtualFirstChild): Renamed virtual functions. There are now
+        non-virtual inline functions that call these virtual functions.
+        (WebCore::Node::virtualLastChild): Ditto.
+
+        * dom/ContainerNode.h: Added non-virtual first/lastChild functions that hide the ones
+        inherited from the Node class; these also replace the fastFirst/LastChild functions,
+        and transparently give callers the faster form if they have a pointer of the right
+        type. But still override the virtual functions named virtualFirst/LastChild, because
+        those can still be called through a Node*. Removed the "fast" from the names of
+        fastSetFirst/LastChild.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::virtualFirstChild): Renamed virtual functions. There are now
+        also non-virtual inline versions.
+        (WebCore::ContainerNode::virtualLastChild): Ditto.
+
+        * dom/CharacterData.cpp: Removed implementations of data and length functons.
+        * dom/CharacterData.h: Made data, setData, length, substringData, appendData,
+        insertData, deleteData, and replaceData all non-virtual, and made data and length
+        both be inline.
+
+        * dom/NamedAttrMap.h: (WebCore::NamedAttrMap::attributeItem): Removed a null check
+        from this function. If the length of the map is known to be greater than 0, then
+        the null check isn't needed. But if the length of the map hasn't been checked at all,
+        then it's unsafe to call this function since it doesn't range check the array
+        index. Thus the null check is never needed. I also looked at all callers.
+
+        * dom/Attr.cpp: (WebCore::Attr::createTextChild):
+        * dom/Document.cpp: (WebCore::Document::recalcStyle):
+        * dom/Element.cpp: (WebCore::Element::recalcStyle):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::haveLoadedRequiredResources):
+        Removed "fast" prefix from calls to fastFirst/LastChild and fastSetFirst/LastChlld.
+        It's not needed any more -- you still get fast behavior if the pointer has a type
+        that's ContainerNode or derived from it.
+
 2007-05-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

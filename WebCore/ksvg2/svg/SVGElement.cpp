@@ -146,7 +146,7 @@ void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 
 bool SVGElement::haveLoadedRequiredResources()
 {
-    Node* child = fastFirstChild();
+    Node* child = firstChild();
     while (child) {
         if (child->isSVGElement() && !static_cast<SVGElement*>(child)->haveLoadedRequiredResources())
             return false;

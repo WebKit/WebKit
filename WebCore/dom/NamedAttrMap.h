@@ -61,7 +61,7 @@ public:
     unsigned length() const { return len; }
 
     // Other methods (not part of DOM)
-    Attribute* attributeItem(unsigned index) const { return attrs ? attrs[index] : 0; }
+    Attribute* attributeItem(unsigned index) const { return attrs[index]; }
     Attribute* getAttributeItem(const QualifiedName& name) const;
     Attribute* getAttributeItem(const String& name) const;
     virtual bool isReadOnlyNode();

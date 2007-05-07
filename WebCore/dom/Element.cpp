@@ -710,7 +710,7 @@ void Element::recalcStyle(StyleChange change)
         }
     }
 
-    for (Node *n = fastFirstChild(); n; n = n->nextSibling()) {
+    for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (change >= Inherit || n->isTextNode() || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
     }
