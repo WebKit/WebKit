@@ -1,3 +1,39 @@
+2007-05-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13602
+          Amazon product pages keep repainting over and over again
+
+        Optimize setInnerHTML, setOuterHTML, and setInnerText so they don't change the DOM at all
+        if they don't need to.
+
+        Test: fast/dom/HTMLElement/set-inner-outer-optimization.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::equal): Added. Helper function that compares two Text nodes or two NamedAttrMap
+        attribute maps.
+        (WebCore::shallowEqual): Added. Helper function that compares two Element nodes or two
+        arbitrary nodes.
+        (WebCore::replaceChildrenWithFragment): Added. Helper function used by setInnerHTML and
+        setInnerText. Optimizes the cases where all the nodes are the same, where both the current
+        and the new content are single text nodes, and where the current content is a single node
+        that can be replaced with replaceChild.
+        (WebCore::replaceChildrenWithText): Added. Helper function used by setInnerText. Optimizes
+        the case where the current content is a single text node or a single node that can be
+        replaced with replaceChild.
+        (WebCore::HTMLElement::setInnerHTML): Changed to call replaceChildrenWithFragment.
+        (WebCore::HTMLElement::setOuterHTML): Added special case to optimize when the new content
+        exactly matches the current node.
+        (WebCore::HTMLElement::setInnerText): Changed to call replaceChildrenWithText in a few
+        cases instead of doing removeChildren/appendChild. Changed code that was using
+        DeprecatedString to instead use String. Changed general case to use a document fragment
+        and replaceChildrenWithFragment.
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::dispatchModifiedEvent):
+        Fixed bug where we would not dispatch the DOMSubtreeModified event unless someone
+        was registered for the DOMCharacterDataModified event. Caused trouble in the test.
+
 2007-05-06  Darin Adler  <darin@apple.com>
 
         - blind try at fixing the Qt build

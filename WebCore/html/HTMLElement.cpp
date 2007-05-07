@@ -274,7 +274,127 @@ PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String 
     return fragment.release();
 }
 
-void HTMLElement::setInnerHTML(const String &html, ExceptionCode& ec)
+static inline bool equal(NamedAttrMap* a, NamedAttrMap* b)
+{
+    // empty maps; empty and null maps are equivalent
+    if (!a) {
+        if (!b)
+            return true;
+        return !b->length();
+    }
+    if (!b)
+        return !a->length();
+
+    unsigned len = a->length();
+    if (b->length() != len)
+        return false;
+
+    for (unsigned i = 0; i < len; ++i) {
+        Attribute* aa = a->attributeItem(i);
+        Attribute* ba = b->attributeItem(i);
+        if (aa->name() != ba->name())
+            return false;
+        if (aa->value() != ba->value())
+            return false;
+    }
+
+    return true;
+}
+
+static inline bool shallowEqual(Element* a, Element* b)
+{
+    return a->tagQName() == b->tagQName() && equal(a->attributes(false), b->attributes(false));
+}
+
+static bool shallowEqual(Node* a, Node* b)
+{
+    Node::NodeType ta = a->nodeType();
+    Node::NodeType tb = b->nodeType();
+    if (ta != tb)
+        return false;
+
+    switch (ta) {
+        case Node::ATTRIBUTE_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
+        case Node::DOCUMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::ENTITY_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
+        case Node::NOTATION_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+        case Node::XPATH_NAMESPACE_NODE:
+            // Don't bother comparing these node types for now; they don't typically occur.
+            // Since these functions are used only for optimization, it's OK to have a false negative.
+            return false;
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::TEXT_NODE:
+            return equal(static_cast<CharacterData*>(a)->string(),
+                static_cast<CharacterData*>(b)->string());
+        case Node::ELEMENT_NODE:
+            return shallowEqual(static_cast<Element*>(a), static_cast<Element*>(b));
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static void replaceChildrenWithFragment(HTMLElement* element, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
+{
+    Node* firstChild = element->firstChild();
+    Node* fragmentFirstChild = fragment->firstChild();
+
+    if (!fragmentFirstChild) {
+        element->removeChildren();
+        return;
+    }
+
+    Node* a = firstChild;
+    Node* b = fragmentFirstChild;
+    while (a && b) {
+        if (!shallowEqual(a, b))
+            break;
+        a = a->traverseNextNode(element);
+        b = b->traverseNextNode(fragment.get());
+    }
+    if (!a && !b)
+        return;
+
+    if (firstChild && !firstChild->nextSibling()) {
+        if (!fragmentFirstChild->nextSibling() && firstChild->isTextNode() && fragmentFirstChild->isTextNode()) {
+            static_cast<Text*>(firstChild)->setData(static_cast<Text*>(fragmentFirstChild)->string(), ec);
+            return;
+        }
+        element->replaceChild(fragment, firstChild, ec);
+        return;
+    }
+
+    element->removeChildren();
+    element->appendChild(fragment, ec);
+}
+
+static void replaceChildrenWithText(HTMLElement* element, const String& text, ExceptionCode& ec)
+{
+    Node* firstChild = element->firstChild();
+    if (firstChild && firstChild->isTextNode()) {
+        if (equal(static_cast<Text*>(firstChild)->string(), text.impl()))
+            return;
+        static_cast<Text*>(firstChild)->setData(text, ec);
+        return;
+    }
+
+    RefPtr<Text> textNode = new Text(element->document(), text);
+
+    if (firstChild && !firstChild->nextSibling()) {
+        element->replaceChild(textNode.release(), firstChild, ec);
+        return;
+    }
+
+    element->removeChildren();
+    element->appendChild(textNode.release(), ec);
+}
+
+void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
     RefPtr<DocumentFragment> fragment = createContextualFragment(html);
     if (!fragment) {
@@ -282,11 +402,7 @@ void HTMLElement::setInnerHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: Add special case for when we had one text child and we just want to set its text?
-    // FIXME: Add special case for cases where we can use replaceChild?
-
-    removeChildren();
-    appendChild(fragment.release(), ec);
+    replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
 void HTMLElement::setOuterHTML(const String &html, ExceptionCode& ec)
@@ -304,8 +420,25 @@ void HTMLElement::setOuterHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: Add special case for when we had one text child and we just want to set its text?
     // FIXME: Why doesn't this have code to merge neighboring text nodes the way setOuterText does?
+
+    // Check to see if content is identical.
+    Node* fragmentFirstChild = fragment->firstChild();
+    if (fragmentFirstChild && !fragmentFirstChild->nextSibling()) {
+        Node* next = nextSibling();
+
+        Node* a = this;
+        Node* b = fragmentFirstChild;
+        while (a != next && b) {
+            if (!shallowEqual(a, b))
+                break;
+            a = a->traverseNextNode(parent);
+            b = b->traverseNextNode(fragment.get());
+        }
+        if (a == next && !b)
+            return;
+    }
+
     parent->replaceChild(fragment.release(), this, ec);
 }
 
@@ -325,15 +458,13 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     }
 
     // FIXME: This doesn't take whitespace collapsing into account at all.
-    // FIXME: Add special case for when we had one text child and we just want to set its text?
-    // FIXME: Add special case for cases where we can use replaceChild?
-
-    removeChildren();
 
     if (!text.contains('\n') && !text.contains('\r')) {
-        if (text.isEmpty())
+        if (text.isEmpty()) {
+            removeChildren();
             return;
-        appendChild(new Text(document(), text), ec);
+        }
+        replaceChildrenWithText(this, text, ec);
         return;
     }
 
@@ -343,19 +474,19 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     RenderObject* r = renderer();
     if (r && r->style()->preserveNewline()) {
         if (!text.contains('\r')) {
-            appendChild(new Text(document(), text), ec);
+            replaceChildrenWithText(this, text, ec);
             return;
         }
-        // FIXME: Stick with String once it has a replace that can do this.
-        DeprecatedString textWithConsistentLineBreaks = text.deprecatedString();
+        String textWithConsistentLineBreaks = text;
         textWithConsistentLineBreaks.replace("\r\n", "\n");
         textWithConsistentLineBreaks.replace('\r', '\n');
-        appendChild(new Text(document(), textWithConsistentLineBreaks), ec);
+        replaceChildrenWithText(this, textWithConsistentLineBreaks, ec);
         return;
     }
 
     // Add text nodes and <br> elements.
     ec = 0;
+    RefPtr<DocumentFragment> fragment = new DocumentFragment(document());
     int lineStart = 0;
     UChar prev = 0;
     int length = text.length();
@@ -363,12 +494,12 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         UChar c = text[i];
         if (c == '\n' || c == '\r') {
             if (i > lineStart) {
-                appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
+                fragment->appendChild(new Text(document(), text.substring(lineStart, i - lineStart)), ec);
                 if (ec)
                     return;
             }
             if (!(c == '\n' && i != 0 && prev == '\r')) {
-                appendChild(new HTMLBRElement(document()), ec);
+                fragment->appendChild(new HTMLBRElement(document()), ec);
                 if (ec)
                     return;
             }
@@ -377,7 +508,8 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         prev = c;
     }
     if (length > lineStart)
-        appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
+        fragment->appendChild(new Text(document(), text.substring(lineStart, length - lineStart)), ec);
+    replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
