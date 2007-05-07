@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x74
-  RenderBlock {HTML} at (0,0) size 800x74
-    RenderBody {BODY} at (8,14) size 784x46
-      RenderBlock {P} at (0,0) size 784x16
-        RenderInline {SPAN} at (0,0) size 256x22 [border: (3px solid #000000) (1px solid #000000) (3px solid #000000)]
-          RenderText {#text} at (3,0) size 252x16
-            text run at (3,0) width 252: "This box should have a thin right border."
+layer at (0,0) size 800x80
+  RenderBlock {HTML} at (0,0) size 800x80
+    RenderBody {BODY} at (8,14) size 784x52
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {SPAN} at (0,0) size 260x25 [border: (3px solid #000000) (1px solid #000000) (3px solid #000000)]
+          RenderText {#text} at (3,0) size 256x19
+            text run at (3,0) width 256: "This box should have a thin right border."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,30) size 784x16
-        RenderText {#text} at (0,0) size 226x16
-          text run at (0,0) width 226: "There should be no red on this line. "
-        RenderInline {SPAN} at (0,0) size 12x16 [color=#FF0000]
-          RenderText {#text} at (226,0) size 12x16
-            text run at (226,0) width 12: "   "
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 229x19
+          text run at (0,0) width 229: "There should be no red on this line. "
+        RenderInline {SPAN} at (0,0) size 12x19 [color=#FF0000]
+          RenderText {#text} at (229,0) size 12x19
+            text run at (229,0) width 12: "   "
         RenderText {#text} at (0,0) size 0x0

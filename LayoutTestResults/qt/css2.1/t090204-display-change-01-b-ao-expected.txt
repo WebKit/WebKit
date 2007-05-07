@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {HTML} at (0,0) size 800x84
-    RenderBody {BODY} at (8,14) size 784x62
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 264x16
-          text run at (0,0) width 264: "There should be no red below, only green."
-      RenderBlock (floating) {DIV} at (0,30) size 784x16 [color=#008000] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 9x16
-          text run at (0,0) width 9: "X"
-      RenderBlock {DIV} at (0,30) size 14x32 [color=#008000] [bgcolor=#FF0000]
-        RenderText {#text} at (0,16) size 9x16
-          text run at (0,16) width 9: "X"
+layer at (0,0) size 800x87
+  RenderBlock {HTML} at (0,0) size 800x87
+    RenderBody {BODY} at (8,14) size 784x65
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 269x19
+          text run at (0,0) width 269: "There should be no red below, only green."
+      RenderBlock (floating) {DIV} at (0,33) size 784x16 [color=#008000] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 14x16
+          text run at (0,0) width 14: "X"
+      RenderBlock {DIV} at (0,33) size 14x32 [color=#008000] [bgcolor=#FF0000]
+        RenderText {#text} at (0,16) size 14x16
+          text run at (0,16) width 14: "X"

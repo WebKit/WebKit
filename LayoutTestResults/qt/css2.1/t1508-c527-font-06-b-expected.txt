@@ -1,28 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x396
-  RenderBlock {HTML} at (0,0) size 800x396
-    RenderBody {BODY} at (8,18) size 784x360 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x360
-        RenderText {#text} at (0,8) size 738x56
-          text run at (0,8) width 738: "This text should be 18px monospace, in small-caps, italicized, and very"
-          text run at (0,44) width 331: "bold, with double line spacing. "
-        RenderInline {SPAN} at (0,0) size 771x308 [color=#C0C0C0]
-          RenderText {#text} at (331,44) size 771x308
-            text run at (331,44) width 440: "dummy text dummy text dummy text dummy"
-            text run at (0,80) width 248: "text dummy text dummy "
-            text run at (248,80) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,116) width 248: "text dummy text dummy "
-            text run at (248,116) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,152) width 248: "text dummy text dummy "
-            text run at (248,152) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,188) width 248: "text dummy text dummy "
-            text run at (248,188) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,224) width 248: "text dummy text dummy "
-            text run at (248,224) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,260) width 248: "text dummy text dummy "
-            text run at (248,260) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,296) width 248: "text dummy text dummy "
-            text run at (248,296) width 491: "text dummy text dummy text dummy text dummy"
-            text run at (0,332) width 170: "text dummy text"
+layer at (0,0) size 800x360
+  RenderBlock {HTML} at (0,0) size 800x360
+    RenderBody {BODY} at (8,18) size 784x324 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x324
+        RenderText {#text} at (0,5) size 781x61
+          text run at (0,5) width 781: "This text should be 18px monospace, in small-caps, italicized, and very"
+          text run at (0,41) width 352: "bold, with double line spacing. "
+        RenderInline {SPAN} at (0,0) size 781x277 [color=#C0C0C0]
+          RenderText {#text} at (352,41) size 781x277
+            text run at (352,41) width 418: "dummy text dummy text dummy text dummy"
+            text run at (0,77) width 242: "text dummy text dummy "
+            text run at (242,77) width 528: "text dummy text dummy text dummy text dummy text"
+            text run at (0,113) width 187: "dummy text dummy "
+            text run at (187,113) width 594: "text dummy text dummy text dummy text dummy text dummy"
+            text run at (0,149) width 121: "text dummy "
+            text run at (121,149) width 649: "text dummy text dummy text dummy text dummy text dummy text"
+            text run at (0,185) width 66: "dummy "
+            text run at (66,185) width 715: "text dummy text dummy text dummy text dummy text dummy text dummy"
+            text run at (0,221) width 726: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (726,221) width 44: "text"
+            text run at (0,257) width 671: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (671,257) width 110: "text dummy"
+            text run at (0,293) width 528: "text dummy text dummy text dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0

@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x44
-  RenderBlock {HTML} at (0,0) size 800x44
-    RenderBody {BODY} at (8,14) size 784x16
-      RenderBlock {P} at (0,0) size 784x16
-        RenderInline {A} at (0,0) size 197x16 [color=#008000]
-          RenderText {#text} at (0,0) size 197x16
-            text run at (0,0) width 197: "This sentence should be green."
-        RenderText {#text} at (197,0) size 260x16
-          text run at (197,0) width 260: " Check that it remains green if you click it."
+layer at (0,0) size 800x47
+  RenderBlock {HTML} at (0,0) size 800x47
+    RenderBody {BODY} at (8,14) size 784x19
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {A} at (0,0) size 200x19 [color=#008000]
+          RenderText {#text} at (0,0) size 200x19
+            text run at (0,0) width 200: "This sentence should be green."
+        RenderText {#text} at (200,0) size 263x19
+          text run at (200,0) width 263: " Check that it remains green if you click it."

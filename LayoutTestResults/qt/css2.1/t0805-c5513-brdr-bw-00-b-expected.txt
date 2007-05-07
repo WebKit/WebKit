@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x110
-  RenderBlock {HTML} at (0,0) size 800x110
-    RenderBody {BODY} at (8,14) size 784x88
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 460x16
-          text run at (0,0) width 460: "The three boxes below should have progressively thinner bottom borders."
-      RenderTable {TABLE} at (0,30) size 60x58 [color=#000080]
-        RenderTableSection {TBODY} at (0,0) size 60x58
-          RenderTableRow {TR} at (0,2) size 60x54
-            RenderTableCell {TD} at (2,2) size 17x54 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (1,15) size 15x24 [border: (3px solid #000080) (5px solid #000080) (3px solid #000080)]
-                RenderText {#text} at (3,3) size 9x16
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,14) size 784x94
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 467x19
+          text run at (0,0) width 467: "The three boxes below should have progressively thinner bottom borders."
+      RenderTable {TABLE} at (0,33) size 60x61 [color=#000080]
+        RenderTableSection {TBODY} at (0,0) size 60x61
+          RenderTableRow {TR} at (0,2) size 60x57
+            RenderTableCell {TD} at (2,2) size 17x57 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,15) size 15x27 [border: (3px solid #000080) (5px solid #000080) (3px solid #000080)]
+                RenderText {#text} at (3,3) size 9x19
                   text run at (3,3) width 9: "A"
-            RenderTableCell {TD} at (21,2) size 17x52 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {P} at (1,15) size 15x22 [border: (3px solid #000080)]
-                RenderText {#text} at (3,3) size 9x16
+            RenderTableCell {TD} at (21,2) size 17x55 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (1,15) size 15x25 [border: (3px solid #000080)]
+                RenderText {#text} at (3,3) size 9x19
                   text run at (3,3) width 9: "B"
-            RenderTableCell {TD} at (40,2) size 18x50 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {P} at (1,15) size 16x20 [border: (3px solid #000080) (1px solid #000080) (3px solid #000080)]
-                RenderText {#text} at (3,3) size 10x16
+            RenderTableCell {TD} at (40,2) size 18x53 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {P} at (1,15) size 16x23 [border: (3px solid #000080) (1px solid #000080) (3px solid #000080)]
+                RenderText {#text} at (3,3) size 10x19
                   text run at (3,3) width 10: "C"

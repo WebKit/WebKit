@@ -1,30 +1,28 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x201
-  RenderBlock {HTML} at (0,0) size 800x201
-    RenderBody {BODY} at (8,14) size 784x179
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 287x16
-          text run at (0,0) width 287: "The three diagrams below should be identical:"
-      RenderBlock {P} at (0,32) size 160x32 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 56x18
-          text run at (0,-1) width 56: "xxx xxx "
-        RenderInline {SPAN} at (0,0) size 52x18 [bgcolor=#00FF00]
-          RenderText {#text} at (56,-1) size 52x18
-            text run at (56,-1) width 52: "xxx xxx"
-        RenderText {#text} at (108,-1) size 136x34
-          text run at (108,-1) width 28: " xxx"
-          text run at (0,15) width 24: "xxx"
-      RenderBlock {P} at (0,80) size 160x32 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 56x18
-          text run at (0,-1) width 56: "xxx xxx "
-        RenderInline {SPAN} at (0,0) size 52x18 [bgcolor=#00FF00]
-          RenderText {#text} at (56,-1) size 52x18
-            text run at (56,-1) width 52: "xxx xxx"
-        RenderText {#text} at (108,-1) size 136x34
-          text run at (108,-1) width 28: " xxx"
-          text run at (0,15) width 24: "xxx"
-      RenderBlock {DIV} at (0,128) size 784x51
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,14) size 784x216
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "The three diagrams below should be identical:"
+      RenderBlock {P} at (0,35) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 112x18
+          text run at (0,-1) width 112: "xxx xxx"
+        RenderInline {SPAN} at (0,0) size 112x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,15) size 112x18
+            text run at (0,15) width 112: "xxx xxx"
+        RenderText {#text} at (0,31) size 112x18
+          text run at (0,31) width 112: "xxx xxx"
+      RenderBlock {P} at (0,99) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 112x18
+          text run at (0,-1) width 112: "xxx xxx"
+        RenderInline {SPAN} at (0,0) size 112x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,15) size 112x18
+            text run at (0,15) width 112: "xxx xxx"
+        RenderText {#text} at (0,31) size 112x18
+          text run at (0,31) width 112: "xxx xxx"
+      RenderBlock {DIV} at (0,163) size 784x53
         RenderImage {IMG} at (0,0) size 48x48
         RenderImage {IMG} at (48,0) size 16x48 [border: (16px solid #FFFF00) none (16px solid #FFFF00) none]
         RenderImage {IMG} at (64,0) size 48x48

@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x158
-  RenderBlock {HTML} at (0,0) size 800x158
-    RenderBody {BODY} at (8,14) size 784x136
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 456x16
-          text run at (0,0) width 456: "There should be stripes of dark green and light green below, with no red."
-      RenderBlock {DIV} at (0,30) size 81x106 [color=#00FF00] [bgcolor=#008000] [border: (3px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 36x77 [bgcolor=#FF0000]
-          RenderText {#text} at (3,14) size 36x77
-            text run at (3,14) width 36: "xxx"
-            text run at (3,64) width 36: "xxx"
+layer at (0,0) size 800x161
+  RenderBlock {HTML} at (0,0) size 800x161
+    RenderBody {BODY} at (8,14) size 784x139
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 461x19
+          text run at (0,0) width 461: "There should be stripes of dark green and light green below, with no red."
+      RenderBlock {DIV} at (0,33) size 81x106 [color=#00FF00] [bgcolor=#008000] [border: (3px solid #000000)]
+        RenderInline {SPAN} at (0,0) size 75x76 [bgcolor=#FF0000]
+          RenderText {#text} at (3,15) size 75x76
+            text run at (3,15) width 75: "xxx"
+            text run at (3,65) width 75: "xxx"
         RenderText {#text} at (0,0) size 0x0

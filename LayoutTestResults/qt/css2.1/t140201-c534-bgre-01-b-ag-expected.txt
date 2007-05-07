@@ -1,30 +1,30 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x148
-  RenderBlock {HTML} at (0,0) size 800x148
-    RenderBody {BODY} at (8,14) size 784x126
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 234x16
-          text run at (0,0) width 234: "There should be a green block below."
-      RenderBlock {DIV} at (0,30) size 156x96 [color=#008000] [bgcolor=#008000] [border: (3px solid #000000)]
-        RenderBlock {DIV} at (3,3) size 150x30
-          RenderText {#text} at (0,-1) size 140x32
-            text run at (0,-1) width 48: "z          "
-            text run at (48,-1) width 48: "z          "
-            text run at (96,-1) width 44: "z         "
-            text run at (0,14) width 48: "z          "
-            text run at (48,14) width 44: "z         "
-        RenderBlock {DIV} at (3,33) size 150x30
-          RenderText {#text} at (0,-1) size 128x32
-            text run at (0,-1) width 84: "zzzzzzzzzz "
-            text run at (84,-1) width 40: "          "
-            text run at (0,14) width 44: "           "
-            text run at (44,14) width 44: "           "
-            text run at (88,14) width 40: "          "
-        RenderBlock {DIV} at (3,63) size 150x30
-          RenderText {#text} at (0,-1) size 132x32
-            text run at (0,-1) width 48: "z          "
-            text run at (48,-1) width 44: "           "
-            text run at (92,-1) width 40: "          "
-            text run at (0,14) width 44: "           "
-            text run at (44,14) width 40: "          "
+layer at (0,0) size 800x286
+  RenderBlock {HTML} at (0,0) size 800x286
+    RenderBody {BODY} at (8,14) size 784x264
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 239x19
+          text run at (0,0) width 239: "There should be a green block below."
+      RenderBlock {DIV} at (0,33) size 156x231 [color=#008000] [bgcolor=#008000] [border: (3px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 150x75
+          RenderText {#text} at (0,0) size 150x76
+            text run at (0,0) width 150: "z         "
+            text run at (0,15) width 150: "z         "
+            text run at (0,30) width 150: "z         "
+            text run at (0,45) width 150: "z         "
+            text run at (0,60) width 150: "z         "
+        RenderBlock {DIV} at (3,78) size 150x75
+          RenderText {#text} at (0,0) size 150x76
+            text run at (0,0) width 150: "zzzzzzzzzz"
+            text run at (0,15) width 150: "          "
+            text run at (0,30) width 150: "          "
+            text run at (0,45) width 150: "          "
+            text run at (0,60) width 150: "          "
+        RenderBlock {DIV} at (3,153) size 150x75
+          RenderText {#text} at (0,0) size 150x76
+            text run at (0,0) width 150: "z         "
+            text run at (0,15) width 150: "          "
+            text run at (0,30) width 150: "          "
+            text run at (0,45) width 150: "          "
+            text run at (0,60) width 150: "          "

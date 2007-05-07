@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x100
-  RenderBlock {HTML} at (0,0) size 800x100
-    RenderBody {BODY} at (8,14) size 784x78
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 234x16
-          text run at (0,0) width 234: "There should be a green block below."
-      RenderBlock {DIV} at (0,30) size 160x48 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
-        RenderBlock {DIV} at (3,3) size 154x42
-          RenderText {#text} at (0,-1) size 103x44
-            text run at (0,-1) width 55: " rr rr rr r "
-            text run at (55,-1) width 48: "r  r  r  r "
-            text run at (0,13) width 52: "r  r  r  r  "
-            text run at (52,13) width 51: " rr rr rr r"
-            text run at (0,27) width 48: "r  r  r  r "
+layer at (0,0) size 800x131
+  RenderBlock {HTML} at (0,0) size 800x131
+    RenderBody {BODY} at (8,14) size 784x109
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 239x19
+          text run at (0,0) width 239: "There should be a green block below."
+      RenderBlock {DIV} at (0,33) size 160x76 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 154x70
+          RenderText {#text} at (0,-1) size 154x72
+            text run at (0,-1) width 154: " rr rr rr r"
+            text run at (0,13) width 154: "r  r  r  r "
+            text run at (0,27) width 154: "r  r  r  r "
+            text run at (0,41) width 154: " rr rr rr r"
+            text run at (0,55) width 154: "r  r  r  r "

@@ -1,22 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x272
-  RenderBlock {HTML} at (0,0) size 800x272
-    RenderBody {BODY} at (8,14) size 784x246
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 257x16
-          text run at (0,0) width 257: "The two blocks below should be identical:"
-      RenderBlock {DIV} at (12,30) size 126x78 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
-        RenderText {#text} at (27,26) size 85x26
-          text run at (27,26) width 85: "X X X X"
-      RenderBlock {PRE} at (12,120) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
-        RenderText {#text} at (3,2) size 53x122
-          text run at (3,2) width 35: "     "
-          text run at (38,2) width 0: " "
-          text run at (3,26) width 53: " X X "
-          text run at (56,26) width 0: " "
-          text run at (3,50) width 35: "     "
-          text run at (38,50) width 0: " "
-          text run at (3,74) width 53: " X X "
-          text run at (56,74) width 0: " "
-          text run at (3,98) width 35: "     "
+layer at (0,0) size 800x323
+  RenderBlock {HTML} at (0,0) size 800x323
+    RenderBody {BODY} at (8,14) size 784x297
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 262x19
+          text run at (0,0) width 262: "The two blocks below should be identical:"
+      RenderBlock {DIV} at (12,33) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
+        RenderText {#text} at (27,26) size 72x74
+          text run at (27,26) width 72: "X X"
+          text run at (27,74) width 72: "X X"
+      RenderBlock {PRE} at (12,171) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
+        RenderText {#text} at (3,2) size 120x122
+          text run at (3,2) width 120: "     "
+          text run at (123,2) width 0: " "
+          text run at (3,26) width 120: " X X "
+          text run at (123,26) width 0: " "
+          text run at (3,50) width 120: "     "
+          text run at (123,50) width 0: " "
+          text run at (3,74) width 120: " X X "
+          text run at (123,74) width 0: " "
+          text run at (3,98) width 120: "     "

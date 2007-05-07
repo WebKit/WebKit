@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x286
-  RenderBlock {HTML} at (0,0) size 800x286
-    RenderBody {BODY} at (8,14) size 784x258
-      RenderBlock {P} at (0,0) size 784x16 [color=#000080]
-        RenderText {#text} at (0,0) size 216x16
-          text run at (0,0) width 216: "There should be no red anywhere."
-      RenderBlock {P} at (0,30) size 784x16 [color=#000080]
-        RenderText {#text} at (0,0) size 326x16
-          text run at (0,0) width 326: "There should be two identical squares after this line:"
-      RenderBlock {DIV} at (14,60) size 756x37
+layer at (0,0) size 800x295
+  RenderBlock {HTML} at (0,0) size 800x295
+    RenderBody {BODY} at (8,14) size 784x267
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 219x19
+          text run at (0,0) width 219: "There should be no red anywhere."
+      RenderBlock {P} at (0,33) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 330x19
+          text run at (0,0) width 330: "There should be two identical squares after this line:"
+      RenderBlock {DIV} at (14,66) size 756x37
         RenderImage {IMG} at (0,0) size 15x15
         RenderBlock {SPAN} at (0,20) size 15x17 [color=#0000FF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 10x17
-            text run at (0,0) width 10: "X"
-      RenderBlock {P} at (0,111) size 784x16 [color=#000080]
-        RenderText {#text} at (0,0) size 326x16
-          text run at (0,0) width 326: "There should be two identical squares after this line:"
-      RenderBlock {DIV} at (14,141) size 756x117
+          RenderText {#text} at (0,0) size 15x16
+            text run at (0,0) width 15: "X"
+      RenderBlock {P} at (0,117) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 330x19
+          text run at (0,0) width 330: "There should be two identical squares after this line:"
+      RenderBlock {DIV} at (14,150) size 756x117
         RenderImage {IMG} at (0,0) size 56x56
         RenderBlock {SPAN} at (0,61) size 56x56 [color=#0000FF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,2) size 37x58
-            text run at (0,2) width 37: "X"
+          RenderText {#text} at (0,0) size 56x58
+            text run at (0,0) width 56: "X"

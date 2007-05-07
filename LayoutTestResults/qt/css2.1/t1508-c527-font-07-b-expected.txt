@@ -4,25 +4,25 @@ layer at (0,0) size 800x996
   RenderBlock {HTML} at (0,0) size 800x996
     RenderBody {BODY} at (8,18) size 784x960 [color=#000080]
       RenderBlock {P} at (0,0) size 784x960
-        RenderText {#text} at (0,38) size 758x116
-          text run at (0,38) width 758: "This text should be 18px sans-serif, in small-caps and italicized. The lines"
-          text run at (0,134) width 272: "should be one inch apart. "
-        RenderInline {SPAN} at (0,0) size 763x788 [color=#C0C0C0]
-          RenderText {#text} at (272,134) size 763x788
-            text run at (272,134) width 491: "dummy text dummy text dummy text dummy text"
-            text run at (0,230) width 197: "dummy text dummy "
-            text run at (197,230) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,326) width 197: "dummy text dummy "
-            text run at (197,326) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,422) width 197: "dummy text dummy "
-            text run at (197,422) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,518) width 197: "dummy text dummy "
-            text run at (197,518) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,614) width 197: "dummy text dummy "
-            text run at (197,614) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,710) width 197: "dummy text dummy "
-            text run at (197,710) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,806) width 197: "dummy text dummy "
-            text run at (197,806) width 542: "text dummy text dummy text dummy text dummy text"
-            text run at (0,902) width 119: "dummy text"
+        RenderText {#text} at (0,35) size 758x121
+          text run at (0,35) width 758: "This text should be 18px sans-serif, in small-caps and italicized. The lines"
+          text run at (0,131) width 272: "should be one inch apart. "
+        RenderInline {SPAN} at (0,0) size 763x793 [color=#C0C0C0]
+          RenderText {#text} at (272,131) size 763x793
+            text run at (272,131) width 491: "dummy text dummy text dummy text dummy text"
+            text run at (0,227) width 197: "dummy text dummy "
+            text run at (197,227) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,323) width 197: "dummy text dummy "
+            text run at (197,323) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,419) width 197: "dummy text dummy "
+            text run at (197,419) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,515) width 197: "dummy text dummy "
+            text run at (197,515) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,611) width 197: "dummy text dummy "
+            text run at (197,611) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,707) width 197: "dummy text dummy "
+            text run at (197,707) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,803) width 197: "dummy text dummy "
+            text run at (197,803) width 542: "text dummy text dummy text dummy text dummy text"
+            text run at (0,899) width 119: "dummy text"
         RenderText {#text} at (0,0) size 0x0

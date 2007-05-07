@@ -1,17 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x105
-  RenderBlock {HTML} at (0,0) size 800x105
-    RenderBody {BODY} at (8,14) size 784x76
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 222x16
-          text run at (0,0) width 222: "There should be a green bar below:"
-      RenderBlock {DIV} at (15,31) size 120x45 [bgcolor=#008000]
-        RenderBlock {P} at (0,0) size 120x15 [color=#FFFFFF] [bgcolor=#FFFFFF]
-          RenderText {#text} at (0,-1) size 44x17
-            text run at (0,-1) width 44: "x x x x"
-          RenderInline {SPAN} at (0,0) size 8x17
-            RenderText {#text} at (-16,-1) size 16x17
-              text run at (-16,-1) width 8: "x"
-          RenderText {#text} at (-8,-1) size 68x17
-            text run at (-8,-1) width 68: "x x x x x x"
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,14) size 784x79
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 227x19
+          text run at (0,0) width 227: "There should be a green bar below:"
+      RenderBlock {DIV} at (15,34) size 120x45 [bgcolor=#008000]
+        RenderBlock {P} at (0,0) size 120x30 [color=#FFFFFF] [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,0) size 105x16
+            text run at (0,0) width 105: "x x x x"
+          RenderInline {SPAN} at (0,0) size 15x16
+            RenderText {#text} at (45,0) size 15x16
+              text run at (45,0) width 15: "x"
+          RenderText {#text} at (60,0) size 105x31
+            text run at (60,0) width 45: "x x"
+            text run at (0,15) width 105: "x x x x"
