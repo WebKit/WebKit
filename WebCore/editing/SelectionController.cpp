@@ -1018,15 +1018,12 @@ bool SelectionController::contains(const IntPoint& point)
     VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(result.localPoint()));
     if (visiblePos.isNull())
         return false;
-    
-    // A selection doesn't contain it's endpoints.
-    if (visiblePos == m_sel.visibleStart() || visiblePos == m_sel.visibleEnd())
-        return false;
         
-    RefPtr<Range> range = toRange();
-    ExceptionCode ec = 0;
+    Position start(m_sel.visibleStart().deepEquivalent());
+    Position end(m_sel.visibleEnd().deepEquivalent());
     Position p(visiblePos.deepEquivalent());
-    return range->comparePoint(p.node(), p.offset(), ec) == 0 && ec == 0;
+    // A selection doesn't contain its endpoints.
+    return comparePositions(start, p) < 0 && comparePositions(p, end) < 0;
 }
 
 // Workaround for the fact that it's hard to delete a frame.

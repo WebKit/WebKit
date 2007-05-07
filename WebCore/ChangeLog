@@ -1,5 +1,14 @@
 2007-05-07  Justin Garcia  <justin.garcia@apple.com>
 
+        Fix layout test failures.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::contains): Use comparePositions
+        instead of Range::comparePoint, because comparePositions can
+        handle positions inside shadow trees.
+
+2007-05-07  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         <rdar://problem/4895428> Can't drag selected To Do if it is not showing a due date
