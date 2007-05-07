@@ -3,66 +3,66 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 324x34 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 314x24
-          RenderTableRow {TR} at (0,2) size 314x20
-            RenderTableCell {TD} at (2,2) size 154x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 150x16
-                text run at (2,2) width 150: "almaalmaalmaalmaalma"
-            RenderTableCell {TD} at (158,2) size 154x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+      RenderTable {TABLE} at (0,0) size 334x37 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 324x27
+          RenderTableRow {TR} at (0,2) size 324x23
+            RenderTableCell {TD} at (2,2) size 159x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 155x19
+                text run at (2,2) width 155: "almaalmaalmaalmaalma"
+            RenderTableCell {TD} at (163,2) size 159x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"
-      RenderBlock (anonymous) at (0,34) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,50) size 325x34 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 315x24
-          RenderTableRow {TR} at (0,2) size 315x20
-            RenderTableCell {TD} at (2,2) size 155x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 150x16
-                text run at (2,2) width 150: "almaalmaalmaalmaalma"
-            RenderTableCell {TD} at (159,2) size 154x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+      RenderBlock (anonymous) at (0,37) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,56) size 335x37 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 325x27
+          RenderTableRow {TR} at (0,2) size 325x23
+            RenderTableCell {TD} at (2,2) size 160x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 155x19
+                text run at (2,2) width 155: "almaalmaalmaalmaalma"
+            RenderTableCell {TD} at (164,2) size 159x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"
-      RenderBlock (anonymous) at (0,84) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderBlock {P} at (0,114) size 784x32
-        RenderText {#text} at (0,0) size 353x16
-          text run at (0,0) width 353: "In this table, the second and the third cell are given 40%"
-        RenderBR {BR} at (353,13) size 0x0
-        RenderText {#text} at (0,16) size 255x16
-          text run at (0,16) width 255: "The cells are competing with each other."
-        RenderBR {BR} at (255,29) size 0x0
-      RenderTable {TABLE} at (0,160) size 345x34 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 335x24
-          RenderTableRow {TR} at (0,2) size 335x20
-            RenderTableCell {TD} at (2,2) size 67x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 61x16
-                text run at (2,2) width 61: "some text"
-            RenderTableCell {TD} at (71,2) size 130x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+      RenderBlock (anonymous) at (0,93) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {P} at (0,126) size 784x38
+        RenderText {#text} at (0,0) size 355x19
+          text run at (0,0) width 355: "In this table, the second and the third cell are given 40%"
+        RenderBR {BR} at (355,14) size 0x0
+        RenderText {#text} at (0,19) size 257x19
+          text run at (0,19) width 257: "The cells are competing with each other."
+        RenderBR {BR} at (257,33) size 0x0
+      RenderTable {TABLE} at (0,178) size 350x37 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 340x27
+          RenderTableRow {TR} at (0,2) size 340x23
+            RenderTableCell {TD} at (2,2) size 68x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "some text"
+            RenderTableCell {TD} at (72,2) size 132x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"
-            RenderTableCell {TD} at (203,2) size 130x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+            RenderTableCell {TD} at (206,2) size 132x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"
-      RenderBlock {P} at (0,208) size 784x48
-        RenderText {#text} at (0,0) size 353x16
-          text run at (0,0) width 353: "In this table, the second and the third cell are given 50%"
-        RenderBR {BR} at (353,13) size 0x0
-        RenderText {#text} at (0,16) size 449x16
-          text run at (0,16) width 449: "The cells are competing again but their percentage can not be satisfied."
-        RenderBR {BR} at (449,29) size 0x0
-        RenderText {#text} at (0,32) size 473x16
-          text run at (0,32) width 473: "The table grows as large as it can and the first cell gets to its minimal width."
-      RenderTable {TABLE} at (0,270) size 784x50 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 774x40
-          RenderTableRow {TR} at (0,2) size 774x36
-            RenderTableCell {TD} at (2,2) size 38x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 34x32
-                text run at (2,2) width 34: "some"
-                text run at (2,18) width 23: "text"
-            RenderTableCell {TD} at (42,10) size 364x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+      RenderBlock {P} at (0,229) size 784x57
+        RenderText {#text} at (0,0) size 355x19
+          text run at (0,0) width 355: "In this table, the second and the third cell are given 50%"
+        RenderBR {BR} at (355,14) size 0x0
+        RenderText {#text} at (0,19) size 454x19
+          text run at (0,19) width 454: "The cells are competing again but their percentage can not be satisfied."
+        RenderBR {BR} at (454,33) size 0x0
+        RenderText {#text} at (0,38) size 477x19
+          text run at (0,38) width 477: "The table grows as large as it can and the first cell gets to its minimal width."
+      RenderTable {TABLE} at (0,300) size 784x56 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 774x46
+          RenderTableRow {TR} at (0,2) size 774x42
+            RenderTableCell {TD} at (2,2) size 39x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 35x38
+                text run at (2,2) width 35: "some"
+                text run at (2,21) width 23: "text"
+            RenderTableCell {TD} at (43,11) size 363x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"
-            RenderTableCell {TD} at (408,10) size 364x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+            RenderTableCell {TD} at (408,11) size 364x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "x"

@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 749x16
-          text run at (0,0) width 749: "The TD tag uses the ALIGN attribute. The contents in the first TD tag (Netscape Communicator) should be aligned right."
-        RenderBR {BR} at (749,13) size 0x0
-      RenderTable {TABLE} at (0,16) size 277x48 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 275x46
-          RenderTableRow {TR} at (0,2) size 275x20
-            RenderTableCell {TD} at (2,2) size 265x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (109,2) size 154x16
-                text run at (109,2) width 154: "Netscape Communicator"
-            RenderTableCell {TD} at (269,10) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-          RenderTableRow {TR} at (0,24) size 275x20
-            RenderTableCell {TD} at (2,24) size 265x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 261x16
-                text run at (2,2) width 261: "Available on the Mac/PC/UNIX platforms !"
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 759x19
+          text run at (0,0) width 759: "The TD tag uses the ALIGN attribute. The contents in the first TD tag (Netscape Communicator) should be aligned right."
+        RenderBR {BR} at (759,14) size 0x0
+      RenderTable {TABLE} at (0,19) size 279x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 277x52
+          RenderTableRow {TR} at (0,2) size 277x23
+            RenderTableCell {TD} at (2,2) size 267x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (108,2) size 157x19
+                text run at (108,2) width 157: "Netscape Communicator"
+            RenderTableCell {TD} at (271,11) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,27) size 277x23
+            RenderTableCell {TD} at (2,27) size 267x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 263x19
+                text run at (2,2) width 263: "Available on the Mac/PC/UNIX platforms !"

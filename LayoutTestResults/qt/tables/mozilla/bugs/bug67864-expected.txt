@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 60x108
-        RenderBlock {CAPTION} at (0,0) size 60x86
-          RenderTable {TABLE} at (0,0) size 60x86
-            RenderTableSection {TBODY} at (0,0) size 60x86
-              RenderTableRow {TR} at (0,2) size 60x82
-                RenderTableCell {TD} at (2,2) size 56x82 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 50x80
+      RenderTable {TABLE} at (0,0) size 61x126
+        RenderBlock {CAPTION} at (0,0) size 61x101
+          RenderTable {TABLE} at (0,0) size 61x101
+            RenderTableSection {TBODY} at (0,0) size 61x101
+              RenderTableRow {TR} at (0,2) size 61x97
+                RenderTableCell {TD} at (2,2) size 57x97 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (1,1) size 50x95
                     text run at (1,1) width 50: "Another"
-                    text run at (1,17) width 30: "table"
-                    text run at (1,33) width 37: "inside"
-                    text run at (1,49) width 20: "the"
-                    text run at (1,65) width 46: "caption"
-        RenderTableSection {TBODY} at (0,86) size 60x22
-          RenderTableRow {TR} at (0,2) size 60x18
-            RenderTableCell {TD} at (2,2) size 56x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 54x16
-                text run at (1,1) width 54: "First row"
+                    text run at (1,20) width 31: "table"
+                    text run at (1,39) width 37: "inside"
+                    text run at (1,58) width 20: "the"
+                    text run at (1,77) width 46: "caption"
+        RenderTableSection {TBODY} at (0,101) size 61x25
+          RenderTableRow {TR} at (0,2) size 61x21
+            RenderTableCell {TD} at (2,2) size 57x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "First row"

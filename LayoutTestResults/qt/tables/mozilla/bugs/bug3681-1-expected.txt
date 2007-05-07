@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 627x58
-        RenderTableSection {TBODY} at (0,0) size 627x58
-          RenderTableRow {TR} at (0,2) size 627x54
-            RenderTableCell {TD} at (2,18) size 204x22 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 123x16
+      RenderTable {TABLE} at (0,0) size 627x67
+        RenderTableSection {TBODY} at (0,0) size 627x67
+          RenderTableRow {TR} at (0,2) size 627x63
+            RenderTableCell {TD} at (2,21) size 204x25 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 123x19
                 text run at (3,3) width 123: "Cell 1 (width=33%)."
-            RenderTableCell {TD} at (208,18) size 204x22 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 123x16
+            RenderTableCell {TD} at (208,21) size 204x25 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 123x19
                 text run at (3,3) width 123: "Cell 2 (width=33%)."
-            RenderTableCell {TD} at (414,2) size 211x54 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 205x48
+            RenderTableCell {TD} at (414,2) size 211x63 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 203x57
                 text run at (3,3) width 203: "Cell 3 (width=*) - should be 67%"
-                text run at (3,19) width 205: "when cell 2 is hidden, 33% when"
-                text run at (3,35) width 92: "cell 2 is visible."
+                text run at (3,22) width 168: "when cell 2 is hidden, 33%"
+                text run at (3,41) width 132: "when cell 2 is visible."

@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 780x32
-          text run at (0,0) width 523: "The table displayed is two rows by three columns. Each table row has been aligned "
-          text run at (523,0) width 257: "left. The table has been assigned a width"
-          text run at (0,16) width 241: "and border value so that it is easier to "
-          text run at (241,16) width 115: "see the alignment."
-        RenderBR {BR} at (356,29) size 0x0
-      RenderTable {TABLE} at (0,32) size 300x48 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x46
-          RenderTableRow {TR} at (0,2) size 298x20
-            RenderTableCell {TD} at (2,2) size 95x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 61x16
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 753x38
+          text run at (0,0) width 530: "The table displayed is two rows by three columns. Each table row has been aligned "
+          text run at (530,0) width 223: "left. The table has been assigned a"
+          text run at (0,19) width 280: "width and border value so that it is easier to "
+          text run at (280,19) width 117: "see the alignment."
+        RenderBR {BR} at (397,33) size 0x0
+      RenderTable {TABLE} at (0,38) size 300x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x52
+          RenderTableRow {TR} at (0,2) size 298x23
+            RenderTableCell {TD} at (2,2) size 96x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 61x19
                 text run at (2,2) width 61: "Navigator"
-            RenderTableCell {TD} at (99,2) size 104x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 71x16
+            RenderTableCell {TD} at (100,2) size 103x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 71x19
                 text run at (2,2) width 71: "Messenger"
-            RenderTableCell {TD} at (205,2) size 91x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 52x16
-                text run at (2,2) width 52: "Collabra"
-          RenderTableRow {TR} at (0,24) size 298x20
-            RenderTableCell {TD} at (2,24) size 95x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 65x16
-                text run at (2,2) width 65: "Composer"
-            RenderTableCell {TD} at (99,24) size 104x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x16
+            RenderTableCell {TD} at (205,2) size 91x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x19
+                text run at (2,2) width 53: "Collabra"
+          RenderTableRow {TR} at (0,27) size 298x23
+            RenderTableCell {TD} at (2,27) size 96x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x19
+                text run at (2,2) width 66: "Composer"
+            RenderTableCell {TD} at (100,27) size 103x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x19
                 text run at (2,2) width 58: "Calendar"
-            RenderTableCell {TD} at (205,24) size 91x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 61x16
+            RenderTableCell {TD} at (205,27) size 91x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 61x19
                 text run at (2,2) width 61: "Netcaster"

@@ -9,42 +9,42 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,2) size 768x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (768,0) size 6x6 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 4x4
-      RenderBlock (anonymous) at (0,8) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,24) size 352x24
-        RenderTableSection {TBODY} at (0,0) size 352x24
-          RenderTableRow {TR} at (0,0) size 352x20
-            RenderTableCell {TD} at (0,0) size 348x20 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,8) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,27) size 352x28
+        RenderTableSection {TBODY} at (0,0) size 352x28
+          RenderTableRow {TR} at (0,0) size 352x24
+            RenderTableCell {TD} at (0,0) size 348x24 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 13x16
-              RenderInline {FONT} at (0,0) size 131x19 [color=#FFFFFF]
-                RenderInline {B} at (0,0) size 131x19
-                  RenderText {#text} at (13,0) size 131x19
-                    text run at (13,0) width 131: "Rugged Laptops"
-            RenderTableCell {TD} at (348,2) size 4x18 [r=0 c=1 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 130x23 [color=#FFFFFF]
+                RenderInline {B} at (0,0) size 130x24
+                  RenderText {#text} at (13,0) size 130x24
+                    text run at (13,0) width 130: "Rugged Laptops"
+            RenderTableCell {TD} at (348,6) size 4x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x18
-          RenderTableRow {TR} at (0,20) size 352x4
-            RenderTableCell {TD} at (0,20) size 348x4 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 352x4
+            RenderTableCell {TD} at (0,24) size 348x4 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x4
-            RenderTableCell {TD} at (348,20) size 4x4 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (348,24) size 4x4 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x4
-      RenderBlock (anonymous) at (0,48) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,64) size 352x36
-        RenderTableSection {TBODY} at (0,0) size 352x36
-          RenderTableRow {TR} at (0,0) size 352x20
-            RenderTableCell {TD} at (0,0) size 348x20 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,55) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,74) size 352x44
+        RenderTableSection {TBODY} at (0,0) size 352x44
+          RenderTableRow {TR} at (0,0) size 352x24
+            RenderTableCell {TD} at (0,0) size 348x24 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 13x16
-              RenderInline {FONT} at (0,0) size 131x19 [color=#FFFFFF]
-                RenderInline {B} at (0,0) size 131x19
-                  RenderText {#text} at (13,0) size 131x19
-                    text run at (13,0) width 131: "Rugged Laptops"
-            RenderTableCell {TD} at (348,2) size 4x18 [r=0 c=1 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 130x23 [color=#FFFFFF]
+                RenderInline {B} at (0,0) size 130x24
+                  RenderText {#text} at (13,0) size 130x24
+                    text run at (13,0) width 130: "Rugged Laptops"
+            RenderTableCell {TD} at (348,6) size 4x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x18
-          RenderTableRow {TR} at (0,20) size 352x16
-            RenderTableCell {TD} at (0,20) size 348x16 [r=1 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (0,9) size 1x4
-              RenderInline {B} at (0,0) size 22x16
-                RenderText {#text} at (1,0) size 22x16
-                  text run at (1,0) width 22: "foo"
-            RenderTableCell {TD} at (348,26) size 4x4 [r=1 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 352x20
+            RenderTableCell {TD} at (0,24) size 348x20 [r=1 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,10) size 1x4
+              RenderInline {B} at (0,0) size 23x20
+                RenderText {#text} at (1,0) size 23x20
+                  text run at (1,0) width 23: "foo"
+            RenderTableCell {TD} at (348,32) size 4x4 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x4

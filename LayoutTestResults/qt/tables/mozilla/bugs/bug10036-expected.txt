@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 221x16
-          text run at (0,0) width 221: "the lower left cell should be colored"
-      RenderTable {TABLE} at (0,16) size 31x48 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 29x46
-          RenderTableRow {TR} at (0,2) size 29x20
-            RenderTableCell {TD} at (2,2) size 12x20 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 8x16
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 223x19
+          text run at (0,0) width 223: "the lower left cell should be colored"
+      RenderTable {TABLE} at (0,19) size 32x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 30x52
+          RenderTableRow {TR} at (0,2) size 30x23
+            RenderTableCell {TD} at (2,2) size 12x23 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "a"
-            RenderTableCell {TD} at (16,2) size 11x20 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
-                text run at (2,2) width 7: "b"
-          RenderTableRow {TR} at (0,24) size 29x20
-            RenderTableCell {TD} at (2,24) size 12x20 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBR {BR} at (2,2) size 0x16
-            RenderTableCell {TD} at (16,24) size 11x20 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 7x16
+            RenderTableCell {TD} at (16,2) size 12x23 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x19
+                text run at (2,2) width 8: "b"
+          RenderTableRow {TR} at (0,27) size 30x23
+            RenderTableCell {TD} at (2,27) size 12x23 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBR {BR} at (2,2) size 0x19
+            RenderTableCell {TD} at (16,27) size 12x23 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "c"

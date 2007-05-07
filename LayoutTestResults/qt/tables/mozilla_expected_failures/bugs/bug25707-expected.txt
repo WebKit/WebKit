@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 772x32
-          text run at (0,0) width 772: "The table below should be sized so that each word of text wraps to its own line, and if the font size is not too large, then the"
-          text run at (0,16) width 240: "table will not be wider than the screen."
-      RenderBlock {P} at (0,46) size 784x64
-        RenderText {#text} at (0,0) size 781x64
-          text run at (0,0) width 759: "Previously, the table would be incredibly wide, wide enough so that the entire paragraph of text was on one line. That was"
-          text run at (0,16) width 781: "because the \"maxElementSize\" of the cell was including margins calculated from the desired size of the text (in this case, 19x"
-          text run at (0,32) width 737: "the desired width of the paragraph). The fix was to calculate the margin for the \"maxElementSize\" of the cell using the"
-          text run at (0,48) width 610: "\"maxElementSize\" of the contained block itself, which in this case is the maximum width of a word."
-      RenderTable {TABLE} at (0,124) size 232x138 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 230x136
-          RenderTableRow {TR} at (0,2) size 230x132
-            RenderTableCell {TD} at (2,2) size 226x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (212,2) size 12x128
-                RenderText {#text} at (0,0) size 34x128
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 778x38
+          text run at (0,0) width 778: "The table below should be sized so that each word of text wraps to its own line, and if the font size is not too large, then the"
+          text run at (0,19) width 243: "table will not be wider than the screen."
+      RenderBlock {P} at (0,52) size 784x76
+        RenderText {#text} at (0,0) size 770x76
+          text run at (0,0) width 768: "Previously, the table would be incredibly wide, wide enough so that the entire paragraph of text was on one line. That was"
+          text run at (0,19) width 763: "because the \"maxElementSize\" of the cell was including margins calculated from the desired size of the text (in this case,"
+          text run at (0,38) width 770: "19x the desired width of the paragraph). The fix was to calculate the margin for the \"maxElementSize\" of the cell using the"
+          text run at (0,57) width 619: "\"maxElementSize\" of the contained block itself, which in this case is the maximum width of a word."
+      RenderTable {TABLE} at (0,142) size 236x162 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 234x160
+          RenderTableRow {TR} at (0,2) size 234x156
+            RenderTableCell {TD} at (2,2) size 230x156 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (216,2) size 12x152
+                RenderText {#text} at (0,0) size 35x152
                   text run at (0,0) width 27: "This"
-                  text run at (0,16) width 10: "is"
-                  text run at (0,32) width 34: "some"
-                  text run at (0,48) width 26: "text."
-                  text run at (0,64) width 27: "This"
-                  text run at (0,80) width 10: "is"
-                  text run at (0,96) width 34: "some"
-                  text run at (0,112) width 26: "text."
+                  text run at (0,19) width 10: "is"
+                  text run at (0,38) width 35: "some"
+                  text run at (0,57) width 27: "text."
+                  text run at (0,76) width 27: "This"
+                  text run at (0,95) width 10: "is"
+                  text run at (0,114) width 35: "some"
+                  text run at (0,133) width 27: "text."

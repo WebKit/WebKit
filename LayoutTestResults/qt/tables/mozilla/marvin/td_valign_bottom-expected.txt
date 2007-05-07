@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 144x16
-          text run at (0,0) width 144: "TD VALIGN=BOTTOM"
-      RenderTable {TABLE} at (0,16) size 784x195 [border: (1px outset #808080)]
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 143x19
+          text run at (0,0) width 143: "TD VALIGN=BOTTOM"
+      RenderTable {TABLE} at (0,19) size 784x195 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x193
           RenderTableRow {TR} at (0,2) size 782x189
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
-            RenderTableCell {TD} at (308,155) size 235x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 227x32
-                text run at (2,2) width 227: "This text should be vertically aligned"
-                text run at (2,18) width 82: "to the bottom"
-            RenderTableCell {TD} at (545,155) size 235x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 227x32
-                text run at (2,2) width 227: "This text should be vertically aligned"
-                text run at (2,18) width 82: "to the bottom"
+            RenderTableCell {TD} at (308,149) size 235x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 229x38
+                text run at (2,2) width 229: "This text should be vertically aligned"
+                text run at (2,21) width 84: "to the bottom"
+            RenderTableCell {TD} at (545,149) size 235x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 229x38
+                text run at (2,2) width 229: "This text should be vertically aligned"
+                text run at (2,21) width 84: "to the bottom"

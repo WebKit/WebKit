@@ -3,47 +3,47 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 502x16
-          text run at (0,0) width 423: "there's a table below this line with cellspacing=1 and border=2 and "
-          text run at (423,0) width 79: "several lines"
-        RenderBR {BR} at (502,13) size 0x0
-        RenderText {#text} at (0,16) size 408x16
-          text run at (0,16) width 408: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
-      RenderTable {TABLE} at (0,46) size 776x529 [border: (2px outset #808080)]
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 503x19
+          text run at (0,0) width 424: "there's a table below this line with cellspacing=1 and border=2 and "
+          text run at (424,0) width 79: "several lines"
+        RenderBR {BR} at (503,14) size 0x0
+        RenderText {#text} at (0,19) size 414x19
+          text run at (0,19) width 414: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
+      RenderTable {TABLE} at (0,52) size 776x529 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 772x525
-          RenderTableRow {TR} at (0,1) size 772x89
-            RenderTableCell {TD} at (1,1) size 770x166 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
-              RenderBlock {P} at (5,5) size 760x37
-                RenderInline {FONT} at (0,0) size 20x23 [color=#E91C05]
-                  RenderText {#text} at (0,0) size 20x23
+          RenderTableRow {TR} at (0,1) size 772x82
+            RenderTableCell {TD} at (1,1) size 770x194 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
+              RenderBlock {P} at (5,5) size 760x44
+                RenderInline {FONT} at (0,0) size 20x28 [color=#E91C05]
+                  RenderText {#text} at (0,0) size 20x28
                     text run at (0,0) width 20: "W"
-                RenderInline {B} at (0,0) size 240x16
-                  RenderInline {FONT} at (0,0) size 240x16 [color=#E91C05]
-                    RenderText {#text} at (20,7) size 240x16
-                      text run at (20,7) width 240: "elcome to Pacific Shore Properties"
-                    RenderBR {BR} at (260,20) size 0x0
-                RenderInline {FONT} at (0,0) size 283x12
-                  RenderText {#text} at (0,24) size 283x12
-                    text run at (0,24) width 283: "Pacific Shore Properties is situated on beautiful Mayne Island."
-              RenderBlock {P} at (5,56) size 760x26
-                RenderInline {FONT} at (0,0) size 622x25
-                  RenderText {#text} at (0,0) size 622x12
-                    text run at (0,0) width 622: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver Island."
-                  RenderBR {BR} at (622,10) size 0x0
-                  RenderText {#text} at (0,13) size 68x12
-                    text run at (0,13) width 68: "(See map: left)"
-              RenderBlock {P} at (5,96) size 760x65
-                RenderInline {FONT} at (0,0) size 735x64
-                  RenderText {#text} at (0,0) size 735x25
-                    text run at (0,0) width 735: "Pacific Shore Properties specializes in the diverse properties of the Southern Gulf Islands; which include Beach, Business, View, Acreage, Home, Retirement and"
-                    text run at (0,13) width 52: "Recreation."
-                  RenderBR {BR} at (52,23) size 0x0
-                  RenderBR {BR} at (0,26) size 0x12
-                  RenderText {#text} at (0,39) size 713x25
-                    text run at (0,39) width 713: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties knowledge and expertise on the Gulf Islands is"
-                    text run at (0,52) width 53: "unmatched."
-              RenderBlock {P} at (5,175) size 760x0
-          RenderTableRow {TR} at (0,91) size 772x89
-          RenderTableRow {TR} at (0,181) size 772x89
-          RenderTableRow {TR} at (0,271) size 772x253
+                RenderInline {B} at (0,0) size 235x20
+                  RenderInline {FONT} at (0,0) size 235x20 [color=#E91C05]
+                    RenderText {#text} at (20,7) size 235x20
+                      text run at (20,7) width 235: "elcome to Pacific Shore Properties"
+                    RenderBR {BR} at (255,21) size 0x0
+                RenderInline {FONT} at (0,0) size 298x16
+                  RenderText {#text} at (0,28) size 298x16
+                    text run at (0,28) width 298: "Pacific Shore Properties is situated on beautiful Mayne Island."
+              RenderBlock {P} at (5,63) size 760x32
+                RenderInline {FONT} at (0,0) size 652x32
+                  RenderText {#text} at (0,0) size 652x16
+                    text run at (0,0) width 652: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver Island."
+                  RenderBR {BR} at (652,11) size 0x0
+                  RenderText {#text} at (0,16) size 71x16
+                    text run at (0,16) width 71: "(See map: left)"
+              RenderBlock {P} at (5,109) size 760x80
+                RenderInline {FONT} at (0,0) size 758x80
+                  RenderText {#text} at (0,0) size 758x32
+                    text run at (0,0) width 758: "Pacific Shore Properties specializes in the diverse properties of the Southern Gulf Islands; which include Beach, Business, View, Acreage, Home, Retirement"
+                    text run at (0,16) width 77: "and Recreation."
+                  RenderBR {BR} at (77,27) size 0x0
+                  RenderBR {BR} at (0,32) size 0x16
+                  RenderText {#text} at (0,48) size 754x32
+                    text run at (0,48) width 754: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties knowledge and expertise on the Gulf Islands is"
+                    text run at (0,64) width 57: "unmatched."
+              RenderBlock {P} at (5,203) size 760x0
+          RenderTableRow {TR} at (0,84) size 772x82
+          RenderTableRow {TR} at (0,167) size 772x82
+          RenderTableRow {TR} at (0,250) size 772x274

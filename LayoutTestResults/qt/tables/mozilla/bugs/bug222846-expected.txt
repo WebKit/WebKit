@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x196
-  RenderBlock {HTML} at (0,0) size 800x196
-    RenderBody {BODY} at (8,8) size 784x180
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 201x16
-          text run at (0,0) width 201: "Both tables should look identical"
-      RenderTable {TABLE} at (0,16) size 200x82 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 198x36
-          RenderText {#text} at (47,1) size 104x34
-            text run at (47,1) width 104: "caption"
-        RenderTableSection {TBODY} at (1,37) size 198x44
-          RenderTableRow {TR} at (0,2) size 198x40
-            RenderTableCell {TD} at (2,2) size 194x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 66x34
-                text run at (2,3) width 66: "cell1"
-      RenderTable {TABLE} at (0,98) size 200x82 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 198x36
-          RenderText {#text} at (47,1) size 104x34
-            text run at (47,1) width 104: "caption"
-        RenderTableSection {TBODY} at (1,37) size 198x44
-          RenderTableRow {TR} at (0,2) size 198x40
-            RenderTableCell {TD} at (2,2) size 194x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 66x34
-                text run at (2,3) width 66: "cell1"
+layer at (0,0) size 800x223
+  RenderBlock {HTML} at (0,0) size 800x223
+    RenderBody {BODY} at (8,8) size 784x207
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 203x19
+          text run at (0,0) width 203: "Both tables should look identical"
+      RenderTable {TABLE} at (0,19) size 200x94 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 198x42
+          RenderText {#text} at (47,0) size 104x42
+            text run at (47,0) width 104: "caption"
+        RenderTableSection {TBODY} at (1,43) size 198x50
+          RenderTableRow {TR} at (0,2) size 198x46
+            RenderTableCell {TD} at (2,2) size 194x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x42
+                text run at (2,2) width 66: "cell1"
+      RenderTable {TABLE} at (0,113) size 200x94 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 198x42
+          RenderText {#text} at (47,0) size 104x42
+            text run at (47,0) width 104: "caption"
+        RenderTableSection {TBODY} at (1,43) size 198x50
+          RenderTableRow {TR} at (0,2) size 198x46
+            RenderTableCell {TD} at (2,2) size 194x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x42
+                text run at (2,2) width 66: "cell1"

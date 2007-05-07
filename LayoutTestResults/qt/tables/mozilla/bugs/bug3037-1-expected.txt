@@ -15,22 +15,22 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {XUL:TOOLBAR} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderTable at (0,0) size 32x16
-          RenderTableSection at (0,0) size 32x16
-            RenderTableRow at (0,0) size 32x16
-              RenderTableCell {HTML:SPAN} at (0,0) size 31x16 [r=0 c=0 rs=1 cs=1]
-                RenderInline {HTML:BUTTON} at (0,0) size 31x16 [bgcolor=#C0C0C0]
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderTable at (0,0) size 32x19
+          RenderTableSection at (0,0) size 32x19
+            RenderTableRow at (0,0) size 32x19
+              RenderTableCell {HTML:SPAN} at (0,0) size 31x19 [r=0 c=0 rs=1 cs=1]
+                RenderInline {HTML:BUTTON} at (0,0) size 31x19 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 0x0
-                  RenderInline {HTML:IMG} at (0,0) size 31x16
-                    RenderInline {HTML:BR} at (0,0) size 31x16
-                      RenderText {#text} at (0,0) size 31x16
+                  RenderInline {HTML:IMG} at (0,0) size 31x19
+                    RenderInline {HTML:BR} at (0,0) size 31x19
+                      RenderText {#text} at (0,0) size 31x19
                         text run at (0,0) width 31: "Back"
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {HTML:SPAN} at (31,0) size 1x0 [r=0 c=1 rs=1 cs=1]
                 RenderInline {HTML:INPUT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,16) size 784x0
+      RenderBlock (anonymous) at (0,19) size 784x0
         RenderInline {WINDOW} at (0,0) size 0x0
           RenderInline {WINDOW} at (0,0) size 0x0
             RenderInline {WINDOW} at (0,0) size 0x0

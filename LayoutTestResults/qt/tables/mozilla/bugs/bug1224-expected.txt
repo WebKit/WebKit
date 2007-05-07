@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 133x16
-          text run at (0,0) width 133: "and the page works.)"
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 134x19
+          text run at (0,0) width 134: "and the page works.)"
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,16) size 181x48 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 179x46
-          RenderTableRow {TR} at (0,2) size 179x20
-            RenderTableCell {TD} at (2,2) size 91x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 49x16
-                text run at (2,2) width 49: "img-cap"
-            RenderTableCell {TD} at (95,5) size 82x36 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 77x16
-                text run at (2,2) width 77: "img-features"
-              RenderBR {BR} at (79,15) size 0x0
-              RenderText {#text} at (2,18) size 78x16
-                text run at (2,18) width 78: "img-holidays"
-              RenderBR {BR} at (80,31) size 0x0
-          RenderTableRow {TR} at (0,24) size 179x20
-            RenderTableCell {TD} at (2,24) size 91x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 87x16
-                text run at (2,2) width 87: "img-projo.com"
+      RenderTable {TABLE} at (0,19) size 187x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 185x52
+          RenderTableRow {TR} at (0,2) size 185x23
+            RenderTableCell {TD} at (2,2) size 95x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 51x19
+                text run at (2,2) width 51: "img-cap"
+            RenderTableCell {TD} at (99,5) size 84x42 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 80x19
+                text run at (2,2) width 80: "img-features"
+              RenderBR {BR} at (82,16) size 0x0
+              RenderText {#text} at (2,21) size 80x19
+                text run at (2,21) width 80: "img-holidays"
+              RenderBR {BR} at (82,35) size 0x0
+          RenderTableRow {TR} at (0,27) size 185x23
+            RenderTableCell {TD} at (2,27) size 95x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 91x19
+                text run at (2,2) width 91: "img-projo.com"

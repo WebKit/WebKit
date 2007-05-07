@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderTable {TABLE} at (0,0) size 183x26 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 181x24
-          RenderTableRow {TR} at (0,2) size 181x20
-            RenderTableCell {TD} at (2,2) size 65x20 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 61x16
-                text run at (2,2) width 61: "appName"
-            RenderTableCell {TD} at (69,2) size 110x20 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 106x16
+      RenderTable {TABLE} at (0,0) size 185x29 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 183x27
+          RenderTableRow {TR} at (0,2) size 183x23
+            RenderTableCell {TD} at (2,2) size 66x23 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x19
+                text run at (2,2) width 62: "appName"
+            RenderTableCell {TD} at (70,2) size 111x23 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 107x19
                 text run at (2,2) width 64: "Netscape "
-                text run at (66,2) width 42: "rules!!!"
+                text run at (66,2) width 43: "rules!!!"

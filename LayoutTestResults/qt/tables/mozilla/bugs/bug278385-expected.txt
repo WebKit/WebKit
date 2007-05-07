@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x120
-  RenderBlock {HTML} at (0,0) size 800x120
-    RenderBody {BODY} at (8,8) size 784x104
+layer at (0,0) size 800x126
+  RenderBlock {HTML} at (0,0) size 800x126
+    RenderBody {BODY} at (8,8) size 784x110
       RenderTableCol {COL} at (0,0) size 0x0
       RenderTableCol {COL} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,0) size 79x104 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 77x102
-          RenderTableRow {TR} at (0,2) size 77x48
-            RenderTableCell {TH} at (2,24) size 34x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (38,2) size 37x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {P} at (2,16) size 33x16
-                RenderText {#text} at (0,0) size 33x16
+      RenderTable {TABLE} at (0,0) size 79x110 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 77x108
+          RenderTableRow {TR} at (0,2) size 77x51
+            RenderTableCell {TH} at (2,25) size 34x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (38,2) size 37x51 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (2,16) size 33x19
+                RenderText {#text} at (0,0) size 33x19
                   text run at (0,0) width 33: "TWO"
-          RenderTableRow {TR} at (0,52) size 77x48
-            RenderTableCell {TD} at (2,52) size 34x48 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock {P} at (2,16) size 30x16
-                RenderText {#text} at (0,0) size 30x16
+          RenderTableRow {TR} at (0,55) size 77x51
+            RenderTableCell {TD} at (2,55) size 34x51 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {P} at (2,16) size 30x19
+                RenderText {#text} at (0,0) size 30x19
                   text run at (0,0) width 30: "ONE"

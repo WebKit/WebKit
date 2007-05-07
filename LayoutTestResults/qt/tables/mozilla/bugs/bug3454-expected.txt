@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,14) size 784x572
-      RenderTable {TABLE} at (14,0) size 756x64 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 754x62
-          RenderTableRow {TR} at (0,2) size 754x20
-            RenderTableCell {TH} at (2,2) size 177x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (47,2) size 82x16
-                text run at (47,2) width 82: "Header One"
-            RenderTableCell {TH} at (181,2) size 270x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (95,2) size 80x16
-                text run at (95,2) width 80: "Header Two"
-            RenderTableCell {TH} at (453,2) size 299x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (103,2) size 92x16
-                text run at (103,2) width 92: "Header Three"
-          RenderTableRow {TR} at (0,24) size 754x36
-            RenderTableCell {TD} at (2,24) size 177x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 161x32
-                text run at (2,2) width 118: "This table uses the"
-                text run at (2,18) width 161: "separated borders model."
-            RenderTableCell {TD} at (181,24) size 270x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 251x32
-                text run at (2,2) width 251: "This means that elements within the cell"
-                text run at (2,18) width 179: "have border-spacing of 1em."
-            RenderTableCell {TD} at (453,24) size 299x36 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 283x32
-                text run at (2,2) width 209: "The borders on the header cells, "
-                text run at (211,2) width 74: "on all sides,"
-                text run at (2,18) width 191: "should be medium solid purple."
+      RenderTable {TABLE} at (14,0) size 756x74 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 754x72
+          RenderTableRow {TR} at (0,2) size 754x24
+            RenderTableCell {TH} at (2,2) size 177x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (48,2) size 80x20
+                text run at (48,2) width 80: "Header One"
+            RenderTableCell {TH} at (181,2) size 269x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (94,2) size 81x20
+                text run at (94,2) width 81: "Header Two"
+            RenderTableCell {TH} at (452,2) size 300x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (104,2) size 91x20
+                text run at (104,2) width 91: "Header Three"
+          RenderTableRow {TR} at (0,28) size 754x42
+            RenderTableCell {TD} at (2,28) size 177x42 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 164x38
+                text run at (2,2) width 120: "This table uses the"
+                text run at (2,21) width 164: "separated borders model."
+            RenderTableCell {TD} at (181,28) size 269x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 253x38
+                text run at (2,2) width 253: "This means that elements within the cell"
+                text run at (2,21) width 183: "have border-spacing of 1em."
+            RenderTableCell {TD} at (452,28) size 300x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 286x38
+                text run at (2,2) width 211: "The borders on the header cells, "
+                text run at (213,2) width 75: "on all sides,"
+                text run at (2,21) width 198: "should be medium solid purple."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x402
-  RenderBlock {HTML} at (0,0) size 800x402
-    RenderBody {BODY} at (8,19) size 784x375
-      RenderBlock {H5} at (0,0) size 784x14
-        RenderText {#text} at (0,0) size 206x14
+layer at (0,0) size 800x414
+  RenderBlock {HTML} at (0,0) size 800x414
+    RenderBody {BODY} at (8,19) size 784x387
+      RenderBlock {H5} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 206x17
           text run at (0,0) width 206: "table - color, tbodies color, row color"
-      RenderTable {TABLE} at (0,33) size 186x342 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (41,41) size 104x160 [bgcolor=#FF0000]
-          RenderTableRow {TR} at (0,40) size 104x20 [bgcolor=#FFFF00]
-            RenderTableCell {TD} at (40,40) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x16
+      RenderTable {TABLE} at (0,36) size 186x351 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (41,41) size 104x166 [bgcolor=#FF0000]
+          RenderTableRow {TR} at (0,40) size 104x23 [bgcolor=#FFFF00]
+            RenderTableCell {TD} at (40,40) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
-          RenderTableRow {TR} at (0,100) size 104x20
-            RenderTableCell {TD} at (40,100) size 24x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x16
+          RenderTableRow {TR} at (0,103) size 104x23
+            RenderTableCell {TD} at (40,103) size 24x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
-        RenderTableSection {TBODY} at (41,201) size 104x100 [bgcolor=#008000]
-          RenderTableRow {TR} at (0,40) size 104x20
-            RenderTableCell {TD} at (40,40) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x16
+        RenderTableSection {TBODY} at (41,207) size 104x103 [bgcolor=#008000]
+          RenderTableRow {TR} at (0,40) size 104x23
+            RenderTableCell {TD} at (40,40) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"

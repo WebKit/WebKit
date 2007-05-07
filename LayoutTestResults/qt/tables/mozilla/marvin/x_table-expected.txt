@@ -1,89 +1,89 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x296
-  RenderBlock {html} at (0,0) size 800x296
-    RenderBody {body} at (8,14) size 784x274
-      RenderBlock {p} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 265x16
-          text run at (0,0) width 265: "The table below should have the following:"
-      RenderBlock {ol} at (0,30) size 784x96
-        RenderListItem {li} at (40,0) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "1"
-          RenderText {#text} at (0,0) size 112x16
+layer at (0,0) size 800x339
+  RenderBlock {html} at (0,0) size 800x339
+    RenderBody {body} at (8,14) size 784x317
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 269x19
+          text run at (0,0) width 269: "The table below should have the following:"
+      RenderBlock {ol} at (0,33) size 784x114
+        RenderListItem {li} at (40,0) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 112x19
             text run at (0,0) width 112: "a caption 'TABLE'"
-        RenderListItem {li} at (40,16) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "2"
-          RenderText {#text} at (0,0) size 61x16
-            text run at (0,0) width 61: "no border"
-        RenderListItem {li} at (40,32) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "3"
-          RenderText {#text} at (0,0) size 216x16
-            text run at (0,0) width 216: "3 colgroups, each with one column"
-        RenderListItem {li} at (40,48) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "4"
-          RenderText {#text} at (0,0) size 143x16
+        RenderListItem {li} at (40,19) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 62x19
+            text run at (0,0) width 62: "no border"
+        RenderListItem {li} at (40,38) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 220x19
+            text run at (0,0) width 220: "3 colgroups, each with one column"
+        RenderListItem {li} at (40,57) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "4"
+          RenderText {#text} at (0,0) size 143x19
             text run at (0,0) width 143: "a THEAD with one row"
-        RenderListItem {li} at (40,64) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "5"
-          RenderText {#text} at (0,0) size 149x16
+        RenderListItem {li} at (40,76) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "5"
+          RenderText {#text} at (0,0) size 149x19
             text run at (0,0) width 149: "a TBODY with two rows"
-        RenderListItem {li} at (40,80) size 744x16
-          RenderListMarker at (-19,0) size 15x16: "6"
-          RenderText {#text} at (0,0) size 144x16
-            text run at (0,0) width 144: "a TFOOT with one row"
-      RenderBlock (anonymous) at (0,140) size 784x32
-        RenderBR {br} at (0,0) size 0x16
-        RenderBR {br} at (0,16) size 0x16
-      RenderTable {table} at (0,172) size 158x102
-        RenderBlock {caption} at (0,0) size 158x16
-          RenderText {#text} at (57,0) size 44x16
-            text run at (57,0) width 44: "TABLE"
+        RenderListItem {li} at (40,95) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "6"
+          RenderText {#text} at (0,0) size 145x19
+            text run at (0,0) width 145: "a TFOOT with one row"
+      RenderBlock (anonymous) at (0,161) size 784x38
+        RenderBR {br} at (0,0) size 0x19
+        RenderBR {br} at (0,19) size 0x19
+      RenderTable {table} at (0,199) size 161x118
+        RenderBlock {caption} at (0,0) size 161x19
+          RenderText {#text} at (58,0) size 44x19
+            text run at (58,0) width 44: "TABLE"
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection {thead} at (0,16) size 158x22
-          RenderTableRow {tr} at (0,2) size 158x18
-            RenderTableCell {th} at (2,2) size 50x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+        RenderTableSection {thead} at (0,19) size 161x26
+          RenderTableRow {tr} at (0,2) size 161x22
+            RenderTableCell {th} at (2,2) size 51x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x20
                 text run at (1,1) width 48: "THEAD"
-            RenderTableCell {th} at (54,2) size 50x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {th} at (55,2) size 51x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x20
                 text run at (1,1) width 48: "THEAD"
-            RenderTableCell {th} at (106,2) size 50x18 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {th} at (108,2) size 51x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x20
                 text run at (1,1) width 48: "THEAD"
-        RenderTableSection {tfoot} at (0,80) size 158x22
-          RenderTableRow {tr} at (0,2) size 158x18
-            RenderTableCell {td} at (2,2) size 50x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
-                text run at (1,1) width 48: "TFOOT"
-            RenderTableCell {td} at (54,2) size 50x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
-                text run at (1,1) width 48: "TFOOT"
-            RenderTableCell {td} at (106,2) size 50x18 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
-                text run at (1,1) width 48: "TFOOT"
-        RenderTableSection {tbody} at (0,38) size 158x42
-          RenderTableRow {tr} at (0,2) size 158x18
-            RenderTableCell {td} at (2,2) size 50x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+        RenderTableSection {tfoot} at (0,93) size 161x25
+          RenderTableRow {tr} at (0,2) size 161x21
+            RenderTableCell {td} at (2,2) size 51x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 49x19
+                text run at (1,1) width 49: "TFOOT"
+            RenderTableCell {td} at (55,2) size 51x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 49x19
+                text run at (1,1) width 49: "TFOOT"
+            RenderTableCell {td} at (108,2) size 51x21 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 49x19
+                text run at (1,1) width 49: "TFOOT"
+        RenderTableSection {tbody} at (0,45) size 161x48
+          RenderTableRow {tr} at (0,2) size 161x21
+            RenderTableCell {td} at (2,2) size 51x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"
-            RenderTableCell {td} at (54,2) size 50x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {td} at (55,2) size 51x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"
-            RenderTableCell {td} at (106,2) size 50x18 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {td} at (108,2) size 51x21 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"
-          RenderTableRow {tr} at (0,22) size 158x18
-            RenderTableCell {td} at (2,22) size 50x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+          RenderTableRow {tr} at (0,25) size 161x21
+            RenderTableCell {td} at (2,25) size 51x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"
-            RenderTableCell {td} at (54,22) size 50x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {td} at (55,25) size 51x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"
-            RenderTableCell {td} at (106,22) size 50x18 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x16
+            RenderTableCell {td} at (108,25) size 51x21 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 48x19
                 text run at (1,1) width 48: "TBODY"

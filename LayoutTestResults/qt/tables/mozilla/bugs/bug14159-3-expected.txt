@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 253x26
-        RenderTableSection {TBODY} at (0,0) size 253x26
-          RenderTableRow {TR} at (0,2) size 253x18
-            RenderTableCell {TD} at (2,2) size 249x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 247x16
-                text run at (1,1) width 247: "Really sorry about the server yesterday"
-          RenderTableRow {TR} at (0,22) size 253x2
-            RenderTableCell {TD} at (2,22) size 249x2 [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 255x29
+        RenderTableSection {TBODY} at (0,0) size 255x29
+          RenderTableRow {TR} at (0,2) size 255x21
+            RenderTableCell {TD} at (2,2) size 251x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 249x19
+                text run at (1,1) width 249: "Really sorry about the server yesterday"
+          RenderTableRow {TR} at (0,25) size 255x2
+            RenderTableCell {TD} at (2,25) size 251x2 [r=1 c=0 rs=1 cs=1]

@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 283x102 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 281x100
-          RenderTableRow {TR} at (0,2) size 281x96
-            RenderTableCell {TD} at (2,2) size 204x96 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 200x92 [border: (10px outset #808080)]
-                RenderTableSection {TBODY} at (10,10) size 180x72
-                  RenderTableRow {TR} at (0,2) size 180x68
-                    RenderTableCell {TD} at (2,14) size 44x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 284x114 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 282x112
+          RenderTableRow {TR} at (0,2) size 282x108
+            RenderTableCell {TD} at (2,2) size 204x108 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 200x104 [border: (10px outset #808080)]
+                RenderTableSection {TBODY} at (10,10) size 180x84
+                  RenderTableRow {TR} at (0,2) size 180x80
+                    RenderTableCell {TD} at (2,20) size 44x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (2,2) size 40x40
-                    RenderTableCell {TD} at (48,2) size 130x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 121x64
+                    RenderTableCell {TD} at (48,2) size 130x80 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 121x76
                         text run at (2,2) width 121: "xxx xxx xxx xxx xxx"
-                        text run at (2,18) width 121: "xxx xxx xxx xxx xxx"
-                        text run at (2,34) width 121: "xxx xxx xxx xxx xxx"
-                        text run at (2,50) width 121: "xxx xxx xxx xxx xxx"
-            RenderTableCell {TD} at (208,40) size 71x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 67x16
-                text run at (2,2) width 67: "row2, cell2"
+                        text run at (2,21) width 121: "xxx xxx xxx xxx xxx"
+                        text run at (2,40) width 121: "xxx xxx xxx xxx xxx"
+                        text run at (2,59) width 121: "xxx xxx xxx xxx xxx"
+            RenderTableCell {TD} at (208,44) size 72x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x19
+                text run at (2,2) width 68: "row2, cell2"

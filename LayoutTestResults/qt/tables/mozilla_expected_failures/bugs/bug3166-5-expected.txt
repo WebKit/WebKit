@@ -3,16 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 784x114 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 778x22 [border: (3px solid #FFA500)]
-          RenderText {#text} at (352,3) size 73x16
+      RenderTable {TABLE} at (0,0) size 784x151 [border: (3px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 778x25 [border: (3px solid #FFA500)]
+          RenderText {#text} at (352,3) size 73x19
             text run at (352,3) width 73: "caption text"
-        RenderTableSection {TBODY} at (3,25) size 778x86
-          RenderTableRow {TR} at (0,2) size 778x82
-            RenderTableCell {TD} at (2,2) size 774x82 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 765x80
-                text run at (1,1) width 754: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap table"
-                text run at (1,17) width 747: "text which should wrap table text which should wrap table text which should wrap table text which should wrap table text"
-                text run at (1,33) width 760: "which should wrap table text which should wrap table text which should wrap table text which should wrap table text which"
-                text run at (1,49) width 765: "should wrap table text which should wrap table text which should wrap table text which should wrap table text which should"
-                text run at (1,65) width 755: "wrap table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+        RenderTableSection {TBODY} at (3,28) size 778x120
+          RenderTableRow {TR} at (0,2) size 778x116
+            RenderTableCell {TD} at (2,2) size 774x116 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 768x114
+                text run at (1,1) width 763: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap table"
+                text run at (1,20) width 755: "text which should wrap table text which should wrap table text which should wrap table text which should wrap table text"
+                text run at (1,39) width 768: "which should wrap table text which should wrap table text which should wrap table text which should wrap table text which"
+                text run at (1,58) width 728: "should wrap table text which should wrap table text which should wrap table text which should wrap table text which"
+                text run at (1,77) width 728: "should wrap table text which should wrap table text which should wrap table text which should wrap table text which"
+                text run at (1,96) width 77: "should wrap"

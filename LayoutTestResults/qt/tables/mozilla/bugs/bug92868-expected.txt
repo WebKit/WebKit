@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderInline {A} at (0,0) size 60x16 [color=#0000EE]
-        RenderText {#text} at (0,0) size 60x16
-          text run at (0,0) width 60: "Hide Blue"
-      RenderText {#text} at (60,0) size 12x16
-        text run at (60,0) width 12: "   "
-      RenderInline {A} at (0,0) size 66x16 [color=#0000EE]
-        RenderText {#text} at (72,0) size 66x16
-          text run at (72,0) width 66: "Show Blue"
-      RenderText {#text} at (138,0) size 12x16
-        text run at (138,0) width 12: "   "
+      RenderInline {A} at (0,0) size 61x19 [color=#0000EE]
+        RenderText {#text} at (0,0) size 61x19
+          text run at (0,0) width 61: "Hide Blue"
+      RenderText {#text} at (61,0) size 12x19
+        text run at (61,0) width 12: "   "
+      RenderInline {A} at (0,0) size 67x19 [color=#0000EE]
+        RenderText {#text} at (73,0) size 67x19
+          text run at (73,0) width 67: "Show Blue"
+      RenderText {#text} at (140,0) size 12x19
+        text run at (140,0) width 12: "   "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,16) size 181x16
-        text run at (0,16) width 181: "Should not see the blue table"
-      RenderBR {BR} at (181,29) size 0x0
-      RenderBR {BR} at (0,32) size 0x16
+      RenderText {#text} at (0,19) size 185x19
+        text run at (0,19) width 185: "Should not see the blue table"
+      RenderBR {BR} at (185,33) size 0x0
+      RenderBR {BR} at (0,38) size 0x19

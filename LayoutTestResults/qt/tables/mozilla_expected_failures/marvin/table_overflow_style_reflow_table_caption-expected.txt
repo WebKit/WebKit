@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x425
-  RenderBlock {HTML} at (0,0) size 800x425
-    RenderBody {BODY} at (8,8) size 784x409
-      RenderTable {TABLE} at (0,0) size 200x409 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 198x42 [border: (3px solid #FFA500)]
-          RenderText {#text} at (73,4) size 52x34
-            text run at (73,4) width 52: "cap"
-        RenderTableSection {TBODY} at (1,43) size 198x365
-          RenderTableRow {TR} at (0,30) size 198x305
-            RenderTableCell {TD} at (30,127) size 54x110 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 52x106
-                text run at (1,2) width 45: "foo"
-                text run at (1,38) width 47: "bar"
-                text run at (1,74) width 52: "baz"
-            RenderTableCell {TD} at (114,30) size 54x305 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+layer at (0,0) size 800x465
+  RenderBlock {HTML} at (0,0) size 800x254
+    RenderBody {BODY} at (8,8) size 784x238
+      RenderTable {TABLE} at (0,0) size 200x238 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 198x48 [border: (3px solid #FFA500)]
+          RenderText {#text} at (73,3) size 52x42
+            text run at (73,3) width 52: "cap"
+        RenderTableSection {TBODY} at (1,49) size 198x188
+          RenderTableRow {TR} at (0,30) size 198x128
+            RenderTableCell {TD} at (30,30) size 54x128 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 52x126
+                text run at (1,1) width 45: "foo"
+                text run at (1,43) width 47: "bar"
+                text run at (1,85) width 52: "baz"
+            RenderTableCell {TD} at (114,104) size 54x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
-                  RenderText {#text} at (1,2) size 18x34
-                    text run at (1,2) width 18: "d"
+                  RenderText {#text} at (1,1) size 18x42
+                    text run at (1,1) width 18: "d"

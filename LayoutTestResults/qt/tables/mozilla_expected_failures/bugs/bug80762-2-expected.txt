@@ -1,77 +1,77 @@
-layer at (0,0) size 800x656
+layer at (0,0) size 800x773
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x656
-  RenderBlock {HTML} at (0,0) size 800x656
-    RenderBody {BODY} at (8,8) size 784x640
-      RenderTable {TABLE} at (0,0) size 784x640 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x638
-          RenderTableRow {TR} at (0,0) size 782x18
-            RenderTableCell {TD} at (0,0) size 73x18 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 20x16
+layer at (0,0) size 800x773
+  RenderBlock {HTML} at (0,0) size 800x773
+    RenderBody {BODY} at (8,8) size 784x757
+      RenderTable {TABLE} at (0,0) size 784x757 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x755
+          RenderTableRow {TR} at (0,0) size 782x21
+            RenderTableCell {TD} at (0,0) size 73x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "foo"
-            RenderTableCell {TD} at (73,0) size 709x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 20x16
-                text run at (1,1) width 20: "bar"
-          RenderTableRow {TR} at (0,18) size 782x620
-            RenderTableCell {TD} at (0,18) size 782x620 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 780x618 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 778x616
-                  RenderTableRow {TR} at (0,2) size 778x612
-                    RenderTableCell {TD} at (2,2) size 774x612 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 746x32
-                        text run at (2,2) width 746: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff Daphne"
-                        text run at (2,18) width 416: "Whiten was the cause of the fire herself and had committed arson."
-                      RenderBR {BR} at (418,31) size 0x0
-                      RenderBR {BR} at (2,34) size 0x16
-                      RenderText {#text} at (2,50) size 769x64
-                        text run at (2,50) width 752: "The insurance company had not only refused to pay, but had received opinions from its adjuster, its expert engineer and"
-                        text run at (2,66) width 769: "an investigative agency that the fire was accidental. Its own adjuster had recommended the claim be paid. The defendant's"
-                        text run at (2,82) width 765: "counsel, as the court found, had pressured experts to provide opinions supporting an arson defence and withheld relevant"
-                        text run at (2,98) width 611: "information from the experts and gave them misleading information to buttress the arson defence."
-                      RenderBR {BR} at (613,111) size 0x0
-                      RenderBR {BR} at (2,114) size 0x16
-                      RenderText {#text} at (2,130) size 627x16
-                        text run at (2,130) width 627: "After the fire the Plaintiff and her husband, Keith Whiten needed welfare assistance to support them."
-                      RenderBR {BR} at (629,143) size 0x0
-                      RenderBR {BR} at (2,146) size 0x16
-                      RenderText {#text} at (2,162) size 752x48
-                        text run at (2,162) width 752: "The jury, however, in a 4 week trial, disagreed with the position of the insurance company. It awarded not only the policy"
-                        text run at (2,178) width 733: "sum against the insurer, but also was sufficiently annoyed with the conduct of the company to award a further punitive"
-                        text run at (2,194) width 176: "damage award of $1 million."
-                      RenderBR {BR} at (178,207) size 0x0
-                      RenderBR {BR} at (2,210) size 0x16
-                      RenderText {#text} at (2,226) size 763x48
-                        text run at (2,226) width 749: "The company appealed. At the time of the appeal, the company acknowledged that the fire was accidental. The Ontario"
-                        text run at (2,242) width 763: "Court of Appeal reversed the jury award and in a 2-1 decision determined that there should be a cap on punitive damages"
-                        text run at (2,258) width 78: "of $100,000."
-                      RenderBR {BR} at (80,271) size 0x0
-                      RenderBR {BR} at (2,274) size 0x16
-                      RenderText {#text} at (2,290) size 760x80
-                        text run at (2,290) width 736: "Lawyers became hard pressed to reconcile this decision with a prior case, Hill vs. Church of Scientology. Hill, a Crown"
-                        text run at (2,306) width 667: "Attorney, had sued the Church for libel due to statements made accusing him of breaching a judge's order. "
-                        text run at (669,306) width 93: "He succeeded."
-                        text run at (2,322) width 735: "The jury at trial, aside from awarding compensatory damages, also awarded a punitive damage sum of $800,000. The"
-                        text run at (2,338) width 746: "decision was appealed without success to the Ontario Court of Appeal and again to the Supreme Court of Canada. The"
-                        text run at (2,354) width 414: "award of punitive damages was sustained at both appellate levels."
-                      RenderBR {BR} at (416,367) size 0x0
-                      RenderBR {BR} at (2,370) size 0x16
-                      RenderText {#text} at (2,386) size 737x48
-                        text run at (2,386) width 716: "In the Whiten case, the insurance industry is mounting all its ammunition to maintain the notion of a cap on punitive"
-                        text run at (2,402) width 737: "damages. It is expected that the Court of Appeal decision will receive a rough ride in the Supreme Court, given the Hill"
-                        text run at (2,418) width 165: "decision a few years prior."
-                      RenderBR {BR} at (167,431) size 0x0
-                      RenderBR {BR} at (2,434) size 0x16
-                      RenderText {#text} at (2,450) size 767x48
-                        text run at (2,450) width 757: "The concept of punitive damages is designed to act as civil penalty imposed on a wrong doer, which has conducted itself"
-                        text run at (2,466) width 767: "in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally the financial"
-                        text run at (2,482) width 677: "abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be awarded."
-                      RenderBR {BR} at (679,495) size 0x0
-                      RenderBR {BR} at (2,498) size 0x16
-                      RenderText {#text} at (2,514) size 768x80
-                        text run at (2,514) width 746: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
-                        text run at (2,530) width 743: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and powerful"
-                        text run at (2,546) width 768: "dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set for the week of"
-                        text run at (2,562) width 745: "December 11th. A decision will likely be forthcoming in March to June time period. This decision will be no doubt a much"
-                        text run at (2,578) width 371: "quoted decision for many years, regardless of the outcome."
-                      RenderBR {BR} at (373,591) size 0x0
-                      RenderBR {BR} at (2,594) size 0x16
+            RenderTableCell {TD} at (73,0) size 709x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x19
+                text run at (1,1) width 21: "bar"
+          RenderTableRow {TR} at (0,21) size 782x734
+            RenderTableCell {TD} at (0,21) size 782x734 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 780x732 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 778x730
+                  RenderTableRow {TR} at (0,2) size 778x726
+                    RenderTableCell {TD} at (2,2) size 774x726 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 753x38
+                        text run at (2,2) width 753: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff Daphne"
+                        text run at (2,21) width 420: "Whiten was the cause of the fire herself and had committed arson."
+                      RenderBR {BR} at (422,35) size 0x0
+                      RenderBR {BR} at (2,40) size 0x19
+                      RenderText {#text} at (2,59) size 761x76
+                        text run at (2,59) width 761: "The insurance company had not only refused to pay, but had received opinions from its adjuster, its expert engineer and"
+                        text run at (2,78) width 698: "an investigative agency that the fire was accidental. Its own adjuster had recommended the claim be paid. The"
+                        text run at (2,97) width 739: "defendant's counsel, as the court found, had pressured experts to provide opinions supporting an arson defence and"
+                        text run at (2,116) width 730: "withheld relevant information from the experts and gave them misleading information to buttress the arson defence."
+                      RenderBR {BR} at (732,130) size 0x0
+                      RenderBR {BR} at (2,135) size 0x19
+                      RenderText {#text} at (2,154) size 633x19
+                        text run at (2,154) width 633: "After the fire the Plaintiff and her husband, Keith Whiten needed welfare assistance to support them."
+                      RenderBR {BR} at (635,168) size 0x0
+                      RenderBR {BR} at (2,173) size 0x19
+                      RenderText {#text} at (2,192) size 759x57
+                        text run at (2,192) width 759: "The jury, however, in a 4 week trial, disagreed with the position of the insurance company. It awarded not only the policy"
+                        text run at (2,211) width 744: "sum against the insurer, but also was sufficiently annoyed with the conduct of the company to award a further punitive"
+                        text run at (2,230) width 179: "damage award of $1 million."
+                      RenderBR {BR} at (181,244) size 0x0
+                      RenderBR {BR} at (2,249) size 0x19
+                      RenderText {#text} at (2,268) size 755x57
+                        text run at (2,268) width 755: "The company appealed. At the time of the appeal, the company acknowledged that the fire was accidental. The Ontario"
+                        text run at (2,287) width 708: "Court of Appeal reversed the jury award and in a 2-1 decision determined that there should be a cap on punitive"
+                        text run at (2,306) width 143: "damages of $100,000."
+                      RenderBR {BR} at (145,320) size 0x0
+                      RenderBR {BR} at (2,325) size 0x19
+                      RenderText {#text} at (2,344) size 763x95
+                        text run at (2,344) width 743: "Lawyers became hard pressed to reconcile this decision with a prior case, Hill vs. Church of Scientology. Hill, a Crown"
+                        text run at (2,363) width 679: "Attorney, had sued the Church for libel due to statements made accusing him of breaching a judge's order. "
+                        text run at (681,363) width 18: "He"
+                        text run at (2,382) width 727: "succeeded. The jury at trial, aside from awarding compensatory damages, also awarded a punitive damage sum of"
+                        text run at (2,401) width 763: "$800,000. The decision was appealed without success to the Ontario Court of Appeal and again to the Supreme Court of"
+                        text run at (2,420) width 506: "Canada. The award of punitive damages was sustained at both appellate levels."
+                      RenderBR {BR} at (508,434) size 0x0
+                      RenderBR {BR} at (2,439) size 0x19
+                      RenderText {#text} at (2,458) size 745x57
+                        text run at (2,458) width 726: "In the Whiten case, the insurance industry is mounting all its ammunition to maintain the notion of a cap on punitive"
+                        text run at (2,477) width 745: "damages. It is expected that the Court of Appeal decision will receive a rough ride in the Supreme Court, given the Hill"
+                        text run at (2,496) width 166: "decision a few years prior."
+                      RenderBR {BR} at (168,510) size 0x0
+                      RenderBR {BR} at (2,515) size 0x19
+                      RenderText {#text} at (2,534) size 762x57
+                        text run at (2,534) width 762: "The concept of punitive damages is designed to act as civil penalty imposed on a wrong doer, which has conducted itself"
+                        text run at (2,553) width 717: "in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally the"
+                        text run at (2,572) width 742: "financial abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be awarded."
+                      RenderBR {BR} at (744,586) size 0x0
+                      RenderBR {BR} at (2,591) size 0x19
+                      RenderText {#text} at (2,610) size 762x95
+                        text run at (2,610) width 754: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
+                        text run at (2,629) width 751: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and powerful"
+                        text run at (2,648) width 762: "dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set for the week"
+                        text run at (2,667) width 735: "of December 11th. A decision will likely be forthcoming in March to June time period. This decision will be no doubt a"
+                        text run at (2,686) width 416: "much quoted decision for many years, regardless of the outcome."
+                      RenderBR {BR} at (418,700) size 0x0
+                      RenderBR {BR} at (2,705) size 0x19

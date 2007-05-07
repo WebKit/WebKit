@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 477x50 [bgcolor=#000000]
-        RenderTableSection {TBODY} at (0,0) size 477x50
-          RenderTableRow {TR} at (0,0) size 477x50
-            RenderTableCell {TD} at (0,0) size 477x50 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 475x48 [bgcolor=#959595]
-                RenderTableSection {TBODY} at (0,0) size 475x48
-                  RenderTableRow {TR} at (0,0) size 475x24
-                    RenderTableCell {TD} at (0,0) size 475x24 [bgcolor=#6666CC] [r=0 c=0 rs=1 cs=1]
-                      RenderInline {FONT} at (0,0) size 206x16 [color=#FFFFFF]
-                        RenderInline {B} at (0,0) size 206x16
-                          RenderText {#text} at (134,4) size 206x16
-                            text run at (134,4) width 169: "BrowserWatch Headline "
-                            text run at (303,4) width 37: "News"
-                  RenderTableRow {TR} at (0,24) size 475x24
-                    RenderTableCell {TD} at (0,24) size 475x24 [bgcolor=#D4D4D4] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (4,4) size 21x16
+      RenderTable {TABLE} at (0,0) size 477x57 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (0,0) size 477x57
+          RenderTableRow {TR} at (0,0) size 477x57
+            RenderTableCell {TD} at (0,0) size 477x57 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 475x55 [bgcolor=#959595]
+                RenderTableSection {TBODY} at (0,0) size 475x55
+                  RenderTableRow {TR} at (0,0) size 475x28
+                    RenderTableCell {TD} at (0,0) size 475x28 [bgcolor=#6666CC] [r=0 c=0 rs=1 cs=1]
+                      RenderInline {FONT} at (0,0) size 204x19 [color=#FFFFFF]
+                        RenderInline {B} at (0,0) size 204x20
+                          RenderText {#text} at (135,4) size 204x20
+                            text run at (135,4) width 167: "BrowserWatch Headline "
+                            text run at (302,4) width 37: "News"
+                  RenderTableRow {TR} at (0,28) size 475x27
+                    RenderTableCell {TD} at (0,28) size 475x27 [bgcolor=#D4D4D4] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (4,4) size 21x19
                         text run at (4,4) width 21: "xxx"

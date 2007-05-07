@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#C0C0C0]
-      RenderTable {TABLE} at (0,0) size 784x80 [border: (4px outset #808080)]
-        RenderTableSection {TBODY} at (4,4) size 776x72
-          RenderTableRow {TR} at (0,2) size 776x68
-            RenderTableCell {TD} at (2,17) size 728x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 96x34 [border: (5px outset #808080)]
-                RenderTableSection {TBODY} at (5,5) size 86x24
-                  RenderTableRow {TR} at (0,2) size 86x20
-                    RenderTableCell {TD} at (2,2) size 82x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 45x16
+      RenderTable {TABLE} at (0,0) size 784x92 [border: (4px outset #808080)]
+        RenderTableSection {TBODY} at (4,4) size 776x84
+          RenderTableRow {TR} at (0,2) size 776x80
+            RenderTableCell {TD} at (2,21) size 728x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 96x37 [border: (5px outset #808080)]
+                RenderTableSection {TBODY} at (5,5) size 86x27
+                  RenderTableRow {TR} at (0,2) size 86x23
+                    RenderTableCell {TD} at (2,2) size 82x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 45x19
                         text run at (2,2) width 45: "This is "
-                      RenderText {#text} at (47,2) size 33x16
+                      RenderText {#text} at (47,2) size 33x19
                         text run at (47,2) width 33: "cell 1"
-            RenderTableCell {TD} at (732,2) size 42x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 38x64
+            RenderTableCell {TD} at (732,2) size 42x80 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 38x76
                 text run at (2,2) width 32: "Hello"
-                text run at (2,18) width 38: "world!"
-                text run at (2,34) width 32: "Hello"
-                text run at (2,50) width 38: "world!"
+                text run at (2,21) width 38: "world!"
+                text run at (2,40) width 32: "Hello"
+                text run at (2,59) width 38: "world!"

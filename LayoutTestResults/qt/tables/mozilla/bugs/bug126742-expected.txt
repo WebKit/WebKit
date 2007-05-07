@@ -3,84 +3,84 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {CENTER} at (0,0) size 784x372
-        RenderTable {TABLE} at (0,0) size 784x372
-          RenderTableSection {TBODY} at (0,0) size 784x372
-            RenderTableRow {TR} at (0,0) size 784x55
-              RenderTableCell {TD} at (0,7) size 784x41 [r=0 c=0 rs=1 cs=1]
-                RenderBlock {H2} at (0,0) size 784x24
-                  RenderInline {FONT} at (0,0) size 83x23
-                    RenderText {#text} at (350,0) size 83x23
+      RenderBlock {CENTER} at (0,0) size 784x378
+        RenderTable {TABLE} at (0,0) size 784x378
+          RenderTableSection {TBODY} at (0,0) size 784x378
+            RenderTableRow {TR} at (0,0) size 784x60
+              RenderTableCell {TD} at (0,7) size 784x46 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {H2} at (0,0) size 784x29
+                  RenderInline {FONT} at (0,0) size 83x29
+                    RenderText {#text} at (350,0) size 83x29
                       text run at (350,0) width 83: "EET 304"
-            RenderTableRow {TR} at (0,55) size 784x20
-              RenderTableCell {TD} at (0,58) size 784x13 [r=1 c=0 rs=1 cs=1]
-                RenderBlock {P} at (0,0) size 784x13
-                  RenderInline {FONT} at (0,0) size 27x12
-                    RenderInline {A} at (0,0) size 27x12 [color=#0000EE]
-                      RenderText {#text} at (378,0) size 27x12
-                        text run at (378,0) width 27: "Home"
-            RenderTableRow {TR} at (0,75) size 784x33
-              RenderTableCell {TD} at (0,85) size 784x13 [r=2 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 90x12 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 90x12
-                    RenderText {#text} at (347,0) size 90x12
-                      text run at (347,0) width 90: "Course Information"
-            RenderTableRow {TR} at (0,108) size 784x33
-              RenderTableCell {TD} at (0,118) size 784x13 [r=3 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 34x12 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 34x12
-                    RenderText {#text} at (375,0) size 34x12
-                      text run at (375,0) width 34: "Lecture"
-            RenderTableRow {TR} at (0,141) size 784x33
-              RenderTableCell {TD} at (0,151) size 784x13 [r=4 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,60) size 784x21
+              RenderTableCell {TD} at (0,62) size 784x16 [r=1 c=0 rs=1 cs=1]
+                RenderBlock {P} at (0,0) size 784x16
+                  RenderInline {FONT} at (0,0) size 29x16
+                    RenderInline {A} at (0,0) size 29x16 [color=#0000EE]
+                      RenderText {#text} at (377,0) size 29x16
+                        text run at (377,0) width 29: "Home"
+            RenderTableRow {TR} at (0,81) size 784x33
+              RenderTableCell {TD} at (0,89) size 784x16 [r=2 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 93x16 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 93x16
+                    RenderText {#text} at (345,0) size 93x16
+                      text run at (345,0) width 93: "Course Information"
+            RenderTableRow {TR} at (0,114) size 784x33
+              RenderTableCell {TD} at (0,122) size 784x16 [r=3 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 37x16 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 37x16
+                    RenderText {#text} at (373,0) size 37x16
+                      text run at (373,0) width 37: "Lecture"
+            RenderTableRow {TR} at (0,147) size 784x33
+              RenderTableCell {TD} at (0,155) size 784x16 [r=4 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 0x0
-                RenderInline {A} at (0,0) size 50x12 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 50x12
-                    RenderText {#text} at (367,0) size 50x12
-                      text run at (367,0) width 50: "Homework"
-            RenderTableRow {TR} at (0,174) size 784x33
-              RenderTableCell {TD} at (0,184) size 784x13 [r=5 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 35x12 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 35x12
-                    RenderText {#text} at (374,0) size 35x12
-                      text run at (374,0) width 35: "Quizzes"
-            RenderTableRow {TR} at (0,207) size 784x33
-              RenderTableCell {TD} at (0,217) size 784x13 [r=6 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 31x12 [color=#0000FF]
-                  RenderInline {A} at (0,0) size 31x12 [color=#0000EE]
-                    RenderText {#text} at (376,0) size 31x12
-                      text run at (376,0) width 31: "Exams"
-            RenderTableRow {TR} at (0,240) size 784x33
-              RenderTableCell {TD} at (0,250) size 784x13 [r=7 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 53x16 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 53x16
+                    RenderText {#text} at (365,0) size 53x16
+                      text run at (365,0) width 53: "Homework"
+            RenderTableRow {TR} at (0,180) size 784x33
+              RenderTableCell {TD} at (0,188) size 784x16 [r=5 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 41x16 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 41x16
+                    RenderText {#text} at (371,0) size 41x16
+                      text run at (371,0) width 41: "Quizzes"
+            RenderTableRow {TR} at (0,213) size 784x33
+              RenderTableCell {TD} at (0,221) size 784x16 [r=6 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 34x16 [color=#0000FF]
+                  RenderInline {A} at (0,0) size 34x16 [color=#0000EE]
+                    RenderText {#text} at (375,0) size 34x16
+                      text run at (375,0) width 34: "Exams"
+            RenderTableRow {TR} at (0,246) size 784x33
+              RenderTableCell {TD} at (0,254) size 784x16 [r=7 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 0x0
-                RenderInline {A} at (0,0) size 51x12 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 51x12
-                    RenderText {#text} at (366,0) size 17x12
-                      text run at (366,0) width 17: "Lab"
-                    RenderInline {U} at (0,0) size 34x12
-                      RenderText {#text} at (383,0) size 34x12
-                        text run at (383,0) width 34: "oratory"
-            RenderTableRow {TR} at (0,273) size 784x33
-              RenderTableCell {TD} at (0,283) size 784x13 [r=8 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 33x12 [color=#0000EE]
-                  RenderInline {U} at (0,0) size 33x12
-                    RenderInline {FONT} at (0,0) size 33x12
-                      RenderText {#text} at (375,0) size 33x12
-                        text run at (375,0) width 33: "Grades"
-            RenderTableRow {TR} at (0,306) size 784x33
-              RenderTableCell {TD} at (0,316) size 784x13 [r=9 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 58x12
-                  RenderInline {A} at (0,0) size 58x12 [color=#0000EE]
-                    RenderText {#text} at (363,0) size 58x12
-                      text run at (363,0) width 26: "Filter "
-                      text run at (389,0) width 32: "Design"
-            RenderTableRow {TR} at (0,339) size 784x33
-              RenderTableCell {TD} at (0,349) size 784x13 [r=10 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 59x12
-                  RenderInline {U} at (0,0) size 59x12
-                    RenderInline {A} at (0,0) size 59x12 [color=#0000EE]
-                      RenderText {#text} at (362,0) size 59x12
-                        text run at (362,0) width 31: "Office "
-                        text run at (393,0) width 28: "Hours"
+                RenderInline {A} at (0,0) size 53x16 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 53x16
+                    RenderText {#text} at (365,0) size 18x16
+                      text run at (365,0) width 18: "Lab"
+                    RenderInline {U} at (0,0) size 35x16
+                      RenderText {#text} at (383,0) size 35x16
+                        text run at (383,0) width 35: "oratory"
+            RenderTableRow {TR} at (0,279) size 784x33
+              RenderTableCell {TD} at (0,287) size 784x16 [r=8 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 37x16 [color=#0000EE]
+                  RenderInline {U} at (0,0) size 37x16
+                    RenderInline {FONT} at (0,0) size 37x16
+                      RenderText {#text} at (373,0) size 37x16
+                        text run at (373,0) width 37: "Grades"
+            RenderTableRow {TR} at (0,312) size 784x33
+              RenderTableCell {TD} at (0,320) size 784x16 [r=9 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 61x16
+                  RenderInline {A} at (0,0) size 61x16 [color=#0000EE]
+                    RenderText {#text} at (361,0) size 61x16
+                      text run at (361,0) width 27: "Filter "
+                      text run at (388,0) width 34: "Design"
+            RenderTableRow {TR} at (0,345) size 784x33
+              RenderTableCell {TD} at (0,353) size 784x16 [r=10 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 62x16
+                  RenderInline {U} at (0,0) size 62x16
+                    RenderInline {A} at (0,0) size 62x16 [color=#0000EE]
+                      RenderText {#text} at (361,0) size 62x16
+                        text run at (361,0) width 32: "Office "
+                        text run at (393,0) width 30: "Hours"

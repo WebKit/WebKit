@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x42 [bgcolor=#E2BF81] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x40
-          RenderTableRow {TR} at (0,2) size 782x36
-            RenderTableCell {TD} at (2,10) size 32x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 28x16
+      RenderTable {TABLE} at (0,0) size 784x48 [bgcolor=#E2BF81] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x46
+          RenderTableRow {TR} at (0,2) size 782x42
+            RenderTableCell {TD} at (2,11) size 32x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "<td>"
-            RenderTableCell {TD} at (36,10) size 642x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 120x16
-                text run at (2,2) width 120: "<td width=\"100%\">"
-            RenderTableCell {TD} at (680,2) size 100x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 96x32
+            RenderTableCell {TD} at (36,11) size 643x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 119x19
+                text run at (2,2) width 119: "<td width=\"100%\">"
+            RenderTableCell {TD} at (681,2) size 99x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 95x38
                 text run at (2,2) width 20: "<td"
-                text run at (2,18) width 96: "width=\"100%\">"
+                text run at (2,21) width 95: "width=\"100%\">"

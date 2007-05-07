@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x140
-        RenderBlock (anonymous) at (0,0) size 784x64
-          RenderText {#text} at (0,0) size 327x16
-            text run at (0,0) width 327: "In the yellow table the \"W\" is clipped on its left edge."
-          RenderBR {BR} at (327,13) size 0x0
-          RenderText {#text} at (0,16) size 167x16
-            text run at (0,16) width 167: "The only difference is that:"
-          RenderBR {BR} at (167,29) size 0x0
-          RenderText {#text} at (0,32) size 229x16
-            text run at (0,32) width 229: "yellow table has CELLPADDING=\"0\""
-          RenderBR {BR} at (229,45) size 0x0
-          RenderText {#text} at (0,48) size 221x16
-            text run at (0,48) width 221: "grey table has CELLPADDING=\"1\"."
-        RenderTable {TABLE} at (0,64) size 40x37 [bgcolor=#FFFF00]
-          RenderTableSection {TBODY} at (0,0) size 40x37
-            RenderTableRow {TR} at (0,2) size 40x33
-              RenderTableCell {TD} at (2,2) size 36x33 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 26x33
-                  RenderText {#text} at (0,0) size 26x33
+      RenderBlock {P} at (0,0) size 784x164
+        RenderBlock (anonymous) at (0,0) size 784x76
+          RenderText {#text} at (0,0) size 329x19
+            text run at (0,0) width 329: "In the yellow table the \"W\" is clipped on its left edge."
+          RenderBR {BR} at (329,14) size 0x0
+          RenderText {#text} at (0,19) size 168x19
+            text run at (0,19) width 168: "The only difference is that:"
+          RenderBR {BR} at (168,33) size 0x0
+          RenderText {#text} at (0,38) size 229x19
+            text run at (0,38) width 229: "yellow table has CELLPADDING=\"0\""
+          RenderBR {BR} at (229,52) size 0x0
+          RenderText {#text} at (0,57) size 222x19
+            text run at (0,57) width 222: "grey table has CELLPADDING=\"1\"."
+        RenderTable {TABLE} at (0,76) size 40x43 [bgcolor=#FFFF00]
+          RenderTableSection {TBODY} at (0,0) size 40x43
+            RenderTableRow {TR} at (0,2) size 40x39
+              RenderTableCell {TD} at (2,2) size 36x39 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 26x39
+                  RenderText {#text} at (0,0) size 26x39
                     text run at (0,0) width 26: "Online"
-                    text run at (0,11) width 22: "Web-"
-                    text run at (0,22) width 22: "Store"
-        RenderTable {TABLE} at (0,101) size 40x39 [bgcolor=#EEEEEE]
-          RenderTableSection {TBODY} at (0,0) size 40x39
-            RenderTableRow {TR} at (0,2) size 40x35
-              RenderTableCell {TD} at (2,2) size 36x35 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 26x33
-                  RenderText {#text} at (1,1) size 26x33
+                    text run at (0,13) width 22: "Web-"
+                    text run at (0,26) width 22: "Store"
+        RenderTable {TABLE} at (0,119) size 40x45 [bgcolor=#EEEEEE]
+          RenderTableSection {TBODY} at (0,0) size 40x45
+            RenderTableRow {TR} at (0,2) size 40x41
+              RenderTableCell {TD} at (2,2) size 36x41 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 26x39
+                  RenderText {#text} at (1,1) size 26x39
                     text run at (1,1) width 26: "Online"
-                    text run at (1,12) width 22: "Web-"
-                    text run at (1,23) width 22: "Store"
+                    text run at (1,14) width 22: "Web-"
+                    text run at (1,27) width 22: "Store"

@@ -1,452 +1,452 @@
-layer at (0,0) size 800x2745
+layer at (0,0) size 800x3045
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2745
-  RenderBlock {HTML} at (0,0) size 800x2745
-    RenderBody {BODY} at (8,18) size 784x2713
-      RenderBlock {H1} at (0,0) size 784x32
-        RenderText {#text} at (0,1) size 272x30
-          text run at (0,1) width 272: "Tables and captions"
-      RenderBlock {P} at (0,50) size 784x16
-        RenderText {#text} at (0,0) size 523x16
-          text run at (0,0) width 419: "The table should have width 300px, as should the caption (entirely "
-          text run at (419,0) width 104: "above the table):"
-      RenderTable {TABLE} at (0,80) size 306x84 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 306x22 [border: (3px solid #800080)]
-          RenderText {#text} at (92,3) size 122x16
-            text run at (92,3) width 122: "The table's caption."
-        RenderTableSection {TBODY} at (10,32) size 286x42
-          RenderTableRow {TR} at (0,2) size 286x18
-            RenderTableCell {TD} at (2,2) size 140x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+layer at (0,0) size 800x3045
+  RenderBlock {HTML} at (0,0) size 800x3045
+    RenderBody {BODY} at (8,18) size 784x3013
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 272x38
+          text run at (0,0) width 272: "Tables and captions"
+      RenderBlock {P} at (0,56) size 784x19
+        RenderText {#text} at (0,0) size 530x19
+          text run at (0,0) width 423: "The table should have width 300px, as should the caption (entirely "
+          text run at (423,0) width 107: "above the table):"
+      RenderTable {TABLE} at (0,89) size 306x93 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 306x25 [border: (3px solid #800080)]
+          RenderText {#text} at (91,3) size 124x19
+            text run at (91,3) width 124: "The table's caption."
+        RenderTableSection {TBODY} at (10,35) size 286x48
+          RenderTableRow {TR} at (0,2) size 286x21
+            RenderTableCell {TD} at (2,2) size 140x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (144,2) size 140x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (144,2) size 140x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 286x18
-            RenderTableCell {TD} at (2,22) size 140x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 286x21
+            RenderTableCell {TD} at (2,25) size 140x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (144,22) size 140x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (144,25) size 140x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,178) size 784x16
-        RenderText {#text} at (0,0) size 487x16
-          text run at (0,0) width 408: "The table should have width 300px, and the caption should have "
-          text run at (408,0) width 79: "width 600px."
-      RenderTable {TABLE} at (0,208) size 606x84 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 606x22 [border: (3px solid #800080)]
-          RenderText {#text} at (242,3) size 122x16
-            text run at (242,3) width 122: "The table's caption."
-        RenderTableSection {TBODY} at (10,32) size 586x42
-          RenderTableRow {TR} at (0,2) size 586x18
-            RenderTableCell {TD} at (2,2) size 290x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+      RenderBlock {P} at (0,196) size 784x19
+        RenderText {#text} at (0,0) size 492x19
+          text run at (0,0) width 412: "The table should have width 300px, and the caption should have "
+          text run at (412,0) width 80: "width 600px."
+      RenderTable {TABLE} at (0,229) size 606x93 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 606x25 [border: (3px solid #800080)]
+          RenderText {#text} at (241,3) size 124x19
+            text run at (241,3) width 124: "The table's caption."
+        RenderTableSection {TBODY} at (10,35) size 586x48
+          RenderTableRow {TR} at (0,2) size 586x21
+            RenderTableCell {TD} at (2,2) size 290x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (294,2) size 290x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (294,2) size 290x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 586x18
-            RenderTableCell {TD} at (2,22) size 290x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 586x21
+            RenderTableCell {TD} at (2,25) size 290x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (294,22) size 290x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (294,25) size 290x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,306) size 784x16
-        RenderText {#text} at (0,0) size 487x16
-          text run at (0,0) width 408: "The table should have width 600px, and the caption should have "
-          text run at (408,0) width 79: "width 300px."
-      RenderTable {TABLE} at (0,336) size 600x84 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 306x22 [border: (3px solid #800080)]
-          RenderText {#text} at (92,3) size 122x16
-            text run at (92,3) width 122: "The table's caption."
-        RenderTableSection {TBODY} at (10,32) size 580x42
-          RenderTableRow {TR} at (0,2) size 580x18
-            RenderTableCell {TD} at (2,2) size 287x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+      RenderBlock {P} at (0,336) size 784x19
+        RenderText {#text} at (0,0) size 492x19
+          text run at (0,0) width 412: "The table should have width 600px, and the caption should have "
+          text run at (412,0) width 80: "width 300px."
+      RenderTable {TABLE} at (0,369) size 600x93 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 306x25 [border: (3px solid #800080)]
+          RenderText {#text} at (91,3) size 124x19
+            text run at (91,3) width 124: "The table's caption."
+        RenderTableSection {TBODY} at (10,35) size 580x48
+          RenderTableRow {TR} at (0,2) size 580x21
+            RenderTableCell {TD} at (2,2) size 287x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (291,2) size 287x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (291,2) size 287x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 580x18
-            RenderTableCell {TD} at (2,22) size 287x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 580x21
+            RenderTableCell {TD} at (2,25) size 287x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (291,22) size 287x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (291,25) size 287x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,434) size 784x16
-        RenderText {#text} at (0,0) size 682x16
-          text run at (0,0) width 362: "The next four tables should have their caption on the top, "
-          text run at (362,0) width 320: "with a 20px gap between the table and the caption."
-      RenderTable {TABLE} at (0,470) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderBlock {P} at (0,476) size 784x19
+        RenderText {#text} at (0,0) size 689x19
+          text run at (0,0) width 366: "The next four tables should have their caption on the top, "
+          text run at (366,0) width 323: "with a 20px gap between the table and the caption."
+      RenderTable {TABLE} at (0,515) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,586) size 90x136 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,646) size 90x151 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,84) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,93) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,737) size 90x136 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,812) size 90x151 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,84) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,93) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,893) size 90x131 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,983) size 90x146 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,79) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,88) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,1038) size 784x16
-        RenderText {#text} at (0,0) size 690x16
-          text run at (0,0) width 370: "The next four tables should have their caption on the right, "
-          text run at (370,0) width 320: "with a 20px gap between the table and the caption."
-      RenderTable {TABLE} at (0,1068) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderBlock {P} at (0,1143) size 784x19
+        RenderText {#text} at (0,0) size 697x19
+          text run at (0,0) width 374: "The next four tables should have their caption on the right, "
+          text run at (374,0) width 323: "with a 20px gap between the table and the caption."
+      RenderTable {TABLE} at (0,1176) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1184) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (20,0) size 50x54 [border: (3px solid #800080)]
-          RenderText {#text} at (12,3) size 49x48
+      RenderTable {TABLE} at (0,1307) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (20,0) size 50x63 [border: (3px solid #800080)]
+          RenderText {#text} at (12,3) size 50x57
             text run at (12,3) width 25: "The"
-            text run at (5,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (4,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1300) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (20,0) size 50x54 [border: (3px solid #800080)]
-          RenderText {#text} at (12,3) size 49x48
+      RenderTable {TABLE} at (0,1438) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (20,0) size 50x63 [border: (3px solid #800080)]
+          RenderText {#text} at (12,3) size 50x57
             text run at (12,3) width 25: "The"
-            text run at (5,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (4,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1416) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (15,0) size 55x54 [border: (3px solid #800080)]
-          RenderText {#text} at (15,3) size 49x48
+      RenderTable {TABLE} at (0,1569) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (15,0) size 55x63 [border: (3px solid #800080)]
+          RenderText {#text} at (15,3) size 50x57
             text run at (15,3) width 25: "The"
-            text run at (7,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (7,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,1546) size 784x16
-        RenderText {#text} at (0,0) size 704x16
-          text run at (0,0) width 384: "The next four tables should have their caption on the bottom, "
-          text run at (384,0) width 320: "with a 20px gap between the table and the caption."
-      RenderTable {TABLE} at (0,1576) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,62) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderBlock {P} at (0,1714) size 784x19
+        RenderText {#text} at (0,0) size 713x19
+          text run at (0,0) width 390: "The next four tables should have their caption on the bottom, "
+          text run at (390,0) width 323: "with a 20px gap between the table and the caption."
+      RenderTable {TABLE} at (0,1747) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,68) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,10) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,10) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1712) size 90x136 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,62) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,1898) size 90x151 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,68) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,10) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,10) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1848) size 90x136 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,62) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,2049) size 90x151 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,68) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,10) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,10) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,1999) size 90x131 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,62) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderTable {TABLE} at (0,2215) size 90x146 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,68) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,10) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,10) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,2150) size 784x16
-        RenderText {#text} at (0,0) size 681x16
-          text run at (0,0) width 361: "The next four tables should have their caption on the left, "
-          text run at (361,0) width 320: "with a 20px gap between the table and the caption."
-      RenderTable {TABLE} at (20,2180) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 70x54 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 49x48
+      RenderBlock {P} at (0,2381) size 784x19
+        RenderText {#text} at (0,0) size 688x19
+          text run at (0,0) width 365: "The next four tables should have their caption on the left, "
+          text run at (365,0) width 323: "with a 20px gap between the table and the caption."
+      RenderTable {TABLE} at (20,2414) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 70x63 [border: (3px solid #800080)]
+          RenderText {#text} at (22,3) size 50x57
             text run at (22,3) width 25: "The"
-            text run at (15,19) width 40: "table's"
-            text run at (10,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (14,22) width 41: "table's"
+            text run at (10,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (0,2296) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 50x54 [border: (3px solid #800080)]
-          RenderText {#text} at (12,3) size 49x48
+      RenderTable {TABLE} at (0,2545) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 50x63 [border: (3px solid #800080)]
+          RenderText {#text} at (12,3) size 50x57
             text run at (12,3) width 25: "The"
-            text run at (5,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (4,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (15,2412) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 50x54 [border: (3px solid #800080)]
-          RenderText {#text} at (12,3) size 49x48
+      RenderTable {TABLE} at (15,2676) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 50x63 [border: (3px solid #800080)]
+          RenderText {#text} at (12,3) size 50x57
             text run at (12,3) width 25: "The"
-            text run at (5,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (4,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderTable {TABLE} at (20,2528) size 90x116 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 55x54 [border: (3px solid #800080)]
-          RenderText {#text} at (15,3) size 49x48
+      RenderTable {TABLE} at (20,2807) size 90x131 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 55x63 [border: (3px solid #800080)]
+          RenderText {#text} at (15,3) size 50x57
             text run at (15,3) width 25: "The"
-            text run at (7,19) width 40: "table's"
-            text run at (3,35) width 49: "caption."
-        RenderTableSection {TBODY} at (10,64) size 70x42
-          RenderTableRow {TR} at (0,2) size 70x18
-            RenderTableCell {TD} at (2,2) size 32x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            text run at (7,22) width 41: "table's"
+            text run at (3,41) width 50: "caption."
+        RenderTableSection {TBODY} at (10,73) size 70x48
+          RenderTableRow {TR} at (0,2) size 70x21
+            RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,2) size 32x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,2) size 32x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,22) size 70x18
-            RenderTableCell {TD} at (2,22) size 32x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+          RenderTableRow {TR} at (0,25) size 70x21
+            RenderTableCell {TD} at (2,25) size 32x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-            RenderTableCell {TD} at (36,22) size 32x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x16
+            RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {HR} at (0,2651) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,2667) size 784x16
-        RenderText {#text} at (0,0) size 56x16
+      RenderBlock {HR} at (0,2945) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,2961) size 784x19
+        RenderText {#text} at (0,0) size 56x19
           text run at (0,0) width 56: "(Back to "
-        RenderInline {A} at (0,0) size 154x16 [color=#0000EE]
-          RenderText {#text} at (56,0) size 154x16
-            text run at (56,0) width 154: "CSS Testing Information"
-        RenderText {#text} at (210,0) size 7x16
-          text run at (210,0) width 7: ", "
-        RenderInline {A} at (0,0) size 78x16 [color=#0000EE]
-          RenderText {#text} at (217,0) size 78x16
-            text run at (217,0) width 78: "David Baron"
-        RenderText {#text} at (295,0) size 5x16
-          text run at (295,0) width 5: ")"
-      RenderBlock {P} at (0,2697) size 784x16
-        RenderInline {A} at (0,0) size 27x16 [color=#0000EE]
-          RenderText {#text} at (0,0) size 27x16
+        RenderInline {A} at (0,0) size 155x19 [color=#0000EE]
+          RenderText {#text} at (56,0) size 155x19
+            text run at (56,0) width 155: "CSS Testing Information"
+        RenderText {#text} at (211,0) size 8x19
+          text run at (211,0) width 8: ", "
+        RenderInline {A} at (0,0) size 78x19 [color=#0000EE]
+          RenderText {#text} at (219,0) size 78x19
+            text run at (219,0) width 78: "David Baron"
+        RenderText {#text} at (297,0) size 5x19
+          text run at (297,0) width 5: ")"
+      RenderBlock {P} at (0,2994) size 784x19
+        RenderInline {A} at (0,0) size 27x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 27x19
             text run at (0,0) width 27: "LDB"
-        RenderText {#text} at (27,0) size 7x16
-          text run at (27,0) width 7: ", "
-        RenderInline {A} at (0,0) size 154x16 [color=#0000EE]
-          RenderText {#text} at (34,0) size 154x16
-            text run at (34,0) width 154: "dbaron@fas.harvard.edu"
+        RenderText {#text} at (27,0) size 8x19
+          text run at (27,0) width 8: ", "
+        RenderInline {A} at (0,0) size 159x19 [color=#0000EE]
+          RenderText {#text} at (35,0) size 159x19
+            text run at (35,0) width 159: "dbaron@fas.harvard.edu"

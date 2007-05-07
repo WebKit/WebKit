@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x44
-  RenderBlock {html} at (0,0) size 800x44
-    RenderBody {body} at (8,8) size 784x28
-      RenderTable {table} at (0,0) size 569x28 [border: (3px solid #FF0000)]
-        RenderTableSection {tbody} at (3,3) size 563x22
-          RenderTableRow {tr} at (0,2) size 563x18
-            RenderTableCell {td} at (2,2) size 559x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 557x16
-                text run at (1,1) width 359: "This tests the 'style' attribute of TABLE. This table should "
-                text run at (360,1) width 198: "have a solid medium red border"
+layer at (0,0) size 800x47
+  RenderBlock {html} at (0,0) size 800x47
+    RenderBody {body} at (8,8) size 784x31
+      RenderTable {table} at (0,0) size 578x31 [border: (3px solid #FF0000)]
+        RenderTableSection at (3,3) size 572x25
+          RenderTableRow {tr} at (0,2) size 572x21
+            RenderTableCell {td} at (2,2) size 568x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 566x19
+                text run at (1,1) width 364: "This tests the 'style' attribute of TABLE. This table should "
+                text run at (365,1) width 202: "have a solid medium red border"

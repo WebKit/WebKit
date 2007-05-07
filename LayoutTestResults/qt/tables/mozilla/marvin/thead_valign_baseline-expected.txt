@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 178x16
-          text run at (0,0) width 178: "THEAD VALIGN=BASELINE"
-      RenderTable {TABLE} at (0,16) size 784x264 [border: (1px outset #808080)]
-        RenderTableSection {THEAD} at (1,1) size 782x212
-          RenderTableRow {TR} at (0,2) size 782x208
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 177x19
+          text run at (0,0) width 177: "THEAD VALIGN=BASELINE"
+      RenderTable {TABLE} at (0,19) size 784x275 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 782x217
+          RenderTableRow {TR} at (0,2) size 782x213
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
-            RenderTableCell {TD} at (308,174) size 472x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 454x32
-                text run at (2,2) width 454: "This text is within the THEAD element and should be vertically aligned to"
-                text run at (2,18) width 76: "the baseline"
-        RenderTableSection {TFOOT} at (1,239) size 782x24
-          RenderTableRow {TR} at (0,2) size 782x20
-            RenderTableCell {TD} at (2,2) size 304x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x16
-                text run at (2,2) width 48: "TFOOT"
-            RenderTableCell {TD} at (308,2) size 472x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x16
-                text run at (2,2) width 48: "TFOOT"
-        RenderTableSection {TBODY} at (1,213) size 782x24
-          RenderTableRow {TR} at (0,2) size 782x20
-            RenderTableCell {TD} at (2,2) size 304x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x16
+            RenderTableCell {TD} at (308,173) size 472x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 457x38
+                text run at (2,2) width 457: "This text is within the THEAD element and should be vertically aligned to"
+                text run at (2,21) width 77: "the baseline"
+        RenderTableSection {TFOOT} at (1,247) size 782x27
+          RenderTableRow {TR} at (0,2) size 782x23
+            RenderTableCell {TD} at (2,2) size 304x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x19
+                text run at (2,2) width 49: "TFOOT"
+            RenderTableCell {TD} at (308,2) size 472x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x19
+                text run at (2,2) width 49: "TFOOT"
+        RenderTableSection {TBODY} at (1,218) size 782x27
+          RenderTableRow {TR} at (0,2) size 782x23
+            RenderTableCell {TD} at (2,2) size 304x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x19
                 text run at (2,2) width 48: "TBODY"
-            RenderTableCell {TD} at (308,2) size 472x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x16
+            RenderTableCell {TD} at (308,2) size 472x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x19
                 text run at (2,2) width 48: "TBODY"
-        RenderTableSection {TBODY} at (1,237) size 782x2
+        RenderTableSection {TBODY} at (1,245) size 782x2

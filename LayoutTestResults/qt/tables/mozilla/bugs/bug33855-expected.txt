@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578 [bgcolor=#FFFFFF]
-      RenderBlock {FORM} at (0,0) size 784x35
-        RenderTable {TABLE} at (0,0) size 784x35
-          RenderTableSection {TBODY} at (0,0) size 784x35
-            RenderTableRow {TR} at (0,2) size 784x31 [bgcolor=#FFFFFF]
-              RenderTableCell {TD} at (2,2) size 79x31 [r=0 c=0 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 73x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 57x16
-                    RenderText at (0,0) size 57x16
+      RenderBlock {FORM} at (0,0) size 784x40
+        RenderTable {TABLE} at (0,0) size 784x40
+          RenderTableSection {TBODY} at (0,0) size 784x40
+            RenderTableRow {TR} at (0,2) size 784x36 [bgcolor=#FFFFFF]
+              RenderTableCell {TD} at (2,2) size 79x36 [r=0 c=0 rs=1 cs=1]
+                RenderButton {INPUT} at (3,3) size 73x30 [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (8,5) size 57x19
+                    RenderText at (0,0) size 57x19
                       text run at (0,0) width 57: "Select all"
-              RenderTableCell {TD} at (83,2) size 63x31 [r=0 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 57x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 41x16
-                    RenderText at (0,0) size 41x16
+              RenderTableCell {TD} at (83,2) size 63x36 [r=0 c=1 rs=1 cs=1]
+                RenderButton {INPUT} at (3,3) size 57x30 [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (8,5) size 41x19
+                    RenderText at (0,0) size 41x19
                       text run at (0,0) width 41: "Delete"
-              RenderTableCell {TD} at (148,2) size 97x31 [r=0 c=2 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 91x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 75x16
-                    RenderText at (0,0) size 75x16
-                      text run at (0,0) width 75: "Empty trash"
-              RenderTableCell {TD} at (247,15) size 358x18 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 4x16
+              RenderTableCell {TD} at (148,2) size 98x36 [r=0 c=2 rs=1 cs=1]
+                RenderButton {INPUT} at (3,3) size 92x30 [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (8,5) size 76x19
+                    RenderText at (0,0) size 76x19
+                      text run at (0,0) width 76: "Empty trash"
+              RenderTableCell {TD} at (248,17) size 342x21 [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 4x19
                   text run at (1,1) width 4: " "
-              RenderTableCell {TD} at (607,2) size 76x31 [r=0 c=4 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 70x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 54x16
-                    RenderText at (0,0) size 54x16
-                      text run at (0,0) width 54: "Move to:"
-              RenderTableCell {TD} at (685,9) size 97x24 [r=0 c=5 rs=1 cs=1]
-                RenderMenuList {SELECT} at (3,3) size 91x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 89x16
-                    RenderText at (0,0) size 89x16
+              RenderTableCell {TD} at (592,2) size 77x36 [r=0 c=4 rs=1 cs=1]
+                RenderButton {INPUT} at (3,3) size 71x30 [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (8,5) size 55x19
+                    RenderText at (0,0) size 55x19
+                      text run at (0,0) width 55: "Move to:"
+              RenderTableCell {TD} at (671,7) size 111x31 [r=0 c=5 rs=1 cs=1]
+                RenderMenuList {SELECT} at (3,3) size 105x25 [bgcolor=#FFFFFF]
+                  RenderBlock (anonymous) at (8,3) size 89x19
+                    RenderText at (0,0) size 89x19
                       text run at (0,0) width 89: "Choose folder"
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0

@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x52
-  RenderBlock {HTML} at (0,0) size 800x52
-    RenderBody {BODY} at (8,8) size 784x36
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 252x16
-          text run at (0,0) width 252: "This is the first of two lines on this page."
-      RenderBlock {TABLE} at (0,16) size 784x20
-        RenderTable at (0,0) size 279x20
-          RenderTableSection {TBODY} at (0,0) size 279x20
-            RenderTableRow at (0,2) size 279x16
-              RenderTableCell at (2,2) size 275x16 [r=0 c=0 rs=1 cs=1]
-                RenderBlock {TR} at (0,0) size 275x16
-                  RenderBlock {TD} at (0,0) size 275x16
-                    RenderText {#text} at (0,0) size 275x16
-                      text run at (0,0) width 275: "This is the second of two lines on this page."
+layer at (0,0) size 800x58
+  RenderBlock {HTML} at (0,0) size 800x58
+    RenderBody {BODY} at (8,8) size 784x42
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 253x19
+          text run at (0,0) width 253: "This is the first of two lines on this page."
+      RenderBlock {TABLE} at (0,19) size 784x23
+        RenderTable at (0,0) size 280x23
+          RenderTableSection {TBODY} at (0,0) size 280x23
+            RenderTableRow at (0,2) size 280x19
+              RenderTableCell at (2,2) size 276x19 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {TR} at (0,0) size 276x19
+                  RenderBlock {TD} at (0,0) size 276x19
+                    RenderText {#text} at (0,0) size 276x19
+                      text run at (0,0) width 276: "This is the second of two lines on this page."
