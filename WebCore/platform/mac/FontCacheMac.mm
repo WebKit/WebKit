@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,41 +119,49 @@ void FontCache::platformInit()
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    NSFont* nsFont = font.primaryFont()->getNSFont();
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(UniChar*)characters length:length freeWhenDone:NO];
-    NSFont* substituteFont = wkGetFontInLanguageForRange(nsFont, string, NSMakeRange(0, [string length]));
-    if (!substituteFont && [string length] == 1)
-        substituteFont = wkGetFontInLanguageForCharacter(nsFont, [string characterAtIndex:0]);
+    const FontPlatformData& platformData = font.primaryFont()->platformData();
+    NSFont *nsFont = platformData.font;
+
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters)
+        length:length freeWhenDone:NO];
+    NSFont *substituteFont = wkGetFontInLanguageForRange(nsFont, string, NSMakeRange(0, length));
     [string release];
-    
-    // Now that we have a substitute font, attempt to match it to the best variation.
-    // If we have a good match return that, otherwise return the font the AppKit has found.
-    if (substituteFont) {
-        NSFontTraitMask traits = 0;
-        if (font.fontDescription().italic())
-            traits |= NSItalicFontMask;
-        if (font.fontDescription().weight() >= cBoldWeight)
-            traits |= NSBoldFontMask;
-        float size = font.fontDescription().computedPixelSize();
-    
-        NSFontManager *manager = [NSFontManager sharedFontManager];
-        NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
-            traits:traits
-            weight:[manager weightOfFont:nsFont]
-            size:size];
-        if (bestVariation)
-            substituteFont = bestVariation;
-        
-        substituteFont = font.fontDescription().usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
 
-        NSFontTraitMask actualTraits = [manager traitsOfFont:substituteFont];
-        FontPlatformData alternateFont(substituteFont, 
-                                       (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask),
-                                       (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask));
-        return getCachedFontData(&alternateFont);
-    }
+    if (!substituteFont && length == 1)
+        substituteFont = wkGetFontInLanguageForCharacter(nsFont, characters[0]);
+    if (!substituteFont)
+        return 0;
+    
+    // Use the family name from the AppKit-supplied substitute font, requesting the
+    // traits, weight, and size we want. One way this does better than the original
+    // AppKit request is that it takes synthetic bold and oblique into account.
+    // But it does create the possibility that we could end up with a font that
+    // doesn't actually cover the characters we need.
 
-    return 0;
+    NSFontManager *manager = [NSFontManager sharedFontManager];
+
+    NSFontTraitMask traits = [manager traitsOfFont:nsFont];
+    if (platformData.syntheticBold)
+        traits |= NSBoldFontMask;
+    if (platformData.syntheticOblique)
+        traits |= NSItalicFontMask;
+
+    NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
+        traits:traits
+        weight:[manager weightOfFont:nsFont]
+        size:[nsFont pointSize]];
+    if (bestVariation)
+        substituteFont = bestVariation;
+
+    substituteFont = font.fontDescription().usePrinterFont()
+        ? [substituteFont printerFont] : [substituteFont screenFont];
+
+    NSFontTraitMask substituteFontTraits = [manager traitsOfFont:substituteFont];
+
+    FontPlatformData alternateFont(substituteFont, 
+        (traits & NSBoldFontMask) && !(substituteFontTraits & NSBoldFontMask),
+        (traits & NSItalicFontMask) && !(substituteFontTraits & NSItalicFontMask));
+    return getCachedFontData(&alternateFont);
 }
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)

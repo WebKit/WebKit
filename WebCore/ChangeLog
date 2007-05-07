@@ -2,6 +2,20 @@
 
         Reviewed by Hyatt.
 
+        - fix <rdar://problem/4585593> REGRESSION: Some 2-byte characters in printed page
+          header are drawn with too-large font and clipped
+
+        Doesn't affect text within web pages, so no layout test.
+
+        * platform/mac/FontCacheMac.mm: (WebCore::FontCache::getFontDataForCharacters):
+        Base the substitute font on the FontPlatformData rather than the FontDescription.
+        Before, it was a mix of both. This works properly for fonts where we have no
+        FontDescription and is also more internally consistent.
+
+2007-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
         - http://bugs.webkit.org/show_bug.cgi?id=13606
           some functions are virtual that don't need to be
 
