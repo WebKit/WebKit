@@ -33,6 +33,7 @@
 #include <qurl.h>
 #include <qdir.h>
 #include <qdebug.h>
+#include <qfont.h>
 
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
@@ -80,6 +81,11 @@ int main(int argc, char* argv[])
     FcConfigSetCurrent(config);
 #endif
     QApplication app(argc, argv);
+    QFont f("Sans Serif");
+    f.setPointSize(9);
+    f.setWeight(QFont::Normal);
+    f.setStyle(QFont::StyleNormal);
+    app.setFont(f);
 
 #ifdef Q_WS_X11
     QX11Info::setAppDpiY(0, 96);

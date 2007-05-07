@@ -1,3 +1,12 @@
+2007-05-07  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix the default font to 9pt Sans Serif.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2007-05-04  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

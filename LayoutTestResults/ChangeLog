@@ -1,5 +1,22 @@
 2007-05-07  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack
+
+        Change 5 results in css2.1 that were wrong due to a Qt bug.
+        Add css3 baseline. 
+
+        * qt/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * qt/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * qt/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * qt/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * qt/css2.1/t0905-c5525-fltwrap-00-b-expected.txt:
+        * qt/css3/expected_failures/css3-modsel-33-expected.txt: Added.
+        * qt/css3/expected_failures/css3-modsel-35-expected.txt: Added.
+        * qt/css3/expected_failures/css3-modsel-36-expected.txt: Added.
+        * qt/css3/expected_failures/css3-modsel-37-expected.txt: Added.
+
+2007-05-07  Lars Knoll <lars@trolltech.com>
+
         New baseline for the css2.1 tests.
 
         * qt/css2.1/t010403-shand-border-00-c-expected.txt:
