@@ -750,16 +750,19 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     ec = 0;
 
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    if (!(imageRect.contains(srcRect) && srcRect.width() > 0 && srcRect.height() > 0 
-        && dstRect.width() > 0 && dstRect.height() > 0)) {
+    if (!(imageRect.contains(srcRect) && srcRect.width() >= 0 && srcRect.height() >= 0 
+            && dstRect.width() >= 0 && dstRect.height() >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
+
+    if (srcRect.isEmpty() || dstRect.isEmpty())
+        return;
+
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
 
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage)
@@ -792,12 +795,14 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
 
     ec = 0;
 
-    if (srcRect.isEmpty() || dstRect.isEmpty()) {
+    FloatRect srcCanvasRect = FloatRect(FloatPoint(), canvas->size());
+    if (!(srcCanvasRect.contains(srcRect) && srcRect.width() >= 0 && srcRect.height() >= 0 
+            && dstRect.width() >= 0 && dstRect.height() >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    if (!canvas)
+    if (srcRect.isEmpty() || dstRect.isEmpty())
         return;
 
     GraphicsContext* c = drawingContext();

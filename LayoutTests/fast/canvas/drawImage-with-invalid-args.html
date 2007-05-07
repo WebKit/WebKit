@@ -1,6 +1,6 @@
 <body onload="draw();">
-    This test merely ensures we don't crash when giving invalid arguments to Canvas::drawImage.
-    If you can see this without crashing, the test has passed.<p/>
+<p>This test checks behavior of invalid arguments to Canvas::drawImage.</p>
+<p id="result"></p>
 <canvas id="canvas" width="150" height="150"></canvas>
 <script>
     // Create image
@@ -8,50 +8,102 @@
     var img_src = 'resources/apple.gif';
     myImage.src = img_src;
 
+    function print(message)
+    {
+        var line = document.createElement("div");
+        line.appendChild(document.createTextNode(message));
+        document.getElementById("result").appendChild(line);
+    }
+
     function draw() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
         var ctx = document.getElementById('canvas').getContext('2d');
 
         // draw image
         try{
             ctx.drawImage();
+            print("FAIL");
         } catch (e) {
+            print("PASS: no arguments, got exception as expected");
         }
         try{
             ctx.drawImage(myImage);
+            print("FAIL");
         } catch (e) {
+            print("PASS: image argument only, got exception as expected");
         }
         try{
             ctx.drawImage(myImage, 0);
+            print("FAIL");
         } catch (e) {
+            print("PASS: image argument plus one number, got exception as expected");
         }
         try{
             ctx.drawImage(myImage, 0, 0);
+            print("PASS: image argument plus 2 numbers");
         } catch (e) {
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 0, 0, 20, 20);
+            print("PASS: image argument plus 4 numbers");
         } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20, 0, 0, 20, 20);
+            print("PASS: image argument plus 8 numbers");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 0, 0);
+            print("PASS: image argument plus zero size");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20, 0, 0, 0, 0);
+            print("PASS: image argument plus 8 numbers, zero size");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20, 0, 0, -1, 0);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument plus 8 numbers, negative size, got exception as expected");
         }
         try{
             ctx.drawImage(null);
+            print("FAIL");
         } catch (e) {
+            print("PASS: null image, got exception as expected");
         }
         try{
             ctx.drawImage(null, 0);
+            print("FAIL");
         } catch (e) {
+            print("PASS: null image, got exception as expected");
         }
         try{
             ctx.drawImage(null, 0, 0);
+            print("FAIL");
         } catch (e) {
+            print("PASS: null image, got exception as expected");
         }
         try{
             ctx.drawImage(null, 0, 0, 20, 20);
+            print("FAIL");
         } catch (e) {
+            print("PASS: null image, got exception as expected");
         }
         ctx.fillStyle = 'green';
         ctx.fillRect(0,0,150,150);
-    }
 
-    myImage.onload(draw);
+        print("Test complete.");
+    }
 </script>
 </body>

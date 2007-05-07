@@ -1,3 +1,16 @@
+2007-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13537
+
+        * fast/canvas/drawImage-with-invalid-args.html: Changed to a dumpAsText test.
+        Added logging and a negative-size test.
+        * fast/canvas/drawImage-with-invalid-args-expected.txt: Updated.
+
+        * fast/canvas/drawImage-with-invalid-args-expected.checksum: Removed.
+        * fast/canvas/drawImage-with-invalid-args-expected.png: Removed.
+
 2007-05-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

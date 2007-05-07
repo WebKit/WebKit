@@ -2,6 +2,16 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13537
+          Canvex example starts rendering strangely after a while
+
+        * html/CanvasRenderingContext2D.cpp: (WebCore::CanvasRenderingContext2D::drawImage):
+        Don't raise an exception if the source or destination rectangle is empty.
+
+2007-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
         - fix <rdar://problem/4585593> REGRESSION: Some 2-byte characters in printed page
           header are drawn with too-large font and clipped
 
