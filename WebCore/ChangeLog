@@ -1,5 +1,9 @@
 2007-05-07  Darin Adler  <darin@apple.com>
 
+        - rolling out setInnerHTML optimization until I can figure out why tests are failing
+
+2007-05-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13602
