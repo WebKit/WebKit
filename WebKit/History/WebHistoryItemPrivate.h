@@ -52,4 +52,9 @@
 // This should not be called directly for WebHistoryItems that are already included
 // in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
 - (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
+// Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
+// The properties will not be persisted; when the history item is removed, the properties will be lost.
+- (id)_transientPropertyForKey:(NSString *)key;
+- (void)_setTransientProperty:(id)property forKey:(NSString *)key;
+
 @end

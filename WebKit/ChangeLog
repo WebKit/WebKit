@@ -1,3 +1,12 @@
+2007-05-07  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Kevin (Sarge)
+
+        Make _transientPropertyForKey: and _setTransientProperty:forKey: SPI
+
+        * History/WebHistoryItemInternal.h:
+        * History/WebHistoryItemPrivate.h:
+
 2007-05-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.
