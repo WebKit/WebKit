@@ -1,5 +1,13 @@
 2007-05-07  Brady Eidson  <beidson@apple.com>
 
+        Actually finish the code move from my last checkin
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _transientPropertyForKey:]):
+        (-[WebHistoryItem _setTransientProperty:forKey:]):
+
+2007-05-07  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Kevin (Sarge)
 
         Make _transientPropertyForKey: and _setTransientProperty:forKey: SPI

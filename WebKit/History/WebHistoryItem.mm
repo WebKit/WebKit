@@ -363,16 +363,6 @@ static WebWindowWatcher *_windowWatcher = nil;
     return core(_private)->scrollPoint();
 }
 
-- (id)_transientPropertyForKey:(NSString *)key
-{
-    return core(_private)->getTransientProperty(key);
-}
-
-- (void)_setTransientProperty:(id)property forKey:(NSString *)key
-{
-    core(_private)->setTransientProperty(key, property);
-}
-
 @end
 
 @implementation WebHistoryItem (WebPrivate)
@@ -500,6 +490,16 @@ static WebWindowWatcher *_windowWatcher = nil;
 + (void)_releaseAllPendingPageCaches
 {
     HistoryItem::performPendingReleaseOfCachedPages();
+}
+
+- (id)_transientPropertyForKey:(NSString *)key
+{
+    return core(_private)->getTransientProperty(key);
+}
+
+- (void)_setTransientProperty:(id)property forKey:(NSString *)key
+{
+    core(_private)->setTransientProperty(key, property);
 }
 
 @end
