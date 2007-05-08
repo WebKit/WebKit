@@ -19,7 +19,7 @@
 
 module core {
 
-    interface CDATASection : Text {
+    interface [GenerateConstructor] CDATASection : Text {
     };
 
 }

@@ -20,7 +20,7 @@
 
 module core {
 
-    interface ProcessingInstruction : Node {
+    interface [GenerateConstructor] ProcessingInstruction : Node {
 
         // DOM Level 1
 

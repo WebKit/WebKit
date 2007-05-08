@@ -20,7 +20,7 @@
 
 module core {
 
-    interface DOMImplementation {
+    interface [GenerateConstructor] DOMImplementation {
 
         // DOM Level 1
 

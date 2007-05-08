@@ -19,7 +19,7 @@
 
 module core {
 
-    interface DocumentType : Node {
+    interface [GenerateConstructor] DocumentType : Node {
 
         // DOM Level 1
 

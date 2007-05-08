@@ -19,7 +19,7 @@
 
 module core {
 
-    interface Entity : Node {
+    interface [GenerateConstructor] Entity : Node {
         readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
         readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
         readonly attribute [ConvertNullStringTo=Null] DOMString notationName;

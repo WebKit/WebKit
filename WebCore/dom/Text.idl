@@ -19,7 +19,7 @@
 
 module core {
 
-    interface Text : CharacterData {
+    interface [GenerateConstructor] Text : CharacterData {
 
         // DOM Level 1
 

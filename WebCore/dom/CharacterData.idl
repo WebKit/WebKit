@@ -19,7 +19,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMEventTargetNode] CharacterData : EventTargetNode {
+    interface [LegacyParent=KJS::DOMEventTargetNode, GenerateConstructor] CharacterData : EventTargetNode {
 
         attribute DOMString data
             setter raises (DOMException);

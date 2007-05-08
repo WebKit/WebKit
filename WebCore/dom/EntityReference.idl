@@ -19,7 +19,7 @@
 
 module core {
 
-    interface EntityReference : Node {
+    interface [GenerateConstructor] EntityReference : Node {
     };
 
 }

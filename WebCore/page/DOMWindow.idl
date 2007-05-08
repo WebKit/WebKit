@@ -46,11 +46,38 @@ module window {
         attribute CSSRuleConstructor CSSRule;
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute CSSValueConstructor CSSValue;
-        attribute DocumentConstructor Document;
-        attribute DocumentFragmentConstructor DocumentFragment;
         attribute DOMParserConstructor DOMParser;
-        attribute ElementConstructor Element;
         attribute EventConstructor Event;
+        
+        // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
+//        attribute DOMExceptionConstructor DOMException;
+//        attribute DOMStringListConstructor DOMStringList;
+//        attribute NameListConstructor NameList;
+//        attribute DOMImplementationListConstructor DOMImplementationList;
+//        attribute DOMImplementationSourceConstructor DOMImplementationSource;
+        attribute DOMImplementationConstructor DOMImplementation;
+        attribute DocumentFragmentConstructor DocumentFragment;
+        attribute DocumentConstructor Document;
+        attribute NodeConstructor Node;
+//        attribute NodeListConstructor NodeList;
+//        attribute NamedNodeMapConstructor NamedNodeMap;
+        attribute CharacterDataConstructor CharacterData;
+        attribute AttrConstructor Attr;
+        attribute ElementConstructor Element;
+        attribute TextConstructor Text;
+        attribute CommentConstructor Comment;
+//        attribute TypeInfoConstructor TypeInfo;
+//        attribute UserDataHandlerConstructor UserDataHandler;
+//        attribute DOMErrorConstructor DOMError;
+//        attribute DOMErrorHandlerConstructor DOMErrorHandler
+//        attribute DOMLocatorConstructor DOMLocator;
+//        attribute DOMConfigurationConstructor DOMConfiguration;
+        attribute CDATASectionConstructor CDATASection;
+        attribute DocumentTypeConstructor DocumentType;
+        attribute NotationConstructor Notation;
+        attribute EntityConstructor Entity;
+        attribute EntityReferenceConstructor EntityReference;
+        attribute ProcessingInstructionConstructor ProcessingInstruction;
         
         // FIXME: Implement the commented-out global constructors for elements listed in DOM Level 2 HTML specification.
         attribute HTMLElementConstructor HTMLElement;
@@ -110,7 +137,6 @@ module window {
 
         attribute HTMLDocumentConstructor HTMLDocument;
         attribute MutationEventConstructor MutationEvent;
-        attribute NodeConstructor Node;
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;

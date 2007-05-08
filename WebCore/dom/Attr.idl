@@ -20,7 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMEventTargetNode] Attr : EventTargetNode {
+    interface [LegacyParent=KJS::DOMEventTargetNode, GenerateConstructor] Attr : EventTargetNode {
 
         // DOM Level 1
 

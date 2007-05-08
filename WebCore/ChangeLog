@@ -1,3 +1,27 @@
+2007-05-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13480
+        window.Attr is undefined
+
+        Test: fast/dom/Window/attr-constructor.html
+
+        * dom/Attr.idl:
+        * dom/CDATASection.idl:
+        * dom/CharacterData.idl:
+        * dom/Comment.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DocumentType.idl:
+        * dom/Entity.idl:
+        * dom/EntityReference.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Text.idl:
+        Added GenerateConstructor.
+
+        * page/DOMWindow.idl: Added constructor properties for DOM interfaces.
+
 2007-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

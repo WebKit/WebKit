@@ -19,7 +19,7 @@
 
 module core {
 
-    interface Comment : CharacterData {
+    interface [GenerateConstructor] Comment : CharacterData {
     };
 
 }
