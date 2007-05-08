@@ -1,3 +1,13 @@
+2007-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt and Hatcher.
+
+        - fix auto-activation code path so Tiger and Leopard aren't different
+
+        * platform/mac/WebFontCache.mm: (+[WebFontCache fontWithFamily:traits:size:]):
+        Do the auto-activation dance first before doing anything else, and ignore the
+        font that it returns.
+
 2007-05-08  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Ada.

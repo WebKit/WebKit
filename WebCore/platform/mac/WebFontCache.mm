@@ -114,6 +114,12 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
+#ifndef BUILDING_ON_TIGER
+    // Auto activate the font before looking for it. <rdar://problem/4564955>
+    // Ignore the result because we want to use our own algorithm to actually find the font.
+    [NSFont fontWithName:desiredFamily size:size];
+#endif
+
     // Look for an exact match first.
     NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
     NSString *availableFont;
@@ -132,17 +138,6 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
             break;
         }
     }
-
-    NSFont *font = nil;
-#ifndef BUILDING_ON_TIGER
-    // font was not immediately available, try auto activated fonts <rdar://problem/4564955>
-    font = [NSFont fontWithName:desiredFamily size:size];
-    if (font) {
-        NSFontTraitMask traits = [fontManager traitsOfFont:font];
-        if ((traits & desiredTraits) == desiredTraits)
-            return [fontManager convertFont:font toHaveTrait:desiredTraits];
-    }
-#endif
 
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
@@ -188,7 +183,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     if (!choseFont)
         return nil;
 
-    font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
+    NSFont *font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
 
     if (!font)
         return nil;
