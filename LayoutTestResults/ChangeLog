@@ -1,5 +1,23 @@
 2007-05-08  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack.
+
+        Adjust tests that have console output, now that it's added by
+        DumpRenderTree.
+
+        * qt/Skipped:
+        * qt/tables/mozilla/bugs/bug53690-1-expected.txt:
+        * qt/tables/mozilla/bugs/bug9024-expected.txt:
+        * qt/tables/mozilla_expected_failures/bugs/bug3517-expected.txt:
+        * qt/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * qt/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * qt/tables/mozilla_expected_failures/dom/appendCells1-expected.txt:
+        * qt/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.txt:
+        * qt/tables/mozilla_expected_failures/dom/insertTbodyExpand1-expected.txt:
+        * qt/tables/mozilla_expected_failures/dom/insertTbodyRebuild1-expected.txt:
+
+2007-05-08  Lars Knoll <lars@trolltech.com>
+
         Update the baseline for traversal/ and add a few missing results in
         tables/
 

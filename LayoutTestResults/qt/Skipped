@@ -38,6 +38,8 @@ fast/tokenizer
 fast/xpath
 fast/xsl
 fast
+security
+webarchive
 
 http
 plugins

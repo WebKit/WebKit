@@ -1,5 +1,20 @@
 2007-05-08  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack.
+
+        Dump JavaScript console messages as well. Also requires a slight
+        change in run-webkit-tests, so we still correctly differentiate
+        between text only and rendertree tests.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::javaScriptConsoleMessage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::dump):
+        * Scripts/run-webkit-tests:
+
+2007-05-08  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Zack
 
         Specify what the serif, sans-serif and monospace aliases

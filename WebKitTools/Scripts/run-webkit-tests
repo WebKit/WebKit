@@ -1108,10 +1108,10 @@ sub isTextOnlyTest($)
 {
     my ($actual) = @_;
     my $isText;
-    if ($actual !~ /^layer at/) {
-        $isText = 1;
-    } else {
+    if ($actual =~ /^layer at/ms) {
         $isText = 0;
+    } else {
+        $isText = 1;
     }
     return $isText;
 }
