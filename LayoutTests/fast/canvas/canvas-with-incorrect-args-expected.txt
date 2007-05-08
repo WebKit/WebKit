@@ -1,0 +1,37 @@
+
+This tests the behaviour of a number of the DOM Canvas drawing methods when
+given 0, inf, or NaN as parameters.
+A number of the Canvas methods do not have defined behaviour when given inf
+or nan and so we use UNDEFINED to indicate this.
+
+PASS called fillRect 0*0 fillRect without throwing an exception.
+UNDEFINED called fillRect with inf*inf fillRect without throwing an exception.
+UNDEFINED threw exception code 1 on nan*nan fillRect.
+PASS called clearRect 0*0 clearRect without throwing an exception.
+UNDEFINED called clearRect with inf*inf clearRect without throwing an exception.
+UNDEFINED threw exception code 1 on nan*nan clearRect.
+PASS called rect 0*0 rect without throwing an exception.
+UNDEFINED called rect with inf*inf rect without throwing an exception.
+UNDEFINED threw exception code 1 on nan*nan rect.
+PASS called fill with an empty path without throwing an exception.
+PASS threw exception code 1 on arc with zero-length radius
+PASS threw exception code 1 on arc with negative-length radius
+UNDEFINED did not throw exception on arc with infinite radius
+UNDEFINED threw exception code 1 on arc with nan-length radius
+PASS threw exception code 1 on arcTo with zero-length radius
+PASS threw exception code 1 on arcTo with negative-length radius
+UNDEFINED did not throw exception on arcTo with infinite radius
+UNDEFINED threw exception code 1 on arcTo with nan-length radius
+UNDEFINED did not throw exception on lineTo(inf, inf).
+UNDEFINED did not throw exception on lineTo(nan, nan).
+UNDEFINED did not throw exception on quadraticCurveTo(20, 20, inf, inf).
+UNDEFINED did not throw exception on quadraticCurveTo(inf, inf, 20, 20).
+UNDEFINED did not throw exception on quadraticCurveTo(20, 20, nan, nan).
+UNDEFINED did not throw exception on quadraticCurveTo(nan, nan, 20, 20).
+UNDEFINED did not throw exception on bezierCurveTo(20, 20, 30, 30, inf, inf).
+UNDEFINED did not throw exception on bezierCurveTo(20, 20, inf, inf, 30, 30).
+UNDEFINED did not throw exception on bezierCurveTo(inf, inf, 20, 20, 30, 30).
+UNDEFINED did not throw exception on bezierCurveTo(20, 20, 30, 30, nan, nan).
+UNDEFINED did not throw exception on bezierCurveTo(20, 20, nan, nan, 30, 30).
+UNDEFINED did not throw exception on bezierCurveTo(nan, nan, 20, 20, 30, 30).
+

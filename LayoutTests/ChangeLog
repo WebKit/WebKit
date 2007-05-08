@@ -1,3 +1,12 @@
+2007-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Test the behaviour of canvas methods called with inf/nan parameters
+
+        * fast/canvas/canvas-with-incorrect-args-expected.txt: Added.
+        * fast/canvas/canvas-with-incorrect-args.html: Added.
+
 2007-05-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

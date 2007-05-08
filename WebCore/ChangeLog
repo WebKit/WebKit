@@ -1,3 +1,19 @@
+2007-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Correcting comparisons to handle NaN in the same manner
+        as other Canvas methods.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+          Correcting arc/arcTo to match the WHAT WG draft.
+        (WebCore::CanvasRenderingContext2D::rect):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+
 2007-05-07  David Hyatt  <hyatt@apple.com>
 
         Add some comments to the glyph/font code (patch from MarvinD, tweaked by

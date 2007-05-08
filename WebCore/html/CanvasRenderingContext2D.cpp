@@ -395,7 +395,7 @@ void CanvasRenderingContext2D::bezierCurveTo(float cp1x, float cp1y, float cp2x,
 void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, float r, ExceptionCode& ec)
 {
     ec = 0;
-    if (r < 0) {
+    if (!(r > 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -405,7 +405,7 @@ void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, flo
 void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool clockwise, ExceptionCode& ec)
 {
     ec = 0;
-    if (r < 0) {
+    if (!(r > 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -415,7 +415,7 @@ void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea
 void CanvasRenderingContext2D::rect(float x, float y, float width, float height, ExceptionCode& ec)
 {
     ec = 0;
-    if (width < 0 || height < 0) {
+    if (!(width >= 0 && height >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -493,7 +493,7 @@ void CanvasRenderingContext2D::clip()
 void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height, ExceptionCode& ec)
 {
     ec = 0;
-    if (width < 0 || height < 0) {
+    if (!(width >= 0 && height >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -509,7 +509,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 {
     ec = 0;
 
-    if (width < 0 || height < 0) {
+    if (!(width >= 0 && height >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -546,7 +546,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
 {
     ec = 0;
 
-    if (width < 0 || height < 0 || lineWidth < 0) {
+    if (!(width >= 0 && height >= 0 && lineWidth >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }

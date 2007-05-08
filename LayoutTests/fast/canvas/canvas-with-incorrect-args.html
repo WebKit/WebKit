@@ -1,0 +1,286 @@
+<html>
+<head>
+<style>
+.fail { color: red; font-weight: bold;}
+.pass { color: green; font-weight: bold;}
+.undefined { color: blue; font-weight: bold;}
+</style>
+<script type="text/javascript">
+failed = false;
+
+function debug(msg) {
+    var span = document.createElement("span");
+    span.innerHTML = msg + '<br>';
+    document.getElementById("console").appendChild(span);
+}
+
+function pass(msg) {
+    debug('<span class="pass">PASS</span> ' + msg + '</span>');
+}
+
+function fail(msg) {
+    debug('<span class="fail">FAIL</span> ' + msg + '</span>');
+    failed = true;
+}
+
+function undefined(msg) {
+    debug('<span class="undefined">UNDEFINED</span> ' + msg + '</span>');
+}
+
+function runTest() {
+    var canvas = document.getElementById("test");
+    var context = canvas.getContext("2d");
+    context.fillStyle = '#f00';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    try {
+        context.fillRect(0, 0, 0, 0);
+        pass("called fillRect 0*0 fillRect without throwing an exception.");
+    } catch (e) {
+        fail("threw exception code " + e.code + " with 0*0 fillRect");       
+    }
+    try {
+        context.fillRect(0, 0, 0.0/1.0, 0.0/1.0);
+        undefined("called fillRect with inf*inf fillRect without throwing an exception.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " with inf*inf fillRect");       
+    }
+    try {
+        context.fillRect(0, 0, 0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception with nan*nan fillRect.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on nan*nan fillRect.");       
+    }
+    try {
+        context.clearRect(0, 0, 0, 0);
+        pass("called clearRect 0*0 clearRect without throwing an exception.");
+    } catch (e) {
+        fail("threw exception code " + e.code + " with 0*0 clearRect.");       
+    }
+    try {
+        context.clearRect(0, 0, 0.0/1.0, 0.0/1.0);
+        undefined("called clearRect with inf*inf clearRect without throwing an exception.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " with inf*inf clearRect.");       
+    }
+    try {
+        context.clearRect(0, 0, 0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception with nan*nan clearRect.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on nan*nan clearRect.");       
+    }
+    try {
+        context.rect(0, 0, 0, 0);
+        pass("called rect 0*0 rect without throwing an exception.");
+    } catch (e) {
+        fail("threw exception code " + e.code + " with 0*0 rect.");       
+    }
+    try {
+        context.rect(0, 0, 0.0/1.0, 0.0/1.0);
+        undefined("called rect with inf*inf rect without throwing an exception.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " with inf*inf rect.");       
+    }
+    try {
+        context.rect(0, 0, 0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception with nan*nan rect.");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on nan*nan rect.");       
+    }
+    try {
+        context.fill();
+        pass("called fill with an empty path without throwing an exception.");
+    } catch (e) {
+        fail("threw exception code " + e.code + " on fill with no path.");       
+    }
+    try {
+        context.arc(2, 2, 0, 0, 90, true);
+        fail("did not throw exception on arc with zero-length radius");
+    } catch (e) {
+        pass("threw exception code " + e.code + " on arc with zero-length radius");    
+    }
+    try {
+        context.arc(2, 2, -10, 0, 90, true);
+        fail("did not throw exception on arc with negative-length radius");
+    } catch (e) {
+        pass("threw exception code " + e.code + " on arc with negative-length radius");    
+    }
+    try {
+        context.arc(2, 2, 1.0/0.0, 0, 90, true);
+        undefined("did not throw exception on arc with infinite radius");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on arc with infinite radius");    
+    }
+    try {
+        context.arc(2, 2, 0.0/0.0, 0, 90, true);
+        undefined("did not throw exception on arc with nan-length radius");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on arc with nan-length radius");    
+    }
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.arcTo(2, 2, 4, 4, 0);
+        fail("did not throw exception on arcTo with zero-length radius");
+    } catch (e) {
+        pass("threw exception code " + e.code + " on arcTo with zero-length radius");    
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.arcTo(2, 2, 4, 4, -10);
+        fail("did not throw exception on arcTo with negative-length radius");
+    } catch (e) {
+        pass("threw exception code " + e.code + " on arcTo with negative-length radius");    
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.arcTo(2, 2, 4, 4, 1.0/0.0);
+        undefined("did not throw exception on arcTo with infinite radius");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on arcTo with infinite radius");    
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.arcTo(2, 2, 4, 4, 0.0/0.0);
+        undefined("did not throw exception on arcTo with nan-length radius");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on arcTo with nan-length radius");    
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.lineTo(1.0/0.0, 1.0/0.0);
+        undefined("did not throw exception on lineTo(inf, inf).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on lineTo(inf, inf).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.lineTo(0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception on lineTo(nan, nan).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on lineTo(nan, nan).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.quadraticCurveTo(20, 20, 1.0/0.0, 1.0/0.0);
+        undefined("did not throw exception on quadraticCurveTo(20, 20, inf, inf).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on quadraticCurveTo(20, 20, inf, inf).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.quadraticCurveTo(1.0/0.0, 1.0/0.0, 20, 20);
+        undefined("did not throw exception on quadraticCurveTo(inf, inf, 20, 20).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on quadraticCurveTo(inf, inf, 20, 20).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.quadraticCurveTo(20, 20, 0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception on quadraticCurveTo(20, 20, nan, nan).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on quadraticCurveTo(20, 20, nan, nan).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.quadraticCurveTo(0.0/0.0, 0.0/0.0, 20, 20);
+        undefined("did not throw exception on quadraticCurveTo(nan, nan, 20, 20).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on quadraticCurveTo(nan, nan, 20, 20).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(20, 20, 30, 30, 1.0/0.0, 1.0/0.0);
+        undefined("did not throw exception on bezierCurveTo(20, 20, 30, 30, inf, inf).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(20, 20, 30, 30, inf, inf).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(20, 20, 1.0/0.0, 1.0/0.0, 30, 30);
+        undefined("did not throw exception on bezierCurveTo(20, 20, inf, inf, 30, 30).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(20, 20, inf, inf, 30, 30).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(1.0/0.0, 1.0/0.0, 20, 20, 30, 30);
+        undefined("did not throw exception on bezierCurveTo(inf, inf, 20, 20, 30, 30).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(inf, inf, 20, 20, 30, 30).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(20, 20, 30, 30, 0.0/0.0, 0.0/0.0);
+        undefined("did not throw exception on bezierCurveTo(20, 20, 30, 30, nan, nan).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(20, 20, 30, 30, nan, nan).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(20, 20, 0.0/0.0, 0.0/0.0, 30, 30);
+        undefined("did not throw exception on bezierCurveTo(20, 20, nan, nan, 30, 30).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(20, 20, nan, nan, 30, 30).");       
+    }
+    context.closePath();
+    context.beginPath();
+    try {
+        context.moveTo(10, 10);
+        context.bezierCurveTo(0.0/0.0, 0.0/0.0, 20, 20, 30, 30);
+        undefined("did not throw exception on bezierCurveTo(nan, nan, 20, 20, 30, 30).");
+    } catch (e) {
+        undefined("threw exception code " + e.code + " on bezierCurveTo(nan, nan, 20, 20, 30, 30).");       
+    }
+    context.closePath();
+
+    if (!failed) {
+        context.fillStyle = '#0f0';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (layoutTestController)
+        layoutTestController.dumpAsText();
+}
+</script>
+<title>Canvas test of doom</title>
+</head>
+<body onload="runTest()">
+<canvas id="test" width="100" height="100"></canvas><br />
+<pre id="console">
+This tests the behaviour of a number of the DOM Canvas drawing methods when
+given 0, inf, or NaN as parameters.
+A number of the Canvas methods do not have defined behaviour when given inf
+or nan and so we use <span class="undefined">UNDEFINED</span> to indicate this.
+
+</pre>
+
+</body>
+</html>
