@@ -60,6 +60,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebCore/WebScriptObjectPendingPublic.h>
 #import <WebKit/WebViewPrivate.h>
 #import <JavaScriptCore/Assertions.h>
 #import <getopt.h>
@@ -187,12 +188,10 @@ static CFMutableDictionaryRef javaScriptThreads()
 void* runJavaScriptThread(void* arg)
 {
     const char* const script =
-    " \
-    var array = []; \
-    for (var i = 0; i < 10; i++) { \
-        array.push(String(i)); \
-    } \
-    ";
+        "var array = [];"
+        "for (var i = 0; i < 10; i++) {"
+        "    array.push(String(i));"
+        "}";
 
     while(1) {
         JSGlobalContextRef ctx = JSGlobalContextCreate(NULL);
@@ -981,6 +980,14 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)obj 
 { 
+    ASSERT_NOT_REACHED();
+}
+
+- (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
+{
+    ASSERT(obj == [frame windowObject]);
+    ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
+    
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
     [obj setValue:ltc forKey:@"layoutTestController"];
     [ltc release];

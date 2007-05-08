@@ -25,12 +25,14 @@
 
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
+#import "WebScriptObjectPendingPublic.h"
 
 #import "DOMInternal.h"
 #import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/context.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
+#import <JavaScriptCore/APICast.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -521,6 +523,11 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 - (id)objectAtIndex:(unsigned)index
 {
     return [self webScriptValueAtIndex:index];
+}
+
+- (JSObjectRef)JSObject
+{
+    return toRef([self _imp]);
 }
 
 @end

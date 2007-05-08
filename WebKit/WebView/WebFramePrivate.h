@@ -29,6 +29,9 @@
 // This header contains the WebFrame SPI.
 
 #import <WebKit/WebFrame.h>
+#import <JavaScriptCore/JSBase.h>
+
+@class WebScriptObject;
 
 // Keys for accessing the values in the page cache dictionary.
 extern NSString *WebPageCacheEntryDateKey;
@@ -64,5 +67,21 @@ typedef enum {
 - (void)_selectNSRange:(NSRange)range;
 
 - (BOOL)_isDisplayingStandaloneImage;
+
+@end
+
+@interface WebFrame (WebPendingPublic)
+
+/*!
+    @method windowObject
+    @result The WebScriptObject representing the frame's JavaScript window object.
+*/
+- (WebScriptObject *)windowObject;
+
+/*!
+    @method globalContext
+    @result The frame's global JavaScript execution context.
+*/
+- (JSGlobalContextRef)globalContext;
 
 @end

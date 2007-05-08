@@ -72,6 +72,8 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/FormState.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/kjs_binding.h>
+#import <WebCore/kjs_proxy.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLElement.h>
@@ -654,6 +656,26 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     Document* document = core(self)->document();
     return document && document->isImageDocument();
+}
+
+@end
+
+@implementation WebFrame (WebPendingPublic)
+
+- (WebScriptObject *)windowObject
+{
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return 0;
+    return coreFrame->windowScriptObject();
+}
+
+- (JSGlobalContextRef)globalContext
+{
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return 0;
+    return reinterpret_cast<JSGlobalContextRef>(coreFrame->scriptProxy()->interpreter()->globalExec());
 }
 
 @end

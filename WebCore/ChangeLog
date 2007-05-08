@@ -1,3 +1,24 @@
+2007-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed <rdar://problem/5140447> API for fetching JSGlobalContextRef from 
+        WebView or WebFrame
+        
+        Added support for new -[WebScriptObject JSObject] and -[WebFrame globalContext]
+        APIs.
+        
+        Also fixed some more cases of <rdar://problem/4395622> API: 
+        WebScriptObject.h incorrectly reports that -isSelectorExcludedFromWebScript 
+        returns NO by default, and generally cleaned up that documentation.
+
+        * WebCore.exp: A lot of the diff here is from sorting.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/WebScriptObject.h:
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject JSObject]):
+        * bindings/objc/WebScriptObjectPendingPublic.h: Added.
+
 2007-05-08  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Hyatt.

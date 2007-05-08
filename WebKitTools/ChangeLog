@@ -1,3 +1,19 @@
+2007-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added tests for new APIs: -[WebFrame windowObject], -[WebFrame globalContext], 
+        and - (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject 
+        forFrame:(WebFrame *)frame, in the form of ASSERTs.
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (runJavaScriptThread): Fixed quote mismatch that prepare-changelog likes
+        to complain about.
+
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]):
+        (-[WaitUntilDoneDelegate webView:didClearWindowObject:forFrame:]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-05-08  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

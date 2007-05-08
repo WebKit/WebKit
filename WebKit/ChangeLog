@@ -1,3 +1,28 @@
+2007-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/5140447> API for fetching JSGlobalContextRef from 
+        WebView or WebFrame
+        
+        Added -[WebFrame windowObject] and -[WebFrame globalContext], along with
+        a new frame load delegate method, - (void)webView:(WebView *)webView 
+        didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame.
+        This is all to support briding between the WebScriptObject and JavaScriptCore
+        APIs.
+
+        Also fixed more of <rdar://problem/4395622> API: WebScriptObject.h incorrectly 
+        reports that -isSelectorExcludedFromWebScript returns NO by default, and
+        generally cleaned up the WebScriptObject headerdoc.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge windowObjectCleared]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame windowObject]):
+        (-[WebFrame globalContext]):
+        * WebView/WebFramePrivate.h:
+        * WebView/WebViewPrivate.h:
+
 2007-05-07  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

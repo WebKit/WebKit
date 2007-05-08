@@ -745,7 +745,11 @@ static BOOL loggedObjectCacheSize = NO;
 - (void)windowObjectCleared
 {
     WebView *wv = [self webView];
-    [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:m_frame->windowScriptObject()];
+    if ([[wv frameLoadDelegate] respondsToSelector:@selector(webView:didClearWindowObject:forFrame:)])
+        [[wv frameLoadDelegate] webView:wv didClearWindowObject:m_frame->windowScriptObject() forFrame:kit(m_frame)];
+    else // legacy API
+        [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:m_frame->windowScriptObject()];
+
     if ([wv scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger]; // FIXME: remove this once <rdar://problem/4608404> is fixed
         [_frame _attachScriptDebugger];

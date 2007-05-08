@@ -9,39 +9,39 @@
 // NSObject (WebScripting) -----------------------------------------------------
 
 /*
-    The methods in WebScripting are optionally implemented by classes whose
-    interfaces are exported (wrapped) to a web scripting environment. The
-    scripting environment currently supported by WebKit uses the JavaScript
-    language.
+    Classes may implement the methods in WebScripting to export interfaces to
+    WebKit's JavaScript environment.
 
-    Instances automatically reflect their interfaces in the scripting environment. This
-    automatic reflection can be overridden using the class methods defined in the WebScripting
-    informal protocol.
+    By default, no properties or functions are exported. A class must implement 
+    +isKeyExcludedFromWebScript: and/or +isSelectorExcludedFromWebScript: to 
+    expose selected properties and methods to JavaScript.
 
-    Access to the attributes of an instance is done using KVC. Specifically the following
+    Access to exported properties is done using KVC -- specifically, the following
     KVC methods:
 
         - (void)setValue:(id)value forKey:(NSString *)key
         - (id)valueForKey:(NSString *)key
 
-    Instances may also intercept property set/get operations and method invocations that are
-    made by the scripting environment, but not reflected. This is done using the KVC
-    methods:
+    Clients may also intercept property set/get operations that are made by the 
+    scripting environment for properties that are not exported. This is done using 
+    the KVC methods:
 
         - (void)setValue:(id)value forUndefinedKey:(NSString *)key
         - (id)valueForUndefinedKey:(NSString *)key
+    
+    Similarly, clients may intercept method invocations that are made by the
+    scripting environment for methods that are not exported. This is done using
+    the method:
+
+        - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
 
     If clients need to raise an exception in the script environment
     they can call [WebScriptObject throwException:]. Note that throwing an
     exception using this method will only succeed if the method that throws the exception
     is being called within the scope of a script invocation.
 
-    By default all attributes, as defined by KVC, will be exposed. However, a
-    class may further exclude properties that they do not want to expose
-    to web script.
-
     Not all methods are exposed. Only those methods whose parameters and return
-    type meets the export criteria will exposed. Valid types are Objective-C instances
+    type meets the export criteria are exposed. Valid types are Objective-C instances
     and scalars. Other types are not allowed. Classes may further exclude method
     that they do not want to expose.
 
@@ -80,17 +80,17 @@
 /*!
     @method isSelectorExcludedFromWebScript:
     @param aSelector The selector the will be exposed to the script environment.
-    @discussion Return YES to prevent the selector appearing in the script
-    environment. Return NO to expose the selector in the script environment.
-    If this method is not implemented on the class no selectors will be exposed.
-    @result Returns YES to hide the selector, NO to expose the selector.
+    @discussion Return NO to export the selector to the script environment.
+    Return YES to prevent the selector from being exported to the script environment. 
+    If this method is not implemented on the class no selectors will be exported.
+    @result Returns YES to hide the selector, NO to export the selector.
 */
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
 
 /*!
     @method webScriptNameForKey:
     @param name The name of the instance variable that will be exposed to the
-    script environment. Only that properties that meet the export criteria will
+    script environment. Only instance variables that meet the export criteria will
     be exposed.
     @discussion Provide an alternate name for a property.
     @result Returns the name to be used to represent the specified property in the
@@ -102,9 +102,9 @@
     @method isKeyExcludedFromWebScript:
     @param name The name of the instance variable that will be exposed to the
     script environment.
-    @discussion Return YES to exclude the property from visibility in the script environment.
-    Return NO to expose the instance variable to the script environment.
-    @result Returns YES to hide the property, NO to expose the property.
+    @discussion Return NO to export the property to the script environment.
+    Return YES to prevent the property from being exported to the script environment.
+    @result Returns YES to hide the property, NO to export the property.
 */
 + (BOOL)isKeyExcludedFromWebScript:(const char *)name;
 
@@ -112,8 +112,8 @@
     @method invokeUndefinedMethodFromWebScript:withArguments:
     @param name The name of the method to invoke.
     @param args The args to pass the method.
-    @discussion If a script attempt to invoke a method that is not an exposed
-    method, scriptInvocation:withArgs: will be called.
+    @discussion If a script attempts to invoke a method that is not exported, 
+    invokeUndefinedMethodFromWebScript:withArguments: will be called.
     @result The return value of the invocation. The value will be converted as appropriate
     for the script environment.
 */
@@ -122,17 +122,18 @@
 /*!
     @method invokeDefaultMethodWithArguments:
     @param args The args to pass the method.
-    @discussion If a script attempts to invoke a method on an exposed object
-    directly this method will be called.
+    @discussion If a script attempts to call an exposed object as a function, 
+    this method will be called.
+    @result The return value of the call. The value will be converted as appropriate
+    for the script environment.
 */
 - (id)invokeDefaultMethodWithArguments:(NSArray *)args;
 
 /*!
     @method finalizeForWebScript
     @discussion finalizeForScript is called on objects exposed to the script
-    environment just before the script environment releases the object. After calls to
-    finalizeForWebScript the object will no longer be referenced by the script environment.
-    Further, any references to WebScriptObjects made by the exposed object will
+    environment just before the script environment garbage collects the object.
+    Subsequently, any references to WebScriptObjects made by the exposed object will
     be invalid and have undefined consequences.
 */
 - (void)finalizeForWebScript;

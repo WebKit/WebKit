@@ -56,6 +56,7 @@
 		148CF65E0B00561400A997FC /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CF65D0B00561400A997FC /* Screen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14993BE30B2F2B1C0050497F /* FocusController.cpp */; };
 		14993BE60B2F2B1C0050497F /* FocusController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14993BE40B2F2B1C0050497F /* FocusController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C9A2980BF04DB600D734A8 /* WebScriptObjectPendingPublic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C9A5E90B3D105F005A0232 /* Settings.cpp */; };
 		14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */; };
 		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
@@ -245,7 +246,7 @@
 		1C4C8F660AD8655D009475CE /* DeleteButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F640AD8655D009475CE /* DeleteButton.h */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
-		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; };
+		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (); }; };
 		1CB4214A0AF2B2CA0085AD91 /* DOMDocumentInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711460AC5D5340053270F /* DOMDocumentInternal.h */; };
 		1CB4214B0AF2B2CA0085AD91 /* DOMElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711490AC5D5340053270F /* DOMElementInternal.h */; };
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
@@ -1520,7 +1521,7 @@
 		93B70D6109EB0C7C009D8468 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */; };
 		93B70D6209EB0C7C009D8468 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4609EB0C7C009D8468 /* JSXSLTProcessor.h */; };
 		93B70D6309EB0C7C009D8468 /* kjs_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4709EB0C7C009D8468 /* kjs_binding.cpp */; };
-		93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* kjs_binding.h */; };
+		93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* kjs_binding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6509EB0C7C009D8468 /* kjs_css.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4909EB0C7C009D8468 /* kjs_css.cpp */; };
 		93B70D6609EB0C7C009D8468 /* kjs_css.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4A09EB0C7C009D8468 /* kjs_css.h */; };
 		93B70D6709EB0C7C009D8468 /* kjs_dom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */; };
@@ -1532,7 +1533,7 @@
 		93B70D6D09EB0C7C009D8468 /* kjs_navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5109EB0C7C009D8468 /* kjs_navigator.cpp */; };
 		93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5209EB0C7C009D8468 /* kjs_navigator.h */; };
 		93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */; };
-		93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* kjs_proxy.h */; };
+		93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* kjs_proxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */; };
 		93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5609EB0C7C009D8468 /* kjs_traversal.h */; };
 		93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5909EB0C7C009D8468 /* kjs_window.cpp */; };
@@ -3141,6 +3142,7 @@
 		148CF65D0B00561400A997FC /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Screen.h; sourceTree = "<group>"; };
 		14993BE30B2F2B1C0050497F /* FocusController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FocusController.cpp; sourceTree = "<group>"; };
 		14993BE40B2F2B1C0050497F /* FocusController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusController.h; sourceTree = "<group>"; };
+		14C9A2980BF04DB600D734A8 /* WebScriptObjectPendingPublic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPendingPublic.h; sourceTree = "<group>"; };
 		14C9A5E90B3D105F005A0232 /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
 		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
 		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValue.cpp; sourceTree = "<group>"; };
@@ -9050,6 +9052,7 @@
 				1CAF347E0A6C405200ABE06E /* WebScriptObject.h */,
 				1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */,
 				1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */,
+				14C9A2980BF04DB600D734A8 /* WebScriptObjectPendingPublic.h */,
 			);
 			path = objc;
 			sourceTree = "<group>";
@@ -11253,6 +11256,7 @@
 				06FC442E0BAE5A9E0090EDE1 /* JavaScriptStatistics.h in Headers */,
 				E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
+				14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

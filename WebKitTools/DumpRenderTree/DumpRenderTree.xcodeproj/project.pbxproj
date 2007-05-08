@@ -93,7 +93,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpRenderTree.m; sourceTree = "<group>"; };
+		08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = DumpRenderTree.m; sourceTree = "<group>"; };
 		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		141BF445096A45C800E0753C /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		141BF446096A45C800E0753C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = PluginObject.c; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 		93442CF508F8BA4900BFE8CA /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputController.m; sourceTree = "<group>"; };
-		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = "AHEM____.TTF"; path = "DumpRenderTree.qtproj/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
+		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
 		A803FCB709CAAAB0009B2A37 /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
 		A803FCB809CAAAB1009B2A37 /* EventSendingController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EventSendingController.m; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTree.h; sourceTree = "<group>"; };
@@ -372,13 +372,11 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
@@ -528,7 +526,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -543,7 +541,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
