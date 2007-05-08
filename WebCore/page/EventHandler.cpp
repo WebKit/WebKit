@@ -1167,8 +1167,21 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
         while (renderer) {
             node = renderer->element();
-            if (node && node->isFocusable())
+            if (node && node->isFocusable()) {
+                // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a 
+                // node on mouse down if it's selected and inside a focused node. It will be 
+                // focused if the user does a mouseup over it, however, because the mouseup
+                // will set a selection inside it, which will call setFocuseNodeIfNeeded.
+                ExceptionCode ec = 0;
+                Node* n = node->isShadowNode() ? node->shadowParentNode() : node;
+                if (m_frame->selectionController()->isRange() && 
+                    m_frame->selectionController()->toRange()->compareNode(n, ec) == Range::NODE_INSIDE &&
+                    n->isDescendantOf(m_frame->document()->focusedNode()))
+                    return false;
+                    
                 break;
+            }
+            
             renderer = renderer->parent();
         }
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent

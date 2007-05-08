@@ -1,0 +1,38 @@
+<p>This tests to see if an editable selection containing a focusable node is draggable by content inside that focusable node. To achieve this we delay focus of such nodes until mouse up. Below, the table should be inside the red bordered div.</p>
+<div id="div" contenteditable="true" style="border: 1px solid blue;">
+<table contenteditable="false" border="1"><tr><td id="cell" contenteditable="true">editable</td></tr></table>
+</div>
+<div id="destination" contenteditable="true" style="border: 1px solid red;"><br></div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    var text = document.createTextNode(str);
+    var li = document.createElement("li");
+    var console = document.getElementById("console");
+    console.appendChild(li);
+    li.appendChild(text);
+}
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+    var cell = document.getElementById("cell");
+    var div = document.getElementById("div");
+    div.focus();
+    document.execCommand("SelectAll");
+
+    var x, y;
+    x = cell.offsetParent.offsetLeft + cell.offsetLeft + cell.offsetWidth / 2;
+    y = cell.offsetParent.offsetTop + cell.offsetTop + cell.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(1000);
+    
+    var destination = document.getElementById("destination");
+    x = destination.offsetParent.offsetLeft + destination.offsetLeft + destination.offsetWidth / 2;
+    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+}
+
+runTest();
+</script>

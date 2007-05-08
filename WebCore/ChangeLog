@@ -1,3 +1,29 @@
+2007-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/4895428> Can't drag selected ToDo
+        
+        The user tries to drag a selection by mousing down
+        on the editable part of a ToDo, which is focusable,
+        since it is an editable node within non-editable 
+        content.  But we focus focusable elements on mouse 
+        down, and focusing the editable piece blows away 
+        the selection and prevents the drag. This is how 
+        IE behaves, but content seems generally difficult 
+        to drag in IE, so this doesn't make it any worse.
+        
+        Since focus doesn't appear to be cancelable, either
+        with a DOM event or an editing delegate, I fixed this
+        by delaying the focus of focusable nodes that are 
+        selected and inside an already focused node.  The 
+        node will be focused if the user mouses up without 
+        doing any dragging because the mouse up sets a
+        selection, which calls setFocusNodeIfNeeded.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+
 2007-05-07  Atul Mehrotra <atul.mehrotra@celunite.com>
 
         Reviewed by Maciej.

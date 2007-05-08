@@ -1,3 +1,29 @@
+2007-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <rdar://problem/4895428> Can't drag selected ToDo
+
+        This tests to see that the focus of a focusable node 
+        inside an already focused node is delayed until mouse up:
+        * editing/selection/4895428-2-expected.checksum: Added.
+        * editing/selection/4895428-2-expected.png: Added.
+        * editing/selection/4895428-2-expected.txt: Added.
+        * editing/selection/4895428-2.html: Added.
+        
+        We delay focus until mouse up, but only if that node is 
+        inside an already focused node:
+        * editing/selection/4895428-3-expected.checksum: Added.
+        * editing/selection/4895428-3-expected.png: Added.
+        * editing/selection/4895428-3-expected.txt: Added.
+        * editing/selection/4895428-3.html: Added.
+        
+        This demonstrates the bug:
+        * editing/selection/4895428-4-expected.checksum: Added.
+        * editing/selection/4895428-4-expected.png: Added.
+        * editing/selection/4895428-4-expected.txt: Added.
+        * editing/selection/4895428-4.html: Added.
+
 2007-05-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
