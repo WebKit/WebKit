@@ -1,3 +1,17 @@
+2007-05-08  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Specify what the serif, sans-serif and monospace aliases
+        should map to and explicitly select the Gui style of
+        DRT to be plastique.
+
+        Fixes most of the test failures still seen on the build bot.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/fonts.conf:
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2007-05-07  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

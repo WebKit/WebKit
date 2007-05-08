@@ -86,6 +86,7 @@ int main(int argc, char* argv[])
     f.setWeight(QFont::Normal);
     f.setStyle(QFont::StyleNormal);
     app.setFont(f);
+    app.setStyle(QLatin1String("Plastique"));
 
 #ifdef Q_WS_X11
     QX11Info::setAppDpiY(0, 96);
