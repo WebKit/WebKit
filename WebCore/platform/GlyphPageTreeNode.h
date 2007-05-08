@@ -40,11 +40,21 @@ class GlyphPageTreeNode;
 
 typedef unsigned short Glyph;
 
-struct GlyphData {    
+// Holds the glyph index and the corresponding FontData information for a given
+// character.
+struct GlyphData {
     Glyph glyph;
     const FontData* fontData;
 };
 
+// A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
+// range of characters in the Unicode code space. GlyphPages are indexed
+// starting from 0 and incrementing for each 256 glyphs.
+//
+// One page may actually include glyphs from other fonts if the characters are
+// missing in the parimary font. It is owned by exactly one GlyphPageTreeNode,
+// although multiple nodes may reference it as their "page" if they are supposed
+// to be overriding the parent's node, but provide no additional information.
 struct GlyphPage {
     GlyphPage()
         : m_owner(0)
@@ -75,6 +85,26 @@ struct GlyphPage {
     bool fill(UChar* characterBuffer, unsigned bufferLength, const FontData* fontData);
 };
 
+// The glyph page tree is a data structure that maps (FontData, glyph page number)
+// to a GlyphPage.  Level 0 (the "root") is special. There is one root
+// GlyphPageTreeNode for each glyph page number.  The roots do not have a
+// GlyphPage associated with them, and their initializePage() function is never
+// called to fill the glyphs.
+//
+// Each root node maps a FontData pointer to another GlyphPageTreeNode at
+// level 1 (the "root child") that stores the actual glyphs for a specific font data.
+// These nodes will only have a GlyphPage if they have glyphs for that range.
+//
+// Levels greater than one correspond to subsequent levels of the fallback list
+// for that font. These levels override their parent's page of glyphs by
+// filling in holes with the new font (thus making a more complete page).
+//
+// A NULL FontData pointer corresponds to the system fallback
+// font. It is tracked separately from the regular pages and overrides so that
+// the glyph pages do not get polluted with these last-resort glyphs. The
+// system fallback page is not populated at construction like the other pages,
+// but on demand for each glyph, because the system may need to use different
+// fallback fonts for each. This lazy population is done by the Font.
 class GlyphPageTreeNode {
 public:
     GlyphPageTreeNode()
@@ -97,8 +127,13 @@ public:
     GlyphPageTreeNode* parent() const { return m_parent; }
     GlyphPageTreeNode* getChild(const FontData*, unsigned pageNumber);
 
+    // Returns a page of glyphs (or NULL if there are no glyphs in this page's character range).
     GlyphPage* page() const { return m_page; }
+
+    // Returns the level of this node. See class-level comment.
     unsigned level() const { return m_level; }
+
+    // The system fallback font has special rules (see above).
     bool isSystemFallback() const { return m_isSystemFallback; }
 
 private:

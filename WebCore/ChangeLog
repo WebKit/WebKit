@@ -1,3 +1,18 @@
+2007-05-07  David Hyatt  <hyatt@apple.com>
+
+        Add some comments to the glyph/font code (patch from MarvinD, tweaked by
+        me to correct a few bits and to make it forward-compatible with the work
+        going on in 3315.
+
+        Reviewed by me
+
+        * ChangeLog:
+        * platform/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/GlyphPageTreeNode.h:
+
 2007-05-07  Justin Garcia  <justin.garcia@apple.com>
 
         Fix layout test failures.

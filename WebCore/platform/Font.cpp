@@ -369,7 +369,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, un
             const GlyphData& data = page->glyphDataForCharacter(c);
             if (data.glyph || !attemptFontSubstitution) {
                 if (!smallCaps)
-                    return data;
+                    return data;  // We have a glyph for the character in question in the current page (or we've been told not to fall back).
 
                 const FontData* smallCapsFontData = data.fontData->smallCapsFontData(m_fontDescription);
 
@@ -398,7 +398,10 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, un
         }
 
         if (node->isSystemFallback()) {
-            // System fallback is character-dependent.
+            // System fallback is character-dependent. When we get here, we
+            // know that the character in question isn't in the system fallback
+            // font's glyph page. Try to lazily create it here.
+
             // Convert characters that shouldn't render to zero width spaces when asking what font is
             // appropriate.
             const FontData* characterFontData;
@@ -409,6 +412,9 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, un
             if (smallCaps)
                 characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
             if (characterFontData) {
+                // Got the fallback font, return the glyph page associated with
+                // it. We also store the FontData for the glyph in the fallback
+                // page for future use (it's lazily populated by us).
                 GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();
                 const GlyphData& data = fallbackPage ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
                 if (!smallCaps)

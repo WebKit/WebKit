@@ -57,11 +57,20 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
 {
     ASSERT(!m_page);
 
+    // This function must not be called for the root of the tree, because that
+    // level does not contain any glyphs.
+    ASSERT(m_level > 0 && m_parent);
+
+    // The parent's page will be 0 if we are level one or the parent's font data
+    // did not contain any glyphs for that page.
     GlyphPage* parentPage = m_parent->m_page;
 
+    // NULL FontData means we're being asked for the system fallback font.
     if (fontData) {
         if (m_level == 1) {
-            // Children of the root hold pure pages.
+            // Children of the root hold pure pages. These will cover only one
+            // font data's glyphs, and will have glyph index 0 if the font data does not
+            // contain the glyph.
             unsigned start = pageNumber * GlyphPage::size;
             UChar buffer[GlyphPage::size * 2 + 2];
             unsigned bufferLength;
@@ -111,18 +120,34 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 delete m_page;
                 m_page = 0;
             }
-        } else if (parentPage && parentPage->owner() != m_parent)
-            // Ensures that the overlay page is owned by the child of the owner of the
-            // parent page, and therefore will be shared.
+        } else if (parentPage && parentPage->owner() != m_parent) {
+            // The page we're overriding may not be owned by our parent node.
+            // This happens when our parent node provides no useful overrides
+            // and just copies the pointer to an already-existing page (see
+            // below).
+            //
+            // We want our override to be shared by all nodes that reference
+            // that page to avoid duplication, and so standardize on having the
+            // page's owner collect all the overrides.  Call getChild on the
+            // page owner with the desired font data (this will populate
+            // the page) and then reference it.
             m_page = parentPage->owner()->getChild(fontData, pageNumber)->page();
-        else {
-            // Get the pure page for the fallback font.
+        } else {
+            // Get the pure page for the fallback font (at level 1 with no
+            // overrides). getRootChild will always create a page if one
+            // doesn't exist, but the page doesn't necessarily have glyphs
+            // (this pointer may be 0).
             GlyphPage* fallbackPage = getRootChild(fontData, pageNumber)->page();
-            if (!parentPage)
+            if (!parentPage) {
+                // When the parent has no glyphs for this page, we can easily
+                // override it just by supplying the glyphs from our font.
                 m_page = fallbackPage;
-            else if (!fallbackPage) {
+            } else if (!fallbackPage) {
+                // When our font has no glyphs for this page, we can just reference the
+                // parent page.
                 m_page = parentPage;
             } else {
+                // Combine the parent's glyphs and ours to form a new more complete page.
                 m_page = new GlyphPage(this);
 
                 // Overlay the parent page on the fallback page. Check if the fallback font
@@ -141,6 +166,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 }
 
                 if (!newGlyphs) {
+                    // We didn't override anything, so our override is just the parent page.
                     delete m_page;
                     m_page = parentPage;
                 }
@@ -149,7 +175,9 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
     } else {
         m_page = new GlyphPage(this);
         // System fallback. Initialized with the parent's page here, as individual
-        // entries may use different fonts depending on character.
+        // entries may use different fonts depending on character. If the Font
+        // ever finds it needs a glyph out of the system fallback page, it will
+        // ask the system for the best font to use and fill that glyph in for us.
         if (parentPage)
             memcpy(m_page->m_glyphs, parentPage->m_glyphs, GlyphPage::size * sizeof(m_page->m_glyphs[0]));
         else {
