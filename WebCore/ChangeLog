@@ -1,3 +1,11 @@
+2007-05-07  Atul Mehrotra <atul.mehrotra@celunite.com>
+
+        Reviewed by Maciej.
+
+        GDK Build fix
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
 2007-05-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

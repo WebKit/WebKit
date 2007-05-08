@@ -73,6 +73,7 @@
 #include "ScrollBar.h"
 #include "SearchPopupMenu.h"
 #include "TextBoundaries.h"
+#include "TextBreakIteratorInternalICU.h"
 #include "Widget.h"
 #include <gtk/gtk.h>
 #include <stdio.h>
