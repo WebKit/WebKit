@@ -27,7 +27,6 @@
 #ifndef APICast_h
 #define APICast_h
 
-#include "JSValueRef.h"
 #include "ustring.h"
 
 namespace KJS {
@@ -36,6 +35,13 @@ namespace KJS {
     class JSObject;
     class PropertyNameArray;
 }
+
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef struct OpaqueJSString* JSStringRef;
+typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSValue* JSObjectRef;
 
 /* Opaque typing convenience methods */
 

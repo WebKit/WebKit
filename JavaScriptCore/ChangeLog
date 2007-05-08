@@ -1,5 +1,15 @@
 2007-05-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix -- this time for sure.
+        
+        APICast.h, being private, ends up in a different folder than JSValueRef.h,
+        so we can't include one from the other using "". Instead, just forward
+        declare the relevant data types.
+
+        * API/APICast.h:
+
+2007-05-08  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: export APICast.h for WebCore and WebKit.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
