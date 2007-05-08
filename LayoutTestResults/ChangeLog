@@ -1,3 +1,28 @@
+2007-05-08  Lars Knoll <lars@trolltech.com>
+
+        Update the baseline for traversal/ and add a few missing results in
+        tables/
+
+        * qt/tables/mozilla/bugs/bug101674-expected.txt: Added.
+        * qt/tables/mozilla/bugs/bug11384s-expected.txt: Added.
+        * qt/tables/mozilla/bugs/bug14323-expected.txt: Added.
+        * qt/tables/mozilla/bugs/bug18440-expected.txt: Added.
+        * qt/tables/mozilla/bugs/bug2973-expected.txt: Added.
+        * qt/traversal/node-iterator-001-expected.txt:
+        * qt/traversal/node-iterator-002-expected.txt:
+        * qt/traversal/node-iterator-003-expected.txt:
+        * qt/traversal/node-iterator-004-expected.txt:
+        * qt/traversal/node-iterator-005-expected.txt:
+        * qt/traversal/node-iterator-006-expected.txt:
+        * qt/traversal/node-iterator-007-expected.txt:
+        * qt/traversal/node-iterator-008-expected.txt:
+        * qt/traversal/stay-within-root-expected.txt:
+        * qt/traversal/tree-walker-001-expected.txt:
+        * qt/traversal/tree-walker-002-expected.txt:
+        * qt/traversal/tree-walker-003-expected.txt:
+        * qt/traversal/tree-walker-004-expected.txt:
+        * qt/traversal/tree-walker-005-expected.txt:
+
 2007-05-07  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

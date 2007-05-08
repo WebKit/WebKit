@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x89
+        RenderTableSection {TBODY} at (0,0) size 784x89
+          RenderTableRow {TR} at (0,2) size 784x85
+            RenderTableCell {TD} at (2,2) size 637x85 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 635x83
+                RenderTableSection {TBODY} at (0,0) size 635x83
+                  RenderTableRow {TR} at (0,2) size 635x79
+                    RenderTableCell {TD} at (2,2) size 631x79 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 88x19
+                        text run at (1,1) width 88: "inside of table"
+                      RenderImage {IMG} at (1,20) size 600x58
+            RenderTableCell {TD} at (641,24) size 141x40 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 117x38
+                text run at (1,1) width 117: "2nd row of outside"
+                text run at (1,20) width 31: "table"
