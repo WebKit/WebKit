@@ -248,6 +248,10 @@ static int pluginDatabaseClientCount = 0;
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
+@interface NSObject (ValidateWithoutDelegate)
+- (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
+@end
+
 @interface WebViewPrivate : NSObject
 {
 @public
@@ -2557,9 +2561,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     id responder = [self _responderForResponderOperations];
     if (responder != self && [responder respondsToSelector:[item action]]) {
-        if ([responder respondsToSelector:@selector(validateUserInterfaceItem:)]) {
+        if ([responder respondsToSelector:@selector(validateUserInterfaceItemWithoutDelegate:)])
+            return [responder validateUserInterfaceItemWithoutDelegate:item];
+        if ([responder respondsToSelector:@selector(validateUserInterfaceItem:)])
             return [responder validateUserInterfaceItem:item];
-        }
         return YES;
     }
     return NO;
@@ -2580,7 +2585,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 #define VALIDATE(name) \
     else if (action == @selector(name:)) { return [self _responderValidateUserInterfaceItem:item]; }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+- (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
 
@@ -2623,6 +2628,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     FOR_EACH_RESPONDER_SELECTOR(VALIDATE)
 
     return YES;
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
+
+    id ud = [self UIDelegate];
+    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
+        return [ud webView:self validateUserInterfaceItem:item defaultValidation:result];
+
+    return result;
 }
 
 @end

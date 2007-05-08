@@ -1,3 +1,22 @@
+2007-05-07  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5180384> webView:validateUserInterfaceItem:defaultValidation: does not get called on WebUIDelegates
+
+        Call the delegate when the one of our views gets a validateUserInterfaceItem: call.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]): Validate without the delegate.
+        (-[WebHTMLView validateUserInterfaceItem:]): Call the delegate with the result of validateUserInterfaceItemWithoutDelegate:.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView validateUserInterfaceItemWithoutDelegate:]): Validate without the delegate.
+        (-[WebPDFView validateUserInterfaceItem:]): Call the delegate with the result of validateUserInterfaceItemWithoutDelegate:.
+        * WebView/WebView.mm:
+        (-[WebView _responderValidateUserInterfaceItem:]): Call validateUserInterfaceItemWithoutDelegate: to prevent asking the delegate twice.
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]): Validate without the delegate.
+        (-[WebView validateUserInterfaceItem:]): Call the delegate with the result of validateUserInterfaceItemWithoutDelegate:.
+
 2007-05-07  Brady Eidson  <beidson@apple.com>
 
         Actually finish the code move from my last checkin

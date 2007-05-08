@@ -2087,7 +2087,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [self centerSelectionInVisibleArea:sender];
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
+- (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
     Frame* frame = core([self _frame]);
@@ -2325,6 +2325,17 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #endif
     
     return YES;
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
+
+    id ud = [[self _webView] UIDelegate];
+    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
+        return [ud webView:[self _webView] validateUserInterfaceItem:item defaultValidation:result];
+
+    return result;
 }
 
 - (BOOL)acceptsFirstResponder

@@ -469,7 +469,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 #pragma mark NSUserInterfaceValidations PROTOCOL IMPLEMENTATION
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
+- (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];    
     if (action == @selector(takeFindStringFromSelection:) || action == @selector(centerSelectionInVisibleArea:) || action == @selector(jumpToSelection:))
@@ -482,6 +482,17 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         return [self _canLookUpInDictionary];
 
     return YES;
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
+
+    id ud = [[self _webView] UIDelegate];
+    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
+        return [ud webView:[self _webView] validateUserInterfaceItem:item defaultValidation:result];
+
+    return result;
 }
 
 #pragma mark INTERFACE BUILDER ACTIONS FOR SAFARI
