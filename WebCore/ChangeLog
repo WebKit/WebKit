@@ -1,3 +1,15 @@
+2007-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5188938> arc method on Canvas causes hang or crash
+        
+        Workaround bad behaviour of CGPathAddArc when passed inf as start or
+        end angles.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addArc):
+
 2007-05-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt and Hatcher.

@@ -1,3 +1,13 @@
+2007-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by darin.
+
+        Test for <rdar://problem/5188938> arc method on 
+        Canvas causes hang or crash work around.
+
+        * fast/canvas/arc-crash-expected.txt: Added.
+        * fast/canvas/arc-crash.html: Added.
+
 2007-05-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.
