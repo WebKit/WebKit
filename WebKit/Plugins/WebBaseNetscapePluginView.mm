@@ -444,8 +444,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
                         nPort.qdPort.port = port;
                         boundsInWindow = [self bounds];
-                        nPort.qdPort.portx = (int32)-boundsInWindow.origin.x;
-                        nPort.qdPort.porty = (int32)-boundsInWindow.origin.y;
+                        
+                        // Generate a QD origin based on the current affine transform for currentContext.
+                        CGAffineTransform offscreenMatrix = CGContextGetCTM(currentContext);
+                        CGPoint origin = {0,0};
+                        CGPoint axisFlip = {1,1};
+                        origin = CGPointApplyAffineTransform(origin, offscreenMatrix);
+                        axisFlip = CGPointApplyAffineTransform(axisFlip, offscreenMatrix);
+                        
+                        // Quartz bitmaps have origins at the bottom left, but the axes may be inverted, so handle that.
+                        origin.x = offscreenBounds.left - origin.x * (axisFlip.x - origin.x);
+                        origin.y = offscreenBounds.bottom + origin.y * (axisFlip.y - origin.y);
+                        
+                        nPort.qdPort.portx = (int32)-boundsInWindow.origin.x + origin.x;
+                        nPort.qdPort.porty = (int32)-boundsInWindow.origin.y + origin.y;                        
                         window.x = 0;
                         window.y = 0;
                         window.window = &nPort;
@@ -463,7 +475,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             
             // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
             // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
-            Rect clipBounds;
             if (forUpdate) {
                 RgnHandle viewClipRegion = NewRgn();
                 
@@ -491,10 +502,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 // Intersect the dirty region with the clip region, so that we only draw over dirty parts
                 SectRgn(clipRegion, viewClipRegion, clipRegion);
                 DisposeRgn(viewClipRegion);
-                if (port == offscreenGWorld) {
-                    GetRegionBounds(clipRegion, &clipBounds);
-                    OffsetRgn(clipRegion, -clipBounds.left, -clipBounds.top);
-                }
             }
 
             // Switch to the port and set it up.
@@ -510,11 +517,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 // But the invalid region at that level didn't include AppKit's notion of what was not valid.
                 // We reset the port's visible region to counteract what BeginUpdate did.
                 SetPortVisibleRegion(nPort.qdPort.port, clipRegion);
-
-                // Some plugins do their own BeginUpdate/EndUpdate.
-                // For those, we must make sure that the update region contains the area we want to draw.
-                if (port == offscreenGWorld)
-                    OffsetRgn(clipRegion, clipBounds.left, clipBounds.top);
                 InvalWindowRgn(windowRef, clipRegion);
             }
             
