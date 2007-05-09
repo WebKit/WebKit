@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "JavaScriptCore.h"
-#include "JSStringRefCF.h"
 #include "JSNode.h"
 #include <wtf/UnusedParam.h>
 

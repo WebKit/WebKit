@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 

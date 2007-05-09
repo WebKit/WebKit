@@ -1,3 +1,21 @@
+2007-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed #includes of JSStringRefCF.h and use of CF datatypes. I think I 
+        misunderstood this issue before.
+
+        * API/JavaScriptCore.h: #include JSStringRefCF.h. Platforms that don't
+        want this behavior can just #include individual headers, instead of the
+        umbrella framework header. But we definitely want Mac OS X clients to
+        get the #include of JSStringRefCF.h "for free."
+        * API/minidom.c: Don't #include JSStringRefCF.h. (Don't need to #include
+        JavaScriptCore.h, either.)
+        * API/testapi.c: Don't #include JSStringRefCF.h. Do use CF datatypes
+        regardless of whether __APPLE__ is defined. Platforms that don't support
+        CF just shouldn't compile this file.
+        (main):
+
 2007-05-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
