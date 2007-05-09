@@ -717,7 +717,7 @@ WebScriptObject* Frame::windowScriptObject()
         KJS::JSLock lock;
         KJS::JSObject* win = KJS::Window::retrieveWindow(this);
         KJS::Bindings::RootObject *root = bindingRootObject();
-        d->m_windowScriptObject = HardRetainWithNSRelease([[WebScriptObject alloc] _initWithJSObject:win originRootObject:root rootObject:root]);
+        d->m_windowScriptObject = HardRetain([WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:0 rootObject:root]);
     }
 
     return d->m_windowScriptObject;

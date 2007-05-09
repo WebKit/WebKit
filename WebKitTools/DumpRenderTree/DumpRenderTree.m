@@ -987,6 +987,7 @@ static void dump(void)
 {
     ASSERT(obj == [frame windowObject]);
     ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
+    ASSERT(obj == [WebScriptObject scriptObjectForJSObject:[obj JSObject]]);
     
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
     [obj setValue:ltc forKey:@"layoutTestController"];
@@ -1061,6 +1062,7 @@ static void dump(void)
             || aSelector == @selector(setUserStyleSheetLocation:)
             || aSelector == @selector(setUserStyleSheetEnabled:)
             || aSelector == @selector(objCClassNameOf:)
+            || aSelector == @selector(objCIdentityIsEqual::)
             || aSelector == @selector(addDisallowedURL:)    
             || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCallCloseOnWebViews:)
@@ -1096,6 +1098,8 @@ static void dump(void)
         return @"setUserStyleSheetEnabled";
     if (aSelector == @selector(objCClassNameOf:))
         return @"objCClassName";
+    if (aSelector == @selector(objCIdentityIsEqual::))
+        return @"objCIdentityIsEqual";
     if (aSelector == @selector(addDisallowedURL:))
         return @"addDisallowedURL";
     if (aSelector == @selector(setCallCloseOnWebViews:))
@@ -1379,6 +1383,11 @@ static void dump(void)
 - (NSString *)objCClassNameOf:(id)object
 {
     return NSStringFromClass([object class]);
+}
+
+- (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
+{
+    return a == b;
 }
 
 @end

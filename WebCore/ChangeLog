@@ -1,3 +1,46 @@
+2007-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        More fix-ups to the WebScriptObject/WebScripting APIs, related to
+        <rdar://problem/5140447> API for fetching JSGlobalContextRef from WebView 
+        or WebFrame
+        
+        1. Added -scriptObjectForJSObject: SPI so you can bridge back from JavaScriptCore
+        to WebScriptObject.
+        
+        2. Fixed WebScriptObject bridging so that you always get the same WebScriptObject
+        for a JSObject (like in the DOM). This makes -scriptObjectForJSObject: a
+        lot more coherent as an API.
+
+        * bindings/objc/DOMInternal.mm: Renamed wrapperCache to DOMWrapperCache
+        to distinguish from the JSWrapperCache. Added typedef for readability.
+        (WebCore::getDOMWrapper):
+        (WebCore::addDOMWrapper):
+        (WebCore::removeDOMWrapper):
+        * bindings/objc/WebScriptObject.mm: Added JSWrapperCache, which works just
+        like the DOMWrapperCache.
+        (WebCore::getJSWrapper):
+        (WebCore::addJSWrapper):
+        (WebCore::removeJSWrapper):
+        (WebCore::createJSWrapper):
+        (+[WebScriptObject scriptObjectForJSObject:]): This is the new API. It attempts
+        to return a specific DOM wrapper object, or, barring that, it returns a 
+        generic WebScriptObject.
+        (+[WebScriptObject scriptObjectForJSObject:originRootObject:rootObject:]):
+        Added this method to support our old WebScriptObject security and leak 
+        checking model, even though it doesn't work very well. 
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+        (-[WebScriptObject dealloc]):
+        (-[WebScriptObject finalize]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bindings/objc/WebScriptObjectPendingPublic.h:
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject): Changed to use the new API. This
+        fixes a bug where the object sent to -windowScriptObjectAvailable: and returned
+        from -windowScriptObject could not be round-tripped.
+
 2007-05-09  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

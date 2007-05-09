@@ -44,27 +44,28 @@
 
 namespace WebCore {
 
-static HashMap<DOMObjectInternal*, NSObject*>* wrapperCache;
+typedef HashMap<DOMObjectInternal*, NSObject*> DOMWrapperMap;
+static DOMWrapperMap* DOMWrapperCache;
 
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
-    if (!wrapperCache)
+    if (!DOMWrapperCache)
         return nil;
-    return wrapperCache->get(impl);
+    return DOMWrapperCache->get(impl);
 }
 
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
-    if (!wrapperCache)
-        wrapperCache = new HashMap<DOMObjectInternal*, NSObject*>;
-    wrapperCache->set(impl, wrapper);
+    if (!DOMWrapperCache)
+        DOMWrapperCache = new DOMWrapperMap;
+    DOMWrapperCache->set(impl, wrapper);
 }
 
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
-    if (!wrapperCache)
+    if (!DOMWrapperCache)
         return;
-    wrapperCache->remove(impl);
+    DOMWrapperCache->remove(impl);
 }
 
 } // namespace WebCore

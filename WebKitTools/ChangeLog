@@ -1,3 +1,19 @@
+2007-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Added support for testing ObjC object identity.
+        
+        Added ASSERT to verify that you can round-trip the object passed to you
+        in -didClearWindowObject:forFrame:.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didClearWindowObject:forFrame:]):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController accessStoredWebScriptObject]):
+        (-[LayoutTestController objCIdentityIsEqual::]):
+
 2007-05-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
