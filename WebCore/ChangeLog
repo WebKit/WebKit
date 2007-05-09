@@ -1,3 +1,14 @@
+2007-05-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5113578> REGRESSION: textfields that set the height but not the font 
+        look different from IE & FF because the font is small
+
+        For plain text fields, don't stretch the inner text box.  Center it vertically in the field.
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::layout):
+
 2007-05-09  Atul Mehrotra  <atul.mehrotra@celunite.com>
 
         Gdk build fix.

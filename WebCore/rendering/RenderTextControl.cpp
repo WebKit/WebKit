@@ -659,7 +659,9 @@ void RenderTextControl::layout()
 
     // Set the text block's height
     int textBlockHeight = m_height - paddingTop() - paddingBottom() - borderTop() - borderBottom();
-    m_innerText->renderer()->style()->setHeight(Length(textBlockHeight, Fixed));
+    int currentTextBlockHeight = m_innerText->renderer()->height();
+    if (m_multiLine || m_innerBlock || currentTextBlockHeight > m_height)
+        m_innerText->renderer()->style()->setHeight(Length(textBlockHeight, Fixed));
     if (m_innerBlock)
         m_innerBlock->renderer()->style()->setHeight(Length(textBlockHeight, Fixed));
 
@@ -686,6 +688,14 @@ void RenderTextControl::layout()
         m_innerBlock->renderer()->style()->setWidth(Length(m_width - paddingLeft() - paddingRight() - borderLeft() - borderRight(), Fixed));
 
     RenderBlock::layoutBlock(relayoutChildren);
+    
+    // For text fields, center the inner text vertically
+    // Don't do this for search fields, since we don't honor height for them
+    if (!m_multiLine) {
+        currentTextBlockHeight = m_innerText->renderer()->height();
+        if (!m_innerBlock && currentTextBlockHeight < m_height)
+            m_innerText->renderer()->setPos(m_innerText->renderer()->xPos(), (m_height - currentTextBlockHeight) / 2);
+    }
 }
 
 void RenderTextControl::calcPrefWidths()

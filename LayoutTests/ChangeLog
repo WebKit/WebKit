@@ -1,3 +1,15 @@
+2007-05-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated results for <rdar://problem/5113578> REGRESSION: textfields that set the height but not the font 
+        look different from IE & FF because the font is small
+
+        * fast/block/float/032-expected.txt:
+        * fast/forms/input-text-word-wrap-expected.checksum:
+        * fast/forms/input-text-word-wrap-expected.png:
+        * fast/forms/input-text-word-wrap-expected.txt:
+
 2007-05-09  Darin Adler  <darin@apple.com>
 
         - checked in a file that was accidentally left out of the last check-in
