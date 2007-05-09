@@ -22,6 +22,36 @@
 
 2007-05-08  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by Darin.
+
+        Moved most spelling/grammar logic to C++.  Now calls through to
+        WebKit to actually invoke NSSpellChecker.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling): Added (ported from EditorMac).
+        (WebCore::Editor::learnSpelling): Added (ported from EditorMac).
+        (WebCore::findFirstMisspellingInRange): Added (ported from EditorMac).
+        (WebCore::paragraphAlignedRangeForRange): Added (ported from EditorMac).
+        (WebCore::findFirstGrammarDetailInRange): Added (ported from EditorMac).
+        (WebCore::findFirstBadGrammarInRange): Added (ported from EditorMac).
+        (WebCore::Editor::advanceToNextMisspelling): Added (ported from EditorMac).
+        (WebCore::Editor::isSelectionMisspelled): Added (ported from EditorMac).
+        (WebCore::isRangeUngrammatical): Added (ported from EditorMac).
+        (WebCore::Editor::isSelectionUngrammatical): Added (ported from EditorMac).
+        (WebCore::Editor::guessesForUngrammaticalSelection): Added (ported from EditorMac).
+        (WebCore::Editor::guessesForMisspelledSelection): Added (ported from EditorMac).
+        (WebCore::Editor::showSpellingGuessPanel): Added (ported from EditorMac).
+        (WebCore::Editor::spellingPanelIsShowing): Added (ported from EditorMac).
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition): Added (ported from EditorMac).
+        (WebCore::markAllMisspellingsInRange): Added (ported from EditorMac).
+        (WebCore::markAllBadGrammarInRange): Added (ported from EditorMac).
+        (WebCore::markMisspellingsOrBadGrammar): Added (ported from EditorMac).
+        (WebCore::Editor::markMisspellings): Added (ported from EditorMac).
+        (WebCore::Editor::markBadGrammar): Added (ported from EditorMac).
+        * editing/mac/EditorMac.mm: Removed Objective C version of spelling/grammar calls.
+
+2007-05-08  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Ada.
 
         Slight modification to last editor method fix.

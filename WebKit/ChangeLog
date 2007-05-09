@@ -1,5 +1,23 @@
 2007-05-08  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by Darin.
+
+        Implemented spelling/grammar related WebEditorClient methods.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::ignoreWordInSpellDocument): Added. Call through to NSSpellChecker.
+        (WebEditorClient::learnWord): Added. Call through to NSSpellChecker.
+        (WebEditorClient::checkSpellingOfString): Added. Call through to NSSpellChecker.
+        (WebEditorClient::checkGrammarOfString): Added. Call through to NSSpellChecker.
+        (WebEditorClient::updateSpellingUIWithGrammarString): Added. Call through to NSSpellChecker.
+        (WebEditorClient::updateSpellingUIWithMisspelledWord): Added. Call through to NSSpellChecker.
+        (WebEditorClient::showSpellingUI): Added. Call through to NSSpellChecker.
+        (WebEditorClient::spellingUIIsShowing): Added. Call through to NSSpellChecker.
+        (WebEditorClient::getGuessesForWord): Added. Call through to NSSpellChecker.
+
+2007-05-08  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Ada.
 
         Slight modification to last editor method fix.

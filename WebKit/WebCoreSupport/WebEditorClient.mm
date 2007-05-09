@@ -56,6 +56,7 @@
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
+using namespace WTF;
 
 EditorInsertAction core(WebViewInsertAction);
 WebViewInsertAction kit(EditorInsertAction);
@@ -69,6 +70,12 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 {
     return static_cast<WebViewInsertAction>(coreAction);
 }
+
+#ifdef BUILDING_ON_TIGER
+@interface NSSpellChecker (NotYetPublicMethods)
+- (void)learnWord:(NSString *)word;
+@end
+#endif
 
 @interface WebEditCommand : NSObject
 {
@@ -89,7 +96,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 }
 #endif
 
-- (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
+- (id)initWithEditCommand:(PassRefPtr<EditCommand>)command
 {
     ASSERT(command);
     [super init];
@@ -243,7 +250,7 @@ bool WebEditorClient::shouldInsertText(String text, Range* range, EditorInsertAc
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity selectionAffinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity selectionAffinity, bool stillSelecting)
 {
     return [m_webView _shouldChangeSelectedDOMRange:kit(fromRange) toDOMRange:kit(toRange) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
 }
@@ -446,23 +453,23 @@ void WebEditorClient::markedTextAbandoned(Frame* frame)
 
 #define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
 
-void WebEditorClient::textFieldDidBeginEditing(WebCore::Element* element)
+void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(WebCore::HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
     [[m_webView _formDelegate] textFieldDidBeginEditing:inputElement inFrame:kit(element->document()->frame())];
 }
 
-void WebEditorClient::textFieldDidEndEditing(WebCore::Element* element)
+void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(WebCore::HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
     [[m_webView _formDelegate] textFieldDidEndEditing:inputElement inFrame:kit(element->document()->frame())];
 }
     
-void WebEditorClient::textDidChangeInTextField(WebCore::Element* element)
+void WebEditorClient::textDidChangeInTextField(Element* element)
 {
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(WebCore::HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
     [[m_webView _formDelegate] textDidChangeInTextField:(DOMHTMLInputElement *)inputElement inFrame:kit(element->document()->frame())];
 }
@@ -489,9 +496,9 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
     return 0;
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(WebCore::Element* element, WebCore::KeyboardEvent* event)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(WebCore::HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
 
     bool result = false;
     FormDelegateLog(inputElement);
@@ -503,19 +510,118 @@ bool WebEditorClient::doTextFieldCommandFromEvent(WebCore::Element* element, Web
     return result;
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(WebCore::Element* element)
+void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
-    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(WebCore::HTMLInputElement*)element];
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
 
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
     FormDelegateLog(inputElement);
     [[m_webView _formDelegate] textField:inputElement doCommandBySelector:@selector(deleteBackward:) inFrame:kit(element->document()->frame())];
 }
 
-void WebEditorClient::textDidChangeInTextArea(WebCore::Element* element)
+void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    DOMHTMLTextAreaElement* textAreaElement = [DOMHTMLTextAreaElement _wrapHTMLTextAreaElement:(WebCore::HTMLTextAreaElement*)element];
+    DOMHTMLTextAreaElement* textAreaElement = [DOMHTMLTextAreaElement _wrapHTMLTextAreaElement:(HTMLTextAreaElement*)element];
 
     FormDelegateLog(textAreaElement);
     [[m_webView _formDelegate] textDidChangeInTextArea:textAreaElement inFrame:kit(element->document()->frame())];
+}
+
+void WebEditorClient::ignoreWordInSpellDocument(const String& text)
+{
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:text 
+                             inSpellDocumentWithTag:spellCheckerDocumentTag()];
+}
+
+void WebEditorClient::learnWord(const String& text)
+{
+    [[NSSpellChecker sharedSpellChecker] learnWord:text];
+}
+
+void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
+{
+    NSString* textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
+    NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:textString startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:spellCheckerDocumentTag() wordCount:NULL];
+    [textString release];
+    if (misspellingLocation)
+        *misspellingLocation = range.location;
+    if (misspellingLength)
+        *misspellingLength = range.length;
+}
+
+void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
+{
+#ifndef BUILDING_ON_TIGER
+    NSArray *grammarDetails;
+    NSString* textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
+    NSRange range = [[NSSpellChecker sharedSpellChecker] checkGrammarOfString:textString startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:spellCheckerDocumentTag() details:&grammarDetails];
+    [textString release];
+    if (badGrammarLocation)
+        *badGrammarLocation = range.location;
+    if (badGrammarLength)
+        *badGrammarLength = range.length;
+    for (NSDictionary *detail in grammarDetails) {
+        ASSERT(detail);
+        GrammarDetail grammarDetail;
+        NSValue *detailRangeAsNSValue = [detail objectForKey:NSGrammarRange];
+        ASSERT(detailRangeAsNSValue);
+        NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+        ASSERT(detailNSRange.location != NSNotFound && detailNSRange.length > 0);
+        grammarDetail.location = detailNSRange.location;
+        grammarDetail.length = detailNSRange.length;
+        grammarDetail.userDescription = [detail objectForKey:NSGrammarUserDescription];
+        NSArray *guesses = [detail objectForKey:NSGrammarCorrections];
+        for (NSString *guess in guesses)
+            grammarDetail.guesses.append(String(guess));
+        details.append(grammarDetail);
+    }
+#endif
+}
+
+void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+{
+#ifndef BUILDING_ON_TIGER
+    NSMutableArray* corrections = [NSMutableArray array];
+    for (unsigned i = 0; i < grammarDetail.guesses.size(); i++) {
+        NSString* guess = grammarDetail.guesses[i];
+        [corrections addObject:guess];
+    }
+    NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
+    NSString* grammarUserDescription = grammarDetail.userDescription;
+    NSMutableDictionary* grammarDetailDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections, NSGrammarCorrections, nil];
+    
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict];
+#endif
+}
+
+void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+{
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
+}
+
+void WebEditorClient::showSpellingUI(bool show)
+{
+    NSPanel *spellingPanel = [[NSSpellChecker sharedSpellChecker] spellingPanel];
+    if (show)
+        [spellingPanel orderFront:nil];
+    else
+        [spellingPanel orderOut:nil];
+}
+
+bool WebEditorClient::spellingUIIsShowing()
+{
+    return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
+}
+
+void WebEditorClient::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
+{
+    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
+    unsigned count = [stringsArray count];
+    guesses.clear();
+    if (count > 0) {
+        NSEnumerator* enumerator = [stringsArray objectEnumerator];
+        NSString* string;
+        while ((string = [enumerator nextObject]) != nil)
+            guesses.append(string);
+    }
 }
