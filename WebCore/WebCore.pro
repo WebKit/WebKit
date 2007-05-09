@@ -772,6 +772,7 @@ gdk-port:SOURCES += \
         platform/network/gdk/ResourceHandleManager.cpp \
         platform/graphics/cairo/AffineTransformCairo.cpp \
         platform/graphics/cairo/GraphicsContextCairo.cpp \
+        platform/graphics/cairo/ImageBufferCairo.cpp \
         platform/graphics/cairo/ImageCairo.cpp \
         platform/graphics/cairo/ImageSourceCairo.cpp \
         platform/graphics/cairo/PathCairo.cpp \

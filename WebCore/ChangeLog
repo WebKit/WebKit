@@ -1,3 +1,15 @@
+2007-05-09  Holger Freyther <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        Gdk build fix with SVG enabled.  Stub out ImageBufferCairo.
+
+        * WebCore.pro: Build ImageBufferCairo.cpp
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Added.
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::context):
+
 2007-05-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
