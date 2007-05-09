@@ -1,3 +1,20 @@
+2007-05-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5017613> Style changes don't effect fully selected ToDo content
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        Use a for loop instead of while(1).
+        Simplify loop termination using Range::pastEndNode.
+        Don't handle the start.node() == end.node() case 
+        specially, it's unnecessary.
+        Apply the style change to fully selected plaintext-only
+        regions, not with wrapper spans inside the region, but 
+        by changing the element's inline style declaration.
+        Don't descend into nodes whose children we should ignore.
+
 2007-05-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

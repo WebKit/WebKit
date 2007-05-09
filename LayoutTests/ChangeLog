@@ -1,3 +1,22 @@
+2007-05-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5017613> Style changes don't effect fully selected ToDo content
+
+        Demonstrates the bug:
+        * editing/style/5017613-1-expected.checksum: Added.
+        * editing/style/5017613-1-expected.png: Added.
+        * editing/style/5017613-1-expected.txt: Added.
+        * editing/style/5017613-1.html: Added.
+        
+        Tests to make sure that a plaintext-only region
+        will only be styled if it is fully selected:
+        * editing/style/5017613-2-expected.checksum: Added.
+        * editing/style/5017613-2-expected.png: Added.
+        * editing/style/5017613-2-expected.txt: Added.
+        * editing/style/5017613-2.html: Added.
+
 2007-05-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

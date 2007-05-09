@@ -636,7 +636,6 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     updateLayout();
     
     Node* node = start.node();
-    Node* endNode = end.node();
     
     bool rangeIsEmpty = false;
 
@@ -646,44 +645,56 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         if (Range::compareBoundaryPoints(end, newStart) < 0)
             rangeIsEmpty = true;
     }
-
-    // If end is [table, maxDeepOffset(table)], that means that the table is selected, and we want to visit
-    // contents of the table, instead of stopping at it.
-    if (end.node()->renderer() && end.node()->renderer()->isTable() && end.offset() == maxDeepOffset(end.node()))
-        endNode = end.node()->lastDescendant();
-    // If the end node is an ancestor of the start node then a pre-order
-    // traversal will never reach it.  Adjust it so that this won't happen.
-    if (node->isDescendantOf(endNode))
-        endNode = endNode->lastDescendant();
     
-    if (node == endNode) {
-        addInlineStyleIfNeeded(style, node, node);
-    } else if (!rangeIsEmpty) {
-    
-        while (1) {
-            if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline() && node->isContentRichlyEditable()) {
-                Node *runStart = node;
-                while (1) {
-                    Node *next = node->traverseNextNode();
-                    // Break if node is the end node, or if the next node does not fit in with
-                    // the current group.
-                    if (node == endNode || 
-                        runStart->parentNode() != next->parentNode() || 
-                        (next->isElementNode() && !next->hasTagName(brTag)) || 
-                        (next->renderer() && !next->renderer()->isInline()))
-                        break;
-                    node = next;
-                }
-                // Now apply style to the run we found.
-                addInlineStyleIfNeeded(style, runStart, node);
+    if (!rangeIsEmpty) {
+        // Add the style to selected inline runs.
+        Node* pastEnd = Range(document(), start, end).pastEndNode();
+        for (Node* next; node && node != pastEnd; node = next) {
+            
+            next = node->traverseNextNode();
+            
+            if (!node->renderer() || !node->isContentEditable())
+                continue;
+            
+            if (!node->isContentRichlyEditable() && node->isHTMLElement()) {
+                // This is a plaintext-only region. Only proceed if it's fully selected.
+                if (end.node()->isDescendantOf(node))
+                    break;
+                // Add to this element's inline style and skip over its contents.
+                HTMLElement* element = static_cast<HTMLElement*>(node);
+                RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
+                inlineStyle->merge(style);
+                setNodeAttribute(element, styleAttr, inlineStyle->cssText());
+                next = node->traverseNextSibling();
+                continue;
             }
-            if (node == endNode)
-                break;
-            node = node->traverseNextNode();
+        
+            if (isBlock(node))
+                continue;
+                
+            if (node->childNodeCount()) {
+                if (editingIgnoresContent(node)) {
+                    next = node->traverseNextSibling();
+                    continue;
+                }
+                continue;
+            }
+            
+            Node* runStart = node;
+            // Find the end of the run.
+            Node* sibling = node->nextSibling();
+            while (node != end.node() && sibling && (!sibling->isElementNode() || sibling->hasTagName(brTag)) && !isBlock(sibling)) {
+                node = sibling;
+                sibling = node->nextSibling();
+            }
+            // Recompute next, since node has changed.
+            next = node->traverseNextNode();
+            // Apply the style to the run.
+            addInlineStyleIfNeeded(style, runStart, node);
         }
     }
 
-    // remove dummy style spans created by splitting text elements
+    // Remove dummy style spans created by splitting text elements.
     cleanupUnstyledAppleStyleSpans(startDummySpanAncestor);
     if (endDummySpanAncestor != startDummySpanAncestor)
         cleanupUnstyledAppleStyleSpans(endDummySpanAncestor);
