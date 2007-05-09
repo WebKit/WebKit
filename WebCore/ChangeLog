@@ -1,3 +1,24 @@
+2007-05-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13037
+          REGRESSION: Copy-on-scroll not reset properly after back/forward navigation
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Moved initialization of
+        m_slowRepaintObjectCount here.
+        (WebCore::FrameViewPrivate::reset): Do not reset the slow repaint object
+        count here.
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject): Added an assertion that the
+        object count is positive.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Corrected a mix up between old and new
+        style, which caused the object count to be decremented when it was supposed
+        to be incremented and vice versa.
+
 2007-05-09  Peter Müller <pm@one.com>
 
         Reviewed by Dave Hyatt.
