@@ -1,3 +1,19 @@
+2007-05-09  Peter Müller <pm@one.com>
+
+        Reviewed by Dave Hyatt.
+
+        Changed the hardcoded colors that are used for CSS 2.1 system colors.
+        Previous colors had numerous conflicts in semantic pairs, which
+        made text invisible in highlight, info and menu colored areas.
+        The new hardcoded colors are inspired by Aqua.
+
+        Ideally these colors should be fetched through AppKit instead,
+        though I am not sure if it is possible to make a 1:1 mapping
+        between CSS2.1 system colors and Mac OS X.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::):
+
 2007-05-09  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build.
