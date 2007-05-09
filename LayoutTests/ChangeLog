@@ -1,3 +1,9 @@
+2007-05-09  Darin Adler  <darin@apple.com>
+
+        - checked in a file that was accidentally left out of the last check-in
+
+        * fast/js/cyclic-prototypes-expected.txt: Added.
+
 2007-05-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
