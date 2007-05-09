@@ -4,6 +4,7 @@
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -211,6 +212,13 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
 
   // non-standard netscape extension
   if (propertyName == exec->propertyNames().underscoreProto) {
+    JSObject* proto = value->getObject();
+    while (proto) {
+      if (proto == this)
+        throwError(exec, GeneralError, "cyclic __proto__ value");
+      proto = proto->prototype() ? proto->prototype()->getObject() : 0;
+    }
+    
     setPrototype(value);
     return;
   }

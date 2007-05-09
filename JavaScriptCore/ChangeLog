@@ -1,3 +1,13 @@
+2007-05-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=6985
+        Cyclic __proto__ values cause WebKit to hang
+
+        * kjs/object.cpp:
+        (KJS::JSObject::put): do a cycle check before setting __proto__
+
 2007-05-08  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by darin.  Landed by eseidel.
