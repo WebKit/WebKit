@@ -1800,7 +1800,7 @@ static int findFirstGrammarDetailInRange(const Vector<GrammarDetail>& grammarDet
     // Optionally add a DocumentMarker for each detail in the range.
     int earliestDetailLocationSoFar = -1;
     int earliestDetailIndex = -1;
-    for (int i = 0; i < grammarDetails.size(); i++) {
+    for (unsigned i = 0; i < grammarDetails.size(); i++) {
         const GrammarDetail* detail = &grammarDetails[i];
         ASSERT(detail->length > 0 && detail->location >= 0);
         
@@ -1874,7 +1874,7 @@ static String findFirstBadGrammarInRange(EditorClient* client, Range* searchRang
         // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
         int badGrammarIndex = findFirstGrammarDetailInRange(grammarDetails, badGrammarPhraseLocation, badGrammarPhraseLength, searchRange, searchRangeStartOffset, searchRangeEndOffset, markAll);
         if (badGrammarIndex >= 0) {
-            ASSERT(badGrammarIndex < grammarDetails.size());
+            ASSERT(static_cast<unsigned>(badGrammarIndex) < grammarDetails.size());
             outGrammarDetail = grammarDetails[badGrammarIndex];
         }
 
@@ -2077,8 +2077,6 @@ static bool isRangeUngrammatical(EditorClient* client, Range *range, Vector<Stri
     // to isSelectionMisspelled. It's not good enough for there to be some bad grammar somewhere in the range,
     // or overlapping the range; the ranges must exactly match.
     guessesVector.clear();
-    int grammarDetailLocation;
-    int grammarDetailLength;
     int grammarPhraseOffset;
     
     GrammarDetail grammarDetail;
