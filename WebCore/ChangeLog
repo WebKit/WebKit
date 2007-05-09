@@ -1,3 +1,10 @@
+2007-05-09  Atul Mehrotra  <atul.mehrotra@celunite.com>
+
+        Gdk build fix.
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Editor::newGeneralClipboard):
+
 2007-05-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

@@ -282,19 +282,7 @@ int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int,
 
 void CachedPage::close() { notImplementedGdk(); }
 
-void Editor::ignoreSpelling() { notImplementedGdk(); }
-void Editor::learnSpelling() { notImplementedGdk(); }
-bool Editor::isSelectionUngrammatical() { notImplementedGdk(); return false; }
-void Editor::advanceToNextMisspelling(bool startBeforeSelection) { notImplementedGdk(); }
-bool Editor::isSelectionMisspelled() { notImplementedGdk(); return false; }
-Vector<String> Editor::guessesForMisspelledSelection() { notImplementedGdk(); return Vector<String>(); }
-Vector<String> Editor::guessesForUngrammaticalSelection() { notImplementedGdk(); return Vector<String>(); }
-void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition&) { notImplementedGdk(); }
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy) { notImplementedGdk(); return 0; }
-void Editor::markMisspellings(const Selection&) { notImplementedGdk(); }
-void Editor::markBadGrammar(const Selection&) { notImplementedGdk(); }
-void Editor::showSpellingGuessPanel() { notImplementedGdk(); }
-bool Editor::spellingPanelIsShowing() { notImplementedGdk(); return false; }
 
 Pasteboard* Pasteboard::generalPasteboard() { notImplementedGdk(); return 0; }
 void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplementedGdk(); }
