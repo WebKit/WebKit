@@ -1,0 +1,13 @@
+This test checks that toString() round-trip on a function that has do..while in JavaScript does not insert extra semicolon.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ueuf1 is uf1
+PASS ueuf2 is uf2
+PASS ueuf3 is uf3
+PASS ueuf4 is uf4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

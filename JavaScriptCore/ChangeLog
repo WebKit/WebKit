@@ -1,3 +1,15 @@
+2007-05-08  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10880 (Do..while loop gains 
+        a semicolon each time it is toStringed)
+        Grammar in Ecma-66262, 12.6: "do Statement while ( Expression );"
+        EmptyStatement was created after every do..while(expr) which
+        had semicolon at the end.
+
+        * kjs/grammar.y: Require semicolon at the end of do..while
+
 2007-05-08  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix -- this time for sure.

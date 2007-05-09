@@ -1,3 +1,13 @@
+2007-05-08  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10880  Do..while loop gains extra ;
+
+        * fast/js/do-while-semicolon-expected.txt: Added.
+        * fast/js/do-while-semicolon.html: Added.
+        * fast/js/resources/do-while-semicolon.js: Added.
+
 2007-05-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by darin.
