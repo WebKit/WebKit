@@ -1,3 +1,24 @@
+2007-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added support for testing ObjC/JS type bridging.
+        
+        Added ASSERT that -JSObject returns nil when the underlying JSObject
+        is no longer GC protected.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (returnThisCallback):
+        (returnThisClass):
+        (-[WaitUntilDoneDelegate webView:didClearWindowObject:forFrame:]):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController accessStoredWebScriptObject]):
+        (-[LayoutTestController testWrapperRoundTripping]):
+        (-[LayoutTestController objCClassNameOf:]):
+        (-[LayoutTestController objCObjectOfClass:]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-05-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Simon

@@ -34,6 +34,13 @@ function objCWrapperClass(node)
     return layoutTestController.objCClassName(node);
 }
 
+function objCObjectOfClass(name)
+{
+    if (!window.layoutTestController)
+        return "only works under DumpRenderTree";
+    return layoutTestController.objCObjectOfClass(name);
+}
+
 function tagJSWrapperClass(tagName)
 {
     return jsWrapperClass(document.createElement(tagName));
@@ -252,6 +259,29 @@ function runTest()
     testTag("var", "HTMLElement");
     testTag("wbr", "HTMLElement");
     testTag("xmp", "HTMLPreElement");
+    
+    debug('');
+    debug('JavaScript types');
+    debug('');
+
+    shouldBe("objCWrapperClass(null)", "'nil'");
+    shouldBe("objCWrapperClass(undefined)", "'WebUndefined'");
+    shouldBe("objCWrapperClass(0)", "'NSCFNumber'");
+    shouldBe("objCWrapperClass(1)", "'NSCFNumber'");
+    shouldBe("objCWrapperClass(false)", "'NSCFBoolean'");
+    shouldBe("objCWrapperClass(true)", "'NSCFBoolean'");
+    shouldBe("objCWrapperClass('')", "'NSCFString'");
+    shouldBe("objCWrapperClass({ })", "'WebScriptObject'");
+    shouldBe("objCWrapperClass([ ])", "'WebScriptObject'");
+
+    shouldBe("objCObjectOfClass('NSNull')", "null"); // can't test with typeof because typeof null is 'object'
+    shouldBe("typeof objCObjectOfClass('')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('WebUndefined')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('NSCFBoolean')", "'boolean'");
+    shouldBe("typeof objCObjectOfClass('NSCFNumber')", "'number'");
+    shouldBe("typeof objCObjectOfClass('NSCFString')", "'string'");
+    shouldBe("typeof objCObjectOfClass('WebScriptObject')", "'object'");
+    shouldBeTrue("objCObjectOfClass('NSArray') instanceof Array");
 
     // Not yet tested:
 

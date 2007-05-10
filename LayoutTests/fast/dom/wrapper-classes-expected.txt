@@ -315,3 +315,23 @@ PASS tagObjCWrapperClass('wbr') is 'DOMHTMLElement'
 PASS tagJSWrapperClass('xmp') is 'HTMLPreElement'
 PASS tagObjCWrapperClass('xmp') is 'DOMHTMLPreElement'
 
+JavaScript types
+
+PASS objCWrapperClass(null) is 'nil'
+PASS objCWrapperClass(undefined) is 'WebUndefined'
+PASS objCWrapperClass(0) is 'NSCFNumber'
+PASS objCWrapperClass(1) is 'NSCFNumber'
+PASS objCWrapperClass(false) is 'NSCFBoolean'
+PASS objCWrapperClass(true) is 'NSCFBoolean'
+PASS objCWrapperClass('') is 'NSCFString'
+PASS objCWrapperClass({ }) is 'WebScriptObject'
+PASS objCWrapperClass([ ]) is 'WebScriptObject'
+PASS objCObjectOfClass('NSNull') is null
+PASS typeof objCObjectOfClass('') is 'undefined'
+PASS typeof objCObjectOfClass('WebUndefined') is 'undefined'
+PASS typeof objCObjectOfClass('NSCFBoolean') is 'boolean'
+PASS typeof objCObjectOfClass('NSCFNumber') is 'number'
+PASS typeof objCObjectOfClass('NSCFString') is 'string'
+PASS typeof objCObjectOfClass('WebScriptObject') is 'object'
+PASS objCObjectOfClass('NSArray') instanceof Array is true
+

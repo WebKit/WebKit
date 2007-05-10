@@ -1,3 +1,32 @@
+2007-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        More fix-ups to the WebScriptObject/WebScripting APIs, related to
+        <rdar://problem/5140447> API for fetching JSGlobalContextRef from WebView 
+        or WebFrame
+
+        * bindings/objc/WebScriptObject.h: Fully specified the surprising rules for
+        type conversion between JavaScript and ObjC.
+        * bindings/objc/WebScriptObject.mm: Added up-call accessor to WebFrame.
+        This is kind of stinky, but I'm OK with it because eventually all of this
+        code should move up into WebKit.
+        (+[WebScriptObject scriptObjectForJSObject:frame:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject JSObject]): 
+            - Added _rootObject check because if _rootObject returns NULL it means 
+            that _imp is no longer GC protected, so it's not safe to use. 
+            - Added _isSafeScript check because that's what WebScriptObject methods
+            typically do, even though the value of doing so isn't clear to me.
+        * bindings/objc/WebScriptObjectPendingPublic.h: Added WebFrame* parameter
+        to -scriptObjectForJSObject:. This is required to wrap JS objects that
+        are not already in the wrapper cache. It would be nice to remove this
+        limitation of WebScriptObject some day.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::cleanupPlatformScriptObjects): Force removal of m_windowScriptObject
+        from the cache, to avoid retrieving the m_windowScriptObject from the previous
+        page on a new page load. (It would be non-functional in that case.)
+
 2007-05-10  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5183697>.

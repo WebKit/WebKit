@@ -28,7 +28,9 @@
 #import "WebScriptObjectPendingPublic.h"
 
 #import "DOMInternal.h"
+#import "Frame.h"
 #import "WebCoreObjCExtras.h"
+#import "WebCoreFrameBridge.h"
 #import <JavaScriptCore/context.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
@@ -40,6 +42,10 @@ using namespace KJS::Bindings;
 #define LOG_EXCEPTION(exec) \
     if (Interpreter::shouldPrintExceptions()) \
         printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception()->toObject(exec)->get(exec, exec->propertyNames().message)->toString(exec).ascii());
+
+@interface WebFrame
+- (WebCoreFrameBridge *)_bridge; // implemented in WebKit
+@end
 
 namespace WebCore {
 
@@ -89,9 +95,12 @@ id createJSWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> 
 }
 #endif
 
-+ (id)scriptObjectForJSObject:(JSObjectRef)jsObject
++ (id)scriptObjectForJSObject:(JSObjectRef)jsObject frame:(WebFrame *)frame
 {
-    return [WebScriptObject scriptObjectForJSObject:jsObject originRootObject:0 rootObject:0];
+    WebCore::Frame* coreFrame = [[frame _bridge] _frame];
+    if (!coreFrame)
+        return nil;
+    return [WebScriptObject scriptObjectForJSObject:jsObject originRootObject:0 rootObject:coreFrame->bindingRootObject()];
 }
 
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
@@ -386,7 +395,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     if ([resultObj isKindOfClass:[WebUndefined class]])
-        resultObj = [super valueForKey:key];    // ensure correct not-applicable key behavior
+        resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
     _didExecute(self);
     
@@ -581,6 +590,12 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (JSObjectRef)JSObject
 {
+    if (![self _rootObject])
+        return nil;
+
+    if (![self _isSafeScript])
+        return nil;
+
     return toRef([self _imp]);
 }
 

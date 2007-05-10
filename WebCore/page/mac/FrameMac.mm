@@ -726,6 +726,12 @@ WebScriptObject* Frame::windowScriptObject()
 void Frame::cleanupPlatformScriptObjects()
 {
     HardRelease(d->m_windowScriptObject);
+    // Explicitly remove m_windowScriptObject from the wrapper caches, otherwise
+    // the next load might end up with a stale, cached m_windowScriptObject.
+    // (This problem is unique to m_windowScriptObject because its JS/DOM counterparts
+    // persist across page loads.)
+    removeDOMWrapper(reinterpret_cast<DOMObjectInternal*>(d->m_domWindow.get()));
+    removeJSWrapper(KJS::Window::retrieveWindow(this));
     d->m_windowScriptObject = 0;
 }
 

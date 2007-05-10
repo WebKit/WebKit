@@ -379,6 +379,26 @@ static void makeLargeMallocFailSilently(void)
     zone->realloc = checkedRealloc;
 }
 
+static JSValueRef returnThisCallback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return thisObject;
+}
+
+static JSClassRef returnThisClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSStaticFunction staticFunctions[] = {
+            { "returnThis", returnThisCallback, kJSPropertyAttributeNone },
+            { 0, 0, 0 }
+        };
+        JSClassDefinition classDefinition = kJSClassDefinitionEmpty;
+        classDefinition.staticFunctions = staticFunctions;
+        jsClass = JSClassCreate(&classDefinition);
+    }
+    return jsClass;
+}
+
 WebView *createWebView()
 {
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
@@ -986,8 +1006,8 @@ static void dump(void)
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
 {
     ASSERT(obj == [frame windowObject]);
+    ASSERT(obj == [WebScriptObject scriptObjectForJSObject:[obj JSObject] frame:frame]);
     ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
-    ASSERT(obj == [WebScriptObject scriptObjectForJSObject:[obj JSObject]]);
     
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
     [obj setValue:ltc forKey:@"layoutTestController"];
@@ -1059,9 +1079,11 @@ static void dump(void)
             || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(accessStoredWebScriptObject)
+            || aSelector == @selector(testWrapperRoundTripping)
             || aSelector == @selector(setUserStyleSheetLocation:)
             || aSelector == @selector(setUserStyleSheetEnabled:)
             || aSelector == @selector(objCClassNameOf:)
+            || aSelector == @selector(objCObjectOfClass:)
             || aSelector == @selector(objCIdentityIsEqual::)
             || aSelector == @selector(addDisallowedURL:)    
             || aSelector == @selector(setCanOpenWindows)
@@ -1098,6 +1120,8 @@ static void dump(void)
         return @"setUserStyleSheetEnabled";
     if (aSelector == @selector(objCClassNameOf:))
         return @"objCClassName";
+    if (aSelector == @selector(objCObjectOfClass:))
+        return @"objCObjectOfClass";
     if (aSelector == @selector(objCIdentityIsEqual::))
         return @"objCIdentityIsEqual";
     if (aSelector == @selector(addDisallowedURL:))
@@ -1363,6 +1387,9 @@ static void dump(void)
 
 - (void)accessStoredWebScriptObject
 {
+    JSObjectRef jsObject = [storedWebScriptObject JSObject];
+    ASSERT(!jsObject);
+
     [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
     [storedWebScriptObject evaluateWebScript:@""];
     [storedWebScriptObject setValue:[WebUndefined undefined] forKey:@"key"];
@@ -1374,6 +1401,49 @@ static void dump(void)
     [storedWebScriptObject setException:@"exception"];
 }
 
+- (BOOL)testWrapperRoundTripping
+{
+    JSObjectRef jsObject = JSObjectMake([frame globalContext], returnThisClass(), NULL);
+    WebScriptObject *webScriptObject = [WebScriptObject scriptObjectForJSObject:jsObject frame:frame];
+
+    if (!jsObject)
+        return false;
+
+    if (!webScriptObject)
+        return false;
+
+    if (jsObject != [webScriptObject JSObject])
+        return false;
+
+    if ([[webScriptObject evaluateWebScript:@"({ })"] class] != [webScriptObject class])
+        return false;
+
+    [webScriptObject setValue:[NSNumber numberWithInt:666] forKey:@"key"];
+    if (![[webScriptObject valueForKey:@"key"] isKindOfClass:[NSNumber class]] ||
+        ![[webScriptObject valueForKey:@"key"] isEqualToNumber:[NSNumber numberWithInt:666]])
+        return false;
+
+    [webScriptObject removeWebScriptKey:@"key"];
+    @try {
+        if ([webScriptObject valueForKey:@"key"])
+            return false;
+    } @catch(NSException *exception) {
+        // NSObject throws an exception if the key doesn't exist.
+    }
+
+    [webScriptObject setWebScriptValueAtIndex:0 value:webScriptObject];
+    if ([webScriptObject webScriptValueAtIndex:0] != webScriptObject)
+        return false;
+
+    if ([[webScriptObject stringRepresentation] isEqualToString:@"[Object object]"])
+        return false;
+
+    if ([webScriptObject callWebScriptMethod:@"returnThis" withArguments:nil] != webScriptObject)
+        return false;
+
+    return true;
+}
+
 - (void)dealloc
 {
     [storedWebScriptObject release];
@@ -1382,7 +1452,29 @@ static void dump(void)
 
 - (NSString *)objCClassNameOf:(id)object
 {
+    if (!object)
+        return @"nil";
     return NSStringFromClass([object class]);
+}
+
+- (id)objCObjectOfClass:(NSString *)aClass
+{
+    if ([aClass isEqualToString:@"NSNull"])
+        return [NSNull null];
+    if ([aClass isEqualToString:@"WebUndefined"])
+        return [WebUndefined undefined];
+    if ([aClass isEqualToString:@"NSCFBoolean"])
+        return [NSNumber numberWithBool:true];
+    if ([aClass isEqualToString:@"NSCFNumber"])
+        return [NSNumber numberWithInt:1];
+    if ([aClass isEqualToString:@"NSCFString"])
+        return @"";
+    if ([aClass isEqualToString:@"WebScriptObject"])
+        return self;
+    if ([aClass isEqualToString:@"NSArray"])
+        return [NSArray array];
+
+    return nil;
 }
 
 - (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b

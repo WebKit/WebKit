@@ -521,6 +521,7 @@
 		149C29C008902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
 				OTHER_LDFLAGS = (
 					"-sectcreate",

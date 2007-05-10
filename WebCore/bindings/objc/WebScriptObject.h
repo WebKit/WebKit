@@ -9,12 +9,12 @@
 // NSObject (WebScripting) -----------------------------------------------------
 
 /*
-    Classes may implement the methods in WebScripting to export interfaces to
-    WebKit's JavaScript environment.
+    Classes may implement one or more methods in WebScripting to export interfaces 
+    to WebKit's JavaScript environment.
 
     By default, no properties or functions are exported. A class must implement 
     +isKeyExcludedFromWebScript: and/or +isSelectorExcludedFromWebScript: to 
-    expose selected properties and methods to JavaScript.
+    expose selected properties and methods, respectively, to JavaScript.
 
     Access to exported properties is done using KVC -- specifically, the following
     KVC methods:
@@ -42,18 +42,41 @@
 
     Not all methods are exposed. Only those methods whose parameters and return
     type meets the export criteria are exposed. Valid types are Objective-C instances
-    and scalars. Other types are not allowed. Classes may further exclude method
-    that they do not want to expose.
+    and scalars. Other types are not allowed.
 
-    Types will be converted to appropriate types in the scripting environment.
-    After any KVC coercion occurs the Objective-C types will converted to a type
-    appropriate for the script environment. For JavaScript NSNumber will be
-    converted to numbers. NSString will be converted to strings. NSArray will
-    be mapped to a special read-only array. NSNull will be converted to null.
-    WebUndefined will be converted to undefined. WebScriptObjects will be unwrapped.
-    Instances of other classes will be wrapped when passed to the script environment
-    and unwrapped when returned to Objective-C. Similar conversion happens in the
-    other direction.
+    Types will be converted automatically between JavaScript and Objective-C in 
+    the following manner:
+
+    JavaScript              ObjC
+    ----------              ----------
+    null            =>      nil
+    undefined       =>      WebUndefined
+    number          =>      NSNumber
+    boolean         =>      CFBoolean
+    string          =>      NSString
+    object          =>      id
+    
+    The object => id conversion occurs as follows: if the object wraps an underlying
+    Objective-C object (i.e., if it was created by a previous ObjC => JavaScript conversion),
+    then the underlying Objective-C object is returned. Otherwise, a new WebScriptObject
+    is created and returned.
+    
+    The above conversions occur only if the declared ObjC type is an object type. 
+    For primitive types like int and char, a numeric cast is performed.
+
+    ObjC                    JavaScript
+    ----                    ----------
+    NSNull          =>      null
+    nil             =>      undefined
+    WebUndefined    =>      undefined
+    CFBoolean       =>      boolean
+    NSNumber        =>      number
+    NSString        =>      string
+    NSArray         =>      array object
+    WebScriptObject =>      object
+
+    The above conversions occur only if the declared ObjC type is an object type. 
+    For primitive type like int and char, a numeric cast is performed.
 */
 @interface NSObject (WebScripting)
 
