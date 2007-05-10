@@ -1,3 +1,23 @@
+2007-05-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Cleanup from my earlier Java Applet patch.  We should keep a central location to query if 
+        a mime type counts as a Java Applet
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet): Query MimeTypeRegistry on the type
+
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::MimeTypeRegistry::isSupportedImageMIMEType): Update style
+        (WebCore::MimeTypeRegistry::isSupportedImageResourceMIMEType): Ditto
+        (WebCore::MimeTypeRegistry::isSupportedNonImageMIMEType): Ditto
+        (WebCore::MimeTypeRegistry::isJavaAppletMIMEType): Perform the Java Applet check
+        * platform/MimeTypeRegistry.h:
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Query MimeTypeRegistry on the type
+
 2007-05-10  Patti Hoa  <patti@apple.com>
 
         Reviewed by Darin.

@@ -140,25 +140,36 @@ String MimeTypeRegistry::getMIMETypeForPath(const String& path)
     return "application/octet-stream";
 }
 
-bool MimeTypeRegistry::isSupportedImageMIMEType(const String &mimeType)
+bool MimeTypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 { 
     if (!supportedImageMIMETypes)
         initialiseMimeTypeRegistry();
     return !mimeType.isEmpty() && supportedImageMIMETypes->contains(mimeType); 
 }
 
-bool MimeTypeRegistry::isSupportedImageResourceMIMEType(const String &mimeType)
+bool MimeTypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 { 
     if (!supportedImageResourceMIMETypes)
         initialiseMimeTypeRegistry();
     return !mimeType.isEmpty() && supportedImageResourceMIMETypes->contains(mimeType); 
 }
     
-bool MimeTypeRegistry::isSupportedNonImageMIMEType(const String &mimeType)
+bool MimeTypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
     if (!supportedNonImageMIMETypes)
         initialiseMimeTypeRegistry();
     return !mimeType.isEmpty() && supportedNonImageMIMETypes->contains(mimeType);
+}
+
+bool MimeTypeRegistry::isJavaAppletMIMEType(const String& mimeType)
+{
+    // Since this set is very limited and is likely to remain so we won't bother with the overhead
+    // of using a Hashset.
+    // Note - "application/x-java-applet" may be followed by any number of specific versions of the JVM,
+    // which is why we use startsWith()
+    
+    String lower = mimeType.lower();
+    return lower.startsWith("application/x-java-applet") || lower == "application/x-java-vm";
 }
 
 const HashSet<String> &MimeTypeRegistry::getSupportedImageMIMETypes()
