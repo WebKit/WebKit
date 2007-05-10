@@ -643,7 +643,8 @@ void RenderText::calcPrefWidths(int leadWidth)
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
-                    m_beginMinWidth = currMaxWidth;
+                    if (!style()->autoWrap())
+                        m_beginMinWidth = currMaxWidth;
                 }
 
                 if (currMaxWidth > m_maxWidth)
@@ -665,9 +666,7 @@ void RenderText::calcPrefWidths(int leadWidth)
     if (!style()->autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style()->whiteSpace() == PRE) {
-        // FIXME: pre-wrap and pre-line need to be dealt with possibly?  This code won't be right
-        // for them though.
+    if (style()->whiteSpace() == PRE || style()->whiteSpace() == PRE_LINE) {
         if (firstLine)
             m_beginMinWidth = m_maxWidth;
         m_endMinWidth = currMaxWidth;

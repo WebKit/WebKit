@@ -1,3 +1,19 @@
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
+        <rdar://problem/5067235> REGRESSION: Excessively wide table, impossible to resize
+
+        The table used white-space: pre-wrap, which is supported only by WebKit.  There
+        was a bug with the computation of min pref width for pre-wrap text.
+
+        Reviewed by mitzpettel
+
+        fast/text/white-space/pre-wrap-line-test.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcPrefWidths):
+
 2007-05-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver
