@@ -1,3 +1,13 @@
+2007-05-09  Oliver Hunt  <oliver@apple.com>
+
+        rs=Adele.
+
+        The previous patch (r21346) broke editing, rolling out
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+        (-[WebHTMLView doCommandBySelector:]):
+
 2007-05-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.
