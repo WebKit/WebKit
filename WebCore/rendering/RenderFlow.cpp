@@ -673,9 +673,14 @@ void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int
 {
     if (isRenderBlock()) {
         // Continuations should include their margins in the outline rect.
-        if (continuation())
-            graphicsContext->addFocusRingRect(IntRect(tx, ty - collapsedMarginTop(), width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
-        else
+        if (continuation()) {
+            bool nextInlineHasLineBox = continuation()->firstLineBox();
+            bool prevInlineHasLineBox = static_cast<RenderFlow*>(continuation()->element()->renderer())->firstLineBox();
+            int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
+            int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
+            graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 
+                                                      width(), height() + topMargin + bottomMargin));
+        } else
             graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
     }
 
