@@ -1,3 +1,14 @@
+2007-05-10  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5191941> Leopard: Adobe Acrobat 8: 
+        Distiller 8 needs same check fix as 4992521
+
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]): Adobe 
+        Distiller needs the same quirk.
+
 2007-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

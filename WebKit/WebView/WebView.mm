@@ -868,7 +868,8 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAcrobatFrameReloadingQuirk(WKAppVersionCheckLessThan(@"com.adobe.Acrobat", -1, 9)
         || WKAppVersionCheckLessThan(@"com.adobe.Acrobat.Pro", -1, 9)
-        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9));
+        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9)
+        || WKAppVersionCheckLessThan(@"com.adobe.distiller", -1, 9));
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification
