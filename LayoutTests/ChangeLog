@@ -1,3 +1,12 @@
+2007-05-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+        
+        Workaround for rdar://problem/5114296 need to allow for
+        download occuring, and thus not triggering subframeLoaded()
+
+        * fast/encoding/char-encoding.html:
+
 2007-05-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
@@ -18,7 +27,7 @@
         * editing/style/5017613-2.html: Added.
 
 2007-05-09  Adele Peterson  <adele@apple.com>
-
+木木
         Reviewed by Hyatt.
 
         Updated results for <rdar://problem/5113578> REGRESSION: textfields that set the height but not the font 

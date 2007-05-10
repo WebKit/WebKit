@@ -47,22 +47,40 @@ function testsDone()
         layoutTestController.notifyDone();
 }
 
-function subframeLoaded()
+var timeout = null;
+
+function processResult(result)
 {
-    var URL = "" + document.getElementById('subframe').contentWindow.location;
     var charsetResults = results[charsets[i]];
     if (!charsetResults) {
         charsetResults = new Object;
         results[charsets[i]] = charsetResults;
     }
-    charsetResults[unicodes[i]] = URL.substr(URL.indexOf('=') + 1);
+    charsetResults[unicodes[i]] = result; 
+}
 
+function subframeLoaded()
+{
+    clearTimeout(timeout);
+    timeout = null;
+    var URL = "" + document.getElementById('subframe').contentWindow.location;
+    processResult(URL.substr(URL.indexOf('=') + 1));
+    ++i;
+    runTest();
+}
+
+// Workaround for rdar://problem/5114296 need to allow for 
+// download occuring, and thus not triggering subframeLoaded()
+function loadTimedOut()
+{
+    timeout = null;
+    processResult("FAILED");    
     ++i;
     runTest();
 }
 
 function runTest()
-{
+{    
     if (i >= charsets.length) {
         testsDone();
         return;
@@ -76,6 +94,11 @@ function runTest()
     form.action = "data:text/plain,x";
     subframe.onload = subframeLoaded;
     text.value = String.fromCharCode(unicodes[i].replace('U+', '0x'));
+    
+    // Workaround for rdar://problem/5114296
+    // 5 second timeout, this will cause a significant slowdown on failures, 
+    // but should guarantee we don't fire prematurely
+    timeout = setTimeout(loadTimedOut, 5);
     form.submit();
 }
 
