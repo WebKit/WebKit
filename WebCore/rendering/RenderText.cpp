@@ -666,7 +666,7 @@ void RenderText::calcPrefWidths(int leadWidth)
     if (!style()->autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style()->whiteSpace() == PRE || style()->whiteSpace() == PRE_LINE) {
+    if (style()->whiteSpace() == PRE) {
         if (firstLine)
             m_beginMinWidth = m_maxWidth;
         m_endMinWidth = currMaxWidth;
