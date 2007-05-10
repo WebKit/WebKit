@@ -671,8 +671,13 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int* extraWidthToE
 
 void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
-    if (isRenderBlock())
-       graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
+    if (isRenderBlock()) {
+        // Continuations should include their margins in the outline rect.
+        if (continuation())
+            graphicsContext->addFocusRingRect(IntRect(tx, ty - collapsedMarginTop(), width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
+        else
+            graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
+    }
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
@@ -683,10 +688,16 @@ void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int
                 curr->addFocusRingRects(graphicsContext, tx + curr->xPos(), ty + curr->yPos());
     }
 
-    if (continuation())
-        continuation()->addFocusRingRects(graphicsContext, 
-                                          tx - containingBlock()->xPos() + continuation()->xPos(),
-                                          ty - containingBlock()->yPos() + continuation()->yPos());
+    if (continuation()) {
+        if (isInline())
+            continuation()->addFocusRingRects(graphicsContext, 
+                                              tx - containingBlock()->xPos() + continuation()->xPos(),
+                                              ty - containingBlock()->yPos() + continuation()->yPos());
+        else
+            continuation()->addFocusRingRects(graphicsContext, 
+                                              tx - xPos() + continuation()->containingBlock()->xPos(),
+                                              ty - yPos() + continuation()->containingBlock()->yPos());
+    }
 }
 
 void RenderFlow::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)

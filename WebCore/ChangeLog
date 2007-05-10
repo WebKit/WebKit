@@ -2,6 +2,28 @@
 
         Fix for:
 
+        <rdar://problem/4778099> Links with nested continuations fail to 
+        paint their outlines (11255)
+        
+        http://bugs.webkit.org/show_bug.cgi?id=11255
+
+        Fix multiple bugs with outline painting of continuations to ensure that
+        all combos work (empty/full inline - block with/without margins - 
+        empty/full inline).
+
+        Reviewed by mitz
+
+        fast/inline/continuation-outlines.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::addFocusRingRects):
+
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
         <rdar://problem/5193529> REGRESSION: RTL Overflows scrollbar not showing 
         when they should be
         
