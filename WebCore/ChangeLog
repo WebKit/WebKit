@@ -2,6 +2,22 @@
 
         Fix for:
 
+        <rdar://problem/5146757> REGRESSION: div that wrapped to screen width in 
+        tiger no longer wraps
+        
+        http://bugs.webkit.org/show_bug.cgi?id=13654
+
+        Reviewed by mitz
+
+        fast/text/whitespace/normal-after-nowrap-breaking.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
         <rdar://problem/4778099> Links with nested continuations fail to 
         paint their outlines (11255)
         
