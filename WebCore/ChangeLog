@@ -1,3 +1,23 @@
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5183697>.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13576
+
+        Make sure verticalPositionHint is not called on an inline-block from
+        content inside the inline-block (like text).
+
+        Reviewed by olliej
+
+        fast/inline-block/inline-block-vertical-align.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::verticalPositionHint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::verticalPositionHint):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+
 2007-05-09  Holger Freyther <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
