@@ -265,12 +265,21 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
             // FIXME: Setting this as layout overflow is bad.  We need to have a separate concept of
             // visual overflow.
             int strokeOverflow = static_cast<int>(ceilf(rt->style()->textStrokeWidth() / 2.0));
-            int visualOverflowLeft = -strokeOverflow;
-            int visualOverflowRight = strokeOverflow;
+            
+            // If letter-spacing is negative, we should factor that into right overflow. (Even in RTL, letter-spacing is
+            // applied to the right, so this is not an issue with left overflow.
+            int letterSpacing = min(0, (int)rt->style(m_firstLine)->font().letterSpacing());
+            
+            int leftGlyphOverflow = -strokeOverflow;
+            int rightGlyphOverflow = strokeOverflow - letterSpacing;
+            
+            int visualOverflowLeft = leftGlyphOverflow;
+            int visualOverflowRight = rightGlyphOverflow;
             for (ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next) {
-                visualOverflowLeft = min(visualOverflowLeft, shadow->x - shadow->blur - strokeOverflow);
-                visualOverflowRight = max(visualOverflowRight, shadow->x + shadow->blur + strokeOverflow);
+                visualOverflowLeft = min(visualOverflowLeft, shadow->x - shadow->blur + leftGlyphOverflow);
+                visualOverflowRight = max(visualOverflowRight, shadow->x + shadow->blur + rightGlyphOverflow);
             }
+            
             leftPosition = min(x + visualOverflowLeft, leftPosition);
             rightPosition = max(x + text->width() + visualOverflowRight, rightPosition);
             m_maxHorizontalVisualOverflow = max(max(visualOverflowRight, -visualOverflowLeft), m_maxHorizontalVisualOverflow);

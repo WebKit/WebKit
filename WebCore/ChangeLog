@@ -1,4 +1,23 @@
-2007-05-09  Geoffrey Garen  <ggaren@apple.com>
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
+        <rdar://problem/4656825> REGRESSION: Japanese TV time table widget:
+        part of the number in background has been cut off.
+
+        Now that opacity uses a tight bounding box to clip, we need to make sure
+        to factor spillout caused by negative letter spacing into our right
+        overflow.  Latch on to the code that does this already for text-stroke
+        and text-shadow.
+
+        Reviewed by olliej
+
+        fast/text/letter-spacing-negative-opacity.html
+
+       * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+
+2007-05-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
         
