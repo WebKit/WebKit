@@ -30,6 +30,31 @@
 
 #include <stdint.h>
 
+#if QT_VERSION >= 0x040300
+namespace QUnicodeTables {
+    struct Properties {
+        ushort category : 8;
+        ushort line_break_class : 8;
+        ushort direction : 8;
+        ushort combiningClass :8;
+        ushort joining : 2;
+        signed short digitValue : 6; /* 5 needed */
+        ushort unicodeVersion : 4;
+        ushort lowerCaseSpecial : 1;
+        ushort upperCaseSpecial : 1;
+        ushort titleCaseSpecial : 1;
+        ushort caseFoldSpecial : 1; /* currently unused */
+        signed short mirrorDiff : 16;
+        signed short lowerCaseDiff : 16;
+        signed short upperCaseDiff : 16;
+        signed short titleCaseDiff : 16;
+        signed short caseFoldDiff : 16;
+    };
+    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(uint ucs4);
+    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(ushort ucs2);
+}
+#endif
+
 typedef uint16_t UChar;
 typedef uint32_t UChar32;
 
@@ -147,13 +172,24 @@ namespace WTF {
     
     inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
     {
-      destIfNeeded = 0;
+        destIfNeeded = 0;
+        
+        const UChar *e = str + strLength;
+        UChar *s = str;
+        while (s < e) {
+            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(*s);
+            if (prop->lowerCaseSpecial || (((*s) & 0xf800) == 0xd800)) {
+                QString qstring = QString(reinterpret_cast<QChar *>(str), strLength).toLower();
+                strLength = qstring.length();
+                destIfNeeded = static_cast<UChar*>(malloc(strLength * sizeof(UChar)));
+                memcpy(destIfNeeded, qstring.constData(), strLength * sizeof(UChar));
+                return strLength;
+            }
+            *s = *s + prop->lowerCaseDiff;
+            ++s;
+        }
 
-      // FIXME: handle special casing. Easiest with some low level API in Qt
-      for (int i = 0; i < strLength; ++i)
-        str[i] = QChar::toLower(str[i]);
-
-      return strLength;
+        return strLength;
     }
 
     inline UChar32 toLower(UChar32 ch)
@@ -163,26 +199,72 @@ namespace WTF {
 
     inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
-      // FIXME: handle special casing. Easiest with some low level API in Qt
-      *error = false;
-      if (resultLength < srcLength) {
-        *error = true;
-        return srcLength;
-      }
-      for (int i = 0; i < srcLength; ++i)
-        result[i] = QChar::toLower(src[i]);
-      return srcLength;
+        const UChar *e = src + srcLength;
+        const UChar *s = src;
+        UChar *r = result;
+        UChar *re = result + resultLength;
+        
+        // this avoids one out of bounds check in the loop
+        if (QChar(*s).isLowSurrogate()) 
+            *r++ = *s++;
+
+        int needed = 0;
+        while (s < e && r < re) {
+            uint c = *s;
+            if (QChar(c).isLowSurrogate() && QChar(*(s - 1)).isHighSurrogate())
+                c = QChar::surrogateToUcs4(*(s - 1), c);
+            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(c);
+            if (prop->lowerCaseSpecial) {
+                QString qstring;
+                if (c > 0x10000) {
+                    qstring += QChar(c);
+                } else {
+                    qstring += QChar(*(s-1));
+                    qstring += QChar(*s);
+                }
+                qstring = qstring.toLower();
+                for (int i = 0; i < qstring.length(); ++i) {
+                    if (r == re) {
+                        needed += qstring.length() - i;
+                        break;
+                    }
+                    *r = qstring.at(i).unicode();
+                    ++r;
+                }
+            } else {
+                *r = *s + prop->lowerCaseDiff;
+                ++r;
+            }
+            ++s;
+        }
+        if (s < e)
+            needed += e - s;
+        *error = (needed != 0);
+        if (r < re)
+            *r = 0;
+        return (r - result) + needed;
     }
 
     inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
     {
-      // FIXME: handle special casing. Easiest with some low level API in Qt
-      destIfNeeded = 0;
+        destIfNeeded = 0;
+        
+        const UChar *e = str + strLength;
+        UChar *s = str;
+        while (s < e) {
+            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(*s);
+            if (prop->upperCaseSpecial || (((*s) & 0xf800) == 0xd800)) {
+                QString qstring = QString(reinterpret_cast<QChar *>(str), strLength).toUpper();
+                strLength = qstring.length();
+                destIfNeeded = static_cast<UChar*>(malloc(strLength * sizeof(UChar)));
+                memcpy(destIfNeeded, qstring.constData(), strLength * sizeof(UChar));
+                return strLength;
+            }
+            *s = *s + prop->upperCaseDiff;
+            ++s;
+        }
 
-      for (int i = 0; i < strLength; ++i)
-        str[i] = QChar::toUpper(str[i]);
-
-      return strLength;
+        return strLength;
     }
 
     inline UChar32 toUpper(UChar32 ch)
@@ -192,15 +274,50 @@ namespace WTF {
 
     inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
     {
-      // FIXME: handle special casing. Easiest with some low level API in Qt
-      *error = false;
-      if (resultLength < srcLength) {
-        *error = true;
-        return srcLength;
-      }
-      for (int i = 0; i < srcLength; ++i)
-        result[i] = QChar::toUpper(src[i]);
-      return srcLength;
+        const UChar *e = src + srcLength;
+        const UChar *s = src;
+        UChar *r = result;
+        UChar *re = result + resultLength;
+        
+        // this avoids one out of bounds check in the loop
+        if (QChar(*s).isLowSurrogate()) 
+            *r++ = *s++;
+
+        int needed = 0;
+        while (s < e && r < re) {
+            uint c = *s;
+            if (QChar(c).isLowSurrogate() && QChar(*(s - 1)).isHighSurrogate())
+                c = QChar::surrogateToUcs4(*(s - 1), c);
+            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(c);
+            if (prop->upperCaseSpecial) {
+                QString qstring;
+                if (c > 0x10000) {
+                    qstring += QChar(c);
+                } else {
+                    qstring += QChar(*(s-1));
+                    qstring += QChar(*s);
+                }
+                qstring = qstring.toUpper();
+                for (int i = 0; i < qstring.length(); ++i) {
+                    if (r == re) {
+                        needed += qstring.length() - i;
+                        break;
+                    }
+                    *r = qstring.at(i).unicode();
+                    ++r;
+                }
+            } else {
+                *r = *s + prop->upperCaseDiff;
+                ++r;
+            }
+            ++s;
+        }
+        if (s < e)
+            needed += e - s;
+        *error = (needed != 0);
+        if (r < re)
+            *r = 0;
+        return (r - result) + needed;
     }
 
     inline int toTitleCase(UChar32 c)
