@@ -131,6 +131,8 @@ namespace WebCore {
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
 
+        void init();
+
         Frame* frame() const { return m_frame; }
 
         // FIXME: This is not cool, people.
@@ -162,7 +164,7 @@ namespace WebCore {
 
         static bool shouldHideReferrer(const KURL& url, const String& referrer);
 
-        Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
+        Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&, bool& created);
 
         void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 
@@ -170,6 +172,7 @@ namespace WebCore {
 
         // Also not cool.
         void stopAllLoaders();
+        void stopForUserCancel();
         void cancelPendingArchiveLoad(ResourceLoader*);
 
         bool isLoadingMainResource() const;
@@ -329,8 +332,6 @@ namespace WebCore {
         String userAgent(const KURL&) const;
 
         Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
-
-        void createEmptyDocument();
 
         void partClearedInBegin(); 
         void restoreDocumentState();
@@ -619,6 +620,9 @@ namespace WebCore {
         HashSet<Frame*> m_openedFrames;
 
         bool m_openedByJavaScript;
+
+        bool m_creatingInitialEmptyDocument;
+        bool m_committedFirstRealDocumentLoad;
 
         RefPtr<HistoryItem> m_currentHistoryItem;
         RefPtr<HistoryItem> m_previousHistoryItem;

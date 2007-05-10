@@ -1,3 +1,43 @@
+2007-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - new test case for:
+        <rdar://problem/5063277> blank screen after login to Citibank Online (accessing document before frame starts loading cancels load)
+        <rdar://problem/5159541> REGRESSION (r20972): Wall Street Journal pages replaced by advertisements (13465)
+
+        (The test case covers both scenarios.)
+
+        * http/tests/misc/frame-access-during-load-expected.checksum: Added.
+        * http/tests/misc/frame-access-during-load-expected.png: Added.
+        * http/tests/misc/frame-access-during-load-expected.txt: Added.
+        * http/tests/misc/frame-access-during-load.html: Added.
+
+        - test results beneficially or harmlessly changed as a result of the above fixes
+
+        * css2.1/t0801-c412-hz-box-00-b-a-expected.checksum:
+        * css2.1/t0801-c412-hz-box-00-b-a-expected.png:
+        * css2.1/t0801-c412-hz-box-00-b-a-expected.txt: This reflects an <object> containing
+        an image now creating an image renderer.
+
+        * dom/xhtml/level2/html/HTMLIFrameElement11-expected.txt: This is updated to a slightly
+        less bad failure for access to a frame that's not loaded yet.
+
+        The following test results now reflect the frame removal that the test was testing:
+        
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.checksum:
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.png:
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt:
+        * fast/dom/replaceChild-expected.checksum:
+        * fast/dom/replaceChild-expected.png:
+        * fast/dom/replaceChild-expected.txt:
+
+        The following tests results now reflect empty document content for iframes that never load anything:
+        
+        * fast/events/focusingUnloadedFrame-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt:
+
 2007-05-10  Brady Eidson <beidson@apple.com>
 
         Reviewed by Oliver

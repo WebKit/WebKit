@@ -28,6 +28,8 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
 #include "HTMLDocument.h"
@@ -294,7 +296,9 @@ bool HTMLObjectElement::isImageType()
                 m_serviceType = "text/plain"; // Data URLs with no MIME type are considered text/plain.
         }
     }
-    
+    if (document()->frame())
+        return document()->frame()->loader()->client()->objectContentType(KURL(m_url.deprecatedString()), m_serviceType) == ObjectContentImage;
+
     return Image::supportsType(m_serviceType);
 }
 

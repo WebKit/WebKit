@@ -681,7 +681,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
-    m_frame->loader()->createEmptyDocument();
+    ASSERT(m_frame->document());
     JSValue* result = m_frame->loader()->executeScript(0, string, forceUserGesture);
     if (!result)
         return 0;
@@ -691,7 +691,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
 {
-    m_frame->loader()->createEmptyDocument();
+    ASSERT(m_frame->document());
     JSValue* result = m_frame->loader()->executeScript(0, string, true);
     if (!result) // FIXME: pass errors
         return 0;

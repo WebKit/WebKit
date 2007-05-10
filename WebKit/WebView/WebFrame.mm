@@ -847,7 +847,7 @@ static NSURL *createUniqueWebDataURL()
 - (void)stopLoading
 {
     if (FrameLoader* frameLoader = [self _frameLoader])
-        frameLoader->stopAllLoaders();
+        frameLoader->stopForUserCancel();
 }
 
 - (void)reload

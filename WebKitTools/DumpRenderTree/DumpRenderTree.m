@@ -1551,6 +1551,7 @@ static void runTest(const char *pathOrURL)
         [pool release];
     }
     pool = [[NSAutoreleasePool alloc] init];
+    [EventSendingController clearSavedEvents];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
     
     if (closeRemainingWindowsWhenComplete) {

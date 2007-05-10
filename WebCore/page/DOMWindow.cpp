@@ -58,13 +58,8 @@ Document* DOMWindow::document() const
 {
     if (!m_frame)
         return 0;
-    
-    if (!m_frame->document()) {
-        m_frame->loader()->createEmptyDocument();
-        m_frame->loader()->begin();
-        m_frame->loader()->write("<HTML><BODY>");
-        m_frame->loader()->end();
-    }
+
+    ASSERT(m_frame->document());
     return m_frame->document();
 }
 

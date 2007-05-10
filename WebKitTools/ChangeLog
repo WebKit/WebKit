@@ -1,3 +1,23 @@
+2007-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - don't clear events whenever an EventSendingController goes away, only do it at predictable times, 
+        since destroying a subframe can make one go away
+        
+        (Discovered while fixing:
+        
+        <rdar://problem/5063277> blank screen after login to Citibank Online (accessing document before frame starts loading cancels load)
+        <rdar://problem/5159541> REGRESSION (r20972): Wall Street Journal pages replaced by advertisements (13465)
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (runTest): explicitly clear saved events after every page load
+        * DumpRenderTree/EventSendingController.h:
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController dealloc]): don't clear saved events here...
+        (+[EventSendingController clearSavedEvents]): do it here
+        * Scripts/check-for-global-initializers:
+
 2007-05-10  Mark Rowe  <mrowe@apple.com>
 
         Build fix for DumpRenderTree. Enable Objective-C exceptions in Release configuration.

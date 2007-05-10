@@ -41,6 +41,7 @@
 
 + (void)saveEvent:(NSInvocation *)event;
 + (void)replaySavedEvents;
++ (void)clearSavedEvents;
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node;
 

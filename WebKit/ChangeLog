@@ -1,3 +1,32 @@
+2007-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - WebKit part of fix for:
+        <rdar://problem/5063277> blank screen after login to Citibank Online (accessing document before frame starts loading cancels load)
+        <rdar://problem/5159541> REGRESSION (r20972): Wall Street Journal pages replaced by advertisements (13465)
+
+        The basic approach is to have Frames start out containing an empty document instead of absolutely nothing,
+        so there is no need to initialize them on demand. Various side effects of that cause both of these bugs.
+        
+        However, this caused many regressions so I had to fix the fallout.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::takeFocus): Avoid focus cycle problems (can happen in DumpRenderTree
+        with initial empty document now).
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:frameName:frameView:ownerElement:]): init the frame.
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]): return image type when appropriate
+        * WebView/WebFrame.mm:
+        (-[WebFrame stopLoading]): use stopForUserCancel().
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]): assume html when no mime type available.
+        * WebView/WebView.mm:
+        (-[WebView becomeFirstResponder]): Track whether we are becoming first responder from
+        outside the view.
+        (-[WebView _becomingFirstResponderFromOutside]): Return this value.
+        * WebView/WebViewInternal.h:
+
 2007-05-09  Oliver Hunt  <oliver@apple.com>
 
         rs=Adele.

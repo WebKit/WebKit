@@ -248,6 +248,10 @@ static int pluginDatabaseClientCount = 0;
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
+@interface NSWindow (AppKitSecretsIKnow) 
+- (id)_oldFirstResponderBeforeBecoming;
+@end
+
 @interface NSObject (ValidateWithoutDelegate)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
 @end
@@ -299,6 +303,7 @@ static int pluginDatabaseClientCount = 0;
     BOOL editable;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
+    BOOL becomingFirstResponderFromOutside;
     BOOL hoverFeedbackSuspended;
 
     NSColor *backgroundColor;
@@ -2257,12 +2262,17 @@ NS_ENDHANDLER
     // WebFrameView has very similar code.
     NSWindow *window = [self window];
     WebFrameView *mainFrameView = [[self mainFrame] frameView];
+
+    NSResponder *previousFirstResponder = [[self window] _oldFirstResponderBeforeBecoming];
+    BOOL fromOutside = ![previousFirstResponder isKindOfClass:[NSView class]] || (![(NSView *)previousFirstResponder isDescendantOf:self] && previousFirstResponder != self);
     
     if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
         NSView *previousValidKeyView = [self previousValidKeyView];
         if ((previousValidKeyView != self) && (previousValidKeyView != mainFrameView)) {
             _private->becomingFirstResponder = YES;
+            _private->becomingFirstResponderFromOutside = fromOutside;
             [window makeFirstResponder:previousValidKeyView];
+            _private->becomingFirstResponderFromOutside = NO;
             _private->becomingFirstResponder = NO;
             return YES;
         } else {
@@ -2272,7 +2282,9 @@ NS_ENDHANDLER
     
     if ([mainFrameView acceptsFirstResponder]) {
         _private->becomingFirstResponder = YES;
+        _private->becomingFirstResponderFromOutside = fromOutside;
         [window makeFirstResponder:mainFrameView];
+        _private->becomingFirstResponderFromOutside = NO;
         _private->becomingFirstResponder = NO;
         return YES;
     } 
@@ -3580,6 +3592,11 @@ static WebFrameView *containingFrameView(NSView *view)
 @end
 
 @implementation WebView (WebViewInternal)
+
+- (BOOL)_becomingFirstResponderFromOutside
+{
+    return _private->becomingFirstResponderFromOutside;
+}
 
 - (NSString *)_userVisibleBundleVersionFromFullVersion:(NSString *)fullVersion
 {

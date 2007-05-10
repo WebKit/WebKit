@@ -146,8 +146,6 @@ BOOL replayingSavedEvents;
 
 - (void)dealloc
 {
-    [savedMouseEvents release];
-    savedMouseEvents = nil;
     [super dealloc];
 }
 
@@ -327,6 +325,12 @@ BOOL replayingSavedEvents;
         [invocation invoke];
     }
     replayingSavedEvents = NO;
+}
+
++ (void)clearSavedEvents
+{
+    [savedMouseEvents release];
+    savedMouseEvents = nil;
 }
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers

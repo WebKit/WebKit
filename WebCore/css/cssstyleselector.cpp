@@ -225,7 +225,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
 
     view = doc->view();
     strictParsing = _strictParsing;
-    settings = view ? view->frame()->settings() : 0;
+    settings = doc->frame() ? doc->frame()->settings() : 0;
     if (!defaultStyle)
         loadDefaultStyle();
 

@@ -252,6 +252,11 @@ Frame::~Frame()
     d = 0;
 }
 
+void Frame::init()
+{
+    d->m_loader->init();
+}
+
 FrameLoader* Frame::loader() const
 {
     return d->m_loader;
@@ -1712,6 +1717,9 @@ EventHandler* Frame::eventHandler() const
 
 void Frame::pageDestroyed()
 {
+    if (Frame* parent = tree()->parent())
+        parent->loader()->checkLoadComplete();
+
     if (d->m_page && d->m_page->focusController()->focusedFrame() == this)
         d->m_page->focusController()->setFocusedFrame(0);
 

@@ -611,7 +611,8 @@ static Frame* createNewWindow(ExecState* exec, Window* openerWindow, const Depre
     // do an isSafeScript call using the window we create, which can't be done before creating it.
     // We'd have to resolve all those issues to pass the URL instead of "".
 
-    Frame* newFrame = openerFrame->loader()->createWindow(frameRequest, windowFeatures);
+    bool created;
+    Frame* newFrame = openerFrame->loader()->createWindow(frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
@@ -1690,21 +1691,15 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       
       // request window (new or existing if framename is set)
       frameRequest.resourceRequest().setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
-      Frame* newFrame = frame->loader()->createWindow(frameRequest, windowFeatures);
+      bool created;
+      Frame* newFrame = frame->loader()->createWindow(frameRequest, windowFeatures, created);
       if (!newFrame)
           return jsUndefined();
       newFrame->loader()->setOpener(frame);
       newFrame->loader()->setOpenedByJavaScript();
-      
-      if (!newFrame->document()) {
-          Document* oldDoc = frame->document();
-          if (oldDoc && oldDoc->baseURL() != 0)
-              newFrame->loader()->begin(oldDoc->baseURL());
-          else
-              newFrame->loader()->begin();
-          newFrame->loader()->write("<HTML><BODY>");
-          newFrame->loader()->end();          
-          if (oldDoc) {
+
+      if (created) {
+          if (Document* oldDoc = frame->document()) {
               newFrame->document()->setDomain(oldDoc->domain(), true);
               newFrame->document()->setBaseURL(oldDoc->baseURL());
           }
@@ -1863,7 +1858,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return result;
   }
   case Window::Stop:
-        frame->loader()->stopAllLoaders();
+        frame->loader()->stopForUserCancel();
         return jsUndefined();
   case Window::Find:
       if (!window->isSafeScript(exec))

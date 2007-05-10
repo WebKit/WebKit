@@ -1,3 +1,80 @@
+2007-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - WebCore part of fix for:
+        <rdar://problem/5063277> blank screen after login to Citibank Online (accessing document before frame starts loading cancels load)
+        <rdar://problem/5159541> REGRESSION (r20972): Wall Street Journal pages replaced by advertisements (13465)
+
+        The basic approach is to have Frames start out containing an empty document instead of absolutely nothing,
+        so there is no need to initialize them on demand. Various side effects of that cause both of these bugs.
+        
+        However, this caused many regressions so I had to fix the fallout.
+        
+        * WebCore.exp: fix symbol exports
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow): useless "created" bool (we don't need it here)
+        (KJS::WindowFunc::callAsFunction): detect if we created a new frame, because if so,
+        we need to initialize the domain (can't count on it not having a document), also
+        don't try to make a new document for it.
+        Also, stop properly.
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector): don't count on document having a view here
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isImageType): Ask client, to match how other <object> renderer
+        decisions are made.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Initialize new data members
+        (WebCore::FrameLoader::init): Do the slightly tricky sequence of steps to properly make
+        an empty document with everything hooked up.
+        (WebCore::FrameLoader::createWindow): Added "created" bool.
+        (WebCore::FrameLoader::stopLoading): (whitespace change)
+        (WebCore::FrameLoader::begin): Don't try to create an empty document.
+        (WebCore::FrameLoader::finishedParsing): If creating an initial empty document, don't
+        do any of this work.
+        (WebCore::FrameLoader::checkCompleted): Do checkLoadComplete() as well.
+        (WebCore::FrameLoader::baseURL): don't check for null document
+        (WebCore::FrameLoader::baseTarget): ditto
+        (WebCore::FrameLoader::completeURL): ditto
+        (WebCore::FrameLoader::didTellBridgeAboutLoad): ditto
+        (WebCore::FrameLoader::scheduleLocationChange): determine duringLoad differently; doc won't
+        be null.
+        (WebCore::FrameLoader::gotoAnchor): don't check for null document
+        (WebCore::FrameLoader::canTarget): don't check for null document
+        (WebCore::FrameLoader::stopForUserCancel): new method for explicit stops like window.stop().
+        (WebCore::FrameLoader::transitionToCommitted): check for pre-loaded state properly
+        (WebCore::FrameLoader::createEmptyDocument): removed
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): don't send delegate callbacks when making initial
+        doc.
+        (WebCore::FrameLoader::tokenizerProcessedData): Assume document; just checkCompleted now that it
+        does checkLoadComplete.
+        (WebCore::FrameLoader::receivedMainResourceError): assume document
+        (WebCore::FrameLoader::saveDocumentState): Assume there's a document except during initial load
+        (WebCore::FrameLoader::mainReceivedCompleteError): do checkCompleted, not checkLoadComplete
+        (WebCore::FrameLoader::continueLoadWithData): assume document
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::receivedError): Add more ref protection and do things in a slightly
+        different order.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::document): don't force document creation, just assert there is one.
+        * page/Frame.cpp:
+        (WebCore::Frame::init): Added init method.
+        (WebCore::Frame::pageDestroyed): when a frame is removed, make sure to check if the parent is
+        done loading.
+        * page/Frame.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]): No need to force
+        document.
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]): ditto
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): init the frame
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::updateWidgetPosition): If a subframe needs layout, then lay it out even
+        if the bounds did not change; the content size might be wrong.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation): Don't crash if the frame lacks a view.
+
 2007-05-10  David Hyatt  <hyatt@apple.com>
 
         Fix for:

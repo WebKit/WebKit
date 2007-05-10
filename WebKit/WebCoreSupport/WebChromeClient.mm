@@ -116,9 +116,16 @@ void WebChromeClient::takeFocus(FocusDirection direction)
         // view of the last view in its key view loop. This makes m_webView
         // behave as if it had no subviews, which is the behavior we want.
         NSView *lastView = [m_webView _findLastViewInKeyViewLoop];
+        // avoid triggering assertions if the WebView is the only thing in the key loop
+        if ([m_webView _becomingFirstResponderFromOutside] && m_webView == [lastView nextValidKeyView])
+            return;
         [[m_webView window] selectKeyViewFollowingView:lastView];
-    } else
+    } else {
+        // avoid triggering assertions if the WebView is the only thing in the key loop
+        if ([m_webView _becomingFirstResponderFromOutside] && m_webView == [m_webView previousValidKeyView])
+            return;
         [[m_webView window] selectKeyViewPrecedingView:m_webView];
+    }
 }
 
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& request)

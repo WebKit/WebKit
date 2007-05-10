@@ -169,8 +169,11 @@ enum {
 }
 
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
-{    
-    Class viewClass = [[self class] _viewClassForMIMEType:[[dataSource response] MIMEType]];
+{
+    NSString* MIMEType = [[dataSource response] MIMEType];
+    if (!MIMEType)
+        MIMEType = @"text/html";
+    Class viewClass = [[self class] _viewClassForMIMEType:MIMEType];
     NSView <WebDocumentView> *documentView;
     if (viewClass) {
         // If the dataSource's representation has already been created, and it is also the

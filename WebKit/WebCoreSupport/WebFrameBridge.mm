@@ -143,6 +143,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     m_frame = new Frame(page, ownerElement, new WebFrameLoaderClient(_frame));
     m_frame->setBridge(self);
     m_frame->tree()->setName(name);
+    m_frame->init();
     
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 
@@ -649,7 +650,7 @@ static BOOL loggedObjectCacheSize = NO;
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
 
     if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType))
-        return ObjectElementFrame;
+        return ObjectElementImage;
 
     if ([[self webView] _isMIMETypeRegisteredAsPlugin:MIMEType])
         return ObjectElementPlugin;
