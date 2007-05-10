@@ -1,3 +1,13 @@
+2007-05-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Simon
+
+        Move setting of the DPI value a few lines up. Should fix
+        the last two remaining failures in the layout tests.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2007-05-09  Holger Freyther <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
