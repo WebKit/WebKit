@@ -5279,11 +5279,16 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
         KeypressCommand command = event->keypressCommand();
-        bool hasKeypressCommand = !command.commandNames.isEmpty() || !command.text.isEmpty();
 
-        if (parameters.shouldSaveCommand || !hasKeypressCommand)
-            [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
-        else {
+        if (parameters.shouldSaveCommand || command.isEmpty()) {
+            // We don't need to call interpretKeyEvents for cmd-key events.  These events will be interpreted by performKeyEquivalent
+            if (!event->metaKey()) {
+                [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
+                // If we have no command after calling interpretKeyEvents, we assume the input method handled the key.
+                if (event->keypressCommand().isEmpty())
+                    parameters.eventWasHandled = true;
+            }
+        } else {
             if (!command.text.isEmpty())
                 [self insertText:command.text];
             else {
@@ -5507,9 +5512,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)doCommandBySelector:(SEL)selector
 {
-    if (selector == @selector(noop:))
-        return;
-
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     // The same call to interpretKeyEvents can do more than one command.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
@@ -5521,7 +5523,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         KeypressCommand command = event->keypressCommand();
         command.commandNames.append(NSStringFromSelector(selector));
         event->setKeypressCommand(command);
-    } else {
+    } else if (selector != @selector(noop:)) {
         // Make sure that only direct calls to doCommandBySelector: see the parameters by setting to 0.
         _private->interpretKeyEventsParameters = 0;
 

@@ -1,3 +1,17 @@
+2007-05-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+        
+        Re-applying fix for <rdar://problem/5107538> REGRESSION: Page scroll when selecting characters from inline input candidate window by arrow buttons
+        http://bugs.webkit.org/show_bug.cgi?id=13263
+        
+        We don't need to call interpretKeyEvents for cmd-key events as
+        they events will be interpreted by performKeyEquivalent.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+        (-[WebHTMLView doCommandBySelector:]):
+
 2007-05-09  Mark Rowe  <mrowe@apple.com>
 
         Build fix to keep the buildbot happy.
