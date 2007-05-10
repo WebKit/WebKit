@@ -2,6 +2,27 @@
 
         Fix for:
 
+        <rdar://problem/4694859> SAP: HTML tags with overflow:hidden consume
+        space on page, do not consume space in Firefox (11926)
+
+        http://bugs.webkit.org/show_bug.cgi?id=11926
+
+        Make sure that unreachable objects along one axis (e.g., top/left) do not
+        contribute to the scrollable area in the opposite axis (e.g., right/bottom).
+
+        Reviewed by olliej
+
+        fast/overflow/unreachable-content-test.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
         <rdar://problem/4656825> REGRESSION: Japanese TV time table widget:
         part of the number in background has been cut off.
 
