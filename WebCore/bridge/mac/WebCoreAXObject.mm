@@ -1881,11 +1881,19 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
     
     // make sure we move off of a sentence end
-    visiblePos = visiblePos.next();
-    if (visiblePos.isNull())
+    VisiblePosition nextVisiblePos = visiblePos.next();
+    if (nextVisiblePos.isNull())
         return nil;
 
-    VisiblePosition endPosition = endOfSentence(visiblePos);
+    // an empty line is considered a sentence. If it's skipped, then the sentence parser will not
+    // see this empty line.  Instead, return the end position of the empty line. 
+    VisiblePosition endPosition;
+    DeprecatedString lineString = plainText(makeRange(startOfLine(visiblePos), endOfLine(visiblePos)).get());
+    if (lineString.isEmpty())
+        endPosition = nextVisiblePos;
+    else
+        endPosition = endOfSentence(nextVisiblePos);
+    
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
@@ -1898,11 +1906,18 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
 
     // make sure we move off of a sentence start
-    visiblePos = visiblePos.previous();
-    if (visiblePos.isNull())
+    VisiblePosition previousVisiblePos = visiblePos.previous();
+    if (previousVisiblePos.isNull())
         return nil;
-
-    VisiblePosition startPosition = startOfSentence(visiblePos);
+    
+    // treat empty line as a separate sentence.  
+    VisiblePosition startPosition;
+    DeprecatedString lineString = plainText(makeRange(startOfLine(previousVisiblePos), endOfLine(previousVisiblePos)).get());
+    if (lineString.isEmpty())
+        startPosition = previousVisiblePos;
+    else
+        startPosition = startOfSentence(previousVisiblePos);
+        
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 

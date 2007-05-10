@@ -163,6 +163,11 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
         CharacterIterator charIt(searchRange.get(), true);
         charIt.advance(next - 1);
         pos = charIt.range()->endPosition();
+        
+        // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
+        VisiblePosition visPos = VisiblePosition(pos);
+        if (visPos == VisiblePosition(charIt.range()->startPosition()))
+            pos = visPos.next(true).deepEquivalent();
     }
 
     // generate VisiblePosition, use UPSTREAM affinity if possible

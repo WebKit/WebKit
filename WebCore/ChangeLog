@@ -1,3 +1,24 @@
+2007-05-10  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4720109> Sentence textMarker methods do not work well with empty lines
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXNextSentenceEndTextMarkerForTextMarker:]):
+        (-[WebCoreAXObject doAXPreviousSentenceStartTextMarkerForTextMarker:]):
+        When a marker position is given, the sentence ax methods automatically shift position by one to make sure
+        not to ask for the current sentence again.  This is generally fine except when the position
+        shift over an empty line break, which is should be considered a separate sentence. In this case, 
+        if we used the shifted position to ask for sentence boundary, ICU parser is not given the text data
+        containing the newline to correctly determine the sentence boundary.  Since the ax sentence method is 
+        explicitly shifting the position to ask for sentence boundary, it should make sure not to skip over important
+        character that can be a standalone sentence.
+        * editing/visible_units.cpp:
+        (WebCore::nextBoundary):
+        When determining boundary, don't stop on a collapsed range, such as newline.  
+        Just pick the next valid position to use as boundary.
+
 2007-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
