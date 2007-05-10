@@ -2300,9 +2300,10 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the lowest position.
             if (r->style()->position() != FixedPosition) {
-                // If a positioned object lies completely to the left of our object it will be unreachable via scrolling.
+                // FIXME: Should work for overflow sections too.
+                // If a positioned object lies completely to the left of the root it will be unreachable via scrolling.
                 // Therefore we should not allow it to contribute to the lowest position.
-                if (r->xPos() + r->width() > 0 || r->xPos() + r->rightmostPosition(false) > 0) {
+                if (!isRenderView() || r->xPos() + r->width() > 0 || r->xPos() + r->rightmostPosition(false) > 0) {
                     int lp = r->yPos() + r->lowestPosition(false);
                     bottom = max(bottom, lp);
                 }
@@ -2353,9 +2354,10 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the rightmost position.
             if (r->style()->position() != FixedPosition) {
-                // If a positioned object lies completely above our object it will be unreachable via scrolling.
+                // FIXME: Should work for overflow sections too.
+                // If a positioned object lies completely above the root it will be unreachable via scrolling.
                 // Therefore we should not allow it to contribute to the rightmost position.
-                if (r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
+                if (!isRenderView() || r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
                     int rp = r->xPos() + r->rightmostPosition(false);
                     right = max(right, rp);
                 }
@@ -2411,9 +2413,10 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the leftmost position.
             if (r->style()->position() != FixedPosition) {
-                // If a positioned object lies completely above our object it will be unreachable via scrolling.
+                // FIXME: Should work for overflow sections too.
+                // If a positioned object lies completely above the root it will be unreachable via scrolling.
                 // Therefore we should not allow it to contribute to the leftmost position.
-                if (r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
+                if (!isRenderView() || r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
                     int lp = r->xPos() + r->leftmostPosition(false);
                     left = min(left, lp);
                 }

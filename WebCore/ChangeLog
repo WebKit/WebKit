@@ -1,3 +1,22 @@
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for:
+
+        <rdar://problem/5193529> REGRESSION: RTL Overflows scrollbar not showing 
+        when they should be
+        
+        Fallout from fix for bug 11926.  Make sure to restrict the fix to the
+        RenderView for now, since the full-blown overflow case is pretty involved.
+
+        Reviewed by mitzpettel
+
+        fast/overflow/unreachable-content-bug-rtl.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+
 2007-05-10  Brady Eidson <beidson@apple.com>
 
         Reviewed by Oliver
