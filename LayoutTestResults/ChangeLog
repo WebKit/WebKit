@@ -1,3 +1,9 @@
+2007-05-10  Lars Knoll <lars@trolltech.com>
+
+        Add missing test result.
+
+        * qt/tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt: Added.
+
 2007-05-08  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.
