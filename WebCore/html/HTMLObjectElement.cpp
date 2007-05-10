@@ -469,6 +469,30 @@ void HTMLObjectElement::setVspace(int value)
     setAttribute(vspaceAttr, String::number(value));
 }
 
+bool HTMLObjectElement::containsJavaApplet() const
+{
+    if (type().lower() == "application/x-java-applet")
+        return true;
+        
+    Node* child = firstChild();
+    while (child) {
+        if (child->isElementNode()) {
+            Element* e = static_cast<Element*>(child);
+            if (e->hasTagName(paramTag) &&
+                e->getAttribute(nameAttr).domString().lower() == "type" &&
+                e->getAttribute(valueAttr).domString().lower() == "application/x-java-applet")
+                return true;
+            else if (e->hasTagName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
+                return true;
+            else if (e->hasTagName(appletTag))
+                return true;
+        }
+        child = child->nextSibling();
+    }
+    
+    return false;
+}
+
 #if ENABLE(SVG)
 SVGDocument* HTMLObjectElement::getSVGDocument(ExceptionCode& ec) const
 {

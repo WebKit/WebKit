@@ -1,3 +1,21 @@
+2007-05-10  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13636 and <rdar://problem/5190816>
+
+        When creating the applets collection, be sure to only count Objects if they contain
+        a java applet
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::traverseNextItem): Add the qualifier for Objects that 
+          containsJavaApplet() must be true
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet): Check this Object element and inner
+          nodes for any Java applets
+        * html/HTMLObjectElement.h: 
+
 2007-05-10  David Hyatt  <hyatt@apple.com>
 
         Fix for:
