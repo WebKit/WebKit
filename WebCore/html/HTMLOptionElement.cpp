@@ -87,22 +87,27 @@ String HTMLOptionElement::text() const
     String text;
 
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!document()->inCompatMode()) {
-        String text = getAttribute(labelAttr);
-        if (!text.isEmpty())
-            return text;
+    if (!document()->inCompatMode())
+        text = getAttribute(labelAttr);
+
+    if (text.isEmpty()) {
+        const Node* n = firstChild();
+        while (n) {
+            if (n->nodeType() == TEXT_NODE || n->nodeType() == CDATA_SECTION_NODE)
+                text += n->nodeValue();
+            // skip script content
+            if (n->isElementNode() && n->hasTagName(HTMLNames::scriptTag))
+                n = n->traverseNextSibling(this);
+            else
+                n = n->traverseNextNode(this);
+        }
     }
 
-    const Node* n = firstChild();
-    while (n) {
-        if (n->nodeType() == TEXT_NODE || n->nodeType() == CDATA_SECTION_NODE)
-            text += n->nodeValue();
-        // skip script content
-        if (n->isElementNode() && n->hasTagName(HTMLNames::scriptTag))
-            n = n->traverseNextSibling(this);
-        else
-            n = n->traverseNextNode(this);
-    }
+    text.replace('\\', document()->backslashAsCurrencySymbol());
+    // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
+    text = text.stripWhiteSpace();
+    // We want to collapse our whitespace too.  This will match other browsers.
+    text = text.simplifyWhiteSpace();
 
     return text;
 }
@@ -234,19 +239,10 @@ void HTMLOptionElement::setRenderStyle(RenderStyle* newStyle)
 
 String HTMLOptionElement::optionText()
 {
-    DeprecatedString itemText = text().deprecatedString();
-    if (itemText.isEmpty())
-        itemText = getAttribute(labelAttr).deprecatedString();
-    
-    itemText.replace('\\', document()->backslashAsCurrencySymbol());
-    // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
-    itemText = itemText.stripWhiteSpace();
-    // We want to collapse our whitespace too.  This will match other browsers.
-    itemText = itemText.simplifyWhiteSpace();
     if (parentNode() && parentNode()->hasTagName(optgroupTag))
-        itemText.prepend("    ");
+        return "    " + text();
         
-    return itemText;
+    return text();
 }
 
 bool HTMLOptionElement::disabled() const

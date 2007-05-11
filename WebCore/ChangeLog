@@ -2,6 +2,30 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13635
+          REGRESSION: Cannot log in to webmail.co.za account
+
+        Test: fast/dom/HTMLOptionElement/option-text.html
+
+        Despite the specification that the 'text' attribute of HTMLOptionElement
+        is "the text contained within the option element", other browsers return
+        the text as displayed in the list box or popup, which is without leading,
+        trailing and collapsible whitespace.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::text): Moved the code to trim and collapse
+        whitespace and replace backslashes with the currency symbol into this
+        function.
+        (WebCore::HTMLOptionElement::optionText): Left only the code that adds
+        the leading spaces for grouped options. Removed code that, in quirks mode,
+        displayed the label if the option element contained no text. That behavior
+        did not match WinIE and the description of the expected behavior in
+        fast/forms/HTMLOptionElement_label06.html.
+
+2007-05-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13572
           Arabic characters are not correctly joined when using Arial
 

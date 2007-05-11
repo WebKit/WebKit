@@ -1,3 +1,16 @@
+2007-05-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=13635
+          REGRESSION: Cannot log in to webmail.co.za account
+
+        * fast/dom/HTMLOptionElement/option-text-expected.txt: Added.
+        * fast/dom/HTMLOptionElement/option-text.html: Added.
+        * fast/forms/HTMLOptionElement_label06-expected.checksum:
+        * fast/forms/HTMLOptionElement_label06-expected.png:
+        * fast/forms/HTMLOptionElement_label06-expected.txt:
+
 2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Darin.
