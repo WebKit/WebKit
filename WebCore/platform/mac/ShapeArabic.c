@@ -486,15 +486,12 @@ int32_t shapeArabic(const UChar *source, int32_t sourceLength, UChar *dest, int3
     }
 
     if((options&U_SHAPE_LETTERS_MASK)!=U_SHAPE_LETTERS_NOOP) {
-        int32_t outputSize;
+        int32_t outputSize = sourceLength;
 
         /* calculate destination size */
         /* TODO: do we ever need to do this pure preflighting? */
-        if((options&U_SHAPE_LENGTH_MASK)==U_SHAPE_LENGTH_GROW_SHRINK) {
-            ASSERT_NOT_REACHED();
-        } else {
-            outputSize=sourceLength;
-        }
+        ASSERT((options&U_SHAPE_LENGTH_MASK) != U_SHAPE_LENGTH_GROW_SHRINK);
+
         if(outputSize>destCapacity) {
             *pErrorCode=U_BUFFER_OVERFLOW_ERROR;
             return outputSize;
