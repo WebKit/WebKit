@@ -1551,16 +1551,9 @@ void FrameLoader::provisionalLoadStarted()
     cancelRedirection(true);
     m_client->provisionalLoadStarted();
 
-    if (canCachePage()) {
-        if (m_client->canCachePage()) {
-            if (!m_currentHistoryItem->cachedPage()) {
-                cachePageToHistoryItem(m_currentHistoryItem.get());
-                purgePageCache();
-            }
-        } else {
-            // Put the document into a null state, so it can be restored correctly. 
-            clear();
-        }
+    if (canCachePage() && m_client->canCachePage() && !m_currentHistoryItem->cachedPage()) {
+        cachePageToHistoryItem(m_currentHistoryItem.get());
+        purgePageCache();
     }
 }
 

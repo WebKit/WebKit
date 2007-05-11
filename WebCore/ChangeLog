@@ -1,3 +1,14 @@
+2007-05-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/5193517> FrameLoader::canCachePage() might walk the entire DOM
+        http://bugs.webkit.org/show_bug.cgi?id=13662
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::provisionalLoadStarted): Remove some useless and now harmful
+        code - there's no need to clear in this case.
+
 2007-05-11  Oliver Hunt  <oliver@apple.com>
 
         GDK Build fix
