@@ -1540,16 +1540,23 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 
     // 5. paint outline.
-    if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && style()->visibility() == VISIBLE) {
-        if (continuation() && continuation()->hasOutline()) {
+    if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
+        RenderObject::paintOutline(paintInfo.context, tx, ty, width(), height(), style());
+
+    // 6. paint continuation outlines.
+    if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
+        if (continuation() && continuation()->hasOutline() & continuation()->style()->visibility() == VISIBLE) {
             RenderFlow* inlineFlow = static_cast<RenderFlow*>(continuation()->element()->renderer());
-            inlineFlow->paintOutline(paintInfo.context, tx - xPos() + inlineFlow->containingBlock()->xPos(),
-                                     ty - yPos() + inlineFlow->containingBlock()->yPos());
-        } else if (hasOutline())
-            RenderObject::paintOutline(paintInfo.context, tx, ty, width(), height(), style());
+            if (!inlineFlow->hasLayer())
+                containingBlock()->addContinuationWithOutline(inlineFlow);
+            else if (!inlineFlow->firstLineBox())
+                inlineFlow->paintOutline(paintInfo.context, tx - xPos() + inlineFlow->containingBlock()->xPos(),
+                                         ty - yPos() + inlineFlow->containingBlock()->yPos());
+        }
+        paintContinuationOutlines(paintInfo, tx, ty);
     }
 
-    // 6. paint caret.
+    // 7. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
     if (!inlineFlow && paintPhase == PaintPhaseForeground) {        
@@ -1610,6 +1617,55 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
                 curr->paintEllipsisBox(paintInfo, tx, ty);
         }
     }
+}
+
+HashMap<RenderBlock*, RenderFlowSequencedSet*>* continuationOutlineTable()
+{
+    static HashMap<RenderBlock*, RenderFlowSequencedSet*> table;
+    return &table;
+}
+
+void RenderBlock::addContinuationWithOutline(RenderFlow* flow)
+{
+    // We can't make this work if the inline is in a layer.  We'll just rely on the broken
+    // way of painting.
+    ASSERT(!flow->layer());
+    
+    HashMap<RenderBlock*, RenderFlowSequencedSet*>* table = continuationOutlineTable();
+    RenderFlowSequencedSet* continuations = table->get(this);
+    if (!continuations) {
+        continuations = new RenderFlowSequencedSet;
+        table->set(this, continuations);
+    }
+    
+    continuations->add(flow);
+}
+
+void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
+{
+    HashMap<RenderBlock*, RenderFlowSequencedSet*>* table = continuationOutlineTable();
+    if (table->isEmpty())
+        return;
+        
+    RenderFlowSequencedSet* continuations = table->get(this);
+    if (!continuations)
+        return;
+        
+    // Paint each continuation outline.
+    RenderFlowSequencedSet::iterator end = continuations->end();
+    for (RenderFlowSequencedSet::iterator it = continuations->begin(); it != end; ++it) {
+        // Need to add in the coordinates of the intervening blocks.
+        RenderFlow* flow = *it;
+        for (RenderBlock* block = flow->containingBlock(); block != this; block = block->containingBlock()) {
+            tx += block->xPos();
+            ty += block->yPos();
+        }        
+        flow->paintOutline(info.context, tx, ty);
+    }
+    
+    // Delete
+    delete continuations;
+    table->remove(this);
 }
 
 void RenderBlock::setSelectionState(SelectionState s)

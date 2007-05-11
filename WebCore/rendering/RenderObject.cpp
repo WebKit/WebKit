@@ -1828,10 +1828,11 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
 
     // We didn't move, but we did change size.  Invalidate the delta, which will consist of possibly
     // two rectangles (but typically only one).
-    int ow = style() ? style()->outlineSize() : 0;
+    RenderStyle* outlineStyle = !isInline() && continuation() ? continuation()->style() : style();
+    int ow = outlineStyle->outlineSize();
     int width = abs(newOutlineBox.width() - oldOutlineBox.width());
     if (width) {
-        int borderWidth = max(-style()->outlineOffset(), max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + ow;
+        int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + ow;
         IntRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
             width + borderWidth,
@@ -1844,7 +1845,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     }
     int height = abs(newOutlineBox.height() - oldOutlineBox.height());
     if (height) {
-        int borderHeight = max(-style()->outlineOffset(), max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + ow;
+        int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + ow;
         IntRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),
@@ -3039,7 +3040,10 @@ IntRect RenderObject::absoluteOutlineBox() const
     absolutePosition(x, y);
     box.move(x, y);
     box.move(view()->layoutDelta());
-    box.inflate(style()->outlineSize());
+    if (!isInline() && continuation())
+        box.inflate(continuation()->style()->outlineSize());
+    else
+        box.inflate(style()->outlineSize());
     return box;
 }
 

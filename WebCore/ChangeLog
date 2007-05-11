@@ -1,3 +1,23 @@
+2007-05-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13675, focus rings don't repaint properly on editable
+        continuations.
+
+        Reviewed by olliej
+
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::continuationOutlineTable):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteClippedOverflowRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::absoluteOutlineBox):
+
 2007-05-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

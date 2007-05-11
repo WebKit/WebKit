@@ -567,9 +567,15 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
-            if (object()->style()->visibility() == VISIBLE && object()->hasOutline() &&
-                    !object()->isInlineContinuation() && !isRootInlineBox())
-                paintInfo.outlineObjects->add(flowObject());
+            if (object()->style()->visibility() == VISIBLE && object()->hasOutline() && !isRootInlineBox()) {
+                if ((object()->continuation() || object()->isInlineContinuation()) && !object()->hasLayer()) {
+                    // Add ourselves to the containing block of the entire continuation so that it can
+                    // paint us atomically.
+                    RenderBlock* block = object()->element()->renderer()->continuation()->containingBlock();
+                    block->addContinuationWithOutline(static_cast<RenderFlow*>(object()->element()->renderer()));
+                } else if (!object()->isInlineContinuation())
+                    paintInfo.outlineObjects->add(flowObject());
+            }
         } else {
             // 1. Paint our background, border and box-shadow.
             paintBoxDecorations(paintInfo, tx, ty);
