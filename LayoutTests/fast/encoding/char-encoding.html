@@ -96,9 +96,9 @@ function runTest()
     text.value = String.fromCharCode(unicodes[i].replace('U+', '0x'));
     
     // Workaround for rdar://problem/5114296
-    // 5 second timeout, this will cause a significant slowdown on failures, 
+    // 500 millisecond timeout. This will cause a significant slowdown on failures, 
     // but should guarantee we don't fire prematurely
-    timeout = setTimeout(loadTimedOut, 5);
+    timeout = setTimeout(loadTimedOut, 500);
     form.submit();
 }
 
