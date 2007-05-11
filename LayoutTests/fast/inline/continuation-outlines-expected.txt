@@ -30,20 +30,18 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 86x18
             RenderText {#text} at (0,0) size 86x18
               text run at (0,0) width 86: "Content after."
-      RenderBlock {P} at (0,220) size 784x94
+      RenderBlock {P} at (0,220) size 784x58
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderInline {SPAN} at (0,0) size 94x18
             RenderText {#text} at (0,0) size 94x18
               text run at (0,0) width 94: "Content before"
         RenderBlock (anonymous) at (0,36) size 784x22
           RenderBlock {H3} at (0,0) size 784x22
-            RenderText {#text} at (0,0) size 58x22
-              text run at (0,0) width 58: "Middle"
-        RenderBlock (anonymous) at (0,76) size 784x18
-          RenderInline {SPAN} at (0,0) size 106x18
-            RenderText {#text} at (0,0) size 106x18
-              text run at (0,0) width 106: "No content after."
-      RenderBlock {P} at (0,332) size 784x22
+            RenderText {#text} at (0,0) size 177x22
+              text run at (0,0) width 177: "But No Content After"
+        RenderBlock (anonymous) at (0,76) size 784x0
+          RenderInline {SPAN} at (0,0) size 0x0
+      RenderBlock {P} at (0,296) size 784x22
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x22
