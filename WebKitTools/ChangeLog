@@ -1,3 +1,14 @@
+2007-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Bug 13656: [gdk] Resize the drawing area of the GdkLauncher
+        http://bugs.webkit.org/show_bug.cgi?id=13656
+
+        * GdkLauncher/main.cpp: Handle resizing the drawing area
+        (frameResizeCallback):
+        (main):
+
 2007-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

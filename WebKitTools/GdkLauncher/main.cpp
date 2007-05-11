@@ -26,7 +26,7 @@
 using namespace WebCore;
 
 static GtkWidget* gURLBarEntry;
-static FrameGdk* gFrame;
+static FrameGdk* gFrame = 0;
 
 static bool stringIsEqual(const char* str1, const char* str2)
 {
@@ -89,9 +89,14 @@ static void registerRenderingAreaEvents(GtkWidget* win)
     g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(handleGdkEvent), NULL);
 }
 
-static void frameResizeCallback(GtkWidget* widget, gpointer data)
+static void frameResizeCallback(GtkWidget* widget, GtkAllocation* allocation, gpointer data)
 {
-    // FIXME: resize the area?
+    if (!gFrame)
+        return;
+
+    gFrame->view()->setFrameGeometry(IntRect(allocation->x,allocation->y,allocation->width,allocation->height));
+    gFrame->forceLayout();
+    gFrame->sendResizeEvent();
 }
 
 static void frameDestroyCallback(GtkWidget* widget, gpointer data)
@@ -172,7 +177,6 @@ int main(int argc, char* argv[])
     GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(topLevelWindow), vbox);
     g_signal_connect(G_OBJECT(topLevelWindow), "destroy", G_CALLBACK(frameDestroyCallback), NULL);
-    g_signal_connect(GTK_OBJECT(topLevelWindow), "size-request", G_CALLBACK(frameResizeCallback), NULL);
 
     GtkWidget* hbox = gtk_hbox_new(FALSE, 2);
     gtk_box_pack_start(GTK_BOX(vbox), menuBar, FALSE, FALSE, 0);
@@ -190,6 +194,7 @@ int main(int argc, char* argv[])
     GtkWidget* frameWindow = gtk_drawing_area_new();
     registerRenderingAreaEvents(frameWindow); 
     gtk_box_pack_start(GTK_BOX(vbox), frameWindow, TRUE, TRUE, 0);
+    g_signal_connect(GTK_OBJECT(frameWindow), "size-allocate", G_CALLBACK(frameResizeCallback), NULL);
     gtk_widget_show(frameWindow);
     GTK_WIDGET_SET_FLAGS(frameWindow, GTK_CAN_FOCUS);
 
