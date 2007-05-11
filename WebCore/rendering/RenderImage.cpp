@@ -217,7 +217,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
     if (isPrinting && !view()->printImages())
         return;
 
-    if (!m_cachedImage || image()->isNull() || errorOccurred()) {
+    if (!m_cachedImage || errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
 
@@ -270,7 +270,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
                     context->drawText(textRun, IntPoint(ax, ay + ascent));
             }
         }
-    } else if (m_cachedImage) {
+    } else if (m_cachedImage && !image()->isNull()) {
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(tx - m_x, ty - m_y, style()->highlight(), true);

@@ -1,3 +1,20 @@
+2007-05-10  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/5015522> Bounds rectangle of unloaded images is 
+        drawn briefly while loading
+        
+        When the image is null and has no size, don't draw the grey
+        rectangles or alt text any more.  Wait for an actual error to
+        occur with the image before we start showing alt text and borders.
+
+        (Images with no source set at all will continue to show alt text and
+        borders immediately.)
+
+        Reviewed by bradee-oh
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+
 2007-05-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
