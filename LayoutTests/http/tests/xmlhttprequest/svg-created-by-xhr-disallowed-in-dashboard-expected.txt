@@ -1,0 +1,6 @@
+Test to make sure we can't use XHR to create usable SVG in dashboard compatibility mode. This cannot be tested manually.
+
+Received doc of type: [object Document]
+Contained circle element is of type: [object SVGCircleElement]
+PASS: Could not insert SVG element into tree
+

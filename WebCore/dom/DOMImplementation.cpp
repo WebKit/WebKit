@@ -30,6 +30,7 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLViewSourceDocument.h"
 #include "Image.h"
@@ -38,6 +39,7 @@
 #include "PluginDocument.h"
 #include "PlugInInfoStore.h"
 #include "RegularExpression.h"
+#include "Settings.h"
 #include "TextDocument.h"
 #include "XMLNames.h"
 
@@ -364,7 +366,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new PluginDocument(this, frame);
 
 #if ENABLE(SVG)
-    if (type == "image/svg+xml")
+    if (type == "image/svg+xml" && (!frame || !frame->settings()->usesDashboardBackwardCompatibilityMode()))
         return new SVGDocument(this, frame);
 #endif
     if (isXMLMIMEType(type))

@@ -1,3 +1,34 @@
+2007-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        Layout tests for <rdar://problem/5017375> WebKit should disable SVG in Dashboard
+        Tests attempt to use SVG in a number of ways, both direct and indirect.
+        
+
+        * http/tests/xmlhttprequest/resources/svgtest.svg: Added.
+          Small test SVG
+          
+        * http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard-expected.txt: Added.
+        * http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html: Added.
+          Attempts to use an SVG doc created with XHR as content 
+        
+        * svg/custom/embedded-svg-disallowed-in-dashboard-expected.txt: Added.
+        * svg/custom/embedded-svg-disallowed-in-dashboard.xml: Added.
+          Attempts to use SVG by embedding it in an SVG doc.
+        
+        * svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard-expected.txt: Added.
+        * svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html: Added.
+          Attempts to use SVG by using a DOMParser to manually parse XHMTL with embedded SVG
+        
+        * svg/custom/manually-parsed-svg-disallowed-in-dashboard-expected.txt: Added.
+        * svg/custom/manually-parsed-svg-disallowed-in-dashboard.html: Added.
+          Attempts to use SVG by using a DOMParser to manually create an SVG doc from a string
+        
+        * svg/custom/svg-disallowed-in-dashboard-object-expected.txt: Added.
+        * svg/custom/svg-disallowed-in-dashboard-object.html: Added.
+          Attempts to embed SVG with <embed>, <object>, and <iframe>
+
 2007-05-11  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver.

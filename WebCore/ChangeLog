@@ -1,3 +1,28 @@
+2007-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+        
+        <rdar://problem/5017375> WebKit should disable SVG in Dashboard
+        
+        Prevents an SVG document or element from being created when in
+        dashboard compatibility mode.
+        
+        Manually parsing, or using XHR to created a document removes our 
+        ability to detect Dashboard compatibility mode, so we also perform
+        the check when importing nodes from one document into another.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+          Don't create an SVGDocument if we're in dashboard compatibility mode
+          
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+          Don't import SVG nodes if we're in dashboard compatibility mode
+          
+        * ksvg2/scripts/make_names.pl:
+          Don't create SVG elements for documents that are in dashboard
+          compatibility mode
+
 2007-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.

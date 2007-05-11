@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -391,6 +391,8 @@ print <<END
 #include "config.h"
 #include "${namespace}ElementFactory.h"
 #include "${namespace}Names.h"
+#include "Page.h"
+#include "Settings.h"
 END
 ;
 
@@ -436,8 +438,8 @@ print <<END
 ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
 #if ENABLE(SVG)
-    if (!doc)
-        return 0; // Do not allow elements to ever be made without having a doc.
+    if (!doc || (doc->page() && doc->page()->settings()->usesDashboardBackwardCompatibilityMode()))
+        return 0; // Do not allow elements to ever be made without having a doc or if we're in dashboard compatibility mode.
 
     createFunctionMapIfNecessary();
     ConstructorFunc func = gFunctionMap->get(qName.localName().impl());
