@@ -234,7 +234,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     
     Selection newSelection = m_frame->selectionController()->selection();
     if (extendSelection && newSelection.isCaretOrRange()) {
-        m_frame->selectionController()->clearModifyBias();
+        m_frame->selectionController()->setLastChangeWasHorizontalExtension(false);
         
         // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
         // was created right-to-left
@@ -388,7 +388,7 @@ void EventHandler::updateSelectionForMouseDragOverPosition(const VisiblePosition
     // Restart the selection if this is the first mouse move. This work is usually
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
     Selection newSelection = m_frame->selectionController()->selection();
-    m_frame->selectionController()->clearModifyBias();
+    m_frame->selectionController()->setLastChangeWasHorizontalExtension(false);
     
     if (!m_beganSelectingText) {
         m_beganSelectingText = true;

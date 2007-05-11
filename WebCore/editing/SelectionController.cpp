@@ -59,7 +59,7 @@ const int NoXPosForVerticalArrowNavigation = INT_MIN;
 
 SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_needsLayout(true)
-    , m_modifyBiasSet(false)
+    , m_lastChangeWasHorizontalExtension(false)
     , m_frame(frame)
     , m_isDragCaretController(isDragCaretController)
     , m_isCaretBlinkingSuspended(false)
@@ -202,26 +202,28 @@ void SelectionController::nodeWillBeRemoved(Node *node)
         setSelection(Selection(), false, false);
 }
 
-void SelectionController::setModifyBias(EAlteration alter, EDirection direction)
+void SelectionController::willBeModified(EAlteration alter, EDirection direction)
 {
     switch (alter) {
         case MOVE:
-            m_modifyBiasSet = false;
+            m_lastChangeWasHorizontalExtension = false;
             break;
         case EXTEND:
-            if (!m_modifyBiasSet) {
-                m_modifyBiasSet = true;
+            if (!m_lastChangeWasHorizontalExtension) {
+                m_lastChangeWasHorizontalExtension = true;
+                Position start = m_sel.start();
+                Position end = m_sel.end();
                 switch (direction) {
                     // FIXME: right for bidi?
                     case RIGHT:
                     case FORWARD:
-                        m_sel.setBase(m_sel.start());
-                        m_sel.setExtent(m_sel.end());
+                        m_sel.setBase(start);
+                        m_sel.setExtent(end);
                         break;
                     case LEFT:
                     case BACKWARD:
-                        m_sel.setBase(m_sel.end());
-                        m_sel.setExtent(m_sel.start());
+                        m_sel.setBase(end);
+                        m_sel.setExtent(start);
                         break;
                 }
             }
@@ -457,6 +459,7 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
 {
     if (userTriggered) {
         SelectionController trialSelectionController;
+        trialSelectionController.setLastChangeWasHorizontalExtension(m_lastChangeWasHorizontalExtension);
         trialSelectionController.setSelection(m_sel);
         trialSelectionController.modify(alter, dir, granularity, false);
 
@@ -468,7 +471,7 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
     if (m_frame)
         m_frame->setSelectionGranularity(granularity);
     
-    setModifyBias(alter, dir);
+    willBeModified(alter, dir);
 
     VisiblePosition pos;
     switch (dir) {
@@ -560,7 +563,7 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
     if (up)
         verticalDistance = -verticalDistance;
 
-    setModifyBias(alter, up ? BACKWARD : FORWARD);
+    willBeModified(alter, up ? BACKWARD : FORWARD);
 
     VisiblePosition pos;
     int xPos = 0;

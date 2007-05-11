@@ -87,8 +87,8 @@ public:
     IntRect caretRect() const;
     void setNeedsLayout(bool flag = true);
 
-    void clearModifyBias() { m_modifyBiasSet = false; }
-    void setModifyBias(EAlteration, EDirection);
+    void setLastChangeWasHorizontalExtension(bool b) { m_lastChangeWasHorizontalExtension = b; }
+    void willBeModified(EAlteration, EDirection);
     
     bool isNone() const { return m_sel.isNone(); }
     bool isCaret() const { return m_sel.isCaret(); }
@@ -184,8 +184,7 @@ private:
     IntPoint m_caretPositionOnLayout;
     
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
-    bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
-                                  // modified with EAlteration::EXTEND
+    bool m_lastChangeWasHorizontalExtension : 1;
     Frame* m_frame;
     bool m_isDragCaretController;
 

@@ -1,0 +1,25 @@
+<p>This tests for a bug where extending a selection created with the mouse would blow it away before extending it.</p>
+<div id="div" contenteditable="true">There should be five characters selected in this sentence.</div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    console = document.getElementById("console");
+    li = document.createElement("li");
+    text = document.createTextNode(str);
+    console.appendChild(li);
+    li.appendChild(text);
+}
+if (window.layoutTestController) {
+    var text = document.getElementById("div").firstChild;
+    var selection = window.getSelection();
+    selection.setBaseAndExtent(text, 3 + 5, text, 3);
+    // Extending this 5 character selection will select 6 characters.
+    textInputController.doCommand("moveForwardAndModifySelection:");
+    // Extending it in this way flips the base and the extent.
+    if (selection.extentOffset - selection.baseOffset != 6)
+        log("Failure: Selection isn't the right size.");
+    else
+        log ("Success");
+} else
+    log ("Failure: This test cannot be run manually.")
+</script>

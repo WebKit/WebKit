@@ -1,3 +1,32 @@
+2007-05-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+
+        <rdar://problem/5195166> Incorrect proposedRange DOMRange passed to WebViewEditing delegate
+        
+        In setModifyBias, we must cache the start and the end 
+        because the calls to setBase and setExtent can modify 
+        them (added a testcase).
+        The temporary SelectionController that we use in modify() to
+        produce the proposed range that will be passed to 
+        shouldChangeSelectedDOMRange must have the same m_modifyBias
+        as the original SelectionController, or else when the 
+        modification is performed, setModifyBias can swap the base 
+        and the extent incorrectly (added a testcase).
+        Renamed m_modifyBias to m_lastChangeWasHorizontalExtension.
+        Renamed setModifyBias to willBeModified.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::willBeModified):
+        (WebCore::SelectionController::modify):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::setLastChangeWasHorizontalExtension):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDragOverPosition):
+
 2007-05-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

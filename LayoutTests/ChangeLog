@@ -1,3 +1,18 @@
+2007-05-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+
+        <rdar://problem/5195166> Incorrect proposedRange DOMRange passed to WebViewEditing delegate
+
+        * editing/selection/5195166-1-expected.checksum: Added.
+        * editing/selection/5195166-1-expected.png: Added.
+        * editing/selection/5195166-1-expected.txt: Added.
+        * editing/selection/5195166-1.html: Added.
+        * editing/selection/5195166-2-expected.checksum: Added.
+        * editing/selection/5195166-2-expected.png: Added.
+        * editing/selection/5195166-2-expected.txt: Added.
+        * editing/selection/5195166-2.html: Added.
+
 2007-05-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
