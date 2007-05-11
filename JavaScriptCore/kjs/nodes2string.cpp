@@ -31,20 +31,23 @@ namespace KJS {
   class SourceStream {
   public:
     enum Format {
-      Endl, Indent, Unindent
+      Endl, Indent, Unindent, DotExpr
     };
-
+    SourceStream() : m_groupIfNumber(false) {}
     UString toString() const { return str; }
     SourceStream& operator<<(const Identifier &);
     SourceStream& operator<<(const UString &);
     SourceStream& operator<<(const char *);
+    SourceStream& operator<<(double);
     SourceStream& operator<<(char);
     SourceStream& operator<<(Format f);
     SourceStream& operator<<(const Node *);
     template <typename T> SourceStream& operator<<(RefPtr<T> n) { return this->operator<<(n.get()); }
+
   private:
     UString str; /* TODO: buffer */
     UString ind;
+    bool m_groupIfNumber;
   };
 }
 
@@ -52,6 +55,7 @@ using namespace KJS;
 
 SourceStream& SourceStream::operator<<(char c)
 {
+  m_groupIfNumber = false;
   UChar ch(c);
   str += UString(&ch, 1);
   return *this;
@@ -59,18 +63,35 @@ SourceStream& SourceStream::operator<<(char c)
 
 SourceStream& SourceStream::operator<<(const char *s)
 {
+  m_groupIfNumber = false;
   str += UString(s);
+  return *this;
+}
+
+SourceStream& SourceStream::operator<<(double value)
+{
+  if (m_groupIfNumber)
+    str.append("(");
+
+  str += UString::from(value);
+
+  if (m_groupIfNumber)
+    str.append(")");
+
+  m_groupIfNumber = false;
   return *this;
 }
 
 SourceStream& SourceStream::operator<<(const UString &s)
 {
+  m_groupIfNumber = false;
   str += s;
   return *this;
 }
 
 SourceStream& SourceStream::operator<<(const Identifier &s)
 {
+  m_groupIfNumber = false;
   str += s.ustring();
   return *this;
 }
@@ -79,11 +100,13 @@ SourceStream& SourceStream::operator<<(const Node *n)
 {
   if (n)
     n->streamTo(*this);
+  m_groupIfNumber = false;
   return *this;
 }
 
 SourceStream& SourceStream::operator<<(Format f)
 {
+  m_groupIfNumber = false;
   switch (f) {
     case Endl:
       str += "\n" + ind;
@@ -93,6 +116,9 @@ SourceStream& SourceStream::operator<<(Format f)
       break;
     case Unindent:
       ind = ind.substr(0, ind.size() - 2);
+      break;
+  case DotExpr:
+      m_groupIfNumber = true;
       break;
   }
 
@@ -114,7 +140,7 @@ void BooleanNode::streamTo(SourceStream &s) const
   s << (value ? "true" : "false");
 }
 
-void NumberNode::streamTo(SourceStream &s) const { s << UString::from(value); }
+void NumberNode::streamTo(SourceStream &s) const { s << value; }
 
 void StringNode::streamTo(SourceStream &s) const
 {
@@ -205,7 +231,7 @@ void BracketAccessorNode::streamTo(SourceStream &s) const
 
 void DotAccessorNode::streamTo(SourceStream &s) const
 {
-  s << expr << "." << ident;
+  s << SourceStream::DotExpr << expr << "." << ident;
 }
 
 void ArgumentListNode::streamTo(SourceStream &s) const
@@ -247,12 +273,12 @@ void FunctionCallParenBracketNode::streamTo(SourceStream &s) const
 
 void FunctionCallDotNode::streamTo(SourceStream &s) const
 {
-  s << base << "." << ident << args;
+  s << SourceStream::DotExpr << base << "." << ident << args;
 }
 
 void FunctionCallParenDotNode::streamTo(SourceStream &s) const
 {
-  s << "(" << base << "." << ident << ")" << args;
+  s << "(" << SourceStream::DotExpr << base << "." << ident << ")" << args;
 }
 
 void PostfixResolveNode::streamTo(SourceStream &s) const
@@ -275,7 +301,7 @@ void PostfixBracketNode::streamTo(SourceStream &s) const
 
 void PostfixDotNode::streamTo(SourceStream &s) const
 {
-  s << m_base << "." << m_ident;
+  s << SourceStream::DotExpr << m_base << "." << m_ident;
   if (m_oper == OpPlusPlus)
     s << "++";
   else
@@ -303,7 +329,7 @@ void DeleteBracketNode::streamTo(SourceStream &s) const
 
 void DeleteDotNode::streamTo(SourceStream &s) const
 {
-  s << "delete " << m_base << "." << m_ident;
+  s << "delete " << SourceStream::DotExpr << m_base << "." << m_ident;
 }
 
 void DeleteValueNode::streamTo(SourceStream &s) const
@@ -350,7 +376,7 @@ void PrefixDotNode::streamTo(SourceStream &s) const
     s << "++";
   else
     s << "--";
-  s << m_base << "." << m_ident;
+  s << SourceStream::DotExpr << m_base << "." << m_ident;
 }
 
 void PrefixErrorNode::streamTo(SourceStream& s) const
@@ -538,7 +564,7 @@ void AssignBracketNode::streamTo(SourceStream &s) const
 
 void AssignDotNode::streamTo(SourceStream &s) const
 {
-  s << m_base << "." << m_ident;
+  s << SourceStream::DotExpr << m_base << "." << m_ident;
   streamAssignmentOperatorTo(s, m_oper);
   s << m_right;
 }

@@ -1,3 +1,29 @@
+2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - Fixes http://bugs.webkit.org/show_bug.cgi?id=10878
+          (Incorrect decompilation for "4..x")
+        - Group numbers in dotted expressions in toString() output, so we
+          avoid the 4.x constructs  when the original input is 4..x.
+          4..x means the same as 4. .x or (4).x or Number(4).x
+
+        * kjs/nodes2string.cpp:
+        (KJS::SourceStream::):
+        Add boolean flag to indicate that if next item is a number, it should be grouped.
+        Add new formatting enum which turns on the boolean flag.
+        (KJS::SourceStream::SourceStream): Added. Initialize the flag.
+        (SourceStream::operator<<): Added. New overloaded operator with double value as parameter.
+        (NumberNode::streamTo): Use the double operator
+        (ArrayNode::streamTo):
+        (DotAccessorNode::streamTo):
+        (FunctionCallDotNode::streamTo):
+        (FunctionCallParenDotNode::streamTo):
+        (PostfixDotNode::streamTo):
+        (DeleteDotNode::streamTo):
+        (PrefixDotNode::streamTo):
+        (AssignDotNode::streamTo): Use the new formatting enum to turn on the grouping flag.
+
 2007-05-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
