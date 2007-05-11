@@ -427,7 +427,7 @@ void WebFrameLoaderClient::dispatchDidReceiveIcon()
     [webView _willChangeValueForKey:_WebMainFrameIconKey];
     id delegate = [webView frameLoadDelegate];
     if ([delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)]) {
-        Image* image = IconDatabase::sharedIconDatabase()->
+        Image* image = iconDatabase()->
             iconForPageURL(core(m_webFrame.get())->loader()->url().url(), IntSize(16, 16));
         NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16));
         if (icon)

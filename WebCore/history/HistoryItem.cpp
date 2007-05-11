@@ -65,7 +65,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_isTargetItem(false)
     , m_visitCount(0)
 {    
-    retainIconInDatabase(true);
+    iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const KURL& url, const String& title)
@@ -76,7 +76,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& title)
     , m_isTargetItem(false)
     , m_visitCount(0)
 {    
-    retainIconInDatabase(true);
+    iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const KURL& url, const String& target, const String& parent, const String& title)
@@ -89,12 +89,12 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_isTargetItem(false)
     , m_visitCount(0)
 {    
-    retainIconInDatabase(true);
+    iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::~HistoryItem()
 {
-    retainIconInDatabase(false);
+    iconDatabase()->releaseIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const HistoryItem& item)
@@ -142,16 +142,6 @@ void HistoryItem::setCachedPage(PassRefPtr<CachedPage> cachedPage)
     LOG(PageCache, "WebCorePageCache: HistoryItem %p (%s) set cached page to %p", this, m_urlString.ascii().data(), m_cachedPage.get());
 }
 
-void HistoryItem::retainIconInDatabase(bool retain)
-{
-    if (!m_urlString.isEmpty()) {
-        if (retain)
-            IconDatabase::sharedIconDatabase()->retainIconForPageURL(m_urlString);
-        else
-            IconDatabase::sharedIconDatabase()->releaseIconForPageURL(m_urlString);
-    }
-}
-
 const String& HistoryItem::urlString() const
 {
     return m_urlString;
@@ -176,8 +166,8 @@ const String& HistoryItem::alternateTitle() const
 
 Image* HistoryItem::icon() const
 {
-    Image* result = IconDatabase::sharedIconDatabase()->iconForPageURL(m_urlString, IntSize(16,16));
-    return result ? result : IconDatabase::sharedIconDatabase()->defaultIcon(IntSize(16,16));
+    Image* result = iconDatabase()->iconForPageURL(m_urlString, IntSize(16,16));
+    return result ? result : iconDatabase()->defaultIcon(IntSize(16,16));
 }
 
 double HistoryItem::lastVisitedTime() const
@@ -214,9 +204,9 @@ void HistoryItem::setAlternateTitle(const String& alternateTitle)
 void HistoryItem::setURLString(const String& urlString)
 {
     if (m_urlString != urlString) {
-        retainIconInDatabase(false);
+        iconDatabase()->releaseIconForPageURL(m_urlString);
         m_urlString = urlString;
-        retainIconInDatabase(true);
+        iconDatabase()->retainIconForPageURL(m_urlString);
     }
     
     notifyHistoryItemChanged();

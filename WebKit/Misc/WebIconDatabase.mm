@@ -99,7 +99,7 @@ NSSize WebIconLargeSize = {128, 128};
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
     BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
-    IconDatabase::sharedIconDatabase()->setEnabled(enabled);
+    iconDatabase()->setEnabled(enabled);
     if (!enabled)
         return self;
     
@@ -116,19 +116,19 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
-        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:IconDatabase::sharedIconDatabase()->defaultDatabaseFilename()];
+        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase()->defaultDatabaseFilename()];
         if (![defaultManager fileExistsAtPath:newDB])
             rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
     }
     
     // Open the WebCore icon database and import the old WebKit icon database
-    if (!IconDatabase::sharedIconDatabase()->open(databaseDirectory))
+    if (!iconDatabase()->open(databaseDirectory))
         LOG_ERROR("Unable to open icon database");
     else
         if ([self _isEnabled])
             [self _importToWebCoreFormat];
 
-    IconDatabase::sharedIconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
+    iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
     
     // Register for important notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -155,7 +155,7 @@ NSSize WebIconLargeSize = {128, 128};
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
       
-    if (Image* image = IconDatabase::sharedIconDatabase()->iconForPageURL(URL, IntSize(size)))
+    if (Image* image = iconDatabase()->iconForPageURL(URL, IntSize(size)))
         if (NSImage *icon = webGetNSImage(image, size))
             return icon;
     return [self defaultIconForURL:URL withSize:size];
@@ -172,7 +172,7 @@ NSSize WebIconLargeSize = {128, 128};
         return nil;
     ASSERT_MAIN_THREAD();
 
-    return IconDatabase::sharedIconDatabase()->iconURLForPageURL(URL);
+    return iconDatabase()->iconURLForPageURL(URL);
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
@@ -181,7 +181,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.width);
     ASSERT(size.height);
     
-    Image* image = IconDatabase::sharedIconDatabase()->defaultIcon(IntSize(size));
+    Image* image = iconDatabase()->defaultIcon(IntSize(size));
     return image ? image->getNSImage() : nil;
 }
 
@@ -199,7 +199,7 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
 
-    IconDatabase::sharedIconDatabase()->retainIconForPageURL(URL);
+    iconDatabase()->retainIconForPageURL(URL);
 }
 
 - (void)releaseIconForURL:(NSString *)pageURL
@@ -209,7 +209,7 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
 
-    IconDatabase::sharedIconDatabase()->releaseIconForPageURL(pageURL);
+    iconDatabase()->releaseIconForPageURL(pageURL);
 }
 
 - (void)setDelegate:(id)delegate
@@ -233,7 +233,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT_MAIN_THREAD();
     if (![self _isEnabled])
         return;
-    IconDatabase::sharedIconDatabase()->removeAllIcons();
+    iconDatabase()->removeAllIcons();
     // FIXME: This notification won't get sent if WebCore calls removeAllIcons.
     [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification
                                                         object:self
@@ -246,7 +246,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (BOOL)_isEnabled
 {
-    return IconDatabase::sharedIconDatabase()->enabled();
+    return iconDatabase()->enabled();
 }
 
 - (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL
@@ -258,7 +258,7 @@ NSSize WebIconLargeSize = {128, 128};
     // If this iconURL already maps to this pageURL, don't bother sending the notification
     // The WebCore::IconDatabase returns TRUE if we should send the notification, and false if we shouldn't.
     // This is a measurable win on the iBench - about 1% worth on average
-    if (IconDatabase::sharedIconDatabase()->setIconURLForPageURL(iconURL, URL))
+    if (iconDatabase()->setIconURLForPageURL(iconURL, URL))
         // FIXME: This notification won't get set when WebCore sets an icon.
         [self _sendNotificationForURL:URL];
 }
@@ -267,7 +267,7 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT([self _isEnabled]);
 
-    return IconDatabase::sharedIconDatabase()->hasEntryForIconURL(iconURL);
+    return iconDatabase()->hasEntryForIconURL(iconURL);
 }
 
 - (void)_sendNotificationForURL:(NSString *)URL
@@ -283,7 +283,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
-    IconDatabase::sharedIconDatabase()->close();
+    iconDatabase()->close();
 }
 
 - (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
@@ -319,7 +319,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_resetCachedWebPreferences:(NSNotification *)notification
 {
     BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
-    IconDatabase::sharedIconDatabase()->setPrivateBrowsingEnabled(privateBrowsingEnabledNow);
+    iconDatabase()->setPrivateBrowsingEnabled(privateBrowsingEnabledNow);
 }
 
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
@@ -498,7 +498,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     ASSERT(_private);    
     
     // If we've already performed the import once we shouldn't try to do it again
-    if (IconDatabase::sharedIconDatabase()->imported())
+    if (iconDatabase()->imported())
         return;
 
     // Get the directory the old icon database *should* be in
@@ -530,7 +530,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
         iconURL = [pageURLToIconURL objectForKey:url];
         if (!iconURL)
             continue;
-        IconDatabase::sharedIconDatabase()->setIconURLForPageURL(iconURL, url);
+        iconDatabase()->setIconURLForPageURL(iconURL, url);
     }    
 
     // Second, we'll get a list of the unique IconURLs we have
@@ -542,23 +542,23 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     while ((url = [enumerator nextObject]) != nil) {
         iconData = iconDataFromPathForIconURL(databaseDirectory, url);
         if (iconData)
-            IconDatabase::sharedIconDatabase()->setIconDataForIconURL(SharedBuffer::wrapNSData(iconData), url);
+            iconDatabase()->setIconDataForIconURL(SharedBuffer::wrapNSData(iconData), url);
         else {
             // This really *shouldn't* happen, so it'd be good to track down why it might happen in a debug build
             // however, we do know how to handle it gracefully in release
             LOG_ERROR("%@ is marked as having an icon on disk, but we couldn't get the data for it", url);
-            IconDatabase::sharedIconDatabase()->setHaveNoIconForIconURL(url);
+            iconDatabase()->setHaveNoIconForIconURL(url);
         }
     }
 
-    IconDatabase::sharedIconDatabase()->setImported(true);
+    iconDatabase()->setImported(true);
     
     // After we're done importing old style icons over to webcore icons, we delete the entire directory hierarchy 
     // for the old icon DB (skipping the new iconDB if it is in the same directory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
     enumerator = [[fileManager directoryContentsAtPath:databaseDirectory] objectEnumerator];
     
-    NSString *databaseFilename = IconDatabase::sharedIconDatabase()->defaultDatabaseFilename();
+    NSString *databaseFilename = iconDatabase()->defaultDatabaseFilename();
 
     BOOL foundIconDB = NO;
     NSString *file;

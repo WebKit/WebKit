@@ -77,7 +77,6 @@ public:
     
     Image* icon() const;
     
-    void retainIconInDatabase(bool retain);
     static void performPendingReleaseOfCachedPages();
     void setCachedPage(PassRefPtr<CachedPage>);
     CachedPage* cachedPage();

@@ -1,3 +1,20 @@
+2007-05-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        "IconDatabase::sharedIconDatabase()" => "iconDatabase()" for terseness,
+        in the style of WebCore::cache().
+
+        * WebCore.exp:
+        * history/HistoryItem.cpp: Removed retainIconInDatabase because calling
+        "retain" in order to release something is really confusing and, now that
+        iconDatabase() is more terse, we don't need this helper to shorten the
+        syntax. (The isEmpty() check is also done by the database, so we don't 
+        need it either.)
+
+        (WebCore::IconDatabase::~IconDatabase): ASSERT that our destructor isn't
+        called. We're a singleton, so it's confusing to have tear-down code.
+
 2007-05-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -134,7 +134,7 @@ void IconLoader::finishLoading(const KURL& iconURL)
     // but must handle it gracefully in release
     ASSERT(m_resourceLoader);
     if (!iconURL.isEmpty() && m_resourceLoader) {
-        IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
+        iconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
         m_frame->loader()->commitIconURLToIconDatabase(iconURL);
         m_frame->loader()->client()->dispatchDidReceiveIcon();
     }
