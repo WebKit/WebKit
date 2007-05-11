@@ -1,14 +1,3 @@
-2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
-
-        Reviewed by Darin.
-
-        - Tests for fix to http://bugs.webkit.org/show_bug.cgi?id=13622 (Decompiler omits
-          trailing comma in array literal)
-
-        * fast/js/resources/toString-elision-trailing-comma.js: Added.
-        * fast/js/toString-elision-trailing-comma-expected.txt: Added.
-        * fast/js/toString-elision-trailing-comma.html: Added.
-
 2007-05-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
