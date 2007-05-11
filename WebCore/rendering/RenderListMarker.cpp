@@ -878,21 +878,28 @@ void RenderListMarker::setSelectionState(SelectionState state)
     containingBlock()->setSelectionState(state);
 }
 
-IntRect RenderListMarker::selectionRect()
+IntRect RenderListMarker::selectionRect(bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
     if (selectionState() == SelectionNone || !inlineBoxWrapper())
         return IntRect();
 
-    int absx, absy;
-    RenderBlock* cb = containingBlock();
-    cb->absolutePosition(absx, absy);
-    if (cb->hasOverflowClip())
-        cb->layer()->subtractScrollOffset(absx, absy);
-
     RootInlineBox* root = inlineBoxWrapper()->root();
-    return IntRect(absx + xPos(), absy + root->selectionTop(), width(), root->selectionHeight());
+    IntRect rect(xPos(), root->selectionTop(), width(), root->selectionHeight());
+            
+    if (clipToVisibleContent)
+        computeAbsoluteRepaintRect(rect);
+    else {
+        int absx, absy;
+        RenderBlock* cb = containingBlock();
+        cb->absolutePosition(absx, absy);
+        if (cb->hasOverflowClip())
+            cb->layer()->subtractScrollOffset(absx, absy);
+        rect.move(absx, absy);
+    }
+    
+    return rect;
 }
 
 } // namespace WebCore

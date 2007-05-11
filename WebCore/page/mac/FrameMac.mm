@@ -372,7 +372,8 @@ NSImage* Frame::imageFromRect(NSRect rect) const
 NSImage* Frame::selectionImage(bool forceWhiteText) const
 {
     d->m_paintRestriction = forceWhiteText ? PaintRestrictionSelectionOnlyWhiteText : PaintRestrictionSelectionOnly;
-    NSImage* result = imageFromRect(visibleSelectionRect());
+    d->m_doc->updateLayout();
+    NSImage* result = imageFromRect(selectionRect());
     d->m_paintRestriction = PaintRestrictionNone;
     return result;
 }

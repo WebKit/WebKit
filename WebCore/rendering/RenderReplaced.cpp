@@ -152,7 +152,7 @@ VisiblePosition RenderReplaced::positionForCoordinates(int x, int y)
     return RenderBox::positionForCoordinates(x, y);
 }
 
-IntRect RenderReplaced::selectionRect()
+IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
@@ -172,12 +172,19 @@ IntRect RenderReplaced::selectionRect()
     int selectionLeft = xPos();
     int selectionRight = xPos() + width();
     
-    int absx, absy;
-    cb->absolutePositionForContent(absx, absy);
-    if (cb->hasOverflowClip())
-        cb->layer()->subtractScrollOffset(absx, absy);
-
-    return IntRect(selectionLeft + absx, selectionTop + absy, selectionRight - selectionLeft, selectionHeight);
+    IntRect rect(selectionLeft, selectionTop, selectionRight - selectionLeft, selectionHeight);
+    
+    if (clipToVisibleContent)
+        computeAbsoluteRepaintRect(rect);
+    else {
+        int absx, absy;
+        cb->absolutePositionForContent(absx, absy);
+        if (cb->hasOverflowClip())
+            cb->layer()->subtractScrollOffset(absx, absy);
+        rect.move(absx, absy);
+    }
+    
+    return rect;
 }
 
 void RenderReplaced::setSelectionState(SelectionState s)

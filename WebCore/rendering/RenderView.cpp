@@ -228,7 +228,7 @@ RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)
     return child ? child : object->nextInPreOrderAfterChildren();
 }
 
-IntRect RenderView::selectionRect() const
+IntRect RenderView::selectionRect(bool clipToVisibleContent) const
 {
     document()->updateRendering();
 
@@ -240,13 +240,13 @@ IntRect RenderView::selectionRect() const
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            selectedObjects.set(os, new SelectionInfo(os));
+            selectedObjects.set(os, new SelectionInfo(os, clipToVisibleContent));
             RenderBlock* cb = os->containingBlock();
             while (cb && !cb->isRenderView()) {
                 SelectionInfo* blockInfo = selectedObjects.get(cb);
                 if (blockInfo)
                     break;
-                selectedObjects.set(cb, new SelectionInfo(cb));
+                selectedObjects.set(cb, new SelectionInfo(cb, clipToVisibleContent));
                 cb = cb->containingBlock();
             }
         }
@@ -299,7 +299,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
-            oldSelectedObjects.set(os, new SelectionInfo(os));
+            oldSelectedObjects.set(os, new SelectionInfo(os, false));
             RenderBlock* cb = os->containingBlock();
             while (cb && !cb->isRenderView()) {
                 BlockSelectionInfo* blockInfo = oldSelectedBlocks.get(cb);
@@ -348,7 +348,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     o = start;
     while (o && o != stop) {
         if ((o->canBeSelectionLeaf() || o == start || o == end) && o->selectionState() != SelectionNone) {
-            newSelectedObjects.set(o, new SelectionInfo(o));
+            newSelectedObjects.set(o, new SelectionInfo(o, false));
             RenderBlock* cb = o->containingBlock();
             while (cb && !cb->isRenderView()) {
                 BlockSelectionInfo* blockInfo = newSelectedBlocks.get(cb);

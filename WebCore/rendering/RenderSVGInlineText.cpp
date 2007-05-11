@@ -45,9 +45,9 @@ void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
     rects.append(enclosingIntRect(absoluteRect));
 }
 
-IntRect RenderSVGInlineText::selectionRect()
+IntRect RenderSVGInlineText::selectionRect(bool clipToVisibleContent)
 {
-    IntRect rect = RenderText::selectionRect();
+    IntRect rect = RenderText::selectionRect(clipToVisibleContent);
     rect = parent()->absoluteTransform().mapRect(rect);
     return rect;
 }

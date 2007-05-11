@@ -1179,22 +1179,15 @@ RenderPart* Frame::ownerRenderer()
     return static_cast<RenderPart*>(ownerElement->renderer());
 }
 
-IntRect Frame::selectionRect() const
+// returns FloatRect because going through IntRect would truncate any floats
+FloatRect Frame::selectionRect(bool clipToVisibleContent) const
 {
     RenderView *root = static_cast<RenderView*>(renderer());
     if (!root)
         return IntRect();
-
-    return root->selectionRect();
-}
-
-// returns FloatRect because going through IntRect would truncate any floats
-FloatRect Frame::visibleSelectionRect() const
-{
-    if (!d->m_view)
-        return FloatRect();
     
-    return intersection(selectionRect(), d->m_view->visibleContentRect());
+    IntRect selectionRect = root->selectionRect(clipToVisibleContent);
+    return clipToVisibleContent ? intersection(selectionRect, d->m_view->visibleContentRect()) : selectionRect;
 }
 
 bool Frame::isFrameSet() const
@@ -1260,7 +1253,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
             break;
             
         case Selection::RANGE:
-            rect = selectionRect();
+            rect = enclosingIntRect(selectionRect(false));
             break;
     }
 
@@ -1504,7 +1497,7 @@ void Frame::setIsActive(bool flag)
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
     if (d->m_view)
-        d->m_view->updateContents(enclosingIntRect(visibleSelectionRect()));
+        d->m_view->updateContents(enclosingIntRect(selectionRect()));
 
     // Caret appears in the active frame.
     if (flag)

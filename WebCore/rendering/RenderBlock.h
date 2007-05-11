@@ -249,7 +249,7 @@ public:
         SelectionState state() const { return m_state; }
     };
 
-    virtual IntRect selectionRect() { return selectionGapRects(); }
+    virtual IntRect selectionRect(bool) { return selectionGapRects(); }
     GapRects selectionGapRects();
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;

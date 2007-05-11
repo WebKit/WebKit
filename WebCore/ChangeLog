@@ -1,3 +1,50 @@
+2007-05-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebCore part of fix for <rdar://problem/4100616> Doing a "find" in RSS doesn't scroll to result
+
+        Test: fast/overflow/scroll-nested-positioned-layer-in-overflow.html
+
+        Merged visibleSelectionRect into selectionRect.  selectionRect() now takes an argument to determine
+        whether or not to return a rect that clips to the visible content.  This change makes all of the implementations of selectionRect
+        consistent by having them all consider the repaint rect when clipping to visible content.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection): Call selectionRect with clipToVisibleContent = false, so we can get a rect that's not visible to reveal.
+        (WebCore::Frame::selectionRect): Added clipToVisibleContent argument, and merged visibleSelectionRect into this method.
+        (WebCore::Frame::setIsActive): Use selectionRect instead of visibleSelectionRect.
+        * page/Frame.h:
+        * page/mac/FrameMac.mm: (WebCore::Frame::selectionImage): Update layout before creating the image.  Use selectionRect instead of visibleSelectionRect.
+        * page/DragController.cpp: (WebCore::dragLocForSelectionDrag): Use selectionRect instead of visibleSelectionRect.
+
+        * rendering/RenderBR.h: (WebCore::RenderBR::selectionRect): Updated argument.
+        * rendering/RenderBlock.h: (WebCore::RenderBlock::selectionRect): ditto.
+        * rendering/RenderSVGInlineText.cpp: (WebCore::RenderSVGInlineText::selectionRect): ditto.
+        * rendering/RenderSVGInlineText.h: ditto.
+        * rendering/RenderObject.h: 
+        (WebCore::RenderObject::selectionRect): ditto.
+        (WebCore::RenderObject::SelectionInfo::SelectionInfo): ditto.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionRect): ditto.
+        (WebCore::RenderView::setSelection): ditto.
+        * rendering/RenderView.h:
+
+        * rendering/RenderText.h:
+        * rendering/RenderText.cpp: (WebCore::RenderText::selectionRect): Only call computeAbsoluteRepaintRect when clipping to visible content.
+        Otherwise, just adjust the rect to the correct position.
+        * rendering/RenderListMarker.h:
+        * rendering/RenderListMarker.cpp: (WebCore::RenderListMarker::selectionRect):
+          To match what we do in RenderText, if we're trying to clip to visible content, just call computeAbsoluteRepaintRect.
+        * rendering/RenderReplaced.h:
+        * rendering/RenderReplaced.cpp: (WebCore::RenderReplaced::selectionRect): ditto.
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::scrollRectToVisible): Check for a parent layer at the beginning, so we can try to scroll all of our parent layers 
+          first, before trying to scroll the top level view.  Also, don't try to scroll overflow layers that have -webkit-line-clamp restricting the height.
+          This will prevent us from revealing text hidden by the slider in Safari RSS.
+
+        * WebCore.exp: Update symbols for WebKit.
+
 2007-05-10  David Hyatt  <hyatt@apple.com>
 
         Fix for:

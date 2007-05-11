@@ -707,8 +707,16 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     FrameView* frameView = m_object->document()->view();
     if (frameView)
         frameView->pauseScheduledEvents();
-    
-    if (m_object->hasOverflowClip()) {
+
+    bool restrictedByLineClamp = false;
+    if (m_object->parent()) {
+        parentLayer = m_object->parent()->enclosingLayer();
+        restrictedByLineClamp = m_object->parent()->style()->lineClamp() >= 0;
+    }
+
+    if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
+        // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
+        // This will prevent us from revealing text hidden by the slider in Safari RSS.
         int x, y;
         m_object->absolutePosition(x, y);
         IntRect layerBounds = IntRect(x + scrollXOffset(), y + scrollYOffset(), 
@@ -731,10 +739,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
         }
-    
-        if (m_object->parent())
-            parentLayer = m_object->parent()->enclosingLayer();
-    } else {
+    } else if (!parentLayer) {
         if (frameView) {
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
                 IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());

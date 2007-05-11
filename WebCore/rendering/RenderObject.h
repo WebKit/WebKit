@@ -746,7 +746,7 @@ public:
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
     // possible bounding box for the selection.
-    virtual IntRect selectionRect() { return IntRect(); }
+    virtual IntRect selectionRect(bool) { return IntRect(); }
 
     // Whether or not an object can be part of the leaf elements of the selection.
     virtual bool canBeSelectionLeaf() const { return false; }
@@ -776,9 +776,9 @@ public:
         {
         }
 
-        SelectionInfo(RenderObject* o)
+        SelectionInfo(RenderObject* o, bool clipToVisibleContent)
             : m_object(o)
-            , m_rect(o->needsLayout() ? IntRect() : o->selectionRect())
+            , m_rect(o->needsLayout() ? IntRect() : o->selectionRect(clipToVisibleContent))
             , m_state(o->selectionState())
         {
         }

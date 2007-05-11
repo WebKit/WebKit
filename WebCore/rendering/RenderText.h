@@ -100,7 +100,7 @@ public:
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState s);
-    virtual IntRect selectionRect();
+    virtual IntRect selectionRect(bool clipToVisibleContent = true);
     virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
 
     virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }

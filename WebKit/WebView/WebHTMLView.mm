@@ -5237,7 +5237,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
     // the bottom of the selection rather than at the selected word.
-    NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
+    NSRect rect = [self convertRect:core([self _frame])->selectionRect() toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
@@ -5245,7 +5245,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // The DictionaryServices API requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
-    NSRect rect = core([self _frame])->visibleSelectionRect();
+    NSRect rect = core([self _frame])->selectionRect();
 
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
@@ -5946,7 +5946,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (NSRect)selectionImageRect
 {
     if ([self _hasSelection])
-        return core([self _frame])->visibleSelectionRect();
+        return core([self _frame])->selectionRect();
     return NSZeroRect;
 }
 

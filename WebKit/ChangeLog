@@ -1,3 +1,15 @@
+2007-05-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebKit part of fix for <rdar://problem/4100616> Doing a "find" in RSS doesn't scroll to result
+
+        Updated to use selectionRect instead of visibleSelectionRect.  selectionRect() now returns the visible rect by default.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView selectionImageRect]):
+
 2007-05-10  dethbakin  <bdakin@apple.com>
 
         Reviewed by Darin.

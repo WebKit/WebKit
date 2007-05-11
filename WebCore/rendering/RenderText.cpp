@@ -1026,7 +1026,7 @@ IntRect RenderText::absoluteClippedOverflowRect()
     return cb->absoluteClippedOverflowRect();
 }
 
-IntRect RenderText::selectionRect()
+IntRect RenderText::selectionRect(bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
@@ -1064,12 +1064,21 @@ IntRect RenderText::selectionRect()
     if (cb->hasOverflowClip()) {
         int x = rect.x();
         int y = rect.y();
-        IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
         cb->layer()->subtractScrollOffset(x, y);
-        IntRect repaintRect(x, y, rect.width(), rect.height());
-        rect = intersection(repaintRect, boxRect);
+        if (clipToVisibleContent) {
+            IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
+            IntRect repaintRect(x, y, rect.width(), rect.height());
+            rect = intersection(repaintRect, boxRect);
+        }
     }
-    cb->computeAbsoluteRepaintRect(rect);
+
+    if (clipToVisibleContent)
+        cb->computeAbsoluteRepaintRect(rect);
+    else {
+        int absx, absy;
+        cb->absolutePosition(absx, absy);
+        rect.move(absx, absy);
+    }
 
     return rect;
 }
