@@ -1,3 +1,13 @@
+2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - Fixes http://bugs.webkit.org/show_bug.cgi?id=13622 (Decompiler omits trailing
+          comma in array literal)
+
+        * kjs/grammar.y: Add the comma that parser consumes in elision
+          when the array has trailing commas.
+
 2007-05-10  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

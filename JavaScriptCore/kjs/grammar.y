@@ -260,7 +260,7 @@ PrimaryExprNoBrace:
 ArrayLiteral:
     '[' ElisionOpt ']'                  { $$ = new ArrayNode($2); }
   | '[' ElementList ']'                 { $$ = new ArrayNode($2); }
-  | '[' ElementList ',' ElisionOpt ']'  { $$ = new ArrayNode($4, $2); }
+  | '[' ElementList ',' ElisionOpt ']'  { $$ = new ArrayNode($4 + 1, $2); }
 ;
 
 ElementList:
