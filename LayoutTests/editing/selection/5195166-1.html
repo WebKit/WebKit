@@ -12,6 +12,12 @@ function log(str) {
 if (window.layoutTestController) {
     var text = document.getElementById("div").firstChild;
     var selection = window.getSelection();
+    
+    // FIXME: m_lastChangeWasHorizontalExtension isn't cleared in several places
+    // where it should be, when opening a new document for example.
+    selection.setPosition(text, 0);
+    selection.modify("move", "forward", "character");
+    
     selection.setBaseAndExtent(text, 3 + 5, text, 3);
     // Extending this 5 character selection will select 6 characters.
     textInputController.doCommand("moveForwardAndModifySelection:");
