@@ -17,7 +17,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ustring.h>
 #include <unicode/ushape.h>
-#include <wtf/assertions.h>
+#include <wtf/Assertions.h>
 
 /*
  * ### TODO in general for letter shaping:
