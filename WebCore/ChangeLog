@@ -1,3 +1,19 @@
+2007-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Bug 13676: [cairo/gdk] Provide implementation for ImageBufferCairo
+        http://bugs.webkit.org/show_bug.cgi?id=13676
+
+        There are no test cases that explicitly cover platform/graphics at present.
+
+        * platform/graphics/ImageBuffer.h: Add cairo bits
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Untested implementation of the ImagerBuffer using the image_surface
+        (WebCore::ImageBuffer::create): Create a reasonable sized surface
+        (WebCore::ImageBuffer::ImageBuffer): Use a cairo_surface and create a GraphicsContext. GraphicsContext takes the cairo_t ownership
+        (WebCore::ImageBuffer::~ImageBuffer): Unref the surface
+        (WebCore::ImageBuffer::context): simply return the GraphicsContext, it should be possible to directly draw on it.
+
 2007-05-11  Mitz Pettel  <mitz@webkit.org>
 
         Release build fix.
