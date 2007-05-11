@@ -38,8 +38,7 @@
 #import "TextStyle.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
-
-#import <unicode/ushape.h>
+#import "ShapeArabic.h"
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 
@@ -284,7 +283,7 @@ static void shapeArabic(const UChar* source, UChar* dest, unsigned totalLength, 
         shapingEnd++;
 
         UErrorCode shapingError = U_ZERO_ERROR;
-        unsigned charsWritten = u_shapeArabic(source + shapingStart, shapingEnd - shapingStart, dest + shapingStart, shapingEnd - shapingStart, U_SHAPE_LETTERS_SHAPE | U_SHAPE_LENGTH_FIXED_SPACES_NEAR, &shapingError);
+        unsigned charsWritten = shapeArabic(source + shapingStart, shapingEnd - shapingStart, dest + shapingStart, shapingEnd - shapingStart, U_SHAPE_LETTERS_SHAPE | U_SHAPE_LENGTH_FIXED_SPACES_NEAR, &shapingError);
 
         if (U_SUCCESS(shapingError) && charsWritten == shapingEnd - shapingStart) {
             for (unsigned j = shapingStart; j < shapingEnd - 1; ++j) {

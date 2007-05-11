@@ -1,3 +1,32 @@
+2007-05-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13572
+          Arabic characters are not correctly joined when using Arial
+
+        No tests added because standard fonts do not use the character-based shaping
+        code path.
+
+        Added shapeArabic(), a private version of u_shapeArabic() from ICU,
+        patched to shape Arabic characters used in Persian, Urdu, Sindhi, etc.
+        (whose contextual forms belong to the Arabic Presentation Forms-A block).
+
+        * WebCore.xcodeproj/project.pbxproj: Added ShapeArabic.{c,h}.
+        * platform/mac/FontMac.mm:
+        (WebCore::shapeArabic): Changed to call shapeArabic() instead of u_shapeArabic().
+        * platform/mac/ShapeArabic.c: Added. Based on ushape.c from ICU, with
+        additional shaping data and logic for Arabic Presentation Forms-A. Removed
+        many options that are not used in WebKit and code that malloc()ed a temporary
+        buffer and reversed the string.
+        (changeLamAlef):
+        (specialChar):
+        (getLink):
+        (isTashkeelChar):
+        (shapeUnicode):
+        (shapeArabic):
+        * platform/mac/ShapeArabic.h: Added.
+
 2007-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

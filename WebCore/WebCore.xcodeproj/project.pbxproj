@@ -272,6 +272,8 @@
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; };
+		37919C190BF375DD00956998 /* ShapeArabic.c in Sources */ = {isa = PBXBuildFile; fileRef = 37919C180BF375DD00956998 /* ShapeArabic.c */; };
+		37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C1C0BF3762800956998 /* ShapeArabic.h */; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
@@ -3390,6 +3392,8 @@
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		37919C180BF375DD00956998 /* ShapeArabic.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ShapeArabic.c; sourceTree = "<group>"; };
+		37919C1C0BF3762800956998 /* ShapeArabic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeArabic.h; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
@@ -6937,6 +6941,8 @@
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */,
+				37919C1C0BF3762800956998 /* ShapeArabic.h */,
+				37919C180BF375DD00956998 /* ShapeArabic.c */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
@@ -11264,6 +11270,7 @@
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
 				14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */,
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
+				37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12637,6 +12644,7 @@
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
 				AACF144D0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm in Sources */,
 				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
+				37919C190BF375DD00956998 /* ShapeArabic.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
