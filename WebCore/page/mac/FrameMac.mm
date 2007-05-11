@@ -732,7 +732,8 @@ void Frame::cleanupPlatformScriptObjects()
     // (This problem is unique to m_windowScriptObject because its JS/DOM counterparts
     // persist across page loads.)
     removeDOMWrapper(reinterpret_cast<DOMObjectInternal*>(d->m_domWindow.get()));
-    removeJSWrapper(KJS::Window::retrieveWindow(this));
+    if (d->m_jscript->haveInterpreter())
+        removeJSWrapper(KJS::Window::retrieveWindow(this));
     d->m_windowScriptObject = 0;
 }
 

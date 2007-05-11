@@ -1,3 +1,19 @@
+<<<<<<< .mine
+2007-05-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - fixed <rdar://problem/5197621> closing second window crashed webkit (13660)
+        http://bugs.webkit.org/show_bug.cgi?id=13660
+
+        No test case; not testable.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::cleanupPlatformScriptObjects): Check if the interpreter is null;
+        if so, we don't want to do work that may lazily create it while the Frame is being
+        destroyed.
+
+=======
 2007-05-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.
@@ -23,6 +39,7 @@
           Don't create SVG elements for documents that are in dashboard
           compatibility mode
 
+>>>>>>> .r21418
 2007-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.
