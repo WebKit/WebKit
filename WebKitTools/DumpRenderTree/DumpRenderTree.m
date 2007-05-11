@@ -379,26 +379,6 @@ static void makeLargeMallocFailSilently(void)
     zone->realloc = checkedRealloc;
 }
 
-static JSValueRef returnThisCallback(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    return thisObject;
-}
-
-static JSClassRef returnThisClass()
-{
-    static JSClassRef jsClass;
-    if (!jsClass) {
-        JSStaticFunction staticFunctions[] = {
-            { "returnThis", returnThisCallback, kJSPropertyAttributeNone },
-            { 0, 0, 0 }
-        };
-        JSClassDefinition classDefinition = kJSClassDefinitionEmpty;
-        classDefinition.staticFunctions = staticFunctions;
-        jsClass = JSClassCreate(&classDefinition);
-    }
-    return jsClass;
-}
-
 WebView *createWebView()
 {
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
@@ -1006,7 +986,6 @@ static void dump(void)
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
 {
     ASSERT(obj == [frame windowObject]);
-    ASSERT(obj == [WebScriptObject scriptObjectForJSObject:[obj JSObject] frame:frame]);
     ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
     
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
@@ -1079,7 +1058,7 @@ static void dump(void)
             || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(accessStoredWebScriptObject)
-            || aSelector == @selector(testWrapperRoundTripping)
+            || aSelector == @selector(testWrapperRoundTripping:)
             || aSelector == @selector(setUserStyleSheetLocation:)
             || aSelector == @selector(setUserStyleSheetEnabled:)
             || aSelector == @selector(objCClassNameOf:)
@@ -1114,6 +1093,8 @@ static void dump(void)
         return @"setTabKeyCyclesThroughElements";
     if (aSelector == @selector(storeWebScriptObject:))
         return @"storeWebScriptObject";
+    if (aSelector == @selector(testWrapperRoundTripping:))
+        return @"testWrapperRoundTripping";
     if (aSelector == @selector(setUserStyleSheetLocation:))
         return @"setUserStyleSheetLocation";
     if (aSelector == @selector(setUserStyleSheetEnabled:))
@@ -1401,18 +1382,14 @@ static void dump(void)
     [storedWebScriptObject setException:@"exception"];
 }
 
-- (BOOL)testWrapperRoundTripping
+- (BOOL)testWrapperRoundTripping:(WebScriptObject *)webScriptObject
 {
-    JSObjectRef jsObject = JSObjectMake([frame globalContext], returnThisClass(), NULL);
-    WebScriptObject *webScriptObject = [WebScriptObject scriptObjectForJSObject:jsObject frame:frame];
+    JSObjectRef jsObject = [webScriptObject JSObject];
 
     if (!jsObject)
         return false;
 
     if (!webScriptObject)
-        return false;
-
-    if (jsObject != [webScriptObject JSObject])
         return false;
 
     if ([[webScriptObject evaluateWebScript:@"({ })"] class] != [webScriptObject class])

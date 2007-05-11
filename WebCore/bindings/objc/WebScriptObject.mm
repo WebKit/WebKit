@@ -95,14 +95,6 @@ id createJSWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> 
 }
 #endif
 
-+ (id)scriptObjectForJSObject:(JSObjectRef)jsObject frame:(WebFrame *)frame
-{
-    WebCore::Frame* coreFrame = [[frame _bridge] _frame];
-    if (!coreFrame)
-        return nil;
-    return [WebScriptObject scriptObjectForJSObject:jsObject originRootObject:0 rootObject:coreFrame->bindingRootObject()];
-}
-
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
     if (id domWrapper = WebCore::createDOMWrapper(toJS(jsObject), originRootObject, rootObject))

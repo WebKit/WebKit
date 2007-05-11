@@ -26,7 +26,8 @@ function runTest()
 
     var message = "FAIL: Test did not run properly.";
     try {
-        success = layoutTestController.testWrapperRoundTripping();
+        var object = { returnThis: function() { return this; } };
+        success = layoutTestController.testWrapperRoundTripping(object);
         message = success
             ? "PASS."
             : "FAIL: wrapper round tripping failed.";
