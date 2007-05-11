@@ -2,7 +2,7 @@
 
         Reviewed by Hyatt.
 
-        <rdar://problem/5193517> FrameLoader::canCachePage() might walk the entire DOM
+        REGRESSION (r21367): Crash due to null document deref when closing bookmarks
         http://bugs.webkit.org/show_bug.cgi?id=13662
 
         * loader/FrameLoader.cpp:
