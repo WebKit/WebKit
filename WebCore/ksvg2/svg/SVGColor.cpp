@@ -95,7 +95,6 @@ Color SVGColor::colorFromRGBColorString(const String& colorString)
     if (colorString.isNull())
         return Color();
 
-    Color color;
     String parse = colorString.stripWhiteSpace();
     if (parse.startsWith("rgb(")) {
         double r = -1, g = -1, b = -1;

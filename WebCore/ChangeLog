@@ -1,3 +1,17 @@
+2007-05-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        Cleanups mostly inspired by Coverage results.
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleFillData::operator==):
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+
 2007-05-11  Holger Freyther <freyther@kde.org>
 
         Reviewed by Mark Rowe.

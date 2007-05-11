@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2005, 2006 Apple Computer, Inc.
 
     This file is part of the KDE project
@@ -42,34 +42,16 @@ namespace WebCore {
 
 bool CSSParser::parseSVGValue(int propId, bool important)
 {
-    if (!valueList)
-        return false;
-
     Value* value = valueList->current();
     if (!value)
         return false;
 
     int id = value->id;
 
-    int num = inShorthand() ? 1 : valueList->size();
-
-    if (id == CSS_VAL_INHERIT) {
-        if (num != 1)
-            return false;
-        addProperty(propId, new CSSInheritedValue(), important);
-        return true;
-    } else if (id == CSS_VAL_INITIAL) {
-        if (num != 1)
-            return false;
-        addProperty(propId, new CSSInitialValue(), important);
-        return true;
-    }
-    
     bool valid_primitive = false;
     CSSValue* parsedValue = 0;
 
-    switch(propId)
-    {
+    switch (static_cast<CSSPropertyID>(propId)) {
     /* The comment to the right defines all valid value of these
      * properties as defined in SVG 1.1, Appendix N. Property index */
     case SVGCSS_PROP_ALIGNMENT_BASELINE:
@@ -331,12 +313,12 @@ CSSValue* CSSParser::parseSVGStrokeDasharray()
     CSSValueList* ret = new CSSValueList;
     Value* value = valueList->current();
     bool valid_primitive = true;
-    while(valid_primitive && value) {
+    while (value) {
         valid_primitive = validUnit(value, FLength | FPercent |FNonNeg, false);
+        if (!valid_primitive)
+            break;
         if (value->id != 0)
             ret->append(new CSSPrimitiveValue(value->id));
-        else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-            ret->append(new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit));
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
             ret->append(new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
         value = valueList->next();
