@@ -1,3 +1,17 @@
+2007-05-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - repaint test and updated results for http://bugs.webkit.org/show_bug.cgi?id=13655
+          Incomplete repaint when text-shadow is used in a render layer with explicit height
+
+        * fast/repaint/layer-full-repaint-expected.checksum: Added.
+        * fast/repaint/layer-full-repaint-expected.png: Added.
+        * fast/repaint/layer-full-repaint-expected.txt: Added.
+        * fast/repaint/layer-full-repaint.html: Added.
+        * fast/repaint/repaint-resized-overflow-expected.checksum:
+        * fast/repaint/repaint-resized-overflow-expected.png:
+
 2007-05-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren

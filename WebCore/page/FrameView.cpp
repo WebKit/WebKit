@@ -405,9 +405,6 @@ void FrameView::layout(bool allowSubtree)
     
     RenderLayer* layer = root->enclosingLayer();
      
-    if (!d->doFullRepaint)
-        layer->checkForRepaintOnResize();
-
     pauseScheduledEvents();
 
     if (subtree)

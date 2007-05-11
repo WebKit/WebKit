@@ -141,7 +141,7 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_isOverflowOnly(shouldBeOverflowOnly())
     , m_usedTransparency(false)
     , m_inOverflowRelayout(false)
-    , m_repaintOverflowOnResize(false)
+    , m_needsFullRepaint(false)
     , m_overflowStatusDirty(true)
     , m_visibleContentStatusDirty(true)
     , m_hasVisibleContent(false)
@@ -174,15 +174,6 @@ RenderLayer::~RenderLayer()
     ASSERT(!m_clipRects);
 }
 
-void RenderLayer::checkForRepaintOnResize()
-{
-    // FIXME: The second part of the condition is probably no longer needed. The first part can be
-    // done when the object is marked for layout instead of walking the tree here.
-    m_repaintOverflowOnResize = m_object->selfNeedsLayout() || m_object->hasOverflowClip() && m_object->normalChildNeedsLayout();
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->checkForRepaintOnResize();
-}
-
 void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 {
     if (doFullRepaint) {
@@ -209,13 +200,12 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         IntRect newOutlineBox = m_object->absoluteOutlineBox();
         if (checkForRepaint) {
             if (view && !view->printing()) {
-                bool didMove = newOutlineBox.location() != m_outlineBox.location();
-                if (!didMove && !m_repaintOverflowOnResize)
-                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
-                else if (didMove || newRect != m_repaintRect) {
+                if (m_needsFullRepaint) {
                     view->repaintViewRectangle(m_repaintRect);
-                    view->repaintViewRectangle(newRect);
-                }
+                    if (newRect != m_repaintRect)
+                        view->repaintViewRectangle(newRect);
+                } else
+                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
             }
         }
         m_repaintRect = newRect;
@@ -224,6 +214,8 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         m_repaintRect = IntRect();
         m_outlineBox = IntRect();
     }
+
+    m_needsFullRepaint = false;
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(doFullRepaint, checkForRepaint);

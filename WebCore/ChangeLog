@@ -1,3 +1,33 @@
+2007-05-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13655
+          Incomplete repaint when text-shadow is used in a render layer with explicit height
+
+        Test: fast/repaint/layer-full-repaint.html
+
+        Removed custom repaint logic from RenderLayer. repaintAfterLayoutIfNeeded()
+        knows how to do everything we need now. The only catch is that we cannot
+        rely on its "do a full repaint if the object needs layout" behavior, since
+        by the time we call it, the needs layout flag has been reset. The solution
+        is to cache the need for a full repaint in the layer.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Removed call to checkForRepaintOnResize().
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::checkForRepaintOnResize): Removed.
+        (WebCore::RenderLayer::RenderLayer): Replaced the m_repaintOverflowOnResize
+        flag with a m_needsFullRepaint flag, which indicates that the layer needs
+        to do a full repaint in the next call to updateLayerPositions().
+        (WebCore::RenderLayer::updateLayerPositions): Simplified the repaint logic.
+        Either call repaintAfterLayoutIfNeeded() or do a full repaint, depending on
+        m_needsFullRepaint.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::setNeedsFullRepaint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setNeedsLayout): Mark the layer for full repaint.
+
 2007-05-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren
