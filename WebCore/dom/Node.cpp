@@ -1005,13 +1005,15 @@ void Node::createRendererIfNeeded()
         ) {
         RenderStyle* style = styleForRenderer(parentRenderer);
         if (rendererIsNeeded(style)) {
-            RenderObject* r = createRenderer(document()->renderArena(), style);
-            if (r && parentRenderer->isChildAllowed(r, style)) {
-                setRenderer(r);
-                renderer()->setStyle(style);
-                parentRenderer->addChild(renderer(), nextRenderer());
-            } else 
-                r->destroy();
+            if (RenderObject* r = createRenderer(document()->renderArena(), style)) {
+                if (!parentRenderer->isChildAllowed(r, style))
+                    r->destroy();
+                else {
+                    setRenderer(r);
+                    renderer()->setStyle(style);
+                    parentRenderer->addChild(renderer(), nextRenderer());
+                }
+            }
         }
         style->deref(document()->renderArena());
     }

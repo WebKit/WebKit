@@ -1,9 +1,7 @@
 /*
- * This file is part of the render object implementation for KHTML.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -3595,6 +3593,12 @@ void RenderBlock::calcInlinePrefWidths()
                     inlineMax += childMax;
                     
                     child->setPrefWidthsDirty(false);
+
+                    if (static_cast<RenderFlow*>(child)->isWordBreak()) {
+                        // End a line and start a new line.
+                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
+                        inlineMin = 0;
+                    }
                 }
                 else {
                     // Inline replaced elts add in their margins to their min/max values.

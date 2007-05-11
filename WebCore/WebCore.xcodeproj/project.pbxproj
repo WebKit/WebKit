@@ -1493,6 +1493,8 @@
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; };
 		936B424E09A436CD00BAA820 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */; };
 		937256100A61564200B053B9 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9372560F0A61564200B053B9 /* libsqlite3.dylib */; };
+		93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */; };
+		93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */ = {isa = PBXBuildFile; fileRef = 93799EF70BF2743600D0F230 /* RenderWordBreak.h */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47709A11ACC001FDB34 /* WidgetMac.mm */; };
@@ -4585,6 +4587,8 @@
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		9372560F0A61564200B053B9 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = /usr/lib/libsqlite3.dylib; sourceTree = "<absolute>"; };
+		93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWordBreak.cpp; sourceTree = "<group>"; };
+		93799EF70BF2743600D0F230 /* RenderWordBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderWordBreak.h; sourceTree = "<group>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
 		9380F47209A11AB4001FDB34 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		9380F47709A11ACC001FDB34 /* WidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetMac.mm; sourceTree = "<group>"; };
@@ -9590,6 +9594,8 @@
 				BCEA4829097D93020094C9E4 /* RenderView.h */,
 				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
 				A871DFE00A15376B00B12A68 /* RenderWidget.h */,
+				93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */,
+				93799EF70BF2743600D0F230 /* RenderWordBreak.h */,
 				A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */,
 				A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */,
 				853CA9E20AEEC608002372DC /* SVGInlineFlowBox.cpp */,
@@ -11257,6 +11263,7 @@
 				E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
 				14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */,
+				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12629,6 +12636,7 @@
 				2D9066060BE141D400956998 /* LayoutState.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
 				AACF144D0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm in Sources */,
+				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -101,6 +101,8 @@ public:
 
     virtual bool hasColumns() const { return m_hasColumns; }
 
+    virtual bool isWordBreak() const { ASSERT(isInlineFlow()); return false; }
+
 private:
     // An inline can be split with blocks occurring in between the inline content.
     // When this occurs we need a pointer to our next object.  We can basically be

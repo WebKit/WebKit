@@ -489,6 +489,7 @@
         rendering/RenderTreeAsText.cpp
         rendering/RenderView.cpp
         rendering/RenderWidget.cpp
+        rendering/RenderWordBreak.cpp
         rendering/RootInlineBox.cpp
         rendering/bidi.cpp
         rendering/break_lines.cpp

@@ -1,8 +1,6 @@
-/**
- * This file is part of the html renderer for KDE.
- *
+/*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -2192,6 +2190,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
             ASSERT(!o->firstChild());
+            if (static_cast<RenderFlow*>(o)->isWordBreak()) {
+                w += tmpW;
+                tmpW = 0;
+                lBreak.obj = o;
+                lBreak.pos = 0;
+            }
             tmpW += o->marginLeft() + o->borderLeft() + o->paddingLeft() +
                     o->marginRight() + o->borderRight() + o->paddingRight();
         } else if (o->isReplaced()) {

@@ -1,3 +1,53 @@
+2007-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7452
+          <rdar://problem/3211749> line breaks ignored after <wbr> in <pre> block (affects livejournal.com)
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10657
+          <rdar://problem/4274588> <wbr> tags are ignored
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12689
+          <wbr> :before/:after content causes line break
+
+        - fix <rdar://problem/5127366> DOM tree isn't correct when parsing with <wbr>
+
+        Test: fast/text/wbr-pre.html
+        Test: fast/text/wbr.html
+        Test: fast/css-generated-content/wbr-with-before-content.html
+        Test: fast/parser/parse-wbr.html
+
+        * html/HTMLElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::endTagRequirement): Use the same end tag requirement for a <wbr>
+        element as for a <br> element, TagStatusForbidden.
+        (WebCore::HTMLElement::tagPriority): Use the same priority for a <wbr> element as for a
+        <br> element, 0.
+        (WebCore::HTMLElement::createRenderer): Added. Create a RenderWordBreak to trigger the
+        new rendering code paths.
+
+        * rendering/RenderFlow.h: Add a virtual isWordBreak so we can detect RenderWordBreak.
+
+        * rendering/RenderWordBreak.h: Added.
+        * rendering/RenderWordBreak.cpp: Added.
+
+        * WebCore.pro: Added new files.
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * WebCoreSources.bkl: Added new files.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::calcInlinePrefWidths): Reset the
+        line when we hit a <wbr>.
+        * rendering/bidi.cpp: (WebCore::RenderBlock::findNextLineBreak): Add a line break when
+        we hit a <wbr>.
+
+        * dom/Node.cpp: (Node::createRendererIfNeeded): Fix a null check for the case where
+        createRenderer returns 0 even though rendererIsNeeded returned true. I can't reproduce
+        it on demand, but while running layout tests I hit this once. Since there was already
+        a null check here, I rearranged it so it guards all the code that uses the renderer.
+        Later we might want to figure out under exactly what circumstances rendererIsNeeded
+        will return true but createRenderer return 0 and consider eliminating them.
+
 2007-05-11  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13675, focus rings don't repaint properly on editable

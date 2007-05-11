@@ -1,3 +1,37 @@
+2007-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=7452
+          <rdar://problem/3211749> line breaks ignored after <wbr> in <pre> block (affects livejournal.com)
+
+        * fast/text/wbr-pre-expected.checksum: Added.
+        * fast/text/wbr-pre-expected.png: Added.
+        * fast/text/wbr-pre-expected.txt: Added.
+        * fast/text/wbr-pre.html: Added.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10657
+          <rdar://problem/4274588> <wbr> tags are ignored
+
+        * fast/text/wbr-expected.checksum: Added.
+        * fast/text/wbr-expected.png: Added.
+        * fast/text/wbr-expected.txt: Added.
+        * fast/text/wbr.html: Added.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12689
+          <wbr> :before/:after content causes line break
+
+        * fast/css-generated-content/wbr-with-before-content-expected.checksum: Added.
+        * fast/css-generated-content/wbr-with-before-content-expected.png: Added.
+        * fast/css-generated-content/wbr-with-before-content-expected.txt: Added.
+        * fast/css-generated-content/wbr-with-before-content.html: Added.
+
+        - test for <rdar://problem/5127366> DOM tree isn't correct when parsing with <wbr>
+
+        * fast/invalid/021-expected.txt: Updated result.
+        * fast/parser/parse-wbr-expected.txt: Added.
+        * fast/parser/parse-wbr.html: Added.
+
 2007-05-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

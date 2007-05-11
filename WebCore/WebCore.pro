@@ -641,6 +641,7 @@ SOURCES += \
     rendering/RenderTreeAsText.cpp \
     rendering/RenderView.cpp \
     rendering/RenderWidget.cpp \
+    rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     xml/DOMParser.cpp \

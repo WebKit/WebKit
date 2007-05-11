@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
+#include "RenderWordBreak.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "XMLTokenizer.h"
@@ -69,6 +70,8 @@ String HTMLElement::nodeName() const
     
 HTMLTagStatus HTMLElement::endTagRequirement() const
 {
+    if (hasLocalName(wbrTag))
+        return TagStatusForbidden;
     if (hasLocalName(dtTag) || hasLocalName(ddTag))
         return TagStatusOptional;
 
@@ -78,6 +81,8 @@ HTMLTagStatus HTMLElement::endTagRequirement() const
 
 int HTMLElement::tagPriority() const
 {
+    if (hasLocalName(wbrTag))
+        return 0;
     if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag))
         return 3;
     if (hasLocalName(centerTag) || hasLocalName(nobrTag))
@@ -850,6 +855,13 @@ void HTMLElement::setHTMLEventListener(const AtomicString& eventType, Attribute*
 {
     Element::setHTMLEventListener(eventType,
         document()->createHTMLEventListener(attr->localName().domString(), attr->value(), this));
+}
+
+RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    if (hasTagName(wbrTag))
+        return new (arena) RenderWordBreak(this);
+    return RenderObject::createObject(this, style);
 }
 
 }
