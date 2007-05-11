@@ -554,7 +554,11 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
 {
     ec = 0;
     
-    if (!importedNode || (importedNode->isSVGElement() && page() && page()->settings()->usesDashboardBackwardCompatibilityMode())) {
+    if (!importedNode
+#if ENABLE(SVG)
+        || (importedNode->isSVGElement() && page() && page()->settings()->usesDashboardBackwardCompatibilityMode())
+#endif
+        ) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }

@@ -1,4 +1,11 @@
-<<<<<<< .mine
+2007-05-11  Oliver Hunt  <oliver@apple.com>
+
+        GDK Build fix
+
+        * ChangeLog:
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+
 2007-05-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
@@ -13,7 +20,6 @@
         if so, we don't want to do work that may lazily create it while the Frame is being
         destroyed.
 
-=======
 2007-05-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.
@@ -39,7 +45,6 @@
           Don't create SVG elements for documents that are in dashboard
           compatibility mode
 
->>>>>>> .r21418
 2007-05-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.
