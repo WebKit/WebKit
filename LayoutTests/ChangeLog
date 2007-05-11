@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        - Tests for bug http://bugs.webkit.org/show_bug.cgi?id=13620
+          Bogus decompilation of "for (var j = 1 in [])"
+
+        Testcase covers toString()ing functions with
+        for-statements of form for (var j = 1 in []) and for (var j=0;j<10;j++)
+
+        * fast/js/resources/toString-for-var-decl.js: Added.
+        * fast/js/toString-for-var-decl-expected.txt: Added.
+        * fast/js/toString-for-var-decl.html: Added.
+
+2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
         Tests for http://bugs.webkit.org/show_bug.cgi?id=10878
         Bug 10878: Incorrect decompilation for "4..x"
 
