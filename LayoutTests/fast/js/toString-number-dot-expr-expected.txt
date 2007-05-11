@@ -1,0 +1,15 @@
+This test checks that toString() round-trip on a function that has a expression of form 4..x does not lose its meaning. The expression accesses the property 'x' from number '4'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ueuf1 is uf1
+PASS ueuf2 is uf2
+PASS ueuf3 is uf3
+PASS ueuf4 is uf4
+PASS ueuf5 is uf5
+PASS ueuf6 is uf6
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

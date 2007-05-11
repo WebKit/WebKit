@@ -1,3 +1,14 @@
+2007-05-11  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=10878
+        Bug 10878: Incorrect decompilation for "4..x"
+
+        * fast/js/resources/toString-number-dot-expr.js: Added.
+        * fast/js/toString-number-dot-expr-expected.txt: Added.
+        * fast/js/toString-number-dot-expr.html: Added.
+
 2007-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
