@@ -7,9 +7,10 @@ isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/WebKitBuild/Release
 qt-port:DEFINES += BUILDING_QT__=1
 qt-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitQt
 gdk-port:CONFIG += link_pkgconfig
-gdk-port:PKGCONFIG += cairo gdk-2.0 gtk+-2.0
+gdk-port:PKGCONFIG += cairo gdk-2.0 gtk+-2.0 libcurl
 gdk-port:DEFINES += BUILDING_GDK__=1 BUILDING_CAIRO__
-gdk-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitGdk
+gdk-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitGdk $$system(icu-config --ldflags)
+gdk-port:QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
 
 DEFINES += USE_SYSTEM_MALLOC
 CONFIG(release) {

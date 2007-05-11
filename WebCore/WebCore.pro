@@ -39,8 +39,6 @@ DEFINES += ENABLE_XSLT=1
 qt-port:DEFINES += ENABLE_SVG=1
 
 DEFINES += WTF_CHANGES=1
-gdk-port:PKGCONFIG += libcurl
-gdk-port:LIBS += $$system(icu-config --ldflags)
 
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 

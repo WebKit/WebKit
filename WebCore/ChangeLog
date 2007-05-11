@@ -1,3 +1,11 @@
+2007-05-11  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Mark Rowe.
+
+        Move libcurl configuration into WebKit.pri so it will be used by GdkLauncher.
+
+        * WebCore.pro:
+
 2007-05-10  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/5015522> Bounds rectangle of unloaded images is 

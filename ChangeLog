@@ -1,3 +1,12 @@
+2007-05-11  Holger Freyther <freyther@kde.org>
+
+        Reviewed by Mark Rowe.
+
+        Move libcurl configuration into WebKit.pri so it will be used by GdkLauncher,
+        and add ICU configuration to QMAKE_CXXFLAGS.
+
+        * WebKit.pri:
+
 2007-05-06  Erik Bunce  <kde@bunce.us>
 
         Reviewed by Mark Rowe.
