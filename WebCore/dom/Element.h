@@ -182,6 +182,10 @@ public:
     IntSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const IntSize&);
 
+    // The following method is called when a Document is restored from the page cache
+    // and the element has registered itself with the Document via registerForDidRestorePageCallback()
+    virtual void didRestoreFromCache() { }
+    
 private:
     ElementRareData* rareData();
     const ElementRareData* rareData() const;

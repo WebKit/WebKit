@@ -1616,10 +1616,6 @@ bool FrameLoader::canCachePage()
         && m_frame->document()
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
-        // If you change the following to allow caching of documents with password fields,
-        // you also need to make sure that Frame::setDocument turns on secure keyboard
-        // entry mode if the document's focused node requires it.
-        && !m_frame->document()->hasPasswordField()
         && m_frame->page() 
         && m_frame->page()->backForwardList()->pageCacheSize() != 0
         && m_currentHistoryItem
@@ -3244,6 +3240,8 @@ void FrameLoader::opened()
         updateHistoryForClientRedirect();
 
     if (m_documentLoader->isLoadingFromCachedPage()) {
+        m_frame->document()->didRestoreFromCache();
+        
         // Force a layout to update view size and thereby update scrollbars.
         m_client->forceLayout();
 
@@ -3742,12 +3740,13 @@ void FrameLoader::saveDocumentState()
     if (m_creatingInitialEmptyDocument)
         return;
 
-    // Do not save doc state if the page has a password field and a form that would be submitted via https.
+    // Do not save doc state if the page has a form that would be submitted via https.
     Document* document = m_frame->document();
     ASSERT(document);
-    if (document->hasPasswordField() && document->hasSecureForm())
-        return;
         
+    if (document->hasSecureForm())
+         return;
+         
     // For a standard page load, we will have a previous item set, which will be used to
     // store the form state.  However, in some cases we will have no previous item, and
     // the current item is the right place to save the state.  One example is when we

@@ -290,7 +290,7 @@ public:
 
     // Machinery for saving and restoring state when you leave and then go back to a page.
     void registerFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.add(e); }
-    void deregisterFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.remove(e); }
+    void unregisterFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.remove(e); }
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;
@@ -634,6 +634,9 @@ public:
 
     bool isAllowedToLoadLocalResources() const { return m_isAllowedToLoadLocalResources; }
 
+    void setUseSecureKeyboardEntryWhenActive(bool);
+    bool useSecureKeyboardEntryWhenActive() const;
+    
 #if USE(LOW_BANDWIDTH_DISPLAY)
     void setDocLoader(DocLoader* loader) { m_docLoader = loader; }
     bool inLowBandwidthDisplay() const { return m_inLowBandwidthDisplay; }
@@ -701,6 +704,8 @@ protected:
     ListHashSet<HTMLGenericFormElement*> m_formElementsWithState;
     FormElementStateMap m_stateForNewFormElements;
 
+    HashSet<Element*> m_didRestorePageCallbackSet;
+    
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
@@ -766,9 +771,12 @@ public:
     bool inPageCache();
     void setInPageCache(bool flag);
 
-    void passwordFieldAdded();
-    void passwordFieldRemoved();
-    bool hasPasswordField() const;
+    // Elements can register themselves for the "didRestoreFromCache()" callback which will be
+    // called if the document is restored from the Page Cache
+    void registerForDidRestoreFromCacheCallback(Element*);
+    void unregisterForDidRestoreFromCacheCallback(Element*);
+    
+    void didRestoreFromCache();
 
     void secureFormAdded();
     void secureFormRemoved();
@@ -815,7 +823,6 @@ private:
 
     mutable String m_domain;
     RenderObject* m_savedRenderer;
-    int m_passwordFields;
     int m_secureForms;
     
     RefPtr<TextResourceDecoder> m_decoder;
@@ -853,6 +860,8 @@ private:
     String m_iconURL;
 
     bool m_isAllowedToLoadLocalResources;
+    
+    bool m_useSecureKeyboardEntryWhenActive;
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;

@@ -307,20 +307,15 @@ Document *Frame::document() const
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
 {
-    if (d) {
-        if (d->m_doc) {
-            if (d->m_doc->attached())
-                d->m_doc->detach();
-            // The old document's focused node may have turned on secure keyboard entry.
-            // Now that it's going away, turn it off. Documents containing a password
-            // field cannot enter the page cache, therefore |newDoc| cannot contain a
-            // focused password field, and hence we can always set to false.
-            setUseSecureKeyboardEntryWhenActive(false);
-        }
-        d->m_doc = newDoc;
-        if (d->m_doc && !d->m_doc->attached())
-            d->m_doc->attach();
-    }
+    if (d->m_doc && d->m_doc->attached())
+        d->m_doc->detach();
+
+    d->m_doc = newDoc;
+    if (d->m_doc && d->m_isActive)
+        setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
+        
+    if (d->m_doc && !d->m_doc->attached())
+        d->m_doc->attach();
 }
 
 const Settings *Frame::settings() const
@@ -789,14 +784,10 @@ void Frame::setUseSecureKeyboardEntry(bool)
 
 #endif
 
-void Frame::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
+void Frame::updateSecureKeyboardEntryIfActive()
 {
-    if (d->m_useSecureKeyboardEntryWhenActive == usesSecureKeyboard)
-        return;
-    d->m_useSecureKeyboardEntryWhenActive = usesSecureKeyboard;
-
     if (d->m_isActive)
-        setUseSecureKeyboardEntry(usesSecureKeyboard);
+        setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
 }
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const
@@ -1517,7 +1508,7 @@ void Frame::setIsActive(bool flag)
     }
 
     // Secure keyboard entry is set by the active frame.
-    if (d->m_useSecureKeyboardEntryWhenActive)
+    if (d->m_doc->useSecureKeyboardEntryWhenActive())
         setUseSecureKeyboardEntry(flag);
 }
 
@@ -1870,7 +1861,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isActive(false)
-    , m_useSecureKeyboardEntryWhenActive(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_userStyleSheetLoader(0)

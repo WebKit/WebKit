@@ -1,3 +1,77 @@
+2007-05-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin and Geoff
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13630
+        and
+        <rdar://problem/4873628>
+
+        Back/Forward cache should work with pages with login fields.
+
+        First change is to relocate the "useSecureKeyboardEntry" flag to the document.  This lets
+        it persist through page cache transitions and it is truly a per-document concept more than
+        per-frame anyways since its the document that has a password field, not the frame.
+
+        Second change is to introduce the concept of an Element getting a "didRestoreFromCache()" callback.
+        The idea is for elements to register with the document if they need work to be done when the
+        page comes out of the back/forward cache.  Currently the only client of this service is 
+        HTMLInputElements that are input type == PASSWORD.  Such an element's implementation for this
+        method is to call reset()
+
+        Finally, after a page is restored from the cache we have the document send the didRestoreFromCache()
+        callback to its registered Elements.  The whole design is to clear the password fields after 
+        restoring the page instead of when caching the page because we want to defer work for the common
+        case - there shouldn't be extra work here just to navigate away from a page when the common case
+        is that you'll never go back!
+
+        No layout tests possible until http://bugs.webkit.org/show_bug.cgi?id=13672 is resolved
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::registerForDidRestoreFromCacheCallback): Add an Element to the special page-restoration callback list
+        (WebCore::Document::unregisterForDidRestoreFromCacheCallback): Remove such an element
+        (WebCore::Document::didRestoreFromCache): Called by FrameLoader - dispatch to all the registered elements
+        (WebCore::Document::setUseSecureKeyboardEntryWhenActive): Set the local flag and call updateSecureKeyboardEntryIfActive
+          on the Frame
+        (WebCore::Document::useSecureKeyboardEntryWhenActive): Return the flag
+
+        * dom/Document.h:
+        (WebCore::Document::unregisterFormElementWithState): Renamed
+
+        * dom/Element.h:
+        (WebCore::Element::didRestoreFromCache): Added virtual base method
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement): Deregister from the document if inputType == PASSWORD
+        (WebCore::HTMLInputElement::dispatchFocusEvent): Set the flag on the document, not the frame
+        (WebCore::HTMLInputElement::dispatchBlurEvent): Ditto
+        (WebCore::HTMLInputElement::setInputType): If changing to/from PASSWORD, register/deregister in the document accordingly
+        (WebCore::HTMLInputElement::attach): Call registerForDidRestoreFromCacheCallback(this) instead of passwordFieldAdded()
+        (WebCore::HTMLInputElement::didRestoreFromCache): Call reset();
+        * html/HTMLInputElement.h:
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::~HTMLSelectElement): Renamed deregisterFormElementWithState to unregisterFormElementWithState
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::~HTMLTextAreaElement): Ditto
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage): Remove the check for password fields - they're allowed now!
+        (WebCore::FrameLoader::opened): Tell the document to dispatch to the registered elements
+        (WebCore::FrameLoader::saveDocumentState): Remove the check for password fields.  Turns out that when we grab a copy a the
+          form state we're only copying the state of form elements that are registered with the Document - and that set 
+          explicitly excludes Password elements
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): If the frame is active, set the setUseSecureKeyboardEntry based on the setting contained
+          in the new document
+        (WebCore::Frame::updateSecureKeyboardEntryIfActive): Notification for the secure entry flag changing - if the Frame is
+          active, then update to the new setting from the document
+        (WebCore::Frame::setIsActive): Grab the useSecureKeyboardEntry flag from the document instead of FramePrivate
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+
 2007-05-12  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 12740, bmw.com doesn't work.  We were missing a rule that is covered by the HTML5

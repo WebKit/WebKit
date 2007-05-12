@@ -136,7 +136,8 @@ void HTMLInputElement::init()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    document()->deregisterFormElementWithState(this);
+    document()->unregisterFormElementWithState(this);
+    document()->unregisterForDidRestoreFromCacheCallback(this);
     delete m_imageLoader;
 }
 
@@ -232,7 +233,7 @@ void HTMLInputElement::dispatchFocusEvent()
     if (isTextField()) {
         setAutofilled(false);
         if (inputType() == PASSWORD && document()->frame())
-            document()->frame()->setUseSecureKeyboardEntryWhenActive(true);
+            document()->setUseSecureKeyboardEntryWhenActive(true);
     }
     HTMLGenericFormElement::dispatchFocusEvent();
 }
@@ -241,7 +242,7 @@ void HTMLInputElement::dispatchBlurEvent()
 {
     if (isTextField() && document()->frame()) {
         if (inputType() == PASSWORD)
-            document()->frame()->setUseSecureKeyboardEntryWhenActive(false);
+            document()->setUseSecureKeyboardEntryWhenActive(false);
         document()->frame()->textFieldDidEndEditing(this);
     }
     HTMLGenericFormElement::dispatchBlurEvent();
@@ -305,11 +306,11 @@ void HTMLInputElement::setInputType(const String& t)
                 detach();
 
             bool didStoreValue = storesValueSeparateFromAttribute();
-            bool didMaintainState = inputType() != PASSWORD;
+            bool wasPasswordField = inputType() == PASSWORD;
             bool didRespectHeightAndWidth = respectHeightAndWidthAttrs();
             m_type = newType;
             bool willStoreValue = storesValueSeparateFromAttribute();
-            bool willMaintainState = inputType() != PASSWORD;
+            bool isPasswordField = inputType() == PASSWORD;
             bool willRespectHeightAndWidth = respectHeightAndWidthAttrs();
 
             if (didStoreValue && !willStoreValue && !m_value.isNull()) {
@@ -321,10 +322,13 @@ void HTMLInputElement::setInputType(const String& t)
             else
                 recheckValue();
 
-            if (willMaintainState && !didMaintainState)
+            if (wasPasswordField && !isPasswordField) {
                 document()->registerFormElementWithState(this);
-            else if (!willMaintainState && didMaintainState)
-                document()->deregisterFormElementWithState(this);
+                document()->unregisterForDidRestoreFromCacheCallback(this);
+            } else if (!wasPasswordField && isPasswordField) {
+                document()->unregisterFormElementWithState(this);
+                document()->registerForDidRestoreFromCacheCallback(this);
+            }
 
             if (didRespectHeightAndWidth != willRespectHeightAndWidth) {
                 NamedMappedAttrMap* map = mappedAttributes();
@@ -758,10 +762,8 @@ void HTMLInputElement::attach()
         }
     }
 
-    // note we don't deal with calling passwordFieldRemoved() on detach, because the timing
-    // was such that it cleared our state too early
     if (inputType() == PASSWORD)
-        document()->passwordFieldAdded();
+        document()->unregisterForDidRestoreFromCacheCallback(this);
 }
 
 void HTMLInputElement::detach()
@@ -1469,6 +1471,12 @@ Selection HTMLInputElement::selection() const
    if (!renderer() || !isTextField() || cachedSelStart == -1 || cachedSelEnd == -1)
         return Selection();
    return static_cast<RenderTextControl*>(renderer())->selection(cachedSelStart, cachedSelEnd);
+}
+
+void HTMLInputElement::didRestoreFromCache()
+{
+    ASSERT(inputType() == PASSWORD);
+    reset();
 }
     
 } // namespace
