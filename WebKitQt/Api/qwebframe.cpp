@@ -79,6 +79,7 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     frameView->setScrollArea(qframe);
     frameView->setAllowsScrolling(frameData->allowsScrolling);
     frame->setView(frameView.get());
+    frame->init();
     eventHandler = frame->eventHandler();
 }
 

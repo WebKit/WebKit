@@ -123,6 +123,8 @@ void WebKitPart::initView(QWidget* parentWidget, GUIProfile prof)
     m_frame->setView(frameView);
     m_frameView->setParentWidget(parentWidget);
 
+    m_frame->init();
+
     // Initialize KParts widget...
     setWidget(m_frame->view()->qwidget());
 }
