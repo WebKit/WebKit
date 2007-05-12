@@ -1,5 +1,14 @@
 2007-05-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Hyatt.
+        
+        Layout test for x-mac-roman character encoding.
+
+        * fast/encoding/xmacroman-encoding-test-expected.txt: Added.
+        * fast/encoding/xmacroman-encoding-test.html: Added.
+
+2007-05-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Brady.
 
         Layout tests for <rdar://problem/5017375> WebKit should disable SVG in Dashboard

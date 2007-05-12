@@ -1,3 +1,15 @@
+2007-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+        
+        <rdar://problem/5195473> REGRESSION: "Curly quote" fails to 
+        be displayed correctly even when META tag specifies charset=x-mac-roman
+
+
+        * platform/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Register the xmacroman encoding
+
 2007-05-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.
