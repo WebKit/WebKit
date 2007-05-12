@@ -1,3 +1,15 @@
+2007-05-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Crash starting Safari with JavaScript disabled.
+        http://bugs.webkit.org/show_bug.cgi?id=13691
+        
+        Test: none possible.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::cleanupPlatformScriptObjects): NULL check d->m_script
+
 2007-05-11  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=13688, Colloquy is broken!
