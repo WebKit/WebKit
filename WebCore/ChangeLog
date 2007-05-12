@@ -1,5 +1,21 @@
 2007-05-11  David Hyatt  <hyatt@apple.com>
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13688, Colloquy is broken!
+
+        Make sure to adjust the baseline of a percentage height table cell's row if the
+        cell flexes (and lowers the baseline).
+
+        Reviewed by olliej
+
+        fast/tables/vertical-align-baseline-readjust.html
+
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::getBaseline):
+        
+2007-05-11  David Hyatt  <hyatt@apple.com>
+
         Make sure focus rings are always using the exterior style, regardless
         of what the OS default is.
 
