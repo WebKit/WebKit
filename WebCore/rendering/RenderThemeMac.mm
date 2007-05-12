@@ -1243,6 +1243,7 @@ NSButtonCell* RenderThemeMac::checkbox() const
         [m_checkbox.get() setButtonType:NSSwitchButton];
         [m_checkbox.get() setTitle:nil];
         [m_checkbox.get() setAllowsMixedState:YES];
+        [m_checkbox.get() setFocusRingType:NSFocusRingTypeExterior];
     }
     
     return m_checkbox.get();
@@ -1254,6 +1255,7 @@ NSButtonCell* RenderThemeMac::radio() const
         m_radio.adoptNS([[NSButtonCell alloc] init]);
         [m_radio.get() setButtonType:NSRadioButton];
         [m_radio.get() setTitle:nil];
+        [m_radio.get() setFocusRingType:NSFocusRingTypeExterior];
     }
     
     return m_radio.get();
@@ -1275,6 +1277,7 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
     if (!m_popupButton) {
         m_popupButton.adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popupButton.get() setUsesItemFromMenu:NO];
+        [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
     }
     
     return m_popupButton.get();
@@ -1287,7 +1290,7 @@ NSSearchFieldCell* RenderThemeMac::search() const
         [m_search.get() setBezelStyle:NSTextFieldRoundedBezel];
         [m_search.get() setBezeled:YES];
         [m_search.get() setEditable:YES];
-        
+        [m_search.get() setFocusRingType:NSFocusRingTypeExterior];
         NSMenu* searchMenuTemplate = [[NSMenu alloc] initWithTitle:@""];
         [m_search.get() setSearchMenuTemplate:searchMenuTemplate];
         [searchMenuTemplate release];
@@ -1303,6 +1306,7 @@ NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
         [m_sliderThumbHorizontal.get() setTitle:nil];
         [m_sliderThumbHorizontal.get() setSliderType:NSLinearSlider];
         [m_sliderThumbHorizontal.get() setControlSize:NSSmallControlSize];
+        [m_sliderThumbHorizontal.get() setFocusRingType:NSFocusRingTypeExterior];
     }
     
     return m_sliderThumbHorizontal.get();
@@ -1315,6 +1319,7 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
         [m_sliderThumbVertical.get() setTitle:nil];
         [m_sliderThumbVertical.get() setSliderType:NSLinearSlider];
         [m_sliderThumbVertical.get() setControlSize:NSSmallControlSize];
+        [m_sliderThumbVertical.get() setFocusRingType:NSFocusRingTypeExterior];
     }
     
     return m_sliderThumbVertical.get();
