@@ -281,7 +281,12 @@ bool HTMLParser::insertNode(Node* n, bool flat)
 
     const AtomicString& localName = n->localName();
     int tagPriority = n->isHTMLElement() ? static_cast<HTMLElement*>(n)->tagPriority() : 0;
-        
+    
+    // <table> is never allowed inside stray table content.  Always pop out of the stray table content
+    // and close up the first table, and then start the second table as a sibling.
+    if (inStrayTableContent && localName == tableTag)
+        popBlock(tableTag);
+    
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
     Node* newNode = current->addChild(n);

@@ -1,3 +1,13 @@
+2007-05-12  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 12740, bmw.com doesn't work.  We were missing a rule that is covered by the HTML5
+        parsing spec.  A <table> encountered while inside stray table content should close up the
+        table responsible for the stray content and start the new table as a sibling of the first.
+
+        Reviewed by mjs
+
+        fast/invalid/table-inside-stray-table-content.html
+
 2007-05-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
