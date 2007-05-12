@@ -763,7 +763,7 @@ void HTMLInputElement::attach()
     }
 
     if (inputType() == PASSWORD)
-        document()->unregisterForDidRestoreFromCacheCallback(this);
+        document()->registerForDidRestoreFromCacheCallback(this);
 }
 
 void HTMLInputElement::detach()
