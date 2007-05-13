@@ -167,20 +167,13 @@ IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
         return IntRect();
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    int selectionTop = root->selectionTop();
-    int selectionHeight = root->selectionHeight();
-    int selectionLeft = xPos();
-    int selectionRight = xPos() + width();
-    
-    IntRect rect(selectionLeft, selectionTop, selectionRight - selectionLeft, selectionHeight);
+    IntRect rect(0, root->selectionTop() - yPos(), width(), root->selectionHeight());
     
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
         int absx, absy;
-        cb->absolutePositionForContent(absx, absy);
-        if (cb->hasOverflowClip())
-            cb->layer()->subtractScrollOffset(absx, absy);
+        absolutePositionForContent(absx, absy);
         rect.move(absx, absy);
     }
     

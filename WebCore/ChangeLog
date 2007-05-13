@@ -1,5 +1,22 @@
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13695
+          REGRESSION (r21387): Replaced elements' highlight rects are wrongly positioned
+
+        Test: fast/replaced/selection-rect.html
+
+        Also fixes the same problem with list markers, covered by existing test
+        fast/lists/markers-in-selection.html.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRect):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13685

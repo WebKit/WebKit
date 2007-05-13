@@ -886,16 +886,13 @@ IntRect RenderListMarker::selectionRect(bool clipToVisibleContent)
         return IntRect();
 
     RootInlineBox* root = inlineBoxWrapper()->root();
-    IntRect rect(xPos(), root->selectionTop(), width(), root->selectionHeight());
+    IntRect rect(0, root->selectionTop() - yPos(), width(), root->selectionHeight());
             
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
         int absx, absy;
-        RenderBlock* cb = containingBlock();
-        cb->absolutePosition(absx, absy);
-        if (cb->hasOverflowClip())
-            cb->layer()->subtractScrollOffset(absx, absy);
+        absolutePosition(absx, absy);
         rect.move(absx, absy);
     }
     

@@ -1,5 +1,17 @@
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13695
+          REGRESSION (r21387): Replaced elements' highlight rects are wrongly positioned
+
+        * fast/replaced/selection-rect-expected.checksum: Added.
+        * fast/replaced/selection-rect-expected.png: Added.
+        * fast/replaced/selection-rect-expected.txt: Added.
+        * fast/replaced/selection-rect.html: Added.
+
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13685
