@@ -455,6 +455,9 @@ private: // members
     RenderObject* m_renderer;
 
 protected:
+    virtual void willMoveToNewOwnerDocument() { }
+    virtual void didMoveToNewOwnerDocument() { }
+    
     NodeListsNodeData* m_nodeLists;
 
     short m_tabIndex;

@@ -1,3 +1,37 @@
+2007-05-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz
+
+        http://bugs.webkit.org/show_bug.cgi?id=13701
+
+        Since HTMLInputElements register themselves with their Document for special handling, if their document
+        ever changes then bad things can happen.
+
+        Unfortunately, with adoptNode, the document can change.  This has been a long standing crasher with all 
+        input fields but was given recent high visibility by r21430
+
+        The solution is to add functionality for a Node to react to its owner document changing via a pair of 
+        virtual callbacks.  Then we can tap into those callbacks in HTMLInputElement.
+
+        No layout test possible until http://bugs.webkit.org/show_bug.cgi?id=13672 is resolved
+
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): Call willMoveToNewOwnerDocument and didMoveToNewOwnerDocument
+
+        * dom/Node.h:
+        (WebCore::Node::willMoveToNewOwnerDocument): Virtual callback to a node for before an owner document change
+        (WebCore::Node::didMoveToNewOwnerDocument): Virtual callback to a node for after an owner document change
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement): Unconditionally unregister both for both form state
+          and the cache restoration callback
+        (WebCore::HTMLInputElement::setInputType): Change registration with the document only if we're in one
+        (WebCore::HTMLInputElement::attach): Don't bother registering for the callback here - that will be
+          handled by setInputType() or by a change in owner document
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument): Unregister with the old owner document
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument): Register with the new owner document
+        * html/HTMLInputElement.h:
+
 2007-05-13  Darin Adler  <darin@apple.com>
 
         * platform/mac/TextBreakIteratorInternalICUMac.mm: Fix comment typo.

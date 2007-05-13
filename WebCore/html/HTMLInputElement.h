@@ -186,6 +186,9 @@ public:
     virtual void didRestoreFromCache();
     
 protected:
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
+    
     AtomicString m_name;
 
 private:
