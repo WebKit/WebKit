@@ -175,6 +175,16 @@
 
 2007-05-12  David Hyatt  <hyatt@apple.com>
 
+        FIx for 13696.  Rework residual style to be much more aggressive about reopening.  Added
+        a comprehensive test case of HTML tags to guarantee we match Firefox.  We now have an exclusion
+        set rather than an inclusion set, so unknown future tags will also participate in residual style.
+
+        Reviewed by olliej
+
+        fast/invalid/residual-style.html
+
+2007-05-12  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 12740, bmw.com doesn't work.  We were missing a rule that is covered by the HTML5
         parsing spec.  A <table> encountered while inside stray table content should close up the
         table responsible for the stray content and start the new table as a sibling of the first.

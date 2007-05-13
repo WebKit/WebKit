@@ -823,7 +823,6 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
         gFunctionMap.set(trTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
         gFunctionMap.set(ttTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
         gFunctionMap.set(uTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(wbrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
     }
 
     bool proceed = true;
@@ -917,7 +916,7 @@ bool HTMLParser::isInline(Node* node) const
             e->hasLocalName(kbdTag) || e->hasLocalName(varTag) || e->hasLocalName(citeTag) ||
             e->hasLocalName(abbrTag) || e->hasLocalName(acronymTag) || e->hasLocalName(subTag) ||
             e->hasLocalName(supTag) || e->hasLocalName(spanTag) || e->hasLocalName(nobrTag) ||
-            e->hasLocalName(wbrTag) || e->hasLocalName(noframesTag) || e->hasLocalName(nolayerTag) ||
+            e->hasLocalName(noframesTag) || e->hasLocalName(nolayerTag) ||
             e->hasLocalName(noembedTag) || (e->hasLocalName(noscriptTag) && !m_isParsingFragment && document->frame() && document->frame()->settings()->isJavaScriptEnabled()))
             return true;
     }
@@ -947,7 +946,6 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
         residualStyleTags.add(kbdTag.localName().impl());
         residualStyleTags.add(varTag.localName().impl());
         residualStyleTags.add(nobrTag.localName().impl());
-        residualStyleTags.add(wbrTag.localName().impl());
     }
     
     return residualStyleTags.contains(tagName.impl());
@@ -955,34 +953,26 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
 
 bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 {
-    if (isResidualStyleTag(tagName))
-        return true;
-
-    static HashSet<AtomicStringImpl*> affectedBlockTags;
-    if (affectedBlockTags.isEmpty()) {
-        affectedBlockTags.add(addressTag.localName().impl());
-        affectedBlockTags.add(blockquoteTag.localName().impl());
-        affectedBlockTags.add(centerTag.localName().impl());
-        affectedBlockTags.add(ddTag.localName().impl());
-        affectedBlockTags.add(divTag.localName().impl());
-        affectedBlockTags.add(dlTag.localName().impl());
-        affectedBlockTags.add(dtTag.localName().impl());
-        affectedBlockTags.add(formTag.localName().impl());
-        affectedBlockTags.add(h1Tag.localName().impl());
-        affectedBlockTags.add(h2Tag.localName().impl());
-        affectedBlockTags.add(h3Tag.localName().impl());
-        affectedBlockTags.add(h4Tag.localName().impl());
-        affectedBlockTags.add(h5Tag.localName().impl());
-        affectedBlockTags.add(h6Tag.localName().impl());
-        affectedBlockTags.add(liTag.localName().impl());
-        affectedBlockTags.add(listingTag.localName().impl());
-        affectedBlockTags.add(olTag.localName().impl());
-        affectedBlockTags.add(pTag.localName().impl());
-        affectedBlockTags.add(preTag.localName().impl());
-        affectedBlockTags.add(ulTag.localName().impl());
+    static HashSet<AtomicStringImpl*> unaffectedTags;
+    if (unaffectedTags.isEmpty()) {
+        unaffectedTags.add(bodyTag.localName().impl());
+        unaffectedTags.add(tableTag.localName().impl());
+        unaffectedTags.add(theadTag.localName().impl());
+        unaffectedTags.add(tbodyTag.localName().impl());
+        unaffectedTags.add(tfootTag.localName().impl());
+        unaffectedTags.add(trTag.localName().impl());
+        unaffectedTags.add(thTag.localName().impl());
+        unaffectedTags.add(tdTag.localName().impl());
+        unaffectedTags.add(captionTag.localName().impl());
+        unaffectedTags.add(colgroupTag.localName().impl());
+        unaffectedTags.add(colTag.localName().impl());
+        unaffectedTags.add(optionTag.localName().impl());
+        unaffectedTags.add(optgroupTag.localName().impl());
+        unaffectedTags.add(selectTag.localName().impl());
+        unaffectedTags.add(objectTag.localName().impl());
     }
     
-    return affectedBlockTags.contains(tagName.impl());
+    return !unaffectedTags.contains(tagName.impl());
 }
 
 void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
