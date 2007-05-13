@@ -1,3 +1,15 @@
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13685
+          REGRESSION (r21368-r21388): Highlighting text in scrolled textareas behaves oddly
+
+        Test: fast/repaint/text-selection-rect-in-overflow.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRect):
+
 2007-05-12  Brady Eidson  <beidson@apple.com>
 
         Rubber stamped by Mitz

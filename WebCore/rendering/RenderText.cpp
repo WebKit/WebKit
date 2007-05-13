@@ -1061,22 +1061,11 @@ IntRect RenderText::selectionRect(bool clipToVisibleContent)
     if (cb->hasColumns())
         cb->adjustRectForColumns(rect);
 
-    if (cb->hasOverflowClip()) {
-        int x = rect.x();
-        int y = rect.y();
-        cb->layer()->subtractScrollOffset(x, y);
-        if (clipToVisibleContent) {
-            IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
-            IntRect repaintRect(x, y, rect.width(), rect.height());
-            rect = intersection(repaintRect, boxRect);
-        }
-    }
-
     if (clipToVisibleContent)
-        cb->computeAbsoluteRepaintRect(rect);
+        computeAbsoluteRepaintRect(rect);
     else {
         int absx, absy;
-        cb->absolutePosition(absx, absy);
+        absolutePosition(absx, absy);
         rect.move(absx, absy);
     }
 

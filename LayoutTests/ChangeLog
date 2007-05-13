@@ -1,3 +1,15 @@
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13685
+          REGRESSION (r21368-r21388): Highlighting text in scrolled textareas behaves oddly
+
+        * fast/repaint/text-selection-rect-in-overflow-expected.checksum: Added.
+        * fast/repaint/text-selection-rect-in-overflow-expected.png: Added.
+        * fast/repaint/text-selection-rect-in-overflow-expected.txt: Added.
+        * fast/repaint/text-selection-rect-in-overflow.html: Added.
+
 2007-05-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.
