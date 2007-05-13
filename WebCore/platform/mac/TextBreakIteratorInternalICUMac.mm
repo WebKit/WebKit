@@ -28,7 +28,7 @@ namespace WebCore {
 // engineer.
 //
 // NOTE: this abviously could be fairly expensive to do.  If it turns out to be a bottleneck, it might
-// help to instead put a call in the iteratory initializer to set the current text break locale.  Unfortunately,
+// help to instead put a call in the iterator initializer to set the current text break locale.  Unfortunately,
 // we can not cache it across calls to our API since the result can change without our knowing (AFAIK
 // there are no notifiers for AppleTextBreakLocale and/or AppleLanguages changes).
 const char* currentTextBreakLocaleID()
