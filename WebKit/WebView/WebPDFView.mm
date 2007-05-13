@@ -1270,6 +1270,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [prefs setPDFScaleFactor:scaleFactor];
     [prefs setPDFDisplayMode:[PDFSubview displayMode]];
     _willUpdatePreferencesSoon = NO;
+    [prefs release];
     [self release];
 }
 
@@ -1280,8 +1281,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (_willUpdatePreferencesSoon)
         return;
 
+    WebPreferences *prefs = [[dataSource _webView] preferences];
+
     [self retain];
-    [self performSelector:@selector(_updatePreferences:) withObject:[[dataSource _webView] preferences] afterDelay:0];
+    [prefs retain];
+    [self performSelector:@selector(_updatePreferences:) withObject:prefs afterDelay:0];
     _willUpdatePreferencesSoon = YES;
 }
 
