@@ -1,3 +1,15 @@
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13680
+          Incomplete repaint of focus ring around continuation
+
+        Test: fast/repaint/continuation-after-outline.html
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+
 2007-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

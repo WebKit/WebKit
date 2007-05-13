@@ -1,3 +1,15 @@
+2007-05-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13680
+          Incomplete repaint of focus ring around continuation
+
+        * fast/repaint/continuation-after-outline-expected.checksum: Added.
+        * fast/repaint/continuation-after-outline-expected.png: Added.
+        * fast/repaint/continuation-after-outline-expected.txt: Added.
+        * fast/repaint/continuation-after-outline.html: Added.
+
 2007-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

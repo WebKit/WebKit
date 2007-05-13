@@ -453,7 +453,7 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
         // Only compacts and run-ins are allowed in here during layout.
         ASSERT(!view() || !view()->layoutState() || isCompact() || isRunIn());
 
-        if (!firstLineBox())
+        if (!firstLineBox() && !continuation())
             return IntRect();
 
         // Find our leftmost position.
