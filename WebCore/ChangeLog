@@ -1,3 +1,14 @@
+2007-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - fix <rdar://problem/5174903> Safari crashes opening the attached webarchive (made by OmniWeb)
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveResponse): Check ResourceHandle for nil before calling url() on it.
+        (WebCore::IconLoader::didFail): Ditto.
+        (WebCore::IconLoader::didFinishLoading): Ditto.
+
 2007-05-12  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.
