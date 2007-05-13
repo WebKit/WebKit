@@ -28,7 +28,6 @@
 #include "cssstyleselector.h"
 #include "RenderPath.h"
 #include "RenderSVGHiddenContainer.h"
-#include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"
@@ -142,12 +141,12 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
             
             stops.append(makeGradientStop(stopOffset, makeRGBA(c.red(), c.green(), c.blue(), int(opacity * 255.))));
             if (!stop->renderer())
-                stopStyle->deref(view()->renderArena());
+                stopStyle->deref(document()->renderArena());
         }
     }
 
     if (gradientStyle)
-        gradientStyle->deref(view()->renderArena());
+        gradientStyle->deref(document()->renderArena());
     return stops;
 }
 

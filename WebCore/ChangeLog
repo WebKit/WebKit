@@ -1,3 +1,18 @@
+2007-05-12  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        Cleanup, get rid of the SVGStyledElement::view() call.
+
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "ksvgcssproperties.h"
 #include "PlatformString.h"
-#include "RenderView.h"
 #include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGElementInstance.h"
@@ -258,11 +257,6 @@ void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     // but will result in slower dynamic-update performance than necessary.
     SVGElement::attributeChanged(attr, preserveDecls);
     notifyAttributeChange();
-}
-
-RenderView* SVGStyledElement::view() const
-{
-    return static_cast<RenderView*>(document()->renderer());
 }
 
 void SVGStyledElement::rebuildRenderer() const

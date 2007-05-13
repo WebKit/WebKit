@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,7 +26,6 @@
 #include "SVGFEFloodElement.h"
 
 #include "Attr.h"
-#include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGResourceFilter.h"
@@ -67,7 +66,7 @@ SVGFEFlood* SVGFEFloodElement::filterEffect() const
     const SVGRenderStyle* svgStyle = filterStyle->svgStyle();
     m_filterEffect->setFloodColor(svgStyle->floodColor());
     m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());
-    filterStyle->deref(view()->renderArena());
+    filterStyle->deref(document()->renderArena());
 
     return m_filterEffect;
 }

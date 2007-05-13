@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,7 +36,6 @@ namespace WebCore {
 
     class CSSStyleDeclaration;
     class RenderPath;
-    class RenderView;
 
     class SVGStyledElement : public SVGElement {
     public:
@@ -55,8 +54,6 @@ namespace WebCore {
         
         virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
         virtual void parseMappedAttribute(MappedAttribute*);
-
-        RenderView* view() const;
 
         virtual void notifyAttributeChange() const;
         void notifyResourceParentIfExistant() const;

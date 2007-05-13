@@ -26,7 +26,6 @@
 #include "SVGClipPathElement.h"
 
 #include "Document.h"
-#include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
 #include "cssstyleselector.h"
@@ -68,9 +67,6 @@ void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
 
 SVGResource* SVGClipPathElement::canvasResource()
 {
-    if (!view())
-        return 0;
-
     if (!m_clipper)
         m_clipper = new SVGResourceClipper();
     else
@@ -89,10 +85,10 @@ SVGResource* SVGClipPathElement::canvasResource()
                 pathData.transform(static_cast<SVGStyledTransformableElement*>(e)->localMatrix());
             if (!pathData.isEmpty())
                 m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
-            pathStyle->deref(view()->renderArena());
+            pathStyle->deref(document()->renderArena());
         }
     }
-    clipPathStyle->deref(view()->renderArena());
+    clipPathStyle->deref(document()->renderArena());
     return m_clipper.get();
 }
 
