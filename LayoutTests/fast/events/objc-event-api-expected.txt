@@ -75,7 +75,7 @@ event type:      keydown
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000041
+  keyIdentifier: U+0041
   keyLocation:   0
   modifier keys: c:0 s:0 a:0 m:0
   keyCode:       65
@@ -87,7 +87,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000041
+  keyIdentifier: U+0041
   keyLocation:   0
   modifier keys: c:0 s:0 a:0 m:0
   keyCode:       97
@@ -99,7 +99,7 @@ event type:      keydown
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000042
+  keyIdentifier: U+0042
   keyLocation:   0
   modifier keys: c:1 s:0 a:0 m:0
   keyCode:       66
@@ -111,7 +111,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000042
+  keyIdentifier: U+0042
   keyLocation:   0
   modifier keys: c:1 s:0 a:0 m:0
   keyCode:       98
@@ -123,7 +123,7 @@ event type:      keydown
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000044
+  keyIdentifier: U+0044
   keyLocation:   0
   modifier keys: c:0 s:1 a:0 m:0
   keyCode:       68
@@ -135,7 +135,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000044
+  keyIdentifier: U+0044
   keyLocation:   0
   modifier keys: c:0 s:1 a:0 m:0
   keyCode:       100
@@ -147,7 +147,7 @@ event type:      keydown
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000045
+  keyIdentifier: U+0045
   keyLocation:   0
   modifier keys: c:0 s:0 a:1 m:1
   keyCode:       69
@@ -159,7 +159,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: U+000045
+  keyIdentifier: U+0045
   keyLocation:   0
   modifier keys: c:0 s:0 a:1 m:1
   keyCode:       101

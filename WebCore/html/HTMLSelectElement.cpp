@@ -632,7 +632,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
                 form()->submitClick(evt);
             handled = true;
         }
-        if (keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+000020") {
+        if (keyIdentifier == "Down" || keyIdentifier == "Up" || keyIdentifier == "U+0020") {
             focus();
             // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.

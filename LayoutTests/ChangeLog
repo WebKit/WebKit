@@ -1,3 +1,19 @@
+2007-05-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13529
+        DOM3 keyIdentifier text is incorrect
+
+        Adjusted tests and test results.
+
+        * fast/events/frame-tab-focus.html:
+        * fast/events/js-keyboard-event-creation-expected.txt:
+        * fast/events/objc-event-api-expected.txt:
+        * fast/events/option-tab.html:
+        * fast/forms/focus2.html:
+        * fast/html/tab-order.html:
+
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

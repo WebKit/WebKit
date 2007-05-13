@@ -1386,7 +1386,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
         m_frame->editor()->handleKeypress(event);
         if (event->defaultHandled())
             return;
-        if (event->keyIdentifier() == "U+000009")
+        if (event->keyIdentifier() == "U+0009")
             defaultTabEventHandler(event, false);
     }
 }

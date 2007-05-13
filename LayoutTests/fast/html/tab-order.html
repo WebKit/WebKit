@@ -18,7 +18,7 @@
         function dispatchTabPress(element, shiftKey)
         {
             var event = document.createEvent('KeyboardEvents');
-            var tabKeyIdentifier = 'U+000009';
+            var tabKeyIdentifier = 'U+0009';
             event.initKeyboardEvent('keypress', true, true, document.defaultView, tabKeyIdentifier, 0, false, false, shiftKey, false, false);
             element.dispatchEvent(event);
         }

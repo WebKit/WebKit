@@ -128,13 +128,13 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
             return "Select";
         case GDK_Up:
             return "Up";
-            // Standard says that DEL becomes U+00007F.
+            // Standard says that DEL becomes U+007F.
         case GDK_Delete:
-            return "U+00007F";
+            return "U+007F";
         case GDK_Tab:
-            return "U+000009";
+            return "U+0009";
         default:
-            return String::format("U+%06X", toupper(keyCode));
+            return String::format("U+%04X", toupper(keyCode));
     }
 }
 

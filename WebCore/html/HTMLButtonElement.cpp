@@ -101,7 +101,7 @@ void HTMLButtonElement::defaultEventHandler(Event* evt)
             evt->setDefaultHandled();
             return;
         }
-        if (key == "Enter" || key == "U+000020") {
+        if (key == "Enter" || key == "U+0020") {
             dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
             return;

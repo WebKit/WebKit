@@ -1185,7 +1185,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
         String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
-        if (key == "U+000020") {
+        if (key == "U+0020") {
             switch (inputType()) {
                 case BUTTON:
                 case CHECKBOX:

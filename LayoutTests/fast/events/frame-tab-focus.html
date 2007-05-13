@@ -88,7 +88,7 @@ function setupWindow(win)
 function dispatchTabPress(element, shiftKey, altKey)
 {
     var event = document.createEvent('KeyboardEvents');
-    var tabKeyIdentifier = 'U+000009';
+    var tabKeyIdentifier = 'U+0009';
     event.initKeyboardEvent('keypress', true, true, document.defaultView, tabKeyIdentifier, 0, false, altKey, shiftKey, false, false);
     element.dispatchEvent(event);
 }

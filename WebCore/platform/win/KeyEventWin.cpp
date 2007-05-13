@@ -126,11 +126,11 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
             return "Select";
         case VK_UP:
             return "Up";
-        // Standard says that DEL becomes U+00007F.
+        // Standard says that DEL becomes U+007F.
         case VK_DELETE:
-            return "U+00007F";
+            return "U+007F";
         default:
-            return String::format("U+%06X", toupper(keyCode));
+            return String::format("U+%04X", toupper(keyCode));
     }
 }
 

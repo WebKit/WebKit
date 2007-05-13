@@ -295,14 +295,14 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
 
         // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
         case 0x7F:
-            return "U+000008";
-        // Standard says that DEL becomes U+00007F.
+            return "U+0008";
+        // Standard says that DEL becomes U+007F.
         case NSDeleteFunctionKey:
-            return "U+00007F";
+            return "U+007F";
             
         // Always use 0x09 for tab instead of AppKit's backtab character.
         case NSBackTabCharacter:
-            return "U+000009";
+            return "U+0009";
 
         case NSBeginFunctionKey:
         case NSBreakFunctionKey:
@@ -322,7 +322,7 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            return String::format("U+%06X", toupper(c));
+            return String::format("U+%04X", toupper(c));
     }
 }
 

@@ -1,3 +1,39 @@
+2007-05-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13529
+        DOM3 keyIdentifier text is incorrect
+
+        Use 4 digits for the Unicode based key identifiers.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::isKeyboardOptionTab):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::isKeyboardOptionTab):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::isKeyboardOptionTab):
+        * platform/gdk/KeyEventGdk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::keyIdentifierForQtKeyCode):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        * platform/wx/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::keyIdentifierForWxKeyCode):
+
 2007-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti.
