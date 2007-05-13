@@ -56,6 +56,10 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
      assert(!draggingInfo);
+     if (addFileToPasteboardOnDrag) {
+         [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+         [pboard setPropertyList:[NSArray arrayWithObject:@"DRTFakeFile"] forType:NSFilenamesPboardType];
+     }
      draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
      [EventSendingController replaySavedEvents];
 }

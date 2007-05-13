@@ -41,6 +41,15 @@ bool DragData::containsColor() const
     return false;
 }
 
+bool DragData::containsFiles() const
+{
+    return false;
+}
+
+void DragData::asFilenames(Vector<String>& result) const
+{
+}
+
 bool DragData::containsPlainText() const
 {
     return false;

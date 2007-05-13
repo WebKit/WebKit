@@ -110,6 +110,7 @@ BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone(
 BOOL canOpenWindows;
 BOOL closeWebViews;
 BOOL closeRemainingWindowsWhenComplete = YES;
+BOOL addFileToPasteboardOnDrag = NO;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -1068,8 +1069,9 @@ static void dump(void)
             || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCallCloseOnWebViews:)
             || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
-            || aSelector == @selector(setUseDashboardCompatibilityMode:))
-        return NO;
+            || aSelector == @selector(setUseDashboardCompatibilityMode:)
+            || aSelector == @selector(addFileToPasteboardOnDrag))
+            return NO;
     return YES;
 }
 
@@ -1176,6 +1178,11 @@ static void dump(void)
 - (void)dumpAsText
 {
     dumpAsText = YES;
+}
+
+- (void)addFileToPasteboardOnDrag
+{
+    addFileToPasteboardOnDrag = YES;
 }
 
 - (void)addDisallowedURL:(NSString *)urlString
@@ -1468,7 +1475,7 @@ static void runTest(const char *pathOrURL)
         fprintf(stderr, "can't parse filename as UTF-8\n");
         return;
     }
-
+    
     CFURLRef URL;
     if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")))
         URL = CFURLCreateWithString(NULL, pathOrURLString, NULL);
@@ -1498,6 +1505,7 @@ static void runTest(const char *pathOrURL)
     readFromWindow = NO;
     canOpenWindows = NO;
     closeWebViews = YES;
+    addFileToPasteboardOnDrag = NO;
     [[frame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;

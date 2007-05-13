@@ -1,3 +1,55 @@
+2007-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/4728842> Can't drag-and-drop files onto <input type="file">
+        
+        This patch allows a file to be dropped on to a file input field.  There
+        are a few changes for data handling and a  few to allow the data to be
+        threaded to the appropriate places.
+
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+           When dropping a file onto a file input we may mouse over either 
+           the element itself, or the contained button element.  This method
+           returns the base element for the file input in either of these
+           cases.
+        (WebCore::DragController::tryDocumentDrag):
+           Don't try to set the drag caret to a file input.
+        (WebCore::DragController::concludeDrag):
+           Handle dropping onto a file input element.
+        (WebCore::DragController::canProcessDrag):
+           We can now process a file being dragged onto a file input element.
+           
+        * platform/DragData.h:
+           New accessors
+           
+        * platform/gdk/DragDataGdk.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+           Link stubs.
+           
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+           Implement new accessors
+        (WebCore::DragData::containsCompatibleContent):
+           Update containsCompatibleContent to allow standalone files.
+          
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+           Link stubs
+                      
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::receiveDroppedFile):
+        * rendering/RenderFileUploadControl.h:
+           For security reasons we don't have an api to allow us to set 
+           a value directly on a file input -- attempts to do so are
+           blocked.  By adding a method to set the target through the 
+           render we bypass such restrictions, and ensure the renderer
+           is updated correctly.
+
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

@@ -39,5 +39,6 @@ extern NSMutableSet *disallowedURLs;
 extern BOOL waitToDump;
 extern BOOL canOpenWindows;
 extern BOOL closeWebViews;
+extern BOOL addFileToPasteboardOnDrag;
 
 WebView *createWebView();

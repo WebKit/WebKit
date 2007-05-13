@@ -1,3 +1,12 @@
+2007-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Add test to verify files can be dragged to <input type="file">
+
+        * fast/forms/dragging-to-file-input-expected.txt: Added.
+        * fast/forms/dragging-to-file-input.html: Added.
+
 2007-05-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

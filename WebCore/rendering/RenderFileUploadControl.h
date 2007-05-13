@@ -47,6 +47,8 @@ public:
     void click();
 
     void valueChanged();
+    
+    void receiveDroppedFile(const String&);
 
 private:
     int maxFilenameWidth() const;

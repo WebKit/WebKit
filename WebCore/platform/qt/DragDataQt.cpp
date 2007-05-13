@@ -50,6 +50,16 @@ bool DragData::containsColor() const
     return false;
 }
 
+bool DragData::containsFiles() const
+{
+    notImplemented();
+    return false;
+}
+
+void DragData::asFilenames(Vector<String>& result) const
+{
+}
+
 bool DragData::containsPlainText() const
 {
     return m_platformDragData->hasText() || m_platformDragData->hasUrls();

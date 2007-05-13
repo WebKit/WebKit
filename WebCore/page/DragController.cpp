@@ -44,12 +44,15 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "Image.h"
 #include "markup.h"
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"
 #include "PlugInInfoStore.h"
+#include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
@@ -248,6 +251,26 @@ DragOperation DragController::dragEnteredOrUpdated(DragData* dragData)
     
     return operation;
 }
+
+static HTMLInputElement* asFileInput(Node* node)
+{
+    ASSERT(node);
+    
+    // The button for a FILE input is a sub element with no set input type
+    // In order to get around this problem we assume any non-FILE input element
+    // is this internal button, and try querying the shadow parent node.
+    if (node->hasTagName(HTMLNames::inputTag) && node->isShadowNode() && static_cast<HTMLInputElement*>(node)->inputType() != HTMLInputElement::FILE)
+      node = node->shadowParentNode();
+    
+    if (!node || !node->hasTagName(HTMLNames::inputTag))
+        return 0;
+    
+    HTMLInputElement* inputElem = static_cast<HTMLInputElement*>(node);
+    if (inputElem->inputType() == HTMLInputElement::FILE)
+        return inputElem;
+    
+    return 0;
+}
     
 DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask)
 {
@@ -271,12 +294,15 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         
         IntPoint dragPos = dragData->clientPosition();
         IntPoint point = frameView->windowToContents(dragPos);
-        Selection dragCaret(visiblePositionForPoint(m_document->frame(), point));
-        m_page->dragCaretController()->setSelection(dragCaret);
         Element* element = m_document->elementFromPoint(point.x(), point.y());
         ASSERT(element);
         Frame* innerFrame = element->document()->frame();
         ASSERT(innerFrame);
+        if (!asFileInput(element)) {
+            Selection dragCaret(visiblePositionForPoint(m_document->frame(), point));
+            m_page->dragCaretController()->setSelection(dragCaret);
+        }
+        
         return dragIsMove(innerFrame->selectionController(), dragData) ? DragOperationMove : DragOperationCopy;
     } 
     
@@ -341,10 +367,32 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         innerFrame->editor()->applyStyle(style.get(), EditActionSetColor);
         return true;
     }
-
+    
     if (!m_page->dragController()->canProcessDrag(dragData)) {
         m_page->dragCaretController()->clear();
         return false;
+    }
+    
+    if (HTMLInputElement* fileInput = asFileInput(element)) {
+        if (!dragData->containsFiles())
+            return false;
+        
+        Vector<String> filenames;
+        dragData->asFilenames(filenames);
+        if (filenames.isEmpty())
+            return false;
+        
+        // Ugly.  For security none of the API's available to us to set the input value 
+        // on file inputs.  Even forcing a change in HTMLInputElement doesn't work as
+        // RenderFileUploadControl clears the file when doing updateFromElement()
+        RenderFileUploadControl* renderer = static_cast<RenderFileUploadControl*>(fileInput->renderer());
+        
+        if (!renderer)
+            return false;
+        
+        // Only take the first filename as <input type="file" /> can only accept one
+        renderer->receiveDroppedFile(filenames[0]);
+        return true;
     }
 
     Selection dragCaret(m_page->dragCaretController()->selection());
@@ -400,9 +448,16 @@ bool DragController::canProcessDrag(DragData* dragData)
         return false;
 
     result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, true);
-    if (!result.innerNonSharedNode() || !result.innerNonSharedNode()->isContentEditable())
+    
+    if (!result.innerNonSharedNode()) 
         return false;
-
+    
+    if (dragData->containsFiles() && asFileInput(result.innerNonSharedNode()))
+        return true;
+        
+    if (!result.innerNonSharedNode()->isContentEditable())
+        return false;
+        
     if (m_didInitiateDrag && m_document == m_dragInitiator && result.isSelected())
         return false;
 
