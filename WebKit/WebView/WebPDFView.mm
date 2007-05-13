@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,14 +45,14 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/Assertions.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/EventNames.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
-#import <JavaScriptCore/Assertions.h>
-#import <PDFKit/PDFKit.h>
-#import <WebCore/FrameLoader.h>
-#import <WebCore/KURL.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -63,23 +63,22 @@ using namespace EventNames;
 #define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
 #define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
 
-// QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
-// Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
+@interface PDFDocument (PDFKitSecretsIKnow)
+- (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
+@end
+
+extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
 @interface WebPDFView (FileInternal)
 + (Class)_PDFPreviewViewClass;
 + (Class)_PDFViewClass;
 - (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu;
 - (void)_applyPDFDefaults;
-- (void)_cancelUpdatePreferencesTimer;
 - (BOOL)_canLookUpInDictionary;
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey;
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent;
-- (void)_openWithFinder:(id)sender;
 - (NSString *)_path;
-- (PDFView *)_PDFSubview;
 - (BOOL)_pointIsInSelection:(NSPoint)point;
-- (void)_receivedPDFKitLaunchNotification:(NSNotification *)notification;
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString;
 - (NSString *)_temporaryPDFDirectoryPath;
 - (void)_trackFirstResponder;
@@ -93,12 +92,6 @@ using namespace EventNames;
 }
 - (id)initWithView:(WebPDFView *)view;
 @end
-
-@interface PDFDocument (PDFKitSecretsIKnow)
-- (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
-@end
-
-extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
 #pragma mark C UTILITY FUNCTIONS
 
@@ -184,7 +177,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)dealloc
 {
     ASSERT(!trackedFirstResponder);
-    [self _cancelUpdatePreferencesTimer];
     [previewView release];
     [PDFSubview release];
     [path release];
@@ -986,13 +978,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [PDFSubview setDisplayMode:[prefs PDFDisplayMode]];
 }
 
-- (void)_cancelUpdatePreferencesTimer
-{
-    [_updatePreferencesTimer invalidate];
-    [_updatePreferencesTimer release];
-    _updatePreferencesTimer = nil;
-}
-
 - (BOOL)_canLookUpInDictionary
 {
     return [PDFSubview respondsToSelector:@selector(_searchInDictionary:)];
@@ -1279,27 +1264,28 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     trackedFirstResponder = [newFirstResponder retain];
 }
 
-- (void)_updatePreferencesNow
+- (void)_updatePreferences:(WebPreferences *)prefs
 {
-    [self _cancelUpdatePreferencesTimer];
-
-    WebPreferences *prefs = [[dataSource _webView] preferences];
     float scaleFactor = [PDFSubview autoScales] ? 0.0f : [PDFSubview scaleFactor];
     [prefs setPDFScaleFactor:scaleFactor];
     [prefs setPDFDisplayMode:[PDFSubview displayMode]];
+    _willUpdatePreferencesSoon = NO;
+    [self release];
 }
 
 - (void)_updatePreferencesSoon
 {   
     // Consolidate calls; due to the PDFPrefUpdatingProxy method, this can be called multiple times with a single user action
     // such as showing the context menu.
-    if (_updatePreferencesTimer)
+    if (_willUpdatePreferencesSoon)
         return;
 
-    _updatePreferencesTimer = [[NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(_updatePreferencesNow) userInfo:nil repeats:NO] retain];
+    [self retain];
+    [self performSelector:@selector(_updatePreferences:) withObject:[[dataSource _webView] preferences] afterDelay:0];
+    _willUpdatePreferencesSoon = YES;
 }
 
-@end;
+@end
 
 @implementation PDFPrefUpdatingProxy
 

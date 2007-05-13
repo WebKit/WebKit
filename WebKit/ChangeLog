@@ -1,3 +1,23 @@
+2007-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/5188400> Webkit crashes going back from PDF at perl.org site
+
+        * WebView/WebPDFView.h: Replace _updatePreferencesTimer with _willUpdatePreferencesSoon BOOL.
+        Also remove unneeded @public that gives other classes access to our dataSource member.
+
+        * WebView/WebPDFView.mm: Rearrange top of file a bit, remove forward declaration of the
+        _cancelUpdatePreferencesTimer method.
+        (-[WebPDFView dealloc]): Removed call to _cancelUpdatePreferencesTimer.
+        (-[WebPDFView _updatePreferencesNow:]): Added WebPreferences parameter. This sidesteps problems
+        where the dataSource is no longer present by not looking at the dataSource field at all.
+        Also removed the call to _cancelUpdatePreferencesTimer, added code to set _willUpdatePreferencesSoon
+        to NO and added a release to balance a retain I did in _updatePreferencesSoon.
+        (-[WebPDFView _updatePreferencesSoon]): Changed to use performSelectorAfterDelay instead of
+        an NSTimer. Pass in the preferences object as a parameter, since we might not be able to get to
+        the dataSource when the timer fires.
+
 2007-05-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

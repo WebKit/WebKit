@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 @class PDFDocument;
 @class PDFView;
 @class WebDataSource;
-@class PDFPrefUpdatingProxy;
 
 @interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentTextSizing>
 {
@@ -41,9 +40,8 @@
     id trackedFirstResponder;
     BOOL written;
     BOOL _ignoreScaleAndDisplayModeNotifications;
-    NSTimer *_updatePreferencesTimer;
+    BOOL _willUpdatePreferencesSoon;
     PDFView *PDFSubviewProxy;
-@public
     WebDataSource *dataSource;
 }
 
