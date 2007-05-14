@@ -1,3 +1,11 @@
+2007-05-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Remove incorrect assertion.
+
+        * page/FrameView.cpp: (WebCore::FrameView::setContentsPos):
+
 2007-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

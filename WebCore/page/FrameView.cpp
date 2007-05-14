@@ -613,7 +613,6 @@ void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 
 void FrameView::setContentsPos(int x, int y)
 {
-    ASSERT(!d->m_inProgrammaticScroll);
     if (frame()->prohibitsScrolling())
         return;
     bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
