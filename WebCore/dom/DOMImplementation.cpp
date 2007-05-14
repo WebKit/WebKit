@@ -360,6 +360,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new PluginDocument(this, frame);
     if (Image::supportsType(type))
         return new ImageDocument(this, frame);
+    if (isTextMIMEType(type))
+        return new TextDocument(this, frame);
 
     // Everything else can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
     if (PlugInInfoStore::supportsMIMEType(type))
@@ -371,8 +373,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 #endif
     if (isXMLMIMEType(type))
         return new Document(this, frame);
-    if (isTextMIMEType(type))
-        return new TextDocument(this, frame);
 
     return new HTMLDocument(this, frame);
 }
