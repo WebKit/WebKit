@@ -158,7 +158,7 @@ QSize QWebPage::sizeHint() const
 void QWebPage::stop()
 {
     FrameLoader *f = mainFrame()->d->frame->loader();
-    f->stopAllLoaders();
+    f->stopForUserCancel();
 }
 
 QWebPageHistory QWebPage::history() const

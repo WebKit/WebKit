@@ -1,3 +1,17 @@
+2007-05-14  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Required updates after Maciej's frame change.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+              Call checkLoadCompleted() at the end of the method. Without it
+              we never get the loadDone() signal on the Qt port.
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::ResourceHandleManager::receivedFinished):
+              Don't pass a null error to didFail().
+
 2007-05-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti.

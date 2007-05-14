@@ -300,7 +300,9 @@ void ResourceHandleManager::receivedFinished(RequestQt* request, int errorCode)
 
     if (errorCode) {
         //FIXME: error setting error was removed from ResourceHandle
-        client->didFail(request->resource, ResourceError());
+        client->didFail(request->resource,
+                        ResourceError(request->qurl.host(), request->response.statusCode(),
+                                      request->qurl.toString(), String()));
     } else {
         client->didFinishLoading(request->resource);
     }

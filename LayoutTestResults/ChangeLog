@@ -1,5 +1,15 @@
 2007-05-14  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack
+
+        Update after the behavior change for empty frames.
+
+        * qt/tables/mozilla/bugs/bug33855-expected.txt:
+        * qt/tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt:
+        * qt/tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt:
+
+2007-05-14  Lars Knoll <lars@trolltech.com>
+
         Skip a test that currently hangs
 
         * qt/Skipped:

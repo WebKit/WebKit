@@ -1,3 +1,24 @@
+2007-05-14  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Updates after Maciej's frame change.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::stop):
+              Call stopForUserCancel() instead of stopAllLoaders()
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::didFinishLoad):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad):
+              Call QWebFrame::loadDone() from the places it's supposed to be
+              called from.
+
 2007-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Rob Buis.

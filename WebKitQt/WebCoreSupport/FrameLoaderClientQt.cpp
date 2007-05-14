@@ -286,8 +286,7 @@ void FrameLoaderClientQt::loadedFromCachedPage()
 
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
-    if (m_webFrame)
-        emit m_webFrame->loadDone(true);
+    
 }
 
 
@@ -349,6 +348,8 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 
 void FrameLoaderClientQt::dispatchDidFinishLoad()
 {
+    if (m_webFrame)
+        emit m_webFrame->loadDone(true);    
 }
 
 
@@ -545,7 +546,7 @@ void FrameLoaderClientQt::addHistoryItemForFragmentScroll()
 
 void FrameLoaderClientQt::didFinishLoad()
 {
-    notImplemented();
+//     notImplemented();
 }
 
 
@@ -636,14 +637,12 @@ bool FrameLoaderClientQt::canCachePage() const
     return false;
 }
 
-void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader* loader, const WebCore::ResourceError&)
+void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader* loader, const WebCore::ResourceError& error)
 {
     if (m_firstData) {
         loader->frameLoader()->setEncoding(m_response.textEncodingName(), false);
         m_firstData = false;
     }
-    if (m_webFrame)
-        emit m_webFrame->loadDone(false);
 }
 
 void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
@@ -721,7 +720,7 @@ void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identif
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
     // seems like the Mac code doesn't do anything here by default neither
-    qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().url();
+    //qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().url();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
@@ -739,7 +738,7 @@ void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, u
 
     m_response = response;
     m_firstData = true;
-    qDebug() << "    got response from" << response.url().url();
+    //qDebug() << "    got response from" << response.url().url();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long, int)
@@ -768,12 +767,14 @@ bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::Docume
 
 void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::ResourceError&)
 {
-    notImplemented();
+    if (m_webFrame)
+        emit m_webFrame->loadDone(false);    
 }
 
 void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
 {
-    notImplemented();
+    if (m_webFrame)
+        emit m_webFrame->loadDone(false);    
 }
 
 WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
