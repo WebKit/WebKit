@@ -48,6 +48,9 @@ svg
 # crashes
 fast/dom/Window/window-open-self.html
 
+# infinite hangs
+dom/html/level2/html/AppletsCollection.html
+
 # Failing tests or tests that need closer inspection
 css2.1/t0801-c412-hz-box-00-b-a.html
 css2.1/t040302-c61-ex-len-00-b-a.html

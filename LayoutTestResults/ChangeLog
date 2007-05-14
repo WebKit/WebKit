@@ -1,3 +1,9 @@
+2007-05-14  Lars Knoll <lars@trolltech.com>
+
+        Skip a test that currently hangs
+
+        * qt/Skipped:
+
 2007-05-10  Lars Knoll <lars@trolltech.com>
 
         Add missing test result.
