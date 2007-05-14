@@ -990,11 +990,14 @@ void HTMLInputElement::setValue(const String& value)
     } else
         setAttribute(valueAttr, constrainValue(value));
     
-    // Restore a caret at the starting point of the old selection.
-    // This matches Safari 2.0 behavior.
-    if (isTextField() && document()->focusedNode() == this && cachedSelStart != -1) {
-        ASSERT(cachedSelEnd != -1);
-        setSelectionRange(cachedSelStart, cachedSelStart);
+    if (isTextField()) {
+        unsigned max = m_value.length();
+        if (document()->focusedNode() == this)
+            setSelectionRange(max, max);
+        else {
+            cachedSelStart = max;
+            cachedSelEnd = max;
+        }
     }
 }
 

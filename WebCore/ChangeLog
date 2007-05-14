@@ -1,3 +1,17 @@
+2007-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13690
+        JavaScript Form Validation issue on Banco do Brasil site
+
+        Test: fast/forms/input-setvalue-selection.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): In other browsers, changing textInput.value
+        always moves the insertion point past the text. In 10.4.9 WebKit, this only worked
+        for inactive controls, and it never worked in ToT.
+
 2007-05-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz

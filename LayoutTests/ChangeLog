@@ -1,3 +1,21 @@
+2007-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13690
+        JavaScript Form Validation issue on Banco do Brasil site
+
+        * fast/forms/input-setvalue-selection-expected.txt: Added.
+        * fast/forms/input-setvalue-selection.html: Added.
+
+        * fast/forms/input-appearance-maxlength.html: Now that the selection is correctly set
+        in inactive text inputs, we need to explicitly change it to exercise the same code path.
+
+        * fast/forms/input-selection-restore-expected.txt: Removed.
+        * fast/forms/input-selection-restore.html: Removed.
+        AFAICT, this test was added in r14931 to test for status quo, and not because we
+        specifically wanted such behavior.
+
 2007-05-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
