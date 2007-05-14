@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 544x19
+          text run at (0,0) width 544: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
+      RenderTable {TABLE} at (0,33) size 41x71
+        RenderTableSection {TBODY} at (0,0) size 41x71
+          RenderTableRow {TR} at (0,2) size 41x21
+            RenderTableCell {TD} at (2,2) size 37x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x19
+                text run at (1,1) width 35: "row 1"
+          RenderTableRow {TR} at (0,25) size 41x21
+            RenderTableCell {TD} at (2,25) size 37x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x19
+                text run at (1,1) width 35: "row 2"
+          RenderTableRow {TR} at (0,48) size 41x21
+            RenderTableCell {TD} at (2,48) size 37x21 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x19
+                text run at (1,1) width 35: "row 3"

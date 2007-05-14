@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x114 [bgcolor=#808000]
+        RenderTableSection {TBODY} at (0,0) size 784x114
+          RenderTableRow {TR} at (0,0) size 784x114
+            RenderTableCell {TD} at (0,0) size 70x114 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 70x114
+                text run at (0,0) width 50: "Dorothy"
+                text run at (0,19) width 70: "Rothschild:"
+                text run at (0,38) width 35: "Love,"
+                text run at (0,57) width 56: "curiosity,"
+                text run at (0,76) width 49: "freckles"
+                text run at (0,95) width 24: "and"
+            RenderTableCell {TD} at (70,0) size 714x19 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 195x19
+                text run at (0,0) width 195: "Animal Friends Rescue Project"

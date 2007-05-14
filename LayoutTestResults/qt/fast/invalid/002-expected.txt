@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {I} at (0,0) size 58x19
+          RenderText {#text} at (0,0) size 58x19
+            text run at (0,0) width 58: "Line One"
+      RenderBlock (anonymous) at (0,34) size 784x20
+        RenderBlock {P} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 58x19
+            text run at (0,0) width 58: "Line Two"
+      RenderBlock (anonymous) at (0,68) size 784x20
+        RenderInline {I} at (0,0) size 31x19
+          RenderText {#text} at (0,0) size 31x19
+            text run at (0,0) width 31: "Line "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {I} at (0,0) size 38x19
+          RenderText {#text} at (31,0) size 38x19
+            text run at (31,0) width 38: "Three"
+      RenderBlock (anonymous) at (0,102) size 784x20
+        RenderBlock {P} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 61x19
+            text run at (0,0) width 61: "Line Four"
+      RenderBlock (anonymous) at (0,136) size 784x20
+        RenderInline {I} at (0,0) size 58x19
+          RenderText {#text} at (0,0) size 58x19
+            text run at (0,0) width 58: "Line Five"
+        RenderText {#text} at (0,0) size 0x0

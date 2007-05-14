@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 219x19
+          text run at (0,0) width 219: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 759x39
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (219,0) size 337x19
+              text run at (219,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5868"
+          RenderText {#text} at (556,0) size 759x39
+            text run at (556,0) width 4: " "
+            text run at (560,0) width 199: "Crash on HP.com with ToT and"
+            text run at (0,20) width 304: "Safari 2.0.2 in khtml::RenderContainer::detach()"
+        RenderText {#text} at (304,20) size 4x19
+          text run at (304,20) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 735x19
+          text run at (0,0) width 405: "There should be two 100x100 squares stacked vertically below. "
+          text run at (405,0) width 330: "The green square should be above the blue square."
+      RenderBlock {HR} at (0,87) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,96) size 106x206
+        RenderTableSection {TBODY} at (0,0) size 106x206
+          RenderTableRow at (0,2) size 106x202
+            RenderTableCell at (2,2) size 102x202 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {TR} at (1,1) size 100x100 [bgcolor=#008000]
+              RenderBlock {TR} at (1,101) size 100x100 [bgcolor=#0000FF]

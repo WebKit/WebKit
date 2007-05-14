@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 190x25
+        RenderTableSection {TBODY} at (0,0) size 190x25
+          RenderTableRow {TR} at (0,2) size 190x21
+            RenderTableCell {TD} at (2,2) size 57x21 [bgcolor=#FFFFCC] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "Cell One"
+            RenderTableCell {TD} at (61,2) size 57x21 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "Cell Two"
+            RenderTableCell {TD} at (120,2) size 68x21 [bgcolor=#FFFFCC] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 66x19
+                text run at (1,1) width 66: "Cell Three"

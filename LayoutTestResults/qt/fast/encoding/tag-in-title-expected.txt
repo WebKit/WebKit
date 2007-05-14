@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 764x38
+          text run at (0,0) width 764: "This test checks that WebKit doesn't stop looking for a charset defined in an HTTP-EQUIV meta when it encounters a tag"
+          text run at (0,19) width 82: "within <title>."
+      RenderBlock {P} at (0,52) size 784x19
+        RenderText {#text} at (0,0) size 296x19
+          text run at (0,0) width 296: "The first letter should look like a Latin \"K\" here:"
+      RenderBlock {P} at (0,85) size 784x19
+        RenderText {#text} at (0,0) size 100x19
+          text run at (0,0) width 100: "\x{41A}\x{430}\x{43A}\x{430}\x{44F} \x{433}\x{430}\x{434}\x{43E}\x{441}\x{442}\x{44C}!"

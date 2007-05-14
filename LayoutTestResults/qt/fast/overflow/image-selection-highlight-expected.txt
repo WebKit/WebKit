@@ -1,0 +1,55 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 219x19
+          text run at (0,0) width 219: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 762x39
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (219,0) size 337x19
+              text run at (219,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6673"
+          RenderText {#text} at (556,0) size 762x39
+            text run at (556,0) width 4: " "
+            text run at (560,0) width 202: "Selection highlight doesn't scroll"
+            text run at (0,20) width 359: "along with an image contained in an overflow:scroll block"
+        RenderText {#text} at (359,20) size 4x19
+          text run at (359,20) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 784x19
+          text run at (0,0) width 401: "There should be one contiguous highlight from \x{201C}elit\x{201D} to \x{201C}Etiam\x{201D}, "
+          text run at (401,0) width 383: "including the orange square, and no other highlighted areas."
+      RenderBlock {HR} at (0,87) size 784x2 [border: (1px inset #000000)]
+layer at (8,104) size 100x200 clip at (0,0) size 0x0 scrollY 40 scrollWidth 82 scrollHeight 485
+  RenderBlock {DIV} at (0,96) size 100x200
+    RenderText {#text} at (0,0) size 82x152
+      text run at (0,0) width 41: "Lorem"
+      text run at (0,19) width 38: "ipsum"
+      text run at (0,38) width 32: "dolor"
+      text run at (0,57) width 14: "sit"
+      text run at (0,76) width 36: "amet,"
+      text run at (0,95) width 82: "consectetuer"
+      text run at (0,114) width 63: "adipiscing"
+      text run at (0,133) width 22: "elit."
+    RenderImage {IMG} at (0,152) size 10x10
+    RenderText {#text} at (0,162) size 82x323
+      text run at (0,162) width 36: "Etiam"
+      text run at (0,181) width 12: "et"
+      text run at (0,200) width 42: "ipsum."
+      text run at (0,219) width 30: "Nam"
+      text run at (0,238) width 82: "consectetuer"
+      text run at (0,257) width 15: "mi"
+      text run at (0,276) width 28: "eget"
+      text run at (0,295) width 29: "velit."
+      text run at (0,314) width 25: "Sed"
+      text run at (0,333) width 23: "nec"
+      text run at (0,352) width 30: "risus"
+      text run at (0,371) width 30: "vitae"
+      text run at (0,390) width 25: "felis"
+      text run at (0,409) width 40: "auctor"
+      text run at (0,428) width 52: "ultricies."
+      text run at (0,447) width 82: "Pellentesque"
+      text run at (0,466) width 54: "aliquet..."
+selection start: position 58 of child 0 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 11 of child 2 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document

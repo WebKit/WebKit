@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x57
+        RenderText {#text} at (0,0) size 763x57
+          text run at (0,0) width 290: "In this sample, the H3s should not be nested. "
+          text run at (290,0) width 340: "While WinIE does allow the nesting, Firefox does not. "
+          text run at (630,0) width 122: "We have chosen to"
+          text run at (0,19) width 763: "match Firefox, since we size H3s based off the current font size, and therefore nesting would lead to ever-increasing font"
+          text run at (0,38) width 36: "sizes."
+      RenderBlock {H3} at (0,73) size 784x31 [border: (2px solid #FF0000)]
+        RenderInline {I} at (0,0) size 31x22
+          RenderText {#text} at (4,4) size 31x22
+            text run at (4,4) width 31: "One"
+      RenderBlock (anonymous) at (0,120) size 784x0
+        RenderInline {I} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,120) size 784x31
+        RenderBlock {H3} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {I} at (0,0) size 32x22
+            RenderText {#text} at (4,4) size 32x22
+              text run at (4,4) width 32: "Two"
+      RenderBlock (anonymous) at (0,167) size 784x0
+        RenderInline {I} at (0,0) size 0x0
+          RenderInline {I} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,167) size 784x31
+        RenderBlock {H3} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {I} at (0,0) size 44x22
+            RenderText {#text} at (4,4) size 44x22
+              text run at (4,4) width 44: "Three"
+      RenderBlock (anonymous) at (0,214) size 784x0
+        RenderInline {I} at (0,0) size 0x0
+          RenderInline {I} at (0,0) size 0x0
+            RenderInline {I} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,214) size 784x31
+        RenderBlock {H3} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {I} at (0,0) size 36x22
+            RenderText {#text} at (4,4) size 36x22
+              text run at (4,4) width 36: "Four"
+      RenderBlock (anonymous) at (0,261) size 784x0
+        RenderInline {I} at (0,0) size 0x0
+          RenderInline {I} at (0,0) size 0x0
+            RenderInline {I} at (0,0) size 0x0

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,8) size 784x38
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderInline {FONT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 784x38
+          text run at (0,0) width 784: "PASS - this test checks that removing a block element while it's in an imporperly closed inline doesn't crash. This is checking"
+          text run at (0,19) width 142: "for regression against "
+        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
+          RenderText {#text} at (142,19) size 60x19
+            text run at (142,19) width 60: "bug 6778"
+        RenderText {#text} at (202,19) size 4x19
+          text run at (202,19) width 4: "."
+        RenderText {#text} at (0,0) size 0x0

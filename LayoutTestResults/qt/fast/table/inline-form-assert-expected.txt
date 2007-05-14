@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 684x19
+          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 294x19
+              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=12373"
+          RenderText {#text} at (347,0) size 390x19
+            text run at (347,0) width 4: " "
+            text run at (351,0) width 386: "ASSERTION FAILURE: !child->needsLayout() on paypal.com"
+        RenderText {#text} at (737,0) size 4x19
+          text run at (737,0) width 4: "."
+      RenderBlock {P} at (0,34) size 784x19
+        RenderText {#text} at (0,0) size 179x19
+          text run at (0,0) width 179: "No assert means test PASS."
+      RenderTable {TABLE} at (0,67) size 4x0
+        RenderInline {FORM} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,67) size 4x2
+        RenderTableSection {TBODY} at (0,0) size 4x2
+          RenderInline {FORM} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,69) size 4x2
+        RenderTableSection {THEAD} at (0,0) size 4x2
+          RenderInline {FORM} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,71) size 4x2
+        RenderTableSection {TFOOT} at (0,0) size 4x2
+          RenderInline {FORM} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,73) size 4x4
+        RenderTableSection {TBODY} at (0,0) size 4x4
+          RenderTableRow {TR} at (0,2) size 4x0
+            RenderInline {FORM} at (0,0) size 0x0

@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {OL} at (0,0) size 784x57
+        RenderListItem {LI} at (40,0) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 539x19
+            text run at (0,0) width 539: "The list marker should show 1 because this item had a value of 4 but it was removed."
+        RenderListItem {LI} at (40,19) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 439x19
+            text run at (0,0) width 439: "The list marker should show 2 even though this item has a value of 0."
+        RenderListItem {LI} at (40,38) size 744x19
+          RenderListMarker at (-20,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 444x19
+            text run at (0,0) width 444: "The list marker should show 3 even though this item has a value of -1."

@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {OL} at (0,0) size 784x418
+        RenderListItem {LI} at (40,0) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-10"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -10"
+        RenderListItem {LI} at (40,19) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-09"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -09"
+        RenderListItem {LI} at (40,38) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-08"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -08"
+        RenderListItem {LI} at (40,57) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-07"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -07"
+        RenderListItem {LI} at (40,76) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-06"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -06"
+        RenderListItem {LI} at (40,95) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-05"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -05"
+        RenderListItem {LI} at (40,114) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-04"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -04"
+        RenderListItem {LI} at (40,133) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-03"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -03"
+        RenderListItem {LI} at (40,152) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-02"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -02"
+        RenderListItem {LI} at (40,171) size 744x19
+          RenderListMarker at (-33,0) size 29x19: "-01"
+          RenderText {#text} at (0,0) size 215x19
+            text run at (0,0) width 215: "this list item should be labeled -01"
+        RenderListItem {LI} at (40,190) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "00"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 00"
+        RenderListItem {LI} at (40,209) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "01"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 01"
+        RenderListItem {LI} at (40,228) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "02"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 02"
+        RenderListItem {LI} at (40,247) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "03"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 03"
+        RenderListItem {LI} at (40,266) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "04"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 04"
+        RenderListItem {LI} at (40,285) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "05"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 05"
+        RenderListItem {LI} at (40,304) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "06"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 06"
+        RenderListItem {LI} at (40,323) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "07"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 07"
+        RenderListItem {LI} at (40,342) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "08"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 08"
+        RenderListItem {LI} at (40,361) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "09"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 09"
+        RenderListItem {LI} at (40,380) size 744x19
+          RenderListMarker at (-28,0) size 24x19: "10"
+          RenderText {#text} at (0,0) size 210x19
+            text run at (0,0) width 210: "this list item should be labeled 10"
+        RenderListItem {LI} at (40,399) size 744x19
+          RenderListMarker at (-36,0) size 32x19: "100"
+          RenderText {#text} at (0,0) size 218x19
+            text run at (0,0) width 218: "this list item should be labeled 100"

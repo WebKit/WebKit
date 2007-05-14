@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 18: TypeError: Value undefined (result of expression layoutTestController.display) is not object.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 753x19
+          text run at (0,0) width 451: "This tests that the graphics context is restored after painting solid color "
+          text run at (451,0) width 302: "images. The highlight color should be light blue."
+      RenderBlock {HR} at (0,33) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,42) size 784x19
+        RenderText {#text} at (0,0) size 20x19
+          text run at (0,0) width 20: "foo"

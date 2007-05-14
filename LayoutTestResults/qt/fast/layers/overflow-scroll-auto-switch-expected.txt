@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 143x19
+          text run at (0,0) width 143: "Scrollbars should work"
+layer at (8,27) size 100x100 clip at (0,0) size 0x0 scrollWidth 272 scrollHeight 190
+  RenderBlock (relative positioned) {DIV} at (0,19) size 100x100
+    RenderText {#text} at (0,0) size 272x19
+      text run at (0,0) width 272: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,19) size 8x19
+      text run at (0,19) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,38) size 8x19
+      text run at (0,38) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,57) size 8x19
+      text run at (0,57) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,76) size 8x19
+      text run at (0,76) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,95) size 8x19
+      text run at (0,95) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,114) size 8x19
+      text run at (0,114) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,133) size 8x19
+      text run at (0,133) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,152) size 8x19
+      text run at (0,152) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
+    RenderText {#text} at (0,171) size 8x19
+      text run at (0,171) width 8: "a"
+    RenderBR {BR} at (0,0) size 0x0
