@@ -1,3 +1,39 @@
+2007-05-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - <rdar://problem/4865655> REGRESSION: find function does not work for the character ß
+
+        The trick was to fold case consistently in the CircularSearchBuffer class.
+
+        The problem was that we were folding the search target string with full case folding and
+        the characters of the text we were searching with simple case folding. We now use full
+        case folding in both cases.
+
+        * editing/TextIterator.cpp:
+        (WebCore::CircularSearchBuffer::CircularSearchBuffer): Changed the buffer to be a
+        Vector<UChar>. Added a Vector<bool> to record which characters were starts of characters
+        in the text we are searching. Changed the cursor to be an int rather than a pointer.
+        (WebCore::CircularSearchBuffer::append): New function that knows how to append multiple
+        characters when folding case turns one character into many -- uses the full foldCase
+        rather than the simplified single-character foldCase. Also removed the append function
+        that did multiple characters at once; that was part of an optimization we don't need.
+        (WebCore::CircularSearchBuffer::isMatch): Instead of asserting that the buffer is full,
+        changed this to return false if it's not full, which lets us fill up the buffer with
+        the normal loop. Also return false if the start of the buffer is half-way through a
+        case-folded character and updated this since m_cursor is now an integer.
+        (WebCore::CircularSearchBuffer::length): This returns the length in non-case-folded
+        characters of the characters that were appended, which may not be the same as the length
+        of the original target string. To do that we have to total up the character start
+        booleans for the current state of the circular buffer.
+        (WebCore::findPlainText): Streamlined the logic in a few ways: 1) Moved more of the
+        return value setup to the top of the function so it could be shared with the early
+        error exit. 2) Removed the separate "fill the buffer" logic, which allowed me to
+        remove some of the functions from CircularSearchBuffer and eliminated the need for
+        two nested loops. 3) Replaced the CharacterIterator and bool that were used to record
+        the location we found with integers matchStart and matchLength. 4) Got rid of the use
+        of goto since we don't have two nested loops any more.
+
 2007-05-14  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

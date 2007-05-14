@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,32 +47,30 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // Buffer that knows how to compare with a search target.
-// Keeps enough of the previous text to be able to search in the future,
-// but no more.
-class CircularSearchBuffer {
+// Keeps enough of the previous text to be able to search in the future, but no more.
+class CircularSearchBuffer : Noncopyable {
 public:
     CircularSearchBuffer(const String& target, bool isCaseSensitive);
-    ~CircularSearchBuffer() { fastFree(m_buffer); }
 
-    void clear() { m_cursor = m_buffer; m_bufferFull = false; }
-    void append(int length, const UChar* characters);
+    void clear() { m_cursor = 0; m_isBufferFull = false; }
     void append(UChar);
 
-    int neededCharacters() const;
     bool isMatch() const;
-    int length() const { return m_target.length(); }
+    unsigned length() const;
 
 private:
+    void append(UChar, bool isCharacterStart);
+
     String m_target;
     bool m_isCaseSensitive;
 
-    UChar* m_buffer;
-    UChar* m_cursor;
-    bool m_bufferFull;
-
-    CircularSearchBuffer(const CircularSearchBuffer&);
-    CircularSearchBuffer &operator=(const CircularSearchBuffer&);
+    Vector<UChar> m_characterBuffer;
+    Vector<bool> m_isCharacterStartBuffer;
+    bool m_isBufferFull;
+    unsigned m_cursor;
 };
+
+// --------
 
 TextIterator::TextIterator() : m_startContainer(0), m_startOffset(0), m_endContainer(0), m_endOffset(0), m_positionNode(0), m_lastCharacter(0)
 {
@@ -495,7 +493,6 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
     return false;
 }
 
-
 bool TextIterator::shouldRepresentNodeOffsetZero()
 {
     // Can't represent the position without m_lastTextNode
@@ -639,6 +636,8 @@ PassRefPtr<Range> TextIterator::range() const
         
     return 0;
 }
+
+// --------
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
 {
@@ -835,6 +834,8 @@ PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
     return new Range(m_startNode->document(), m_startNode, m_startOffset, m_startNode, m_startOffset);
 }
 
+// --------
+
 CharacterIterator::CharacterIterator()
     : m_offset(0), m_runOffset(0), m_atBreak(true)
 {
@@ -922,6 +923,8 @@ DeprecatedString CharacterIterator::string(int numChars)
     }
     return result;
 }
+
+// --------
 
 WordAwareIterator::WordAwareIterator()
 : m_previousText(0), m_didLookAhead(false)
@@ -1011,76 +1014,78 @@ const UChar* WordAwareIterator::characters() const
     return m_textIterator.characters();
 }
 
+// --------
+
 CircularSearchBuffer::CircularSearchBuffer(const String& s, bool isCaseSensitive)
-    : m_target(s)
+    : m_target(isCaseSensitive ? s : s.foldCase())
+    , m_isCaseSensitive(isCaseSensitive)
+    , m_characterBuffer(m_target.length())
+    , m_isCharacterStartBuffer(m_target.length())
+    , m_isBufferFull(false)
+    , m_cursor(0)
 {
-    ASSERT(!s.isEmpty());
-
-    if (!isCaseSensitive)
-        m_target = s.foldCase();
+    ASSERT(!m_target.isEmpty());
     m_target.replace(noBreakSpace, ' ');
-    m_isCaseSensitive = isCaseSensitive;
-
-    m_buffer = static_cast<UChar*>(fastMalloc(s.length() * sizeof(UChar)));
-    m_cursor = m_buffer;
-    m_bufferFull = false;
 }
 
-void CircularSearchBuffer::append(UChar c)
+inline void CircularSearchBuffer::append(UChar c, bool isStart)
 {
-    if (m_isCaseSensitive)
-        *m_cursor++ = c == noBreakSpace ? ' ' : c;
-    else
-        *m_cursor++ = c == noBreakSpace ? ' ' : foldCase(c);
-    if (m_cursor == m_buffer + length()) {
-        m_cursor = m_buffer;
-        m_bufferFull = true;
+    m_characterBuffer[m_cursor] = c == noBreakSpace ? ' ' : c;
+    m_isCharacterStartBuffer[m_cursor] = isStart;
+    if (++m_cursor == m_target.length()) {
+        m_cursor = 0;
+        m_isBufferFull = true;
     }
 }
 
-// This function can only be used when the buffer is not yet full,
-// and when then count is small enough to fit in the buffer.
-// No need for a more general version for the search algorithm.
-void CircularSearchBuffer::append(int count, const UChar* characters)
+inline void CircularSearchBuffer::append(UChar c)
 {
-    int tailSpace = m_buffer + length() - m_cursor;
-
-    ASSERT(!m_bufferFull);
-    ASSERT(count <= tailSpace);
-
     if (m_isCaseSensitive) {
-        for (int i = 0; i != count; ++i) {
-            UChar c = characters[i];
-            m_cursor[i] = c == noBreakSpace ? ' ' : c;
-        }
-    } else {
-        for (int i = 0; i != count; ++i) {
-            UChar c = characters[i];
-            m_cursor[i] = c == noBreakSpace ? ' ' : foldCase(c);
-        }
+        append(c, true);
+        return;
     }
-    if (count < tailSpace)
-        m_cursor += count;
-    else {
-        m_bufferFull = true;
-        m_cursor = m_buffer;
+    const int maxFoldedCharacters = 16; // sensible maximum is 3, this should be more than enough
+    UChar foldedCharacters[maxFoldedCharacters];
+    bool error;
+    int numFoldedCharacters = foldCase(foldedCharacters, maxFoldedCharacters, &c, 1, &error);
+    ASSERT(!error);
+    ASSERT(numFoldedCharacters);
+    ASSERT(numFoldedCharacters <= maxFoldedCharacters);
+    if (!error && numFoldedCharacters) {
+        numFoldedCharacters = min(numFoldedCharacters, maxFoldedCharacters);
+        append(foldedCharacters[0], true);
+        for (int i = 1; i < numFoldedCharacters; ++i)
+            append(foldedCharacters[i], false);
     }
 }
 
-int CircularSearchBuffer::neededCharacters() const
+inline bool CircularSearchBuffer::isMatch() const
 {
-    return m_bufferFull ? 0 : m_buffer + length() - m_cursor;
+    if (!m_isBufferFull)
+        return false;
+    if (!m_isCharacterStartBuffer[m_cursor])
+        return false;
+
+    unsigned tailSpace = m_target.length() - m_cursor;
+    return memcmp(&m_characterBuffer[m_cursor], m_target.characters(), tailSpace * sizeof(UChar)) == 0
+        && memcmp(&m_characterBuffer[0], m_target.characters() + tailSpace, m_cursor * sizeof(UChar)) == 0;
 }
 
-bool CircularSearchBuffer::isMatch() const
+// Returns the number of characters that were appended to the buffer (what we are searching in).
+// That's not necessarily the same length as the passed-in target string, because case folding
+// can make two strings match even though they're not the same length.
+unsigned CircularSearchBuffer::length() const
 {
-    ASSERT(m_bufferFull);
+    ASSERT(isMatch());
 
-    int headSpace = m_cursor - m_buffer;
-    int tailSpace = length() - headSpace;
-    return memcmp(m_cursor, m_target.characters(), tailSpace * sizeof(UChar)) == 0
-        && memcmp(m_buffer, m_target.characters() + tailSpace, headSpace * sizeof(UChar)) == 0;
+    unsigned bufferSize = m_target.length();
+    unsigned length = 0;
+    for (unsigned i = 0; i < bufferSize; ++i)
+        length += m_isCharacterStartBuffer[i];
+    return length;
 }
+
+// --------
 
 int TextIterator::rangeLength(const Range *r, bool spacesForReplacedElements)
 {
@@ -1201,6 +1206,8 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
     return resultRange.release();
 }
 
+// --------
+
 DeprecatedString plainText(const Range* r)
 {
     DeprecatedString result("");
@@ -1209,72 +1216,55 @@ DeprecatedString plainText(const Range* r)
     return result;
 }
 
-PassRefPtr<Range> findPlainText(const Range *r, const String& s, bool forward, bool caseSensitive)
+PassRefPtr<Range> findPlainText(const Range* range, const String& target, bool forward, bool caseSensitive)
 {
     // FIXME: Can we do Boyer-Moore or equivalent instead for speed?
 
+    ExceptionCode ec = 0;
+    RefPtr<Range> result = range->cloneRange(ec);
+    result->collapse(!forward, ec);
+
     // FIXME: This code does not allow \n at the moment because of issues with <br>.
     // Once we fix those, we can remove this check.
-    if (s.isEmpty() || s.find('\n') != -1) {
-        int exception = 0;
-        RefPtr<Range> result = r->cloneRange(exception);
-        result->collapse(forward, exception);
+    if (target.isEmpty() || target.find('\n') != -1)
         return result.release();
-    }
 
-    CircularSearchBuffer buffer(s, caseSensitive);
-
-    bool found = false;
-    CharacterIterator rangeEnd;
-
+    unsigned matchStart = 0;
+    unsigned matchLength = 0;
     {
-        CharacterIterator it(r);
-        while (1) {
-            // Fill the buffer.
-            while (int needed = buffer.neededCharacters()) {
-                if (it.atBreak()) {
-                    if (it.atEnd())
-                        goto done;
-                    buffer.clear();
-                }
-                int available = it.length();
-                int runLength = min(needed, available);
-                buffer.append(runLength, it.characters());
-                it.advance(runLength);
-            }
-
-            // Do the search.
-            while (1) {
-                if (buffer.isMatch()) {
-                    // Compute the range for the result.
-                    found = true;
-                    rangeEnd = it;
-                    // If searching forward, stop on the first match.
-                    // If searching backward, don't stop, so we end up with the last match.
-                    if (forward)
-                        goto done;
-                }
-                if (it.atBreak())
+        CircularSearchBuffer searchBuffer(target, caseSensitive);
+        CharacterIterator it(range);
+        for (;;) {
+            if (searchBuffer.isMatch()) {
+                // Note that we found a match, and where we found it.
+                unsigned matchEnd = it.characterOffset();
+                matchLength = searchBuffer.length();
+                ASSERT(matchLength);
+                ASSERT(matchEnd >= matchLength);
+                matchStart = matchEnd - matchLength;
+                // If searching forward, stop on the first match.
+                // If searching backward, don't stop, so we end up with the last match.
+                if (forward)
                     break;
-                buffer.append(it.characters()[0]);
-                it.advance(1);
             }
-            buffer.clear();
+            if (it.atBreak()) {
+                if (it.atEnd())
+                    break;
+                searchBuffer.clear();
+            }
+            searchBuffer.append(it.characters()[0]);
+            it.advance(1);
         }
     }
 
-done:
-    int exception = 0;
-    RefPtr<Range> result = r->cloneRange(exception);
-    if (!found)
-        result->collapse(!forward, exception);
-    else {
-        CharacterIterator it(r);
-        it.advance(rangeEnd.characterOffset() - buffer.length());
-        result->setStart(it.range()->startContainer(exception), it.range()->startOffset(exception), exception);
-        it.advance(buffer.length() - 1);
-        result->setEnd(it.range()->endContainer(exception), it.range()->endOffset(exception), exception);
+    if (matchLength) {
+        CharacterIterator it(range);
+        it.advance(matchStart);
+        result->setStart(it.range()->startContainer(ec), it.range()->startOffset(ec), ec);
+        it.advance(matchLength - 1);
+        result->setEnd(it.range()->endContainer(ec), it.range()->endOffset(ec), ec);
     }
+
     return result.release();
 }
 
