@@ -78,6 +78,10 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         return;
 
     Window* window = windowObj();
+    // Null check as clearWindowObj() can clear this and we still get called back by
+    // xmlhttprequest objects. See http://bugs.webkit.org/show_bug.cgi?id=13275
+    if (!window)
+        return;
     Frame *frame = window->frame();
     if (!frame)
         return;

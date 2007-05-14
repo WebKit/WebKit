@@ -1,3 +1,15 @@
+2007-05-14  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13275
+        Safari crashed when trying to login using the windows live contact control
+
+        Check for cleared windowObj in JSAbstractEventListener::handleEvent
+
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+
 2007-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
