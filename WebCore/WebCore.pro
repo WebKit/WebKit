@@ -1,3 +1,4 @@
+# -*- Mode:makefile -*-
 # WebCore - qmake build info
 include($$PWD/../WebKit.pri)
 qt-port:LIBS -= -lWebKitQt
@@ -10,6 +11,8 @@ OBJECTS_DIR = tmp
 INCLUDEPATH += tmp $$OUTPUT_DIR/WebCore/tmp
 
 DESTDIR = $$OUTPUT_DIR/lib
+DEPENDPATH += css dom loader editing history html \
+	loader page platform platform/graphics rendering xml
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -49,7 +52,8 @@ macx {
     INCLUDEPATH += /usr/include/libxml2
     LIBS += -lxml2 -lxslt
 }
-qt-port:INCLUDEPATH += \
+qt-port {
+INCLUDEPATH += \
                 $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/ \
                 $$PWD/platform/qt \
                 $$PWD/platform/network/qt \
@@ -59,6 +63,10 @@ qt-port:INCLUDEPATH += \
                 $$PWD/page/qt \
                 $$PWD/../WebKitQt/WebCoreSupport \
                 $$PWD/../WebKitQt/Api
+
+DEPENDPATH += editing/qt history/qt loader/qt page/qt \
+	platform/graphics/qt ../WeKitQt/Api ../WebKitQt/WebCoreSupport
+}
 
 gdk-port:INCLUDEPATH += \
     $$PWD/platform/image-decoders/bmp \
@@ -855,6 +863,11 @@ contains(DEFINES, ENABLE_XBL=1) {
 contains(DEFINES, ENABLE_SVG=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG
 
+    DEPENDPATH += ksvg2/css ksvg2/events ksvg2/misc ksvg2/svg platform/graphics/svg
+    qt-port {
+	DEPENDPATH += platform/graphics/svg/qt
+    }
+
     SVG_NAMES = $$PWD/ksvg2/svg/svgtags.in
 
     XLINK_NAMES = $$PWD/ksvg2/misc/xlinkattrs.in
@@ -1146,7 +1159,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGBlock.cpp \
         rendering/RenderSVGContainer.cpp \
         rendering/RenderSVGGradientStop.cpp \
-        rendering/RenderSVGHiddenContainer.cpp \ 
+        rendering/RenderSVGHiddenContainer.cpp \
         rendering/RenderSVGImage.cpp \
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \

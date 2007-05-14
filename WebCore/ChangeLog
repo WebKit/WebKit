@@ -1,3 +1,12 @@
+2007-05-14  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Simon.
+
+        Do some magic to get better dependency tracking for header
+        files in the qmake project files.
+
+        * ChangeLog:
+
 2007-05-14  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
