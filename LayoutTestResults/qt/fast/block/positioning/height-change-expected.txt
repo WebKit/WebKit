@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 219x16
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 219x19
           text run at (0,0) width 219: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 781x32
-          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
-            RenderText {#text} at (219,0) size 330x16
-              text run at (219,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6881"
-          RenderText {#text} at (549,0) size 781x32
-            text run at (549,0) width 4: " "
-            text run at (553,0) width 228: "Block with position:absolute bottom:0"
-            text run at (0,16) width 520: "doesn't always move when height of containing block changes (affects Safari RSS)"
-        RenderText {#text} at (520,16) size 3x16
-          text run at (520,16) width 3: "."
-      RenderBlock {P} at (0,46) size 784x16
-        RenderText {#text} at (0,0) size 549x16
-          text run at (0,0) width 549: "The squares below should have blue tops and green bottoms, not the other way around."
-      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,185) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-layer at (8,93) size 784x100
-  RenderBlock (relative positioned) {DIV} at (0,85) size 784x100
+        RenderInline {I} at (0,0) size 734x39
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (219,0) size 337x19
+              text run at (219,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6881"
+          RenderText {#text} at (556,0) size 734x39
+            text run at (556,0) width 4: " "
+            text run at (560,0) width 174: "Block with position:absolute"
+            text run at (0,20) width 582: "bottom:0 doesn't always move when height of containing block changes (affects Safari RSS)"
+        RenderText {#text} at (582,20) size 4x19
+          text run at (582,20) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 559x19
+          text run at (0,0) width 559: "The squares below should have blue tops and green bottoms, not the other way around."
+      RenderBlock {HR} at (0,87) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,196) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+layer at (8,104) size 784x100
+  RenderBlock (relative positioned) {DIV} at (0,96) size 784x100
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
-layer at (8,143) size 100x50
+layer at (8,154) size 100x50
   RenderBlock (positioned) {DIV} at (0,50) size 100x50 [bgcolor=#90EE90]
-layer at (8,209) size 784x100
-  RenderFlexibleBox (relative positioned) {DIV} at (0,201) size 784x100
+layer at (8,223) size 784x100
+  RenderFlexibleBox (relative positioned) {DIV} at (0,215) size 784x100
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
-layer at (8,259) size 100x50
+layer at (8,273) size 100x50
   RenderBlock (positioned) {DIV} at (0,50) size 100x50 [bgcolor=#90EE90]

@@ -7,18 +7,18 @@ layer at (0,0) size 800x600
         RenderBlock {H1} at (0,51) size 800x70 [color=#FFFFFF]
         RenderBlock {DIV} at (0,171) size 800x0
           RenderBlock {UL} at (0,0) size 800x0
-            RenderBlock (floating) {LI} at (0,0) size 461x20 [border: (2px solid #0000FF)]
-              RenderText {#text} at (2,2) size 457x16
-                text run at (2,2) width 457: "There should be a gap between this float and the green rectangle above."
-      RenderBlock {DIV} at (0,221) size 800x48 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
+            RenderBlock (floating) {LI} at (0,0) size 466x23 [border: (2px solid #0000FF)]
+              RenderText {#text} at (2,2) size 462x19
+                text run at (2,2) width 462: "There should be a gap between this float and the green rectangle above."
+      RenderBlock {DIV} at (0,221) size 800x51 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 28x28 [bgcolor=#FFFFFF]
         RenderBlock {DIV} at (2,30) size 796x0
-        RenderBlock (anonymous) at (2,30) size 796x16
-          RenderText {#text} at (0,0) size 480x16
-            text run at (0,0) width 480: "This text should be inside a black rectangle and below the 2em white square."
-      RenderBlock {DIV} at (0,283) size 800x48 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
+        RenderBlock (anonymous) at (2,30) size 796x19
+          RenderText {#text} at (0,0) size 487x19
+            text run at (0,0) width 487: "This text should be inside a black rectangle and below the 2em white square."
+      RenderBlock {DIV} at (0,286) size 800x51 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 28x28 [bgcolor=#FFFFFF]
         RenderBlock {DIV} at (2,30) size 796x0
-        RenderBlock (anonymous) at (2,30) size 796x16
-          RenderText {#text} at (0,0) size 510x16
-            text run at (0,0) width 510: "This text should also be inside a black rectangle and below the 2em white square."
+        RenderBlock (anonymous) at (2,30) size 796x19
+          RenderText {#text} at (0,0) size 517x19
+            text run at (0,0) width 517: "This text should also be inside a black rectangle and below the 2em white square."

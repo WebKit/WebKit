@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 776x32
-          text run at (0,0) width 776: "This test makes sure that HTMLObjectElement.vspace and HTMLObjectElement.hspace are exposed as numbers instead of"
-          text run at (0,16) width 669: "strings, per the DOM Level 2 HTML spec: http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-9893177"
-      RenderBlock (anonymous) at (0,46) size 784x170
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 771x38
+          text run at (0,0) width 771: "This test makes sure that HTMLObjectElement.vspace and HTMLObjectElement.hspace are exposed as numbers instead"
+          text run at (0,19) width 697: "of strings, per the DOM Level 2 HTML spec: http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-9893177"
+      RenderBlock (anonymous) at (0,52) size 784x170
         RenderPartObject {OBJECT} at (20,10) size 300x150
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,216) size 784x16
-        RenderText {#text} at (0,0) size 70x16
+      RenderBlock {DIV} at (0,222) size 784x19
+        RenderText {#text} at (0,0) size 70x19
           text run at (0,0) width 70: "SUCCESS!"

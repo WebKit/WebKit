@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x134
-  RenderBlock {HTML} at (0,0) size 800x134
-    RenderBody {BODY} at (8,14) size 784x112
+layer at (0,0) size 800x155
+  RenderBlock {HTML} at (0,0) size 800x155
+    RenderBody {BODY} at (8,14) size 784x133
       RenderBlock {PRE} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 782x32
-          text run at (0,0) width 782: "This tests that insertRule, deleteRule, and the IE extensions addRule and removeRule update the style when rules are added"
-          text run at (0,16) width 443: "and removed. It also tests that disabling a stylesheet updates the style."
-      RenderBlock {DIV} at (0,32) size 784x16
-        RenderText {#text} at (0,0) size 480x16
-          text run at (0,0) width 480: "This is div1. This text should not be red because that rule has been removed."
-      RenderBlock {DIV} at (0,48) size 784x16 [color=#0000FF]
-        RenderText {#text} at (0,0) size 604x16
-          text run at (0,0) width 604: "This is div2. This text should be blue because a matching rule with that property has been added."
-      RenderBlock {DIV} at (0,64) size 784x16
-        RenderText {#text} at (0,0) size 498x16
-          text run at (0,0) width 498: "This is div3. This text should not be yellow because that rule has been removed."
-      RenderBlock {DIV} at (0,80) size 784x16 [color=#008000]
-        RenderText {#text} at (0,0) size 616x16
-          text run at (0,0) width 616: "This is div4. This text should be green because a matching rule with that property has been added."
-      RenderBlock {DIV} at (0,96) size 784x16
-        RenderText {#text} at (0,0) size 616x16
-          text run at (0,0) width 616: "This is div3. This text should not be purple because the stylesheet with that rule has been disabled."
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 747x38
+          text run at (0,0) width 747: "This tests that insertRule, deleteRule, and the IE extensions addRule and removeRule update the style when rules are"
+          text run at (0,19) width 492: "added and removed. It also tests that disabling a stylesheet updates the style."
+      RenderBlock {DIV} at (0,38) size 784x19
+        RenderText {#text} at (0,0) size 489x19
+          text run at (0,0) width 489: "This is div1. This text should not be red because that rule has been removed."
+      RenderBlock {DIV} at (0,57) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,0) size 615x19
+          text run at (0,0) width 615: "This is div2. This text should be blue because a matching rule with that property has been added."
+      RenderBlock {DIV} at (0,76) size 784x19
+        RenderText {#text} at (0,0) size 507x19
+          text run at (0,0) width 507: "This is div3. This text should not be yellow because that rule has been removed."
+      RenderBlock {DIV} at (0,95) size 784x19 [color=#008000]
+        RenderText {#text} at (0,0) size 625x19
+          text run at (0,0) width 625: "This is div4. This text should be green because a matching rule with that property has been added."
+      RenderBlock {DIV} at (0,114) size 784x19
+        RenderText {#text} at (0,0) size 626x19
+          text run at (0,0) width 626: "This is div3. This text should not be purple because the stylesheet with that rule has been disabled."

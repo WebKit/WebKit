@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x533
-  RenderBlock {HTML} at (0,0) size 800x533
-    RenderBody {BODY} at (8,14) size 784x505
-      RenderBlock {P} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 783x32
-          text run at (0,0) width 783: "This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple logo"
-          text run at (0,16) width 350: "should appear scaled, normal and finally tiled in a circle."
-      RenderBlock {DIV} at (0,46) size 784x153
+layer at (0,0) size 800x545
+  RenderBlock {HTML} at (0,0) size 800x545
+    RenderBody {BODY} at (8,14) size 784x517
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 759x38
+          text run at (0,0) width 759: "This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple"
+          text run at (0,19) width 385: "logo should appear scaled, normal and finally tiled in a circle."
+      RenderBlock {DIV} at (0,52) size 784x155
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
-        RenderText {#text} at (150,137) size 113x16
-          text run at (150,137) width 113: "Using drawImage."
-      RenderBlock {DIV} at (0,199) size 784x153
+        RenderText {#text} at (150,136) size 115x19
+          text run at (150,136) width 115: "Using drawImage."
+      RenderBlock {DIV} at (0,207) size 784x155
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
-        RenderText {#text} at (150,137) size 174x16
-          text run at (150,137) width 174: "Using drawImageFromRect."
-      RenderBlock {DIV} at (0,352) size 784x153
+        RenderText {#text} at (150,136) size 178x19
+          text run at (150,136) width 178: "Using drawImageFromRect."
+      RenderBlock {DIV} at (0,362) size 784x155
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
-        RenderText {#text} at (150,137) size 128x16
-          text run at (150,137) width 128: "Using ImagePattern."
-      RenderBlock {PRE} at (0,519) size 784x0
+        RenderText {#text} at (150,136) size 130x19
+          text run at (150,136) width 130: "Using ImagePattern."
+      RenderBlock {PRE} at (0,531) size 784x0

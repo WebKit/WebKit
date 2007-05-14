@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x106
-  RenderBlock {HTML} at (0,0) size 800x106
-    RenderBody {BODY} at (8,14) size 784x84
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 266x16
-          text run at (0,0) width 266: "The two boxes below should look identical."
-      RenderTable {TABLE} at (0,30) size 190x54
+layer at (0,0) size 800x109
+  RenderBlock {HTML} at (0,0) size 800x109
+    RenderBody {BODY} at (8,14) size 784x87
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 270x19
+          text run at (0,0) width 270: "The two boxes below should look identical."
+      RenderTable {TABLE} at (0,33) size 190x54
         RenderTableSection {TBODY} at (0,0) size 190x54
           RenderTableRow {TR} at (0,2) size 190x50
             RenderTableCell {TD} at (2,2) size 92x50 [r=0 c=0 rs=1 cs=1]

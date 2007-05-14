@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (0,1) size 100x100 [bgcolor=#008000]
-        RenderInline {A} at (0,0) size 28x16 [color=#0000EE]
-          RenderText {#text} at (0,0) size 28x16
+        RenderInline {A} at (0,0) size 28x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 28x19
             text run at (0,0) width 28: "Test"
-      RenderText {#text} at (100,0) size 32x16
+      RenderText {#text} at (100,0) size 32x19
         text run at (100,0) width 32: "Hello"
       RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x159 [border: (70px solid #FF0000)]
+        RenderText {#text} at (70,70) size 208x19
+          text run at (70,70) width 208: "This border should be 5em thick."
+      RenderBlock {DIV} at (0,159) size 100x38 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 96x38
+          text run at (0,0) width 95: "This div should"
+          text run at (0,19) width 96: "be 100px wide."

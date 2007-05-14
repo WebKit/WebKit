@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 631x16
-          text run at (0,0) width 631: "Test of createContextualFragment. If the test succeeds you will see the word \"success\" below in bold."
-      RenderBlock {DIV} at (0,30) size 784x16
-        RenderInline {B} at (0,0) size 72x16
-          RenderText {#text} at (0,0) size 72x16
-            text run at (0,0) width 72: "SUCCESS"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 641x19
+          text run at (0,0) width 641: "Test of createContextualFragment. If the test succeeds you will see the word \"success\" below in bold."
+      RenderBlock {DIV} at (0,33) size 784x20
+        RenderInline {B} at (0,0) size 66x20
+          RenderText {#text} at (0,0) size 66x20
+            text run at (0,0) width 66: "SUCCESS"

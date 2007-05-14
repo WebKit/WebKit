@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {BLOCKQUOTE} at (40,0) size 704x16
-        RenderInline {SPAN} at (0,0) size 161x16
-          RenderText {#text} at (0,0) size 161x16
-            text run at (0,0) width 161: "Heck, son, you're a failure"
-      RenderBlock {P} at (0,30) size 784x16
-        RenderText {#text} at (0,0) size 370x16
-          text run at (0,0) width 370: "The result appears below here; should not include any text:"
-      RenderBlock {P} at (0,60) size 784x0
+      RenderBlock {BLOCKQUOTE} at (40,0) size 704x19
+        RenderInline {SPAN} at (0,0) size 165x19
+          RenderText {#text} at (0,0) size 165x19
+            text run at (0,0) width 165: "Heck, son, you're a failure"
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 375x19
+          text run at (0,0) width 375: "The result appears below here; should not include any text:"
+      RenderBlock {P} at (0,66) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0

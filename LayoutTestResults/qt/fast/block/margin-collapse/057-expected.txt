@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x298
-  RenderBlock {HTML} at (0,0) size 800x298
-    RenderBody {BODY} at (8,14) size 784x276
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 406x16
-          text run at (0,0) width 406: "There six boxes below should look the same with no red present."
-      RenderTable {TABLE} at (0,30) size 368x246
+layer at (0,0) size 800x301
+  RenderBlock {HTML} at (0,0) size 800x301
+    RenderBody {BODY} at (8,14) size 784x279
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 411x19
+          text run at (0,0) width 411: "There six boxes below should look the same with no red present."
+      RenderTable {TABLE} at (0,33) size 368x246
         RenderTableSection {TBODY} at (0,0) size 368x246
           RenderTableRow {TR} at (0,2) size 368x120
             RenderTableCell {TD} at (2,2) size 120x120 [r=0 c=0 rs=1 cs=1]

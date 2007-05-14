@@ -37,7 +37,6 @@ fast/text
 fast/tokenizer
 fast/xpath
 fast/xsl
-fast
 security
 webarchive
 
@@ -89,6 +88,7 @@ fast/block/float/027.html
 fast/block/float/028.html
 fast/block/float/032.html
 fast/block/float/float-in-float-hit-testing.html
+fast/block/float/float-avoidance.html
 fast/block/margin-collapse/003.html
 fast/block/positioning/006.html
 fast/block/positioning/010.html
@@ -109,6 +109,21 @@ fast/block/positioning/absolute-with-html-border-quirks.html
 fast/block/positioning/absolute-with-html-border-strict.html
 fast/block/positioning/auto/003.html
 fast/block/positioning/auto/006.html
+
+fast/css/acid2-pixel.html
+fast/css/acid2.html
+fast/css/resize-corner-tracking.html
+
+fast/dom/css-cached-import-rule.html
+fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-location-href-put-crash.html
+fast/dom/null-document-location-put-crash.html
+fast/dom/null-document-location-replace-crash.html
+fast/dom/null-document-window-open-crash.html
+fast/dom/null-document-xmlhttprequest-open.html
+fast/dom/wrapper-identity.html
+fast/dom/wrapper-round-tripping.html
+fast/dom/Window/setting-properties-on-closed-window.html
 
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html

@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x445
-  RenderBlock {HTML} at (0,0) size 800x445
-    RenderBody {BODY} at (8,14) size 784x417
-      RenderBlock {P} at (0,0) size 784x64
-        RenderText {#text} at (0,0) size 778x64
-          text run at (0,0) width 778: "There should be one big square below containing four squares. Top left square should be filled with 3 rows of 2 and bit Apple"
-          text run at (0,16) width 771: "images. Top right square should be 2 and a bit rows with one Apple image column along the left edge of the square. Bottom"
-          text run at (0,32) width 776: "left square should be one row with three Apple images along the top of the square. Bottom right square should be one Apple"
-          text run at (0,48) width 148: "image in top left corner."
-      RenderBlock {P} at (0,78) size 784x339
+layer at (0,0) size 800x459
+  RenderBlock {HTML} at (0,0) size 800x459
+    RenderBody {BODY} at (8,14) size 784x431
+      RenderBlock {P} at (0,0) size 784x76
+        RenderText {#text} at (0,0) size 774x76
+          text run at (0,0) width 750: "There should be one big square below containing four squares. Top left square should be filled with 3 rows of 2 and bit"
+          text run at (0,19) width 774: "Apple images. Top right square should be 2 and a bit rows with one Apple image column along the left edge of the square."
+          text run at (0,38) width 767: "Bottom left square should be one row with three Apple images along the top of the square. Bottom right square should be"
+          text run at (0,57) width 218: "one Apple image in top left corner."
+      RenderBlock {P} at (0,90) size 784x341
         RenderHTMLCanvas {CANVAS} at (0,0) size 336x336 [border: (3px solid #000000)]

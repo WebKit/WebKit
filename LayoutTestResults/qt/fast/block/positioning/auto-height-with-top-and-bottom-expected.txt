@@ -3,18 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 619x16
-          text run at (0,0) width 619: "The red box should be entirely inside the black box with the text content spilling out of both of them."
-layer at (8,38) size 404x104
-  RenderBlock (relative positioned) {DIV} at (0,30) size 404x104 [border: (2px solid #000000)]
-layer at (10,60) size 400x114
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 628x19
+          text run at (0,0) width 628: "The red box should be entirely inside the black box with the text content spilling out of both of them."
+layer at (8,41) size 404x104
+  RenderBlock (relative positioned) {DIV} at (0,33) size 404x104 [border: (2px solid #000000)]
+layer at (10,63) size 400x154
   RenderBlock (positioned) {DIV} at (2,22) size 400x60 [border: (2px solid #FF0000)]
-    RenderText {#text} at (2,2) size 395x112
-      text run at (2,2) width 391: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do"
-      text run at (2,18) width 390: "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut"
-      text run at (2,34) width 395: "enim ad minim veniam, quis nostrud exercitation ullamco laboris"
-      text run at (2,50) width 386: "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor"
-      text run at (2,66) width 379: "in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-      text run at (2,82) width 386: "nulla pariatur. Excepteur sint occaecat cupidatat non proident,"
-      text run at (2,98) width 364: "sunt in culpa qui officia deserunt mollit anim id est laborum."
+    RenderText {#text} at (2,2) size 393x152
+      text run at (2,2) width 378: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed"
+      text run at (2,21) width 355: "do eiusmod tempor incididunt ut labore et dolore magna"
+      text run at (2,40) width 370: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+      text run at (2,59) width 393: "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis"
+      text run at (2,78) width 382: "aute irure dolor in reprehenderit in voluptate velit esse cillum"
+      text run at (2,97) width 345: "dolore eu fugiat nulla pariatur. Excepteur sint occaecat"
+      text run at (2,116) width 391: "cupidatat non proident, sunt in culpa qui officia deserunt mollit"
+      text run at (2,135) width 129: "anim id est laborum."

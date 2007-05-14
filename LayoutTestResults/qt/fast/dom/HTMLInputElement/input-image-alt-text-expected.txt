@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock (anonymous) at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 776x32
-          text run at (0,0) width 475: "This tests whether alt text is shown for image-type form input elements with "
-          text run at (475,0) width 301: "no src attribute. You should see \"Success\" twice,"
-          text run at (0,16) width 177: "followed by a blue rectangle."
-      RenderBlock {P} at (0,46) size 784x0
-      RenderBlock {FORM} at (0,46) size 784x88
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 748x38
+          text run at (0,0) width 480: "This tests whether alt text is shown for image-type form input elements with "
+          text run at (480,0) width 268: "no src attribute. You should see \"Success\""
+          text run at (0,19) width 221: "twice, followed by a blue rectangle."
+      RenderBlock {P} at (0,52) size 784x0
+      RenderBlock {FORM} at (0,52) size 784x88
         RenderImage {INPUT} at (2,2) size 13x13 [bgcolor=#C0C0C0]
         RenderBR {BR} at (17,17) size 0x0
         RenderImage {INPUT} at (2,19) size 100x50 [bgcolor=#C0C0C0]

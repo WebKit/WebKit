@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 562x28
-        RenderTableSection {TBODY} at (0,0) size 562x28
-          RenderTableRow {TR} at (0,2) size 562x24
-            RenderTableCell {TD} at (2,2) size 254x24 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 252x22
-                RenderTableSection {TBODY} at (0,0) size 252x22
-                  RenderTableRow {TR} at (0,2) size 252x18
-                    RenderTableCell {TD} at (2,2) size 248x18 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 246x16
-                        text run at (1,1) width 246: "Look at me contributing some minwidth."
-            RenderTableCell {TD} at (258,13) size 302x2 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 568x31
+        RenderTableSection {TBODY} at (0,0) size 568x31
+          RenderTableRow {TR} at (0,2) size 568x27
+            RenderTableCell {TD} at (2,2) size 260x27 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 258x25
+                RenderTableSection {TBODY} at (0,0) size 258x25
+                  RenderTableRow {TR} at (0,2) size 258x21
+                    RenderTableCell {TD} at (2,2) size 254x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 252x19
+                        text run at (1,1) width 252: "Look at me contributing some minwidth."
+            RenderTableCell {TD} at (264,14) size 302x2 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]

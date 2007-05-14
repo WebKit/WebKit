@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 325x16
-          text run at (0,0) width 325: "The text below should say \"document type created\";"
-      RenderBlock {DIV} at (0,30) size 784x16
-        RenderText {#text} at (0,0) size 144x16
-          text run at (0,0) width 144: "document type created"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 329x19
+          text run at (0,0) width 329: "The text below should say \"document type created\";"
+      RenderBlock {DIV} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 146x19
+          text run at (0,0) width 146: "document type created"

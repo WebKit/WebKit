@@ -1,5 +1,324 @@
 2007-05-14  Lars Knoll <lars@trolltech.com>
 
+        Add another 300 test cases, that are ok on the Qt build.
+        Add a few more tests that need examination to the Skipped list.
+
+        * qt/Skipped:
+        * qt/fast/backgrounds/001-expected.txt:
+        * qt/fast/backgrounds/background-inherit-color-bug-expected.txt:
+        * qt/fast/backgrounds/repeat/negative-offset-repeat-expected.txt: Added.
+        * qt/fast/backgrounds/repeat/noRepeatCorrectClip-expected.txt:
+        * qt/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * qt/fast/backgrounds/size/backgroundSize16-expected.txt:
+        * qt/fast/block/basic/001-expected.txt:
+        * qt/fast/block/basic/002-expected.txt:
+        * qt/fast/block/basic/003-expected.txt:
+        * qt/fast/block/basic/004-expected.txt:
+        * qt/fast/block/basic/005-expected.txt:
+        * qt/fast/block/basic/006-expected.txt:
+        * qt/fast/block/basic/007-expected.txt:
+        * qt/fast/block/basic/008-expected.txt:
+        * qt/fast/block/basic/009-expected.txt:
+        * qt/fast/block/basic/010-expected.txt:
+        * qt/fast/block/basic/011-expected.txt:
+        * qt/fast/block/basic/012-expected.txt:
+        * qt/fast/block/basic/014-expected.txt:
+        * qt/fast/block/basic/015-expected.txt:
+        * qt/fast/block/basic/017-expected.txt:
+        * qt/fast/block/basic/018-expected.txt:
+        * qt/fast/block/basic/019-expected.txt:
+        * qt/fast/block/basic/020-expected.txt:
+        * qt/fast/block/basic/021-expected.txt:
+        * qt/fast/block/basic/minheight-expected.txt:
+        * qt/fast/block/basic/quirk-height-expected.txt:
+        * qt/fast/block/basic/white-space-pre-wraps-expected.txt: Added.
+        * qt/fast/block/float/001-expected.txt:
+        * qt/fast/block/float/002-expected.txt:
+        * qt/fast/block/float/003-expected.txt:
+        * qt/fast/block/float/004-expected.txt:
+        * qt/fast/block/float/005-expected.txt:
+        * qt/fast/block/float/006-expected.txt:
+        * qt/fast/block/float/007-expected.txt:
+        * qt/fast/block/float/008-expected.txt:
+        * qt/fast/block/float/010-expected.txt:
+        * qt/fast/block/float/011-expected.txt:
+        * qt/fast/block/float/012-expected.txt:
+        * qt/fast/block/float/013-expected.txt:
+        * qt/fast/block/float/014-expected.txt:
+        * qt/fast/block/float/015-expected.txt:
+        * qt/fast/block/float/016-expected.txt:
+        * qt/fast/block/float/017-expected.txt:
+        * qt/fast/block/float/018-expected.txt:
+        * qt/fast/block/float/020-expected.txt:
+        * qt/fast/block/float/021-expected.txt:
+        * qt/fast/block/float/022-expected.txt:
+        * qt/fast/block/float/023-expected.txt:
+        * qt/fast/block/float/024-expected.txt:
+        * qt/fast/block/float/029-expected.txt:
+        * qt/fast/block/float/030-expected.txt:
+        * qt/fast/block/float/031-expected.txt:
+        * qt/fast/block/float/dynamic-unfloat-pref-width-expected.txt: Added.
+        * qt/fast/block/float/float-in-float-painting-expected.txt:
+        * qt/fast/block/float/independent-align-positioning-expected.txt:
+        * qt/fast/block/float/multiple-float-positioning-expected.txt:
+        * qt/fast/block/float/nestedAnonymousBlocks-expected.txt: Added.
+        * qt/fast/block/float/nopaint-after-layer-destruction-expected.txt:
+        * qt/fast/block/float/nopaint-after-layer-destruction2-expected.txt: Added.
+        * qt/fast/block/float/nowrap-clear-min-width-expected.txt: Added.
+        * qt/fast/block/float/shrink-to-fit-width-expected.txt: Added.
+        * qt/fast/block/float/table-relayout-expected.txt:
+        * qt/fast/block/float/tableshifting-expected.txt:
+        * qt/fast/block/float/vertical-move-relayout-expected.txt:
+        * qt/fast/block/float/width-update-after-clear-expected.txt:
+        * qt/fast/block/margin-collapse/001-expected.txt:
+        * qt/fast/block/margin-collapse/002-expected.txt:
+        * qt/fast/block/margin-collapse/004-expected.txt:
+        * qt/fast/block/margin-collapse/005-expected.txt:
+        * qt/fast/block/margin-collapse/006-expected.txt:
+        * qt/fast/block/margin-collapse/010-expected.txt:
+        * qt/fast/block/margin-collapse/011-expected.txt:
+        * qt/fast/block/margin-collapse/012-expected.txt:
+        * qt/fast/block/margin-collapse/015-expected.txt:
+        * qt/fast/block/margin-collapse/016-expected.txt:
+        * qt/fast/block/margin-collapse/017-expected.txt:
+        * qt/fast/block/margin-collapse/018-expected.txt:
+        * qt/fast/block/margin-collapse/019-expected.txt:
+        * qt/fast/block/margin-collapse/020-expected.txt:
+        * qt/fast/block/margin-collapse/021-expected.txt:
+        * qt/fast/block/margin-collapse/022-expected.txt:
+        * qt/fast/block/margin-collapse/025-expected.txt:
+        * qt/fast/block/margin-collapse/026-expected.txt:
+        * qt/fast/block/margin-collapse/027-expected.txt:
+        * qt/fast/block/margin-collapse/028-expected.txt:
+        * qt/fast/block/margin-collapse/029-expected.txt:
+        * qt/fast/block/margin-collapse/030-expected.txt:
+        * qt/fast/block/margin-collapse/031-expected.txt:
+        * qt/fast/block/margin-collapse/032-expected.txt:
+        * qt/fast/block/margin-collapse/033-expected.txt:
+        * qt/fast/block/margin-collapse/034-expected.txt:
+        * qt/fast/block/margin-collapse/035-expected.txt:
+        * qt/fast/block/margin-collapse/037-expected.txt:
+        * qt/fast/block/margin-collapse/038-expected.txt:
+        * qt/fast/block/margin-collapse/039-expected.txt:
+        * qt/fast/block/margin-collapse/040-expected.txt:
+        * qt/fast/block/margin-collapse/041-expected.txt:
+        * qt/fast/block/margin-collapse/042-expected.txt:
+        * qt/fast/block/margin-collapse/043-expected.txt:
+        * qt/fast/block/margin-collapse/044-expected.txt:
+        * qt/fast/block/margin-collapse/045-expected.txt:
+        * qt/fast/block/margin-collapse/055-expected.txt:
+        * qt/fast/block/margin-collapse/056-expected.txt:
+        * qt/fast/block/margin-collapse/057-expected.txt:
+        * qt/fast/block/margin-collapse/058-expected.txt:
+        * qt/fast/block/margin-collapse/059-expected.txt:
+        * qt/fast/block/margin-collapse/062-expected.txt:
+        * qt/fast/block/margin-collapse/063-expected.txt:
+        * qt/fast/block/margin-collapse/100-expected.txt:
+        * qt/fast/block/margin-collapse/101-expected.txt:
+        * qt/fast/block/margin-collapse/102-expected.txt:
+        * qt/fast/block/margin-collapse/103-expected.txt:
+        * qt/fast/block/margin-collapse/104-expected.txt:
+        * qt/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+        * qt/fast/block/margin-collapse/negative-margins-expected.txt:
+        * qt/fast/block/positioning/001-expected.txt:
+        * qt/fast/block/positioning/002-expected.txt:
+        * qt/fast/block/positioning/047-expected.txt:
+        * qt/fast/block/positioning/051-expected.txt:
+        * qt/fast/block/positioning/053-expected.txt:
+        * qt/fast/block/positioning/054-expected.txt:
+        * qt/fast/block/positioning/055-expected.txt:
+        * qt/fast/block/positioning/056-expected.txt:
+        * qt/fast/block/positioning/057-expected.txt:
+        * qt/fast/block/positioning/058-expected.txt:
+        * qt/fast/block/positioning/059-expected.txt:
+        * qt/fast/block/positioning/060-expected.txt:
+        * qt/fast/block/positioning/061-expected.txt:
+        * qt/fast/block/positioning/abs-inside-inline-rel-expected.txt: Added.
+        * qt/fast/block/positioning/absolute-in-inline-ltr-2-expected.txt:
+        * qt/fast/block/positioning/absolute-in-inline-ltr-3-expected.txt:
+        * qt/fast/block/positioning/absolute-in-inline-ltr-expected.txt:
+        * qt/fast/block/positioning/absolute-in-inline-short-ltr-expected.txt:
+        * qt/fast/block/positioning/absolute-length-of-neg-666666-expected.txt:
+        * qt/fast/block/positioning/absolute-position-direction-quirk-expected.txt:
+        * qt/fast/block/positioning/absolute-position-direction-strict-expected.txt:
+        * qt/fast/block/positioning/absolute-positioned-overconstrained-expected.txt:
+        * qt/fast/block/positioning/auto-height-with-top-and-bottom-expected.txt:
+        * qt/fast/block/positioning/auto/001-expected.txt:
+        * qt/fast/block/positioning/auto/002-expected.txt:
+        * qt/fast/block/positioning/auto/004-expected.txt:
+        * qt/fast/block/positioning/auto/005-expected.txt:
+        * qt/fast/block/positioning/auto/007-expected.txt:
+        * qt/fast/block/positioning/child-of-absolute-with-auto-height-expected.txt:
+        * qt/fast/block/positioning/height-change-expected.txt:
+        * qt/fast/block/positioning/inline-block-relposition-expected.txt: Added.
+        * qt/fast/block/positioning/leftmargin-topmargin-expected.txt:
+        * qt/fast/block/positioning/negative-right-pos-expected.txt:
+        * qt/fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Added.
+        * qt/fast/block/positioning/padding-percent-expected.txt: Added.
+        * qt/fast/block/positioning/pref-width-change-expected.txt: Added.
+        * qt/fast/block/positioning/relative-overflow-block-expected.txt:
+        * qt/fast/block/positioning/relative-overflow-replaced-expected.txt:
+        * qt/fast/block/positioning/relative-overflow-replaced-float-expected.txt:
+        * qt/fast/block/positioning/relayout-on-position-change-expected.txt:
+        * qt/fast/block/positioning/window-height-change-expected.txt:
+        * qt/fast/borders/border-fit-expected.txt: Added.
+        * qt/fast/borders/borderRadiusAllStylesAllCorners-expected.txt:
+        * qt/fast/borders/borderRadiusArcs01-expected.txt:
+        * qt/fast/borders/borderRadiusDashed01-expected.txt:
+        * qt/fast/borders/borderRadiusDashed02-expected.txt:
+        * qt/fast/borders/borderRadiusDashed03-expected.txt:
+        * qt/fast/borders/borderRadiusDotted01-expected.txt:
+        * qt/fast/borders/borderRadiusDotted02-expected.txt:
+        * qt/fast/borders/borderRadiusDotted03-expected.txt:
+        * qt/fast/borders/borderRadiusDouble01-expected.txt:
+        * qt/fast/borders/borderRadiusDouble02-expected.txt:
+        * qt/fast/borders/borderRadiusDouble03-expected.txt:
+        * qt/fast/borders/borderRadiusGroove01-expected.txt:
+        * qt/fast/borders/borderRadiusGroove02-expected.txt:
+        * qt/fast/borders/borderRadiusInset01-expected.txt:
+        * qt/fast/borders/borderRadiusInvalidColor-expected.txt:
+        * qt/fast/borders/borderRadiusOutset01-expected.txt:
+        * qt/fast/borders/borderRadiusRidge01-expected.txt:
+        * qt/fast/borders/borderRadiusSolid01-expected.txt:
+        * qt/fast/borders/borderRadiusSolid02-expected.txt:
+        * qt/fast/borders/borderRadiusSolid03-expected.txt:
+        * qt/fast/borders/borderRadiusSolid04-expected.txt:
+        * qt/fast/box-shadow/basic-shadows-expected.txt: Removed.
+        * qt/fast/canvas/canvas-before-css-expected.txt:
+        * qt/fast/canvas/canvas-size-change-after-layout-expected.txt: Added.
+        * qt/fast/canvas/canvas-transforms-during-path-expected.txt:
+        * qt/fast/canvas/fillrect_gradient-expected.txt:
+        * qt/fast/canvas/image-object-in-canvas-expected.txt:
+        * qt/fast/canvas/patternfill-repeat-expected.txt:
+        * qt/fast/canvas/quadraticCurveTo-expected.txt:
+        * qt/fast/canvas/zero-size-fill-rect-expected.txt:
+        * qt/fast/clip/001-expected.txt:
+        * qt/fast/clip/002-expected.txt:
+        * qt/fast/clip/003-expected.txt:
+        * qt/fast/clip/004-expected.txt:
+        * qt/fast/clip/005-expected.txt:
+        * qt/fast/clip/009-expected.txt:
+        * qt/fast/clip/010-expected.txt:
+        * qt/fast/clip/011-expected.txt:
+        * qt/fast/clip/012-expected.txt:
+        * qt/fast/clip/013-expected.txt:
+        * qt/fast/clip/014-expected.txt:
+        * qt/fast/clip/015-expected.txt:
+        * qt/fast/clip/016-expected.txt:
+        * qt/fast/clip/nestedTransparencyClip-expected.txt:
+        * qt/fast/clip/outline-overflowClip-expected.txt:
+        * qt/fast/compact/001-expected.txt:
+        * qt/fast/compact/002-expected.txt:
+        * qt/fast/compact/003-expected.txt:
+        * qt/fast/css/001-expected.txt:
+        * qt/fast/css/002-expected.txt:
+        * qt/fast/css/003-expected.txt:
+        * qt/fast/css/004-expected.txt:
+        * qt/fast/css/005-expected.txt:
+        * qt/fast/css/007-expected.txt:
+        * qt/fast/css/008-expected.txt:
+        * qt/fast/css/MarqueeLayoutTest-expected.txt:
+        * qt/fast/css/ZeroOpacityLayers-expected.txt:
+        * qt/fast/css/ZeroOpacityLayers2-expected.txt:
+        * qt/fast/css/acid2-expected.txt: Removed.
+        * qt/fast/css/acid2-pixel-expected.txt: Removed.
+        * qt/fast/css/background-image-with-baseurl-expected.txt: Added.
+        * qt/fast/css/beforeSelectorOnCodeElement-expected.txt:
+        * qt/fast/css/border-radius-outline-offset-expected.txt:
+        * qt/fast/css/color-quirk-expected.txt:
+        * qt/fast/css/color-strict-expected.txt:
+        * qt/fast/css/counters/counter-text-security-expected.txt:
+        * qt/fast/css/counters/counter-text-transform-expected.txt:
+        * qt/fast/css/css-imports-expected.txt:
+        * qt/fast/css/css2-system-fonts-expected.txt:
+        * qt/fast/css/css3-modsel-22-expected.txt:
+        * qt/fast/css/error-in-last-decl-expected.txt:
+        * qt/fast/css/ex-after-font-variant-expected.txt:
+        * qt/fast/css/find-next-layer-expected.txt:
+        * qt/fast/css/first-letter-detach-expected.txt:
+        * qt/fast/css/font-shorthand-weight-only-expected.txt:
+        * qt/fast/css/font_property_normal-expected.txt:
+        * qt/fast/css/getFloatValueForUnit-expected.txt:
+        * qt/fast/css/hsl-color-expected.txt:
+        * qt/fast/css/hsla-color-expected.txt:
+        * qt/fast/css/imageTileOpacity-expected.txt:
+        * qt/fast/css/import-rule-regression-11590-expected.txt:
+        * qt/fast/css/import_with_baseurl-expected.txt: Added.
+        * qt/fast/css/inline-properties-important-expected.txt: Added.
+        * qt/fast/css/invalid-pseudo-classes-expected.txt: Added.
+        * qt/fast/css/invalidation-errors-2-expected.txt:
+        * qt/fast/css/invalidation-errors-3-expected.txt:
+        * qt/fast/css/invalidation-errors-expected.txt:
+        * qt/fast/css/line-height-expected.txt:
+        * qt/fast/css/list-outline-expected.txt:
+        * qt/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * qt/fast/css/marginComputedStyle-expected.txt:
+        * qt/fast/css/max-height-none-expected.txt:
+        * qt/fast/css/namespaces/001-expected.txt:
+        * qt/fast/css/namespaces/002-expected.txt:
+        * qt/fast/css/namespaces/003-expected.txt:
+        * qt/fast/css/namespaces/004-expected.txt:
+        * qt/fast/css/namespaces/005-expected.txt:
+        * qt/fast/css/namespaces/006-expected.txt:
+        * qt/fast/css/namespaces/007-expected.txt:
+        * qt/fast/css/outline-auto-empty-rects-expected.txt:
+        * qt/fast/css/outline-auto-location-expected.txt:
+        * qt/fast/css/percentage-non-integer-expected.txt:
+        * qt/fast/css/position-negative-top-margin-expected.txt:
+        * qt/fast/css/quirk-orphaned-units-expected.txt: Added.
+        * qt/fast/css/resize-corner-tracking-expected.txt: Removed.
+        * qt/fast/css/rgb-float-expected.txt:
+        * qt/fast/css/selector-set-attribute-expected.txt:
+        * qt/fast/css/table-text-align-quirk-expected.txt: Added.
+        * qt/fast/css/table-text-align-strict-expected.txt: Added.
+        * qt/fast/css/text-security-expected.txt:
+        * qt/fast/css/word-space-extra-expected.txt:
+        * qt/fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt:
+        * qt/fast/dom/Element/class-attribute-whitespace-expected.txt:
+        * qt/fast/dom/Element/null-offset-parent-expected.txt:
+        * qt/fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/head-link-style-href-check-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/textInHead1-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/textInHead2-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/textInHead3-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/textInHead4-expected.txt:
+        * qt/fast/dom/HTMLHeadElement/textInHead5-expected.txt:
+        * qt/fast/dom/HTMLImageElement/image-alt-text-expected.txt:
+        * qt/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt:
+        * qt/fast/dom/HTMLLinkElement/pending-stylesheet-count-expected.txt:
+        * qt/fast/dom/HTMLObjectElement/vspace-hspace-as-number-expected.txt:
+        * qt/fast/dom/HTMLTableElement/colSpan-expected.txt:
+        * qt/fast/dom/HTMLTableElement/createCaption-expected.txt:
+        * qt/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * qt/fast/dom/Range/create-contextual-fragment-expected.txt:
+        * qt/fast/dom/Range/surroundContents-1-expected.txt:
+        * qt/fast/dom/Window/btoa-pnglet-expected.txt:
+        * qt/fast/dom/Window/open-existing-pop-up-blocking-expected.txt:
+        * qt/fast/dom/anchor-text-expected.txt:
+        * qt/fast/dom/attr_dead_doc-expected.txt:
+        * qt/fast/dom/children-nodes-expected.txt:
+        * qt/fast/dom/clone-contents-0-end-offset-expected.txt:
+        * qt/fast/dom/clone-node-dynamic-style-expected.txt:
+        * qt/fast/dom/comment-not-documentElement-expected.txt:
+        * qt/fast/dom/createDocumentType-expected.txt:
+        * qt/fast/dom/css-inline-style-important-expected.txt: Removed.
+        * qt/fast/dom/css-mediarule-deleteRule-update-expected.txt: Removed.
+        * qt/fast/dom/css-mediarule-insertRule-update-expected.txt: Removed.
+        * qt/fast/dom/css-rule-functions-expected.txt:
+        * qt/fast/dom/delete-contents-expected.txt: Removed.
+        * qt/fast/dom/dom-parse-serialize-display-expected.txt: Removed.
+        * qt/fast/dom/dom-parse-serialize-expected.txt:
+        * qt/fast/dom/importNodeHTML-expected.txt:
+        * qt/fast/dom/importNodeXML-expected.txt:
+        * qt/fast/dom/inner-text-expected.txt:
+        * qt/fast/dom/jsDevicePixelRatio-expected.txt:
+        * qt/fast/dom/outerText-expected.txt:
+        * qt/fast/dom/row-inner-text-expected.txt:
+        * qt/fast/dom/setPrimitiveValue-expected.txt:
+        * qt/fast/dom/stripNullFromTextNodes-expected.txt:
+
+2007-05-14  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Zack
 
         Update after the behavior change for empty frames.

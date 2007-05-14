@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x80
-  RenderBlock {HTML} at (0,0) size 800x80
-    RenderBody {BODY} at (8,14) size 784x58
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 523x16
-          text run at (0,0) width 523: "The following two DIVs should be the same width (resulting in a single 4 by 2 block)."
-      RenderBlock {DIV} at (0,30) size 42x14 [bgcolor=#000080]
+layer at (0,0) size 800x83
+  RenderBlock {HTML} at (0,0) size 800x83
+    RenderBody {BODY} at (8,14) size 784x61
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 530x19
+          text run at (0,0) width 530: "The following two DIVs should be the same width (resulting in a single 4 by 2 block)."
+      RenderBlock {DIV} at (0,33) size 42x14 [bgcolor=#000080]
         RenderBlock {DIV} at (0,0) size 56x14
-      RenderBlock {DIV} at (0,44) size 56x14 [bgcolor=#000080]
+      RenderBlock {DIV} at (0,47) size 56x14 [bgcolor=#000080]

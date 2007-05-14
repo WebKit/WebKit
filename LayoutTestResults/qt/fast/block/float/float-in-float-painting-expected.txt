@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 255x16
+      RenderBlock {DIV} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 255x19
           text run at (0,0) width 255: "This test checks for regressions against "
-        RenderInline {A} at (0,0) size 762x32 [color=#0000EE]
-          RenderText {#text} at (255,0) size 762x32
-            text run at (255,0) width 507: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
-            text run at (0,16) width 111: "issues (flickr.com)"
-        RenderText {#text} at (111,16) size 586x16
-          text run at (111,16) width 586: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
-layer at (8,40) size 784x125
-  RenderBlock {DIV} at (0,32) size 784x125
+        RenderInline {A} at (0,0) size 768x38 [color=#0000EE]
+          RenderText {#text} at (255,0) size 768x38
+            text run at (255,0) width 513: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
+            text run at (0,19) width 114: "issues (flickr.com)"
+        RenderText {#text} at (114,19) size 596x19
+          text run at (114,19) width 596: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
+layer at (8,46) size 784x161
+  RenderBlock {DIV} at (0,38) size 784x125
     RenderBlock (floating) {DIV} at (0,0) size 104x125
       RenderImage {IMG} at (0,0) size 100x100
-      RenderText {#text} at (100,87) size 4x16
-        text run at (100,87) width 4: " "
+      RenderText {#text} at (100,86) size 4x19
+        text run at (100,86) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock (floating) {H1} at (27,121) size 77x32
-        RenderInline {A} at (0,0) size 77x30 [color=#0000EE]
-          RenderText {#text} at (0,1) size 77x30
-            text run at (0,1) width 77: "PASS"
+      RenderBlock (floating) {H1} at (27,123) size 77x38
+        RenderInline {A} at (0,0) size 77x38 [color=#0000EE]
+          RenderText {#text} at (0,0) size 77x38
+            text run at (0,0) width 77: "PASS"
         RenderText {#text} at (0,0) size 0x0
-    RenderBR {BR} at (104,0) size 0x16
+    RenderBR {BR} at (104,0) size 0x19

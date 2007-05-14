@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x50
-  RenderBlock {HTML} at (0,0) size 800x50
-    RenderBody {BODY} at (8,8) size 784x34
+layer at (0,0) size 800x169
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x40
       RenderBlock (floating) {DIV} at (532,0) size 252x102 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 77x16
-          text run at (1,1) width 77: "TOP-RIGHT"
-        RenderBR {BR} at (78,1) size 0x16
-        RenderText {#text} at (1,17) size 62x16
-          text run at (1,17) width 62: "float:right;"
-        RenderBR {BR} at (63,17) size 0x16
-        RenderText {#text} at (1,33) size 83x16
-          text run at (1,33) width 83: "width: 250px;"
-        RenderBR {BR} at (84,33) size 0x16
-        RenderText {#text} at (1,49) size 85x16
-          text run at (1,49) width 85: "height:100px;"
-      RenderBlock {DIV} at (0,0) size 394x34 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 29x16
+        RenderText {#text} at (1,1) size 78x19
+          text run at (1,1) width 78: "TOP-RIGHT"
+        RenderBR {BR} at (79,1) size 0x19
+        RenderText {#text} at (1,20) size 63x19
+          text run at (1,20) width 63: "float:right;"
+        RenderBR {BR} at (64,20) size 0x19
+        RenderText {#text} at (1,39) size 84x19
+          text run at (1,39) width 84: "width: 250px;"
+        RenderBR {BR} at (85,39) size 0x19
+        RenderText {#text} at (1,58) size 86x19
+          text run at (1,58) width 86: "height:100px;"
+      RenderBlock {DIV} at (0,0) size 394x40 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 29x19
           text run at (1,1) width 29: "TOP"
-        RenderBR {BR} at (30,1) size 0x16
-        RenderText {#text} at (1,17) size 68x16
-          text run at (1,17) width 68: "width:50%;"
-      RenderBlock (floating) {DIV} at (0,102) size 101x50 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 99x16
-          text run at (1,1) width 99: "BOTTOM-LEFT"
-        RenderBR {BR} at (100,1) size 0x16
-        RenderText {#text} at (1,17) size 57x16
-          text run at (1,17) width 57: "float: left;"
-        RenderBR {BR} at (58,17) size 0x16
-        RenderText {#text} at (1,33) size 69x16
-          text run at (1,33) width 69: "clear: both;"
+        RenderBR {BR} at (30,1) size 0x19
+        RenderText {#text} at (1,20) size 69x19
+          text run at (1,20) width 69: "width:50%;"
+      RenderBlock (floating) {DIV} at (0,102) size 103x59 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 101x19
+          text run at (1,1) width 101: "BOTTOM-LEFT"
+        RenderBR {BR} at (102,1) size 0x19
+        RenderText {#text} at (1,20) size 58x19
+          text run at (1,20) width 58: "float: left;"
+        RenderBR {BR} at (59,20) size 0x19
+        RenderText {#text} at (1,39) size 71x19
+          text run at (1,39) width 71: "clear: both;"

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 724x16
-        text run at (0,0) width 724: "The canvas below should show a gradient, starting at green at the top and fading to white at the bottom of the rect. "
-      RenderHTMLCanvas {CANVAS} at (0,16) size 150x150
+      RenderText {#text} at (0,0) size 730x19
+        text run at (0,0) width 730: "The canvas below should show a gradient, starting at green at the top and fading to white at the bottom of the rect. "
+      RenderHTMLCanvas {CANVAS} at (0,19) size 150x150
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

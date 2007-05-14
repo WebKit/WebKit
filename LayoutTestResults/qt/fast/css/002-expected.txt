@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x564
-      RenderBlock (anonymous) at (0,0) size 784x64
-        RenderText {#text} at (0,1) size 720x62
-          text run at (0,1) width 525: "These two lines should both be Verdana. "
-          text run at (525,1) width 195: "They should be"
-          text run at (0,33) width 112: "identical."
-      RenderBlock {P} at (0,92) size 784x64
-        RenderText {#text} at (0,1) size 720x62
-          text run at (0,1) width 525: "These two lines should both be Verdana. "
-          text run at (525,1) width 195: "They should be"
-          text run at (0,33) width 112: "identical."
+      RenderBlock (anonymous) at (0,0) size 784x74
+        RenderText {#text} at (0,0) size 720x73
+          text run at (0,0) width 525: "These two lines should both be Verdana. "
+          text run at (525,0) width 195: "They should be"
+          text run at (0,37) width 112: "identical."
+      RenderBlock {P} at (0,102) size 784x74
+        RenderText {#text} at (0,0) size 720x73
+          text run at (0,0) width 525: "These two lines should both be Verdana. "
+          text run at (525,0) width 195: "They should be"
+          text run at (0,37) width 112: "identical."

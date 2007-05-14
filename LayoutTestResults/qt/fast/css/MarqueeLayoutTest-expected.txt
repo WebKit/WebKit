@@ -1,28 +1,28 @@
-layer at (0,0) size 800x858
+layer at (0,0) size 800x892
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x858
-  RenderBlock {HTML} at (0,0) size 800x858
-    RenderBody {BODY} at (8,8) size 784x842
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 287x16
-          text run at (0,0) width 287: "Tests: the height attribute for the marquee tag"
-        RenderBR {BR} at (287,13) size 0x0
-      RenderBlock {P} at (0,30) size 784x64
-        RenderText {#text} at (0,0) size 70x16
-          text run at (0,0) width 70: "Conditions:"
-        RenderBR {BR} at (70,13) size 0x0
-        RenderText {#text} at (0,16) size 768x48
-          text run at (0,16) width 768: "Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overridden"
-          text run at (0,32) width 100: "when the given "
-          text run at (100,32) width 647: "height is smaller than the font height. We also make sure that the default height of a vertical marquee is"
-          text run at (0,48) width 42: "200px."
-      RenderBlock {P} at (0,108) size 784x32
-        RenderText {#text} at (0,0) size 769x32
-          text run at (0,0) width 769: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None of"
-          text run at (0,16) width 51: "the text "
-          text run at (51,16) width 671: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
-      RenderBlock {HR} at (0,154) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,163) size 784x679
+layer at (0,0) size 800x892
+  RenderBlock {HTML} at (0,0) size 800x892
+    RenderBody {BODY} at (8,8) size 784x876
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "Tests: the height attribute for the marquee tag"
+        RenderBR {BR} at (292,14) size 0x0
+      RenderBlock {P} at (0,33) size 784x76
+        RenderText {#text} at (0,0) size 71x19
+          text run at (0,0) width 71: "Conditions:"
+        RenderBR {BR} at (71,14) size 0x0
+        RenderText {#text} at (0,19) size 779x57
+          text run at (0,19) width 779: "Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overridden"
+          text run at (0,38) width 100: "when the given "
+          text run at (100,38) width 654: "height is smaller than the font height. We also make sure that the default height of a vertical marquee is"
+          text run at (0,57) width 43: "200px."
+      RenderBlock {P} at (0,123) size 784x38
+        RenderText {#text} at (0,0) size 783x38
+          text run at (0,0) width 783: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None of"
+          text run at (0,19) width 51: "the text "
+          text run at (51,19) width 686: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
+      RenderBlock {HR} at (0,175) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,184) size 784x692
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
@@ -32,123 +32,126 @@ layer at (0,0) size 800x858
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,160) size 0x16
-        RenderBR {BR} at (0,176) size 0x16
-        RenderBlock {DIV} at (0,379) size 109x200 [bgcolor=#008000]
-          RenderText {#text} at (0,0) size 109x16
-            text run at (0,0) width 109: "This is 200px tall."
-        RenderText {#text} at (109,379) size 4x16
-          text run at (109,379) width 4: " "
-        RenderText {#text} at (313,379) size 4x16
-          text run at (313,379) width 4: " "
-        RenderText {#text} at (517,379) size 4x16
-          text run at (517,379) width 4: " "
+        RenderBR {BR} at (0,168) size 0x19
+        RenderBR {BR} at (0,187) size 0x19
+        RenderBlock {DIV} at (0,392) size 110x200 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 110x19
+            text run at (0,0) width 110: "This is 200px tall."
+        RenderText {#text} at (110,392) size 4x19
+          text run at (110,392) width 4: " "
+        RenderText {#text} at (314,392) size 4x19
+          text run at (314,392) width 4: " "
+        RenderText {#text} at (518,392) size 4x19
+          text run at (518,392) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,579) size 109x100 [bgcolor=#008000]
-          RenderText {#text} at (0,0) size 109x16
-            text run at (0,0) width 109: "This is 100px tall."
+        RenderBlock {DIV} at (0,592) size 110x100 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 110x19
+            text run at (0,0) width 110: "This is 100px tall."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,171) size 784x14 scrollX -784 scrollWidth 1704 scrollHeight 16
+layer at (8,192) size 784x14 scrollX -784 scrollWidth 1681 scrollHeight 19
   RenderBlock {MARQUEE} at (0,0) size 784x14 [bgcolor=#00FFFF]
-    RenderInline {B} at (0,0) size 1704x16
-      RenderText {#text} at (0,0) size 1704x16
-        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
-        text run at (734,0) width 117: "Paul O' Connell, "
-        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderInline {B} at (0,0) size 1681x20
+      RenderText {#text} at (0,0) size 1681x20
+        text run at (0,0) width 730: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (730,0) width 113: "Paul O' Connell, "
+        text run at (843,0) width 838: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,185) size 784x14 scrollX -784 scrollWidth 1704 scrollHeight 16
+layer at (8,206) size 784x14 scrollX -784 scrollWidth 1681 scrollHeight 19
   RenderBlock {MARQUEE} at (0,14) size 784x14 [bgcolor=#FFFF00]
-    RenderInline {B} at (0,0) size 1704x16
-      RenderText {#text} at (0,0) size 1704x16
-        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
-        text run at (734,0) width 117: "Paul O' Connell, "
-        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderInline {B} at (0,0) size 1681x20
+      RenderText {#text} at (0,0) size 1681x20
+        text run at (0,0) width 730: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (730,0) width 113: "Paul O' Connell, "
+        text run at (843,0) width 838: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,199) size 784x16 scrollX -784 scrollWidth 1704
-  RenderBlock {MARQUEE} at (0,28) size 784x16 [bgcolor=#FFA500]
-    RenderInline {B} at (0,0) size 1704x16
-      RenderText {#text} at (0,0) size 1704x16
-        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
-        text run at (734,0) width 117: "Paul O' Connell, "
-        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+layer at (8,220) size 784x20 scrollX -784 scrollWidth 1681
+  RenderBlock {MARQUEE} at (0,28) size 784x20 [bgcolor=#FFA500]
+    RenderInline {B} at (0,0) size 1681x20
+      RenderText {#text} at (0,0) size 1681x20
+        text run at (0,0) width 730: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (730,0) width 113: "Paul O' Connell, "
+        text run at (843,0) width 838: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,215) size 784x16 scrollX -784 scrollWidth 1704
-  RenderBlock {MARQUEE} at (0,44) size 784x16 [bgcolor=#A52A2A]
-    RenderInline {B} at (0,0) size 1704x16
-      RenderText {#text} at (0,0) size 1704x16
-        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
-        text run at (734,0) width 117: "Paul O' Connell, "
-        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+layer at (8,240) size 784x20 scrollX -784 scrollWidth 1681
+  RenderBlock {MARQUEE} at (0,48) size 784x20 [bgcolor=#A52A2A]
+    RenderInline {B} at (0,0) size 1681x20
+      RenderText {#text} at (0,0) size 1681x20
+        text run at (0,0) width 730: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (730,0) width 113: "Paul O' Connell, "
+        text run at (843,0) width 838: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,231) size 784x100 scrollX -784 scrollWidth 1704
-  RenderBlock {MARQUEE} at (0,60) size 784x100 [bgcolor=#FFC0CB]
-    RenderInline {B} at (0,0) size 1704x16
-      RenderText {#text} at (0,0) size 1704x16
-        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
-        text run at (734,0) width 117: "Paul O' Connell, "
-        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+layer at (8,260) size 784x100 scrollX -784 scrollWidth 1681
+  RenderBlock {MARQUEE} at (0,68) size 784x100 [bgcolor=#FFC0CB]
+    RenderInline {B} at (0,0) size 1681x20
+      RenderText {#text} at (0,0) size 1681x20
+        text run at (0,0) width 730: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (730,0) width 113: "Paul O' Connell, "
+        text run at (843,0) width 838: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (121,363) size 200x200 scrollY -200 scrollHeight 288
-  RenderBlock {MARQUEE} at (113,192) size 200x200 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 200x288
-      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
-      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
-      text run at (0,32) width 180: "diam nonummy nibh euismod"
-      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
-      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
-      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
-      text run at (0,96) width 128: "nostrud exerci tation"
-      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
-      text run at (0,128) width 159: "ut aliquip ex ea commodo"
-      text run at (0,144) width 193: "consequat. Duis autem vel eum"
-      text run at (0,160) width 158: "iriure dolor in hendrerit in"
-      text run at (0,176) width 175: "vulputate velit esse molestie"
-      text run at (0,192) width 184: "consequat, vel illum dolore eu"
-      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
-      text run at (0,224) width 191: "eros et accumsan et iusto odio"
-      text run at (0,240) width 185: "dignissim qui blandit praesent"
-      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
-      text run at (0,272) width 180: "dolore te feugait nulla facilisi."
-layer at (325,463) size 200x100 scrollY -100 scrollHeight 288
-  RenderBlock {MARQUEE} at (317,292) size 200x100 [bgcolor=#FFFF00]
-    RenderText {#text} at (0,0) size 200x288
-      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
-      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
-      text run at (0,32) width 180: "diam nonummy nibh euismod"
-      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
-      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
-      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
-      text run at (0,96) width 128: "nostrud exerci tation"
-      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
-      text run at (0,128) width 159: "ut aliquip ex ea commodo"
-      text run at (0,144) width 193: "consequat. Duis autem vel eum"
-      text run at (0,160) width 158: "iriure dolor in hendrerit in"
-      text run at (0,176) width 175: "vulputate velit esse molestie"
-      text run at (0,192) width 184: "consequat, vel illum dolore eu"
-      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
-      text run at (0,224) width 191: "eros et accumsan et iusto odio"
-      text run at (0,240) width 185: "dignissim qui blandit praesent"
-      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
-      text run at (0,272) width 180: "dolore te feugait nulla facilisi."
-layer at (529,463) size 200x100 scrollY -100 scrollHeight 288
-  RenderBlock {MARQUEE} at (521,292) size 200x100 [bgcolor=#FF0000]
-    RenderText {#text} at (0,0) size 200x288
-      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
-      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
-      text run at (0,32) width 180: "diam nonummy nibh euismod"
-      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
-      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
-      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
-      text run at (0,96) width 128: "nostrud exerci tation"
-      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
-      text run at (0,128) width 159: "ut aliquip ex ea commodo"
-      text run at (0,144) width 193: "consequat. Duis autem vel eum"
-      text run at (0,160) width 158: "iriure dolor in hendrerit in"
-      text run at (0,176) width 175: "vulputate velit esse molestie"
-      text run at (0,192) width 184: "consequat, vel illum dolore eu"
-      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
-      text run at (0,224) width 191: "eros et accumsan et iusto odio"
-      text run at (0,240) width 185: "dignissim qui blandit praesent"
-      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
-      text run at (0,272) width 180: "dolore te feugait nulla facilisi."
+layer at (122,398) size 200x200 scrollY -200 scrollHeight 361
+  RenderBlock {MARQUEE} at (114,206) size 200x200 [bgcolor=#00FFFF]
+    RenderText {#text} at (0,0) size 197x361
+      text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"
+      text run at (0,19) width 175: "consectetuer adipiscing elit,"
+      text run at (0,38) width 156: "sed diam nonummy nibh"
+      text run at (0,57) width 175: "euismod tincidunt ut laoreet"
+      text run at (0,76) width 171: "dolore magna aliquam erat"
+      text run at (0,95) width 196: "volutpat. Ut wisi enim ad minim"
+      text run at (0,114) width 174: "veniam, quis nostrud exerci"
+      text run at (0,133) width 165: "tation ullamcorper suscipit"
+      text run at (0,152) width 171: "lobortis nisl ut aliquip ex ea"
+      text run at (0,171) width 169: "commodo consequat. Duis"
+      text run at (0,190) width 181: "autem vel eum iriure dolor in"
+      text run at (0,209) width 197: "hendrerit in vulputate velit esse"
+      text run at (0,228) width 182: "molestie consequat, vel illum"
+      text run at (0,247) width 190: "dolore eu feugiat nulla facilisis"
+      text run at (0,266) width 177: "at vero eros et accumsan et"
+      text run at (0,285) width 193: "iusto odio dignissim qui blandit"
+      text run at (0,304) width 190: "praesent luptatum zzril delenit"
+      text run at (0,323) width 177: "augue duis dolore te feugait"
+      text run at (0,342) width 76: "nulla facilisi."
+layer at (326,498) size 200x100 scrollY -100 scrollHeight 361
+  RenderBlock {MARQUEE} at (318,306) size 200x100 [bgcolor=#FFFF00]
+    RenderText {#text} at (0,0) size 197x361
+      text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"
+      text run at (0,19) width 175: "consectetuer adipiscing elit,"
+      text run at (0,38) width 156: "sed diam nonummy nibh"
+      text run at (0,57) width 175: "euismod tincidunt ut laoreet"
+      text run at (0,76) width 171: "dolore magna aliquam erat"
+      text run at (0,95) width 196: "volutpat. Ut wisi enim ad minim"
+      text run at (0,114) width 174: "veniam, quis nostrud exerci"
+      text run at (0,133) width 165: "tation ullamcorper suscipit"
+      text run at (0,152) width 171: "lobortis nisl ut aliquip ex ea"
+      text run at (0,171) width 169: "commodo consequat. Duis"
+      text run at (0,190) width 181: "autem vel eum iriure dolor in"
+      text run at (0,209) width 197: "hendrerit in vulputate velit esse"
+      text run at (0,228) width 182: "molestie consequat, vel illum"
+      text run at (0,247) width 190: "dolore eu feugiat nulla facilisis"
+      text run at (0,266) width 177: "at vero eros et accumsan et"
+      text run at (0,285) width 193: "iusto odio dignissim qui blandit"
+      text run at (0,304) width 190: "praesent luptatum zzril delenit"
+      text run at (0,323) width 177: "augue duis dolore te feugait"
+      text run at (0,342) width 76: "nulla facilisi."
+layer at (530,498) size 200x100 scrollY -100 scrollHeight 361
+  RenderBlock {MARQUEE} at (522,306) size 200x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 197x361
+      text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"
+      text run at (0,19) width 175: "consectetuer adipiscing elit,"
+      text run at (0,38) width 156: "sed diam nonummy nibh"
+      text run at (0,57) width 175: "euismod tincidunt ut laoreet"
+      text run at (0,76) width 171: "dolore magna aliquam erat"
+      text run at (0,95) width 196: "volutpat. Ut wisi enim ad minim"
+      text run at (0,114) width 174: "veniam, quis nostrud exerci"
+      text run at (0,133) width 165: "tation ullamcorper suscipit"
+      text run at (0,152) width 171: "lobortis nisl ut aliquip ex ea"
+      text run at (0,171) width 169: "commodo consequat. Duis"
+      text run at (0,190) width 181: "autem vel eum iriure dolor in"
+      text run at (0,209) width 197: "hendrerit in vulputate velit esse"
+      text run at (0,228) width 182: "molestie consequat, vel illum"
+      text run at (0,247) width 190: "dolore eu feugiat nulla facilisis"
+      text run at (0,266) width 177: "at vero eros et accumsan et"
+      text run at (0,285) width 193: "iusto odio dignissim qui blandit"
+      text run at (0,304) width 190: "praesent luptatum zzril delenit"
+      text run at (0,323) width 177: "augue duis dolore te feugait"
+      text run at (0,342) width 76: "nulla facilisi."

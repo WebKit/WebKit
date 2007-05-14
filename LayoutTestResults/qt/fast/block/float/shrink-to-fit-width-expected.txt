@@ -1,0 +1,77 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 309x19
+          text run at (0,0) width 309: "Test shrink-to-fit width for floating elements (see "
+        RenderInline {A} at (0,0) size 96x19 [color=#0000EE]
+          RenderText {#text} at (309,0) size 96x19
+            text run at (309,0) width 96: "CSS 2.1 10.3.5"
+        RenderText {#text} at (405,0) size 9x19
+          text run at (405,0) width 9: ")."
+      RenderBlock {P} at (0,33) size 784x40
+        RenderText {#text} at (0,0) size 188x19
+          text run at (0,0) width 188: "Shrink-to-fit width is min(max("
+        RenderInline {I} at (0,0) size 158x19
+          RenderText {#text} at (188,0) size 158x19
+            text run at (188,0) width 158: "preferred minimum width"
+        RenderText {#text} at (346,0) size 8x19
+          text run at (346,0) width 8: ", "
+        RenderInline {I} at (0,0) size 93x19
+          RenderText {#text} at (354,0) size 93x19
+            text run at (354,0) width 93: "available width"
+        RenderText {#text} at (447,0) size 13x19
+          text run at (447,0) width 13: "), "
+        RenderInline {I} at (0,0) size 96x19
+          RenderText {#text} at (460,0) size 96x19
+            text run at (460,0) width 96: "preferred width"
+        RenderText {#text} at (556,0) size 780x39
+          text run at (556,0) width 13: "). "
+          text run at (569,0) width 211: "In the following cases (except the"
+          text run at (0,20) width 30: "\x{201C}x\x{201D}), "
+        RenderInline {I} at (0,0) size 158x19
+          RenderText {#text} at (30,20) size 158x19
+            text run at (30,20) width 158: "preferred minimum width"
+        RenderText {#text} at (188,20) size 16x19
+          text run at (188,20) width 16: " < "
+        RenderInline {I} at (0,0) size 93x19
+          RenderText {#text} at (204,20) size 93x19
+            text run at (204,20) width 93: "available width"
+        RenderText {#text} at (297,20) size 16x19
+          text run at (297,20) width 16: " < "
+        RenderInline {I} at (0,0) size 96x19
+          RenderText {#text} at (313,20) size 96x19
+            text run at (313,20) width 96: "preferred width"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,87) size 100x243
+        RenderBlock (floating) {DIV} at (0,0) size 100x44 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 58x38
+            text run at (3,3) width 58: "longword"
+            text run at (3,22) width 58: "longword"
+        RenderBlock {DIV} at (0,44) size 100x10
+        RenderBlock (floating) {DIV} at (0,54) size 100x44 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 58x38
+            text run at (3,3) width 58: "longword"
+            text run at (3,22) width 58: "longword"
+        RenderBlock {DIV} at (0,98) size 100x10
+        RenderBlock (floating) {DIV} at (0,108) size 100x44 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 58x38
+            text run at (3,3) width 58: "longword"
+            text run at (3,22) width 58: "longword"
+        RenderBlock (floating) {DIV} at (87,152) size 13x25 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 7x19
+            text run at (3,3) width 7: "x"
+        RenderBlock {DIV} at (0,177) size 100x10
+        RenderBlock (floating) {DIV} at (0,187) size 100x46 [border: (3px solid #000000)]
+          RenderBlock {DIV} at (3,3) size 60x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 0x0
+          RenderBlock {DIV} at (3,23) size 60x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,233) size 100x10
+        RenderBlock (floating) {DIV} at (0,243) size 100x46 [border: (3px solid #000000)]
+          RenderBlock {DIV} at (3,3) size 60x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 0x0
+          RenderBlock {DIV} at (3,23) size 60x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 0x0

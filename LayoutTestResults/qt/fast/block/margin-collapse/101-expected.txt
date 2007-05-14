@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 385x339
-        RenderBlock {P} at (0,0) size 385x36 [border: (2px solid #0000FF)]
-          RenderText {#text} at (2,2) size 368x32
-            text run at (2,2) width 368: "There should be only 2em between this paragraph and the"
-            text run at (2,18) width 81: "image below."
-        RenderImage {IMG} at (0,64) size 395x275
+      RenderBlock {DIV} at (0,0) size 385x345
+        RenderBlock {P} at (0,0) size 385x42 [border: (2px solid #0000FF)]
+          RenderText {#text} at (2,2) size 372x38
+            text run at (2,2) width 372: "There should be only 2em between this paragraph and the"
+            text run at (2,21) width 84: "image below."
+        RenderImage {IMG} at (0,70) size 395x275

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 45x16
-          text run at (0,0) width 45: "10pt = "
-        RenderText {#text} at (45,0) size 378x16
-          text run at (45,0) width 378: "3.4395833333333328mm (should be 3.4395833333333328)"
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 44x19
+          text run at (0,0) width 44: "10pt = "
+        RenderText {#text} at (44,0) size 384x19
+          text run at (44,0) width 384: "3.4395833333333328mm (should be 3.4395833333333328)"

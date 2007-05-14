@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 30x16
+      RenderText {#text} at (0,0) size 30x19
         text run at (0,0) width 30: "hello"
-      RenderText {#text} at (30,0) size 23x16
+      RenderText {#text} at (30,0) size 23x19
         text run at (30,0) width 23: "test"
-      RenderText {#text} at (53,0) size 35x16
+      RenderText {#text} at (53,0) size 35x19
         text run at (53,0) width 35: "again"

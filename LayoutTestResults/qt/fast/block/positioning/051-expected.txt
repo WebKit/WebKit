@@ -1,298 +1,298 @@
-layer at (0,0) size 800x5230
+layer at (0,0) size 800x5245
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x5230 layerType: background only
-layer at (82,1456) size 200x200
+layer at (0,0) size 800x5245 layerType: background only
+layer at (82,1468) size 200x200
   RenderBlock (positioned) zI: -3000000 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (32,1606) size 200x200
+    RenderText zI: -3000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (32,1618) size 200x200
   RenderBlock (positioned) zI: -2000000 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -2000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,1756) size 200x200
+    RenderText zI: -2000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,1768) size 200x200
   RenderBlock (positioned) zI: -1000000 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -1000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (82,2090) size 200x200
+    RenderText zI: -1000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (82,2102) size 200x200
   RenderBlock (positioned) zI: -40 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -40 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (32,2240) size 200x200
+    RenderText zI: -40 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (32,2252) size 200x200
   RenderBlock (positioned) zI: -30 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -30 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,822) size 442x200
+    RenderText zI: -30 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,834) size 439x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (50,49) size 392x82
-      text run at (50,49) width 392: " 8 hide me"
-layer at (82,2724) size 200x200
+    RenderText zI: -3 {#text} at (50,38) size 389x105
+      text run at (50,38) width 389: " 8 hide me"
+layer at (82,2736) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (32,2874) size 200x200
+    RenderText zI: -3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (32,2886) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,3358) size 200x200
+    RenderText zI: -3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,3370) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (82,3992) size 200x200
+    RenderText zI: -3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (82,4004) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (82,4656) size 200x200
+    RenderText zI: -3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (82,4671) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "8"
-layer at (32,972) size 200x200
+    RenderText zI: -3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "8"
+layer at (32,984) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,2390) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,2402) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (232,2440) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (232,2452) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (32,3508) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (32,3520) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (32,4142) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (32,4154) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (0,200) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (32,4806) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (32,4821) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (0,200) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,1122) size 200x200
+    RenderText zI: -2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,1134) size 200x200
   RenderBlock (positioned) zI: -1 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (82,4292) size 200x200
+    RenderText zI: -1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (82,4304) size 200x200
   RenderBlock (positioned) zI: -1 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (82,4956) size 200x200
+    RenderText zI: -1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (82,4971) size 200x200
   RenderBlock (positioned) zI: -1 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (0,0) size 800x5230 layerType: foreground only
-  RenderBlock {HTML} at (0,0) size 800x5230
-    RenderBody {BODY} at (8,18) size 784x5198
-      RenderBlock {H1} at (0,0) size 784x32
-        RenderText {#text} at (0,1) size 288x30
-          text run at (0,1) width 288: "Layered Presentation"
-      RenderBlock {P} at (0,50) size 784x16
-        RenderText {#text} at (0,0) size 735x16
-          text run at (0,0) width 398: "Robert O'Callahan pointed out to me some mistakes in this test "
-          text run at (398,0) width 337: "that I have not yet had the time to examine or correct."
-      RenderBlock {P} at (0,80) size 784x16
-        RenderText {#text} at (0,0) size 456x16
-          text run at (0,0) width 456: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
-      RenderBlock {P} at (0,4548) size 784x16
-        RenderText {#text} at (0,0) size 345x16
-          text run at (0,0) width 345: "Using assumed default value of z-index (may not pass):"
-layer at (22,128) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,110) size 620x620 [border: (10px solid #000000)]
-layer at (82,188) size 442x200
+    RenderText zI: -1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (0,0) size 800x5245 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x5245
+    RenderBody {BODY} at (8,18) size 784x5213
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 288x38
+          text run at (0,0) width 288: "Layered Presentation"
+      RenderBlock {P} at (0,56) size 784x19
+        RenderText {#text} at (0,0) size 743x19
+          text run at (0,0) width 403: "Robert O'Callahan pointed out to me some mistakes in this test "
+          text run at (403,0) width 340: "that I have not yet had the time to examine or correct."
+      RenderBlock {P} at (0,89) size 784x19
+        RenderText {#text} at (0,0) size 462x19
+          text run at (0,0) width 462: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
+      RenderBlock {P} at (0,4560) size 784x19
+        RenderText {#text} at (0,0) size 352x19
+          text run at (0,0) width 352: "Using assumed default value of z-index (may not pass):"
+layer at (22,140) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,122) size 620x620 [border: (10px solid #000000)]
+layer at (82,200) size 439x200
   RenderBlock (positioned) {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText {#text} at (50,49) size 392x82
-      text run at (50,49) width 392: " 8 hide me"
-layer at (32,338) size 200x200
+    RenderText {#text} at (50,38) size 389x105
+      text run at (50,38) width 389: " 8 hide me"
+layer at (32,350) size 200x200
   RenderBlock (positioned) {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "7"
-layer at (82,488) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "7"
+layer at (82,500) size 200x200
   RenderBlock (positioned) {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (232,538) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (232,550) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (382,488) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (382,500) size 200x200
   RenderBlock (positioned) {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (432,338) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (432,350) size 200x200
   RenderBlock (positioned) {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (382,188) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (382,200) size 200x200
   RenderBlock (positioned) {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (232,138) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (232,150) size 200x200
   RenderBlock (positioned) {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (22,762) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,744) size 620x620 [border: (10px solid #000000)]
-layer at (232,1172) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (22,774) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,756) size 620x620 [border: (10px solid #000000)]
+layer at (232,1184) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (22,1396) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,1378) size 620x620 [border: (10px solid #000000)]
-layer at (232,1806) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (22,1408) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,1390) size 620x620 [border: (10px solid #000000)]
+layer at (232,1818) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (22,2030) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,2012) size 620x620 [border: (10px solid #000000)]
-layer at (382,2390) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (22,2042) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,2024) size 620x620 [border: (10px solid #000000)]
+layer at (382,2402) size 200x200
   RenderBlock (positioned) {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (432,2240) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (432,2252) size 200x200
   RenderBlock (positioned) {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (22,2664) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,2646) size 620x620 [border: (10px solid #000000)]
-layer at (82,3024) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (22,2676) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,2658) size 620x620 [border: (10px solid #000000)]
+layer at (82,3036) size 200x200
   RenderBlock (positioned) {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (232,3074) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (232,3086) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (382,3024) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (382,3036) size 200x200
   RenderBlock (positioned) {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (22,3298) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,3280) size 620x620 [border: (10px solid #000000)]
-layer at (32,3308) size 600x600 layerType: background only
-layer at (82,3658) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (22,3310) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,3292) size 620x620 [border: (10px solid #000000)]
+layer at (32,3320) size 600x600 layerType: background only
+layer at (82,3670) size 200x200
   RenderBlock (positioned) zI: -9 {P} at (50,350) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
-    RenderText zI: -9 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "6"
-layer at (32,3308) size 600x600 layerType: foreground only
+    RenderText zI: -9 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "6"
+layer at (32,3320) size 600x600 layerType: foreground only
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-layer at (232,3708) size 200x200
+layer at (232,3720) size 200x200
   RenderBlock (positioned) {P} at (200,400) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (382,3658) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (382,3670) size 200x200
   RenderBlock (positioned) zI: 9 {P} at (350,350) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText zI: 9 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (22,3932) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,3914) size 620x620 [border: (10px solid #000000)]
-layer at (32,3942) size 600x600
+    RenderText zI: 9 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (22,3944) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,3926) size 620x620 [border: (10px solid #000000)]
+layer at (32,3954) size 600x600
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-layer at (232,4342) size 200x200
+layer at (232,4354) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (22,4596) size 620x620
-  RenderBlock (relative positioned) {DIV} at (14,4578) size 620x620 [border: (10px solid #000000)]
-layer at (32,4606) size 600x600
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (22,4611) size 620x620
+  RenderBlock (relative positioned) {DIV} at (14,4593) size 620x620 [border: (10px solid #000000)]
+layer at (32,4621) size 600x600
   RenderBlock (positioned) {DIV} at (10,10) size 600x600
-layer at (232,5006) size 200x200
+layer at (232,5021) size 200x200
   RenderBlock (positioned) {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "5"
-layer at (382,1122) size 200x200
+    RenderText {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "5"
+layer at (382,1134) size 200x200
   RenderBlock (positioned) zI: 1 {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText zI: 1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (382,4292) size 200x200
+    RenderText zI: 1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (382,4304) size 200x200
   RenderBlock (positioned) zI: 1 {P} at (350,350) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText zI: 1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (382,4956) size 200x200
+    RenderText zI: 1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (382,4971) size 200x200
   RenderBlock (positioned) zI: 1 {P} at (350,350) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText zI: 1 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (432,972) size 200x200
+    RenderText zI: 1 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (432,984) size 200x200
   RenderBlock (positioned) zI: 2 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (382,2090) size 200x200
+    RenderText zI: 2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (382,2102) size 200x200
   RenderBlock (positioned) zI: 2 {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (432,3508) size 200x200
+    RenderText zI: 2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (432,3520) size 200x200
   RenderBlock (positioned) zI: 2 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (432,4142) size 200x200
+    RenderText zI: 2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (432,4154) size 200x200
   RenderBlock (positioned) zI: 2 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (432,4806) size 200x200
+    RenderText zI: 2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (432,4821) size 200x200
   RenderBlock (positioned) zI: 2 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 2 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (382,822) size 200x200
+    RenderText zI: 2 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (382,834) size 200x200
   RenderBlock (positioned) zI: 3 {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (232,2040) size 200x200
+    RenderText zI: 3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (232,2052) size 200x200
   RenderBlock (positioned) zI: 3 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (382,3358) size 200x200
+    RenderText zI: 3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (382,3370) size 200x200
   RenderBlock (positioned) zI: 3 {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (382,3992) size 200x200
+    RenderText zI: 3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (382,4004) size 200x200
   RenderBlock (positioned) zI: 3 {P} at (350,50) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (382,4656) size 200x200
+    RenderText zI: 3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (382,4671) size 200x200
   RenderBlock (positioned) zI: 3 {P} at (350,50) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 3 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (232,772) size 200x200
+    RenderText zI: 3 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (232,784) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (432,2874) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (432,2886) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (382,2724) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (382,2736) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (232,2674) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (232,2686) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (232,3308) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (232,3320) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (232,3942) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (232,3954) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (232,4606) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (232,4621) size 200x200
   RenderBlock (positioned) zI: 4 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
-layer at (382,1756) size 200x200
+    RenderText zI: 4 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"
+layer at (382,1768) size 200x200
   RenderBlock (positioned) zI: 1000000 {P} at (360,360) size 200x200 [color=#FFFFFF] [bgcolor=#00CC00]
-    RenderText zI: 1000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "4"
-layer at (432,1606) size 200x200
+    RenderText zI: 1000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "4"
+layer at (432,1618) size 200x200
   RenderBlock (positioned) zI: 2000000 {P} at (410,210) size 200x200 [color=#FFFFFF] [bgcolor=#CCCC00]
-    RenderText zI: 2000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "3"
-layer at (382,1456) size 200x200
+    RenderText zI: 2000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "3"
+layer at (382,1468) size 200x200
   RenderBlock (positioned) zI: 3000000 {P} at (360,60) size 200x200 [color=#FFFFFF] [bgcolor=#FF9900]
-    RenderText zI: 3000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "2"
-layer at (232,1406) size 200x200
+    RenderText zI: 3000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "2"
+layer at (232,1418) size 200x200
   RenderBlock (positioned) zI: 4000000 {P} at (210,10) size 200x200 [color=#FFFFFF] [bgcolor=#FF0000]
-    RenderText zI: 4000000 {#text} at (77,49) size 45x82
-      text run at (77,49) width 45: "1"
+    RenderText zI: 4000000 {#text} at (78,38) size 44x105
+      text run at (78,38) width 44: "1"

@@ -3,102 +3,102 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 169x16
-          text run at (0,0) width 169: "Tests: the colspan attribute"
-        RenderBR {BR} at (169,13) size 0x0
-      RenderBlock {P} at (0,30) size 784x64
-        RenderText {#text} at (0,0) size 70x16
-          text run at (0,0) width 70: "Conditions:"
-        RenderBR {BR} at (70,13) size 0x0
-        RenderText {#text} at (0,16) size 765x48
-          text run at (0,16) width 647: "The colSpan attribute specifies the number of columns spanned by the current cell. The default value of "
-          text run at (647,16) width 118: "this attribute is one"
-          text run at (0,32) width 507: "(\"1\"). The value zero (\"0\") means that the cell spans all columns from the current "
-          text run at (507,32) width 246: "column to the last column of the column"
-          text run at (0,48) width 302: "group (COLGROUP) in which the cell is defined."
-      RenderBlock {P} at (0,108) size 784x48
-        RenderText {#text} at (0,0) size 772x48
-          text run at (0,0) width 748: "The first table tests the default value of one, and an input of 7, which is within the normal range of expect input. The first"
-          text run at (0,16) width 697: "column in the first row should span only column \"one\" and the second cell should span all of the other columns. "
-          text run at (697,16) width 75: "The second"
-          text run at (0,32) width 501: "table tests the zero value. \"Just A\" should span \"A\" and \"Just B\" should span \"B.\""
-      RenderBlock {HR} at (0,170) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,179) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,195) size 266x64 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 264x16
-          RenderText {#text} at (26,0) size 211x16
-            text run at (26,0) width 211: "Testing Default and Regular Input"
-        RenderTableSection {TBODY} at (1,17) size 264x46
-          RenderTableRow {TR} at (0,2) size 264x20
-            RenderTableCell {TD} at (2,2) size 31x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x16
-                text run at (2,2) width 27: "First"
-            RenderTableCell {TD} at (35,2) size 227x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=7]
-              RenderText {#text} at (2,2) size 72x16
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 172x19
+          text run at (0,0) width 172: "Tests: the colspan attribute"
+        RenderBR {BR} at (172,14) size 0x0
+      RenderBlock {P} at (0,33) size 784x76
+        RenderText {#text} at (0,0) size 71x19
+          text run at (0,0) width 71: "Conditions:"
+        RenderBR {BR} at (71,14) size 0x0
+        RenderText {#text} at (0,19) size 779x57
+          text run at (0,19) width 659: "The colSpan attribute specifies the number of columns spanned by the current cell. The default value of "
+          text run at (659,19) width 120: "this attribute is one"
+          text run at (0,38) width 514: "(\"1\"). The value zero (\"0\") means that the cell spans all columns from the current "
+          text run at (514,38) width 252: "column to the last column of the column"
+          text run at (0,57) width 304: "group (COLGROUP) in which the cell is defined."
+      RenderBlock {P} at (0,123) size 784x57
+        RenderText {#text} at (0,0) size 781x57
+          text run at (0,0) width 757: "The first table tests the default value of one, and an input of 7, which is within the normal range of expect input. The first"
+          text run at (0,19) width 706: "column in the first row should span only column \"one\" and the second cell should span all of the other columns. "
+          text run at (706,19) width 75: "The second"
+          text run at (0,38) width 509: "table tests the zero value. \"Just A\" should span \"A\" and \"Just B\" should span \"B.\""
+      RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,203) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,222) size 268x73 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 266x19
+          RenderText {#text} at (26,0) size 214x19
+            text run at (26,0) width 214: "Testing Default and Regular Input"
+        RenderTableSection {TBODY} at (1,20) size 266x52
+          RenderTableRow {TR} at (0,2) size 266x23
+            RenderTableCell {TD} at (2,2) size 32x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x19
+                text run at (2,2) width 28: "First"
+            RenderTableCell {TD} at (36,2) size 228x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=7]
+              RenderText {#text} at (2,2) size 72x19
                 text run at (2,2) width 72: "All the Rest"
-          RenderTableRow {TR} at (0,24) size 264x20
-            RenderTableCell {TD} at (2,24) size 31x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x16
+          RenderTableRow {TR} at (0,27) size 266x23
+            RenderTableCell {TD} at (2,27) size 32x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "one"
-            RenderTableCell {TD} at (35,24) size 26x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 22x16
+            RenderTableCell {TD} at (36,27) size 26x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "two"
-            RenderTableCell {TD} at (63,24) size 37x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x16
+            RenderTableCell {TD} at (64,27) size 37x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 33x19
                 text run at (2,2) width 33: "three"
-            RenderTableCell {TD} at (102,24) size 28x20 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x16
-                text run at (2,2) width 24: "four"
-            RenderTableCell {TD} at (132,24) size 26x20 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 22x16
+            RenderTableCell {TD} at (103,27) size 29x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x19
+                text run at (2,2) width 25: "four"
+            RenderTableCell {TD} at (134,27) size 26x23 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "five"
-            RenderTableCell {TD} at (160,24) size 21x20 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 17x16
+            RenderTableCell {TD} at (162,27) size 21x23 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 17x19
                 text run at (2,2) width 17: "six"
-            RenderTableCell {TD} at (183,24) size 42x20 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 38x16
+            RenderTableCell {TD} at (185,27) size 42x23 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 38x19
                 text run at (2,2) width 38: "seven"
-            RenderTableCell {TD} at (227,24) size 35x20 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 31x16
+            RenderTableCell {TD} at (229,27) size 35x23 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "eight"
-      RenderBlock (anonymous) at (0,259) size 784x16
-        RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,275) size 186x64 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 184x16
-          RenderText {#text} at (8,0) size 168x16
-            text run at (8,0) width 168: "Testing Zero Special Case"
-        RenderTableSection {TBODY} at (1,17) size 184x46
-          RenderTableRow {TR} at (0,2) size 184x20
-            RenderTableCell {TD} at (2,2) size 42x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 38x16
-                text run at (2,2) width 38: "Just A"
-            RenderTableCell {TD} at (46,2) size 42x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 38x16
-                text run at (2,2) width 38: "Just B"
-          RenderTableRow {TR} at (0,24) size 184x20
-            RenderTableCell {TD} at (2,24) size 42x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 9x16
+      RenderBlock (anonymous) at (0,295) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,314) size 189x73 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 187x19
+          RenderText {#text} at (9,0) size 168x19
+            text run at (9,0) width 168: "Testing Zero Special Case"
+        RenderTableSection {TBODY} at (1,20) size 187x52
+          RenderTableRow {TR} at (0,2) size 187x23
+            RenderTableCell {TD} at (2,2) size 43x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 39x19
+                text run at (2,2) width 39: "Just A"
+            RenderTableCell {TD} at (47,2) size 43x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 39x19
+                text run at (2,2) width 39: "Just B"
+          RenderTableRow {TR} at (0,27) size 187x23
+            RenderTableCell {TD} at (2,27) size 43x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x19
                 text run at (2,2) width 9: "A"
-            RenderTableCell {TD} at (46,24) size 42x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 9x16
+            RenderTableCell {TD} at (47,27) size 43x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x19
                 text run at (2,2) width 9: "B"
-            RenderTableCell {TD} at (90,24) size 14x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 10x16
+            RenderTableCell {TD} at (92,27) size 14x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x19
                 text run at (2,2) width 10: "C"
-            RenderTableCell {TD} at (106,24) size 14x20 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 10x16
+            RenderTableCell {TD} at (108,27) size 14x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x19
                 text run at (2,2) width 10: "D"
-            RenderTableCell {TD} at (122,24) size 13x20 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 9x16
+            RenderTableCell {TD} at (124,27) size 13x23 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x19
                 text run at (2,2) width 9: "E"
-            RenderTableCell {TD} at (137,24) size 12x20 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 8x16
-                text run at (2,2) width 8: "F"
-            RenderTableCell {TD} at (151,24) size 15x20 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 11x16
+            RenderTableCell {TD} at (139,27) size 13x23 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x19
+                text run at (2,2) width 9: "F"
+            RenderTableCell {TD} at (154,27) size 15x23 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x19
                 text run at (2,2) width 11: "G"
-            RenderTableCell {TD} at (168,24) size 14x20 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 10x16
+            RenderTableCell {TD} at (171,27) size 14x23 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x19
                 text run at (2,2) width 10: "H"

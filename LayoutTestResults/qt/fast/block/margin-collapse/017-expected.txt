@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x194
-  RenderBlock {HTML} at (0,0) size 800x194
-    RenderBody {BODY} at (8,14) size 784x166
-      RenderBlock {P} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 598x16
-          text run at (0,0) width 598: "The following square should contain exactly two bands, one yellow, one lime, with no red visible."
-      RenderTable {TABLE} at (0,30) size 106x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
+layer at (0,0) size 800x200
+  RenderBlock {HTML} at (0,0) size 800x200
+    RenderBody {BODY} at (8,14) size 784x172
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 607x19
+          text run at (0,0) width 607: "The following square should contain exactly two bands, one yellow, one lime, with no red visible."
+      RenderTable {TABLE} at (0,33) size 106x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 100x100
           RenderTableRow {TR} at (0,0) size 100x100
             RenderTableCell {TD} at (0,0) size 50x100 [r=0 c=0 rs=1 cs=1]
@@ -16,11 +16,11 @@ layer at (0,0) size 800x194
             RenderTableCell {TD} at (50,0) size 50x100 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x50 [border: (50px solid #FFFF00) none]
               RenderBlock {DIV} at (0,50) size 50x50 [border: (50px solid #00FF00) none]
-      RenderBlock {P} at (0,150) size 784x16
-        RenderText {#text} at (0,0) size 261x16
-          text run at (0,0) width 261: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 51x16 [color=#0000EE]
-          RenderText {#text} at (261,0) size 51x16
-            text run at (261,0) width 51: "test 018"
-        RenderText {#text} at (312,0) size 3x16
-          text run at (312,0) width 3: "."
+      RenderBlock {P} at (0,153) size 784x19
+        RenderText {#text} at (0,0) size 263x19
+          text run at (0,0) width 263: "This test is meaningless if you don't pass "
+        RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+          RenderText {#text} at (263,0) size 51x19
+            text run at (263,0) width 51: "test 018"
+        RenderText {#text} at (314,0) size 4x19
+          text run at (314,0) width 4: "."
