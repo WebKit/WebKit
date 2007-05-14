@@ -77,7 +77,6 @@ public:
     
     Image* icon() const;
     
-    static void performPendingReleaseOfCachedPages();
     void setCachedPage(PassRefPtr<CachedPage>);
     CachedPage* cachedPage();
 
@@ -137,8 +136,6 @@ public:
     void setTransientProperty(const String&, id);
 #endif
 
-    void scheduleCachedPageForRelease();
-    
 #ifndef NDEBUG
     int showTree() const;
     int showTreeWithIndent(unsigned indentLevel) const;

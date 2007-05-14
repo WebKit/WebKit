@@ -29,6 +29,7 @@
 #include "CachedPage.h"
 #include "HistoryItem.h"
 #include "Logging.h"
+#include "PageCache.h"
 
 using namespace std;
 
@@ -202,7 +203,7 @@ void BackForwardList::setPageCacheSize(unsigned size)
     else if (size < m_pageCacheSize) {
         for (signed i = m_current - size - 1; i > -1; --i)
             m_entries[i]->setCachedPage(0);
-        HistoryItem::performPendingReleaseOfCachedPages();
+        pageCache()->autoreleaseNow();
     }
     
     m_pageCacheSize = size;
@@ -221,7 +222,7 @@ void BackForwardList::clearPageCache()
             m_entries[i]->setCachedPage(0);
     }
     
-    HistoryItem::performPendingReleaseOfCachedPages();
+    pageCache()->autoreleaseNow();
 }
 
 int BackForwardList::backListCount()

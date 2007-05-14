@@ -1,3 +1,44 @@
+2007-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Next step toward fixing <rdar://problem/5055182> The back cache has no 
+        global cap.
+        
+        Created a PageCache singleton. Right now, it only handles the timer-based
+        deallocation of cached pages. I plan to add HistoryItem->CachedPage tracking
+        and eviction logic in later patches.
+
+        Updated for renames and file changes:
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::setPageCacheSize):
+        (WebCore::BackForwardList::clearPageCache):
+
+        Removed global timed release code, moved into new PageCache class, since
+        it's eventually going to be in charge of deciding when things are released:
+        
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setCachedPage):
+        * history/HistoryItem.h:
+
+        Folded into PageCache:
+        
+        * history/HistoryItemTimer.cpp: Removed.
+        * history/HistoryItemTimer.h: Removed.
+
+        New singleton. Right now, it just handles timed release of cached pages:
+        
+        * history/PageCache.cpp: Added.
+        (WebCore::pageCache):
+        (WebCore::PageCache::PageCache):
+        (WebCore::PageCache::autoreleaseNowOrReschedule):
+        (WebCore::PageCache::autoreleaseNow):
+        (WebCore::PageCache::autorelease):
+        * history/PageCache.h: Added.
+
 2007-05-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

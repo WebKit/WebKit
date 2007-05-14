@@ -28,27 +28,17 @@
 
 #include "CachedPage.h"
 #include "FrameLoader.h"
-#include "HistoryItemTimer.h"
 #include "IconDatabase.h"
 #include "IntSize.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "PageCache.h"
 #include "ResourceRequest.h"
-#include "SystemTime.h"
 
 namespace WebCore {
 
 void defaultNotifyHistoryItemChanged() {}
 void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
-
-static HashSet<RefPtr<CachedPage> >& cachedPagesPendingRelease()
-{
-    // We keep this on the heap because otherwise, at app shutdown, we run into the "static destruction order fiasco" 
-    // where the vector is torn down, the CachedPages destroyed, and all havok may break loose.  Instead, we just leak at shutdown
-    // since nothing here persists
-    static HashSet<RefPtr<CachedPage> >* cachedPagesPendingRelease = new HashSet<RefPtr<CachedPage> >;
-    return *cachedPagesPendingRelease;
-}
 
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
@@ -129,15 +119,11 @@ PassRefPtr<HistoryItem> HistoryItem::copy() const
 
 void HistoryItem::setCachedPage(PassRefPtr<CachedPage> cachedPage)
 {
-    CachedPage* rawCachedPage = cachedPage.releaseRef();
+    ASSERT(cachedPage != m_cachedPage || !cachedPage);
     
-    // The new cached page should always be distinct from the current cached page and should also
-    // not be in the set of cached pages pending release
-    ASSERT(!rawCachedPage || rawCachedPage != m_cachedPage.get());
-    ASSERT(!cachedPagesPendingRelease().contains(rawCachedPage));
-    
-    scheduleCachedPageForRelease();
-    m_cachedPage = adoptRef(rawCachedPage);
+    if (m_cachedPage)
+        pageCache()->autorelease(m_cachedPage.release());
+    m_cachedPage = cachedPage;
     
     LOG(PageCache, "WebCorePageCache: HistoryItem %p (%s) set cached page to %p", this, m_urlString.ascii().data(), m_cachedPage.get());
 }
@@ -400,64 +386,6 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
     ASSERT(otherItem);
     if (otherItem != this)
         m_visitCount += otherItem->m_visitCount;
-}
-
-// Timer management functions
-
-static HistoryItemTimer& timer()
-{
-    static HistoryItemTimer historyItemTimer;
-    return historyItemTimer;
-}
-
-void HistoryItem::releaseCachedPagesOrReschedule()
-{
-    double loadDelta = currentTime() - FrameLoader::timeOfLastCompletedLoad();
-    float userDelta = userIdleTime();
-    
-    // FIXME: This size of 42 pending caches to release seems awfully arbitrary
-    // Wonder if anyone knows the rationalization
-    if ((userDelta < 0.5 || loadDelta < 1.25) && cachedPagesPendingRelease().size() < 42) {
-        LOG(PageCache, "WebCorePageCache: Postponing releaseCachedPagesOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, cachedPagesPendingRelease().size());
-        timer().schedule();
-        return;
-    }
-
-    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, cachedPagesPendingRelease().size());
-    performPendingReleaseOfCachedPages();
-}
-
-void HistoryItem::performPendingReleaseOfCachedPages()
-{
-    timer().invalidate();
-
-    Vector<CachedPage*> cachedPages;
-    cachedPages.reserveCapacity(cachedPagesPendingRelease().size());
-    
-    HashSet<RefPtr<CachedPage> >::iterator i = cachedPagesPendingRelease().begin();
-    HashSet<RefPtr<CachedPage> >::iterator end = cachedPagesPendingRelease().end();
-    for (; i != end; ++i)
-        cachedPages.append((*i).get());
-        
-    for (unsigned j = 0; j < cachedPages.size(); ++j)
-        cachedPages[j]->close();
-
-    cachedPagesPendingRelease().clear();
-}
-
-void HistoryItem::scheduleCachedPageForRelease()
-{
-    if (!m_cachedPage)
-        return;
-        
-    LOG (PageCache, "WebCorePageCache: HistoryItem %p (%s) scheduling release of cached page %p", this, m_urlString.ascii().data(), m_cachedPage.get());
-
-    cachedPagesPendingRelease().add(m_cachedPage);
-    m_cachedPage = 0;
-
-    // Don't reschedule the timer if its already running
-    if (!timer().isActive())
-        timer().schedule();
 }
 
 #ifndef NDEBUG

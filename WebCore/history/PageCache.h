@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#ifndef HistoryItemTimer_h
-#define HistoryItemTimer_h 
+
+#ifndef PageCache_h
+#define PageCache_h
 
 #include "Timer.h"
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-extern const double DefaultPageCacheReleaseInterval;
-
-class HistoryItemTimer {
-public:
-    HistoryItemTimer();
+    class CachedPage;
     
-    bool isActive() const;
-    void schedule(double seconds = DefaultPageCacheReleaseInterval);
-    void invalidate();
+    class PageCache : Noncopyable {
+    public:
+        void autorelease(PassRefPtr<CachedPage>);
+        void autoreleaseNow();
 
-private:
-    void callReleaseCachedPagesOrReschedule(Timer<HistoryItemTimer>*);
-    Timer<HistoryItemTimer> m_timer;
-}; 
+    private:
+        friend PageCache* pageCache();
+        typedef HashSet<RefPtr<CachedPage> > CachedPageSet;
 
-}
+        PageCache();
+        ~PageCache(); // not implemented because we're a singleton
 
-#endif // HistoryItemTimer_h
+        void autoreleaseNowOrReschedule(Timer<PageCache>*);
 
+        Timer<PageCache> m_autoreleaseTimer;
+        CachedPageSet m_autoreleaseSet;
+     };
+
+    // Function to obtain the global page cache.
+    PageCache* pageCache();
+
+} // namespace WebCore
+
+#endif // PageCache_h

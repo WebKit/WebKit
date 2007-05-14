@@ -1,3 +1,14 @@
+2007-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Updated for WebCore move to PageCache singleton. Also removed some WebCore::
+        prefixes and replaced them with 'using namespace WebCore'.
+
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        (-[WebWindowWatcher windowWillClose:]):
+
 2007-05-13  Darin Adler  <darin@apple.com>
 
         - one more retain/release for a tiny bit more robustness

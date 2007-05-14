@@ -50,6 +50,8 @@
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
 		142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */; };
 		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; };
+		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
+		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148A00110AF59F3F008CC700 /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A00100AF59F3F008CC700 /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 148AFDA30AF58360008CC700 /* ExceptionHandlers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */; };
@@ -324,8 +326,6 @@
 		513BF1280B4F57DC00CCFECE /* AuthenticationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 513BF1270B4F57DC00CCFECE /* AuthenticationMac.mm */; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
-		5160F1FE0B0A7EF400C1D2AF /* HistoryItemTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160F1FC0B0A7EF400C1D2AF /* HistoryItemTimer.h */; };
-		5160F1FF0B0A7EF400C1D2AF /* HistoryItemTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160F1FD0B0A7EF400C1D2AF /* HistoryItemTimer.cpp */; };
 		5160F3BC0B0A99C900C1D2AF /* CachedPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F3BB0B0A99C900C1D2AF /* CachedPageMac.mm */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		51741D0F0B07259A00ED442C /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3139,6 +3139,8 @@
 		142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
 		142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
 		142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleDeclaration.h; sourceTree = "<group>"; };
+		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
+		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		148A00100AF59F3F008CC700 /* FontPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontPlatformData.h; sourceTree = "<group>"; };
 		148AFDA30AF58360008CC700 /* ExceptionHandlers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExceptionHandlers.h; sourceTree = "<group>"; };
@@ -3446,8 +3448,6 @@
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		5160F1FC0B0A7EF400C1D2AF /* HistoryItemTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryItemTimer.h; sourceTree = "<group>"; };
-		5160F1FD0B0A7EF400C1D2AF /* HistoryItemTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItemTimer.cpp; sourceTree = "<group>"; };
 		5160F3BB0B0A99C900C1D2AF /* CachedPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CachedPageMac.mm; path = mac/CachedPageMac.mm; sourceTree = "<group>"; };
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
 		51741D0B0B07259A00ED442C /* BackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardList.h; sourceTree = "<group>"; };
@@ -6786,14 +6786,14 @@
 			isa = PBXGroup;
 			children = (
 				5160F4920B0AA71500C1D2AF /* mac */,
-				51741D0B0B07259A00ED442C /* BackForwardList.h */,
 				51741D0C0B07259A00ED442C /* BackForwardList.cpp */,
-				510184670B08602A004A825F /* CachedPage.h */,
+				51741D0B0B07259A00ED442C /* BackForwardList.h */,
 				510184680B08602A004A825F /* CachedPage.cpp */,
-				51741D0D0B07259A00ED442C /* HistoryItem.h */,
+				510184670B08602A004A825F /* CachedPage.h */,
 				51741D0E0B07259A00ED442C /* HistoryItem.cpp */,
-				5160F1FC0B0A7EF400C1D2AF /* HistoryItemTimer.h */,
-				5160F1FD0B0A7EF400C1D2AF /* HistoryItemTimer.cpp */,
+				51741D0D0B07259A00ED442C /* HistoryItem.h */,
+				1477E7740BF4134A00152872 /* PageCache.cpp */,
+				1477E7750BF4134A00152872 /* PageCache.h */,
 			);
 			path = history;
 			sourceTree = "<group>";
@@ -11145,7 +11145,6 @@
 				51741D0F0B07259A00ED442C /* BackForwardList.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
-				5160F1FE0B0A7EF400C1D2AF /* HistoryItemTimer.h in Headers */,
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
@@ -11269,6 +11268,7 @@
 				E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
 				14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */,
+				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 				37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */,
 			);
@@ -12493,7 +12493,6 @@
 				51741D100B07259A00ED442C /* BackForwardList.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,
 				5101846A0B08602A004A825F /* CachedPage.cpp in Sources */,
-				5160F1FF0B0A7EF400C1D2AF /* HistoryItemTimer.cpp in Sources */,
 				5160F3BC0B0A99C900C1D2AF /* CachedPageMac.mm in Sources */,
 				5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */,
 				93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */,
@@ -12643,6 +12642,7 @@
 				2D9066060BE141D400956998 /* LayoutState.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
 				AACF144D0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm in Sources */,
+				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
 				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
 				37919C190BF375DD00956998 /* ShapeArabic.c in Sources */,
 			);
