@@ -153,6 +153,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     frame->willPopupMenu(menu);
     wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font);
 
+    [m_popup.get() dismissPopUp];
     [dummyView.get() removeFromSuperview];
 
     if (client()) {

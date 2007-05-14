@@ -2,6 +2,14 @@
 
         Reviewed by Darin.
 
+        Fix for <rdar://problem/5200081> Repro crash in PopupMenu::show clicking popup menu button after reload
+
+        * platform/mac/PopupMenuMac.mm: (WebCore::PopupMenu::show): Added call to dismissPopup so the cell gets unattached properly.
+
+2007-05-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
         Remove incorrect assertion.
 
         * page/FrameView.cpp: (WebCore::FrameView::setContentsPos):
