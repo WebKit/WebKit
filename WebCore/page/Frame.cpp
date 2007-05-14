@@ -242,7 +242,7 @@ Frame::~Frame()
             
     if (d->m_view) {
         d->m_view->hide();
-        d->m_view->m_frame = 0;
+        d->m_view->clearFrame();
     }
   
     ASSERT(!d->m_lifeSupportTimer.isActive());
@@ -1396,13 +1396,14 @@ void Frame::sendResizeEvent()
 
 void Frame::sendScrollEvent()
 {
-    FrameView *v = d->m_view.get();
-    if (v) {
-        Document *doc = document();
-        if (!doc)
-            return;
-        doc->dispatchHTMLEvent(scrollEvent, true, false);
-    }
+    FrameView* v = d->m_view.get();
+    if (!v)
+        return;
+    v->setWasScrolledByUser(true);
+    Document* doc = document();
+    if (!doc)
+        return;
+    doc->dispatchHTMLEvent(scrollEvent, true, false);
 }
 
 void Frame::clearTimers(FrameView *view)

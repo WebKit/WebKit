@@ -144,7 +144,7 @@ void CachedPage::clear()
             m_document->removeAllEventListenersFromAllNodes();
         }
 
-        m_view->clearPart();
+        m_view->clearFrame();
     }
 
     ASSERT(!m_document->inPageCache());

@@ -2,6 +2,43 @@
 
         Reviewed by Antti.
 
+        - fix <rdar://problem/3109180> VIP: after go back, page jumps after loading even if I scrolled while loading
+
+        * history/CachedPage.cpp: (WebCore::CachedPage::clear): Call clearFrame rather than
+        clearPart -- the "part" term was leftover prehistoric terminology.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open): Call setWasScrolledByUser(false) on the page, so that we
+        can detect any user scrolling that happens during the "go back" process.
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState): Don't scroll if the view's
+        wasScrolledByUser flag is set.
+        (WebCore::FrameLoader::loadItem): Call setWasScrolledByUser(false) false when we do
+        a new "load" (actually just a scroll) using the same frame. Also moved the line of code that
+        sets m_currentHistoryItem to make this code path mroe similar to recursiveGoToItem.
+        (WebCore::FrameLoader::recursiveGoToItem): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Call clearFrame rather than stting m_frame directly.
+        (WebCore::Frame::sendScrollEvent): Call setWasScrolledByUser(true) on FrameView. The FrameView
+        itself knows to ignore this if the scrolling is being done programmatically instead of by the user.
+
+        * page/FrameView.h: Added wasScrolledByUser and setWasScrolledByUser. Also removed unneeded
+        include and class forward declarations, renamed clearPart to clearFrame, removed uneeded function
+        haveDelayedLayoutScheduled, and removed unneeded friend declarations.
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Added m_inProgrammaticScroll and m_wasScrolledByUser.
+        (WebCore::FrameViewPrivate::reset): Set m_wasScrolledByUser to false.
+        (WebCore::FrameView::clearFrame): Renamed from clearPart.
+        (WebCore::FrameView::scrollRectIntoViewRecursively): Added code to set the m_inProgrammaticScroll flag.
+        (WebCore::FrameView::setContentsPos): Ditto.
+        (WebCore::FrameView::wasScrolledByUser): Added.
+        (WebCore::FrameView::setWasScrolledByUser): Added. Does nothing if called when m_inProgrammaticScroll
+        is true.
+
+2007-05-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
         - <rdar://problem/4865655> REGRESSION: find function does not work for the character ß
 
         The trick was to fold case consistently in the CircularSearchBuffer class.

@@ -60,6 +60,8 @@ public:
         , m_enqueueEvents(0)
         , m_overflowStatusDirty(true)
         , m_viewportRenderer(0)
+        , m_wasScrolledByUser(false)
+        , m_inProgrammaticScroll(false)
     {
         isTransparent = false;
         baseBackgroundColor = Color::white;
@@ -80,6 +82,7 @@ public:
         layoutCount = 0;
         firstLayout = true;
         repaintRects.clear();
+        m_wasScrolledByUser = false;
     }
 
     bool doFullRepaint;
@@ -116,6 +119,9 @@ public:
     bool horizontalOverflow;
     bool m_verticalOverflow;    
     RenderObject* m_viewportRenderer;
+
+    bool m_wasScrolledByUser;
+    bool m_inProgrammaticScroll;
 };
 
 FrameView::FrameView(Frame* frame)
@@ -150,7 +156,7 @@ bool FrameView::isFrameView() const
     return true; 
 }
 
-void FrameView::clearPart()
+void FrameView::clearFrame()
 {
     m_frame = 0;
 }
@@ -599,14 +605,21 @@ void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 {
     if (frame()->prohibitsScrolling())
         return;
+    bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
+    d->m_inProgrammaticScroll = true;
     ScrollView::scrollRectIntoViewRecursively(r);
+    d->m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
 void FrameView::setContentsPos(int x, int y)
 {
+    ASSERT(!d->m_inProgrammaticScroll);
     if (frame()->prohibitsScrolling())
         return;
+    bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
+    d->m_inProgrammaticScroll = true;
     ScrollView::setContentsPos(x, y);
+    d->m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
 void FrameView::repaintRectangle(const IntRect& r, bool immediate)
@@ -700,11 +713,6 @@ void FrameView::setNeedsLayout()
 {
     if (m_frame->renderer())
         m_frame->renderer()->setNeedsLayout(true);
-}
-
-bool FrameView::haveDelayedLayoutScheduled()
-{
-    return d->layoutTimer.isActive() && d->delayedLayout;
 }
 
 void FrameView::unscheduleRelayout()
@@ -899,6 +907,18 @@ void FrameView::updateControlTints()
         context.setUpdatingControlTints(true);
         m_frame->paint(&context, enclosingIntRect(visibleContentRect()));
     }
+}
+
+bool FrameView::wasScrolledByUser() const
+{
+    return d->m_wasScrolledByUser;
+}
+
+void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
+{
+    if (d->m_inProgrammaticScroll)
+        return;
+    d->m_wasScrolledByUser = wasScrolledByUser;
 }
 
 }

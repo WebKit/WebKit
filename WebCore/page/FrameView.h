@@ -1,11 +1,10 @@
-/* This file is part of the KDE project
-
+/*
    Copyright (C) 1997 Martin Jones (mjones@kde.org)
              (C) 1998 Waldo Bastian (bastian@kde.org)
              (C) 1998, 1999 Torben Weis (weis@kde.org)
              (C) 1999 Lars Knoll (knoll@kde.org)
              (C) 1999 Antti Koivisto (koivisto@kde.org)
-   Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+   Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -28,27 +27,21 @@
 
 #include "ScrollView.h"
 #include "IntSize.h"
-#include "PlatformString.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AtomicString;
 class Color;
-class Clipboard;
 class Event;
 class EventTargetNode;
 class Frame;
 class FrameViewPrivate;
-class HTMLFrameSetElement;
-class IntPoint;
 class IntRect;
-class KeyboardEvent;
 class PlatformMouseEvent;
-class MouseEventWithHitTestResults;
 class Node;
 class RenderLayer;
 class RenderObject;
-class PlatformWheelEvent;
+class String;
 
 template <typename T> class Timer;
 
@@ -58,6 +51,7 @@ public:
     virtual ~FrameView();
 
     Frame* frame() const { return m_frame.get(); }
+    void clearFrame();
 
     void ref() { ++m_refCount; }
     void deref() { if (!--m_refCount) delete this; }
@@ -71,14 +65,13 @@ public:
     virtual void setVScrollbarMode(ScrollbarMode);
     virtual void setHScrollbarMode(ScrollbarMode);
     virtual void setScrollbarsMode(ScrollbarMode);
-    
+
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(Node*);
     void unscheduleRelayout();
-    bool haveDelayedLayoutScheduled();
     bool layoutPending() const;
 
     Node* layoutRoot() const;
@@ -95,7 +88,6 @@ public:
     void resetScrollbars();
 
     void clear();
-    void clearPart();
 
     bool isTransparent() const;
     void setTransparent(bool isTransparent);
@@ -110,10 +102,11 @@ public:
     IntRect windowClipRect(bool clipToContents) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
-    virtual void scrollRectIntoViewRecursively(const IntRect& r);
+    virtual void scrollRectIntoViewRecursively(const IntRect&);
     virtual void setContentsPos(int x, int y);
 
     String mediaType() const;
+    void setMediaType(const String&);
 
     void setUseSlowRepaints();
 
@@ -125,14 +118,15 @@ public:
 
     void restoreScrollbar();
 
-    void setMediaType(const String&);
-
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&);
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
 
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
     void pauseScheduledEvents();
     void resumeScheduledEvents();
+
+    bool wasScrolledByUser() const;
+    void setWasScrolledByUser(bool);
 
 private:
     void init();
@@ -156,13 +150,8 @@ private:
     IntSize m_margins;
     RefPtr<Frame> m_frame;
     FrameViewPrivate* d;
-
-    friend class Frame;
-    friend class FrameMac;
-
 };
 
 }
 
 #endif
-
