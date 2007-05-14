@@ -3,66 +3,191 @@ description(
 + " The expression accesses the property 'x' from number '4'."
 );
 
-function f1() {
-    return 4..x;
+// construct same test-case for different kinds of number literals. the switch is used to avoid
+// individual returns getting optimized away (if the interpreter would do dead code elimination)
+
+// testcase for number literal with decimal point, i.e '4.'
+function f1(a) {
+    switch(a) {
+    case "member":
+        return 4..x;
+    case "arrayget":
+        return 4.["x"];
+    case "constr":
+        return 4.();
+    case "funccall":
+        return 4..f();
+    case "parenfunccall":
+        return (4..x)();
+    case "assignment":
+        return 4..x = 33;
+    case "assignment2":
+        return 4..x >>>= 1;
+    case "prefix":
+        return ++4..x;
+    case "postfix":
+        return 4..x++;
+   case "delete":
+        delete 4..x;
+        return 4..x;
+    }
+
+    return 0;
 }
 
-function f2() {
-    return 4e20.x;
+// '4. .'
+function f2(a) {
+    switch(a) {
+    case "member":
+        return 4. .x;
+    case "arrayget":
+        return 4. ["x"];
+    case "constr":
+        return 4.();
+    case "funccall":
+        return 4. .f();
+    case "parenfunccall":
+        return (4. .x)();
+    case "assignment":
+        return 4. .x = 33;
+    case "assignment2":
+        return 4. .x >>>= 1;
+    case "prefix":
+        return ++4. .x;
+    case "postfix":
+        return 4. .x++;
+    case "delete":
+        delete 4. .x;
+        return 4. .x;
+    }
+
+    return 0;
 }
 
-function f3() {
-    return 4.0.x;
+// '4e20'
+function f2(a) {
+    switch(a) {
+    case "member":
+        return 4e20.x;
+    case "arrayget":
+        return 4e20["x"];
+    case "constr":
+        return 4e20();
+    case "funccall":
+        return 4e20.f();
+    case "parenfunccall":
+        return (4e20.x)();
+    case "assignment":
+        return 4e20.x = 33;
+    case "assignment2":
+        return 4e20.x >>>= 1;
+    case "prefix":
+        return ++4e20.x;
+    case "postfix":
+        return 4e20.x++;
+    case "delete":
+        delete 4e20.x;
+        return 4e20.x;
+    }
+
+    return 0;
 }
 
-function f4() {
-    return 4.[x];
+// '4.1e-20'
+function f3(a) {
+    switch(a) {
+    case "member":
+        return 4.1e-20.x;
+    case "arrayget":
+        return 4.1e-20["x"];
+    case "constr":
+        return 4.1e-20();
+    case "funccall":
+        return 4.1e-20.f();
+    case "parenfunccall":
+        return (4.1e-20.x)();
+    case "assignment":
+        return 4.1e-20.x = 33;
+    case "assignment2":
+        return 4.1e-20.x >>>= 1;
+    case "prefix":
+        return ++4.1e-20.x;
+    case "postfix":
+        return 4.1e-20.x++;
+   case "delete":
+        delete 4.1e-20.x;
+        return 4.1e-20.x;
+    }
+
+    return 0;
 }
 
-function f5() {
-    return 4.();
+// '4'
+function f4(a) {
+    switch(a) {
+    case "member":
+        return 4 .x;
+    case "arrayget":
+        return 4["x"];
+    case "constr":
+        return 4();
+    case "funccall":
+        return 4 .f();
+    case "parenfunccall":
+        return (4 .x)();
+    case "assignment":
+        return 4 .x = 33;
+    case "assignment2":
+        return 4 .x >>>= 1;
+    case "prefix":
+        return ++4 .x;
+    case "postfix":
+        return 4 .x++;
+    case "delete":
+        delete 4 .x;
+        return 4 .x;
+
+    }
+
+    return 0;
 }
 
-function f6() {
-    return 4..f();
+// '(4)'
+function f5(a) {
+    switch(a) {
+    case "member":
+        return (4).x;
+    case "arrayget":
+        return (4)["x"];
+    case "constr":
+        return (4)();
+    case "funccall":
+        return (4).f();
+    case "parenfunccall":
+        return ((4).x)();
+    case "assignment":
+        return (4).x = 33;
+    case "assignment2":
+        return (4).x >>>= 1;
+    case "prefix":
+        return ++(4).x;
+    case "postfix":
+        return (4).x++;
+    case "delete":
+        delete (4).x;
+        return (4).x;
+    }
+
+    return 0;
+}
+unevalf = function(x) { return '(' + x.toString() + ')'; };
+
+function testToString(fn) 
+{
+    shouldBe("unevalf(eval(unevalf(" + fn + ")))", "unevalf(" + fn + ")");
 }
 
-
-
-
-unevalf = function(x) { return '(' + x.toString() + ')'; }
-
-try {
-    uf1 = unevalf(f1);
-    ueuf1 = unevalf(eval(unevalf(f1)));
-}  catch(e) {};
-try {
-    uf2 = unevalf(f2);
-    ueuf2 = unevalf(eval(unevalf(f2)));
-} catch(e) {};
-try {
-    uf3 = unevalf(f3);
-    ueuf3 = unevalf(eval(unevalf(f3)));
-} catch(e) {};
-try {
-    uf4 = unevalf(f4);
-    ueuf4 = unevalf(eval(unevalf(f4)));
-} catch(e) {};
-try {
-    uf5 = unevalf(f5);
-    ueuf5 = unevalf(eval(unevalf(f5)));
-} catch(e) {};
-try {
-    uf6 = unevalf(f6);
-    ueuf6 = unevalf(eval(unevalf(f6)));
-} catch(e) {};
-
-shouldBe("ueuf1", "uf1");
-shouldBe("ueuf2", "uf2");
-shouldBe("ueuf3", "uf3");
-shouldBe("ueuf4", "uf4");
-shouldBe("ueuf5", "uf5");
-shouldBe("ueuf6", "uf6");
-
+for(var i = 1; i < 6; ++i)
+    testToString("f" + i);
 
 var successfullyParsed = true;

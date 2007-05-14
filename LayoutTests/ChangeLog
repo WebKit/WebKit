@@ -1,3 +1,16 @@
+2007-05-14  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=10878
+        Bug 10878: Incorrect decompilation for "4..x"
+
+        Test all the different forms of expressions that can contain
+        a dot following a number literal.
+        Includes new tests for PrefixDotNode, PostfixDotNode, DeleteDotNode,
+        AssignDotNode and FunctionCallParenDotNode.
+
+        * fast/js/resources/toString-number-dot-expr.js:
+        * fast/js/toString-number-dot-expr-expected.txt: Updated.
+
 2007-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
