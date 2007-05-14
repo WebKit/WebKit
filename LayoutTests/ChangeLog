@@ -1,3 +1,15 @@
+2007-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5136696> Selection is removed when focusing a node in another frame
+
+        Demonstrates bug:
+        * editing/selection/5136696-expected.checksum: Added.
+        * editing/selection/5136696-expected.png: Added.
+        * editing/selection/5136696-expected.txt: Added.
+        * editing/selection/5136696.html: Added.
+
 2007-05-14  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Tests for http://bugs.webkit.org/show_bug.cgi?id=10878

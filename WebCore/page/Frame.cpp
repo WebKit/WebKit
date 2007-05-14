@@ -613,7 +613,7 @@ void Frame::setFocusedNodeIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target && target->isMouseFocusable() && !isFrameElement(target)) {
-                document()->setFocusedNode(target);
+                page()->focusController()->setFocusedNode(target);
                 return;
             }
             renderer = renderer->parent();

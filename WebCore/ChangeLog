@@ -1,3 +1,37 @@
+2007-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5136696> Selection is removed when focusing a node in another frame
+        <rdar://problem/5192388> WordPress: Can't insert links/images
+        
+        Don't clear a selection when changing focus if the new
+        focus node is in a different frame than the old selection.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode): Moved code to clear 
+        selections to the FocusController, since it is Page level 
+        and will know about the frame/document that contained the 
+        old selection. Moved code to call shouldEndEditing to the 
+        FocusController because selections are now cleared before
+        calling Document::setFocusedNode and shouldEndEditing must
+        be called before selections are cleared.
+        * dom/Element.cpp:
+        (WebCore::Element::blur): Call FocusController::setFocusNode
+        instead of Document::setFocusNode, if possible.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Ditto.
+        * page/FocusController.cpp:
+        (WebCore::relinquishesEditingFocus): Moved from Document.cpp.
+        (WebCore::clearSelectionIfNeeded): Ditto.  Don't clear if
+        the old selection is in a frame that's different than the 
+        one that contains the new focus node.
+        (WebCore::FocusController::setFocusedNode): Moved code
+        here from Document::setFocusedNode.
+        * page/Frame.cpp:
+        (WebCore::Frame::setFocusedNodeIfNeeded): Call
+        FocusController::setFocusNode.
+
 2007-05-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

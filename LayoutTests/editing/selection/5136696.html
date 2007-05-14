@@ -1,0 +1,20 @@
+<p>This tests to make sure that a selection in one from isn't cleared when focusing a node in a different frame.</p>
+<iframe border="1" src="../resources/contenteditable-iframe-src.html"></iframe><br>
+<input type="text" id="input" value="This text field should be focused." size="30">
+
+<script>
+function runTest() {
+    frame = frames[0];
+    frame.focus();
+    s = frame.getSelection();
+    s.setPosition(frame.document.body, 0);
+    frame.document.execCommand("InsertText", false, "This test should be selected, but this frame shouldn't be focused.");
+    frame.document.execCommand("SelectAll");
+    document.getElementById("input").focus();
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+if (window.layoutTestController)
+    window.layoutTestController.waitUntilDone();
+window.setTimeout(runTest, 200);
+</script>

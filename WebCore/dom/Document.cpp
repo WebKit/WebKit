@@ -228,19 +228,6 @@ static Widget* widgetForNode(Node* focusedNode)
     return static_cast<RenderWidget*>(renderer)->widget();
 }
 
-static bool relinquishesEditingFocus(Node *node)
-{
-    ASSERT(node);
-    ASSERT(node->isContentEditable());
-
-    Node *root = node->rootEditableElement();
-    Frame* frame = node->document()->frame();
-    if (!frame || !root)
-        return false;
-
-    return frame->editor()->shouldEndEditing(rangeOfContents(root).get());
-}
-
 static bool acceptsEditingFocus(Node *node)
 {
     ASSERT(node);
@@ -252,18 +239,6 @@ static bool acceptsEditingFocus(Node *node)
         return false;
 
     return frame->editor()->shouldBeginEditing(rangeOfContents(root).get());
-}
-
-static void clearSelectionIfNeeded(Frame* frame, Node* newFocusedNode)
-{
-    if (!frame)
-        return;
-
-    // Clear the selection when changing the focus node to null or to a node that is not 
-    // contained by the current selection.
-    Node* startContainer = frame->selectionController()->start().node();
-    if (!newFocusedNode || (startContainer && startContainer != newFocusedNode && !(startContainer->isDescendantOf(newFocusedNode)) && startContainer->shadowAncestorNode() != newFocusedNode))
-        frame->selectionController()->clear();
 }
 
 DeprecatedPtrList<Document>*  Document::changedDocuments = 0;
@@ -2151,14 +2126,10 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 
     if (m_focusedNode == newFocusedNode)
         return true;
-
-    if (m_focusedNode && m_focusedNode.get() == m_focusedNode->rootEditableElement() && !relinquishesEditingFocus(m_focusedNode.get()))
-          return false;
         
     bool focusChangeBlocked = false;
     RefPtr<Node> oldFocusedNode = m_focusedNode;
     m_focusedNode = 0;
-    clearSelectionIfNeeded(frame(), newFocusedNode.get());
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusedNode && !oldFocusedNode->m_inDetach) { 
@@ -2183,14 +2154,12 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
             focusChangeBlocked = true;
             newFocusedNode = 0;
         }
-        clearSelectionIfNeeded(frame(), newFocusedNode.get());
         EventTargetNodeCast(oldFocusedNode.get())->dispatchUIEvent(DOMFocusOutEvent);
         if (m_focusedNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             newFocusedNode = 0;
         }
-        clearSelectionIfNeeded(frame(), newFocusedNode.get());
         if ((oldFocusedNode.get() == this) && oldFocusedNode->hasOneRef())
             return true;
             
