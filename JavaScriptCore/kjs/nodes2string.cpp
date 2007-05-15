@@ -177,6 +177,10 @@ void ArrayNode::streamTo(SourceStream &s) const
   s << "[" << element;
   for (int i = 0; i < elision; i++)
     s << ",";
+  // Parser consumes one elision comma if there's array elements 
+  // present in the expression.
+  if (opt && element)
+    s << ",";
   s << "]";
 }
 

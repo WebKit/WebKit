@@ -1,3 +1,15 @@
+2007-05-14  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - Fixes http://bugs.webkit.org/show_bug.cgi?id=13622 (Decompiler
+          omits trailing comma in array literal)
+
+         * kjs/nodes2string.cpp:
+         (ArrayNode::streamTo): print extra ',' in case there was elision
+         commas (check opt member var) and array elements present
+         in the array expression
+
 2007-05-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
