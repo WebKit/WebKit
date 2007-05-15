@@ -1,3 +1,14 @@
+2007-05-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+
+        - fixed <rdar://problem/5203036> REGRESSION: Assertion failure in WebCore::FrameLoader::restoreScrollPositionAndViewState() going back from fark.com Photoshop contest (13684)
+
+        Test: http/tests/navigation/back-to-slow-frame.html
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState): Add needed early return.
+
 2007-05-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
