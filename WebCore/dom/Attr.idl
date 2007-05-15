@@ -26,8 +26,8 @@ module core {
 
         readonly attribute [ConvertNullStringTo=Null] DOMString name;
         readonly attribute boolean specified;
-                 attribute [ConvertNullStringTo=Null] DOMString value 
-                     setter raises (DOMException);
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString value 
+                     setter raises(DOMException);
 
         // DOM Level 2
 

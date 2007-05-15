@@ -112,12 +112,6 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
         return;
     }
 
-    // ### what to do on 0 ?
-    if (v.isNull()) {
-        ec = DOMSTRING_SIZE_ERR;
-        return;
-    }
-
     int e = 0;
     m_ignoreChildrenChanged++;
     removeChildren();

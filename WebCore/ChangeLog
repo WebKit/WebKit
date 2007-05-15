@@ -1,3 +1,21 @@
+2007-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=13722
+          Finish testing and fixing the setting of DOM attributes to JS null
+
+          Convert JS null to null string for remaining Core DOM attributes.
+
+        Test: fast/dom/coreDOM-element-attribute-js-null.xhtml
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue): Don't throw an expection for null values as this
+        is not in the spec and Firefox does not do it either.
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/ProcessingInstruction.idl:
+
 2007-05-15  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

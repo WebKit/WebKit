@@ -1,3 +1,15 @@
+2007-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Test for http://bugs.webkit.org/show_bug.cgi?id=13722
+          Finish testing and fixing the setting of DOM attributes to JS null
+
+          Tests for Core DOM attributes.
+
+        * fast/dom/coreDOM-element-attribute-js-null-expected.txt: Added.
+        * fast/dom/coreDOM-element-attribute-js-null.xhtml: Added.
+
 2007-05-15  Justin Garcia  <justin.garcia@apple.com>
 
         Updating expected results for r21074.
