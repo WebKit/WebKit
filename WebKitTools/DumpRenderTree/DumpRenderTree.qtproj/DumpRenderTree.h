@@ -39,6 +39,7 @@ class QWebPage;
 class QWebFrame;
 
 class LayoutTestController;
+class EventSender;
 
 namespace WebCore {
 
@@ -71,6 +72,7 @@ private:
     QWebFrame *frame;
     
     LayoutTestController *m_controller;
+    EventSender *m_eventSender;
 
     QFile *m_stdin;
     QSocketNotifier* m_notifier;

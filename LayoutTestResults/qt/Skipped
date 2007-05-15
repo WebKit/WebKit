@@ -239,7 +239,6 @@ fast/parser/external-entities-in-xslt.xml
 fast/parser/external-entities.xml
 fast/parser/xhtml-alternate-entities.xml
 
-fast/table/click-near-anonymous-table.html
 fast/table/edge-offsets.html
 fast/table/empty-section-crash.html
 fast/table/giantCellspacing.html

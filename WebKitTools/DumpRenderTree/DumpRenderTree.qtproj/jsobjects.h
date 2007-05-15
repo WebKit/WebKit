@@ -30,6 +30,7 @@
 
 #include <qobject.h>
 #include <qdebug.h>
+#include <qpoint.h>
 
 class LayoutTestController : public QObject
 {
@@ -59,5 +60,30 @@ private:
     bool waitForDone;
     int timeoutTimer;
 };
+
+class QWebPage;
+class QWebFrame;
+
+class EventSender : public QObject
+{
+    Q_OBJECT
+public:
+    EventSender(QWebPage *parent);
+
+public slots:
+    
+    void mouseDown();
+    void mouseUp();
+    void mouseMoveTo(int x, int y);
+    void leapForward(int ms);
+    void keyDown(const QString &string, const QList<QString> &modifiers);
+
+private:
+    QPoint mousePos;
+    QWebPage *page;
+    int timeLeap;
+    QWebFrame *frameUnderMouse() const;
+};
+
 
 #endif

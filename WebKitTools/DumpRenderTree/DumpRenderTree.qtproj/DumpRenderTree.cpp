@@ -83,6 +83,8 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     QObject::connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
     QObject::connect(frame, SIGNAL(loadDone(bool)), this, SLOT(maybeDump(bool)));
+
+    m_eventSender = new EventSender(page);
     
 //     page->resize(800, 800);
 }
@@ -137,6 +139,7 @@ void DumpRenderTree::resetJSObjects()
 void DumpRenderTree::initJSObjects()
 {
     frame->addToJSWindowObject("layoutTestController", m_controller);    
+    frame->addToJSWindowObject("eventSender", m_eventSender);    
 }
 
 void DumpRenderTree::dump()

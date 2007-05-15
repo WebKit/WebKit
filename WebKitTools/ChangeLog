@@ -1,3 +1,29 @@
+2007-05-15  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Add the EventSender object to DRT. Currently it implements
+        mouseDown, mouseUp and mouseMoveTo.
+
+        Make run-webkit-tests --strict work somewhat better for form elements.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::initJSObjects):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (HackWebFrame::mousePressEvent):
+        (HackWebFrame::mouseReleaseEvent):
+        (EventSender::EventSender):
+        (EventSender::mouseDown):
+        (EventSender::mouseUp):
+        (EventSender::mouseMoveTo):
+        (EventSender::leapForward):
+        (EventSender::keyDown):
+        (EventSender::frameUnderMouse):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h:
+        * Scripts/run-webkit-tests:
+
 2007-05-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

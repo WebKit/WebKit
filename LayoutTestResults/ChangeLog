@@ -1,5 +1,15 @@
 2007-05-15  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack
+
+        one more test passing, the first one that uses
+        the eventSender in DRT.
+
+        * qt/Skipped:
+        * qt/fast/table/click-near-anonymous-table-expected.txt: Added.
+
+2007-05-15  Lars Knoll <lars@trolltech.com>
+
         5319 -> 5879 passing test cases for the Qt build.
 
         * qt/Skipped:

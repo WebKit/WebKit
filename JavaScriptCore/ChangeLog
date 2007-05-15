@@ -1,3 +1,13 @@
+2007-05-15  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Extend the QObject JavaScript bindings to work for slots with
+        arguments.
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::invokeMethod):
+
 2007-05-14  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Darin.

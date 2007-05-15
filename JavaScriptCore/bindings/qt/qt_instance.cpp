@@ -100,12 +100,29 @@ JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList,
         return jsUndefined();
 
     // only void methods work currently
-    if (args.size()) 
+    if (args.size() > 10) 
         return jsUndefined();
 
-    if (_object->qt_metacall(QMetaObject::InvokeMetaMethod, method->index, 0) >= 0) 
+    QVariant vargs[11];
+    void *qargs[11];
+    
+    vargs[0] = QVariant(QMetaType::type(metaMethod.typeName()));
+    qargs[0] = vargs[0].data();
+
+    for (int i = 0; i < args.size(); ++i) {
+        vargs[i+1] = convertValueToQVariant(exec, args[i]);
+        QVariant::Type type = (QVariant::Type) QMetaType::type(argTypes.at(i));
+        if (!vargs[i+1].convert(type)) 
+            return jsUndefined();
+
+        qargs[i+1] = vargs[i+1].data();
+    }
+    if (_object->qt_metacall(QMetaObject::InvokeMetaMethod, method->index, qargs) >= 0) 
         return jsUndefined();
 
+
+    if (vargs[0].isValid())
+        return convertQVariantToValue(exec, vargs[0]);
     return jsNull();
 }
 
