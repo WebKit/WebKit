@@ -457,7 +457,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                         origin.y = offscreenBounds.bottom + origin.y * (axisFlip.y - origin.y);
                         
                         nPort.qdPort.portx = static_cast<int32>(-boundsInWindow.origin.x + origin.x);
-                        nPort.qdPort.porty = static_cast<int32>(-boundsInWindow.origin.y + origin.y);
+                        nPort.qdPort.porty = static_cast<int32>(-boundsInWindow.origin.y - origin.y);
                         window.x = 0;
                         window.y = 0;
                         window.window = &nPort;
