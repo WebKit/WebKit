@@ -282,6 +282,7 @@ Font::Font()
     : m_pageZero(0)
     , m_letterSpacing(0)
     , m_wordSpacing(0)
+    , m_isPlatformFont(false)
 {
 }
 
@@ -290,6 +291,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
     , m_pageZero(0)
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
+    , m_isPlatformFont(false)
 {
 }
 
@@ -298,6 +300,7 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
     , m_pageZero(0)
     , m_letterSpacing(0)
     , m_wordSpacing(0)
+    , m_isPlatformFont(true)
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontList->setPlatformFont(fontData);
@@ -310,6 +313,7 @@ Font::Font(const Font& other)
     , m_pageZero(other.m_pageZero)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
+    , m_isPlatformFont(other.m_isPlatformFont)
 {
 }
 

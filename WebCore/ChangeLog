@@ -1,3 +1,23 @@
+2007-05-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13711
+          REGRESSION - Bookmark Bar text rendering changed
+
+        No test possible since this patch affects only Safari chrome.
+
+        * platform/Font.cpp:
+        (WebCore::Font::Font): Initialize m_isPlatformFont according to whether
+        the Font object is derived from a FontPlatformData or not.
+        * platform/Font.h:
+        (WebCore::Font::isPlatformFont): Added. Returns whether this Font was
+        derived from a platform font.
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters): Changed to not enable
+        synthetic bold and italic in the fallback fonts if the original font
+        was derived from a platform font.
+
 2007-05-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice!

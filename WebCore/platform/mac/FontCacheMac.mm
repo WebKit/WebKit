@@ -159,8 +159,8 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
     NSFontTraitMask substituteFontTraits = [manager traitsOfFont:substituteFont];
 
     FontPlatformData alternateFont(substituteFont, 
-        (traits & NSBoldFontMask) && !(substituteFontTraits & NSBoldFontMask),
-        (traits & NSItalicFontMask) && !(substituteFontTraits & NSItalicFontMask));
+        !font.isPlatformFont() && (traits & NSBoldFontMask) && !(substituteFontTraits & NSBoldFontMask),
+        !font.isPlatformFont() && (traits & NSItalicFontMask) && !(substituteFontTraits & NSItalicFontMask));
     return getCachedFontData(&alternateFont);
 }
 

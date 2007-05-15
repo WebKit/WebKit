@@ -126,6 +126,8 @@ public:
     unsigned weight() const { return m_fontDescription.weight(); }
     bool bold() const { return m_fontDescription.bold(); }
 
+    bool isPlatformFont() const { return m_isPlatformFont; }
+
 #if PLATFORM(QT)
     operator QFont() const;
 #endif
@@ -181,6 +183,7 @@ private:
     mutable GlyphPageTreeNode* m_pageZero;
     short m_letterSpacing;
     short m_wordSpacing;
+    bool m_isPlatformFont;
 };
 
 }
