@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        function firstPartLoaded()
+        {
+            window.stop();
+        }
+    </script>
+</head>
+<body>
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=13360">http://bugs.webkit.org/show_bug.cgi?id=13360</a>
+        REGRESSION: Crash closing live web cam viewer page</i>.
+    </p>
+    <p>
+        If WebKit does not assert or crash after the test, then it passed.
+    </p>
+    <img width=24 height=24 src="resources/multipart.php" onload="firstPartLoaded()">
+</body>
+</html>

@@ -1,3 +1,18 @@
+2007-05-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Brady
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13360
+          REGRESSION: Crash closing live web cam viewer page
+
+        Test: http/tests/misc/multipart.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didFail): Avoid calling didFailToLoad() if
+        didFinishLoad() has already been called (when the first part of a
+        multipart resource arrived).
+        (WebCore::ResourceLoader::didCancel): Ditto.
+
 2007-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

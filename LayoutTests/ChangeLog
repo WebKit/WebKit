@@ -1,3 +1,15 @@
+2007-05-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Brady
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13360
+          REGRESSION: Crash closing live web cam viewer page
+
+        * http/tests/misc/multipart-expected.txt: Added.
+        * http/tests/misc/multipart.html: Added.
+        * http/tests/misc/resources/1x1-blue.png: Added.
+        * http/tests/misc/resources/multipart.php: Added.
+
 2007-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
