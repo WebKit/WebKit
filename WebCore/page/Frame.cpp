@@ -569,8 +569,6 @@ void Frame::setCaretVisible(bool flag)
     if (d->m_caretVisible == flag)
         return;
     clearCaretRectIfNeeded();
-    if (flag)
-        setFocusedNodeIfNeeded();
     d->m_caretVisible = flag;
     selectionLayoutChanged();
 }

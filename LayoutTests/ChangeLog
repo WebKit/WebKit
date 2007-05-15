@@ -1,6 +1,16 @@
 2007-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren
+        
+        Updated these expected results.  We now clear the
+        selection inside a focused node *after* firing the
+        mousedown event handler, which matches FF:
+        * fast/forms/focus-selection-input-expected.txt:
+        * fast/forms/focus-selection-textarea-expected.txt:
+
+2007-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
 
         Spelling markers fixed:
         * editing/deleting/delete-to-select-table-expected.checksum:

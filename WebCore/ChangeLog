@@ -1,3 +1,27 @@
+2007-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=13716>
+        REGRESSION: Three new layout test failures
+        
+        Two failures are correct.  Updated their expected results.
+        
+        In fast/events/frame-tab-focus.html, as we advance
+        through focusable nodes, we descend into a subframe
+        to focus a node and then ascend out of it into the
+        main frame to focus the next.  When we focus the main 
+        frame, the node in that frame that was previously 
+        focused and contains an inactive selection is focused 
+        momentarily because setCaretVisible tries to focus the 
+        node containing the caret.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setCaretVisible): Don't focus the
+        node containing the caret. FocusController will focus
+        the previously focused node (which will contain the
+        caret) if necessary when the frame gains focus.
+        
 2007-05-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
