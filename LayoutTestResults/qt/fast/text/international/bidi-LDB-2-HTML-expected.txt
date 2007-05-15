@@ -1,0 +1,584 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x499
+  RenderBlock {HTML} at (0,0) size 800x499
+    RenderBody {BODY} at (8,18) size 784x467
+      RenderBlock {H1} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 429x38
+          text run at (0,0) width 429: "Bidirectional Text Test 2 - HTML"
+      RenderBlock {P} at (0,56) size 784x19
+        RenderText {#text} at (0,0) size 135x19
+          text run at (0,0) width 135: "This test is based on "
+        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
+          RenderText {#text} at (135,0) size 117x19
+            text run at (135,0) width 117: "CSS2 section 9.10"
+        RenderText {#text} at (252,0) size 32x19
+          text run at (252,0) width 32: " and "
+        RenderInline {A} at (0,0) size 63x19 [color=#0000EE]
+          RenderText {#text} at (284,0) size 63x19
+            text run at (284,0) width 63: "Chapter 3"
+        RenderText {#text} at (347,0) size 44x19
+          text run at (347,0) width 44: " of the "
+        RenderInline {A} at (0,0) size 114x19 [color=#0000EE]
+          RenderText {#text} at (391,0) size 114x19
+            text run at (391,0) width 114: "Unicode Standard"
+        RenderText {#text} at (505,0) size 4x19
+          text run at (505,0) width 4: "."
+      RenderBlock {PRE} at (0,89) size 784x0
+      RenderBlock {P} at (0,89) size 784x19
+        RenderText {#text} at (0,0) size 286x19
+          text run at (0,0) width 286: "In each box, all the lines should be the same."
+      RenderBlock (anonymous) at (0,122) size 784x237
+        RenderBlock {DIV} at (3,3) size 89x179 [border: (1px solid #008000)]
+          RenderBlock {P} at (4,4) size 81x19
+            RenderText {#text} at (0,0) size 81x19
+              text run at (0,0) width 81: "ABCDEFGHI"
+          RenderBlock {P} at (4,23) size 81x19
+            RenderText {#text} at (0,0) size 81x19
+              text run at (0,0) width 81: "ABCDEFGHI"
+          RenderBlock {P} at (4,42) size 81x19
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28: "ABC"
+            RenderInline {SPAN} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28: "DEF"
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25: "GHI"
+          RenderBlock {P} at (4,61) size 81x19
+            RenderText {#text} at (0,0) size 81x19
+              text run at (0,0) width 81 RTL override: "IHGFEDCBA"
+          RenderBlock {P} at (4,80) size 81x19
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25 RTL override: "IHG"
+            RenderInline {SPAN} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28 RTL override: "FED"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28 RTL override: "CBA"
+          RenderBlock {P} at (4,99) size 81x19
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25 RTL override: "IHG"
+            RenderInline {SPAN} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28: "DEF"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28 RTL override: "CBA"
+          RenderBlock {P} at (4,118) size 81x19
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25 RTL override: "IHG"
+            RenderInline {BDO} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28 RTL override: "FED"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28 RTL override: "CBA"
+          RenderBlock {P} at (4,137) size 81x19
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25 RTL override: "IHG"
+            RenderInline {SPAN} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28 RTL override: "FED"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28 RTL override: "CBA"
+          RenderBlock {P} at (4,156) size 81x19
+            RenderText {#text} at (56,0) size 25x19
+              text run at (56,0) width 25 RTL override: "IHG"
+            RenderInline {BDO} at (0,0) size 28x19
+              RenderText {#text} at (28,0) size 28x19
+                text run at (28,0) width 28 LTR override: "DEF"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28 RTL override: "CBA"
+        RenderText {#text} at (95,81) size 4x19
+          text run at (95,81) width 4: " "
+        RenderBlock {DIV} at (102,50) size 50x84 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 42x19
+            RenderTableSection {TBODY} at (0,0) size 42x19
+              RenderTableRow {TR} at (0,0) size 42x19
+                RenderTableCell {TD} at (0,0) size 14x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (14,0) size 14x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (28,0) size 14x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+          RenderBlock {P} at (4,23) size 42x19
+            RenderText {#text} at (0,0) size 42x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+          RenderBlock {P} at (4,42) size 42x19
+            RenderText {#text} at (0,0) size 42x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+          RenderBlock {P} at (4,61) size 42x19
+            RenderText {#text} at (0,0) size 42x19
+              text run at (0,0) width 42 LTR override: "\x{5D2}\x{5D1}\x{5D0}"
+        RenderText {#text} at (155,81) size 4x19
+          text run at (155,81) width 4: " "
+        RenderBlock {DIV} at (162,60) size 128x65 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 120x19
+            RenderTableSection {TBODY} at (0,0) size 120x19
+              RenderTableRow {TR} at (0,0) size 120x19
+                RenderTableCell {TD} at (0,0) size 14x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (14,0) size 14x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (28,0) size 14x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+                RenderTableCell {TD} at (42,0) size 4x19 [r=0 c=3 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (46,0) size 9x19 [r=0 c=4 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "A"
+                RenderTableCell {TD} at (55,0) size 9x19 [r=0 c=5 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "B"
+                RenderTableCell {TD} at (64,0) size 10x19 [r=0 c=6 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "C"
+                RenderTableCell {TD} at (74,0) size 4x19 [r=0 c=7 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (78,0) size 14x19 [r=0 c=8 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D5}"
+                RenderTableCell {TD} at (92,0) size 14x19 [r=0 c=9 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D4}"
+                RenderTableCell {TD} at (106,0) size 14x19 [r=0 c=10 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D3}"
+          RenderBlock {P} at (4,23) size 120x19
+            RenderText {#text} at (0,0) size 120x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 36: " ABC "
+              text run at (78,0) width 42 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          RenderBlock {P} at (4,42) size 120x19
+            RenderText {#text} at (0,0) size 120x19
+              text run at (0,0) width 46 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+              text run at (46,0) width 28: "ABC"
+              text run at (74,0) width 46 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+        RenderText {#text} at (293,81) size 4x19
+          text run at (293,81) width 4: " "
+        RenderBlock {DIV} at (300,3) size 206x179 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 198x19
+            RenderTableSection {TBODY} at (0,0) size 198x19
+              RenderTableRow {TR} at (0,0) size 198x19
+                RenderTableCell {TD} at (0,0) size 14x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (14,0) size 14x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (28,0) size 14x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+                RenderTableCell {TD} at (42,0) size 4x19 [r=0 c=3 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (46,0) size 9x19 [r=0 c=4 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "A"
+                RenderTableCell {TD} at (55,0) size 9x19 [r=0 c=5 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "B"
+                RenderTableCell {TD} at (64,0) size 10x19 [r=0 c=6 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "C"
+                RenderTableCell {TD} at (74,0) size 4x19 [r=0 c=7 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (78,0) size 14x19 [r=0 c=8 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D5}"
+                RenderTableCell {TD} at (92,0) size 14x19 [r=0 c=9 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D4}"
+                RenderTableCell {TD} at (106,0) size 14x19 [r=0 c=10 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D3}"
+                RenderTableCell {TD} at (120,0) size 4x19 [r=0 c=11 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (124,0) size 10x19 [r=0 c=12 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "D"
+                RenderTableCell {TD} at (134,0) size 9x19 [r=0 c=13 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "E"
+                RenderTableCell {TD} at (143,0) size 9x19 [r=0 c=14 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "F"
+                RenderTableCell {TD} at (152,0) size 4x19 [r=0 c=15 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (156,0) size 14x19 [r=0 c=16 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D8}"
+                RenderTableCell {TD} at (170,0) size 14x19 [r=0 c=17 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D7}"
+                RenderTableCell {TD} at (184,0) size 14x19 [r=0 c=18 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D6}"
+          RenderBlock {P} at (4,23) size 198x19
+            RenderText {#text} at (0,0) size 198x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 36: " ABC "
+              text run at (78,0) width 42 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+              text run at (120,0) width 36: " DEF "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,42) size 198x19
+            RenderText {#text} at (0,0) size 46x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 4: " "
+            RenderInline {SPAN} at (0,0) size 74x19
+              RenderText {#text} at (46,0) size 74x19
+                text run at (46,0) width 32: "ABC "
+                text run at (78,0) width 42 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+            RenderText {#text} at (120,0) size 78x19
+              text run at (120,0) width 36: " DEF "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,61) size 198x19
+            RenderText {#text} at (0,0) size 46x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 4: " "
+            RenderInline {SPAN} at (0,0) size 106x19
+              RenderText {#text} at (46,0) size 106x19
+                text run at (46,0) width 32: "ABC "
+                text run at (78,0) width 42 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+                text run at (120,0) width 32: " DEF"
+            RenderText {#text} at (152,0) size 46x19
+              text run at (152,0) width 4: " "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,80) size 198x19
+            RenderText {#text} at (152,0) size 46x19
+              text run at (152,0) width 46 RTL: "\x{5D6}\x{5D7}\x{5D8} "
+            RenderInline {SPAN} at (0,0) size 106x19
+              RenderText {#text} at (46,0) size 106x19
+                text run at (46,0) width 28: "ABC"
+                text run at (74,0) width 50 RTL: " \x{5D3}\x{5D4}\x{5D5} "
+                text run at (124,0) width 28: "DEF"
+            RenderText {#text} at (0,0) size 46x19
+              text run at (0,0) width 46 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+          RenderBlock {P} at (4,99) size 198x19
+            RenderText {#text} at (74,0) size 46x19
+              text run at (74,0) width 46 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+            RenderInline {SPAN} at (0,0) size 74x19
+              RenderText {#text} at (0,0) size 74x19
+                text run at (0,0) width 46 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+                text run at (46,0) width 28: "ABC"
+            RenderText {#text} at (120,0) size 78x19
+              text run at (120,0) width 36: " DEF "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,118) size 198x19
+            RenderText {#text} at (74,0) size 46x19
+              text run at (74,0) width 46 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+            RenderInline {BDO} at (0,0) size 74x19
+              RenderText {#text} at (0,0) size 74x19
+                text run at (0,0) width 74 RTL override: "CBA \x{5D0}\x{5D1}\x{5D2}"
+            RenderText {#text} at (120,0) size 78x19
+              text run at (120,0) width 36: " DEF "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,137) size 198x19
+            RenderText {#text} at (0,0) size 46x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 4: " "
+            RenderInline {BDO} at (0,0) size 74x19
+              RenderText {#text} at (46,0) size 74x19
+                text run at (46,0) width 74 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
+            RenderText {#text} at (120,0) size 78x19
+              text run at (120,0) width 36: " DEF "
+              text run at (156,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,156) size 198x19
+            RenderText {#text} at (152,0) size 46x19
+              text run at (152,0) width 46 RTL: "\x{5D6}\x{5D7}\x{5D8} "
+            RenderInline {BDO} at (0,0) size 74x19
+              RenderText {#text} at (46,0) size 74x19
+                text run at (46,0) width 74 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
+            RenderText {#text} at (0,0) size 152x19
+              text run at (0,0) width 46 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+              text run at (120,0) width 32: " DEF"
+        RenderText {#text} at (509,81) size 4x19
+          text run at (509,81) width 4: " "
+        RenderBlock {DIV} at (516,69) size 235x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 227x19
+            RenderTableSection {TBODY} at (0,0) size 227x19
+              RenderTableRow {TR} at (0,0) size 227x19
+                RenderTableCell {TD} at (0,0) size 14x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (14,0) size 14x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (28,0) size 14x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+                RenderTableCell {TD} at (42,0) size 4x19 [r=0 c=3 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (46,0) size 9x19 [r=0 c=4 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "A"
+                RenderTableCell {TD} at (55,0) size 9x19 [r=0 c=5 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "B"
+                RenderTableCell {TD} at (64,0) size 10x19 [r=0 c=6 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "C"
+                RenderTableCell {TD} at (74,0) size 4x19 [r=0 c=7 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (78,0) size 14x19 [r=0 c=8 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D5}"
+                RenderTableCell {TD} at (92,0) size 14x19 [r=0 c=9 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D4}"
+                RenderTableCell {TD} at (106,0) size 14x19 [r=0 c=10 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D3}"
+                RenderTableCell {TD} at (120,0) size 4x19 [r=0 c=11 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (124,0) size 10x19 [r=0 c=12 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "D"
+                RenderTableCell {TD} at (134,0) size 9x19 [r=0 c=13 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "E"
+                RenderTableCell {TD} at (143,0) size 9x19 [r=0 c=14 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "F"
+                RenderTableCell {TD} at (152,0) size 4x19 [r=0 c=15 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (156,0) size 11x19 [r=0 c=16 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 11x19
+                    text run at (0,0) width 11: "G"
+                RenderTableCell {TD} at (167,0) size 10x19 [r=0 c=17 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "H"
+                RenderTableCell {TD} at (177,0) size 4x19 [r=0 c=18 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: "I"
+                RenderTableCell {TD} at (181,0) size 4x19 [r=0 c=19 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (185,0) size 14x19 [r=0 c=20 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D8}"
+                RenderTableCell {TD} at (199,0) size 14x19 [r=0 c=21 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D7}"
+                RenderTableCell {TD} at (213,0) size 14x19 [r=0 c=22 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D6}"
+          RenderBlock {P} at (4,23) size 227x19
+            RenderText {#text} at (0,0) size 227x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 36: " ABC "
+              text run at (78,0) width 42 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+              text run at (120,0) width 65: " DEF GHI "
+              text run at (185,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+        RenderText {#text} at (754,81) size 4x19
+          text run at (754,81) width 4: " "
+        RenderBR {BR} at (758,81) size 0x19
+        RenderBlock {DIV} at (3,188) size 235x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 227x19
+            RenderTableSection {TBODY} at (0,0) size 227x19
+              RenderTableRow {TR} at (0,0) size 227x19
+                RenderTableCell {TD} at (0,0) size 9x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "F"
+                RenderTableCell {TD} at (9,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "E"
+                RenderTableCell {TD} at (18,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "D"
+                RenderTableCell {TD} at (28,0) size 4x19 [r=0 c=3 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (32,0) size 14x19 [r=0 c=4 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D5}"
+                RenderTableCell {TD} at (46,0) size 14x19 [r=0 c=5 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D4}"
+                RenderTableCell {TD} at (60,0) size 14x19 [r=0 c=6 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D3}"
+                RenderTableCell {TD} at (74,0) size 4x19 [r=0 c=7 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (78,0) size 10x19 [r=0 c=8 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "C"
+                RenderTableCell {TD} at (88,0) size 9x19 [r=0 c=9 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "B"
+                RenderTableCell {TD} at (97,0) size 9x19 [r=0 c=10 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "A"
+                RenderTableCell {TD} at (106,0) size 4x19 [r=0 c=11 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (110,0) size 14x19 [r=0 c=12 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (124,0) size 14x19 [r=0 c=13 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (138,0) size 14x19 [r=0 c=14 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+                RenderTableCell {TD} at (152,0) size 4x19 [r=0 c=15 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (156,0) size 11x19 [r=0 c=16 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 11x19
+                    text run at (0,0) width 11: "G"
+                RenderTableCell {TD} at (167,0) size 10x19 [r=0 c=17 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "H"
+                RenderTableCell {TD} at (177,0) size 4x19 [r=0 c=18 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: "I"
+                RenderTableCell {TD} at (181,0) size 4x19 [r=0 c=19 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (185,0) size 14x19 [r=0 c=20 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D8}"
+                RenderTableCell {TD} at (199,0) size 14x19 [r=0 c=21 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D7}"
+                RenderTableCell {TD} at (213,0) size 14x19 [r=0 c=22 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D6}"
+          RenderBlock {P} at (4,23) size 227x19
+            RenderText {#text} at (106,0) size 46x19
+              text run at (106,0) width 46 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            RenderInline {BDO} at (0,0) size 106x19
+              RenderText {#text} at (0,0) size 106x19
+                text run at (0,0) width 106 RTL override: "ABC \x{5D3}\x{5D4}\x{5D5} DEF"
+            RenderText {#text} at (152,0) size 75x19
+              text run at (152,0) width 33: " GHI "
+              text run at (185,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+        RenderText {#text} at (241,200) size 4x19
+          text run at (241,200) width 4: " "
+        RenderBlock {DIV} at (248,188) size 235x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 227x19
+            RenderTableSection {TBODY} at (0,0) size 227x19
+              RenderTableRow {TR} at (0,0) size 227x19
+                RenderTableCell {TD} at (0,0) size 14x19 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D2}"
+                RenderTableCell {TD} at (14,0) size 14x19 [r=0 c=1 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D1}"
+                RenderTableCell {TD} at (28,0) size 14x19 [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D0}"
+                RenderTableCell {TD} at (42,0) size 4x19 [r=0 c=3 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (46,0) size 9x19 [r=0 c=4 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "A"
+                RenderTableCell {TD} at (55,0) size 9x19 [r=0 c=5 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "B"
+                RenderTableCell {TD} at (64,0) size 10x19 [r=0 c=6 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "C"
+                RenderTableCell {TD} at (74,0) size 4x19 [r=0 c=7 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (78,0) size 9x19 [r=0 c=8 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "F"
+                RenderTableCell {TD} at (87,0) size 9x19 [r=0 c=9 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 9x19
+                    text run at (0,0) width 9: "E"
+                RenderTableCell {TD} at (96,0) size 10x19 [r=0 c=10 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "D"
+                RenderTableCell {TD} at (106,0) size 4x19 [r=0 c=11 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (110,0) size 14x19 [r=0 c=12 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D5}"
+                RenderTableCell {TD} at (124,0) size 14x19 [r=0 c=13 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D4}"
+                RenderTableCell {TD} at (138,0) size 14x19 [r=0 c=14 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D3}"
+                RenderTableCell {TD} at (152,0) size 4x19 [r=0 c=15 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (156,0) size 11x19 [r=0 c=16 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 11x19
+                    text run at (0,0) width 11: "G"
+                RenderTableCell {TD} at (167,0) size 10x19 [r=0 c=17 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 10x19
+                    text run at (0,0) width 10: "H"
+                RenderTableCell {TD} at (177,0) size 4x19 [r=0 c=18 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: "I"
+                RenderTableCell {TD} at (181,0) size 4x19 [r=0 c=19 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x19
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (185,0) size 14x19 [r=0 c=20 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D8}"
+                RenderTableCell {TD} at (199,0) size 14x19 [r=0 c=21 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D7}"
+                RenderTableCell {TD} at (213,0) size 14x19 [r=0 c=22 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 14x19
+                    text run at (0,0) width 14 RTL: "\x{5D6}"
+          RenderBlock {P} at (4,23) size 227x19
+            RenderText {#text} at (0,0) size 78x19
+              text run at (0,0) width 42 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (42,0) width 36: " ABC "
+            RenderInline {BDO} at (0,0) size 74x19
+              RenderText {#text} at (78,0) size 74x19
+                text run at (78,0) width 74 RTL override: "\x{5D3}\x{5D4}\x{5D5} DEF"
+            RenderText {#text} at (152,0) size 75x19
+              text run at (152,0) width 33: " GHI "
+              text run at (185,0) width 42 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,366) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,382) size 784x19
+        RenderText {#text} at (0,0) size 56x19
+          text run at (0,0) width 56: "(Back to "
+        RenderInline {A} at (0,0) size 155x19 [color=#0000EE]
+          RenderText {#text} at (56,0) size 155x19
+            text run at (56,0) width 155: "CSS Testing Information"
+        RenderText {#text} at (211,0) size 8x19
+          text run at (211,0) width 8: ", "
+        RenderInline {A} at (0,0) size 78x19 [color=#0000EE]
+          RenderText {#text} at (219,0) size 78x19
+            text run at (219,0) width 78: "David Baron"
+        RenderText {#text} at (297,0) size 5x19
+          text run at (297,0) width 5: ")"
+      RenderBlock {P} at (0,415) size 784x19
+        RenderInline {A} at (0,0) size 27x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 27x19
+            text run at (0,0) width 27: "LDB"
+        RenderText {#text} at (27,0) size 8x19
+          text run at (27,0) width 8: ", "
+        RenderInline {A} at (0,0) size 129x19 [color=#0000EE]
+          RenderText {#text} at (35,0) size 129x19
+            text run at (35,0) width 129: "dbaron@dbaron.org"
+        RenderText {#text} at (164,0) size 82x19
+          text run at (164,0) width 82: ", 2001-06-05"
+      RenderBlock {P} at (0,448) size 784x19
+        RenderText {#text} at (0,0) size 302x19
+          text run at (0,0) width 302: "Modified and used with the author\x{2019}s permission."

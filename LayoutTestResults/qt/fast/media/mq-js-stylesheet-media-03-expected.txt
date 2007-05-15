@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 564x19
+          text run at (0,0) width 564: "This text should be green and below should read \"braille, not screen, screen and (color)\"."
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 312x19
+          text run at (0,0) width 312: "braille, not screen, screen and (color), not screen"
+      RenderBlock {P} at (0,66) size 784x19
+        RenderText {#text} at (0,0) size 182x19
+          text run at (0,0) width 182: "expected to fail (24.07.2005)"

@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 233x19
+          text run at (0,0) width 233: "Tests that buttons clip their contents."
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 782x19
+          text run at (0,0) width 481: "Each button below should have a yellow border and a black dashed outline. "
+          text run at (481,0) width 301: "Contents should not overflow the yellow border."
+      RenderBlock {P} at (0,66) size 784x50
+        RenderButton {BUTTON} at (0,0) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]
+          RenderBlock (anonymous) at (12,12) size 76x204
+            RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
+              RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
+              RenderText {#text} at (11,2) size 42x76
+                text run at (11,2) width 32: "short"
+                text run at (8,21) width 38: "words"
+                text run at (14,40) width 26: "only"
+                text run at (6,59) width 42: "please"
+        RenderText {#text} at (0,0) size 0x0
+      RenderButton {BUTTON} at (0,130) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]
+        RenderBlock (anonymous) at (12,12) size 76x204
+          RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
+            RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
+            RenderText {#text} at (11,2) size 42x76
+              text run at (11,2) width 32: "short"
+              text run at (8,21) width 38: "words"
+              text run at (14,40) width 26: "only"
+              text run at (6,59) width 42: "please"
+      RenderBlock {P} at (0,194) size 784x0
+layer at (8,202) size 100x50
+  RenderButton {BUTTON} at (8,202) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]
+    RenderBlock (anonymous) at (12,12) size 76x204
+      RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
+        RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
+        RenderText {#text} at (11,2) size 42x76
+          text run at (11,2) width 32: "short"
+          text run at (8,21) width 38: "words"
+          text run at (14,40) width 26: "only"
+          text run at (6,59) width 42: "please"

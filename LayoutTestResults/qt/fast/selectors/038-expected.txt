@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x123
+  RenderBlock {HTML} at (0,0) size 800x123
+    RenderBody {BODY} at (8,14) size 784x95
+      RenderBlock {P} at (0,0) size 784x95
+        RenderText {#text} at (0,0) size 774x95
+          text run at (0,0) width 256: "This very long paragraph should have a "
+          text run at (256,0) width 489: "first line with green background. This very long paragraph should have a first "
+          text run at (745,0) width 22: "line"
+          text run at (0,19) width 153: "with green background. "
+          text run at (153,19) width 309: "This very long paragraph should have a first line "
+          text run at (462,19) width 312: "with green background. This very long paragraph"
+          text run at (0,38) width 175: "should have a first line with "
+          text run at (175,38) width 503: "green background. This very long paragraph should have a first line with green "
+          text run at (678,38) width 79: "background."
+          text run at (0,57) width 462: "This very long paragraph should have a first line with green background. "
+          text run at (462,57) width 305: "This very long paragraph should have a first line"
+          text run at (0,76) width 149: "with green background."

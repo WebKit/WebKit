@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderMenuList {SELECT} at (2,0) size 58x25 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (8,3) size 42x19
+          RenderText at (0,0) size 32x19
+            text run at (0,0) width 32: "Hello"
+      RenderBlock (anonymous) at (0,27) size 784x19
+        RenderText {#text} at (0,0) size 285x19
+          text run at (0,0) width 285: "This text should be *below* the select widget."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

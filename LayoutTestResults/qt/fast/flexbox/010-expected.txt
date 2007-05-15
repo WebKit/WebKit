@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 778x38
+          text run at (0,0) width 307: "You should see a 100x100 green square below. "
+          text run at (307,0) width 274: "If you see any red, then the test has failed. "
+          text run at (581,0) width 197: "This test is ensuring that boxes"
+          text run at (0,19) width 334: "can act as containing blocks for positioned elements."
+layer at (8,60) size 100x100
+  RenderFlexibleBox (relative positioned) {DIV} at (0,52) size 100x100 [bgcolor=#FF0000]
+layer at (8,60) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

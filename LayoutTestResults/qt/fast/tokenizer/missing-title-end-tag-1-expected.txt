@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 772x38
+          text run at (0,0) width 325: "This document is missing its </title> tag in its head. "
+          text run at (325,0) width 447: "The tokenizer should retokenize this document after consuming all of it"
+          text run at (0,19) width 513: "looking for the missing end tag, then let the parser clean up the missing tag. See "
+        RenderInline {A} at (0,0) size 114x19 [color=#0000EE]
+          RenderText {#text} at (513,19) size 114x19
+            text run at (513,19) width 114: "Bugzilla Bug 3905"
+        RenderText {#text} at (627,19) size 4x19
+          text run at (627,19) width 4: "."

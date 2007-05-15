@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x332
+  RenderBlock {HTML} at (0,0) size 800x332
+    RenderBody {BODY} at (8,8) size 784x316
+      RenderFieldSet {FIELDSET} at (2,0) size 780x316 [border: (2px groove #C0C0C0)]
+        RenderBlock (floating) {DIV} at (12,6) size 300x300 [bgcolor=#008000]
+        RenderBlock {DIV} at (12,6) size 756x50
+          RenderText {#text} at (300,0) size 87x19
+            text run at (300,0) width 87: "Other content"
+          RenderText {#text} at (0,0) size 0x0

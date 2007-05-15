@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x464
+      RenderBlock {P} at (0,0) size 784x76
+        RenderText {#text} at (0,0) size 779x76
+          text run at (0,0) width 437: "The single Hebrew glyph below should be in the Lucida Grande font. "
+          text run at (437,0) width 342: "It should not be a synthetic bold, because the first font"
+          text run at (0,19) width 284: "in the list (Geneva) does not have the glyph. "
+          text run at (284,19) width 471: "Therefore we fall back to the second font in the list (Lucida Grande), which"
+          text run at (0,38) width 122: "does support bold. "
+          text run at (122,38) width 645: "This test is making sure we don't make incorrect assumptions based off the fact that we would have to"
+          text run at (0,57) width 262: "synthesize bold for the first font in the list."
+      RenderBlock {P} at (0,204) size 784x167
+        RenderText {#text} at (0,0) size 128x167
+          text run at (0,0) width 128 RTL: "\x{5D0}"

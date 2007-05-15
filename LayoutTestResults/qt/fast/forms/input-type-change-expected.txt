@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 771x38
+          text run at (0,0) width 771: "Test the changing of an input type=TEXT to type=IMAGE. This test is to make sure that the height and width attributes are"
+          text run at (0,19) width 206: "used for the new type of IMAGE."
+      RenderBlock {FORM} at (0,38) size 784x45
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,26) size 90x19
+          text run at (0,26) width 90: "input element "
+        RenderImage {INPUT} at (92,21) size 19x17 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0

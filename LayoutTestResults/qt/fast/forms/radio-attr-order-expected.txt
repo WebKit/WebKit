@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x76
+        RenderText {#text} at (0,0) size 761x19
+          text run at (0,0) width 761: "This tests that radio buttons are checked by default, even when the name attribute is parsed after the checked attribute. "
+        RenderBR {BR} at (761,14) size 0x0
+        RenderBR {BR} at (0,19) size 0x19
+        RenderBlock {INPUT} at (2,41) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (17,38) size 300x19
+          text run at (17,38) width 300: "This radio button should be checked by default "
+        RenderBR {BR} at (317,52) size 0x0
+        RenderBR {BR} at (0,57) size 0x19
+      RenderBlock {DIV} at (0,76) size 784x19
+        RenderText {#text} at (0,0) size 305x19
+          text run at (0,0) width 87: "Test Passed. "
+          text run at (87,0) width 218: "Radio button is checked by default"

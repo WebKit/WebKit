@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 106x19
+          text run at (0,0) width 106: "Test for revision "
+        RenderInline {A} at (0,0) size 48x19 [color=#0000EE]
+          RenderText {#text} at (106,0) size 48x19
+            text run at (106,0) width 48: "#20574"
+        RenderText {#text} at (154,0) size 4x19
+          text run at (154,0) width 4: "."
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 250x19
+          text run at (0,0) width 250: "The two blue boxes should be identical."
+      RenderBlock {DIV} at (0,66) size 106x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 8x19
+          text run at (3,3) width 8: "L"
+        RenderInline {SPAN} at (0,0) size 41x19 [color=#008000] [bgcolor=#FFFF00]
+          RenderText {#text} at (11,3) size 41x19
+            text run at (11,3) width 41: "o r"
+        RenderText {#text} at (52,3) size 100x38
+          text run at (52,3) width 51: "e mi"
+          text run at (3,22) width 67: "psumdolor"
+      RenderBlock (anonymous) at (0,110) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,129) size 106x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 100x38
+          text run at (3,3) width 100: "Lo re mi"
+          text run at (3,22) width 67: "psumdolor"
+selection start: position 1 of child 0 {#text} of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 4 of child 0 {#text} of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document

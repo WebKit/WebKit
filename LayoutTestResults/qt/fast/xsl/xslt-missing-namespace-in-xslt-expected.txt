@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x80
+  RenderBlock {html} at (0,0) size 800x80
+    RenderBody {body} at (8,14) size 784x52
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 229x19
+          text run at (0,0) width 229: "You should see error text above this"
+      RenderBlock (anonymous) at (0,33) size 784x0
+        RenderInline {bar} at (0,0) size 0x0
+      RenderBlock {p} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 347x19
+          text run at (0,0) width 347: "ERROR? this, and nothing below it should be rendered"

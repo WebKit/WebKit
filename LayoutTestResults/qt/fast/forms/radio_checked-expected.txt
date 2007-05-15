@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 508x19
+          text run at (0,0) width 508: "This test should make sure that only one button per group, per form, is checked."
+      RenderBlock (anonymous) at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 327x19
+          text run at (0,0) width 327: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (329,3) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (344,0) size 4x19
+          text run at (344,0) width 4: " "
+        RenderBlock {INPUT} at (350,3) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,52) size 784x57
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,19) size 291x19
+          text run at (0,19) width 291: "These buttons are in group1, in the first form. "
+        RenderBlock {INPUT} at (293,22) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (308,19) size 4x19
+          text run at (308,19) width 4: " "
+        RenderBlock {INPUT} at (314,22) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (329,19) size 4x19
+          text run at (329,19) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,38) size 291x19
+          text run at (0,38) width 291: "These buttons are in group2, in the first form. "
+        RenderBlock {INPUT} at (293,41) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (308,38) size 4x19
+          text run at (308,38) width 4: " "
+        RenderBlock {INPUT} at (314,41) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,123) size 784x19
+        RenderText {#text} at (0,0) size 327x19
+          text run at (0,0) width 327: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (329,3) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (344,0) size 4x19
+          text run at (344,0) width 4: " "
+        RenderBlock {INPUT} at (350,3) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,142) size 784x38
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,19) size 314x19
+          text run at (0,19) width 314: "These buttons are in group2, in the second form. "
+        RenderBlock {INPUT} at (316,22) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (331,19) size 4x19
+          text run at (331,19) width 4: " "
+        RenderBlock {INPUT} at (337,22) size 13x13 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,194) size 784x19
+        RenderText {#text} at (0,0) size 99x19
+          text run at (0,0) width 99: "TEST PASSED."

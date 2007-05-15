@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x167
+  RenderBlock {HTML} at (0,0) size 800x167
+    RenderBody {BODY} at (8,8) size 784x151
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderInline {DIV} at (0,0) size 462x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,2) size 462x16
+            text run at (0,2) width 462: "Ahem_font_required_for_this_test."
+        RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,19) size 300x132
+        RenderTableSection {TBODY} at (0,0) size 300x132
+          RenderTableRow {TR} at (0,2) size 300x128
+            RenderTableCell {TD} at (2,2) size 296x128 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (1,15) size 294x98 [color=#00FF00] [bgcolor=#008000]
+                RenderText {#text} at (0,-1) size 294x100
+                  text run at (0,-1) width 294: "                     "
+                  text run at (294,-1) width 0: " "
+                  text run at (0,13) width 294: " xxxx xxxx xxxx xxxx "
+                  text run at (294,13) width 0: " "
+                  text run at (0,27) width 294: " x  x x  x x    x    "
+                  text run at (294,27) width 0: " "
+                  text run at (0,41) width 280: " xxxx xxxx xxxx xxxx"
+                  text run at (280,41) width 0: " "
+                  text run at (0,55) width 294: " x    x  x    x    x "
+                  text run at (294,55) width 0: " "
+                  text run at (0,69) width 294: " x    x  x xxxx xxxx "
+                  text run at (294,69) width 0: " "
+                  text run at (0,83) width 294: "                     "

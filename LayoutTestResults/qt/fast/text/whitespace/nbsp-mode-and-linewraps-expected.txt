@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (100,8) size 700x252
+  RenderBlock (positioned) {DIV} at (100,8) size 700x252 [border: (2px solid #FF0000)]
+    RenderText {#text} at (14,14) size 670x223
+      text run at (14,14) width 670: "This div is absolutely positioned to the left. All the spaces in this"
+      text run at (14,46) width 661: "div are replaced with non-breaking spaces, and the nbsp-mode"
+      text run at (14,78) width 655: "for this div is 'space', so when calculating line breaks, the non-"
+      text run at (14,110) width 627: "breaking spaces should be treated as normal spaces. If this"
+      text run at (14,142) width 580: "isn't the case, then all the text for this paragraph will be"
+      text run at (14,174) width 622: "rendered in two lines, and a horizontal scroll bar will appear"
+      text run at (14,206) width 184: "along the bottom."
