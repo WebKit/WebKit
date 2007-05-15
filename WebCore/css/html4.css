@@ -541,10 +541,6 @@ nobr {
     white-space: nowrap
 }
 
-wbr {
-    white-space: normal
-}
-
 /* states */
 
 :focus { 
