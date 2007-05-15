@@ -1,3 +1,12 @@
+2007-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        It helps if you swap the right variable.
+
+        * wtf/HashSet.h:
+        (WTF::::operator):
+
 2007-05-15  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

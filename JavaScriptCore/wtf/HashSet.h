@@ -184,7 +184,7 @@ namespace WTF {
     inline HashSet<T, U, V>& HashSet<T, U, V>::operator=(const HashSet& other)
     {
         HashSet tmp(other);
-        swap(other); 
+        swap(tmp); 
         return *this;
     }
 
