@@ -404,8 +404,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSMutableURLRequest *)request
 {
-    // FIXME: XXX
-    return (NSMutableURLRequest*)_private->loader->request().nsURLRequest();
+    if (!_private->loader->frameLoader()->frameHasLoaded())
+        return nil;
+
+    // FIXME: this cast is dubious
+    return (NSMutableURLRequest *)_private->loader->request().nsURLRequest();
 }
 
 - (NSURLResponse *)response

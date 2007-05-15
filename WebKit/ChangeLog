@@ -1,3 +1,12 @@
+2007-05-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt and Lars.
+        
+        - fixed <rdar://problem/5201758> REGRESSION: Stop button enabled and other problems caused by [WebView currentURL] returning non-nil for empty window
+        
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource request]): Return nil when we are still showing the initial empty doc
+
 2007-05-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,17 @@
+2007-05-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt and Lars.
+
+        - fixed <rdar://problem/5201758> REGRESSION: Stop button enabled and other problems caused by [WebView currentURL] returning non-nil for empty window
+
+        * WebCore.exp: export new symbol
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): move marker that we committed a real doc load from here...
+        (WebCore::FrameLoader::transitionToCommitted): ...to here
+        (WebCore::FrameLoader::frameHasLoaded): check that we have at least started loading something
+        besides the initial empty doc.
+        * loader/FrameLoader.h:
+
 2007-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren
