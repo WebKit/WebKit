@@ -1,3 +1,14 @@
+2007-05-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13718
+          REGRESSION (r21093): editing/execCommand/5136770.html failing pixel test
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode): Moved the code that clears the
+        selection when moving a selection border into the fast path.
+
 2007-05-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Hyatt.

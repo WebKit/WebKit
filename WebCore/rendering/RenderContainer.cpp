@@ -185,13 +185,6 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild, bool full
             oldChild->removeLayers(layer);
         }
         
-        // If oldChild is the start or end of the selection, then clear the selection to
-        // avoid problems of invalid pointers.
-        // FIXME: The SelectionController should be responsible for this when it
-        // is notified of DOM mutations.
-        if (oldChild->isSelectionBorder())
-            view()->clearSelection();
-
         // renumber ordered lists
         if (oldChild->isListItem())
             updateListMarkerNumbers(oldChild->nextSibling());
@@ -200,6 +193,13 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild, bool full
             dirtyLinesFromChangedChild(oldChild);
     }
     
+    // If oldChild is the start or end of the selection, then clear the selection to
+    // avoid problems of invalid pointers.
+    // FIXME: The SelectionController should be responsible for this when it
+    // is notified of DOM mutations.
+    if (!documentBeingDestroyed() && oldChild->isSelectionBorder())
+        view()->clearSelection();
+
     // remove the child
     if (oldChild->previousSibling())
         oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
