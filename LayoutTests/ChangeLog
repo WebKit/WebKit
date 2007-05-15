@@ -1,3 +1,13 @@
+2007-05-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13603
+          style leaks in washingtonpost.com
+
+        * fast/parser/residual-style-close-across-n-blocks-expected.txt: Added.
+        * fast/parser/residual-style-close-across-n-blocks.html: Added.
+
 2007-05-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice.

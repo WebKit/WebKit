@@ -1,5 +1,25 @@
 2007-05-14  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13603
+          style leaks in washingtonpost.com
+          also known as http://bugs.webkit.org/show_bug.cgi?id=8750
+          w3c.org: incorrect recovery from unclosed <a> elements
+          also known as http://bugs.webkit.org/show_bug.cgi?id=12808
+          Handling of misnested tags results in entire page appearing as link
+          also known as http://bugs.webkit.org/show_bug.cgi?id=12861
+          Post text renders as link
+
+        Test: fast/parser/residual-style-close-across-n-blocks.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Changed to
+        deal with multiple block crossings instead of bailing out, by doing multiple
+        reparenting passes, starting from the outermost block.
+
+2007-05-14  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13711

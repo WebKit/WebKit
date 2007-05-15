@@ -977,157 +977,177 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 
 void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 {
-    // Find the element that crosses over to a higher level.   For now, if there is more than
-    // one, we will just give up and not attempt any sort of correction.  It's highly unlikely that
-    // there will be more than one, since <p> tags aren't allowed to be nested.
-    ExceptionCode ec = 0;
-    HTMLStackElem* curr = blockStack;
-    HTMLStackElem* maxElem = 0;
-    HTMLStackElem* prev = 0;
-    HTMLStackElem* prevMaxElem = 0;
-    while (curr && curr != elem) {
-        if (curr->level > elem->level) {
-            if (maxElem)
-                return;
-            maxElem = curr;
-            prevMaxElem = prev;
+    HTMLStackElem* maxElem;
+    bool finished = false;
+    while (!finished) {
+        // Find the outermost element that crosses over to a higher level. If there exists another higher-level
+        // element, we will do another pass, until we have corrected the innermost one.
+        ExceptionCode ec = 0;
+        HTMLStackElem* curr = blockStack;
+        HTMLStackElem* prev = 0;
+        HTMLStackElem* prevMaxElem = 0;
+        maxElem = 0;
+        finished = true;
+        while (curr && curr != elem) {
+            if (curr->level > elem->level) {
+                if (!isAffectedByResidualStyle(curr->tagName))
+                    return;
+                if (maxElem)
+                    // We will need another pass.
+                    finished = false;
+                maxElem = curr;
+                prevMaxElem = prev;
+            }
+
+            prev = curr;
+            curr = curr->next;
         }
 
-        prev = curr;
-        curr = curr->next;
-    }
+        if (!curr || !maxElem)
+            return;
 
-    if (!curr || !maxElem || !isAffectedByResidualStyle(maxElem->tagName)) return;
+        Node* residualElem = prev->node;
+        Node* blockElem = prevMaxElem ? prevMaxElem->node : current;
+        Node* parentElem = elem->node;
 
-    Node* residualElem = prev->node;
-    Node* blockElem = prevMaxElem ? prevMaxElem->node : current;
-    Node* parentElem = elem->node;
+        // Check to see if the reparenting that is going to occur is allowed according to the DOM.
+        // FIXME: We should either always allow it or perform an additional fixup instead of
+        // just bailing here.
+        // Example: <p><font><center>blah</font></center></p> isn't doing a fixup right now.
+        if (!parentElem->childAllowed(blockElem))
+            return;
 
-    // Check to see if the reparenting that is going to occur is allowed according to the DOM.
-    // FIXME: We should either always allow it or perform an additional fixup instead of
-    // just bailing here.
-    // Example: <p><font><center>blah</font></center></p> isn't doing a fixup right now.
-    if (!parentElem->childAllowed(blockElem))
-        return;
-    
-    if (maxElem->node->parentNode() != elem->node) {
-        // Walk the stack and remove any elements that aren't residual style tags.  These
-        // are basically just being closed up.  Example:
-        // <font><span>Moo<p>Goo</font></p>.
-        // In the above example, the <span> doesn't need to be reopened.  It can just close.
-        HTMLStackElem* currElem = maxElem->next;
-        HTMLStackElem* prevElem = maxElem;
+        if (maxElem->node->parentNode() != elem->node) {
+            // Walk the stack and remove any elements that aren't residual style tags.  These
+            // are basically just being closed up.  Example:
+            // <font><span>Moo<p>Goo</font></p>.
+            // In the above example, the <span> doesn't need to be reopened.  It can just close.
+            HTMLStackElem* currElem = maxElem->next;
+            HTMLStackElem* prevElem = maxElem;
+            while (currElem != elem) {
+                HTMLStackElem* nextElem = currElem->next;
+                if (!isResidualStyleTag(currElem->tagName)) {
+                    prevElem->next = nextElem;
+                    prevElem->derefNode();
+                    prevElem->node = currElem->node;
+                    prevElem->didRefNode = currElem->didRefNode;
+                    delete currElem;
+                }
+                else
+                    prevElem = currElem;
+                currElem = nextElem;
+            }
+
+            // We have to reopen residual tags in between maxElem and elem.  An example of this case is:
+            // <font><i>Moo<p>Foo</font>.
+            // In this case, we need to transform the part before the <p> into:
+            // <font><i>Moo</i></font><i>
+            // so that the <i> will remain open.  This involves the modification of elements
+            // in the block stack.
+            // This will also affect how we ultimately reparent the block, since we want it to end up
+            // under the reopened residual tags (e.g., the <i> in the above example.)
+            RefPtr<Node> prevNode = 0;
+            currElem = maxElem;
+            while (currElem->node != residualElem) {
+                if (isResidualStyleTag(currElem->node->localName())) {
+                    // Create a clone of this element.
+                    // We call releaseRef to get a raw pointer since we plan to hand over ownership to currElem.
+                    Node* currNode = currElem->node->cloneNode(false).releaseRef();
+
+                    // Change the stack element's node to point to the clone.
+                    // The stack element adopts the reference we obtained above by calling release().
+                    currElem->derefNode();
+                    currElem->node = currNode;
+                    currElem->didRefNode = true;
+
+                    // Attach the previous node as a child of this new node.
+                    if (prevNode)
+                        currNode->appendChild(prevNode, ec);
+                    else // The new parent for the block element is going to be the innermost clone.
+                        parentElem = currNode;
+
+                    prevNode = currNode;
+                }
+
+                currElem = currElem->next;
+            }
+
+            // Now append the chain of new residual style elements if one exists.
+            if (prevNode)
+                elem->node->appendChild(prevNode, ec);
+        }
+
+        // Check if the block is still in the tree. If it isn't, then we don't
+        // want to remove it from its parent (that would crash) or insert it into
+        // a new parent later. See http://bugs.webkit.org/show_bug.cgi?id=6778
+        bool isBlockStillInTree = blockElem->parentNode();
+
+        // We need to make a clone of |residualElem| and place it just inside |blockElem|.
+        // All content of |blockElem| is reparented to be under this clone.  We then
+        // reparent |blockElem| using real DOM calls so that attachment/detachment will
+        // be performed to fix up the rendering tree.
+        // So for this example: <b>...<p>Foo</b>Goo</p>
+        // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
+        //
+        // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
+        if (m_currentFormElement)
+            m_currentFormElement->setPreserveAcrossRemove(true);
+        if (isBlockStillInTree)
+            blockElem->parentNode()->removeChild(blockElem, ec);
+
+        // Step 2: Clone |residualElem|.
+        RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
+        Node* newNodePtr = newNode.get();
+
+        // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
+        // before we've put |newElem| into the document.  That way we'll only do one attachment of all
+        // the new content (instead of a bunch of individual attachments).
+        Node* currNode = blockElem->firstChild();
+        while (currNode) {
+            Node* nextNode = currNode->nextSibling();
+            newNode->appendChild(currNode, ec);
+            currNode = nextNode;
+        }
+
+        // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
+        // attachment can occur yet.
+        blockElem->appendChild(newNode.release(), ec);
+
+        // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
+        if (isBlockStillInTree)
+            parentElem->appendChild(blockElem, ec);
+
+        // Step 6: Pull |elem| out of the stack, since it is no longer enclosing us.  Also update
+        // the node associated with the previous stack element so that when it gets popped,
+        // it doesn't make the residual element the next current node.
+        HTMLStackElem* currElem = maxElem;
+        HTMLStackElem* prevElem = 0;
         while (currElem != elem) {
-            HTMLStackElem* nextElem = currElem->next;
-            if (!isResidualStyleTag(currElem->tagName)) {
-                prevElem->next = nextElem;
-                prevElem->derefNode();
-                prevElem->node = currElem->node;
-                prevElem->didRefNode = currElem->didRefNode;
-                delete currElem;
-            }
-            else
-                prevElem = currElem;
-            currElem = nextElem;
-        }
-        
-        // We have to reopen residual tags in between maxElem and elem.  An example of this case is:
-        // <font><i>Moo<p>Foo</font>.
-        // In this case, we need to transform the part before the <p> into:
-        // <font><i>Moo</i></font><i>
-        // so that the <i> will remain open.  This involves the modification of elements
-        // in the block stack.
-        // This will also affect how we ultimately reparent the block, since we want it to end up
-        // under the reopened residual tags (e.g., the <i> in the above example.)
-        RefPtr<Node> prevNode = 0;
-        currElem = maxElem;
-        while (currElem->node != residualElem) {
-            if (isResidualStyleTag(currElem->node->localName())) {
-                // Create a clone of this element.
-                // We call releaseRef to get a raw pointer since we plan to hand over ownership to currElem.
-                Node* currNode = currElem->node->cloneNode(false).releaseRef();
-
-                // Change the stack element's node to point to the clone.
-                // The stack element adopts the reference we obtained above by calling release().
-                currElem->derefNode();
-                currElem->node = currNode;
-                currElem->didRefNode = true;
-                
-                // Attach the previous node as a child of this new node.
-                if (prevNode)
-                    currNode->appendChild(prevNode, ec);
-                else // The new parent for the block element is going to be the innermost clone.
-                    parentElem = currNode;
-                                
-                prevNode = currNode;
-            }
-            
+            prevElem = currElem;
             currElem = currElem->next;
         }
-
-        // Now append the chain of new residual style elements if one exists.
-        if (prevNode)
-            elem->node->appendChild(prevNode, ec);
-    }
-         
-    // Check if the block is still in the tree. If it isn't, then we don't
-    // want to remove it from its parent (that would crash) or insert it into
-    // a new parent later. See http://bugs.webkit.org/show_bug.cgi?id=6778
-    bool isBlockStillInTree = blockElem->parentNode();
-
-    // We need to make a clone of |residualElem| and place it just inside |blockElem|.
-    // All content of |blockElem| is reparented to be under this clone.  We then
-    // reparent |blockElem| using real DOM calls so that attachment/detachment will
-    // be performed to fix up the rendering tree.
-    // So for this example: <b>...<p>Foo</b>Goo</p>
-    // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
-    //
-    // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
-    if (m_currentFormElement)
-        m_currentFormElement->setPreserveAcrossRemove(true);
-    if (isBlockStillInTree)
-        blockElem->parentNode()->removeChild(blockElem, ec);
-
-    // Step 2: Clone |residualElem|.
-    RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
-
-    // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
-    // before we've put |newElem| into the document.  That way we'll only do one attachment of all
-    // the new content (instead of a bunch of individual attachments).
-    Node* currNode = blockElem->firstChild();
-    while (currNode) {
-        Node* nextNode = currNode->nextSibling();
-        newNode->appendChild(currNode, ec);
-        currNode = nextNode;
+        prevElem->next = elem->next;
+        prevElem->derefNode();
+        prevElem->node = elem->node;
+        prevElem->didRefNode = elem->didRefNode;
+        if (!finished) {
+            // Repurpose |elem| to represent |newNode| and insert it at the appropriate position
+            // in the stack. We do not do this for the innermost block, because in that case the new
+            // node is effectively no longer open.
+            elem->next = maxElem;
+            elem->node = prevMaxElem->node;
+            elem->didRefNode = prevMaxElem->didRefNode;
+            prevMaxElem->next = elem;
+            prevMaxElem->node = newNodePtr;
+            prevMaxElem->didRefNode = false;
+        } else
+            delete elem;
     }
 
-    // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
-    // attachment can occur yet.
-    blockElem->appendChild(newNode.release(), ec);
-    
-    // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
-    if (isBlockStillInTree)
-        parentElem->appendChild(blockElem, ec);
-        
-    // Step 6: Elide |elem|, since it is effectively no longer open.  Also update
-    // the node associated with the previous stack element so that when it gets popped,
-    // it doesn't make the residual element the next current node.
-    HTMLStackElem* currElem = maxElem;
-    HTMLStackElem* prevElem = 0;
-    while (currElem != elem) {
-        prevElem = currElem;
-        currElem = currElem->next;
-    }
-    prevElem->next = elem->next;
-    prevElem->derefNode();
-    prevElem->node = elem->node;
-    prevElem->didRefNode = elem->didRefNode;
-    delete elem;
-    
     // Step 7: Reopen intermediate inlines, e.g., <b><p><i>Foo</b>Goo</p>.
     // In the above example, Goo should stay italic.
     // We cap the number of tags we're willing to reopen based off cResidualStyleMaxDepth.
-    curr = blockStack;
+    HTMLStackElem* curr = blockStack;
     HTMLStackElem* residualStyleStack = 0;
     unsigned stackDepth = 1;
     while (curr && curr != maxElem) {
@@ -1151,7 +1171,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
     reopenResidualStyleTags(residualStyleStack, 0); // FIXME: Deal with stray table content some day
                                                     // if it becomes necessary to do so.
-                                                    
+
     if (m_currentFormElement)
         m_currentFormElement->setPreserveAcrossRemove(false);
 }
