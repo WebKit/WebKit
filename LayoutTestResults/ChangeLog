@@ -1,5 +1,11 @@
 2007-05-15  Lars Knoll <lars@trolltech.com>
 
+        Update test result now that we have the eventSender object.
+
+        * qt/fast/overflow/overflow-text-hit-testing-expected.txt:
+
+2007-05-15  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Zack
 
         one more test passing, the first one that uses
