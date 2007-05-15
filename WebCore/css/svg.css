@@ -53,3 +53,7 @@ text, foreignObject {
 text, tspan {
    white-space: nowrap
 }
+
+text, tspan, tref {
+   -webkit-text-size-adjust: none;
+}

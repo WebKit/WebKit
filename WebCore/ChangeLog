@@ -1,3 +1,14 @@
+2007-05-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6487
+        "Make Text Bigger/Smaller" affects SVGs when it probably shouldn't
+
+        Ignore Make Text Bigger/Smaller for SVG text.
+
+        * css/svg.css:
+
 2007-05-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
