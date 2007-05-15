@@ -1,3 +1,16 @@
+2007-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5183685>
+        http://bugs.webkit.org/show_bug.cgi?id=13301
+        ASSERT or null value when trying to use a getter defined on a window object
+
+        Handle the case where the value returned is a getter/setter object.
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOverridePropertySlot):
+
 2007-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
