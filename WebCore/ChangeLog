@@ -1,5 +1,11 @@
 2007-05-14  Geoffrey Garen  <ggaren@apple.com>
 
+        Trying to fix the Qt build.
+
+        * WebCore.pro:
+
+2007-05-14  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
         
         Some improvements on my last patch, suggested by Darin.

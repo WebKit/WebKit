@@ -407,7 +407,7 @@ SOURCES += \
     history/BackForwardList.cpp \
     history/CachedPage.cpp \
     history/HistoryItem.cpp \
-    history/HistoryItemTimer.cpp \
+    history/PageCache.cpp \
     html/CanvasGradient.cpp \
     html/CanvasPattern.cpp \
     html/CanvasRenderingContext2D.cpp \
