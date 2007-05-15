@@ -1,3 +1,12 @@
+2007-05-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by David Kilzer.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13732
+        prepare-ChangeLog should work with git
+
+        * Scripts/prepare-ChangeLog: Added support for Git.
+
 2007-05-15  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
