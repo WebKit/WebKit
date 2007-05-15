@@ -85,7 +85,7 @@ namespace KJS {
 
     // FIXME: Might make sense to combine this with ClassInfo some day.
     typedef JSValue* (JSHTMLElement::*GetterFunction)(ExecState*, int token) const;
-    typedef void (JSHTMLElement::*SetterFunction)(ExecState*, int token, JSValue*, const WebCore::String&);
+    typedef void (JSHTMLElement::*SetterFunction)(ExecState*, int token, JSValue*);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
     static const Accessors
@@ -94,29 +94,29 @@ namespace KJS {
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
     JSValue* objectGetter(ExecState* exec, int token) const;
-    void  objectSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  objectSetter(ExecState*, int token, JSValue*);
     JSValue* embedGetter(ExecState*, int token) const;
-    void  embedSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  embedSetter(ExecState*, int token, JSValue*);
     JSValue* tableGetter(ExecState* exec, int token) const;
-    void  tableSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableSetter(ExecState*, int token, JSValue*);
     JSValue* tableCaptionGetter(ExecState* exec, int token) const;
-    void  tableCaptionSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableCaptionSetter(ExecState*, int token, JSValue*);
     JSValue* tableColGetter(ExecState* exec, int token) const;
-    void  tableColSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableColSetter(ExecState*, int token, JSValue*);
     JSValue* tableSectionGetter(ExecState* exec, int token) const;
-    void  tableSectionSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableSectionSetter(ExecState*, int token, JSValue*);
     JSValue* tableRowGetter(ExecState* exec, int token) const;
-    void  tableRowSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableRowSetter(ExecState*, int token, JSValue*);
     JSValue* tableCellGetter(ExecState* exec, int token) const;
-    void  tableCellSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  tableCellSetter(ExecState*, int token, JSValue*);
     JSValue* frameSetGetter(ExecState* exec, int token) const;
-    void  frameSetSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  frameSetSetter(ExecState*, int token, JSValue*);
     JSValue* frameGetter(ExecState* exec, int token) const;
-    void  frameSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  frameSetter(ExecState*, int token, JSValue*);
     JSValue* iFrameGetter(ExecState* exec, int token) const;
-    void  iFrameSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  iFrameSetter(ExecState*, int token, JSValue*);
     JSValue* marqueeGetter(ExecState* exec, int token) const;
-    void  marqueeSetter(ExecState*, int token, JSValue*, const WebCore::String&);
+    void  marqueeSetter(ExecState*, int token, JSValue*);
 
     enum {
            ObjectHspace, ObjectHeight, ObjectAlign,

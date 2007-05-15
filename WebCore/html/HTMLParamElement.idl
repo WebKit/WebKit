@@ -20,10 +20,10 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLParamElement : HTMLElement {
-        attribute DOMString name;
-        attribute DOMString type;
-        attribute DOMString value;
-        attribute DOMString valueType;
+        attribute [ConvertNullToNullString] DOMString name;
+        attribute [ConvertNullToNullString] DOMString type;
+        attribute [ConvertNullToNullString] DOMString value;
+        attribute [ConvertNullToNullString] DOMString valueType;
     };
 
 }

@@ -22,7 +22,7 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLDocument, GenerateConstructor] HTMLDocument : Document {
 #if !defined(LANGUAGE_JAVASCRIPT)
-                 attribute DOMString title;
+                 attribute [ConvertNullToNullString] DOMString title;
         readonly attribute DOMString referrer;
         readonly attribute DOMString domain;
         readonly attribute DOMString URL;
@@ -40,7 +40,7 @@ module html {
         
         // FIXME: the DOM spec states that this attribute can 
         // raise an exception on setting.
-                 attribute DOMString cookie
+                 attribute [ConvertNullToNullString] DOMString cookie
                      /*setter raises (DOMException)*/;
 
         void               open();

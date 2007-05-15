@@ -20,7 +20,7 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHeadElement : HTMLElement {
-        attribute  DOMString            profile;
+        attribute  [ConvertNullToNullString] DOMString            profile;
     };
 
 }

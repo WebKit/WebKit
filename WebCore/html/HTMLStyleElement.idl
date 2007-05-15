@@ -22,8 +22,8 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLStyleElement : HTMLElement {
         attribute  boolean              disabled;
-        attribute  DOMString            media;
-        attribute  DOMString            type;
+        attribute  [ConvertNullToNullString] DOMString            media;
+        attribute  [ConvertNullToNullString] DOMString            type;
         
         // DOM Level 2 Style
         readonly attribute StyleSheet sheet;

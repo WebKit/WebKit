@@ -20,6 +20,6 @@
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLIsIndexElement : HTMLInputElement {
         readonly attribute HTMLFormElement form;
-        attribute DOMString prompt;
+        attribute [ConvertNullToNullString] DOMString prompt;
     };
 }

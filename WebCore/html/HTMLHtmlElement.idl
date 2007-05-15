@@ -21,7 +21,7 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHtmlElement : HTMLElement {
 
-        attribute DOMString version;
+        attribute [ConvertNullToNullString] DOMString version;
         
     };
 

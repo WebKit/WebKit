@@ -23,23 +23,23 @@ module html {
     interface HTMLObjectElement : HTMLElement {
 
         readonly attribute HTMLFormElement form;
-                 attribute DOMString       code;
-                 attribute DOMString       align;
-                 attribute DOMString       archive;
-                 attribute DOMString       border;
-                 attribute DOMString       codeBase;
-                 attribute DOMString       codeType;
-                 attribute DOMString       data;
+                 attribute [ConvertNullToNullString] DOMString       code;
+                 attribute [ConvertNullToNullString] DOMString       align;
+                 attribute [ConvertNullToNullString] DOMString       archive;
+                 attribute [ConvertNullToNullString] DOMString       border;
+                 attribute [ConvertNullToNullString] DOMString       codeBase;
+                 attribute [ConvertNullToNullString] DOMString       codeType;
+                 attribute [ConvertNullToNullString] DOMString       data;
                  attribute boolean         declare;
-                 attribute DOMString       height;
+                 attribute [ConvertNullToNullString] DOMString       height;
                  attribute long            hspace;
-                 attribute DOMString       name;
-                 attribute DOMString       standby;
+                 attribute [ConvertNullToNullString] DOMString       name;
+                 attribute [ConvertNullToNullString] DOMString       standby;
                  attribute long            tabIndex;
-                 attribute DOMString       type;
-                 attribute DOMString       useMap;
+                 attribute [ConvertNullToNullString] DOMString       type;
+                 attribute [ConvertNullToNullString] DOMString       useMap;
                  attribute long            vspace;
-                 attribute DOMString       width;
+                 attribute [ConvertNullToNullString] DOMString       width;
         // Introduced in DOM Level 2:
         readonly attribute Document        contentDocument;
 

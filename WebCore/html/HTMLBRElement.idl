@@ -19,6 +19,6 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBRElement : HTMLElement {
-        attribute DOMString clear;
+        attribute [ConvertNullToNullString] DOMString clear;
     };
 }

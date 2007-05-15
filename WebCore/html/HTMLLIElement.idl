@@ -19,7 +19,7 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLIElement : HTMLElement {
-        attribute DOMString type;
+        attribute [ConvertNullToNullString] DOMString type;
         attribute long value;    
     };
 }

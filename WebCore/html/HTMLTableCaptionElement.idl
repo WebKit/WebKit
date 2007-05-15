@@ -22,7 +22,7 @@ module html {
 
     interface HTMLTableCaptionElement : HTMLElement {
 
-        attribute DOMString       align;
+        attribute [ConvertNullToNullString] DOMString       align;
 
     };
 

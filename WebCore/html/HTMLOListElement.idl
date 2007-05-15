@@ -22,7 +22,7 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLOListElement : HTMLElement {
         attribute boolean compact;
         attribute long start;
-        attribute DOMString type;
+        attribute [ConvertNullToNullString] DOMString type;
     };
 
 }

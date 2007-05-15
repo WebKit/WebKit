@@ -21,28 +21,28 @@
 module html {
 
     interface [GenerateConstructor] HTMLElement : Element {
-                 attribute DOMString title;
+                 attribute [ConvertNullToNullString] DOMString title;
 
 #if !defined(LANGUAGE_JAVASCRIPT)
-                 attribute DOMString id;
-                 attribute DOMString lang;
-                 attribute DOMString dir;
-                 attribute DOMString className;
+                 attribute [ConvertNullToNullString] DOMString id;
+                 attribute [ConvertNullToNullString] DOMString lang;
+                 attribute [ConvertNullToNullString] DOMString dir;
+                 attribute [ConvertNullToNullString] DOMString className;
 
         // extensions
 
-                 attribute DOMString innerHTML
-                     setter raises (DOMException);
-                 attribute DOMString innerText
-                     setter raises (DOMException);
-                 attribute DOMString outerHTML
-                     setter raises (DOMException);
-                 attribute DOMString outerText
-                     setter raises (DOMException);
+                 attribute [ConvertNullToNullString] DOMString innerHTML
+                     setter raises(DOMException);
+                 attribute [ConvertNullToNullString] DOMString innerText
+                     setter raises(DOMException);
+                 attribute [ConvertNullToNullString] DOMString outerHTML
+                     setter raises(DOMException);
+                 attribute [ConvertNullToNullString] DOMString outerText
+                     setter raises(DOMException);
 
         readonly attribute HTMLCollection children;
 
-                 attribute DOMString contentEditable;
+                 attribute [ConvertNullToNullString] DOMString contentEditable;
         readonly attribute boolean isContentEditable;
 
         readonly attribute DOMString titleDisplayString;

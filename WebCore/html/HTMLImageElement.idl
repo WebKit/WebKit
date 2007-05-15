@@ -20,22 +20,22 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLImageElement : HTMLElement {
-                 attribute DOMString name;
-                 attribute DOMString align;
-                 attribute DOMString alt;
-                 attribute DOMString border;        
+                 attribute [ConvertNullToNullString] DOMString name;
+                 attribute [ConvertNullToNullString] DOMString align;
+                 attribute [ConvertNullToNullString] DOMString alt;
+                 attribute [ConvertNullToNullString] DOMString border;        
                  attribute long height;
                  attribute long hspace;
                  attribute boolean isMap;
-                 attribute DOMString longDesc;
-                 attribute DOMString src;
-                 attribute DOMString useMap;
+                 attribute [ConvertNullToNullString] DOMString longDesc;
+                 attribute [ConvertNullToNullString] DOMString src;
+                 attribute [ConvertNullToNullString] DOMString useMap;
                  attribute long vspace;
                  attribute long width;
         
         // Extensions
         readonly attribute boolean complete;
-                 attribute DOMString lowsrc;
+                 attribute [ConvertNullToNullString] DOMString lowsrc;
         readonly attribute long naturalHeight;
         readonly attribute long naturalWidth;
         readonly attribute long x;

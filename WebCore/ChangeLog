@@ -1,3 +1,89 @@
+2007-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice!
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=13541
+          REGRESSION: Setting a DOMString attribute to JS null in the 
+          JS bindings should default to converting to the empty string
+
+          Convert JS null to the empty string when passing it to an attribute that takes
+          a DOMString.
+
+        Test: fast/dom/document-attribute-js-null.html
+        Test: fast/dom/element-attribute-js-null.html
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::putValueProperty):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::putValueProperty):
+        (KJS::JSHTMLElement::objectSetter):
+        (KJS::JSHTMLElement::embedSetter):
+        (KJS::JSHTMLElement::tableSetter):
+        (KJS::JSHTMLElement::tableCaptionSetter):
+        (KJS::JSHTMLElement::tableColSetter):
+        (KJS::JSHTMLElement::tableSectionSetter):
+        (KJS::JSHTMLElement::tableRowSetter):
+        (KJS::JSHTMLElement::tableCellSetter):
+        (KJS::JSHTMLElement::frameSetSetter):
+        (KJS::JSHTMLElement::frameSetter):
+        (KJS::JSHTMLElement::iFrameSetter):
+        (KJS::JSHTMLElement::marqueeSetter):
+        (KJS::JSHTMLElement::putValueProperty):
+        * bindings/js/kjs_html.h:
+        * dom/Document.idl:
+        * dom/Node.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBlockquoteElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLDivElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLHRElement.idl:
+        * html/HTMLHeadElement.idl:
+        * html/HTMLHeadingElement.idl:
+        * html/HTMLHtmlElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLIsIndexElement.idl:
+        * html/HTMLLIElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLMetaElement.idl:
+        * html/HTMLModElement.idl:
+        * html/HTMLOListElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLParagraphElement.idl:
+        * html/HTMLParamElement.idl:
+        * html/HTMLQuoteElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTitleElement.idl:
+        * html/HTMLUListElement.idl:
+
 2007-05-14  Geoffrey Garen  <ggaren@apple.com>
 
         Trying to fix the Qt build.

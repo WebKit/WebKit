@@ -20,8 +20,8 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBaseElement : HTMLElement {
-        attribute  DOMString            href;
-        attribute  DOMString            target;
+        attribute [ConvertNullToNullString] DOMString            href;
+        attribute [ConvertNullToNullString] DOMString            target;
     };
 
 }

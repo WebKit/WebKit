@@ -22,12 +22,12 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLButtonElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
-                 attribute  DOMString            accessKey;
+                 attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  boolean              disabled;
-                 attribute  DOMString            name;
+                 attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
-                 attribute  DOMString            value;
+                 attribute  [ConvertNullToNullString] DOMString            value;
                  
         void click();
 

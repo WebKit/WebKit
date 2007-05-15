@@ -23,13 +23,13 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement, HasIndexGetter, HasOverridingNameGetter, GenerateConstructor] HTMLFormElement : HTMLElement {
         readonly attribute HTMLCollection  elements;
         readonly attribute long            length;
-                 attribute DOMString       name;
-                 attribute DOMString       acceptCharset;
-                 attribute DOMString       action;
-                 attribute DOMString       encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
-                 attribute DOMString       enctype;
-                 attribute DOMString       method;
-                 attribute DOMString       target;
+                 attribute [ConvertNullToNullString] DOMString       name;
+                 attribute [ConvertNullToNullString] DOMString       acceptCharset;
+                 attribute [ConvertNullToNullString] DOMString       action;
+                 attribute [ConvertNullToNullString] DOMString       encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
+                 attribute [ConvertNullToNullString] DOMString       enctype;
+                 attribute [ConvertNullToNullString] DOMString       method;
+                 attribute [ConvertNullToNullString] DOMString       target;
         
         void               submit();
         void               reset();

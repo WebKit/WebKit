@@ -20,12 +20,12 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBodyElement : HTMLElement {
-        attribute DOMString aLink;
-        attribute DOMString background;
-        attribute DOMString bgColor;
-        attribute DOMString link;
-        attribute DOMString text;
-        attribute DOMString vLink; 
+        attribute [ConvertNullToNullString] DOMString aLink;
+        attribute [ConvertNullToNullString] DOMString background;
+        attribute [ConvertNullToNullString] DOMString bgColor;
+        attribute [ConvertNullToNullString] DOMString link;
+        attribute [ConvertNullToNullString] DOMString text;
+        attribute [ConvertNullToNullString] DOMString vLink; 
         
         // IE Extensions
         attribute long scrollLeft;

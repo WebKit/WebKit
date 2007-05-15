@@ -25,11 +25,11 @@ module html {
         readonly attribute long            rowIndex;
         readonly attribute long            sectionRowIndex;
         readonly attribute HTMLCollection  cells;
-                 attribute DOMString       align;
-                 attribute DOMString       bgColor;
-                 attribute DOMString       ch;
-                 attribute DOMString       chOff;
-                 attribute DOMString       vAlign;
+                 attribute [ConvertNullToNullString] DOMString       align;
+                 attribute [ConvertNullToNullString] DOMString       bgColor;
+                 attribute [ConvertNullToNullString] DOMString       ch;
+                 attribute [ConvertNullToNullString] DOMString       chOff;
+                 attribute [ConvertNullToNullString] DOMString       vAlign;
 
         HTMLElement        insertCell(in long index)
             raises(DOMException);

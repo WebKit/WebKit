@@ -21,18 +21,18 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLAnchorElement : HTMLElement {
-        attribute DOMString accessKey;
-        attribute DOMString charset;
-        attribute DOMString coords;
-        attribute DOMString href;
-        attribute DOMString hreflang;
-        attribute DOMString name;
-        attribute DOMString rel;
-        attribute DOMString rev;
-        attribute DOMString shape;
+        attribute [ConvertNullToNullString] DOMString accessKey;
+        attribute [ConvertNullToNullString] DOMString charset;
+        attribute [ConvertNullToNullString] DOMString coords;
+        attribute [ConvertNullToNullString] DOMString href;
+        attribute [ConvertNullToNullString] DOMString hreflang;
+        attribute [ConvertNullToNullString] DOMString name;
+        attribute [ConvertNullToNullString] DOMString rel;
+        attribute [ConvertNullToNullString] DOMString rev;
+        attribute [ConvertNullToNullString] DOMString shape;
         attribute long tabIndex;
-        attribute DOMString target;
-        attribute DOMString type;
+        attribute [ConvertNullToNullString] DOMString target;
+        attribute [ConvertNullToNullString] DOMString type;
         
         void blur();
         void focus();

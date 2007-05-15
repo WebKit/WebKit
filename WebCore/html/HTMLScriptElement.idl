@@ -20,12 +20,12 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLScriptElement : HTMLElement {
-        attribute DOMString text;
-        attribute DOMString htmlFor;
-        attribute DOMString event;
-        attribute DOMString charset;
+        attribute [ConvertNullToNullString] DOMString text;
+        attribute [ConvertNullToNullString] DOMString htmlFor;
+        attribute [ConvertNullToNullString] DOMString event;
+        attribute [ConvertNullToNullString] DOMString charset;
         attribute boolean defer;
-        attribute DOMString src;
-        attribute DOMString type;
+        attribute [ConvertNullToNullString] DOMString src;
+        attribute [ConvertNullToNullString] DOMString type;
     };
 }

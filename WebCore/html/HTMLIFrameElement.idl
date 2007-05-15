@@ -22,16 +22,16 @@ module html {
 
     interface HTMLIFrameElement : HTMLElement {
 
-                 attribute DOMString       align;
-                 attribute DOMString       frameBorder;
-                 attribute DOMString       height;
-                 attribute DOMString       longDesc;
-                 attribute DOMString       marginHeight;
-                 attribute DOMString       marginWidth;
-                 attribute DOMString       name;
-                 attribute DOMString       scrolling;
-                 attribute DOMString       src;
-                 attribute DOMString       width;
+                 attribute [ConvertNullToNullString] DOMString       align;
+                 attribute [ConvertNullToNullString] DOMString       frameBorder;
+                 attribute [ConvertNullToNullString] DOMString       height;
+                 attribute [ConvertNullToNullString] DOMString       longDesc;
+                 attribute [ConvertNullToNullString] DOMString       marginHeight;
+                 attribute [ConvertNullToNullString] DOMString       marginWidth;
+                 attribute [ConvertNullToNullString] DOMString       name;
+                 attribute [ConvertNullToNullString] DOMString       scrolling;
+                 attribute [ConvertNullToNullString] DOMString       src;
+                 attribute [ConvertNullToNullString] DOMString       width;
         // Introduced in DOM Level 2:
         readonly attribute Document        contentDocument;
 

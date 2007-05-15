@@ -24,7 +24,7 @@ module html {
         readonly attribute  HTMLFormElement      form;
                  attribute  boolean              defaultSelected;
 #if defined(LANGUAGE_JAVASCRIPT)
-                 attribute  DOMString            text
+                 attribute  [ConvertNullToNullString] DOMString            text
                      setter raises(DOMException);
                  attribute  long                 index
                      setter raises(DOMException); // FIXME: We disallow setting in violation of DOM 1 HTML.
@@ -33,9 +33,9 @@ module html {
         readonly attribute  long                 index;
 #endif
                  attribute  boolean              disabled;
-                 attribute  DOMString            label;
+                 attribute  [ConvertNullToNullString] DOMString            label;
                  attribute  boolean              selected;
-                 attribute  DOMString            value;
+                 attribute  [ConvertNullToNullString] DOMString            value;
     };
 
 }

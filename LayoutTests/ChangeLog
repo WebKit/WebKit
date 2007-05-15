@@ -1,3 +1,18 @@
+2007-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice.
+
+        - Tests for http://bugs.webkit.org/show_bug.cgi?id=13541
+          REGRESSION: Setting a DOMString attribute to JS null in the 
+          JS bindings should default to converting to the empty string
+
+        * fast/dom/document-attribute-js-null-expected.txt: Added.
+        * fast/dom/document-attribute-js-null.html: Added.
+        * fast/dom/element-attribute-js-null-expected.txt: Added.
+        * fast/dom/element-attribute-js-null.html: Added.
+        * fast/forms/input-null-expected.txt: Removed.
+        * fast/forms/input-null.html: Removed.
+
 2007-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

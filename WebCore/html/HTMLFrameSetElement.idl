@@ -22,8 +22,8 @@ module html {
 
     interface HTMLFrameSetElement : HTMLElement {
 
-        attribute DOMString cols;
-        attribute DOMString rows;
+        attribute [ConvertNullToNullString] DOMString cols;
+        attribute [ConvertNullToNullString] DOMString rows;
 
     };
 

@@ -64,7 +64,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString inputEncoding;
 
         readonly attribute [ConvertNullStringTo=Null] DOMString xmlEncoding;
-                 attribute [ConvertNullStringTo=Null] DOMString xmlVersion
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString xmlVersion
                     setter raises (DOMException);
                  attribute boolean xmlStandalone
                     setter raises (DOMException);
@@ -149,7 +149,7 @@ module core {
 #if !defined(LANGUAGE_OBJECTIVE_C)
         readonly attribute DOMString URL;
 #endif
-                 attribute [ConvertNullStringTo=Undefined] DOMString charset;
+                 attribute [ConvertNullStringTo=Undefined, ConvertNullToNullString] DOMString charset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
@@ -162,7 +162,7 @@ module core {
         // WebKit extensions
 
         readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
-                 attribute [ConvertNullStringTo=Null] DOMString selectedStylesheetSet;
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectedStylesheetSet;
 
 #if !defined(LANGUAGE_JAVASCRIPT)
         CSSStyleDeclaration createCSSStyleDeclaration();

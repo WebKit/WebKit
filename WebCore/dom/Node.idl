@@ -39,7 +39,7 @@ module core {
         readonly attribute DOMString        nodeName;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute DOMString        nodeValue
+                 attribute [ConvertNullToNullString] DOMString        nodeValue
                      setter raises(DOMException);
 
         readonly attribute unsigned short   nodeType;
@@ -71,7 +71,7 @@ module core {
         [OldStyleObjC] boolean isSupported(in DOMString feature, 
                                            in DOMString version);
         readonly attribute DOMString        namespaceURI;
-                 attribute DOMString        prefix
+                 attribute [ConvertNullToNullString] DOMString        prefix
                      setter raises(DOMException);
         readonly attribute DOMString        localName;
         boolean            hasAttributes();
@@ -81,7 +81,7 @@ module core {
         readonly attribute DOMString       baseURI;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute DOMString       textContent
+                 attribute [ConvertNullToNullString] DOMString       textContent
                      setter raises(DOMException);
 
         boolean            isSameNode(in Node other);

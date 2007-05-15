@@ -22,12 +22,12 @@ module html {
 
     interface HTMLTableColElement : HTMLElement {
 
-        attribute DOMString       align;
-        attribute DOMString       ch;
-        attribute DOMString       chOff;
+        attribute [ConvertNullToNullString] DOMString       align;
+        attribute [ConvertNullToNullString] DOMString       ch;
+        attribute [ConvertNullToNullString] DOMString       chOff;
         attribute long            span;
-        attribute DOMString       vAlign;
-        attribute DOMString       width;
+        attribute [ConvertNullToNullString] DOMString       vAlign;
+        attribute [ConvertNullToNullString] DOMString       width;
 
     };
 

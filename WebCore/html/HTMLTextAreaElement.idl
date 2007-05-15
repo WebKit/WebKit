@@ -21,17 +21,17 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLTextAreaElement : HTMLElement {
-                 attribute  DOMString            defaultValue;
+                 attribute  [ConvertNullToNullString] DOMString            defaultValue;
         readonly attribute  HTMLFormElement      form;
-                 attribute  DOMString            accessKey;
+                 attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  long                 cols;
                  attribute  boolean              disabled;
-                 attribute  DOMString            name;
+                 attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  boolean              readOnly;
                  attribute  long                 rows;
                  attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
-                 attribute  DOMString            value;
+                 attribute  [ConvertNullToNullString] DOMString            value;
         
         void     blur();
         void     focus();

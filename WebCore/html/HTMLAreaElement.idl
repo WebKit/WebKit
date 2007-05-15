@@ -21,14 +21,14 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLAreaElement : HTMLElement {
-        attribute DOMString accessKey;
-        attribute DOMString alt;
-        attribute DOMString coords;
-        attribute DOMString href;
+        attribute [ConvertNullToNullString] DOMString accessKey;
+        attribute [ConvertNullToNullString] DOMString alt;
+        attribute [ConvertNullToNullString] DOMString coords;
+        attribute [ConvertNullToNullString] DOMString href;
         attribute boolean noHref;
-        attribute DOMString shape;
+        attribute [ConvertNullToNullString] DOMString shape;
         attribute long tabIndex;
-        attribute DOMString target;
+        attribute [ConvertNullToNullString] DOMString target;
 
         // IE Extensions
         readonly attribute DOMString hash;

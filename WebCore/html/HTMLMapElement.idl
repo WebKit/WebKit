@@ -21,6 +21,6 @@
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLMapElement : HTMLElement {
         readonly attribute HTMLCollection areas;
-        attribute DOMString name;
+        attribute [ConvertNullToNullString] DOMString name;
     };
 }

@@ -19,8 +19,8 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLFontElement : HTMLElement {
-        attribute DOMString color;
-        attribute DOMString face;
-        attribute DOMString size;
+        attribute [ConvertNullToNullString] DOMString color;
+        attribute [ConvertNullToNullString] DOMString face;
+        attribute [ConvertNullToNullString] DOMString size;
     };
 }

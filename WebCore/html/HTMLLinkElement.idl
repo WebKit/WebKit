@@ -22,14 +22,14 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLinkElement : HTMLElement {
         attribute  boolean              disabled;
-        attribute  DOMString            charset;
-        attribute  DOMString            href;
-        attribute  DOMString            hreflang;
-        attribute  DOMString            media;
-        attribute  DOMString            rel;
-        attribute  DOMString            rev;
-        attribute  DOMString            target;
-        attribute  DOMString            type;
+        attribute  [ConvertNullToNullString] DOMString            charset;
+        attribute  [ConvertNullToNullString] DOMString            href;
+        attribute  [ConvertNullToNullString] DOMString            hreflang;
+        attribute  [ConvertNullToNullString] DOMString            media;
+        attribute  [ConvertNullToNullString] DOMString            rel;
+        attribute  [ConvertNullToNullString] DOMString            rev;
+        attribute  [ConvertNullToNullString] DOMString            target;
+        attribute  [ConvertNullToNullString] DOMString            type;
 
         // DOM Level 2 Style
         readonly attribute StyleSheet   sheet;

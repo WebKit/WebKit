@@ -21,25 +21,25 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLAppletElement : HTMLElement {
-                 attribute DOMString align;
-                 attribute DOMString alt;
-                 attribute DOMString archive;
-                 attribute DOMString code;
-                 attribute DOMString codeBase;
-                 attribute DOMString height;
+                 attribute [ConvertNullToNullString] DOMString align;
+                 attribute [ConvertNullToNullString] DOMString alt;
+                 attribute [ConvertNullToNullString] DOMString archive;
+                 attribute [ConvertNullToNullString] DOMString code;
+                 attribute [ConvertNullToNullString] DOMString codeBase;
+                 attribute [ConvertNullToNullString] DOMString height;
 #if defined(LANGUAGE_OBJECTIVE_C)
                  attribute [ConvertFromString] long hspace;
 #else
-                 attribute DOMString hspace;
+                 attribute [ConvertNullToNullString] DOMString hspace;
 #endif
-                 attribute DOMString name;
-                 attribute DOMString object;
+                 attribute [ConvertNullToNullString] DOMString name;
+                 attribute [ConvertNullToNullString] DOMString object;
 #if defined(LANGUAGE_OBJECTIVE_C)
                  attribute [ConvertFromString] long vspace;
 #else
-                 attribute DOMString vspace;
+                 attribute [ConvertNullToNullString] DOMString vspace;
 #endif
-                 attribute DOMString width;
+                 attribute [ConvertNullToNullString] DOMString width;
     };
 
 }

@@ -19,9 +19,9 @@
 
 module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHRElement : HTMLElement {
-        attribute DOMString align;
+        attribute [ConvertNullToNullString] DOMString align;
         attribute boolean noShade;
-        attribute DOMString size;
-        attribute DOMString width;
+        attribute [ConvertNullToNullString] DOMString size;
+        attribute [ConvertNullToNullString] DOMString width;
     };
 }

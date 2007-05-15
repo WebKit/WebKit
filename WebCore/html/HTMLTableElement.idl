@@ -33,18 +33,18 @@ module html {
 
         readonly attribute HTMLCollection rows;
         readonly attribute HTMLCollection tBodies;
-                 attribute DOMString align;
-                 attribute DOMString bgColor;
-                 attribute DOMString border;
-                 attribute DOMString cellPadding;
-                 attribute DOMString cellSpacing;
+                 attribute [ConvertNullToNullString] DOMString align;
+                 attribute [ConvertNullToNullString] DOMString bgColor;
+                 attribute [ConvertNullToNullString] DOMString border;
+                 attribute [ConvertNullToNullString] DOMString cellPadding;
+                 attribute [ConvertNullToNullString] DOMString cellSpacing;
 
         // FIXME: the obj-c attribute is called frameBorders
-                 attribute DOMString frame;
+                 attribute [ConvertNullToNullString] DOMString frame;
 
-                 attribute DOMString rules;
-                 attribute DOMString summary;
-                 attribute DOMString width;
+                 attribute [ConvertNullToNullString] DOMString rules;
+                 attribute [ConvertNullToNullString] DOMString summary;
+                 attribute [ConvertNullToNullString] DOMString width;
 
         HTMLElement        createTHead();
         void               deleteTHead();

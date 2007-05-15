@@ -22,14 +22,14 @@ module html {
 
     interface HTMLFrameElement : HTMLElement {
 
-                 attribute DOMString       frameBorder;
-                 attribute DOMString       longDesc;
-                 attribute DOMString       marginHeight;
-                 attribute DOMString       marginWidth;
-                 attribute DOMString       name;
+                 attribute [ConvertNullToNullString] DOMString       frameBorder;
+                 attribute [ConvertNullToNullString] DOMString       longDesc;
+                 attribute [ConvertNullToNullString] DOMString       marginHeight;
+                 attribute [ConvertNullToNullString] DOMString       marginWidth;
+                 attribute [ConvertNullToNullString] DOMString       name;
                  attribute boolean         noResize;
-                 attribute DOMString       scrolling;
-                 attribute DOMString       src;
+                 attribute [ConvertNullToNullString] DOMString       scrolling;
+                 attribute [ConvertNullToNullString] DOMString       src;
         // Introduced in DOM Level 2:
         readonly attribute Document        contentDocument;
 

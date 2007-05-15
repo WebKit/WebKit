@@ -22,10 +22,10 @@ module html {
 
     interface HTMLTableSectionElement : HTMLElement {
 
-                 attribute DOMString       align;
-                 attribute DOMString       ch;
-                 attribute DOMString       chOff;
-                 attribute DOMString       vAlign;
+                 attribute [ConvertNullToNullString] DOMString       align;
+                 attribute [ConvertNullToNullString] DOMString       ch;
+                 attribute [ConvertNullToNullString] DOMString       chOff;
+                 attribute [ConvertNullToNullString] DOMString       vAlign;
         readonly attribute HTMLCollection  rows;
 
         HTMLElement        insertRow(in long index)

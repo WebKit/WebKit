@@ -21,11 +21,11 @@
 module html {
 
     interface HTMLEmbedElement : HTMLElement {
-                 attribute DOMString align;
+                 attribute [ConvertNullToNullString] DOMString align;
                  attribute [ConvertFromString] long height;
-                 attribute DOMString name;
-                 attribute DOMString src;
-                 attribute DOMString type;
+                 attribute [ConvertNullToNullString] DOMString name;
+                 attribute [ConvertNullToNullString] DOMString src;
+                 attribute [ConvertNullToNullString] DOMString type;
                  attribute [ConvertFromString] long width;
     };
 

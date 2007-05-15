@@ -258,10 +258,10 @@ void DOMNode::putValueProperty(ExecState* exec, int token, JSValue* value, int /
   Node& node = *m_impl;
   switch (token) {
   case NodeValue:
-    node.setNodeValue(value->toString(exec), exception);
+    node.setNodeValue(valueToStringWithNullCheck(exec, value), exception);
     break;
   case Prefix:
-    node.setPrefix(value->toString(exec), exception);
+    node.setPrefix(valueToStringWithNullCheck(exec, value), exception);
     break;
   case TextContent:
     node.setTextContent(valueToStringWithNullCheck(exec, value), exception);

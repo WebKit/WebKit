@@ -24,7 +24,7 @@ module html {
 
         readonly attribute DOMString       type;
                  attribute long            selectedIndex;
-                 attribute DOMString       value;
+                 attribute [ConvertNullToNullString] DOMString       value;
         
         // Modified in DOM Level 2:
 #if defined(LANGUAGE_OBJECTIVE_C)
@@ -41,7 +41,7 @@ module html {
 
                  attribute boolean         disabled;
                  attribute boolean         multiple;
-                 attribute DOMString       name;
+                 attribute [ConvertNullToNullString] DOMString       name;
                  attribute long            size;
                  attribute long            tabIndex;
         

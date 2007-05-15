@@ -20,6 +20,6 @@
 module html {
 
     interface [LegacyParent=KJS::JSHTMLElement] HTMLBlockquoteElement : HTMLElement {
-        attribute DOMString cite;
+        attribute [ConvertNullToNullString] DOMString cite;
     };
 }

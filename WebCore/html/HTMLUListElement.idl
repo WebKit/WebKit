@@ -21,7 +21,7 @@ module html {
 
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLUListElement : HTMLElement {
         attribute boolean compact;
-        attribute DOMString type;
+        attribute [ConvertNullToNullString] DOMString type;
     };
 
 }
