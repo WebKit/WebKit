@@ -1,3 +1,74 @@
+2007-05-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Updating expected results for r21074.
+
+        * editing/deleting/4866671-expected.checksum:
+        * editing/deleting/4866671-expected.png:
+        * editing/deleting/delete-first-list-item-expected.checksum:
+        * editing/deleting/delete-first-list-item-expected.png:
+        * editing/deleting/delete-listitem-002-expected.checksum:
+        * editing/deleting/delete-listitem-002-expected.png:
+        * editing/deleting/list-item-1-expected.checksum:
+        * editing/deleting/list-item-1-expected.png:
+        * editing/deleting/merge-into-empty-block-2-expected.checksum:
+        * editing/deleting/merge-into-empty-block-2-expected.png:
+        * editing/execCommand/4641880-1-expected.checksum:
+        * editing/execCommand/4641880-1-expected.png:
+        * editing/execCommand/4747450-expected.checksum:
+        * editing/execCommand/4747450-expected.png:
+        * editing/execCommand/4916402-expected.checksum:
+        * editing/execCommand/4916402-expected.png:
+        * editing/execCommand/4916583-expected.checksum:
+        * editing/execCommand/4916583-expected.png:
+        * editing/execCommand/5142012-2-expected.checksum:
+        * editing/execCommand/5142012-2-expected.png:
+        * editing/execCommand/5144139-1-expected.checksum:
+        * editing/execCommand/5144139-1-expected.png:
+        * editing/execCommand/create-list-with-hr-expected.checksum:
+        * editing/execCommand/create-list-with-hr-expected.png:
+        * editing/execCommand/indent-list-item-expected.checksum:
+        * editing/execCommand/indent-list-item-expected.png:
+        * editing/execCommand/indent-selection-expected.checksum:
+        * editing/execCommand/indent-selection-expected.png:
+        * editing/execCommand/insert-list-empty-div-expected.checksum:
+        * editing/execCommand/insert-list-empty-div-expected.png:
+        * editing/execCommand/remove-list-item-1-expected.checksum:
+        * editing/execCommand/remove-list-item-1-expected.png:
+        * editing/inserting/4959067-expected.checksum:
+        * editing/inserting/4959067-expected.png:
+        * editing/pasteboard/4861080-expected.checksum:
+        * editing/pasteboard/4861080-expected.png:
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.checksum:
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.png:
+        * editing/pasteboard/drop-link-expected.checksum:
+        * editing/pasteboard/drop-link-expected.png:
+        * editing/pasteboard/innerText-inline-table-expected.checksum:
+        * editing/pasteboard/innerText-inline-table-expected.png:
+        * editing/pasteboard/input-field-1-expected.checksum:
+        * editing/pasteboard/input-field-1-expected.png:
+        * editing/pasteboard/merge-end-list-expected.checksum:
+        * editing/pasteboard/merge-end-list-expected.png:
+        * editing/pasteboard/merge-start-list-expected.checksum:
+        * editing/pasteboard/merge-start-list-expected.png:
+        * editing/pasteboard/select-element-1-expected.checksum:
+        * editing/pasteboard/select-element-1-expected.png:
+        * editing/selection/drag-to-contenteditable-iframe-expected.checksum:
+        * editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * editing/selection/extend-by-word-002-expected.checksum:
+        * editing/selection/extend-by-word-002-expected.png:
+        * editing/selection/select-all-iframe-expected.checksum:
+        * editing/selection/select-all-iframe-expected.png:
+        * editing/selection/selectNode-expected.checksum:
+        * editing/selection/selectNode-expected.png:
+        * editing/selection/selectNodeContents-expected.checksum:
+        * editing/selection/selectNodeContents-expected.png:
+        * editing/unsupported-content/list-delete-001-expected.checksum:
+        * editing/unsupported-content/list-delete-001-expected.png:
+        * editing/unsupported-content/list-type-after-expected.checksum:
+        * editing/unsupported-content/list-type-after-expected.png:
+        * editing/unsupported-content/list-type-before-expected.checksum:
+        * editing/unsupported-content/list-type-before-expected.png:
+
 2007-05-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
