@@ -1,3 +1,29 @@
+2007-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+
+        Spelling markers fixed:
+        * editing/deleting/delete-to-select-table-expected.checksum:
+        * editing/deleting/delete-to-select-table-expected.png:
+        * editing/selection/end-of-document-expected.checksum:
+        * editing/selection/end-of-document-expected.png:
+        * editing/inserting/insert-paragraph-02-expected.checksum:
+        * editing/inserting/insert-paragraph-02-expected.png:
+                
+        Focus halo now painted:
+        * editing/execCommand/format-block-with-braces-expected.checksum:
+        * editing/execCommand/format-block-with-braces-expected.png:
+
+        Needed FIXMEs removed after fixing 4714993:
+        * editing/pasteboard/merge-end-1-expected.checksum:
+        * editing/pasteboard/merge-end-1-expected.png:
+        * editing/pasteboard/merge-end-1-expected.txt:
+        * editing/pasteboard/merge-end-1.html:
+        * editing/pasteboard/merge-end-2-expected.checksum:
+        * editing/pasteboard/merge-end-2-expected.png:
+        * editing/pasteboard/merge-end-2-expected.txt:
+        * editing/pasteboard/merge-end-2.html:
+
 2007-05-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.

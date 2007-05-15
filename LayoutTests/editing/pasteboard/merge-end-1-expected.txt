@@ -16,14 +16,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 766x36
           text run at (0,0) width 766: "This tests one of the cases where it is necessary for paste to merge the last paragraph in the fragment being pasted with the"
           text run at (0,18) width 328: "content after the position where the paste will occur."
-      RenderBlock {P} at (0,52) size 784x36
-        RenderInline {B} at (0,0) size 171x18
-          RenderText {#text} at (0,0) size 171x18
-            text run at (0,0) width 171: "This demonstrates a bug:"
-        RenderText {#text} at (171,0) size 757x36
-          text run at (171,0) width 586: " two adjacent text nodes render with a line break between them and cause focus ring drawing"
-          text run at (0,18) width 116: "problems (10428)."
-      RenderBlock {DIV} at (0,104) size 784x54
+      RenderBlock {DIV} at (0,52) size 784x54
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderInline {SPAN} at (0,0) size 5x18
             RenderText {#text} at (0,0) size 5x18
@@ -38,4 +31,4 @@ layer at (0,0) size 800x600
               text run at (0,18) width 22: "baz"
             RenderText {#text} at (22,18) size 16x18
               text run at (22,18) width 16: "oo"
-caret: position 3 of child 3 {#text} of child 0 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 3 {#text} of child 0 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

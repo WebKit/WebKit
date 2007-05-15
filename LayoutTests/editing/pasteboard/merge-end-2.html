@@ -3,7 +3,6 @@ if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
 <p>This tests one of the cases where it is necessary for paste to merge the last paragraph in the fragment being pasted with the content after the position where the paste will occur.</p>
-<p><b>This demonstrates a bug:</b> two adjacent text nodes render with a line break between them and cause focus ring drawing problems (10428).</p>
 <div id="test" contenteditable="true"><span>foo</span>bar</div>
 
 <script type="text/javascript" src="../editing.js"></script>
