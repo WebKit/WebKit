@@ -745,14 +745,18 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)windowObjectCleared
 {
-    WebView *wv = [self webView];
-    if ([[wv frameLoadDelegate] respondsToSelector:@selector(webView:didClearWindowObject:forFrame:)])
-        [[wv frameLoadDelegate] webView:wv didClearWindowObject:m_frame->windowScriptObject() forFrame:kit(m_frame)];
-    else // legacy API
-        [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:m_frame->windowScriptObject()];
+    WebView *webView = getWebView(_frame);
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidClearWindowObjectForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didClearWindowObjectForFrameFunc(frameLoadDelegate, @selector(webView:didClearWindowObject:forFrame:), webView, m_frame->windowScriptObject(), _frame);
+    } else if (implementations.delegateImplementsWindowScriptObjectAvailable) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.windowScriptObjectAvailableFunc(frameLoadDelegate, @selector(webView:windowScriptObjectAvailable:), webView, m_frame->windowScriptObject());
+    }
 
-    if ([wv scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
-        [_frame _detachScriptDebugger]; // FIXME: remove this once <rdar://problem/4608404> is fixed
+    if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
+        [_frame _detachScriptDebugger];
         [_frame _attachScriptDebugger];
     }
 }

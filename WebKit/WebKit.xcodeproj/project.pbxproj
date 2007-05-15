@@ -143,7 +143,6 @@
 		939810680824BF01008DF038 /* HIViewAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9A03F9DBA103CA0DE6 /* HIViewAdapter.h */; };
 		939810690824BF01008DF038 /* HIWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398106A0824BF01008DF038 /* CarbonUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F79B974804019934036909D2 /* CarbonUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9398106C0824BF01008DF038 /* WebDefaultFrameLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */; };
 		9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CA5F7E042685E800CA2ACA /* WebKitErrorsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398106E0824BF01008DF038 /* WebFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8B52E04282B5900CA2D3A /* WebFrameView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398106F0824BF01008DF038 /* WebFrameViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8B53204282BD200CA2D3A /* WebFrameViewInternal.h */; };
@@ -242,7 +241,6 @@
 		939811010824BF01008DF038 /* CarbonUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F79B974904019934036909D2 /* CarbonUtils.m */; };
 		939811020824BF01008DF038 /* HIWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEEAB03F9DBA103CA0DE6 /* HIWebView.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		939811030824BF01008DF038 /* WebKitErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 83730F9803FB1E660004736E /* WebKitErrors.m */; };
-		939811050824BF01008DF038 /* WebDefaultFrameLoadDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70BC9ED604144F3200A80182 /* WebDefaultFrameLoadDelegate.m */; };
 		939811060824BF01008DF038 /* WebFrameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B52F04282B5900CA2D3A /* WebFrameView.mm */; };
 		939811070824BF01008DF038 /* WebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B57A042834F700CA2D3A /* WebView.mm */; };
 		939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */; };
@@ -429,8 +427,6 @@
 		65FFB7FB0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDocumentLoaderMac.mm; sourceTree = "<group>"; };
 		7082F56F038EADAA00A80180 /* WebKitNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNSStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7082F570038EADAA00A80180 /* WebKitNSStringExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitNSStringExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		70BC9ED604144F3200A80182 /* WebDefaultFrameLoadDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultFrameLoadDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultFrameLoadDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultScriptDebugDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -843,8 +839,6 @@
 				5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.mm */,
 				BE95BEE605FD0805006E1513 /* WebDefaultEditingDelegate.h */,
 				BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */,
-				70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */,
-				70BC9ED604144F3200A80182 /* WebDefaultFrameLoadDelegate.m */,
 				5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */,
 				5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */,
 				7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */,
@@ -1199,7 +1193,6 @@
 				939810680824BF01008DF038 /* HIViewAdapter.h in Headers */,
 				939810690824BF01008DF038 /* HIWebView.h in Headers */,
 				9398106A0824BF01008DF038 /* CarbonUtils.h in Headers */,
-				9398106C0824BF01008DF038 /* WebDefaultFrameLoadDelegate.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				9398106E0824BF01008DF038 /* WebFrameView.h in Headers */,
 				9398106F0824BF01008DF038 /* WebFrameViewInternal.h in Headers */,
@@ -1481,7 +1474,6 @@
 				939811010824BF01008DF038 /* CarbonUtils.m in Sources */,
 				939811020824BF01008DF038 /* HIWebView.m in Sources */,
 				939811030824BF01008DF038 /* WebKitErrors.m in Sources */,
-				939811050824BF01008DF038 /* WebDefaultFrameLoadDelegate.m in Sources */,
 				939811060824BF01008DF038 /* WebFrameView.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,

@@ -1,3 +1,34 @@
+2007-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Patch: fixed <rdar://problem/5198890> .5% performance regression caused 
+        by r21307
+        
+        The only code r21307 added that runs during the PLT is a frame load delegate
+        -respondsToSelector: call inside windowObjectCleared(), so it seems like 
+        our message dispatch overhead for the frame load delegate is significant.
+        
+        This patch is a straight port of Maciej's fix for the same problem in the
+        resource load delegate. The solution is simple enough: don't use Objective-C. 
+        Instead, use a special structure that caches which methods the delegate 
+        implements, along with pointers to those methods.
+        
+        I verified each frame load delegate callback in the debugger, except for
+        -webView:didFailLoadWithError:forFrame:, which is not implemented by Safari
+        or DumpRenderTree.
+
+        * WebKit/DefaultDelegates/WebDefaultFrameLoadDelegate.h: Removed.
+        * WebKit/DefaultDelegates/WebDefaultFrameLoadDelegate.m: Removed.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge windowObjectCleared]): I also removed a misleading 
+        comment here. The JS debugger caches the windowScriptObject, so you do
+        need to re-create the debugger every time you invalidate the old 
+        WebScriptObject wrapper for the window object and create a new one, or
+        the debugger will stop working. We could fix this in a number of ways, 
+        but <rdar://problem/4608404> is not the key issue.
+
 2007-05-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt and Lars.

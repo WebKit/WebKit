@@ -67,11 +67,13 @@ typedef WebCore::Page WebCorePage;
 id WebViewGetResourceLoadDelegate(WebView *webView);
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView);
 
+id WebViewGetFrameLoadDelegate(WebView *webView);
+WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView);
+
 @interface WebView (WebViewMiscInternal)
 - (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;
-- (id)_frameLoadDelegateForwarder;
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;
 - (id)_scriptDebugDelegateForwarder;

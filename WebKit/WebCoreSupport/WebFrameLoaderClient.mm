@@ -381,58 +381,80 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _frameLoadDelegateForwarder] webView:webView didHandleOnloadEventsForFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidHandleOnloadEventsForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didHandleOnloadEventsForFrameFunc(frameLoadDelegate, @selector(webView:didHandleOnloadEventsForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _frameLoadDelegateForwarder] webView:webView
-       didReceiveServerRedirectForProvisionalLoadForFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidReceiveServerRedirectForProvisionalLoadForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didReceiveServerRedirectForProvisionalLoadForFrameFunc(frameLoadDelegate, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _frameLoadDelegateForwarder] webView:webView didCancelClientRedirectForFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidCancelClientRedirectForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didCancelClientRedirectForFrameFunc(frameLoadDelegate, @selector(webView:didCancelClientRedirectForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const KURL& URL, double delay, double fireDate)
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _frameLoadDelegateForwarder] webView:webView
-                         willPerformClientRedirectToURL:URL.getNSURL()
-                                                  delay:delay
-                                               fireDate:[NSDate dateWithTimeIntervalSince1970:fireDate]
-                                               forFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsWillPerformClientRedirectToURLDelayFireDateForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.willPerformClientRedirectToURLDelayFireDateForFrameFunc(frameLoadDelegate, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:), webView, URL.getNSURL(), delay, [NSDate dateWithTimeIntervalSince1970:fireDate], m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 {
-    WebView *webView = getWebView(m_webFrame.get());   
-    [[webView _frameLoadDelegateForwarder] webView:webView didChangeLocationWithinPageForFrame:m_webFrame.get()];
+    WebView *webView = getWebView(m_webFrame.get());
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidChangeLocationWithinPageForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didChangeLocationWithinPageForFrameFunc(frameLoadDelegate, @selector(webView:didChangeLocationWithinPageForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchWillClose()
 {
     WebView *webView = getWebView(m_webFrame.get());   
-    [[webView _frameLoadDelegateForwarder] webView:webView willCloseFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsWillCloseFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.willCloseFrameFunc(frameLoadDelegate, @selector(webView:willCloseFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveIcon()
 {
-    WebView *webView = getWebView(m_webFrame.get());   
     ASSERT([m_webFrame.get() _isMainFrame]);
+    WebView *webView = getWebView(m_webFrame.get());   
+
     // FIXME: This willChangeValueForKey call is too late, because the icon has already changed by now.
     [webView _willChangeValueForKey:_WebMainFrameIconKey];
-    id delegate = [webView frameLoadDelegate];
-    if ([delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)]) {
-        Image* image = iconDatabase()->
-            iconForPageURL(core(m_webFrame.get())->loader()->url().url(), IntSize(16, 16));
-        NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16));
-        if (icon)
-            [delegate webView:webView didReceiveIcon:icon forFrame:m_webFrame.get()];
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidReceiveIconForFrame) {
+        Image* image = iconDatabase()->iconForPageURL(core(m_webFrame.get())->loader()->url().url(), IntSize(16, 16));
+        if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16))) {
+            id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+            implementations.didReceiveIconForFrameFunc(frameLoadDelegate, @selector(webView:didReceiveIcon:forFrame:), webView, icon, m_webFrame.get());
+        }
     }
+
     [webView _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
@@ -440,13 +462,22 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didStartProvisionalLoadForFrame:m_webFrame.get()];
-    [[webView _frameLoadDelegateForwarder] webView:webView didStartProvisionalLoadForFrame:m_webFrame.get()];    
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidStartProvisionalLoadForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didStartProvisionalLoadForFrameFunc(frameLoadDelegate, @selector(webView:didStartProvisionalLoadForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 {
     WebView *webView = getWebView(m_webFrame.get());   
-    [[webView _frameLoadDelegateForwarder] webView:webView didReceiveTitle:title forFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidReceiveTitleForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didReceiveTitleForFrameFunc(frameLoadDelegate, @selector(webView:didReceiveTitle:forFrame:), webView, title, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidCommitLoad()
@@ -456,14 +487,23 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didCommitLoadForFrame:m_webFrame.get()];
-    [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:m_webFrame.get()];
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidCommitLoadForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didCommitLoadForFrameFunc(frameLoadDelegate, @selector(webView:didCommitLoadForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
-    [[webView _frameLoadDelegateForwarder] webView:webView didFailProvisionalLoadWithError:error forFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidFailProvisionalLoadWithErrorForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didFailProvisionalLoadWithErrorForFrameFunc(frameLoadDelegate, @selector(webView:didFailProvisionalLoadWithError:forFrame:), webView, error, m_webFrame.get());
+    }
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
 }
 
@@ -471,30 +511,48 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFailLoadWithError:error forFrame:m_webFrame.get()];
-    [[webView _frameLoadDelegateForwarder] webView:webView didFailLoadWithError:error forFrame:m_webFrame.get()];
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidFailLoadWithErrorForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didFailLoadWithErrorForFrameFunc(frameLoadDelegate, @selector(webView:didFailLoadWithError:forFrame:), webView, error, m_webFrame.get());
+    }
+
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
 }
 
 void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 {
     WebView *webView = getWebView(m_webFrame.get());
-    id delegate = [webView frameLoadDelegate];
-    if ([delegate respondsToSelector:@selector(webView:didFinishDocumentLoadForFrame:)])
-        [delegate webView:webView didFinishDocumentLoadForFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidFinishDocumentLoadForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didFinishDocumentLoadForFrameFunc(frameLoadDelegate, @selector(webView:didFinishDocumentLoadForFrame:), webView, m_webFrame.get());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
 {
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didFinishLoadForFrame:m_webFrame.get()];
-    [[webView _frameLoadDelegateForwarder] webView:webView didFinishLoadForFrame:m_webFrame.get()];
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidFinishLoadForFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didFinishLoadForFrameFunc(frameLoadDelegate, @selector(webView:didFinishLoadForFrame:), webView, m_webFrame.get());
+    }
+
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:nil];
 }
 
 void WebFrameLoaderClient::dispatchDidFirstLayout()
 {
     WebView *webView = getWebView(m_webFrame.get());
-    [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:m_webFrame.get()];
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations.delegateImplementsDidFirstLayoutInFrame) {
+        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
+        implementations.didFirstLayoutInFrameFunc(frameLoadDelegate, @selector(webView:didFirstLayoutInFrame:), webView, m_webFrame.get());
+    }
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage()

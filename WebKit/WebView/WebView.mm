@@ -39,7 +39,6 @@
 #import "WebDashboardRegion.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultEditingDelegate.h"
-#import "WebDefaultFrameLoadDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
 #import "WebDefaultScriptDebugDelegate.h"
 #import "WebDefaultUIDelegate.h"
@@ -293,6 +292,7 @@ static int pluginDatabaseClientCount = 0;
     int programmaticFocusCount;
     
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
+    WebFrameLoadDelegateImplementationCache frameLoadDelegateImplementations;
 
     void *observationInfo;
     
@@ -884,13 +884,6 @@ static bool debugWidget = true;
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
-- _frameLoadDelegateForwarder
-{
-    if (!_private->frameLoadDelegateForwarder)
-        _private->frameLoadDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self frameLoadDelegate]  defaultTarget: [WebDefaultFrameLoadDelegate sharedFrameLoadDelegate] templateClass: [WebDefaultFrameLoadDelegate class]];
-    return _private->frameLoadDelegateForwarder;
-}
-
 - (void)_cacheResourceLoadDelegateImplementations
 {
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
@@ -945,6 +938,83 @@ id WebViewGetResourceLoadDelegate(WebView *webView)
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
 {
     return webView->_private->resourceLoadDelegateImplementations;
+}
+
+- (void)_cacheFrameLoadDelegateImplementations
+{
+    WebFrameLoadDelegateImplementationCache *cache = &_private->frameLoadDelegateImplementations;
+    id delegate = [self frameLoadDelegate];
+    Class delegateClass = [delegate class];
+
+    cache->delegateImplementsDidClearWindowObjectForFrame = [delegate respondsToSelector:@selector(webView:didClearWindowObject:forFrame:)];
+    cache->delegateImplementsWindowScriptObjectAvailable = [delegate respondsToSelector:@selector(webView:windowScriptObjectAvailable:)];
+    cache->delegateImplementsDidHandleOnloadEventsForFrame = [delegate respondsToSelector:@selector(webView:didHandleOnloadEventsForFrame:)];
+    cache->delegateImplementsDidReceiveServerRedirectForProvisionalLoadForFrame = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:)];
+    cache->delegateImplementsDidCancelClientRedirectForFrame = [delegate respondsToSelector:@selector(webView:didCancelClientRedirectForFrame:)];
+    cache->delegateImplementsWillPerformClientRedirectToURLDelayFireDateForFrame = [delegate respondsToSelector:@selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:)];
+    cache->delegateImplementsDidChangeLocationWithinPageForFrame = [delegate respondsToSelector:@selector(webView:didChangeLocationWithinPageForFrame:)];
+    cache->delegateImplementsWillCloseFrame = [delegate respondsToSelector:@selector(webView:willCloseFrame:)];
+    cache->delegateImplementsDidStartProvisionalLoadForFrame = [delegate respondsToSelector:@selector(webView:didStartProvisionalLoadForFrame:)];
+    cache->delegateImplementsDidReceiveTitleForFrame = [delegate respondsToSelector:@selector(webView:didReceiveTitle:forFrame:)];
+    cache->delegateImplementsDidCommitLoadForFrame = [delegate respondsToSelector:@selector(webView:didCommitLoadForFrame:)];
+    cache->delegateImplementsDidFailProvisionalLoadWithErrorForFrame = [delegate respondsToSelector:@selector(webView:didFailProvisionalLoadWithError:forFrame:)];
+    cache->delegateImplementsDidFailLoadWithErrorForFrame = [delegate respondsToSelector:@selector(webView:didFailLoadWithError:forFrame:)];
+    cache->delegateImplementsDidFinishLoadForFrame = [delegate respondsToSelector:@selector(webView:didFinishLoadForFrame:)];
+    cache->delegateImplementsDidFirstLayoutInFrame = [delegate respondsToSelector:@selector(webView:didFirstLayoutInFrame:)];
+    cache->delegateImplementsDidReceiveIconForFrame = [delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)];
+    cache->delegateImplementsDidFinishDocumentLoadForFrame = [delegate respondsToSelector:@selector(webView:didFinishDocumentLoadForFrame:)];
+
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
+#define GET_OBJC_METHOD_IMP(class,selector) class_getMethodImplementation(class, selector)
+#else
+#define GET_OBJC_METHOD_IMP(class,selector) class_getInstanceMethod(class, selector)->method_imp
+#endif
+
+    if (cache->delegateImplementsDidClearWindowObjectForFrame)
+        cache->didClearWindowObjectForFrameFunc = (WebDidClearWindowObjectForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didClearWindowObject:forFrame:));
+    if (cache->delegateImplementsWindowScriptObjectAvailable)
+        cache->windowScriptObjectAvailableFunc = (WebWindowScriptObjectAvailableFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:windowScriptObjectAvailable:));
+    if (cache->delegateImplementsDidHandleOnloadEventsForFrame)
+        cache->didHandleOnloadEventsForFrameFunc = (WebDidHandleOnloadEventsForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didHandleOnloadEventsForFrame:));
+    if (cache->delegateImplementsDidReceiveServerRedirectForProvisionalLoadForFrame)
+        cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = (WebDidReceiveServerRedirectForProvisionalLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
+    if (cache->delegateImplementsDidCancelClientRedirectForFrame)
+        cache->didCancelClientRedirectForFrameFunc = (WebDidCancelClientRedirectForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCancelClientRedirectForFrame:));
+    if (cache->delegateImplementsWillPerformClientRedirectToURLDelayFireDateForFrame)
+        cache->willPerformClientRedirectToURLDelayFireDateForFrameFunc = (WebWillPerformClientRedirectToURLDelayFireDateForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:));
+    if (cache->delegateImplementsDidChangeLocationWithinPageForFrame)
+        cache->didChangeLocationWithinPageForFrameFunc = (WebDidChangeLocationWithinPageForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didChangeLocationWithinPageForFrame:));
+    if (cache->delegateImplementsWillCloseFrame)
+        cache->willCloseFrameFunc = (WebWillCloseFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willCloseFrame:));
+    if (cache->delegateImplementsDidStartProvisionalLoadForFrame)
+        cache->didStartProvisionalLoadForFrameFunc = (WebDidStartProvisionalLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didStartProvisionalLoadForFrame:));
+    if (cache->delegateImplementsDidReceiveTitleForFrame)
+        cache->didReceiveTitleForFrameFunc = (WebDidReceiveTitleForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveTitle:forFrame:));
+    if (cache->delegateImplementsDidCommitLoadForFrame)
+        cache->didCommitLoadForFrameFunc = (WebDidCommitLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCommitLoadForFrame:));
+    if (cache->delegateImplementsDidFailProvisionalLoadWithErrorForFrame)
+        cache->didFailProvisionalLoadWithErrorForFrameFunc = (WebDidFailProvisionalLoadWithErrorForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailProvisionalLoadWithError:forFrame:));
+    if (cache->delegateImplementsDidFailLoadWithErrorForFrame)
+        cache->didFailLoadWithErrorForFrameFunc = (WebDidFailLoadWithErrorForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailLoadWithError:forFrame:));
+    if (cache->delegateImplementsDidFinishLoadForFrame)
+        cache->didFinishLoadForFrameFunc = (WebDidFinishLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishLoadForFrame:));
+    if (cache->delegateImplementsDidFirstLayoutInFrame)
+        cache->didFirstLayoutInFrameFunc = (WebDidFirstLayoutInFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFirstLayoutInFrame:));
+    if (cache->delegateImplementsDidReceiveIconForFrame)
+        cache->didReceiveIconForFrameFunc = (WebDidReceiveIconForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveIcon:forFrame:));
+    if (cache->delegateImplementsDidFinishDocumentLoadForFrame)
+        cache->didFinishDocumentLoadForFrameFunc = (WebDidFinishDocumentLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishDocumentLoadForFrame:));
+#undef GET_OBJC_METHOD_IMP
+}
+
+id WebViewGetFrameLoadDelegate(WebView *webView)
+{
+    return webView->_private->frameLoadDelegate;
+}
+
+WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView)
+{
+    return webView->_private->frameLoadDelegateImplementations;
 }
 
 - _policyDelegateForwarder
@@ -1947,8 +2017,7 @@ NS_ENDHANDLER
 - (void)setFrameLoadDelegate:delegate
 {
     _private->frameLoadDelegate = delegate;
-    [_private->frameLoadDelegateForwarder release];
-    _private->frameLoadDelegateForwarder = nil;
+    [self _cacheFrameLoadDelegateImplementations];
 }
 
 - frameLoadDelegate
