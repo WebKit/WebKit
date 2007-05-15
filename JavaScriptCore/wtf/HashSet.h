@@ -58,6 +58,8 @@ namespace WTF {
         HashSet& operator=(const HashSet&);
         ~HashSet();
 
+        void swap(HashSet&);
+
         int size() const;
         int capacity() const;
         bool isEmpty() const;
@@ -182,8 +184,14 @@ namespace WTF {
     inline HashSet<T, U, V>& HashSet<T, U, V>::operator=(const HashSet& other)
     {
         HashSet tmp(other);
-        m_impl.swap(tmp.m_impl); 
+        swap(other); 
         return *this;
+    }
+
+    template<typename T, typename U, typename V>
+    inline void HashSet<T, U, V>::swap(HashSet& other)
+    {
+        m_impl.swap(other.m_impl); 
     }
 
     template<typename T, typename U, typename V>

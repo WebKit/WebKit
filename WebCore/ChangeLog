@@ -1,3 +1,14 @@
+2007-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Some improvements on my last patch, suggested by Darin.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::autoreleaseNow): Swap with an empty set instead of 
+        building up an array and then calling clear(). This is slightly more 
+        efficient and the code is cleaner.
+
 2007-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

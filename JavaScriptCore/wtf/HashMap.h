@@ -68,6 +68,8 @@ namespace WTF {
         HashMap& operator=(const HashMap&);
         ~HashMap();
 
+        void swap(HashMap&);
+
         int size() const;
         int capacity() const;
         bool isEmpty() const;
@@ -176,8 +178,14 @@ namespace WTF {
     inline HashMap<T, U, V, W, X>& HashMap<T, U, V, W, X>::operator=(const HashMap& other)
     {
         HashMap tmp(other);
-        m_impl.swap(tmp.m_impl); 
+        swap(tmp); 
         return *this;
+    }
+
+    template<typename T, typename U, typename V, typename W, typename X>
+    inline void HashMap<T, U, V, W, X>::swap(HashMap& other)
+    {
+        m_impl.swap(other.m_impl); 
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
