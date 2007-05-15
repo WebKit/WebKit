@@ -1,3 +1,26 @@
+2007-05-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5200816>
+        REGRESSION: With Shiira 1.2.2 , I can't open embedded link in flash object by clicking (http:/www.adobe.com )
+        
+        Shiira under some circumstances passes nil as the request to -[WebFrame loadRequest:]. ToT WebKit doesn't call any policy
+        delegate methods in this case, which means that the page is actually being loaded. 
+        
+        This patch makes ToT WebKit behave in the same way as Tiger WebKit when the request is nil.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        Don't continue without calling the navigation policy method if the request is null.
+        
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        If the request can't be handled, don't continue the load.
+        
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        Don't create an NSURLRequest object if the request is null.
+
 2007-05-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt and Lars.
