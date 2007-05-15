@@ -1,3 +1,11 @@
+2007-05-15  Justin Garcia  <justin.garcia@apple.com>
+        
+        Spelling markers fixed:
+        * editing/deleting/delete-block-table-expected.checksum:
+        * editing/deleting/delete-block-table-expected.png:
+        * editing/selection/move-by-line-001-expected.checksum:
+        * editing/selection/move-by-line-001-expected.png:
+
 2007-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren
