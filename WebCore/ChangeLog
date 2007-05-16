@@ -4,8 +4,8 @@
 
         - Pass cookies through from the loader.
 
-        * platform/graphics/qt/GraphicsContextQt.cpp:
-        (WebCore::GraphicsContext::strokeArc):
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::ResourceHandleManager::receivedResponse):
 
 2007-05-15  Adam Treat  <adam@staikos.net>
 
