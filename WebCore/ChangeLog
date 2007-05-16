@@ -1,3 +1,11 @@
+2007-05-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam and Geoff.
+
+        Removing dead code left behind from drag and drop refactoring.
+
+        * page/mac/WebCoreFrameBridge.h:
+
 2007-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

@@ -661,17 +661,6 @@ static BOOL loggedObjectCacheSize = NO;
     return ObjectElementNone;
 }
 
-- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op
-    event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
-{
-    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    if (core([docView _webView]))
-        core([docView _webView])->dragController()->setDragInitiator(core(_frame) ? core(_frame)->document() : 0);
-    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event
-        sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
-}
-
 - (void)print
 {
     id wd = [[self webView] UIDelegate];    

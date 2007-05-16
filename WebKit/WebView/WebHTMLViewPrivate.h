@@ -74,7 +74,6 @@
 
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element;
 - (NSImage *)_dragImageForURL:(NSString*)linkURL withLabel:(NSString*)label;
-- (BOOL)_startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData;
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (WebPluginController *)_pluginController;
 

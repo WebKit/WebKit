@@ -1,3 +1,13 @@
+2007-05-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam and Geoff.
+        
+        Removing dead code left behind from drag and drop refactoring.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-05-15  Bruce Q Hammond  <bruceq@apple.com>
 
         Reviewed by Darin.
