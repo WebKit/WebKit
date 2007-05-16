@@ -38,7 +38,14 @@
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
+
+#if PLATFORM(QT)
+#include <QPainter>
+#include <QPixmap>
+#endif
+
 #include <math.h>
+
 
 namespace WebCore {
 
@@ -58,6 +65,9 @@ HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     , m_size(defaultWidth, defaultHeight)
     , m_createdDrawingContext(false)
     , m_data(0)
+#if PLATFORM(QT)
+    , m_painter(0)
+#endif
     , m_drawingContext(0)
 {
 }
@@ -66,7 +76,12 @@ HTMLCanvasElement::~HTMLCanvasElement()
 {
     if (m_2DContext)
         m_2DContext->detachCanvas();
+#if PLATFORM(CG)
     fastFree(m_data);
+#elif PLATFORM(QT)
+    delete m_painter;
+    delete m_data;
+#endif
     delete m_drawingContext;
 }
 
@@ -150,7 +165,12 @@ void HTMLCanvasElement::reset()
 
     bool hadDrawingContext = m_createdDrawingContext;
     m_createdDrawingContext = false;
+#if PLATFORM(QT)
     fastFree(m_data);
+#elif PLATFORM(QT)
+    delete m_painter;
+    delete m_data;
+#endif
     m_data = 0;
     delete m_drawingContext;
     m_drawingContext = 0;
@@ -172,6 +192,12 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
     if (CGImageRef image = createPlatformImage()) {
         CGContextDrawImage(p->platformContext(), p->roundToDevicePixels(r), image);
         CGImageRelease(image);
+    }
+#elif PLATFORM(QT)
+    if (m_data) {
+        if (m_painter->isActive())
+            m_painter->end();
+        static_cast<QPainter*>(p->platformContext())->drawPixmap(r, *m_data);
     }
 #endif
 }
@@ -198,7 +224,11 @@ void HTMLCanvasElement::createDrawingContext() const
     size_t bytesPerRow = w * 4;
     if (bytesPerRow / 4 != w) // check for overflow
         return;
+#if PLATFORM(CG)
     m_data = fastCalloc(h, bytesPerRow);
+#elif PLATFORM(QT)
+    m_data = new QPixmap(w, h);
+#endif
     if (!m_data)
         return;
 #if PLATFORM(CG)
@@ -208,6 +238,10 @@ void HTMLCanvasElement::createDrawingContext() const
     CGColorSpaceRelease(colorSpace);
     m_drawingContext = new GraphicsContext(bitmapContext);
     CGContextRelease(bitmapContext);
+#elif PLATFORM(QT)
+    m_data->fill(Qt::white);
+    m_painter = new QPainter(m_data);
+    m_drawingContext = new GraphicsContext(m_painter);
 #endif
 }
 
@@ -233,6 +267,13 @@ CGImageRef HTMLCanvasElement::createPlatformImage() const
     CGContextFlush(contextRef);
     
     return CGBitmapContextCreateImage(contextRef);
+}
+#elif PLATFORM(QT)
+QPixmap HTMLCanvasElement::createPlatformImage() const
+{
+    if (m_data)
+        return *m_data;
+    return QPixmap();
 }
 
 #endif

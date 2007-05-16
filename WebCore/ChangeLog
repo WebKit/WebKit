@@ -1,5 +1,17 @@
 2007-05-16  Zack Rusin  <zrusin@trolltech.com>
 
+        Reviewed by Lars.
+
+        Implement bigger parts of the Canvas element in the
+        Qt port. Gradients and patterns are missing.
+
+        * WebCore/html/CanvasRenderingContext2D.cpp:
+        * WebCore/html/CanvasStyle.cpp:
+        * WebCore/html/HTMLCanvasElement.cpp:
+        * WebCore/html/HTMLCanvasElement:
+
+2007-05-16  Zack Rusin  <zrusin@trolltech.com>
+
         Reviewed by Lars
 
         Fix shared timers, make them use miliseconds. Based

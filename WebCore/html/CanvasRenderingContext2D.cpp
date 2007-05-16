@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +43,12 @@
 #include "Settings.h"
 #include "cssparser.h"
 #include <wtf/MathExtras.h>
+
+#if PLATFORM(QT)
+#include <QPainter>
+#include <QPixmap>
+#include <QPainterPath>
+#endif
 
 namespace WebCore {
 
@@ -445,6 +452,17 @@ void CanvasRenderingContext2D::fill()
             applyFillPattern();
         CGContextFillPath(c->platformContext());
     }
+#elif PLATFORM(QT)
+    QPainterPath* path = state().m_path.platformPath();
+    QPainter* p = static_cast<QPainter*>(c->platformContext());
+    willDraw(path->controlPointRect());
+    if (state().m_fillStyle->gradient()) {
+        fprintf(stderr, "FIXME: CanvasRenderingContext2D::fill\n");
+    } else {
+        if (state().m_fillStyle->pattern())
+            applyFillPattern();
+        p->fillPath(*path, p->brush());
+    }
 #endif
 }
 
@@ -475,6 +493,17 @@ void CanvasRenderingContext2D::stroke()
         if (state().m_strokeStyle->pattern())
             applyStrokePattern();
         CGContextStrokePath(c->platformContext());
+    }
+#elif PLATFORM(QT)
+    QPainterPath* path = state().m_path.platformPath();
+    QPainter* p = static_cast<QPainter*>(c->platformContext());
+    willDraw(path->controlPointRect());
+    if (state().m_strokeStyle->gradient()) {
+        fprintf(stderr, "FIXME: CanvasRenderingContext2D::stroke\n");
+    } else {
+        if (state().m_strokeStyle->pattern())
+            applyStrokePattern();
+        p->strokePath(*path, p->pen());
     }
 #endif
 
@@ -533,6 +562,17 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
         if (state().m_fillStyle->pattern())
             applyFillPattern();
         CGContextFillRect(c->platformContext(), rect);
+    }
+#elif PLATFORM(QT)
+    QRectF rect(x, y, width, height);
+    willDraw(rect);
+    QPainter* p = static_cast<QPainter*>(c->platformContext());
+    if (state().m_fillStyle->gradient()) {
+        fprintf(stderr, "FIXME: Canvas gradients\n");
+    } else {
+        if (state().m_fillStyle->pattern())
+            applyFillPattern();
+        p->fillRect(rect, p->brush());
     }
 #endif
 }
@@ -852,6 +892,13 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     }
 
     CGImageRelease(platformImage);
+#elif PLATFORM(QT)
+    QPixmap px = canvas->createPlatformImage();
+    if (px.isNull())
+        return;
+    willDraw(dstRect);
+    QPainter* painter = static_cast<QPainter*>(c->platformContext());
+    painter->drawPixmap(dstRect, px, srcRect);
 #endif
 }
 
@@ -926,9 +973,10 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     PassRefPtr<CanvasPattern> pattern = new CanvasPattern(image, repeatX, repeatY);
     CGImageRelease(image);
     return pattern;
-#else
-    return 0;
+#elif PLATFORM(QT)
+    fprintf(stderr, "FIXME: CanvasRenderingContext2D::createPattern patterns not implemented\n");
 #endif
+    return 0;
 }
 
 void CanvasRenderingContext2D::willDraw(const FloatRect& r)
@@ -975,6 +1023,8 @@ void CanvasRenderingContext2D::applyStrokePattern()
     CGPatternRelease(platformPattern);
 
     state().m_strokeStylePatternTransform = m;
+#elif PLATFORM(QT)
+    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyStrokePattern\n");
 #endif
     state().m_appliedStrokePattern = true;
 }
@@ -1009,6 +1059,8 @@ void CanvasRenderingContext2D::applyFillPattern()
     CGPatternRelease(platformPattern);
 
     state().m_fillStylePatternTransform = m;
+#elif PLATFORM(QT)
+    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyStrokePattern\n");
 #endif
     state().m_appliedFillPattern = true;
 }
