@@ -1,3 +1,14 @@
+2007-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for <rdar://problem/4928671> Crash due to runaway recursion when fieldset has display: table-row (12066)
+
+        * fast/css/fieldset-display-row-expected.checksum: Added.
+        * fast/css/fieldset-display-row-expected.png: Added.
+        * fast/css/fieldset-display-row-expected.txt: Added.
+        * fast/css/fieldset-display-row.html: Added.
+
 2007-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

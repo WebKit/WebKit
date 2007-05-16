@@ -1,3 +1,22 @@
+2007-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix <rdar://problem/4928671> Crash due to runaway recursion when fieldset has display: table-row (12066)
+
+        Test: fast/css/fieldset-display-row.html
+
+        * rendering/RenderContainer.cpp: (WebCore::RenderContainer::addChild):
+        Change all decision making about special handling for new children to use
+        the class of the render object instead of the style, except for the cases
+        where the style is the only way to tell (TABLE_COLUMN_GROUP and TABLE_CAPTION).
+        Thus a RenderFieldset with table-row style won't get handled as if it was
+        a table row.
+
+        * rendering/RenderTable.cpp: (WebCore::RenderTable::addChild): Same thing.
+        Except that here the styles that we ahave to look at are TABLE_CAPTION,
+        TABLE_HEADER_GROUP, TABLE_FOOTER_GROUP, and TABLE_ROW_GROUP.
+
 2007-05-16  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars.

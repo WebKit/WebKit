@@ -114,81 +114,67 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     bool wrapInAnonymousSection = true;
     bool isTableElement = element() && element()->hasTagName(tableTag);
 
-    switch (child->style()->display()) {
-        case TABLE_CAPTION:
-            if (child->isRenderBlock()) {
-                // First caption wins.
-                if (beforeChild && m_caption) {
-                    RenderObject* o = beforeChild->previousSibling();
-                    while (o && o != m_caption)
-                        o = o->previousSibling();
-                    if (!o)
-                        m_caption = 0;
+    if (child->isRenderBlock() && child->style()->display() == TABLE_CAPTION) {
+        // First caption wins.
+        if (beforeChild && m_caption) {
+            RenderObject* o = beforeChild->previousSibling();
+            while (o && o != m_caption)
+                o = o->previousSibling();
+            if (!o)
+                m_caption = 0;
+        }
+        if (!m_caption)
+            m_caption = static_cast<RenderBlock*>(child);
+        wrapInAnonymousSection = false;
+    } else if (child->isTableCol()) {
+        m_hasColElements = true;
+        wrapInAnonymousSection = false;
+    } else if (child->isTableSection()) {
+        switch (child->style()->display()) {
+            case TABLE_HEADER_GROUP:
+                if (child->isTableSection()) {
+                    resetSectionPointerIfNotBefore(m_head, beforeChild);
+                    if (!m_head) {
+                        m_head = static_cast<RenderTableSection*>(child);
+                    } else {
+                        resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+                        if (!m_firstBody) 
+                            m_firstBody = static_cast<RenderTableSection*>(child);
+                    }
                 }
-                if (!m_caption)
-                    m_caption = static_cast<RenderBlock*>(child);
-            }
-            wrapInAnonymousSection = false;
-            break;
-        case TABLE_COLUMN:
-        case TABLE_COLUMN_GROUP:
-            m_hasColElements = true;
-            wrapInAnonymousSection = false;
-            break;
-        case TABLE_HEADER_GROUP:
-            if (child->isTableSection()) {
-                resetSectionPointerIfNotBefore(m_head, beforeChild);
-                if (!m_head) {
-                    m_head = static_cast<RenderTableSection*>(child);
-                } else {
+                wrapInAnonymousSection = false;
+                break;
+            case TABLE_FOOTER_GROUP:
+                if (child->isTableSection()) {
+                    resetSectionPointerIfNotBefore(m_foot, beforeChild);
+                    if (!m_foot) {
+                        m_foot = static_cast<RenderTableSection*>(child);
+                        wrapInAnonymousSection = false;
+                        break;
+                    }
+                }
+                // Fall through.
+            case TABLE_ROW_GROUP:
+                if (child->isTableSection()) {
                     resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                    if (!m_firstBody) 
+                    if (!m_firstBody)
                         m_firstBody = static_cast<RenderTableSection*>(child);
                 }
-            }
-            wrapInAnonymousSection = false;
-            break;
-        case TABLE_FOOTER_GROUP:
-            if (child->isTableSection()) {
-                resetSectionPointerIfNotBefore(m_foot, beforeChild);
-                if (!m_foot) {
-                    m_foot = static_cast<RenderTableSection*>(child);
-                    wrapInAnonymousSection = false;
-                    break;
-                }
-            }
-            // Fall through.
-        case TABLE_ROW_GROUP:
-            if (child->isTableSection()) {
-                resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                if (!m_firstBody)
-                    m_firstBody = static_cast<RenderTableSection*>(child);
-            }
-            wrapInAnonymousSection = false;
-            break;
-        case TABLE_CELL:
-        case TABLE_ROW:
-            wrapInAnonymousSection = true;
-            break;
-        case BLOCK:
-        case BOX:
-        case COMPACT:
-        case INLINE:
-        case INLINE_BLOCK:
-        case INLINE_BOX:
-        case INLINE_TABLE:
-        case LIST_ITEM:
-        case NONE:
-        case RUN_IN:
-        case TABLE:
-            // Allow a form to just sit at the top level.
-            wrapInAnonymousSection = !isTableElement || !child->element() || !(child->element()->hasTagName(formTag) && document()->isHTMLDocument());
-
-            // FIXME: Allow the delete button container element to sit at the top level. This is needed until http://bugs.webkit.org/show_bug.cgi?id=11363 is fixed.
-            if (wrapInAnonymousSection && child->element() && child->element()->isHTMLElement() && static_cast<HTMLElement*>(child->element())->id() == DeleteButtonController::containerElementIdentifier)
                 wrapInAnonymousSection = false;
-            break;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
         }
+    } else if (child->isTableCell() || child->isTableRow()) {
+        wrapInAnonymousSection = true;
+    } else {
+        // Allow a form to just sit at the top level.
+        wrapInAnonymousSection = !isTableElement || !child->element() || !(child->element()->hasTagName(formTag) && document()->isHTMLDocument());
+
+        // FIXME: Allow the delete button container element to sit at the top level. This is needed until http://bugs.webkit.org/show_bug.cgi?id=11363 is fixed.
+        if (wrapInAnonymousSection && child->element() && child->element()->isHTMLElement() && static_cast<HTMLElement*>(child->element())->id() == DeleteButtonController::containerElementIdentifier)
+            wrapInAnonymousSection = false;
+    }
 
     if (!wrapInAnonymousSection) {
         // If the next renderer is actually wrapped in an anonymous table section, we need to go up and find that.

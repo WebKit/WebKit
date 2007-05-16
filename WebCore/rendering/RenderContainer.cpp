@@ -86,47 +86,24 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
 {
     bool needsTable = false;
 
-    if(!newChild->isText() && !newChild->isReplaced()) {
-        switch(newChild->style()->display()) {
-        case LIST_ITEM:
-            updateListMarkerNumbers(beforeChild ? beforeChild : m_lastChild);
-            break;
-        case INLINE:
-        case BLOCK:
-        case INLINE_BLOCK:
-        case RUN_IN:
-        case COMPACT:
-        case BOX:
-        case INLINE_BOX:
-        case TABLE:
-        case INLINE_TABLE:
-        case TABLE_COLUMN:
-            break;
-        case TABLE_COLUMN_GROUP:
-        case TABLE_CAPTION:
-        case TABLE_ROW_GROUP:
-        case TABLE_HEADER_GROUP:
-        case TABLE_FOOTER_GROUP:
-            if (!isTable())
-                needsTable = true;
-            break;
-        case TABLE_ROW:
-            if (!isTableSection())
-                needsTable = true;
-            break;
-        case TABLE_CELL:
-            if (!isTableRow())
-                needsTable = true;
-            // I'm not 100% sure this is the best way to fix this, but without this
-            // change we recurse infinitely when trying to render the CSS2 test page:
-            // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
-            // See Radar 2925291.
-            if (isTableCell() && !m_firstChild && !newChild->isTableCell())
-                needsTable = false;
-            break;
-        case NONE:
-            break;
-        }
+    if (newChild->isListItem())
+        updateListMarkerNumbers(beforeChild ? beforeChild : m_lastChild);
+    else if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
+        needsTable = !isTable();
+    else if (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
+        needsTable = !isTable();
+    else if (newChild->isTableSection())
+        needsTable = !isTable();
+    else if (newChild->isTableRow())
+        needsTable = !isTableSection();
+    else if (newChild->isTableCell()) {
+        needsTable = !isTableRow();
+        // I'm not 100% sure this is the best way to fix this, but without this
+        // change we recurse infinitely when trying to render the CSS2 test page:
+        // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
+        // See Radar 2925291.
+        if (needsTable && isTableCell() && !m_firstChild && !newChild->isTableCell())
+            needsTable = false;
     }
 
     if (needsTable) {
