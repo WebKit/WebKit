@@ -208,6 +208,10 @@ void ResourceHandleManager::receivedResponse(RequestQt* request)
     if (!client)
         return;
 
+    QStringList cookies = request->response.allValues("Set-Cookie");
+    foreach (QString c, cookies) {
+        setCookies(request->url, request->url, c);
+    }
     QString contentType = request->response.value("Content-Type");
     QString encoding;
     int idx = contentType.indexOf(QLatin1Char(';'));
