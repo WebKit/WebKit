@@ -1,3 +1,14 @@
+2007-05-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        - rdar://problem/4981886
+        - Now windows opened by the DOM can be closed by JS.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController windowCount]):
+
 2007-05-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by David Kilzer.

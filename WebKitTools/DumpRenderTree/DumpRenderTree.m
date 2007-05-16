@@ -1070,8 +1070,9 @@ static void dump(void)
             || aSelector == @selector(setCallCloseOnWebViews:)
             || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
             || aSelector == @selector(setUseDashboardCompatibilityMode:)
+            || aSelector == @selector(windowCount)
             || aSelector == @selector(addFileToPasteboardOnDrag))
-            return NO;
+        return NO;
     return YES;
 }
 
@@ -1232,6 +1233,11 @@ static void dump(void)
 - (void)dumpBackForwardList
 {
     dumpBackForwardList = YES;
+}
+
+- (int)windowCount
+{
+    return CFArrayGetCount(allWindowsRef);
 }
 
 - (void)dumpChildFrameScrollPositions

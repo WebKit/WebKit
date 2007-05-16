@@ -341,8 +341,8 @@ namespace WebCore {
 
         Frame* opener();
         void setOpener(Frame*);
-        bool openedByJavaScript();
-        void setOpenedByJavaScript();
+        bool openedByDOM() const;
+        void setOpenedByDOM();
 
         void provisionalLoadStarted();
 
@@ -620,7 +620,7 @@ namespace WebCore {
         Frame* m_opener;
         HashSet<Frame*> m_openedFrames;
 
-        bool m_openedByJavaScript;
+        bool m_openedByDOM;
 
         bool m_creatingInitialEmptyDocument;
         bool m_committedFirstRealDocumentLoad;

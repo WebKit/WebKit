@@ -1,3 +1,20 @@
+2007-05-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        - rdar://problem/4981886
+        - Now windows opened by the DOM can be closed by JS.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::WindowFunc::callAsFunction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::openedByDOM):
+        (WebCore::FrameLoader::setOpenedByDOM):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        * loader/FrameLoader.h:
+
 2007-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

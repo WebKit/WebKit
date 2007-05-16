@@ -1,3 +1,15 @@
+2007-05-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        - rdar://problem/4981886
+        - Added tests for allowing JS to close a window that was opened by the DOM.
+
+        * fast/dom/open-and-close-by-DOM-expected.txt: Added.
+        * fast/dom/open-and-close-by-DOM.html: Added.
+        * fast/dom/resources/close.html: Added.
+        * fast/dom/resources/middle.html: Added.
+
 2007-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
