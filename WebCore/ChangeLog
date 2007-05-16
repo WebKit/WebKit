@@ -1,3 +1,13 @@
+2007-05-16  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Fix shared timers, make them use miliseconds. Based
+        on a patch from George.
+
+        * WebCore/platform/qt/SharedTimerQt.cpp:
+       (WebCore::setSharedTimerFireTime):
+
 2007-05-16  David Hyatt  <hyatt@apple.com>
 
         Add rudimentary error reporting to the HTML parser.  This is disabled
