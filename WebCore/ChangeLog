@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        - Implement drawArc with proper units.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokeArc):
+
+2007-05-15  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
         - Add missing paint for nested subframes.
 
         * platform/qt/WidgetQt.cpp:
