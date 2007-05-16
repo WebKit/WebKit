@@ -1,3 +1,13 @@
+2007-05-16  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        pass the mouse events to the event handler, not the frameview.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::mouseMoveEvent):
+        (QWebFrame::mouseReleaseEvent):
+
 2007-05-14  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

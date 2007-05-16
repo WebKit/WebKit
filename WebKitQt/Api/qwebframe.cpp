@@ -266,7 +266,7 @@ void QWebFrame::mouseMoveEvent(QMouseEvent *ev)
     if (!d->frameView)
         return;
 
-    d->frameView->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
+    d->eventHandler->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
     const int xOffset = horizontalScrollBar()->value();
     const int yOffset = verticalScrollBar()->value();
     IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
@@ -291,7 +291,7 @@ void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
     if (!d->frameView)
         return;
 
-    d->frameView->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+    d->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
 }
 
 void QWebFrame::wheelEvent(QWheelEvent *e)
