@@ -1,3 +1,16 @@
+2007-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=13722
+          Finish testing and fixing the setting of DOM attributes to JS null
+
+          Convert JS null to null string for CanvasRenderingContext2D attributes.
+
+        Test: fast/dom/canvasContext2d-element-attribute-js-null.html
+
+        * html/CanvasRenderingContext2D.idl:
+
 2007-05-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam and Geoff.

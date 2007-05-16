@@ -39,20 +39,20 @@ module html {
         void translate(in float tx, in float ty);
 
         attribute float globalAlpha;
-        attribute DOMString globalCompositeOperation;
+        attribute [ConvertNullToNullString] DOMString globalCompositeOperation;
 
         CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
         CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
 
         attribute float lineWidth;
-        attribute DOMString lineCap;
-        attribute DOMString lineJoin;
+        attribute [ConvertNullToNullString] DOMString lineCap;
+        attribute [ConvertNullToNullString] DOMString lineJoin;
         attribute float miterLimit;
 
         attribute float shadowOffsetX;
         attribute float shadowOffsetY;
         attribute float shadowBlur;
-        attribute DOMString shadowColor;
+        attribute [ConvertNullToNullString] DOMString shadowColor;
 
         void clearRect(in float x, in float y, in float width, in float height)
             raises (DOMException);
