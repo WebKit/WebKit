@@ -23,7 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [LegacyParent=KJS::DOMCSSStyleDeclaration, GenerateConstructor] CSSStyleDeclaration {
 #if !defined(LANGUAGE_JAVASCRIPT)
-                 attribute DOMString        cssText
+                 attribute [ConvertNullToNullString] DOMString        cssText
                      setter raises(DOMException);
 
         DOMString          getPropertyValue(in DOMString propertyName);

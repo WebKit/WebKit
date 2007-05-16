@@ -37,7 +37,7 @@ module css {
 
                  // FIXME: DOM spec says that this can raise an
                  // exception on setting.
-                 attribute DOMString        cssText
+                 attribute [ConvertNullToNullString] DOMString        cssText
                      /*setter raises (DOMException)*/;
 
         readonly attribute CSSStyleSheet    parentStyleSheet;

@@ -25,7 +25,7 @@ module css {
 
                  // FIXME: DOM spec says that this can raise an
                  // exception on setting.
-                 attribute DOMString        selectorText
+                 attribute [ConvertNullToNullString] DOMString        selectorText
                      /*setter raises(DOMException)*/;
 
         readonly attribute CSSStyleDeclaration  style;

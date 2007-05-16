@@ -28,7 +28,7 @@ module stylesheets {
     // Introduced in DOM Level 2:
     interface MediaList {
 
-                 attribute DOMString mediaText
+                 attribute [ConvertNullToNullString] DOMString mediaText
                      setter raises(DOMException);
         readonly attribute unsigned long length;
 

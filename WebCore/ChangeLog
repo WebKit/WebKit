@@ -1,3 +1,26 @@
+2007-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        - Second Patch for http://bugs.webkit.org/show_bug.cgi?id=13722
+          Finish testing and fixing the setting of DOM attributes to JS null
+
+          Convert JS null to null string for remaining CSSOM attributes.
+
+        Test: fast/dom/css-element-attribute-js-null.html
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put):
+        (KJS::DOMMediaList::put):
+        (KJS::DOMCSSRule::putValueProperty):
+        (KJS::DOMCSSValue::put):
+        * css/CSSPageRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+
 2007-05-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

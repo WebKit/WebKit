@@ -214,7 +214,7 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
   DOMExceptionTranslator exception(exec);
   CSSStyleDeclaration &styleDecl = *m_impl;
   if (propertyName == "cssText") {
-    styleDecl.setCssText(value->toString(exec), exception);
+    styleDecl.setCssText(valueToStringWithNullCheck(exec, value), exception);
   } else {
     if (isCSSPropertyName(propertyName)) {
       bool pixelOrPos;
@@ -539,7 +539,7 @@ void DOMMediaList::put(ExecState* exec, const Identifier &propertyName, JSValue*
   DOMExceptionTranslator exception(exec);
   MediaList &mediaList = *m_impl;
   if (propertyName == "mediaText")
-    mediaList.setMediaText(value->toString(exec), exception);
+    mediaList.setMediaText(valueToStringWithNullCheck(exec, value), exception);
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
@@ -820,17 +820,17 @@ void DOMCSSRule::putValueProperty(ExecState* exec, int token, JSValue* value, in
   switch (token) {
   // for STYLE_RULE:
   case Style_SelectorText:
-    static_cast<CSSStyleRule*>(m_impl.get())->setSelectorText(value->toString(exec));
+    static_cast<CSSStyleRule*>(m_impl.get())->setSelectorText(valueToStringWithNullCheck(exec, value));
     return;
 
   // for PAGE_RULE:
   case Page_SelectorText:
-    static_cast<CSSPageRule*>(m_impl.get())->setSelectorText(value->toString(exec));
+    static_cast<CSSPageRule*>(m_impl.get())->setSelectorText(valueToStringWithNullCheck(exec, value));
     return;
 
   // for CHARSET_RULE:
   case Charset_Encoding:
-    static_cast<CSSCharsetRule*>(m_impl.get())->setEncoding(value->toString(exec));
+    static_cast<CSSCharsetRule*>(m_impl.get())->setEncoding(valueToStringWithNullCheck(exec, value));
     return;
   }
 }
@@ -915,7 +915,7 @@ void DOMCSSValue::put(ExecState* exec, const Identifier &propertyName, JSValue* 
 {
   CSSValue &cssValue = *m_impl;
   if (propertyName == "cssText")
-    cssValue.setCssText(value->toString(exec));
+    cssValue.setCssText(valueToStringWithNullCheck(exec, value));
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
