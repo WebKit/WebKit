@@ -1,3 +1,9 @@
+2007-05-16  Lars Knoll <lars@trolltech.com>
+
+        Update layout tests for error handling changes.
+
+        * qt/fast/dom/delete-contents-expected.txt:
+
 2007-05-15  Lars Knoll <lars@trolltech.com>
 
         Update test result now that we have the eventSender object.
