@@ -260,7 +260,7 @@ void FrameLoader::init()
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->finishedLoading();
     begin();
-    write("<body>");
+    write("<html><body>");
     end();
     m_frame->document()->cancelParsing();
     m_creatingInitialEmptyDocument = false;

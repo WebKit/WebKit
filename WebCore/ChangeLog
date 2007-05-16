@@ -1,3 +1,12 @@
+2007-05-15  David Hyatt  <hyatt@apple.com>
+
+        Make FrameLoader write "<html><body>" instead of just "<body>".
+
+        Reviewed by aroben
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+
 2007-05-15  George Staikos  <staikos@kde.org>
 
         Reviewed by Adam Roben.
