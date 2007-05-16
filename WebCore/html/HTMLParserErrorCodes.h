@@ -34,8 +34,6 @@ enum HTMLParserErrorCode {
     RedundantHTMLBodyError,
     BadObjectContentError,
     MisplacedAreaError,
-    MisplacedCaptionError,
-    MisplacedCaptionInTableError,
     IgnoredContentError,
     MisplacedFramesetContentError,
     MisplacedContentRetryError,

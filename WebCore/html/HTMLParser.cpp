@@ -420,25 +420,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return true;
             }
             return false;
-        } else if (h->hasLocalName(captionTag)) {
-            if (isTablePart(current)) {
-                reportError(MisplacedCaptionInTableError, &current->localName());
-                Node* tsection = current;
-                if (current->hasTagName(trTag))
-                    tsection = current->parent();
-                else if (current->hasTagName(tdTag) || current->hasTagName(thTag))
-                    tsection = current->parent()->parent();
-                Node* table = tsection->parent();
-                ExceptionCode ec = 0;
-                table->insertBefore(n, tsection, ec);
-                pushBlock(localName, tagPriority);
-                setCurrent(n);
-                inStrayTableContent++;
-                blockStack->strayTableContent = true;
-                return true;
-            } else
-                reportError(MisplacedCaptionError);
-        } else if (h->hasLocalName(colgroupTag)) {
+        } else if (h->hasLocalName(colgroupTag) || h->hasLocalName(captionTag)) {
             if (isTableRelated(current)) {
                 while (blockStack && isTablePart(current))
                     popOneBlock();

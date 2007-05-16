@@ -36,8 +36,6 @@ const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode errorCode)
         "Extra %tag1 encountered.  Migrating attributes back to the original %tag1 element and ignoring the tag.",
         "%tag1 is not allowed inside <object>. Skipping all content until </object> is encountered.",
         "<area> is not allowed inside %tag1. Moving the <area> into the nearest enclosing <map>.",
-        "<caption> found outside of a table.  Content ignored.",
-        "<caption> is not allowed inside %tag1. Moving the <caption> into the enclosing table before all table sections.",
         "%tag1 is not allowed inside %tag2. Content ignored.",
         "%tag1 is not allowed in a <frameset> page. Content ignored.",
         "%tag1 is not allowed inside %tag2. Closing %tag2 and trying the insertion again.",

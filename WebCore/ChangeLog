@@ -1,3 +1,22 @@
+2007-05-16  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5204107> REGRESSION: CSS web forum site 
+        layout not displaying properly in latest WebKit
+
+        Hyatt's http://trac.webkit.org/projects/webkit/changeset/21428 
+        exposed this bug. We were not handling error cases with <caption> 
+        correctly. This patch makes them do the same thing as colgroup.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        * html/HTMLParserErrorCodes.cpp: No need any more for caption-
+        specific errors.
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+        (WebCore::):
+
 2007-05-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin and Geoff.

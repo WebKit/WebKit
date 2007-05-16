@@ -1,3 +1,32 @@
+2007-05-16  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Changes for <rdar://problem/5204107> REGRESSION: CSS web forum site 
+        layout not displaying properly in latest WebKit
+
+        New test:
+        * fast/table/tableInsideCaption-expected.checksum: Added.
+        * fast/table/tableInsideCaption-expected.png: Added.
+        * fast/table/tableInsideCaption-expected.txt: Added.
+        * fast/table/tableInsideCaption.html: Added.
+        
+        Good changes.
+        * tables/mozilla/bugs/bug48028-1-expected.checksum:
+        * tables/mozilla/bugs/bug48028-1-expected.png:
+        * tables/mozilla/bugs/bug48028-1-expected.txt:
+        * tables/mozilla_expected_failures/core/captions1-
+        expected.checksum:
+        * tables/mozilla_expected_failures/core/captions1-expected.png:
+        * tables/mozilla_expected_failures/core/captions1-expected.txt:
+
+        Not great changes. These changes expose other bugs. Filing reports 
+        for these.
+        * tables/mozilla/bugs/bug48028-2-expected.txt:
+        * tables/mozilla/bugs/bug55789-expected.checksum:
+        * tables/mozilla/bugs/bug55789-expected.png:
+        * tables/mozilla/bugs/bug55789-expected.txt:
+
 2007-05-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin and Geoff.
