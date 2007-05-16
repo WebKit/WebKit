@@ -468,6 +468,7 @@ SOURCES += \
     html/HTMLParagraphElement.cpp \
     html/HTMLParamElement.cpp \
     html/HTMLParser.cpp \
+    html/HTMLParserErrorCodes.cpp \
     html/HTMLPlugInElement.cpp \
     html/HTMLPreElement.cpp \
     html/HTMLQuoteElement.cpp \
