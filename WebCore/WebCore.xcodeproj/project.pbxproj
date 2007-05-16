@@ -2750,6 +2750,8 @@
 		BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3FCAA90AC3DB5800BA54AD /* PlatformScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */; settings = {ATTRIBUTES = (); }; };
+		BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */; };
+		BC588B4B0BFA723C00EE679E /* HTMLParserErrorCodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */; };
 		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
 		BC6D6DD309AF906600F59759 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6DD109AF906600F59759 /* Font.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5957,6 +5959,8 @@
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
 		BC3B364705C9D5E200E42902 /* AtomicStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScrollBar.h; sourceTree = "<group>"; };
+		BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParserErrorCodes.h; sourceTree = "<group>"; };
+		BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserErrorCodes.cpp; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
 		BC6D6DD009AF906600F59759 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
 		BC6D6DD109AF906600F59759 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
@@ -8212,6 +8216,8 @@
 				1AE2AB720A1CE81500B42B25 /* HTMLParamElement.idl */,
 				F523D25002DE4396018635CA /* HTMLParser.cpp */,
 				F523D25102DE4396018635CA /* HTMLParser.h */,
+				BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */,
+				BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */,
 				A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */,
 				A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */,
 				A8EA7C9F0A192B9C00A8EF5F /* HTMLPreElement.cpp */,
@@ -11271,6 +11277,7 @@
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 				37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */,
+				BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12645,6 +12652,7 @@
 				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
 				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
 				37919C190BF375DD00956998 /* ShapeArabic.c in Sources */,
+				BC588B4B0BFA723C00EE679E /* HTMLParserErrorCodes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -93,6 +93,8 @@ public:
     virtual int lineNumber() const { return lineno; }
     virtual int columnNumber() const { return 1; }
 
+    int tagStartLineNumber() const { return tagStartLineno; }
+
 private:
     class State;
 

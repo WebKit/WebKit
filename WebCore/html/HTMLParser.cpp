@@ -47,6 +47,7 @@
 #include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "Settings.h"
 #include "Text.h"
 
@@ -118,6 +119,7 @@ HTMLParser::HTMLParser(HTMLDocument* doc)
     , haveContent(false)
     , haveFrameSet(false)
     , m_isParsingFragment(false)
+    , m_reportErrors(false)
     , inStrayTableContent(0)
 {
 }
@@ -132,6 +134,7 @@ HTMLParser::HTMLParser(DocumentFragment* frag)
     , haveContent(false)
     , haveFrameSet(false)
     , m_isParsingFragment(true)
+    , m_reportErrors(false)
     , inStrayTableContent(0)
 {
     if (frag)
@@ -327,21 +330,21 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
     bool handled = false;
 
     // 1. Check out the element's tag name to decide how to deal with errors.
-    if (n->isTextNode()) {
-        if (current->hasTagName(selectTag))
-            return false;
-    } else if (n->isHTMLElement()) {
+    if (n->isHTMLElement()) {
         HTMLElement* h = static_cast<HTMLElement*>(n);
         if (h->hasLocalName(trTag) || h->hasLocalName(thTag) || h->hasLocalName(tdTag)) {
             if (inStrayTableContent && !isTableRelated(current)) {
+                reportError(MisplacedTablePartError, &localName, &current->localName());
                 // pop out to the nearest enclosing table-related tag.
                 while (blockStack && !isTableRelated(current))
                     popOneBlock();
                 return insertNode(n);
             }
         } else if (h->hasLocalName(headTag)) {
-            if (!current->isDocumentNode() && !current->hasTagName(htmlTag))
+            if (!current->isDocumentNode() && !current->hasTagName(htmlTag)) {
+                reportError(MisplacedHeadError);
                 return false;
+            }
         } else if (h->hasLocalName(metaTag) || h->hasLocalName(linkTag) || h->hasLocalName(baseTag)) {
             if (!head)
                 createHead();
@@ -356,6 +359,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
         } else if (h->hasLocalName(htmlTag)) {
             if (!current->isDocumentNode() ) {
                 if (document->firstChild()->hasTagName(htmlTag)) {
+                    reportError(RedundantHTMLBodyError, &localName);
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
                     NamedAttrMap* map = static_cast<Element*>(n)->attributes(true);
@@ -393,6 +397,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 // we have another <BODY> element.... apply attributes to existing one
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
+                reportError(RedundantHTMLBodyError, &localName);
                 NamedAttrMap* map = static_cast<Element*>(n)->attributes(true);
                 Element* existingBody = document->body();
                 NamedAttrMap* bmap = existingBody->attributes(false);
@@ -405,21 +410,9 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             }
             else if (!current->isDocumentNode())
                 return false;
-        } else if (h->hasLocalName(inputTag)) {
-            if (equalIgnoringCase(h->getAttribute(typeAttr), "hidden") && m_currentFormElement) {
-                m_currentFormElement->addChild(n);
-                if (!n->attached() && !m_isParsingFragment)
-                    n->attach();
-                return true;
-            }
-        } else if (h->hasLocalName(ddTag) || h->hasLocalName(dtTag)) {
-            e = new HTMLDListElement(document);
-            if (insertNode(e)) {
-                insertNode(n);
-                return true;
-            }
         } else if (h->hasLocalName(areaTag)) {
             if (m_currentMapElement) {
+                reportError(MisplacedAreaError, &current->localName());
                 m_currentMapElement->addChild(n);
                 if (!n->attached() && !m_isParsingFragment)
                     n->attach();
@@ -429,6 +422,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             return false;
         } else if (h->hasLocalName(captionTag)) {
             if (isTablePart(current)) {
+                reportError(MisplacedCaptionInTableError, &current->localName());
                 Node* tsection = current;
                 if (current->hasTagName(trTag))
                     tsection = current->parent();
@@ -442,27 +436,18 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 inStrayTableContent++;
                 blockStack->strayTableContent = true;
                 return true;
-            }
-        } else if (h->hasLocalName(theadTag) || h->hasLocalName(tbodyTag) ||
-                   h->hasLocalName(tfootTag) || h->hasLocalName(colgroupTag)) {
+            } else
+                reportError(MisplacedCaptionError);
+        } else if (h->hasLocalName(colgroupTag)) {
             if (isTableRelated(current)) {
                 while (blockStack && isTablePart(current))
                     popOneBlock();
                 return insertNode(n);
             }
         }
-    } else if (n->isCommentNode() && !head) { 
-        head = new HTMLHeadElement(document);
-        e = head;
-        insertNode(e);
-        if (head) {
-            head->addChild(n);
-            if (!n->attached() && !m_isParsingFragment)
-                n->attach();
-        }
-        return true;
-    }
-    
+    } else if (n->isCommentNode() && !head)
+        return false;
+
     // 2. Next we examine our currently active element to do some further error handling.
     if (current->isHTMLElement()) {
         HTMLElement* h = static_cast<HTMLElement*>(current);
@@ -491,7 +476,8 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     startBody();
                     insertNode(e);
                     handled = true;
-                }
+                } else
+                    reportError(MisplacedFramesetContentError, &localName);
             }
         } else if (h->hasLocalName(headTag)) {
             if (n->hasTagName(htmlTag))
@@ -504,19 +490,23 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     startBody();
                     insertNode(e);
                     handled = true;
-                }
+                } else
+                    reportError(MisplacedFramesetContentError, &localName);
             }
         } else if (h->hasLocalName(addressTag) || h->hasLocalName(dlTag) || h->hasLocalName(dtTag)
                    || h->hasLocalName(fontTag) || h->hasLocalName(styleTag) || h->hasLocalName(titleTag)) {
+            reportError(MisplacedContentRetryError, &localName, &currentTagName);
             popBlock(currentTagName);
             handled = true;
         } else if (h->hasLocalName(captionTag)) {
             // Illegal content in a caption. Close the caption and try again.
+            reportError(MisplacedCaptionContentError, &localName);
             popBlock(currentTagName);
             if (isTablePart(n))
                 return insertNode(n, flat);
         } else if (h->hasLocalName(tableTag) || h->hasLocalName(trTag) || isTableSection(h)) {
             if (n->hasTagName(tableTag)) {
+                reportError(MisplacedTableError, &currentTagName);
                 popBlock(localName); // end the table
                 handled = true;      // ...and start a new one
             } else {
@@ -556,6 +546,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                             return false;
                         parent->insertBefore(n, node, ec);
                         if (!ec) {
+                            reportError(StrayTableContentError, &localName, &currentTagName);
                             if (n->isHTMLElement() && tagPriority > 0 && 
                                 !flat && static_cast<HTMLElement*>(n)->endTagRequirement() != TagStatusForbidden)
                             {
@@ -569,29 +560,27 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     }
 
                     if (!ec) {
-                        if (current->hasTagName(trTag))
+                        if (current->hasTagName(trTag)) {
+                            reportError(TablePartRequiredError, &localName, &tdTag.localName());
                             e = new HTMLTableCellElement(tdTag, document);
-                        else if (current->hasTagName(tableTag))
+                        } else if (current->hasTagName(tableTag)) {
+                            // Don't report an error in this case, since making a <tbody> happens all the time when you have <table><tr>,
+                            // and it isn't really a parse error per se.
                             e = new HTMLTableSectionElement(tbodyTag, document); 
-                        else
+                        } else {
+                            reportError(TablePartRequiredError, &localName, &trTag.localName());
                             e = new HTMLTableRowElement(document);
-                        
+                        }
+
                         insertNode(e);
                         handled = true;
                     }
                 }
             }
         } else if (h->hasLocalName(objectTag)) {
+            reportError(BadObjectContentError, &localName);
             setSkipMode(objectTag);
             return false;
-        } else if (h->hasLocalName(ulTag) || h->hasLocalName(olTag) ||
-                 h->hasLocalName(dirTag) || h->hasLocalName(menuTag)) {
-            e = new HTMLDivElement(document);
-            insertNode(e);
-            handled = true;
-        } else if (h->hasLocalName(selectTag)) {
-            if (isInline(n))
-                return false;
         } else if (h->hasLocalName(pTag) || isHeaderTag(currentTagName)) {
             if (!isInline(n)) {
                 popBlock(currentTagName);
@@ -617,6 +606,12 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             }
         }
     } else if (current->isDocumentNode()) {
+        if (n->isTextNode()) {
+            Text* t = static_cast<Text*>(n);
+            if (t->containsOnlyWhitespace())
+                return false;
+        }
+
         if (current->firstChild() == 0 || !current->firstChild()->isHTMLElement()) {
             e = new HTMLHtmlElement(document);
             insertNode(e);
@@ -625,8 +620,10 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
     }
 
     // 3. If we couldn't handle the error, just return false and attempt to error-correct again.
-    if (!handled)
+    if (!handled) {
+        reportError(IgnoredContentError, &localName, &current->localName());
         return false;
+    }
     return insertNode(n);
 }
 
@@ -650,7 +647,8 @@ bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<Node>& result)
     if (!head || current->localName() == htmlTag) {
         head = new HTMLHeadElement(document);
         result = head;
-    }
+    } else
+        reportError(MisplacedHeadError);
     return false;
 }
 
@@ -1424,6 +1422,46 @@ void HTMLParser::finished()
     // Warning, this may delete the tokenizer and parser, so don't try to do anything else after this.
     if (!m_isParsingFragment)
         document->finishedParsing();
+}
+
+void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const AtomicString* tagName1, const AtomicString* tagName2)
+{    
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+    
+    Page* page = frame->page();
+    if (!page)
+        return;
+
+    HTMLTokenizer* htmlTokenizer = static_cast<HTMLTokenizer*>(document->tokenizer());
+    int lineNumber = htmlTokenizer->tagStartLineNumber() + 1;
+
+    AtomicString tag1;
+    AtomicString tag2;
+    if (tagName1) {
+        if (*tagName1 == "#text")
+            tag1 = "Text";
+        else if (*tagName1 == "#comment")
+            tag1 = "<!-- comment -->";
+        else
+            tag1 = "<" + *tagName1 + ">";
+    }
+    if (tagName2) {
+        if (*tagName2 == "#text")
+            tag2 = "Text";
+        else if (*tagName2 == "#comment")
+            tag2 = "<!-- comment -->";
+        else
+            tag2 = "<" + *tagName2 + ">";
+    }
+        
+    const char* errorMsg = htmlParserErrorMessageTemplate(errorCode);
+    String message(errorMsg);
+    message.replace("%tag1", tag1);
+    message.replace("%tag2", tag2);
+
+    page->chrome()->addMessageToConsole(message, lineNumber, document->URL());
 }
 
 }
