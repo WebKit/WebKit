@@ -28,7 +28,7 @@ module svg {
     interface [Conditional=SVG] SVGScriptElement : SVGElement,
                                                    SVGURIReference,
                                                    SVGExternalResourcesRequired {
-                 attribute DOMString type
+                 attribute [ConvertNullToNullString] DOMString type
                      /*setter raises(DOMException)*/;
     };
 

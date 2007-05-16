@@ -41,7 +41,7 @@ module svg {
         readonly attribute unsigned short unitType;
                  attribute float          value;
                  attribute float          valueInSpecifiedUnits;
-                 attribute DOMString      valueAsString;
+                 attribute [ConvertNullToNullString] DOMString      valueAsString;
 
         void newValueSpecifiedUnits(in unsigned short unitType, 
                                     in float valueInSpecifiedUnits);

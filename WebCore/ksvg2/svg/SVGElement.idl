@@ -25,9 +25,9 @@
 module svg {
 
     interface [GenerateNativeConverter, Conditional=SVG] SVGElement : Element {
-                 attribute DOMString id
+                 attribute [ConvertNullToNullString] DOMString id
                      setter raises(DOMException);
-                 attribute DOMString xmlbase
+                 attribute [ConvertNullToNullString] DOMString xmlbase
                      setter raises(DOMException);
         readonly attribute SVGSVGElement ownerSVGElement;
         readonly attribute SVGElement viewportElement;
