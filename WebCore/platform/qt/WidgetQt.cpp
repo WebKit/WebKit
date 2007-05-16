@@ -204,9 +204,10 @@ void Widget::unlockDrawingFocus(GraphicsContext*)
     notImplemented();
 }
 
-void Widget::paint(GraphicsContext*, const IntRect&)
+void Widget::paint(GraphicsContext *, const IntRect &rect)
 {
-    notImplemented();
+    if (data->canvas())
+        data->canvas()->update(rect);
 }
 
 void Widget::enableFlushDrawing()

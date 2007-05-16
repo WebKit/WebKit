@@ -1,3 +1,12 @@
+2007-05-15  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        - Add missing paint for nested subframes.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::paint):
+
 2007-05-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
