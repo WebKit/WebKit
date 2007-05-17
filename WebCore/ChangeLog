@@ -1,3 +1,18 @@
+2007-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5191024> Page never loads completely (emonome.vodpod.com)
+        <rdar://problem/5205162> REGRESSION (r21367): In the Address URL field, typing a site name doesn't redirect to site after pressing return
+        http://bugs.webkit.org/show_bug.cgi?id=13683
+        <rdar://problem/5208951> REGRESSION: Progress bar never completes on link click that downloads (13694)
+        http://bugs.webkit.org/show_bug.cgi?id=13694
+        <rdar://problem/5201598> REGRESSION: After uploading file to iDisk at mac.com, "loading" status remains and file does not appear in the list
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::mainReceivedCompleteError): Make sure to always check whether the overall
+        load completed, even if we think the current frame load is already complete.
+
 2007-05-16  dethbakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
