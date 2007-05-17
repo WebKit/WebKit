@@ -89,6 +89,7 @@ private:
     virtual bool hasLineIfEmpty() const { return true; }
 
     void createInnerBlock();
+    void adjustInnerStyle();
     void setText(const String&);
     void setTextFromOption(int optionIndex);
     void updateOptionsWidth();

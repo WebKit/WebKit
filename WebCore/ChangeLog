@@ -1,3 +1,18 @@
+2007-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix for <rdar://problem/5096035> REGRESSION: rtl text should be left-aligned in <select>s
+
+        Test: fast/text/international/bidi-menulist.html
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Set the inner block style to direction: ltr, and text-align: left.  This means that
+         we will ignore those settings in the button to match the way the text is displayed in the popup menu.
+        (WebCore::RenderMenuList::createInnerBlock): Call adjustInnerStyle.
+        (WebCore::RenderMenuList::setStyle): ditto.
+        * rendering/RenderMenuList.h: Added adjustInnerStyle.
+
 2007-05-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

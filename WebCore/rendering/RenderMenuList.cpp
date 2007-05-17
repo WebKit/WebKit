@@ -72,8 +72,15 @@ void RenderMenuList::createInnerBlock()
     // Create an anonymous block.
     ASSERT(!firstChild());
     m_innerBlock = createAnonymousBlock();
-    m_innerBlock->style()->setBoxFlex(1.0f);
+    adjustInnerStyle();
     RenderFlexibleBox::addChild(m_innerBlock);
+}
+
+void RenderMenuList::adjustInnerStyle()
+{
+    m_innerBlock->style()->setBoxFlex(1.0f);
+    m_innerBlock->style()->setDirection(LTR);
+    m_innerBlock->style()->setTextAlign(LEFT);
 }
 
 void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -100,7 +107,7 @@ void RenderMenuList::setStyle(RenderStyle* newStyle)
     if (m_buttonText)
         m_buttonText->setStyle(newStyle);
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
-        m_innerBlock->style()->setBoxFlex(1.0f);
+        adjustInnerStyle();
     setReplaced(isInline());
     if (fontChanged)
         updateOptionsWidth();

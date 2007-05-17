@@ -1,3 +1,14 @@
+2007-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Test for <rdar://problem/5096035> REGRESSION: rtl text should be left-aligned in <select>s
+
+        * fast/text/international/bidi-menulist-expected.checksum: Added.
+        * fast/text/international/bidi-menulist-expected.png: Added.
+        * fast/text/international/bidi-menulist-expected.txt: Added.
+        * fast/text/international/bidi-menulist.html: Added.
+
 2007-05-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
