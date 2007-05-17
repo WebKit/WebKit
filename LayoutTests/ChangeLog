@@ -1,3 +1,20 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/execCommand/4924441-expected.checksum: Added.
+        * editing/execCommand/4924441-expected.png: Added.
+        * editing/execCommand/4924441-expected.txt: Added.
+        * editing/execCommand/4924441.html: Added.
+        * editing/execCommand/5207369-expected.checksum: Added.
+        * editing/execCommand/5207369-expected.png: Added.
+        * editing/execCommand/5207369-expected.txt: Added.
+        * editing/execCommand/5207369.html: Added.
+        * editing/execCommand/5210032-expected.checksum: Added.
+        * editing/execCommand/5210032-expected.png: Added.
+        * editing/execCommand/5210032-expected.txt: Added.
+        * editing/execCommand/5210032.html: Added.
+
 2007-05-17  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Brady

@@ -1,3 +1,20 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4924441> List becomes nested when changing its type
+        <rdar://problem/5210032> Content before a list is placed at the end of the list when its made into a list item
+        <rdar://problem/5207369> Crash when removing ordering from a nested list
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        The outermostEnclosingList of the position before the start isn't
+        the previousList if it contains the start.
+        Ditto for the position after the end and the nextList.
+        If we're putting the newly created list item into the next list,
+        insert it at the start of that list, not the end (don't append).
+        Avoid nesting newly created lists inside list items.
+        
 2007-05-17  Patti Hoa  <patti@apple.com>
 
         Reviewed by Darin.

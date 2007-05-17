@@ -1,0 +1,9 @@
+<p>This tests for a crash when trying to flatten a list containing a sub-list at the end. You shouldn't get a crash and there should be a single level list below.</p>
+<div id="div" contenteditable="true"><ul><li>One</li><li>Two</li><ul><li>Three</li><li>Four</li></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("InsertUnorderedList");
+</script>
