@@ -189,10 +189,12 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
     CachedResource* object = request->cachedResource();    
 
     // Set the data.
-    if (request->isMultipart())
+    if (request->isMultipart()) {
         // The loader delivers the data in a multipart section all at once, send eof.
-        object->data(loader->resourceData(), true);
-    else if (request->isIncremental())
+        // The resource data will change as the next part is loaded, so we need to make a copy.
+        SharedBuffer* copiedData = new SharedBuffer(data, size);
+        object->data(copiedData, true);
+    } else if (request->isIncremental())
         object->data(loader->resourceData(), false);
 }
 

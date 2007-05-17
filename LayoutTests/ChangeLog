@@ -1,3 +1,27 @@
+2007-05-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Brady
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13759
+          REGRESSION (r20182-r20184): Incorrect rendering of multipart images
+
+        Created http/tests/multipart and moved the existing multipart test there.
+
+        * http/tests/misc/multipart-expected.txt: Removed.
+        * http/tests/misc/multipart.html: Removed.
+        * http/tests/misc/resources/1x1-blue.png: Removed.
+        * http/tests/misc/resources/multipart.php: Removed.
+        * http/tests/multipart/invalid-image-data-expected.checksum: Added.
+        * http/tests/multipart/invalid-image-data-expected.png: Added.
+        * http/tests/multipart/invalid-image-data-expected.txt: Added.
+        * http/tests/multipart/invalid-image-data.html: Added.
+        * http/tests/multipart/resources/2x2-green.png: Added. Shared by both
+        multipart tests.
+        * http/tests/multipart/resources/abe.png: Added.
+        * http/tests/multipart/resources/multipart.php: Added. Shared by both
+        multipart tests.
+        * http/tests/multipart/stop-crash.html: Renamed from misc/multipart.html.
+
 2007-05-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

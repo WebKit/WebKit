@@ -1,3 +1,17 @@
+2007-05-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Brady
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13759
+          REGRESSION (r20182-r20184): Incorrect rendering of multipart images
+
+        Test: http/tests/multipart/invalid-image-data.html
+
+        * loader/loader.cpp:
+        (WebCore::Loader::didReceiveData): Make a copy of the current part's data
+        instead of using the resource data, because the latter is going to be
+        overwritten by the new part being received.
+
 2007-05-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Justin.
