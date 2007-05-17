@@ -1,3 +1,14 @@
+2007-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5207156> Hamachi test tool causes assertion in FormCompletionController in Safari
+
+        Update for WebCore changes.
+        
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+
 2007-05-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam and Geoff.

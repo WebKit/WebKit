@@ -1,3 +1,23 @@
+2007-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5207156> Hamachi test tool causes assertion in FormCompletionController in Safari
+
+        This happens because the form delegate gets passed the wrong source frame during the second submit().
+        If a frame with the given name is found, FrameLoader::load is called with the same parameters on the found frame.
+        This causes the found frame to be used as the source frame, which is wrong.
+        
+        The fix is to create the form state object before checking what frame to load the new request in. 
+        
+        * WebCore.exp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        * loader/FrameLoader.h:
+        * manual-tests/submit-form-with-target-twice.html: Added.
+
 2007-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

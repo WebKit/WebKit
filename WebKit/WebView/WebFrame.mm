@@ -325,7 +325,7 @@ WebView *getWebView(WebFrame *webFrame)
         [childFrame loadArchive:archive];
     else
         [childFrame _frameLoader]->load(URL, referrer, childLoadType,
-            String(), nil, 0, HashMap<String, String>());
+                                        String(), 0, 0);
 }
 
 

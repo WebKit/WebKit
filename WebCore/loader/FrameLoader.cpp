@@ -1807,8 +1807,12 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
         else
             loadType = FrameLoadTypeStandard;    
     
+        RefPtr<FormState> formState;
+        if (submitForm && !formValues.isEmpty())
+            formState = FormState::create(submitForm, formValues, m_frame);
+        
         load(request.resourceRequest().url(), referrer, loadType, 
-            request.frameName(), event, submitForm, formValues);
+            request.frameName(), event, formState.release());
     } else
         post(request.resourceRequest().url(), referrer, request.frameName(), 
             request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), event, submitForm, formValues);
@@ -1818,9 +1822,9 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
 }
 
 void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
-    const String& frameName, Event* event, HTMLFormElement* form, const HashMap<String, String>& values)
+    const String& frameName, Event* event, PassRefPtr<FormState> formState)
 {
-    bool isFormSubmission = !values.isEmpty();
+    bool isFormSubmission = formState;
     
     ResourceRequest request(URL);
     if (!referrer.isEmpty())
@@ -1833,15 +1837,11 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
 
     NavigationAction action(URL, newLoadType, isFormSubmission, event);
 
-    RefPtr<FormState> formState;
-    if (form && !values.isEmpty())
-        formState = FormState::create(form, values, m_frame);
-    
     if (!frameName.isEmpty()) {
         if (Frame* targetFrame = m_frame->tree()->find(frameName))
-            targetFrame->loader()->load(URL, referrer, newLoadType, String(), event, form, values);
+            targetFrame->loader()->load(URL, referrer, newLoadType, String(), event, formState);
         else
-            checkNewWindowPolicy(action, request, formState.release(), frameName);
+            checkNewWindowPolicy(action, request, formState, frameName);
         return;
     }
 
@@ -1870,12 +1870,12 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
         
         oldDocumentLoader->setTriggeringAction(action);
         stopPolicyCheck();
-        checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
+        checkNavigationPolicy(request, oldDocumentLoader.get(), formState,
             callContinueFragmentScrollAfterNavigationPolicy, this);
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         bool isRedirect = m_quickRedirectComing;
-        load(request, action, newLoadType, formState.release());
+        load(request, action, newLoadType, formState);
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)

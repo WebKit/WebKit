@@ -144,7 +144,7 @@ namespace WebCore {
         void load(const FrameLoadRequest&, bool userGesture,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
         void load(const KURL&, const String& referrer, FrameLoadType, const String& target,
-            Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
+            Event*, PassRefPtr<FormState>);
         void post(const KURL&, const String& referrer, const String& target,
             PassRefPtr<FormData>, const String& contentType,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
