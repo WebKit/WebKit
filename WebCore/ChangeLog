@@ -1,3 +1,14 @@
+2007-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, emergency test fix.
+
+        - avoid crash on layout tests.
+        
+        Patched up my last change so that  widgets don't crash.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+
 2007-05-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
