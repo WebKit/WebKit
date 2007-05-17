@@ -2483,10 +2483,10 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     Frame *frame = selection->frame();
     if (frame) {
         SelectionController* s = frame->selectionController();
-        
+        ExceptionCode ec = 0;
         switch (id) {
             case Selection::Collapse:
-                s->collapse(toNode(args[0]), args[1]->toInt32(exec));
+                s->collapse(toNode(args[0]), args[1]->toInt32(exec), ec);
                 break;
             case Selection::CollapseToEnd:
                 s->collapseToEnd();
@@ -2498,16 +2498,18 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
                 s->empty();
                 break;
             case Selection::SetBaseAndExtent:
-                s->setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec));
+                s->setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec), ec);
                 break;
             case Selection::SetPosition:
-                s->setPosition(toNode(args[0]), args[1]->toInt32(exec));
+                s->setPosition(toNode(args[0]), args[1]->toInt32(exec), ec);
                 break;
             case Selection::Modify:
                 s->modify(args[0]->toString(exec), args[1]->toString(exec), args[2]->toString(exec));
                 break;
             case Selection::GetRangeAt:
-                return toJS(exec, s->getRangeAt(args[0]->toInt32(exec)).get());
+                JSValue* val = toJS(exec, s->getRangeAt(args[0]->toInt32(exec), ec).get());
+                setDOMException(exec, ec);
+                return val;
             case Selection::RemoveAllRanges:
                 s->removeAllRanges();
                 break;
@@ -2517,6 +2519,7 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
             case Selection::ToString:
                 return jsString(s->toString());
         }
+        setDOMException(exec, ec);
     }
 
     return jsUndefined();

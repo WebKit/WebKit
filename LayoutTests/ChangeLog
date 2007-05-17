@@ -1,3 +1,14 @@
+2007-05-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13727
+        REGRESSION: Reproducible hang setting the selection's extent offset to -1
+        <rdar://problem/5206890>
+
+        * LayoutTests/editing/selection/selection-invalid-offset-expected.txt: Added.
+        * LayoutTests/editing/selection/selection-invalid-offset.html: Added.
+
 2007-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.

@@ -1,3 +1,22 @@
+2007-05-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13727
+        REGRESSION: Reproducible hang setting the selection's extent offset to -1
+        <rdar://problem/5206890>
+        
+        Rise INDEX_SIZE_ERR if used selection index is negative. This matches HTML5 for
+        getRangeAt() and collapse() which are part of the spec (FF throws NS_ERROR_FAILURE). 
+        
+        Not throwing exceptions yet for too high offsets (except getRangeAt()) as it is
+        unclear if WebCore's definition of offsets is the same as other browsers.
+
+        * bindings/js/kjs_window.cpp:
+        * WebCore/editing/SelectionController.cpp:
+        * WebCore/editing/SelectionController.h:
+        * WebCore/editing/VisiblePosition.cpp:
+        
 2007-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.

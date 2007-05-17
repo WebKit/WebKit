@@ -47,6 +47,7 @@ VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 
 VisiblePosition::VisiblePosition(Node *node, int offset, EAffinity affinity)
 {
+    ASSERT(offset >= 0);
     init(Position(node, offset), affinity);
 }
 

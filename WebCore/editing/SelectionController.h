@@ -109,8 +109,8 @@ public:
     int baseOffset() const { return m_sel.base().offset(); }
     int extentOffset() const { return m_sel.extent().offset(); }
     String type() const;
-    void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset);
-    void setPosition(Node*, int offset);
+    void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode&);
+    void setPosition(Node*, int offset, ExceptionCode&);
     bool modify(const String& alterString, const String& directionString, const String& granularityString, bool userTriggered = false);
     
     // Mozilla Selection Object API
@@ -124,11 +124,11 @@ public:
     int focusOffset() const { return m_sel.isBaseFirst() ? m_sel.end().offset() : m_sel.start().offset(); }
     bool isCollapsed() const { return !isRange(); }
     String toString() const;
-    void collapse(Node*, int offset);
+    void collapse(Node*, int offset, ExceptionCode&);
     void collapseToEnd();
     void collapseToStart();
-    void extend(Node*, int offset);
-    PassRefPtr<Range> getRangeAt(int index) const;
+    void extend(Node*, int offset, ExceptionCode&);
+    PassRefPtr<Range> getRangeAt(int index, ExceptionCode&) const;
     int rangeCount() const { return !isNone() ? 1 : 0; }
     void removeAllRanges();
     void addRange(const Range*);
