@@ -1,3 +1,13 @@
+2007-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Update RenderMenuList PopupClient methods to consider style of inner block.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::clientStyle):
+
 2007-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, emergency test fix.

@@ -293,12 +293,12 @@ RenderStyle* RenderMenuList::itemStyle(unsigned listIndex) const
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     HTMLElement* element = select->listItems()[listIndex];
     
-    return element->renderStyle() ? element->renderStyle() : style();
+    return element->renderStyle() ? element->renderStyle() : clientStyle();
 }
 
 RenderStyle* RenderMenuList::clientStyle() const
 {
-    return style();
+    return m_innerBlock ? m_innerBlock->style() : style();
 }
 
 Document* RenderMenuList::clientDocument() const
