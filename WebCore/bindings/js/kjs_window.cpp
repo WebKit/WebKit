@@ -2506,10 +2506,11 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
             case Selection::Modify:
                 s->modify(args[0]->toString(exec), args[1]->toString(exec), args[2]->toString(exec));
                 break;
-            case Selection::GetRangeAt:
+            case Selection::GetRangeAt: {
                 JSValue* val = toJS(exec, s->getRangeAt(args[0]->toInt32(exec), ec).get());
                 setDOMException(exec, ec);
                 return val;
+            }
             case Selection::RemoveAllRanges:
                 s->removeAllRanges();
                 break;
