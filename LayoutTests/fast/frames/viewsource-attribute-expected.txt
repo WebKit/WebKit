@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
-              RenderBody {BODY} at (8,8) size 284x129
+              RenderBody {BODY} at (8,8) size 284x134
                 RenderBlock {PRE} at (0,0) size 284x15
                   RenderInline {SPAN} at (0,0) size 24x15 [color=#881280]
                     RenderText {#text} at (0,0) size 24x15
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
                     RenderView at (0,0) size 300x150
                   layer at (0,0) size 300x150
                     RenderBlock {HTML} at (0,0) size 300x150
-                      RenderBody {BODY} at (8,8) size 284x129
+                      RenderBody {BODY} at (8,8) size 284x134
                         RenderBlock {PRE} at (0,0) size 284x15
                           RenderInline {SPAN} at (0,0) size 24x15 [color=#881280]
                             RenderText {#text} at (0,0) size 24x15
