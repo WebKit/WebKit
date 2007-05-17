@@ -1,3 +1,9 @@
+2007-05-16  Brady Eidson  <beidson@apple.com>
+
+        Build fix for some dev configurations
+
+        * DumpRenderTree/DumpRenderTree.m:
+
 2007-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Justin.

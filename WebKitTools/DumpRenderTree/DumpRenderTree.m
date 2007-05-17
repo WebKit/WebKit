@@ -154,7 +154,7 @@ static CGColorSpaceRef sharedColorSpace;
 NSMutableArray *workQueue = nil;
 // to prevent infinite loops, only the first page of a test can add to a work queue
 // (since we may well come back to that same page)
-BOOL workQueueFrozen = nil;
+BOOL workQueueFrozen = NO;
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
