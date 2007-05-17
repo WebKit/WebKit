@@ -177,7 +177,7 @@ BOOL replayingSavedEvents;
 
 - (void)mouseDown
 {
-    [[[frame frameView] documentView] layout];
+    [[[mainFrame frameView] documentView] layout];
     if ([self currentEventTime] - lastClick >= 1)
         clickCount = 1;
     else
@@ -186,13 +186,13 @@ BOOL replayingSavedEvents;
                                         location:lastMousePosition 
                                    modifierFlags:0 
                                        timestamp:[self currentEventTime]
-                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                    windowNumber:[[[mainFrame webView] window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
                                         pressure:0.0];
 
-    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
         [subView mouseDown:event];
         down = YES;
@@ -212,28 +212,28 @@ BOOL replayingSavedEvents;
         return;
     }
 
-    [[[frame frameView] documentView] layout];
+    [[[mainFrame frameView] documentView] layout];
     NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp 
                                         location:lastMousePosition 
                                    modifierFlags:0 
                                        timestamp:[self currentEventTime]
-                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                    windowNumber:[[[mainFrame webView] window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
                                         pressure:0.0];
 
-    NSView *targetView = [[frame webView] hitTest:[event locationInWindow]];
+    NSView *targetView = [[mainFrame webView] hitTest:[event locationInWindow]];
     // FIXME: Silly hack to teach DRT to respect capturing mouse events outside the WebView.
     // The right solution is just to use NSApplication's built-in event sending methods, 
     // instead of rolling our own algorithm for selecting an event target.
-    targetView = targetView ? targetView : [[frame frameView] documentView];
+    targetView = targetView ? targetView : [[mainFrame frameView] documentView];
     assert(targetView);
     [targetView mouseUp:event];
     down = NO;
     lastClick = [event timestamp];
     if (draggingInfo) {
-        WebView *webView = [frame webView];
+        WebView *webView = [mainFrame webView];
         
         NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
         
@@ -261,7 +261,7 @@ BOOL replayingSavedEvents;
         return;
     }
 
-    NSView *view = [frame webView];
+    NSView *view = [mainFrame webView];
     lastMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) 
                                         location:lastMousePosition 
@@ -273,13 +273,13 @@ BOOL replayingSavedEvents;
                                       clickCount:(down ? clickCount : 0) 
                                         pressure:0.0];
 
-    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
         if (down) {
             [subView mouseDragged:event];
             if (draggingInfo) {
                 [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
-                [[frame webView] draggingUpdated:draggingInfo];
+                [[mainFrame webView] draggingUpdated:draggingInfo];
             }
         } else
             [subView mouseMoved:event];
@@ -288,7 +288,7 @@ BOOL replayingSavedEvents;
 
 - (void)contextClick
 {
-    [[[frame frameView] documentView] layout];
+    [[[mainFrame frameView] documentView] layout];
     if ([self currentEventTime] - lastClick >= 1)
         clickCount = 1;
     else
@@ -297,13 +297,13 @@ BOOL replayingSavedEvents;
                                         location:lastMousePosition 
                                    modifierFlags:0 
                                        timestamp:[self currentEventTime]
-                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                    windowNumber:[[[mainFrame webView] window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
                                         pressure:0.0];
 
-    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView)
         [subView menuForEvent:event];
 }
@@ -353,13 +353,13 @@ BOOL replayingSavedEvents;
                 break;
         }
 
-    [[[frame frameView] documentView] layout];
+    [[[mainFrame frameView] documentView] layout];
     
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:mask
                         timestamp:[self currentEventTime]
-                        windowNumber:[[[frame webView] window] windowNumber]
+                        windowNumber:[[[mainFrame webView] window] windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:character
                         charactersIgnoringModifiers:character
@@ -367,7 +367,7 @@ BOOL replayingSavedEvents;
                         keyCode:0];
     
 
-    NSResponder *firstResponder = [[[frame webView] window] firstResponder];
+    NSResponder *firstResponder = [[[mainFrame webView] window] firstResponder];
     [firstResponder keyDown:event];
 }
 

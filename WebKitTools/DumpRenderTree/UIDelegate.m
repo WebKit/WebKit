@@ -67,7 +67,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webViewFocus:(WebView *)webView
 {
     windowIsKey = YES;
-    NSView *documentView = [[frame frameView] documentView];
+    NSView *documentView = [[mainFrame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _updateActiveState];
 }

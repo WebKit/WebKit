@@ -29,15 +29,13 @@
  
 #import "DumpRenderTree.h"
 
-#import "AppleScriptController.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
-#import "GCController.h"
+#import "FrameLoadDelegate.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
 #import "ResourceLoadDelegate.h"
-#import "TextInputController.h"
 #import "UIDelegate.h"
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <CoreFoundation/CoreFoundation.h>
@@ -82,16 +80,6 @@
 @interface DumpRenderTreeEvent : NSEvent
 @end
 
-@interface WaitUntilDoneDelegate : NSObject
-@end
-
-@interface LayoutTestController : NSObject
-{
-    WebScriptObject *storedWebScriptObject;
-}
-- (void)dealloc;
-@end
-
 @interface LocalPasteboard : NSPasteboard
 {
     NSMutableArray *typesArray;
@@ -102,9 +90,10 @@
 @end
 
 BOOL windowIsKey = YES;
-WebFrame *frame = 0;
+WebFrame *mainFrame = 0;
 BOOL shouldDumpEditingCallbacks;
 BOOL shouldDumpResourceLoadCallbacks;
+BOOL shouldDumpFrameLoadCallbacks;
 NSMutableSet *disallowedURLs = 0;
 BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 BOOL canOpenWindows;
@@ -117,10 +106,10 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 static void displayWebView();
 
 volatile BOOL done;
-static NavigationController *navigationController;
+NavigationController *navigationController = nil;
 
 // Delegates
-static WaitUntilDoneDelegate *waitUntilDoneDelegate;
+static FrameLoadDelegate *frameLoadDelegate;
 static UIDelegate *uiDelegate;
 static EditingDelegate *editingDelegate;
 static ResourceLoadDelegate *resourceLoadDelegate;
@@ -136,13 +125,13 @@ static ResourceLoadDelegate *resourceLoadDelegate;
 // in progress.  Usually this is the same as the main frame, but not always.  In the case
 // where a frameset is loaded, and then new content is loaded into one of the child frames,
 // that child frame is the "topmost frame that is loading".
-static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
+WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
 static BOOL dumpAsText;
 static BOOL dumpDOMAsWebArchive;
 static BOOL dumpSourceAsWebArchive;
 static BOOL dumpSelectionRect;
-static BOOL dumpTitleChanges;
+BOOL dumpTitleChanges = NO;
 static BOOL dumpBackForwardList;
 static BOOL dumpChildFrameScrollPositions;
 static int dumpPixels;
@@ -162,10 +151,10 @@ static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of 
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
 // a queue of NSInvocations, queued by callouts from the test, to be exec'ed when the load is done
-static NSMutableArray *workQueue = nil;
+NSMutableArray *workQueue = nil;
 // to prevent infinite loops, only the first page of a test can add to a work queue
 // (since we may well come back to that same page)
-static BOOL workQueueFrozen;
+BOOL workQueueFrozen = nil;
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
@@ -386,7 +375,7 @@ WebView *createWebView()
     WebView *webView = [[WebView alloc] initWithFrame:rect];
         
     [webView setUIDelegate:uiDelegate];
-    [webView setFrameLoadDelegate:waitUntilDoneDelegate];
+    [webView setFrameLoadDelegate:frameLoadDelegate];
     [webView setEditingDelegate:editingDelegate];
     [webView setResourceLoadDelegate:resourceLoadDelegate];
     
@@ -480,7 +469,7 @@ void dumpRenderTree(int argc, const char *argv[])
     
     localPasteboards = [[NSMutableDictionary alloc] init];
     navigationController = [[NavigationController alloc] init];
-    waitUntilDoneDelegate = [[WaitUntilDoneDelegate alloc] init];
+    frameLoadDelegate = [[FrameLoadDelegate alloc] init];
     uiDelegate = [[UIDelegate alloc] init];
     editingDelegate = [[EditingDelegate alloc] init];    
     resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
@@ -490,7 +479,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [[WebPluginDatabase sharedDatabase] refresh];
     
     WebView *webView = createWebView();    
-    frame = [webView mainFrame];
+    mainFrame = [webView mainFrame];
     NSWindow *window = [webView window];
     
     workQueue = [[NSMutableArray alloc] init];
@@ -539,7 +528,7 @@ void dumpRenderTree(int argc, const char *argv[])
 
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts    
     [webView close];
-    frame = nil;
+    mainFrame = nil;
 
     // Work around problem where registering drag types leaves an outstanding
     // "perform selector" on the window, which retains the window. It's a bit
@@ -549,7 +538,7 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [window close]; // releases when closed
     [webView release];
-    [waitUntilDoneDelegate release];
+    [frameLoadDelegate release];
     [editingDelegate release];
     [resourceLoadDelegate release];
     [uiDelegate release];
@@ -753,28 +742,28 @@ static void dumpBackForwardListForWebView(WebView *view)
     printf("===============================================\n");
 }
 
-static void dump(void)
+void dump(void)
 {
     if (dumpTree) {
         NSString *result = nil;
 
-        dumpAsText |= [[[[frame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
+        dumpAsText |= [[[[mainFrame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
         if (dumpAsText) {
-            DOMElement *documentElement = [[frame DOMDocument] documentElement];
+            DOMElement *documentElement = [[mainFrame DOMDocument] documentElement];
             result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
         } else if (dumpDOMAsWebArchive) {
-            WebArchive *webArchive = [[frame DOMDocument] webArchive];
+            WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             result = serializeWebArchiveToXML(webArchive);
         } else if (dumpSourceAsWebArchive) {
-            WebArchive *webArchive = [[frame dataSource] webArchive];
+            WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             result = serializeWebArchiveToXML(webArchive);
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
             if (isSVGW3CTest)
-                [[frame webView] setFrameSize:NSMakeSize(480, 360)];
+                [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
             else 
-                [[frame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
-            result = [frame renderTreeAsExternalRepresentation];
+                [[mainFrame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
+            result = [mainFrame renderTreeAsExternalRepresentation];
         }
 
         if (!result) {
@@ -782,16 +771,16 @@ static void dump(void)
             if (dumpAsText)
                 errorMessage = "[documentElement innerText]";
             else if (dumpDOMAsWebArchive)
-                errorMessage = "[[frame DOMDocument] webArchive]";
+                errorMessage = "[[mainFrame DOMDocument] webArchive]";
             else if (dumpSourceAsWebArchive)
-                errorMessage = "[[frame dataSource] webArchive]";
+                errorMessage = "[[mainFrame dataSource] webArchive]";
             else
-                errorMessage = "[frame renderTreeAsExternalRepresentation]";
+                errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
             printf("ERROR: nil result from %s", errorMessage);
         } else {
             fputs([result UTF8String], stdout);
             if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive)
-                dumpFrameScrollPosition(frame);
+                dumpFrameScrollPosition(mainFrame);
         }
 
         if (dumpBackForwardList) {
@@ -810,7 +799,7 @@ static void dump(void)
     if (dumpPixels) {
         if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive) {
             // grab a bitmap from the view
-            WebView* view = [frame webView];
+            WebView* view = [mainFrame webView];
             NSSize webViewSize = [view frame].size;
 
             CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, webViewSize.width, webViewSize.height, 8, webViewSize.width * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
@@ -843,7 +832,7 @@ static void dump(void)
                 }
             }
             if (dumpSelectionRect) {
-                NSView *documentView = [[frame frameView] documentView];
+                NSView *documentView = [[mainFrame frameView] documentView];
                 if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
                     [[NSColor redColor] set];
                     [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
@@ -902,132 +891,6 @@ static void dump(void)
     done = YES;
 }
 
-@implementation WaitUntilDoneDelegate
-
-// Exec messages in the work queue until they're all done, or one of them starts a new load
-- (void)processWork:(id)dummy
-{
-    // quit doing work once a load is in progress
-    while ([workQueue count] > 0 && !topLoadingFrame) {
-        [[workQueue objectAtIndex:0] invoke];
-        [workQueue removeObjectAtIndex:0];
-    }
-    
-    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!topLoadingFrame && !waitToDump)
-        dump();
-}
-
-- (void)webView:(WebView *)c locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
-{
-    if ([dataSource webFrame] == topLoadingFrame) {
-        topLoadingFrame = nil;
-        workQueueFrozen = YES;      // first complete load freezes the queue for the rest of this test
-        if (!waitToDump) {
-            if ([workQueue count] > 0)
-                [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
-            else
-                dump();
-        }
-    }
-}
-
-- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)f
-{
-    ASSERT([f provisionalDataSource]);
-    // Make sure we only set this once per test.  If it gets cleared, and then set again, we might
-    // end up doing two dumps for one test.
-    if (!topLoadingFrame && !done)
-        topLoadingFrame = f;
-}
-
-- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)f
-{
-    ASSERT(![f provisionalDataSource]);
-    ASSERT([f dataSource]);
-
-    windowIsKey = YES;
-    NSView *documentView = [[frame frameView] documentView];
-    [[[frame webView] window] makeFirstResponder:documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateActiveState];
-}
-
-- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
-{
-    ASSERT([frame provisionalDataSource]);
-
-    [self webView:sender locationChangeDone:error forDataSource:[frame provisionalDataSource]];
-}
-
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
-{
-    // FIXME: This call to displayIfNeeded can be removed when <rdar://problem/5092361> is fixed.
-    // After that is fixed, we will reenable painting after WebCore is done loading the document, 
-    // and this call will no longer be needed.
-    if ([[sender mainFrame] isEqual:frame])
-        [sender displayIfNeeded];
-    [self webView:sender locationChangeDone:nil forDataSource:[frame dataSource]];
-    [navigationController webView:sender didFinishLoadForFrame:frame];
-}
-
-- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
-{
-    ASSERT(![frame provisionalDataSource]);
-    ASSERT([frame dataSource]);
-
-    [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];
-}
-
-- (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)obj 
-{ 
-    ASSERT_NOT_REACHED();
-}
-
-- (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
-{
-    ASSERT(obj == [frame windowObject]);
-    ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
-    
-    LayoutTestController *ltc = [[LayoutTestController alloc] init];
-    [obj setValue:ltc forKey:@"layoutTestController"];
-    [ltc release];
-    
-    EventSendingController *esc = [[EventSendingController alloc] init];
-    [obj setValue:esc forKey:@"eventSender"];
-    [esc release];
-    
-    TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
-    [obj setValue:tic forKey:@"textInputController"];
-    [tic release];
-    
-    AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
-    [obj setValue:asc forKey:@"appleScriptController"];
-    [asc release];
-    
-    GCController *gcc = [[GCController alloc] init];
-    [obj setValue:gcc forKey:@"GCController"];
-    [gcc release];
-    
-    [obj setValue:navigationController forKey:@"navigationController"];
-    
-    ObjCPlugin *plugin = [[ObjCPlugin alloc] init];
-    [obj setValue:plugin forKey:@"objCPlugin"];
-    [plugin release];
-    
-    ObjCPluginFunction *pluginFunction = [[ObjCPluginFunction alloc] init];
-    [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
-    [pluginFunction release];
-}
-
-- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
-{
-    if (dumpTitleChanges)
-        printf("TITLE CHANGED: %s\n", [title UTF8String]);
-}
-
-@end
-
 @implementation LayoutTestController
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -1042,6 +905,7 @@ static void dump(void)
             || aSelector == @selector(dumpChildFrameScrollPositions)
             || aSelector == @selector(dumpEditingCallbacks)
             || aSelector == @selector(dumpResourceLoadCallbacks)
+            || aSelector == @selector(dumpFrameLoadCallbacks)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
@@ -1122,7 +986,7 @@ static void dump(void)
 
 - (void)clearBackForwardList
 {
-    WebBackForwardList *backForwardList = [[frame webView] backForwardList];
+    WebBackForwardList *backForwardList = [[mainFrame webView] backForwardList];
     WebHistoryItem *item = [[backForwardList currentItem] retain];
 
     // We clear the history by setting the back/forward list's capacity to 0
@@ -1137,7 +1001,7 @@ static void dump(void)
 
 - (void)setUseDashboardCompatibilityMode:(BOOL)flag
 {
-    [[frame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
+    [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
 }
 
 - (void)setCloseRemainingWindowsWhenComplete:(BOOL)closeWindows
@@ -1255,20 +1119,25 @@ static void dump(void)
     shouldDumpResourceLoadCallbacks = YES;
 }
 
+- (void)dumpFrameLoadCallbacks
+{
+    shouldDumpFrameLoadCallbacks = YES;
+}
+
 - (void)setWindowIsKey:(BOOL)flag
 {
     windowIsKey = flag;
-    NSView *documentView = [[frame frameView] documentView];
+    NSView *documentView = [[mainFrame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _updateActiveState];
 }
 
 - (void)setMainFrameIsFirstResponder:(BOOL)flag
 {
-    NSView *documentView = [[frame frameView] documentView];
+    NSView *documentView = [[mainFrame frameView] documentView];
     
     NSResponder *firstResponder = flag ? documentView : nil;
-    [[[frame webView] window] makeFirstResponder:firstResponder];
+    [[[mainFrame webView] window] makeFirstResponder:firstResponder];
         
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _updateActiveState];
@@ -1315,9 +1184,9 @@ static void dump(void)
 {
     WebFrame *targetFrame;
     if (target && ![target isKindOfClass:[WebUndefined class]])
-        targetFrame = [frame findFrameNamed:target];
+        targetFrame = [mainFrame findFrameNamed:target];
     else
-        targetFrame = frame;
+        targetFrame = mainFrame;
     [targetFrame loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
@@ -1325,12 +1194,12 @@ static void dump(void)
 {
     int bfIndex = [index intValue];
     if (bfIndex == 1)
-        [[frame webView] goForward];
+        [[mainFrame webView] goForward];
     if (bfIndex == -1)
-        [[frame webView] goBack];
+        [[mainFrame webView] goBack];
     else {        
-        WebBackForwardList *bfList = [[frame webView] backForwardList];
-        [[frame webView] goToBackForwardItem:[bfList itemAtIndex:bfIndex]];
+        WebBackForwardList *bfList = [[mainFrame webView] backForwardList];
+        [[mainFrame webView] goToBackForwardItem:[bfList itemAtIndex:bfIndex]];
     }
 }
 
@@ -1346,28 +1215,28 @@ static void dump(void)
 
 - (void)queueReload
 {
-    [self _addWorkForTarget:[frame webView] selector:@selector(reload:) arg1:self arg2:nil];
+    [self _addWorkForTarget:[mainFrame webView] selector:@selector(reload:) arg1:self arg2:nil];
 }
 
 - (void)queueScript:(NSString *)script
 {
-    [self _addWorkForTarget:[frame webView] selector:@selector(stringByEvaluatingJavaScriptFromString:) arg1:script arg2:nil];
+    [self _addWorkForTarget:[mainFrame webView] selector:@selector(stringByEvaluatingJavaScriptFromString:) arg1:script arg2:nil];
 }
 
 - (void)queueLoad:(NSString *)URLString target:(NSString *)target
 {
-    NSURL *URL = [NSURL URLWithString:URLString relativeToURL:[[[frame dataSource] response] URL]];
+    NSURL *URL = [NSURL URLWithString:URLString relativeToURL:[[[mainFrame dataSource] response] URL]];
     [self _addWorkForTarget:self selector:@selector(_doLoad:target:) arg1:URL arg2:target];
 }
 
 - (void)setAcceptsEditing:(BOOL)newAcceptsEditing
 {
-    [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
+    [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
 }
 
 - (void)setTabKeyCyclesThroughElements:(BOOL)newTabKeyCyclesThroughElements
 {
-    [[frame webView] setTabKeyCyclesThroughElements:newTabKeyCyclesThroughElements];
+    [[mainFrame webView] setTabKeyCyclesThroughElements:newTabKeyCyclesThroughElements];
 }
 
 - (void)storeWebScriptObject:(WebScriptObject *)webScriptObject
@@ -1474,6 +1343,11 @@ static void dump(void)
 
 @end
 
+static bool shouldLogFrameLoadDelegates(const char *pathOrURL)
+{
+    return strstr(pathOrURL, "loading/");
+}    
+
 static void runTest(const char *pathOrURL)
 {
     CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
@@ -1494,8 +1368,8 @@ static void runTest(const char *pathOrURL)
         return;
     }
 
-    [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:YES];
-    [[frame webView] setTabKeyCyclesThroughElements: YES];
+    [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
+    [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
     done = NO;
     topLoadingFrame = nil;
     waitToDump = NO;
@@ -1505,6 +1379,7 @@ static void runTest(const char *pathOrURL)
     dumpChildFrameScrollPositions = NO;
     shouldDumpEditingCallbacks = NO;
     shouldDumpResourceLoadCallbacks = NO;
+    shouldDumpFrameLoadCallbacks = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
     dumpBackForwardList = NO;
@@ -1512,7 +1387,7 @@ static void runTest(const char *pathOrURL)
     canOpenWindows = NO;
     closeWebViews = YES;
     addFileToPasteboardOnDrag = NO;
-    [[frame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
+    [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if ([WebHistory optionalSharedHistory])
@@ -1524,7 +1399,7 @@ static void runTest(const char *pathOrURL)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;
     [prevTestBFItem release];
-    prevTestBFItem = [[[[frame webView] backForwardList] currentItem] retain];
+    prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
     [workQueue removeAllObjects];
     workQueueFrozen = NO;
 
@@ -1533,7 +1408,9 @@ static void runTest(const char *pathOrURL)
         [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
+    if (shouldLogFrameLoadDelegates(pathOrURL))
+        shouldDumpFrameLoadCallbacks = YES;
+    [mainFrame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
     CFRelease(URL);
     [pool release];
     while (!done) {
@@ -1543,7 +1420,7 @@ static void runTest(const char *pathOrURL)
     }
     pool = [[NSAutoreleasePool alloc] init];
     [EventSendingController clearSavedEvents];
-    [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
+    [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
     
     if (closeRemainingWindowsWhenComplete) {
         NSArray* array = [(NSArray *)allWindowsRef copy];
@@ -1553,7 +1430,7 @@ static void runTest(const char *pathOrURL)
             NSWindow *window = [array objectAtIndex:i];
 
             // Don't try to close the main window
-            if (window == [[frame webView] window])
+            if (window == [[mainFrame webView] window])
                 continue;
             
             WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
@@ -1567,8 +1444,8 @@ static void runTest(const char *pathOrURL)
     [pool release];
     
     // We should only have our main window left when we're done
-    assert(CFArrayGetCount(allWindowsRef) == 1);
-    assert(CFArrayGetValueAtIndex(allWindowsRef, 0) == [[frame webView] window]);
+    ASSERT(CFArrayGetCount(allWindowsRef) == 1);
+    ASSERT(CFArrayGetValueAtIndex(allWindowsRef, 0) == [[mainFrame webView] window]);
     
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
@@ -1606,7 +1483,7 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
 
 static void displayWebView()
 {
-    NSView *webView = [frame webView];
+    NSView *webView = [mainFrame webView];
     [webView display];
     [webView lockFocus];
     [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
@@ -1814,7 +1691,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 + (NSPoint)mouseLocation
 {
-    return [[[frame webView] window] convertBaseToScreen:lastMousePosition];
+    return [[[mainFrame webView] window] convertBaseToScreen:lastMousePosition];
 }
 
 @end

@@ -1,3 +1,20 @@
+2007-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Justin.
+        
+        - added a bunch of layout tests using the new load delegate testing mechanism
+
+        * http/tests/loading/bad-scheme-subframe-expected.txt: Added.
+        * http/tests/loading/bad-scheme-subframe.html: Added.
+        * http/tests/loading/bad-server-subframe-expected.txt: Added.
+        * http/tests/loading/bad-server-subframe.html: Added.
+        * http/tests/loading/basic-expected.txt: Added.
+        * http/tests/loading/basic.html: Added.
+        * http/tests/loading/empty-subframe-expected.txt: Added.
+        * http/tests/loading/empty-subframe.html: Added.
+        * http/tests/loading/simple-subframe-expected.txt: Added.
+        * http/tests/loading/simple-subframe.html: Added.
+
 2007-05-16  dethbakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

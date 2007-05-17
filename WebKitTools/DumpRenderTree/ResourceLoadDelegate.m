@@ -70,9 +70,9 @@
     if (![self isFileURL])
         return [self description];
 
-    WebDataSource *dataSource = [frame dataSource];
+    WebDataSource *dataSource = [mainFrame dataSource];
     if (!dataSource)
-        dataSource = [frame provisionalDataSource];
+        dataSource = [mainFrame provisionalDataSource];
     
     NSString *basePath = [[[[dataSource request] URL] path] stringByDeletingLastPathComponent];
     

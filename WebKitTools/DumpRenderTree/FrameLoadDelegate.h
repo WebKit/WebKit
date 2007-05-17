@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007, Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,42 +20,16 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class DumpRenderTreeDraggingInfo;
-@class NavigationController;
-@class WebFrame;
-@class WebScriptObject;
-@class WebView;
+#import <Cocoa/Cocoa.h>
 
-extern BOOL windowIsKey;
-extern WebFrame *mainFrame;
-extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern volatile BOOL done;
-extern BOOL shouldDumpResourceLoadCallbacks;
-extern BOOL shouldDumpFrameLoadCallbacks;
-extern BOOL dumpTitleChanges;
-extern NSMutableSet *disallowedURLs;
-extern BOOL waitToDump;
-extern BOOL canOpenWindows;
-extern BOOL closeWebViews;
-extern BOOL addFileToPasteboardOnDrag;
-extern NSMutableArray *workQueue;
-extern WebFrame *topLoadingFrame;
-extern BOOL workQueueFrozen;
-extern NavigationController *navigationController;
 
-WebView *createWebView();
-void dump(void);
-
-@interface LayoutTestController : NSObject
-{
-    WebScriptObject *storedWebScriptObject;
+@interface FrameLoadDelegate : NSObject {
 }
-- (void)dealloc;
-@end
 
+@end

@@ -1,0 +1,16 @@
+main frame - didStartProvisionalLoadForFrame
+frame "f1" - willCloseFrame
+main frame - willCloseFrame
+main frame - didCommitLoadForFrame
+main frame - didClearWindowObjectForFrame
+frame "f1" - didClearWindowObjectForFrame
+frame "f1" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "f1" - didFirstLayoutInFrame
+main frame - didFirstLayoutInFrame
+frame "f1" - didFailProvisionalLoadWithError
+main frame - didFinishLoadForFrame
+This is a test of load callbacks. It is only useful inside the regression test tool.
+It also assumes there is no web server running locally on port 54321.
+

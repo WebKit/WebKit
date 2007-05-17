@@ -54,7 +54,7 @@
 
 - (NSWindow *)draggingDestinationWindow 
 {
-    return [[frame webView] window];
+    return [[mainFrame webView] window];
 }
 
 - (NSDragOperation)draggingSourceOperationMask 

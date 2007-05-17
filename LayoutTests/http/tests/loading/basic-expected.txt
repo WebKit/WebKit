@@ -1,0 +1,10 @@
+main frame - didStartProvisionalLoadForFrame
+frame "f1" - willCloseFrame
+main frame - willCloseFrame
+main frame - didCommitLoadForFrame
+main frame - didClearWindowObjectForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFirstLayoutInFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+This is a test of load callbacks. It is only useful inside the regression test tool.

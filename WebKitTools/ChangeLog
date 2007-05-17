@@ -1,3 +1,72 @@
+2007-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Justin.
+        
+        - created a new mechanism to log FrameLoadDelegate callbacks in directories named "loading"
+        
+        The reason for doing things in this slightly odd way is to make sure we don't miss the load delegates
+        that happen before the load commits.
+        
+        Basically I moved WaitUntilDoneDelegate into a separate file (FrameLoadDelegate.m) and added
+        optional logging for every FrameLoadDelegate callback, including SPI callbacks.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.m:
+        (createWebView):
+        (dumpRenderTree):
+        (dump):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController clearBackForwardList]):
+        (-[LayoutTestController setUseDashboardCompatibilityMode:]):
+        (-[LayoutTestController dumpFrameLoadCallbacks]):
+        (-[LayoutTestController setWindowIsKey:]):
+        (-[LayoutTestController setMainFrameIsFirstResponder:]):
+        (-[LayoutTestController _doLoad:target:]):
+        (-[LayoutTestController _doBackOrForwardNavigation:]):
+        (-[LayoutTestController queueReload]):
+        (-[LayoutTestController queueScript:]):
+        (-[LayoutTestController queueLoad:target:]):
+        (-[LayoutTestController setAcceptsEditing:]):
+        (-[LayoutTestController setTabKeyCyclesThroughElements:]):
+        (shouldLogFrameLoadDelegates):
+        (runTest):
+        (displayWebView):
+        (+[DumpRenderTreeEvent mouseLocation]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeDraggingInfo.m:
+        (-[DumpRenderTreeDraggingInfo draggingDestinationWindow]):
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController contextClick]):
+        * DumpRenderTree/FrameLoadDelegate.h: Added.
+        * DumpRenderTree/FrameLoadDelegate.m: Added.
+        (-[WebFrame _drt_descriptionSuitableForTestResult]):
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveServerRedirectForProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveIcon:forFrame:]):
+        (-[FrameLoadDelegate webView:didChangeLocationWithinPageForFrame:]):
+        (-[FrameLoadDelegate webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:]):
+        (-[FrameLoadDelegate webView:didCancelClientRedirectForFrame:]):
+        (-[FrameLoadDelegate webView:willCloseFrame:]):
+        (-[FrameLoadDelegate webView:didFirstLayoutInFrame:]):
+        (-[FrameLoadDelegate webView:didFinishDocumentLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didHandleOnloadEventsForFrame:]):
+        * DumpRenderTree/ResourceLoadDelegate.m:
+        (-[NSURL _drt_descriptionSuitableForTestResult]):
+        * DumpRenderTree/UIDelegate.m:
+        (-[UIDelegate webViewFocus:]):
+
 2007-05-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin and Geoff.
