@@ -68,9 +68,9 @@ public:
 
     // used during parsing: only inserts if not already there
     // no error checking!
-    void insertAttribute(Attribute* newAttribute) {
+    void insertAttribute(Attribute* newAttribute, bool allowDuplicates) {
         ASSERT(!element);
-        if (!getAttributeItem(newAttribute->name()))
+        if (allowDuplicates || !getAttributeItem(newAttribute->name()))
             addAttribute(newAttribute);
         else
             newAttribute->deref();

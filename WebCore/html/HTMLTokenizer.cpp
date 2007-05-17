@@ -131,7 +131,7 @@ inline void Token::addAttribute(Document* doc, AtomicString& attrName, const Ato
         Attribute* a = new MappedAttribute(attrName, v);
         if (!attrs)
             attrs = new NamedMappedAttrMap(0);
-        attrs->insertAttribute(a);
+        attrs->insertAttribute(a, viewSourceMode);
     }
     
     attrName = emptyAtom;
