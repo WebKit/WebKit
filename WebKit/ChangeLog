@@ -1,3 +1,48 @@
+2007-05-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+        
+        Fix for <rdar://problem/4343832> Trying to drag a large 6.2MB jpeg image
+         out of Safari is unexpectedly slow (4 copies of image plus RTF document on pasteboard)
+         
+        This patch causes the construction of the RTF and TIFF data to be delayed until requested.
+        
+        We delay TIFF construction from a DOMElement as this may require generating TIFF data
+        from the CachedImage, which is slow.  To allow the TIFF data to be created later the 
+        it's necessary to add a reference to the source DOMElement to the view.
+
+        * Misc/WebNSPasteboardExtras.h:
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writePromisedRTFDFromArchive:containsImage:]):
+          Implements the delayed write of RTF data
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:source:]):
+          Set up the pasteboard to allow the data writing to be delayed
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+          Now we need to pass the WebHTMLView on to _web_writeImage:element:URL:title:archive:types:source:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+          Clear the dragging pasteboard once the drag has ended to ensure we don't hold references
+          to anything longer than we need to.
+        (WebDragClient::declareAndWriteDragImage):
+          
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView pasteboardChangedOwner:]):
+          Make sure we clear out the DOMElement reference once it is no longer needed
+        (-[WebHTMLView pasteboard:provideDataForType:]):
+          Provide delayed data
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+          Make sure we set pasteboard ownership correctly
+        (-[WebHTMLView promisedDragTIFFDataSource]):
+        (-[WebHTMLView setPromisedDragTIFFDataSource:]):
+        (-[WebHTMLView writeSelectionToPasteboard:types:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+        
+        * WebView/WebView.mm:
+        (-[WebView _writeImageForElement:withPasteboardTypes:toPasteboard:]):
+
 2007-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

@@ -1244,7 +1244,8 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
                             URL:linkURL ? linkURL : (NSURL *)[element objectForKey:WebElementImageURLKey]
                           title:[element objectForKey:WebElementImageAltStringKey] 
                         archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
-                          types:types];
+                          types:types
+                         source:nil];
 }
 
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard

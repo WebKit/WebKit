@@ -28,8 +28,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebArchive;
 @class DOMElement;
+@class WebArchive;
+@class WebHTMLView;
 
 extern NSString *WebURLPboardType;
 extern NSString *WebURLNamePboardType;
@@ -66,12 +67,15 @@ extern NSString *WebURLNamePboardType;
                     URL:(NSURL *)URL 
                   title:(NSString *)title
                 archive:(WebArchive *)archive
-                  types:(NSArray *)types;
+                  types:(NSArray *)types
+                 source:(WebHTMLView *)source;
 
 - (id)_web_declareAndWriteDragImageForElement:(DOMElement *)element
                                        URL:(NSURL *)URL 
                                      title:(NSString *)title
                                    archive:(WebArchive *)archive
-                                    source:(id)source;
+                                    source:(WebHTMLView *)source;
+
+- (void)_web_writePromisedRTFDFromArchive:(WebArchive*)archive containsImage:(BOOL)containsImage;
 
 @end

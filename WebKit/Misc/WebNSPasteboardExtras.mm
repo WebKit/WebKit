@@ -30,12 +30,14 @@
 
 #import "WebArchive.h"
 #import "WebFrameBridge.h"
+#import "WebHTMLViewPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/MimeTypeRegistry.h>
+#import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
@@ -221,12 +223,32 @@ static NSArray *_writableTypesForImageWithArchive (void)
     [self setData:RTFDData forType:NSRTFDPboardType];
 }
 
+
+- (void)_web_writePromisedRTFDFromArchive:(WebArchive*)archive containsImage:(BOOL)containsImage
+{
+    ASSERT(archive);
+    // This image data is either the only subresource of an archive (HTML image case)
+    // or the main resource (standalone image case).
+    NSArray *subresources = [archive subresources];
+    WebResource *resource = [archive mainResource];
+    if (containsImage && !MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType])
+        && [subresources count] > 0)
+        resource = (WebResource *)[subresources objectAtIndex:0];
+    ASSERT(resource != nil);
+    
+    ASSERT(!containsImage || MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
+    if (!containsImage || MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
+        [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
+    
+}
+
 - (void)_web_writeImage:(NSImage *)image
                 element:(DOMElement *)element
                     URL:(NSURL *)URL 
                   title:(NSString *)title
                 archive:(WebArchive *)archive
                   types:(NSArray *)types
+                 source:(WebHTMLView *)source
 {
     ASSERT(image || element);
     ASSERT(URL);
@@ -236,28 +258,16 @@ static NSArray *_writableTypesForImageWithArchive (void)
     if ([types containsObject:NSTIFFPboardType]) {
         if (image)
             [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
-        else if (element)
+        else if (source && element)
+            [source setPromisedDragTIFFDataSource:element];
+        else
             [self setData:[element _imageTIFFRepresentation] forType:NSTIFFPboardType];
     }
     
-    if (archive) {
-        if ([types containsObject:NSRTFDPboardType]) {
-            // This image data is either the only subresource of an archive (HTML image case)
-            // or the main resource (standalone image case).
-            NSArray *subresources = [archive subresources];
-            WebResource *mainResource = [archive mainResource];
-            WebResource *resource = (!MimeTypeRegistry::isSupportedImageResourceMIMEType([mainResource MIMEType])
-                && [subresources count] > 0) ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
-            ASSERT(resource != nil);
-            
-            ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
-            if (MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
-                [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
-        }
-        if ([types containsObject:WebArchivePboardType]) {
+    if (archive)
+        if ([types containsObject:WebArchivePboardType])
             [self setData:[archive data] forType:WebArchivePboardType];
-        }
-    } else {
+    else {
         // We should not have declared types that we aren't going to write (4031826).
         ASSERT(![types containsObject:NSRTFDPboardType]);
         ASSERT(![types containsObject:WebArchivePboardType]);
@@ -268,13 +278,13 @@ static NSArray *_writableTypesForImageWithArchive (void)
                                        URL:(NSURL *)URL 
                                      title:(NSString *)title
                                    archive:(WebArchive *)archive
-                                    source:(id)source
+                                    source:(WebHTMLView *)source
 {
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
-    [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types];
+    [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types source:source];
     [types release];
 
     // FIXME: This has been broken for a while.

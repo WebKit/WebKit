@@ -303,7 +303,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
-
+    [promisedDragTIFFDataSource release];
     [super dealloc];
 }
 
@@ -317,6 +317,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
+    [promisedDragTIFFDataSource release];
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
@@ -326,6 +327,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     firstResponderTextViewAtMouseDownTime = nil;
     dataSource = nil;
     highlighters = nil;
+    promisedDragTIFFDataSource = nil;
 }
 
 @end
@@ -1282,6 +1284,23 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return [self _dragImageForURL:urlString withLabel:label];
 }
 
+- (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
+{
+    [self setPromisedDragTIFFDataSource:nil];
+}
+
+- (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
+{
+    if ([type isEqual:NSRTFDPboardType] && [[pasteboard types] containsObject:WebArchivePboardType]) {
+        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        [pasteboard _web_writePromisedRTFDFromArchive:archive containsImage:[[pasteboard types] containsObject:NSTIFFPboardType]];
+        [archive release];
+    } else if ([type isEqual:NSTIFFPboardType] && [self promisedDragTIFFDataSource]) {
+        [pasteboard setData:[[self promisedDragTIFFDataSource] _imageTIFFRepresentation] forType:NSTIFFPboardType];
+        [self setPromisedDragTIFFDataSource:nil];
+    }
+}
+
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event 
 { 
     [self autoscroll:event]; 
@@ -1589,7 +1608,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         types = mutableTypes;
     }
 
-    [pasteboard declareTypes:types owner:nil];
+    [pasteboard declareTypes:types owner:self];
     [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:attributedString];
     [mutableTypes release];
 }
@@ -1736,6 +1755,19 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                               inContext:context];
                                               
     return nil;
+}
+
+- (DOMElement *)promisedDragTIFFDataSource 
+{
+    return _private->promisedDragTIFFDataSource;
+}
+
+- (void)setPromisedDragTIFFDataSource:(DOMElement *)source
+{
+    [source retain];
+    if (_private->promisedDragTIFFDataSource)
+        [_private->promisedDragTIFFDataSource release];
+    _private->promisedDragTIFFDataSource = source;
 }
 
 @end
@@ -1885,7 +1917,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    [pasteboard declareTypes:types owner:nil];
+    [pasteboard declareTypes:types owner:self];
     [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
     return YES;
 }
