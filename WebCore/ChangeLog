@@ -1,3 +1,10 @@
+2007-05-17  George Staikos  <staikos@kde.org>
+
+        - Back out last patch based on discussion with Zack.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::paint):
+
 2007-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
