@@ -208,7 +208,12 @@ void InsertListCommand::doApply()
                 end = start;
             }
             
-            insertNodeAt(listElement.get(), start.deepEquivalent());
+            // Insert the list at a position visually equivalent to start of the
+            // paragraph that is being moved into the list. 
+            // Try to avoid inserting it somewhere where it will be surrounded by 
+            // inline ancestors of start, since it is easier for editing to produce 
+            // clean markup when inline elements are pushed down as far as possible.
+            insertNodeAt(listElement.get(), start.deepEquivalent().upstream());
         }
         moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
         if (nextList && previousList)

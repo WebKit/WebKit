@@ -1,3 +1,22 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/5190926> 
+        Gmail Editor: Crash when removing list style from underlined, multi-item list
+        
+        The user underlined some text, then created a list.
+        The list was placed inside the inline element carrying 
+        the underline style, so, that element surrounded the 
+        list instead of being at the lowest level (just above 
+        text nodes). This kind of markup is more difficult to 
+        edit. Filed 5192089 and added a workaround so that we 
+        don't produce this kind of markup.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Avoid inline
+        elements when inserting the new list.
+
 2007-05-17  David Hyatt  <hyatt@apple.com>
 
         Allow redundant attributes with the same name in view source mode.

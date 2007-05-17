@@ -1,3 +1,17 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Demonstrates bug:
+        * editing/execCommand/5190926-expected.checksum: Added.
+        * editing/execCommand/5190926-expected.png: Added.
+        * editing/execCommand/5190926-expected.txt: Added.
+        * editing/execCommand/5190926.html: Added.
+        
+        Avoided some nesting:
+        * editing/execCommand/5142012-2-expected.txt:
+        * editing/execCommand/switch-list-type-expected.txt:
+
 2007-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Justin.
