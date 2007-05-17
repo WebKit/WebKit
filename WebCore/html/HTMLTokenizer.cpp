@@ -125,14 +125,16 @@ static inline bool tagMatch(const char* s1, const UChar* s2, unsigned length)
     return true;
 }
 
-inline void Token::addAttribute(Document* doc, const AtomicString& attrName, const AtomicString& v)
+inline void Token::addAttribute(Document* doc, AtomicString& attrName, const AtomicString& v, bool viewSourceMode)
 {
-    if (!attrName.isEmpty() && attrName != "/") {
+    if (!attrName.isEmpty() && (viewSourceMode || attrName != "/")) {
         Attribute* a = new MappedAttribute(attrName, v);
         if (!attrs)
             attrs = new NamedMappedAttrMap(0);
         attrs->insertAttribute(a);
     }
+    
+    attrName = emptyAtom;
 }
 
 // ----------------------------------------------------------------------------
@@ -917,7 +919,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
                 // Now that we've shaved off any invalid / that might have followed the name), make the tag.
                 // FIXME: FireFox and WinIE turn !foo nodes into comments, we ignore comments. (fast/parser/tag-with-exclamation-point.html)
-                if (ptr[0] != '!') {
+                if (ptr[0] != '!' || inViewSourceMode()) {
                     currToken.tagName = AtomicString(ptr);
                     currToken.beginTag = beginTag;
                 }
@@ -943,6 +945,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     cBufferPos = 0;
                     break;
                 }
+                if (inViewSourceMode())
+                    currToken.addViewSourceChar(curchar);
                 ++src;
             }
             break;
@@ -970,14 +974,17 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     // also deviates from WinIE, but in this case we'll just copy Moz and Opera.
                     if (currToken.tagName == scriptTag && curchar == '>' && attrName == "/")
                         currToken.flat = true;
+                    if (inViewSourceMode())
+                        currToken.addViewSourceChar('a');
                     break;
                 }
                 
                 // tolower() shows up on profiles. This is faster!
-                if (curchar >= 'A' && curchar <= 'Z')
+                if (curchar >= 'A' && curchar <= 'Z' && !inViewSourceMode())
                     cBuffer[cBufferPos++] = curchar + ('a' - 'A');
                 else
                     cBuffer[cBufferPos++] = curchar;
+                    
                 ++src;
             }
             if ( cBufferPos == CBUFLEN ) {
@@ -986,6 +993,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 dest = buffer;
                 *dest++ = 0;
                 state.setTagState(SearchEqual);
+                if (inViewSourceMode())
+                    currToken.addViewSourceChar('a');
             }
             break;
         }
@@ -1002,15 +1011,19 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         kdDebug(6036) << "found equal" << endl;
 #endif
                         state.setTagState(SearchValue);
+                        if (inViewSourceMode())
+                            currToken.addViewSourceChar(curchar);
                         ++src;
                     }
                     else {
-                        currToken.addAttribute(m_doc, attrName, emptyAtom);
+                        currToken.addAttribute(m_doc, attrName, emptyAtom, inViewSourceMode());
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                     }
                     break;
                 }
+                if (inViewSourceMode())
+                    currToken.addViewSourceChar(curchar);
                 ++src;
             }
             break;
@@ -1021,12 +1034,16 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if(( curchar == '\'' || curchar == '\"' )) {
                         tquote = curchar == '\"' ? DoubleQuote : SingleQuote;
                         state.setTagState(QuotedValue);
+                        if (inViewSourceMode())
+                            currToken.addViewSourceChar(curchar);
                         ++src;
                     } else
                         state.setTagState(Value);
 
                     break;
                 }
+                if (inViewSourceMode())
+                    currToken.addViewSourceChar(curchar);
                 ++src;
             }
             break;
@@ -1050,7 +1067,9 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         dest--; // remove trailing newlines
                     AtomicString v(buffer+1, dest-buffer-1);
                     attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
-                    currToken.addAttribute(m_doc, attrName, v);
+                    currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
+                    if (inViewSourceMode())
+                        currToken.addViewSourceChar('x');
                     state.setTagState(SearchAttribute);
                     dest = buffer;
                     tquote = NoQuote;
@@ -1072,13 +1091,18 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
                             dest--; // remove trailing newlines
                         AtomicString v(buffer+1, dest-buffer-1);
-                        if (attrName.isEmpty())
+                        if (attrName.isEmpty()) {
                             attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
-                        currToken.addAttribute(m_doc, attrName, v);
-
+                            if (inViewSourceMode())
+                                currToken.addViewSourceChar('x');
+                        } else if (inViewSourceMode())
+                            currToken.addViewSourceChar('v');
+                        currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                         tquote = NoQuote;
+                        if (inViewSourceMode())
+                            currToken.addViewSourceChar(curchar);
                         ++src;
                         break;
                     }
@@ -1107,7 +1131,9 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if ( curchar <= ' ' || curchar == '>' )
                     {
                         AtomicString v(buffer+1, dest-buffer-1);
-                        currToken.addAttribute(m_doc, attrName, v);
+                        currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
+                        if (inViewSourceMode())
+                            currToken.addViewSourceChar('v');
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                         break;
@@ -1130,6 +1156,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 if (*src == '/')
                     currToken.flat = true;
 
+                if (inViewSourceMode())
+                    currToken.addViewSourceChar(*src);
                 ++src;
             }
             if (src.isEmpty()) break;
@@ -1155,7 +1183,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             // compatibility.
             bool isSelfClosingScript = currToken.flat && currToken.beginTag && currToken.tagName == scriptTag;
             bool beginTag = !currToken.flat && currToken.beginTag;
-            if (currToken.beginTag && currToken.tagName == scriptTag && !parser->skipMode()) {
+            if (currToken.beginTag && currToken.tagName == scriptTag && !inViewSourceMode() && !parser->skipMode()) {
                 Attribute* a = 0;
                 scriptSrc = String();
                 scriptSrcCharset = String();

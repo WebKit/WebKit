@@ -1,3 +1,22 @@
+2007-05-16  David Hyatt  <hyatt@apple.com>
+
+        Improve the syntax-highlighted view source mode.  It now preserves all whitespace properly
+        and highlights doctypes and comments (in addition to all the stuff it could highlight before).
+
+        Reviewed by aroben
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLTokenizer.h:
+        (WebCore::Token::Token):
+        (WebCore::Token::~Token):
+        (WebCore::Token::reset):
+        (WebCore::Token::addViewSourceChar):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        * html/HTMLViewSourceDocument.h:
+
 2007-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
