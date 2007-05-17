@@ -1,3 +1,17 @@
+2007-05-17  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4775672> AXTextMarkerRangeForUnorderedTextMarkers returns incorrect order
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        A selection's m_start is not guranteed to equal m_base since m_start can actually be m_base's downstream().
+        A more accurate way to determine the order from selection is to ask directly for isBaseFirst().
+        In addition, if the two visible positions given are the same position but different affinity, we need to 
+        handle it here rather than depend on the selection. This is because selection does not retain the
+        affinity of both selection start/end visible positions as part of the selection validation. 
+
 2007-05-17  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Brady

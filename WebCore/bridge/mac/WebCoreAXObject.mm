@@ -1706,12 +1706,19 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (visiblePos1.isNull() || visiblePos2.isNull())
         return nil;
     
-    // use the SelectionController class to do the ordering
-    // NOTE: Perhaps we could add a SelectionController method to indicate direction, based on m_baseIsStart
     WebCoreTextMarker* startTextMarker;
     WebCoreTextMarker* endTextMarker;
-    Selection selection(visiblePos1, visiblePos2);
-    if (selection.base() == selection.start()) {
+    bool alreadyInOrder;
+    
+    // upstream is ordered before downstream for the same position
+    if (visiblePos1 == visiblePos2 && visiblePos2.affinity() == UPSTREAM) 
+        alreadyInOrder = false;
+    
+    // use selection order to see if the positions are in order
+    else 
+        alreadyInOrder = Selection(visiblePos1, visiblePos2).isBaseFirst();
+    
+    if (alreadyInOrder) {
         startTextMarker = textMarker1;
         endTextMarker = textMarker2;
     } else {
@@ -1719,7 +1726,6 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         endTextMarker = textMarker1;
     }
     
-    // return a range based on the SelectionController verdict
     return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
