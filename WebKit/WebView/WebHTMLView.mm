@@ -74,6 +74,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
+#import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/ExceptionHandlers.h>
@@ -84,6 +85,8 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLImageElement.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -91,7 +94,9 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderImage.h>
 #import <WebCore/SelectionController.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebKit/DOM.h>
@@ -100,6 +105,7 @@
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 extern "C" {
 
@@ -1608,7 +1614,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         types = mutableTypes;
     }
 
-    [pasteboard declareTypes:types owner:self];
+    [pasteboard declareTypes:types owner:[self _topHTMLView]];
     [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:attributedString];
     [mutableTypes release];
 }
@@ -1917,7 +1923,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    [pasteboard declareTypes:types owner:self];
+    [pasteboard declareTypes:types owner:[self _topHTMLView]];
     [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
     return YES;
 }
@@ -2928,21 +2934,49 @@ done:
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    ASSERT(![self _webView] || [self _isTopHTMLView]);
-    Page* page = core([self _webView]);
+    NSFileWrapper *wrapper = nil;
     
-    //If a load occurs midway through a drag, the view may be detached, which gives
-    //us no ability to get to the original Page, so we cannot access any drag state
-    //FIXME: is there a way to recover?
-    if (!page) 
-        return nil; 
+    if (DOMElement *tiffSource = [self promisedDragTIFFDataSource]) {
+        Element *element = core(tiffSource);
+        if (!element->hasTagName(imgTag))
+            goto noPromisedData;
+        
+        HTMLImageElement *imageElement = static_cast<HTMLImageElement *>(element);
+        if (!imageElement->cachedImage() || imageElement->cachedImage()->errorOccurred()) 
+            goto noPromisedData;
+        
+        CachedResource *resource = imageElement->cachedImage();
+        SharedBuffer *buffer = resource->data();
+        if (!buffer)
+            goto noPromisedData;
+        
+        NSData *data = buffer->createNSData();
+        NSURLResponse *response = resource->response().nsURLResponse();
+        
+        wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
+        [wrapper setPreferredFilename:[response suggestedFilename]];
+    }
     
-    KURL imageURL = page->dragController()->draggingImageURL();
-    ASSERT(!imageURL.isEmpty());
+noPromisedData:
     
-    NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
+    if (!wrapper) {
+        ASSERT(![self _webView] || [self _isTopHTMLView]);
+        Page* page = core([self _webView]);
+        
+        //If a load occurs midway through a drag, the view may be detached, which gives
+        //us no ability to get to the original Page, so we cannot access any drag state
+        //FIXME: is there a way to recover?
+        if (!page) 
+            return nil; 
+        
+        KURL imageURL = page->dragController()->draggingImageURL();
+        ASSERT(!imageURL.isEmpty());
+        
+        wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
+    }
+    
     if (wrapper == nil) {
-        LOG_ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");
+        LOG_ERROR("Failed to create image file.");
         return nil;
     }
 

@@ -127,7 +127,7 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElemen
 {
     ASSERT(pasteboard);
     ASSERT(element);
-    WebHTMLView *source = (WebHTMLView*)[[kit(frame) frameView] documentView];        
+    WebHTMLView *source = getTopHTMLView(frame);      
     WebArchive *archive = [element webArchive];
     
     [pasteboard _web_declareAndWriteDragImageForElement:element URL:URL title:title archive:archive source:source];

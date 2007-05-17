@@ -2230,9 +2230,9 @@
 		A8EA7CB60A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7CA80A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp */; };
 		A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CA90A192B9C00A8EF5F /* HTMLDivElement.h */; };
 		A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CAA0A192B9C00A8EF5F /* HTMLHeadingElement.h */; };
-		A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D230A19385500A8EF5F /* HTMLImageLoader.h */; };
+		A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D230A19385500A8EF5F /* HTMLImageLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8EA7D2C0A19385500A8EF5F /* HTMLMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D240A19385500A8EF5F /* HTMLMapElement.h */; };
-		A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D250A19385500A8EF5F /* HTMLImageElement.h */; };
+		A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D250A19385500A8EF5F /* HTMLImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8EA7D2E0A19385500A8EF5F /* HTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D260A19385500A8EF5F /* HTMLAreaElement.h */; };
 		A8EA7D2F0A19385500A8EF5F /* HTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7D270A19385500A8EF5F /* HTMLAreaElement.cpp */; };
 		A8EA7D300A19385500A8EF5F /* HTMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7D280A19385500A8EF5F /* HTMLImageLoader.cpp */; };

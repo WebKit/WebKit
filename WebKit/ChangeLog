@@ -1,5 +1,31 @@
 2007-05-17  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Justin.
+
+        Fix for <rdar://problem/4244861> Safari fails to create image file
+        after releasing dragged image that has changed on source page
+
+        This patch fixes this bug by manually creating an NSFileWrapper from
+        the TIFF promise data for a drag if it is available.  This bypasses
+        the problem of the required resource no longer being held due to page
+        loads or other constraints.
+        
+        We need to leave the old path in place to allow for the case where
+        the promised data is not available.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::declareAndWriteDragImage):
+          Always use the top WebHTMLView as the pasteboard owner, this is
+          safe as we only use the owner for resolving promised types.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+        (-[WebHTMLView writeSelectionToPasteboard:types:]):
+          Always use the top WebHTMLView as the pasteboard owner.
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+          Add path to create NSFileWrapper from promise data.
+
+2007-05-17  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adam.
         
         Fix for <rdar://problem/4343832> Trying to drag a large 6.2MB jpeg image
