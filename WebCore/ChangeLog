@@ -1,3 +1,13 @@
+2007-05-18  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
+        Use the proper clipping algorithm.  Might be a bit slow but we
+        can optimize it later.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clip):
+
 2007-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by George Staikos.

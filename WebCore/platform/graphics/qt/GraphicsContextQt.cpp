@@ -523,7 +523,9 @@ void GraphicsContext::clip(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    m_data->p().setClipRect(rect, Qt::UniteClip);
+    if (m_data->p().clipRegion().isEmpty())
+        m_data->p().setClipRect(rect);
+    else m_data->p().setClipRect(rect, Qt::IntersectClip);
 }
 
 /**
