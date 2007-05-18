@@ -1,3 +1,28 @@
+2007-05-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        WebKit part of fix for 5201499 (support for PDFKit UI for saving PDFs to disk)
+        
+        Also, the PDFKit mechanism for notifying clients about "Open File Externally" was
+        changed from a notification to a delegate method. The notification was new to 
+        Leopard, so removing it doesn't affect clients in the field.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Declared new UI delegate method webView:saveFrameView:, analogous to the existing
+        webView:printFrameView:
+
+        * WebView/WebPDFView.mm:
+        removed declaration of _webkit_PDFKitLaunchNotification
+        (-[WebPDFView viewDidMoveToWindow]):
+        don't observe _webkit_PDFKitLaunchNotification
+        (-[WebPDFView viewWillMoveToWindow:]):
+        ditto
+        (-[WebPDFView PDFViewOpenPDFInNativeApplication:]):
+        new PDFKit delegate method, replaces our use of _webkit_PDFKitLaunchNotification
+        (-[WebPDFView PDFViewSavePDFToDownloadFolder:]):
+        new PDFKit delegate method, calls through to new WebKit UI delegate method
+        
 2007-05-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Justin.
