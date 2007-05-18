@@ -100,6 +100,22 @@
 
 using namespace WebCore;
 
+// SPI for NSURLDownload
+// Needed for <rdar://problem/5121850> 
+@interface NSURLDownload (NSURLDownloadPrivate)
+
+- (void)_setOriginatingURL:(NSURL *)url;
+- (NSURL *)_originatingURL;
+
+@end
+
+// FIXME: This is unnecessary after <rdar://problem/5208329>
+@interface WebHistoryItem (WebHistoryItemPrivate)
+
+- (BOOL)_wasUserGesture;
+
+@end
+
 @interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener>
 {
     Frame* m_frame;
@@ -236,11 +252,31 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
 {
     id proxy = handle->releaseProxy();
     ASSERT(proxy);
-    [WebDownload _downloadWithLoadingConnection:handle->connection()
-                                        request:request.nsURLRequest()
-                                       response:response.nsURLResponse()
-                                       delegate:[getWebView(m_webFrame.get()) downloadDelegate]
-                                          proxy:proxy];
+    
+    WebView *webView = getWebView(m_webFrame.get());
+    WebDownload *download = [WebDownload _downloadWithLoadingConnection:handle->connection()
+                                                                request:request.nsURLRequest()
+                                                               response:response.nsURLResponse()
+                                                               delegate:[webView downloadDelegate]
+                                                                  proxy:proxy]; 
+    NSURL *originalURL = nil;
+    WebBackForwardList *history = [webView backForwardList];
+    WebHistoryItem *currentItem = nil;
+    int backListCount = [history backListCount];
+    int backCount = 0;
+    
+    // find the first item in the history that was originated
+    // by the user
+    while (backListCount > 0 && !originalURL) {
+        currentItem = [history itemAtIndex:backCount--];
+        
+        if (![currentItem respondsToSelector:@selector(_wasUserGesture)] || [currentItem _wasUserGesture])
+            originalURL = [currentItem URL];
+    }
+
+    ASSERT(originalURL);
+    if ([download respondsToSelector:@selector(_setOriginatingURL:)])
+        [download _setOriginatingURL:originalURL];
 }
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)

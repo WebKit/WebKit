@@ -1,3 +1,12 @@
+2007-05-18  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Brady E.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::download):
+        asked the webframeloaderclient for its webview's history and 
+        injected the originated url into the created WebDownload
+
 2007-05-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker
