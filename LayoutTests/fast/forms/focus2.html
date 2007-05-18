@@ -23,7 +23,7 @@ function description(element)
     if (element.toString().match(/iframe/i))
         return "IFRAME";
     
-    if (element.toString().match(/anchor/i))
+    if (element.toString().match(/javascript:/i))
         return "ANCHOR";
 
     if (element.toString().match(/textarea/i))

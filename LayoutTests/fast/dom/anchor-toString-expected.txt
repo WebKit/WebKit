@@ -1,0 +1,7 @@
+A link! 
+
+Writing just the anchor object - file:///sometestfile.html
+
+Writing the result of the String(anchor) - file:///sometestfile.html
+
+Writing the result of the anchor's toString() method - file:///sometestfile.html

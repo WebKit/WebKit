@@ -1,3 +1,14 @@
+2007-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Tests for <rdar://problem/5201423> REGRESSION: Links in 
+        sidebar don't work on Honda website
+
+        * fast/dom/anchor-toString-expected.txt: Added.
+        * fast/dom/anchor-toString.html: Added.
+        * fast/forms/focus2.html:
+
 2007-05-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

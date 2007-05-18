@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -47,10 +47,14 @@ module html {
         readonly attribute DOMString search;
         readonly attribute DOMString text;
 
+#if defined(LANGUAGE_JAVASCRIPT)
+        [Custom] DOMString toString();
+#endif
+
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:
         readonly attribute URL absoluteLinkURL;
-#endif    
+#endif
     };
 
 }

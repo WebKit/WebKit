@@ -1,3 +1,20 @@
+2007-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5201423> REGRESSION: Links in 
+        sidebar don't work on Honda website
+
+        Anchor elements need to have the same behavior for implicit and 
+        explicit toString() calls.
+
+        Test: fast/dom/anchor-toString.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLAnchorElementCustom.cpp: Added.
+        (WebCore::JSHTMLAnchorElement::toString):
+        * html/HTMLAnchorElement.idl:
+
 2007-05-17  Geoffrey Garen  <ggaren@apple.com>
         
         Build fix.
