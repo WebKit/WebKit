@@ -28,7 +28,7 @@
 #include "Editor.h"
 
 #include "ClipboardAccessPolicy.h"
-#include "Clipboard.h"
+#include "ClipboardQt.h"
 #include "Document.h"
 #include "Element.h"
 #include "Selection.h"
@@ -37,11 +37,14 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 
+#include <QApplication>
+#include <QClipboard>
+
 namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    return 0;
+    return new ClipboardQt(policy, QApplication::clipboard()->mimeData(), false); 
 }
 
 } // namespace WebCore
