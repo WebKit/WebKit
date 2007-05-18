@@ -95,6 +95,8 @@ private:
 #elif PLATFORM(QT)
     mutable QPixmap* m_data;
     mutable QPainter* m_painter;
+#else
+    mutable void* m_data;
 #endif
     mutable GraphicsContext* m_drawingContext;
 };

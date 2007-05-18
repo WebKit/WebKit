@@ -1,5 +1,13 @@
 2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Maciej.
+
+        Build fix for non-Qt and non-Mac ports.
+
+        * html/HTMLCanvasElement.h:
+
+2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Mark Rowe.
 
         No test added as this is hard to time.
