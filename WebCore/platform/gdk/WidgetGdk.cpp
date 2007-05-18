@@ -35,12 +35,14 @@
 #include "IntRect.h"
 #include "RenderObject.h"
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
 
 namespace WebCore {
 
 class WidgetPrivate {
 public:
     GdkDrawable* drawable;
+    GtkWidget* widget;
     WidgetClient* client;
     IntRect geometry;
     Font font;
@@ -50,12 +52,13 @@ Widget::Widget()
     : data(new WidgetPrivate)
 {
     data->drawable = 0;
+    data->widget = 0;
 }
 
-Widget::Widget(GdkDrawable* drawable)
+Widget::Widget(GtkWidget* widget)
     : data(new WidgetPrivate)
 {
-    setDrawable(drawable);
+    setGtkWidget(widget);
 }
 
 GdkDrawable* Widget::drawable() const
@@ -63,9 +66,15 @@ GdkDrawable* Widget::drawable() const
     return data->drawable;
 }
 
-void Widget::setDrawable(GdkDrawable* drawable)
+GtkWidget* Widget::gtkWidget() const
 {
-    data->drawable = drawable;
+    return data->widget;
+}
+
+void Widget::setGtkWidget(GtkWidget* widget)
+{
+    data->drawable = widget->window;
+    data->widget = widget;
 }
 
 Widget::~Widget()
@@ -90,16 +99,15 @@ IntRect Widget::frameGeometry() const
 
 bool Widget::hasFocus() const
 {
-    return false;
+    return GTK_WIDGET_HAS_FOCUS(data->widget);
 }
 
 void Widget::setFocus()
 {
-    GdkDrawable* drawable = data->drawable;
-    if (!drawable || !GDK_IS_WINDOW(drawable))
+    GtkWidget *widget = data->widget;
+    if (!widget)
         return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_focus(window, GDK_CURRENT_TIME);
+    gtk_widget_grab_focus(widget);
 }
 
 void Widget::clearFocus()

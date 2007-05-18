@@ -1,3 +1,34 @@
+2007-05-18  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Make WebCore::Widget use GtkWidget to fix focus handling.
+
+        * WebCore.pro: Add PlatformScrollBar
+        * platform/ScrollView.h: Gtk stuff
+        * platform/Widget.h: Take a GtkWidget
+        * platform/gdk/PlatformScrollBarGdk.cpp: Added.
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+        (PlatformScrollbar::width):
+        (PlatformScrollbar::height):
+        (PlatformScrollbar::setEnabled):
+        (PlatformScrollbar::paint):
+        (PlatformScrollbar::updateThumbPosition):
+        (PlatformScrollbar::updateThumbProportion):
+        (PlatformScrollbar::setRect):
+        * platform/gdk/ScreenGdk.cpp: Implement depth handling
+        (WebCore::screenDepth):
+        * platform/gdk/ScrollViewGdk.cpp: use setGtkWidget, not setDrawable
+        (WebCore::ScrollView::setGtkWidget):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::gtkWidget):
+        (WebCore::Widget::setGtkWidget):
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::setFocus):
+
 2007-05-18  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Zack

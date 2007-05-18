@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther zecke@selfish.org
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,47 +26,63 @@
  */
 
 #include "config.h"
-#include "Screen.h"
-#include "Widget.h"
-
+#include "PlatformScrollBar.h"
 #include "NotImplementedGdk.h"
-#include <wtf/Assertions.h>
-#include <gdk/gdk.h>
+
+#include <gtk/gtk.h>
 #include <stdio.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-int screenDepth(Widget* widget) 
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation,
+                                     ScrollbarControlSize controlSize)
+    : Scrollbar(client, orientation, controlSize)
+{ 
+    GtkScrollbar* scrollBar = orientation == HorizontalScrollbar ?
+                              GTK_SCROLLBAR(::gtk_hscrollbar_new(NULL)) :
+                              GTK_SCROLLBAR(::gtk_vscrollbar_new(NULL));
+    setGtkWidget(GTK_WIDGET(scrollBar));
+}
+PlatformScrollbar::~PlatformScrollbar()
 {
-    ASSERT(widget->drawable());
-
-    gint dummy, depth;
-    gdk_window_get_geometry(widget->drawable(), &dummy, &dummy, &dummy, &dummy, &depth);
-    return depth;
+    /*
+     * the Widget does not take over ownership.
+     */
+    gtk_object_unref(GTK_OBJECT(gtkWidget()));
 }
 
-int screenDepthPerComponent(Widget*)
+int PlatformScrollbar::width() const
+{
+    return Widget::width();
+}
+
+int PlatformScrollbar::height() const
+{
+    return Widget::height();
+}
+
+void PlatformScrollbar::setEnabled(bool enabled)
+{
+    Widget::setEnabled(enabled);
+}
+
+void PlatformScrollbar::paint(GraphicsContext*, const IntRect&)
 {
     notImplementedGdk();
-    return 8;
 }
 
-bool screenIsMonochrome(Widget*) 
-{ 
-    notImplementedGdk(); 
-    return false; 
-}
-
-FloatRect screenRect(Widget*) 
+void PlatformScrollbar::updateThumbPosition()
 { 
     notImplementedGdk();
-    return FloatRect(); 
 }
 
-FloatRect screenAvailableRect(Widget*) 
-{ 
-    notImplementedGdk(); 
-    return FloatRect(); 
+void PlatformScrollbar::updateThumbProportion()
+{
+    notImplementedGdk();
 }
 
+void PlatformScrollbar::setRect(const IntRect& rect)
+{
+    setFrameGeometry(rect);
 }
+

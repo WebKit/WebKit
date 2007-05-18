@@ -774,6 +774,7 @@ gdk-port:SOURCES += \
         platform/gdk/KeyEventGdk.cpp \
         platform/gdk/MimeTypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \
+        platform/gdk/PlatformScrollBarGdk.cpp \
         platform/gdk/PopupMenuGdk.cpp \
         platform/gdk/RenderThemeGdk.cpp \
         platform/gdk/ScrollViewGdk.cpp \

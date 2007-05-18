@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 
     FrameView* frameView = new FrameView(gFrame);
     gFrame->setView(frameView);
-    frameView->ScrollView::setDrawable(frameWindow->window);
+    frameView->setGtkWidget(frameWindow);
 
     gFrame->init();
     gFrame->loader()->load(ResourceRequest(url));

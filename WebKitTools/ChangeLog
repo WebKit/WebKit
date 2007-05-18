@@ -1,3 +1,10 @@
+2007-05-18  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        * GdkLauncher/main.cpp: Call setGtkWidget
+        (main):
+
 2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

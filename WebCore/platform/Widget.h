@@ -42,6 +42,7 @@ typedef struct HWND__* HWND;
 
 #if PLATFORM(GDK)
 typedef struct _GdkDrawable GdkDrawable;
+typedef struct _GtkWidget GtkWidget;
 #endif
 
 #if PLATFORM(QT)
@@ -134,9 +135,10 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GDK)
-        Widget(GdkDrawable*);
-        virtual void setDrawable(GdkDrawable*);
+        Widget(GtkWidget*);
+        virtual void setGtkWidget(GtkWidget*);
         GdkDrawable* drawable() const;
+        GtkWidget* gtkWidget() const;
 #endif
 
 #if PLATFORM(QT)
