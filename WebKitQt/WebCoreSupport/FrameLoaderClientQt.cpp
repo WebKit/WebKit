@@ -79,8 +79,8 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
 
     connect(this, SIGNAL(loadStarted(QWebFrame*)),
             m_webFrame->page(), SIGNAL(loadStarted(QWebFrame *)));
-    connect(this, SIGNAL(loadProgressChanged(double)),
-            m_webFrame->page(), SIGNAL(loadProgressChanged(double)));
+    connect(this, SIGNAL(loadProgressChanged(int)),
+            m_webFrame->page(), SIGNAL(loadProgressChanged(int)));
     connect(this, SIGNAL(loadFinished(QWebFrame*)),
             m_webFrame->page(), SIGNAL(loadFinished(QWebFrame *)));
     connect(this, SIGNAL(titleChanged(const QString&)),
@@ -428,7 +428,7 @@ void FrameLoaderClientQt::postProgressStartedNotification()
 void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadProgressChanged(m_frame->page()->progress()->estimatedProgress());
+        emit loadProgressChanged(m_frame->page()->progress()->estimatedProgress() * 100);
 }
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
