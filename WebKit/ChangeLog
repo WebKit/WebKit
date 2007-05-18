@@ -1,3 +1,16 @@
+2007-05-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5204792> REGRESSION (r21367): System widgets are drawn with vertical/horizontal scroll bars
+        
+        No test because the bug requires calling setAllowsScrolling: to reproduce.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView setAllowsScrolling:]): Update the FrameView's scroll state as well as the one
+        on WebDynamicScrollBarsView, otherwise this setting won't stick if the frame has already loaded
+        a document.
+
 2007-05-18  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed spelling error.

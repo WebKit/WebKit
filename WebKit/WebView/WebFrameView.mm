@@ -57,6 +57,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameView.h>
@@ -345,7 +346,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    [(WebDynamicScrollBarsView *)[self _scrollView] setAllowsScrolling:flag];
+    WebDynamicScrollBarsView *scrollView = (WebDynamicScrollBarsView *)[self _scrollView];
+    [scrollView setAllowsScrolling:flag];
+    WebCore::Frame *frame = core([self webFrame]);
+    if (WebCore::FrameView *view = frame? frame->view() : 0) {
+        view->setHScrollbarMode((WebCore::ScrollbarMode)[scrollView horizontalScrollingMode]);
+        view->setVScrollbarMode((WebCore::ScrollbarMode)[scrollView verticalScrollingMode]);
+    }
 }
 
 - (BOOL)allowsScrolling
