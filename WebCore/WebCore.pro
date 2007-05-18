@@ -16,6 +16,13 @@ DEPENDPATH += css dom loader editing history html \
 
 include($$OUTPUT_DIR/config.pri)
 
+unix {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_LIBDIR = $$DESTDIR
+    QMAKE_PKGCONFIG_INCDIR = $$PWD/../WebKitQt/Api
+    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+}
+
 CONFIG -= warn_on
 QMAKE_CXXFLAGS += -Wreturn-type
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
