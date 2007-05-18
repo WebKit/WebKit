@@ -249,6 +249,7 @@ SOURCES += \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
+    bindings/js/JSHTMLAnchorElementCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
     bindings/js/JSHTMLInputElementBase.cpp \
