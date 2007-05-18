@@ -1,3 +1,15 @@
+2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        No test added as this is hard to time.
+
+        * platform/gdk/FrameGdk.cpp: Use needsLayout() to decide if layout()
+        is needed.
+
+        (WebCore::FrameGdk::dumpRenderTree):
+        (WebCore::FrameGdk::handleGdkEvent):
+
 2007-05-18  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

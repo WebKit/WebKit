@@ -45,7 +45,8 @@ my @xcodeArgs;
 # pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
 foreach my $arg(@ARGV) {
     print $arg."\n";
-    if( $arg =~ /^-/ ){
+    if( $arg =~ /^--gdk$/i ){
+    } elsif( $arg =~ /^-/ ){
         push( @jsArgs, $arg );
     } else {
         push( @xcodeArgs, $arg );
@@ -70,7 +71,7 @@ exit WEXITSTATUS($result) if WEXITSTATUS($result);
 my $productDir = productDir();
 chdir "tests/mozilla" or die;
 
-$productDir .= "/JavaScriptCore" if (isQt());
+$productDir .= "/JavaScriptCore" if (isQt() or isGdk());
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 
 my $testkjsName;

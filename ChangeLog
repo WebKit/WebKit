@@ -1,3 +1,9 @@
+2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.pro: Build testkjs for Gdk and Qt
+
 2007-05-11  Holger Freyther <freyther@kde.org>
 
         Reviewed by Mark Rowe.

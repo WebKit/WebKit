@@ -129,7 +129,7 @@ void FrameGdk::onDidFinishLoad()
 
 void FrameGdk::dumpRenderTree() const
 {
-    if (view()->layoutPending())
+    if (view()->needsLayout())
         view()->layout();
     
     String txt = externalRepresentation(renderer());
@@ -206,7 +206,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             cairo_t* cr = gdk_cairo_create(event->any.window);
             GraphicsContext ctx(cr);
             if (renderer()) {
-                if (view()->layoutPending())
+                if (view()->needsLayout())
                     view()->layout();
                 IntRect rect(clip.x, clip.y, clip.width, clip.height);
                 paint(&ctx, rect);

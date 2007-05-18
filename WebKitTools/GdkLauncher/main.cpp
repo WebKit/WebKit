@@ -213,6 +213,7 @@ int main(int argc, char* argv[])
     gFrame->setView(frameView);
     frameView->ScrollView::setDrawable(frameWindow->window);
 
+    gFrame->init();
     gFrame->loader()->load(ResourceRequest(url));
     gtk_main();
 #if 0 // FIXME: this crashes at the moment. needs to provide DragClient

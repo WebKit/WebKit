@@ -1,3 +1,12 @@
+2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        * GdkLauncher/main.cpp:
+        (main): Call Frame::init to catch up with Maciej's changes.
+        * Scripts/run-javascriptcore-tests: Remove --gdk from the command line
+        passed to the helper scripts.
+
 2007-05-16  Brady Eidson  <beidson@apple.com>
 
         Build fix for some dev configurations
