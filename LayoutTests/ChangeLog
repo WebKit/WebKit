@@ -1,3 +1,12 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+        
+        <rdar://problem/5209984> REGRESSION: Crash on click after clearing Facebook status
+
+        * editing/selection/5209984-expected.txt: Added.
+        * editing/selection/5209984.html: Added.
+
 2007-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.

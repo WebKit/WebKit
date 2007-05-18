@@ -1,3 +1,21 @@
+2007-05-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ggaren
+
+        <rdar://problem/5209984> REGRESSION: Crash on click after clearing Facebook status
+        
+        comparePositions() expects non-null positions.  It's 
+        given a null position by contains() if the current 
+        selection is a range selection but contains only invisible 
+        content *and* visible positions cannot be created from its 
+        end points.  This can happen when there is a range selection 
+        inside shadow content (like that inside text fields) that 
+        is made invisible.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::contains): Check for
+        invisible end points.
+
 2007-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.

@@ -1043,6 +1043,9 @@ bool SelectionController::contains(const IntPoint& point)
     if (visiblePos.isNull())
         return false;
         
+    if (m_sel.visibleStart().isNull() || m_sel.visibleEnd().isNull())
+        return false;
+        
     Position start(m_sel.visibleStart().deepEquivalent());
     Position end(m_sel.visibleEnd().deepEquivalent());
     Position p(visiblePos.deepEquivalent());
