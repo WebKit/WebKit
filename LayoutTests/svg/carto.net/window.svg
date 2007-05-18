@@ -12,8 +12,8 @@
 <svg width="100%" height="100%" viewBox="0 0 1024 700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:attrib="http://www.carto.net/attrib" xmlns:batik="http://xml.apache.org/batik/ext" onload="init(evt)">
         <script type="text/ecmascript" xlink:href="resources/helper_functions.js"/>
         <script type="text/ecmascript" xlink:href="resources/mapApp.js"/>
-	<script type="text/ecmascript" xlink:href="resources/timer.js"/>
-       <script type="text/ecmascript" xlink:href="resources/Window.js"/>
+        <script type="text/ecmascript" xlink:href="resources/timer.js"/>
+        <script type="text/ecmascript" xlink:href="resources/window.js"/>
         <script type="text/ecmascript"><![CDATA[
        	//global variables for map application and navigation
        	var myMapApp = new mapApp(false,undefined);

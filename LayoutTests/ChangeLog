@@ -1,3 +1,11 @@
+2007-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark.
+
+        Fix capitalisation of resources referenced by test case. 
+
+        * svg/carto.net/window.svg:
+
 2007-05-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ggaren
