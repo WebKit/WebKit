@@ -97,31 +97,12 @@ IntRect Widget::frameGeometry() const
     return data->geometry;
 }
 
-bool Widget::hasFocus() const
-{
-    return GTK_WIDGET_HAS_FOCUS(data->widget);
-}
-
 void Widget::setFocus()
 {
     GtkWidget *widget = data->widget;
     if (!widget)
         return;
     gtk_widget_grab_focus(widget);
-}
-
-void Widget::clearFocus()
-{
-}
-
-const Font& Widget::font() const
-{
-    return data->font;
-}
-
-void Widget::setFont(const Font& font)
-{
-    data->font = font;
 }
 
 void Widget::setCursor(const Cursor& cursor)
