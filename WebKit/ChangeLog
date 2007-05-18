@@ -1,3 +1,9 @@
+2007-05-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed spelling error.
+        
+        * WebView/WebViewPrivate.h:
+
 2007-05-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker

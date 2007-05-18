@@ -480,7 +480,7 @@ Could be worth adding to the API.
 
 @interface NSObject (WebResourceLoadDelegatePrivate)
 // Addresses <rdar://problem/5008925> - SPI for now
-- (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)respose fromDataSource:(WebDataSource *)dataSource;
+- (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 @end
 
 #undef WebNSInteger
