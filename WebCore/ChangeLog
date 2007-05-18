@@ -2,6 +2,7 @@
 
         Reviewed by Maciej
 
+        http://bugs.webkit.org/show_bug.cgi?id=12681 and
         <rdar://problem/5166149> - window.open() causes server to be hit twice
 
         This regressed in http://trac.webkit.org/projects/webkit/changeset/14637
