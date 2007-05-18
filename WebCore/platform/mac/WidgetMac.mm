@@ -105,12 +105,6 @@ IntRect Widget::frameGeometry() const
     return IntRect();
 }
 
-bool Widget::hasFocus() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 // FIXME: Should move this to Chrome; bad layering that this knows about Frame.
 void Widget::setFocus()
 {
@@ -141,28 +135,6 @@ void Widget::setFocus()
         [bridge makeFirstResponder:oldFirstResponder];
 
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void Widget::clearFocus()
-{
-    ASSERT_NOT_REACHED();
-}
-
-Widget::FocusPolicy Widget::focusPolicy() const
-{
-    ASSERT_NOT_REACHED();
-    return NoFocus;
-}
-
-const Font& Widget::font() const
-{
-    ASSERT_NOT_REACHED();
-    return *static_cast<Font*>(0);
-}
-
-void Widget::setFont(const Font& font)
-{
-    ASSERT_NOT_REACHED();
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -240,27 +212,6 @@ NSView* Widget::getOuterView() const
     return view;
 }
 
-GraphicsContext* Widget::lockDrawingFocus()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-void Widget::unlockDrawingFocus(GraphicsContext*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void Widget::disableFlushDrawing()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void Widget::enableFlushDrawing()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void Widget::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled())
@@ -283,11 +234,6 @@ void Widget::invalidateRect(const IntRect& r)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() setNeedsDisplayInRect: r];
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void Widget::sendConsumedMouseUp()
-{
-    ASSERT_NOT_REACHED();
 }
 
 // FIXME: Should move this to Chrome; bad layering that this knows about Frame.

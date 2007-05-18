@@ -85,8 +85,6 @@ struct WidgetPrivate
 
     QWidget*     m_widget;
     QAbstractScrollArea* m_scrollArea;
-
-    Font     m_font;
 };
 
 Widget::Widget()
@@ -117,36 +115,10 @@ IntRect Widget::frameGeometry() const
     return data->geometry();
 }
 
-bool Widget::hasFocus() const
-{
-    if (!data->canvas())
-        return false;
-
-    return data->canvas()->hasFocus();
-}
-
 void Widget::setFocus()
 {
     if (data->canvas())
         data->canvas()->setFocus();
-}
-
-void Widget::clearFocus()
-{
-    if (data->canvas())
-        data->canvas()->clearFocus();
-}
-
-const Font& Widget::font() const
-{
-    return data->m_font;
-}
-
-void Widget::setFont(const Font& font)
-{
-    if (data->canvas())
-        data->canvas()->setFont(font);
-    data->m_font = font;
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -193,23 +165,7 @@ void Widget::setFrameGeometry(const IntRect& r)
     data->setGeometry(r);
 }
 
-GraphicsContext* Widget::lockDrawingFocus()
-{
-    notImplemented();
-    return 0;
-}
-
-void Widget::unlockDrawingFocus(GraphicsContext*)
-{
-    notImplemented();
-}
-
 void Widget::paint(GraphicsContext *, const IntRect &rect)
-{
-    notImplemented();
-}
-
-void Widget::enableFlushDrawing()
 {
     notImplemented();
 }
@@ -227,37 +183,10 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-void Widget::disableFlushDrawing()
-{
-    notImplemented();
-}
-
 void Widget::setEnabled(bool en)
 {
     if (data->m_widget)
         data->m_widget->setEnabled(en);
-}
-
-Widget::FocusPolicy Widget::focusPolicy() const
-{
-    if (!data->canvas())
-        return NoFocus;
-
-    switch (data->canvas()->focusPolicy())
-    {
-        case Qt::TabFocus:
-            return TabFocus;
-        case Qt::ClickFocus:
-            return ClickFocus;
-        case Qt::StrongFocus:
-            return StrongFocus;
-        case Qt::WheelFocus:
-            return WheelFocus;
-        case Qt::NoFocus:
-            return NoFocus;
-    }
-
-    return NoFocus;
 }
 
 void Widget::invalidate()

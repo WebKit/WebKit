@@ -154,8 +154,6 @@ namespace WebCore {
         NSView* getOuterView() const;
         void setView(NSView*);
         
-        void sendConsumedMouseUp();
-        
         static void beforeMouseDown(NSView*, Widget*);
         static void afterMouseDown(NSView*, Widget*);
 
@@ -163,18 +161,6 @@ namespace WebCore {
         void removeFromSuperview();
         IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
 #endif
-
-        // To be deleted.
-        enum FocusPolicy { NoFocus, TabFocus, ClickFocus, StrongFocus, WheelFocus };
-        GraphicsContext* lockDrawingFocus();
-        const Font& font() const;
-        virtual FocusPolicy focusPolicy() const;
-        virtual bool hasFocus() const;
-        virtual void clearFocus();
-        virtual void setFont(const Font&);
-        void disableFlushDrawing();
-        void enableFlushDrawing();
-        void unlockDrawingFocus(GraphicsContext*);
 
     private:
         WidgetPrivate* data;

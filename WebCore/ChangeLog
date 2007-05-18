@@ -1,3 +1,13 @@
+2007-05-18  Adam Treat <treat@kde.org>
+
+        Reviewed by Lars
+
+        Remove dead code.
+
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        * platform/qt/WidgetQt.cpp:
+
 2007-05-18  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.
