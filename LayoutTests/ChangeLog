@@ -1,3 +1,14 @@
+2007-05-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Update test results after Hyatt's update of view-source
+        to include line numbers and a gutter.
+
+        * fast/frames/viewsource-attribute-expected.checksum:
+        * fast/frames/viewsource-attribute-expected.png:
+        * fast/frames/viewsource-attribute-expected.txt:
+
 2007-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.
