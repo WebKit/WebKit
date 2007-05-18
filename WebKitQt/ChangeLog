@@ -1,3 +1,13 @@
+2007-05-18  Marius Bugge Monsen  <mbm@trolltech.com>
+
+        Reviewed by Zack Rusin.
+
+        The default constructed KeyboardEvent has
+        no PlatformKeyboardEvent.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeypress):
+
 2007-05-17  Adam Treat <adam@staikos.net>
 
         Reviewed by George Staikos.

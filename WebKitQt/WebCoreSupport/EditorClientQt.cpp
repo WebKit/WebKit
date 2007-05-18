@@ -221,7 +221,7 @@ void EditorClientQt::handleKeypress(KeyboardEvent* event)
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent->isKeyUp()) {
+    if (kevent && !kevent->isKeyUp()) {
         Node* start = frame->selectionController()->start().node();
         if (start && start->isContentEditable()) {
             switch(kevent->WindowsKeyCode()) {
