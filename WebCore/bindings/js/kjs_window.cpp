@@ -593,13 +593,12 @@ static float floatFeature(const HashMap<String, String> &features, const char *k
     return static_cast<int>(d);
 }
 
-static Frame* createNewWindow(ExecState* exec, Window* openerWindow, const DeprecatedString &URL,
-    const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs)
+static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& url,
+    const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs, bool immediate)
 {
-    Frame* openerFrame = openerWindow->frame();
     Frame* activeFrame = Window::retrieveActive(exec)->frame();
-
-    ResourceRequest request = ResourceRequest(KURL(""));
+    
+    ResourceRequest request;
     if (activeFrame)
         request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
     FrameLoadRequest frameRequest(request, frameName);
@@ -616,22 +615,30 @@ static Frame* createNewWindow(ExecState* exec, Window* openerWindow, const Depre
     if (!newFrame)
         return 0;
 
-    Window* newWindow = Window::retrieveWindow(newFrame);
-
     newFrame->loader()->setOpener(openerFrame);
     newFrame->loader()->setOpenedByDOM();
+
+    Window* newWindow = Window::retrieveWindow(newFrame);    
+    
     if (dialogArgs)
         newWindow->putDirect("dialogArguments", dialogArgs);
 
-    Document *activeDoc = activeFrame ? activeFrame->document() : 0;
-    if (!URL.isEmpty() && activeDoc) {
-        DeprecatedString completedURL = activeDoc->completeURL(URL);
-        if (!completedURL.startsWith("javascript:", false) || newWindow->isSafeScript(exec)) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+    if (created)
+        if (Document* oldDoc = openerFrame->document()) {
+            newFrame->document()->setDomain(oldDoc->domain(), true);
+            newFrame->document()->setBaseURL(oldDoc->baseURL());
         }
+        
+    if (!url.isEmpty() && (!url.startsWith("javascript:", false) || newWindow->isSafeScript(exec))) {
+        String completedURL = activeFrame->document()->completeURL(url);
+        bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+        
+        if (immediate)
+            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+        else
+            newFrame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
     }
-
+    
     return newFrame;
 }
 
@@ -702,7 +709,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
     
-    Frame* dialogFrame = createNewWindow(exec, openerWindow, URL, "", wargs, args[1]);
+    Frame* dialogFrame = createWindow(exec, openerWindow->frame(), URL, "", wargs, args[1], true);
     if (!dialogFrame)
         return jsUndefined();
 
@@ -1652,72 +1659,48 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   }
   case Window::Open:
   {
-      AtomicString frameName = args[1]->isUndefinedOrNull()
-        ? "_blank" : AtomicString(args[1]->toString(exec));
+      AtomicString frameName = args[1]->isUndefinedOrNull() ? "_blank" : AtomicString(args[1]->toString(exec));
+        
       // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
       // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
       if (!allowPopUp(exec, window) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
           return jsUndefined();
       
+      // Get the target frame for the special cases of _top and _parent
+      if (frameName == "_top")
+          while (frame->tree()->parent())
+                frame = frame->tree()->parent();
+      else if (frameName == "_parent")
+          if (frame->tree()->parent())
+              frame = frame->tree()->parent();
+              
+      // In those cases, we can schedule a location change right now and return early
+      if (frameName == "_top" || frameName == "_parent") {
+          String completedURL;
+          Frame* activeFrame = Window::retrieveActive(exec)->m_frame;
+          if (!str.isEmpty() && activeFrame)
+              completedURL = activeFrame->document()->completeURL(str);
+
+          const Window* window = Window::retrieveWindow(frame);
+          if (!completedURL.isEmpty() && (!completedURL.startsWith("javascript:", false) || (window && window->isSafeScript(exec)))) {
+              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+              frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false/*don't lock history*/, userGesture);
+          }
+          return Window::retrieve(frame);
+      }
+      
+      // In the case of a named frame or a new window, we'll use the createWindow() helper
       WindowFeatures windowFeatures;
       String features = args[2]->isUndefinedOrNull() ? UString() : args[2]->toString(exec);
       parseWindowFeatures(features, windowFeatures);
       constrainToVisible(screenRect(page->mainFrame()->view()), windowFeatures);
       
-      // prepare arguments
-      KURL url;
-      Frame* activeFrame = Window::retrieveActive(exec)->m_frame;
-      if (!str.isEmpty() && activeFrame)
-          url = activeFrame->loader()->completeURL(str.deprecatedString()).url();
-
-      ResourceRequest resRequest(url);
-      FrameLoadRequest frameRequest(resRequest, frameName);
-      if (frameRequest.frameName() == "_top") {
-          while (frame->tree()->parent())
-              frame = frame->tree()->parent();
-          
-          const Window* window = Window::retrieveWindow(frame);
-          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-              frame->loader()->scheduleLocationChange(url.url(), activeFrame->loader()->outgoingReferrer(), false/*don't lock history*/, userGesture);
-          }
-          return Window::retrieve(frame);
-      }
-      if (frameRequest.frameName() == "_parent") {
-          if (frame->tree()->parent())
-              frame = frame->tree()->parent();
-          
-          const Window* window = Window::retrieveWindow(frame);
-          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-              frame->loader()->scheduleLocationChange(url.url(), activeFrame->loader()->outgoingReferrer(), false/*don't lock history*/, userGesture);
-          }
-          return Window::retrieve(frame);
-      }
-      
-      // request window (new or existing if framename is set)
-      frameRequest.resourceRequest().setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
-      bool created;
-      Frame* newFrame = frame->loader()->createWindow(frameRequest, windowFeatures, created);
-      if (!newFrame)
+      frame = createWindow(exec, frame, str, frameName, windowFeatures, 0, false);
+         
+      if (!frame)
           return jsUndefined();
-      newFrame->loader()->setOpener(frame);
-      newFrame->loader()->setOpenedByDOM();
 
-      if (created) {
-          if (Document* oldDoc = frame->document()) {
-              newFrame->document()->setDomain(oldDoc->domain(), true);
-              newFrame->document()->setBaseURL(oldDoc->baseURL());
-          }
-      }
-      if (!url.isEmpty()) {
-          const Window* window = Window::retrieveWindow(newFrame);
-          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-              bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-              newFrame->loader()->scheduleLocationChange(url.url(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
-          }
-      }
-      return Window::retrieve(newFrame); // global object
+      return Window::retrieve(frame); // global object
   }
   case Window::Print:
     frame->print();

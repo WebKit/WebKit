@@ -1,3 +1,37 @@
+2007-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/5166149> - window.open() causes server to be hit twice
+
+        This regressed in http://trac.webkit.org/projects/webkit/changeset/14637
+        That patch was to fix broken behavior when opening an already existant window.
+        The unfortunate side effect was to cause the server to be hit twice.  
+        Once during the call to frame->loader()->createWindow(), and again via a 
+        scheduled redirection.
+
+        I decided to restore the original de-facto behavior by making the new window
+        open via a scheduled redirection - there is a FIXME that was already here that
+        explains the reason why we have to do it this way for now.
+
+        Additionally, there were two distinct places that had their own logic to open
+        a new window - the logic for window.open() and the logic for 
+        window.showModalDialog().  The logic was almost identical so I condensed them
+        into one utility function that takes a flag to handle the slight difference.
+
+        A layout test is not possible at this time since it would involve capturing 
+        server logs (the 1st connection does not exist long enough to result in any
+        delegate callbacks).  That task is documented in 
+        http://bugs.webkit.org/show_bug.cgi?id=13769
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow): Merged the two slightly different versions of "creating a window" 
+          logic here.  For the modal dialog case the load is an immediate call to changeLocation(),
+          which is triggered by the "immediate" flag, and the other cases load via scheduleLocationChange()
+        (KJS::showModalDialog): Call createWindow()
+        (KJS::WindowFunc::callAsFunction): Handle frame targets of _top or _parent immediately and call 
+          createWindow() for all others
+
 2007-05-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
