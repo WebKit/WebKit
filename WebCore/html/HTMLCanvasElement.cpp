@@ -165,7 +165,7 @@ void HTMLCanvasElement::reset()
 
     bool hadDrawingContext = m_createdDrawingContext;
     m_createdDrawingContext = false;
-#if PLATFORM(QT)
+#if PLATFORM(CG)
     fastFree(m_data);
 #elif PLATFORM(QT)
     delete m_painter;
