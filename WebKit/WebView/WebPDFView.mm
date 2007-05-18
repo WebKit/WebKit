@@ -909,13 +909,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)PDFViewSavePDFToDownloadFolder:(PDFView *)sender
 {
-    // Delegate method sent when the user requests downloading the PDF file to disk. The name is
-    // misleading since this gives the user the opportunity to save anywhere, not just to the
-    // Downloads folder.
+    // Delegate method sent when the user requests downloading the PDF file to disk. We pass NO for
+    // showingPanel: so that the PDF file is saved to the standard location without user intervention.
     id UIDelegate = [[self _webView] UIDelegate];
 
-    if (UIDelegate && [UIDelegate respondsToSelector:@selector(webView:saveFrameView:)])
-        [UIDelegate webView:[self _webView] saveFrameView:[[dataSource webFrame] frameView]];
+    if (UIDelegate && [UIDelegate respondsToSelector:@selector(webView:saveFrameView:showingPanel:)])
+        [UIDelegate webView:[self _webView] saveFrameView:[[dataSource webFrame] frameView] showingPanel:NO];
 }
 
 @end

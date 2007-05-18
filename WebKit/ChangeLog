@@ -1,3 +1,17 @@
+2007-05-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        Improvement to WebKit part of fix for 5201499 based on more modern understanding. (That is,
+        a couple of hours more modern.)
+
+        * WebView/WebUIDelegatePrivate.h:
+        add showPanel: parameter to just-introduced delegate method webView:saveFrameView:
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewSavePDFToDownloadFolder:]):
+        pass NO for new showPanel: parameter, and update comment
+
 2007-05-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -81,6 +81,6 @@ enum {
 - (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
-- (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView;
+- (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 
 @end
