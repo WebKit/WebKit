@@ -1,5 +1,4 @@
 main frame - didStartProvisionalLoadForFrame
-main frame - didFirstLayoutInFrame
 main frame - willCloseFrame
 main frame - didCommitLoadForFrame
 main frame - didClearWindowObjectForFrame

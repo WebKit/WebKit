@@ -1,3 +1,14 @@
+2007-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Not Reviewed, buildbot test fix.
+        
+        - updated results for the last fiew checkins.
+        
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt:
+        * fast/dom/replaceChild-expected.txt:
+        * http/tests/loading/bad-scheme-subframe-expected.txt:
+        * webarchive/loading/test-loading-archive-expected.txt:
+
 2007-05-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
