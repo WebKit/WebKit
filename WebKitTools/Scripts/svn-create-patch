@@ -68,6 +68,8 @@ sub pathcmp($$);
 sub processPaths(\@);
 sub splitpath($);
 
+$ENV{'LC_ALL'} = 'C';
+
 my $showHelp;
 if (!GetOptions("help" => \$showHelp) || $showHelp) {
     print STDERR basename($0) . " [-h|--help] [svndir1 [svndir2 ...]]\n";
