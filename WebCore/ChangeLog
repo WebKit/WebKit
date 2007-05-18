@@ -1,3 +1,24 @@
+2007-05-18  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Hyatt.
+
+        Remove unused handleMouseEvent methods in the Widget
+        and derived classes.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseDragged):
+        (WebCore::EventHandler::mouseMoved):
+        * platform/ScrollBar.h:
+        * platform/Widget.h:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::PlatformScrollbar::setRect):
+        * platform/wx/PlatformScrollBar.h:
+
 2007-05-18  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.

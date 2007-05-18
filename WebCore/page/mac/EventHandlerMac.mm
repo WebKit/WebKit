@@ -485,7 +485,7 @@ void EventHandler::mouseDragged(NSEvent *event)
     NSEvent *oldCurrentEvent = currentEvent;
     currentEvent = HardRetain(event);
 
-    v->handleMouseMoveEvent(event);
+    handleMouseMoveEvent(event);
     
     ASSERT(currentEvent == event);
     HardRelease(event);
@@ -599,7 +599,7 @@ void EventHandler::mouseMoved(NSEvent *event)
     NSEvent *oldCurrentEvent = currentEvent;
     currentEvent = HardRetain(event);
     
-    m_frame->view()->handleMouseMoveEvent(event);
+    handleMouseMoveEvent(event);
     
     ASSERT(currentEvent == event);
     HardRelease(event);

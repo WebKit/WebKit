@@ -44,9 +44,6 @@ public:
     virtual void setEnabled(bool);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
-    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; };
-    virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; };
-
     static int horizontalScrollbarHeight() { return 17; }
     static int verticalScrollbarWidth() { return 17; }
 
