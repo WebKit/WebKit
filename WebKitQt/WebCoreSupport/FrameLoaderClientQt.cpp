@@ -492,9 +492,13 @@ void FrameLoaderClientQt::clearArchivedResources()
 
 bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 {
-    // FIXME: This is not good enough in the general case
-    qDebug() << "FrameLoaderClientQt::canShowMIMEType" << MIMEType;
-    return true;
+    if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType))
+        return true;
+
+    if (MimeTypeRegistry::isSupportedNonImageMIMEType(MIMEType))
+        return true;
+
+    return false;
 }
 
 
