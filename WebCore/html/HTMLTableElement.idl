@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,16 +20,16 @@
 
 module html {
 
-    interface HTMLTableElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLTableElement : HTMLElement {
 
         // FIXME: the dom spec states that the following 3 attributes
         // could raise excepetions on setting.
                  attribute HTMLTableCaptionElement caption
-                     /*setter raises (DOMException)*/;
+                     /*setter raises(DOMException)*/;
                  attribute HTMLTableSectionElement tHead
-                     /*setter raises (DOMException)*/;
+                     /*setter raises(DOMException)*/;
                  attribute HTMLTableSectionElement tFoot
-                     /*setter raises (DOMException)*/;
+                     /*setter raises(DOMException)*/;
 
         readonly attribute HTMLCollection rows;
         readonly attribute HTMLCollection tBodies;
@@ -54,10 +54,10 @@ module html {
         void               deleteCaption();
 
         HTMLElement insertRow(in long index)
-            raises (DOMException);
+            raises(DOMException);
 
         void deleteRow(in long index)
-            raises (DOMException);
+            raises(DOMException);
 
     };
 

@@ -1,3 +1,30 @@
+2007-05-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Autogenerate the JS bindings for the HTMLTableElement, HTMLTableCaptionElement,
+        HTMLTableCellElement, HTMLTableColElement, HTMLTableRowElement, HTMLTableSectionElement.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper):
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * page/DOMWindow.idl:
+
 2007-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

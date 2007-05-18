@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,12 +41,6 @@
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
-#include "HTMLTableCaptionElement.h"
-#include "HTMLTableCellElement.h"
-#include "HTMLTableColElement.h"
-#include "HTMLTableElement.h"
-#include "HTMLTableRowElement.h"
-#include "HTMLTableSectionElement.h"
 #include "JSHTMLOptionsCollection.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
@@ -416,8 +410,6 @@ void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value
 
 // -------------------------------------------------------------------------
 
-const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
-const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
 const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
@@ -425,31 +417,17 @@ const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLEleme
 const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
-const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
-const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
-const ClassInfo JSHTMLElement::tablesection_info = { "HTMLTableSectionElement", &JSHTMLElement::info, &HTMLTableSectionElementTable, 0 };
-const ClassInfo JSHTMLElement::tr_info = { "HTMLTableRowElement", &JSHTMLElement::info, &HTMLTableRowElementTable, 0 };
 
 const ClassInfo* JSHTMLElement::classInfo() const
 {
     static HashMap<AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
-        classInfoMap.set(captionTag.localName().impl(), &caption_info);
-        classInfoMap.set(colTag.localName().impl(), &col_info);
-        classInfoMap.set(colgroupTag.localName().impl(), &col_info);
         classInfoMap.set(embedTag.localName().impl(), &embed_info);
         classInfoMap.set(frameTag.localName().impl(), &frame_info);
         classInfoMap.set(framesetTag.localName().impl(), &frameSet_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
-        classInfoMap.set(tableTag.localName().impl(), &table_info);
-        classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
-        classInfoMap.set(tdTag.localName().impl(), &tablecell_info);
-        classInfoMap.set(tfootTag.localName().impl(), &tablesection_info);
-        classInfoMap.set(thTag.localName().impl(), &tablecell_info);
-        classInfoMap.set(theadTag.localName().impl(), &tablesection_info);
-        classInfoMap.set(trTag.localName().impl(), &tr_info);
     }
     
     HTMLElement* element = static_cast<HTMLElement*>(impl());
@@ -461,12 +439,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
 
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
-const JSHTMLElement::Accessors JSHTMLElement::table_accessors = { &JSHTMLElement::tableGetter, &JSHTMLElement::tableSetter };
-const JSHTMLElement::Accessors JSHTMLElement::caption_accessors = { &JSHTMLElement::tableCaptionGetter, &JSHTMLElement::tableCaptionSetter };
-const JSHTMLElement::Accessors JSHTMLElement::col_accessors = { &JSHTMLElement::tableColGetter, &JSHTMLElement::tableColSetter };
-const JSHTMLElement::Accessors JSHTMLElement::tablesection_accessors = { &JSHTMLElement::tableSectionGetter, &JSHTMLElement::tableSectionSetter };
-const JSHTMLElement::Accessors JSHTMLElement::tr_accessors = { &JSHTMLElement::tableRowGetter, &JSHTMLElement::tableRowSetter };
-const JSHTMLElement::Accessors JSHTMLElement::tablecell_accessors = { &JSHTMLElement::tableCellGetter, &JSHTMLElement::tableCellSetter };
 const JSHTMLElement::Accessors JSHTMLElement::frameSet_accessors = { &JSHTMLElement::frameSetGetter, &JSHTMLElement::frameSetSetter };
 const JSHTMLElement::Accessors JSHTMLElement::frame_accessors = { &JSHTMLElement::frameGetter, &JSHTMLElement::frameSetter };
 const JSHTMLElement::Accessors JSHTMLElement::iFrame_accessors = { &JSHTMLElement::iFrameGetter, &JSHTMLElement::iFrameSetter };
@@ -476,22 +448,12 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 {
     static HashMap<AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
-        accessorMap.add(captionTag.localName().impl(), &caption_accessors);
-        accessorMap.add(colTag.localName().impl(), &col_accessors);
-        accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
         accessorMap.add(embedTag.localName().impl(), &embed_accessors);
         accessorMap.add(frameTag.localName().impl(), &frame_accessors);
         accessorMap.add(framesetTag.localName().impl(), &frameSet_accessors);
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
-        accessorMap.add(tableTag.localName().impl(), &table_accessors);
-        accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
-        accessorMap.add(tdTag.localName().impl(), &tablecell_accessors);
-        accessorMap.add(thTag.localName().impl(), &tablecell_accessors);
-        accessorMap.add(theadTag.localName().impl(), &tablesection_accessors);
-        accessorMap.add(tfootTag.localName().impl(), &tablesection_accessors);
-        accessorMap.add(trTag.localName().impl(), &tr_accessors);
     }
     
     HTMLElement* element = static_cast<HTMLElement*>(impl());
@@ -549,79 +511,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   src           KJS::JSHTMLElement::EmbedSrc             DontDelete
   type          KJS::JSHTMLElement::EmbedType            DontDelete
   width         KJS::JSHTMLElement::EmbedWidth           DontDelete
-@end
-@begin HTMLTableElementTable 23
-  caption       KJS::JSHTMLElement::TableCaption          DontDelete
-  tHead         KJS::JSHTMLElement::TableTHead            DontDelete
-  tFoot         KJS::JSHTMLElement::TableTFoot            DontDelete
-  rows          KJS::JSHTMLElement::TableRows             DontDelete|ReadOnly
-  tBodies       KJS::JSHTMLElement::TableTBodies          DontDelete|ReadOnly
-  align         KJS::JSHTMLElement::TableAlign            DontDelete
-  bgColor       KJS::JSHTMLElement::TableBgColor          DontDelete
-  border        KJS::JSHTMLElement::TableBorder           DontDelete
-  cellPadding   KJS::JSHTMLElement::TableCellPadding      DontDelete
-  cellSpacing   KJS::JSHTMLElement::TableCellSpacing      DontDelete
-  frame         KJS::JSHTMLElement::TableFrame            DontDelete
-  rules         KJS::JSHTMLElement::TableRules            DontDelete
-  summary       KJS::JSHTMLElement::TableSummary          DontDelete
-  width         KJS::JSHTMLElement::TableWidth            DontDelete
-  createTHead   KJS::JSHTMLElement::TableCreateTHead      DontDelete|Function 0
-  deleteTHead   KJS::JSHTMLElement::TableDeleteTHead      DontDelete|Function 0
-  createTFoot   KJS::JSHTMLElement::TableCreateTFoot      DontDelete|Function 0
-  deleteTFoot   KJS::JSHTMLElement::TableDeleteTFoot      DontDelete|Function 0
-  createCaption KJS::JSHTMLElement::TableCreateCaption    DontDelete|Function 0
-  deleteCaption KJS::JSHTMLElement::TableDeleteCaption    DontDelete|Function 0
-  insertRow     KJS::JSHTMLElement::TableInsertRow        DontDelete|Function 1
-  deleteRow     KJS::JSHTMLElement::TableDeleteRow        DontDelete|Function 1
-@end
-@begin HTMLTableCaptionElementTable 1
-  align         KJS::JSHTMLElement::TableCaptionAlign     DontDelete
-@end
-@begin HTMLTableColElementTable 7
-  align         KJS::JSHTMLElement::TableColAlign         DontDelete
-  ch            KJS::JSHTMLElement::TableColCh            DontDelete
-  chOff         KJS::JSHTMLElement::TableColChOff         DontDelete
-  span          KJS::JSHTMLElement::TableColSpan          DontDelete
-  vAlign        KJS::JSHTMLElement::TableColVAlign        DontDelete
-  width         KJS::JSHTMLElement::TableColWidth         DontDelete
-@end
-@begin HTMLTableSectionElementTable 7
-  align         KJS::JSHTMLElement::TableSectionAlign             DontDelete
-  ch            KJS::JSHTMLElement::TableSectionCh                DontDelete
-  chOff         KJS::JSHTMLElement::TableSectionChOff             DontDelete
-  vAlign        KJS::JSHTMLElement::TableSectionVAlign            DontDelete
-  rows          KJS::JSHTMLElement::TableSectionRows              DontDelete|ReadOnly
-  insertRow     KJS::JSHTMLElement::TableSectionInsertRow         DontDelete|Function 1
-  deleteRow     KJS::JSHTMLElement::TableSectionDeleteRow         DontDelete|Function 1
-@end
-@begin HTMLTableRowElementTable 11
-  rowIndex      KJS::JSHTMLElement::TableRowRowIndex              DontDelete|ReadOnly
-  sectionRowIndex KJS::JSHTMLElement::TableRowSectionRowIndex     DontDelete|ReadOnly
-  cells         KJS::JSHTMLElement::TableRowCells                 DontDelete|ReadOnly
-  align         KJS::JSHTMLElement::TableRowAlign                 DontDelete
-  bgColor       KJS::JSHTMLElement::TableRowBgColor               DontDelete
-  ch            KJS::JSHTMLElement::TableRowCh                    DontDelete
-  chOff         KJS::JSHTMLElement::TableRowChOff                 DontDelete
-  vAlign        KJS::JSHTMLElement::TableRowVAlign                DontDelete
-  insertCell    KJS::JSHTMLElement::TableRowInsertCell            DontDelete|Function 1
-  deleteCell    KJS::JSHTMLElement::TableRowDeleteCell            DontDelete|Function 1
-@end
-@begin HTMLTableCellElementTable 15
-  cellIndex     KJS::JSHTMLElement::TableCellCellIndex            DontDelete|ReadOnly
-  abbr          KJS::JSHTMLElement::TableCellAbbr                 DontDelete
-  align         KJS::JSHTMLElement::TableCellAlign                DontDelete
-  axis          KJS::JSHTMLElement::TableCellAxis                 DontDelete
-  bgColor       KJS::JSHTMLElement::TableCellBgColor              DontDelete
-  ch            KJS::JSHTMLElement::TableCellCh                   DontDelete
-  chOff         KJS::JSHTMLElement::TableCellChOff                DontDelete
-  colSpan       KJS::JSHTMLElement::TableCellColSpan              DontDelete
-  headers       KJS::JSHTMLElement::TableCellHeaders              DontDelete
-  height        KJS::JSHTMLElement::TableCellHeight               DontDelete
-  noWrap        KJS::JSHTMLElement::TableCellNoWrap               DontDelete
-  rowSpan       KJS::JSHTMLElement::TableCellRowSpan              DontDelete
-  scope         KJS::JSHTMLElement::TableCellScope                DontDelete
-  vAlign        KJS::JSHTMLElement::TableCellVAlign               DontDelete
-  width         KJS::JSHTMLElement::TableCellWidth                DontDelete
 @end
 @begin HTMLFrameSetElementTable 2
 cols          KJS::JSHTMLElement::FrameSetCols                  DontDelete
@@ -815,102 +704,6 @@ JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::tableGetter(ExecState* exec, int token) const
-{
-    HTMLTableElement& table = *static_cast<HTMLTableElement*>(impl());
-    switch (token) {
-        case TableCaption:         return toJS(exec,table.caption()); // type HTMLTableCaptionElement
-        case TableTHead:           return toJS(exec,table.tHead()); // type HTMLTableSectionElement
-        case TableTFoot:           return toJS(exec,table.tFoot()); // type HTMLTableSectionElement
-        case TableRows:            return getHTMLCollection(exec, table.rows().get()); // type JSHTMLCollection
-        case TableTBodies:         return getHTMLCollection(exec, table.tBodies().get()); // type JSHTMLCollection
-        case TableAlign:           return jsString(table.align());
-        case TableBgColor:         return jsString(table.bgColor());
-        case TableBorder:          return jsString(table.border());
-        case TableCellPadding:     return jsString(table.cellPadding());
-        case TableCellSpacing:     return jsString(table.cellSpacing());
-        case TableFrame:           return jsString(table.frame());
-        case TableRules:           return jsString(table.rules());
-        case TableSummary:         return jsString(table.summary());
-        case TableWidth:           return jsString(table.width());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::tableCaptionGetter(ExecState* exec, int token) const
-{
-    HTMLTableCaptionElement& tableCaption = *static_cast<HTMLTableCaptionElement*>(impl());
-    if (token == TableCaptionAlign)
-        return jsString(tableCaption.align());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::tableColGetter(ExecState* exec, int token) const
-{
-    HTMLTableColElement& tableCol = *static_cast<HTMLTableColElement*>(impl());
-    switch (token) {
-        case TableColAlign:           return jsString(tableCol.align());
-        case TableColCh:              return jsString(tableCol.ch());
-        case TableColChOff:           return jsString(tableCol.chOff());
-        case TableColSpan:            return jsNumber(tableCol.span());
-        case TableColVAlign:          return jsString(tableCol.vAlign());
-        case TableColWidth:           return jsString(tableCol.width());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::tableSectionGetter(ExecState* exec, int token) const
-{
-    HTMLTableSectionElement& tableSection = *static_cast<HTMLTableSectionElement*>(impl());
-    switch (token) {
-        case TableSectionAlign:           return jsString(tableSection.align());
-        case TableSectionCh:              return jsString(tableSection.ch());
-        case TableSectionChOff:           return jsString(tableSection.chOff());
-        case TableSectionVAlign:          return jsString(tableSection.vAlign());
-        case TableSectionRows:            return getHTMLCollection(exec, tableSection.rows().get()); // type JSHTMLCollection
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::tableRowGetter(ExecState* exec, int token) const
-{
-    HTMLTableRowElement& tableRow = *static_cast<HTMLTableRowElement*>(impl());
-    switch (token) {
-        case TableRowRowIndex:        return jsNumber(tableRow.rowIndex());
-        case TableRowSectionRowIndex: return jsNumber(tableRow.sectionRowIndex());
-        case TableRowCells:           return getHTMLCollection(exec, tableRow.cells().get()); // type JSHTMLCollection
-        case TableRowAlign:           return jsString(tableRow.align());
-        case TableRowBgColor:         return jsString(tableRow.bgColor());
-        case TableRowCh:              return jsString(tableRow.ch());
-        case TableRowChOff:           return jsString(tableRow.chOff());
-        case TableRowVAlign:          return jsString(tableRow.vAlign());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::tableCellGetter(ExecState* exec, int token) const
-{
-    HTMLTableCellElement& tableCell = *static_cast<HTMLTableCellElement*>(impl());
-    switch (token) {
-        case TableCellCellIndex:       return jsNumber(tableCell.cellIndex());
-        case TableCellAbbr:            return jsString(tableCell.abbr());
-        case TableCellAlign:           return jsString(tableCell.align());
-        case TableCellAxis:            return jsString(tableCell.axis());
-        case TableCellBgColor:         return jsString(tableCell.bgColor());
-        case TableCellCh:              return jsString(tableCell.ch());
-        case TableCellChOff:           return jsString(tableCell.chOff());
-        case TableCellColSpan:         return jsNumber(tableCell.colSpan());
-        case TableCellHeaders:         return jsString(tableCell.headers());
-        case TableCellHeight:          return jsString(tableCell.height());
-        case TableCellNoWrap:          return jsBoolean(tableCell.noWrap());
-        case TableCellRowSpan:         return jsNumber(tableCell.rowSpan());
-        case TableCellScope:           return jsString(tableCell.scope());
-        case TableCellVAlign:          return jsString(tableCell.vAlign());
-        case TableCellWidth:           return jsString(tableCell.width());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::frameSetGetter(ExecState* exec, int token) const
 {
     HTMLFrameSetElement& frameSet = *static_cast<HTMLFrameSetElement*>(impl());
@@ -1078,54 +871,7 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
     DOMExceptionTranslator exception(exec);
     HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
 
-    if (element.hasLocalName(tableTag)) {
-        HTMLTableElement &table = static_cast<HTMLTableElement &>(element);
-        if (id == JSHTMLElement::TableCreateTHead)
-            return toJS(exec,table.createTHead());
-        else if (id == JSHTMLElement::TableDeleteTHead) {
-            table.deleteTHead();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TableCreateTFoot)
-            return toJS(exec,table.createTFoot());
-        else if (id == JSHTMLElement::TableDeleteTFoot) {
-            table.deleteTFoot();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TableCreateCaption)
-            return toJS(exec,table.createCaption());
-        else if (id == JSHTMLElement::TableDeleteCaption) {
-            table.deleteCaption();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TableInsertRow)
-            return toJS(exec,table.insertRow(args[0]->toInt32(exec), exception));
-        else if (id == JSHTMLElement::TableDeleteRow) {
-            table.deleteRow(args[0]->toInt32(exec), exception);
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(theadTag) ||
-             element.hasLocalName(tbodyTag) ||
-             element.hasLocalName(tfootTag)) {
-        HTMLTableSectionElement &tableSection = static_cast<HTMLTableSectionElement &>(element);
-        if (id == JSHTMLElement::TableSectionInsertRow)
-            return toJS(exec, tableSection.insertRow(args[0]->toInt32(exec), exception));
-        else if (id == JSHTMLElement::TableSectionDeleteRow) {
-            tableSection.deleteRow(args[0]->toInt32(exec), exception);
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(trTag)) {
-        HTMLTableRowElement &tableRow = static_cast<HTMLTableRowElement &>(element);
-        if (id == JSHTMLElement::TableRowInsertCell)
-            return toJS(exec,tableRow.insertCell(args[0]->toInt32(exec), exception));
-        else if (id == JSHTMLElement::TableRowDeleteCell) {
-            tableRow.deleteCell(args[0]->toInt32(exec), exception);
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(marqueeTag)) {
+    if (element.hasLocalName(marqueeTag)) {
         if (id == JSHTMLElement::MarqueeStart && element.renderer() && 
             element.renderer()->hasLayer() &&
             element.renderer()->layer()->marquee()) {
@@ -1217,96 +963,6 @@ void JSHTMLElement::embedSetter(ExecState* exec, int token, JSValue* value)
         case EmbedSrc:             { embed.setSrc(valueToStringWithNullCheck(exec, value)); return; }
         case EmbedType:            { embed.setType(valueToStringWithNullCheck(exec, value)); return; }
         case EmbedWidth:           { embed.setWidth(value->toString(exec)); return; }
-    }
-}
-
-void JSHTMLElement::tableSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableElement& table = *static_cast<HTMLTableElement*>(impl());
-    switch (token) {
-        case TableCaption:         { table.setCaption(toHTMLTableCaptionElement(value)); return; }
-        case TableTHead:           { table.setTHead(toHTMLTableSectionElement(value)); return; }
-        case TableTFoot:           { table.setTFoot(toHTMLTableSectionElement(value)); return; }
-        // read-only: rows
-        // read-only: tbodies
-        case TableAlign:           { table.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableBgColor:         { table.setBgColor(valueToStringWithNullCheck(exec, value)); return; }
-        case TableBorder:          { table.setBorder(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellPadding:     { table.setCellPadding(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellSpacing:     { table.setCellSpacing(valueToStringWithNullCheck(exec, value)); return; }
-        case TableFrame:           { table.setFrame(valueToStringWithNullCheck(exec, value)); return; }
-        case TableRules:           { table.setRules(valueToStringWithNullCheck(exec, value)); return; }
-        case TableSummary:         { table.setSummary(valueToStringWithNullCheck(exec, value)); return; }
-        case TableWidth:           { table.setWidth(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::tableCaptionSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableCaptionElement& tableCaption = *static_cast<HTMLTableCaptionElement*>(impl());
-    if (token == TableCaptionAlign)
-        tableCaption.setAlign(valueToStringWithNullCheck(exec, value));
-}
-
-void JSHTMLElement::tableColSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableColElement& tableCol = *static_cast<HTMLTableColElement*>(impl());
-    switch (token) {
-        case TableColAlign:           { tableCol.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableColCh:              { tableCol.setCh(valueToStringWithNullCheck(exec, value)); return; }
-        case TableColChOff:           { tableCol.setChOff(valueToStringWithNullCheck(exec, value)); return; }
-        case TableColSpan:            { tableCol.setSpan(value->toInt32(exec)); return; }
-        case TableColVAlign:          { tableCol.setVAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableColWidth:           { tableCol.setWidth(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::tableSectionSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableSectionElement& tableSection = *static_cast<HTMLTableSectionElement*>(impl());
-    switch (token) {
-        case TableSectionAlign:           { tableSection.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableSectionCh:              { tableSection.setCh(valueToStringWithNullCheck(exec, value)); return; }
-        case TableSectionChOff:           { tableSection.setChOff(valueToStringWithNullCheck(exec, value)); return; }
-        case TableSectionVAlign:          { tableSection.setVAlign(valueToStringWithNullCheck(exec, value)); return; }
-        // read-only: rows
-    }
-}
-
-void JSHTMLElement::tableRowSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableRowElement& tableRow = *static_cast<HTMLTableRowElement*>(impl());
-    switch (token) {
-        // read-only: rowIndex
-        // read-only: sectionRowIndex
-        // read-only: cells
-        case TableRowAlign:           { tableRow.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableRowBgColor:         { tableRow.setBgColor(valueToStringWithNullCheck(exec, value)); return; }
-        case TableRowCh:              { tableRow.setCh(valueToStringWithNullCheck(exec, value)); return; }
-        case TableRowChOff:           { tableRow.setChOff(valueToStringWithNullCheck(exec, value)); return; }
-        case TableRowVAlign:          { tableRow.setVAlign(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::tableCellSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLTableCellElement& tableCell = *static_cast<HTMLTableCellElement*>(impl());
-    switch (token) {
-        // read-only: cellIndex
-        case TableCellAbbr:            { tableCell.setAbbr(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellAlign:           { tableCell.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellAxis:            { tableCell.setAxis(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellBgColor:         { tableCell.setBgColor(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellCh:              { tableCell.setCh(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellChOff:           { tableCell.setChOff(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellColSpan:         { tableCell.setColSpan(value->toInt32(exec)); return; }
-        case TableCellHeaders:         { tableCell.setHeaders(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellHeight:          { tableCell.setHeight(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellNoWrap:          { tableCell.setNoWrap(value->toBoolean(exec)); return; }
-        case TableCellRowSpan:         { tableCell.setRowSpan(value->toInt32(exec)); return; }
-        case TableCellScope:           { tableCell.setScope(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellVAlign:          { tableCell.setVAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case TableCellWidth:           { tableCell.setWidth(valueToStringWithNullCheck(exec, value)); return; }
     }
 }
 
@@ -1406,22 +1062,6 @@ HTMLElement* toHTMLElement(JSValue *val)
     if (!val || !val->isObject(&JSHTMLElement::info))
         return 0;
     return static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(val)->impl());
-}
-
-HTMLTableCaptionElement* toHTMLTableCaptionElement(JSValue *val)
-{
-    HTMLElement* e = toHTMLElement(val);
-    if (e && e->hasTagName(captionTag))
-        return static_cast<HTMLTableCaptionElement*>(e);
-    return 0;
-}
-
-HTMLTableSectionElement* toHTMLTableSectionElement(JSValue *val)
-{
-    HTMLElement* e = toHTMLElement(val);
-    if (e && (e->hasTagName(theadTag) || e->hasTagName(tbodyTag) || e->hasTagName(tfootTag)))
-        return static_cast<HTMLTableSectionElement*>(e);
-    return 0;
 }
 
 // -------------------------------------------------------------------------

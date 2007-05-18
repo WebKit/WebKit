@@ -1,3 +1,13 @@
+2007-05-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        - update results to account for new JSHTMLElements that are being
+          auto-generated and can now produce Constructors.
+
+        * fast/dom/Window/element-constructors-on-window-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+
 2007-05-17  Maciej Stachowiak  <mjs@apple.com>
 
         Not Reviewed, buildbot test fix.

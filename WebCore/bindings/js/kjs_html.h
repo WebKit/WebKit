@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2006, 2007 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,8 +31,6 @@ namespace WebCore {
     class HTMLDocument;
     class HTMLElement;
     class HTMLOptionsCollection;
-    class HTMLTableCaptionElement;
-    class HTMLTableSectionElement;
 }
 
 namespace KJS {
@@ -79,9 +77,8 @@ namespace KJS {
     static const ClassInfo info;
 
     static const ClassInfo
-      object_info, 
-      embed_info, table_info, caption_info, col_info, tablesection_info, tr_info,
-      tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
+      object_info, embed_info,
+      frameSet_info, frame_info, iFrame_info, marquee_info;
 
     // FIXME: Might make sense to combine this with ClassInfo some day.
     typedef JSValue* (JSHTMLElement::*GetterFunction)(ExecState*, int token) const;
@@ -89,26 +86,13 @@ namespace KJS {
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
     static const Accessors
-      object_accessors, embed_accessors, table_accessors,
-      caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
-      tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
+      object_accessors, embed_accessors,
+      frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
     JSValue* objectGetter(ExecState* exec, int token) const;
     void  objectSetter(ExecState*, int token, JSValue*);
     JSValue* embedGetter(ExecState*, int token) const;
     void  embedSetter(ExecState*, int token, JSValue*);
-    JSValue* tableGetter(ExecState* exec, int token) const;
-    void  tableSetter(ExecState*, int token, JSValue*);
-    JSValue* tableCaptionGetter(ExecState* exec, int token) const;
-    void  tableCaptionSetter(ExecState*, int token, JSValue*);
-    JSValue* tableColGetter(ExecState* exec, int token) const;
-    void  tableColSetter(ExecState*, int token, JSValue*);
-    JSValue* tableSectionGetter(ExecState* exec, int token) const;
-    void  tableSectionSetter(ExecState*, int token, JSValue*);
-    JSValue* tableRowGetter(ExecState* exec, int token) const;
-    void  tableRowSetter(ExecState*, int token, JSValue*);
-    JSValue* tableCellGetter(ExecState* exec, int token) const;
-    void  tableCellSetter(ExecState*, int token, JSValue*);
     JSValue* frameSetGetter(ExecState* exec, int token) const;
     void  frameSetSetter(ExecState*, int token, JSValue*);
     JSValue* frameGetter(ExecState* exec, int token) const;
@@ -124,23 +108,7 @@ namespace KJS {
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
            ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument, ObjectGetSVGDocument,
            EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth, EmbedGetSVGDocument,
-           TableSummary, TableTBodies, TableTHead, TableCellPadding,
-           TableDeleteCaption, TableCreateCaption, TableCaption, TableWidth,
-           TableCreateTFoot, TableAlign, TableTFoot, TableDeleteRow,
-           TableCellSpacing, TableRows, TableBgColor, TableBorder, TableFrame,
-           TableRules, TableCreateTHead, TableDeleteTHead, TableDeleteTFoot,
-           TableInsertRow, TableCaptionAlign, TableColCh, TableColChOff,
-           TableColAlign, TableColSpan, TableColVAlign, TableColWidth,
-           TableSectionCh, TableSectionDeleteRow, TableSectionChOff,
-           TableSectionRows, TableSectionAlign, TableSectionVAlign,
-           TableSectionInsertRow, TableRowSectionRowIndex, TableRowRowIndex,
-           TableRowChOff, TableRowCells, TableRowVAlign, TableRowCh,
-           TableRowAlign, TableRowBgColor, TableRowDeleteCell, TableRowInsertCell,
-           TableCellColSpan, TableCellNoWrap, TableCellAbbr, TableCellHeight,
-           TableCellWidth, TableCellCellIndex, TableCellChOff, TableCellBgColor,
-           TableCellCh, TableCellVAlign, TableCellRowSpan, TableCellHeaders,
-           TableCellAlign, TableCellAxis, TableCellScope, FrameSetCols,
-           FrameSetRows, FrameSrc, FrameLocation, FrameFrameBorder, FrameScrolling,
+           FrameSetCols, FrameSetRows, FrameSrc, FrameLocation, FrameFrameBorder, FrameScrolling,
            FrameMarginWidth, FrameLongDesc, FrameMarginHeight, FrameName, FrameContentDocument, FrameContentWindow, 
            FrameNoResize, FrameWidth, FrameHeight, IFrameLongDesc, IFrameAlign,
            IFrameFrameBorder, IFrameSrc, IFrameName, IFrameHeight,
@@ -150,7 +118,7 @@ namespace KJS {
            ElementInnerHTML, ElementId, ElementDir, ElementLang,
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText
-  };
+    };
   private:
     static JSValue* framesetNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* frameWindowPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
@@ -159,8 +127,6 @@ namespace KJS {
   };
 
   WebCore::HTMLElement* toHTMLElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object
-  WebCore::HTMLTableCaptionElement* toHTMLTableCaptionElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object for a HTMLTableCaptionElement
-  WebCore::HTMLTableSectionElement* toHTMLTableSectionElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object for a HTMLTableSectionElement
 
   KJS_DEFINE_PROTOTYPE(JSHTMLCollectionPrototype)
 

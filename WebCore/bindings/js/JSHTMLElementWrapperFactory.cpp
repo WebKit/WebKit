@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Apple Computer, Inc.
+ *  Copyright (C) 2006, 2007 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,29 +22,29 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLBlockquoteElement.h"
 #include "HTMLBodyElement.h"
-#include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDListElement.h"
 #include "HTMLDirectoryElement.h"
 #include "HTMLDivElement.h"
-#include "HTMLDListElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLHRElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHeadingElement.h"
-#include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLIsIndexElement.h"
+#include "HTMLLIElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
-#include "HTMLLIElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLMenuElement.h"
@@ -60,6 +60,12 @@
 #include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLStyleElement.h"
+#include "HTMLTableCaptionElement.h"
+#include "HTMLTableCellElement.h"
+#include "HTMLTableColElement.h"
+#include "HTMLTableElement.h"
+#include "HTMLTableRowElement.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTitleElement.h"
 #include "HTMLUListElement.h"
@@ -69,29 +75,29 @@
 #include "JSHTMLAnchorElement.h"
 #include "JSHTMLAppletElement.h"
 #include "JSHTMLAreaElement.h"
+#include "JSHTMLBRElement.h"
 #include "JSHTMLBaseElement.h"
 #include "JSHTMLBaseFontElement.h"
 #include "JSHTMLBlockquoteElement.h"
 #include "JSHTMLBodyElement.h"
-#include "JSHTMLBRElement.h"
 #include "JSHTMLButtonElement.h"
 #include "JSHTMLCanvasElement.h"
+#include "JSHTMLDListElement.h"
 #include "JSHTMLDirectoryElement.h"
 #include "JSHTMLDivElement.h"
-#include "JSHTMLDListElement.h"
 #include "JSHTMLFieldSetElement.h"
 #include "JSHTMLFontElement.h"
 #include "JSHTMLFormElement.h"
+#include "JSHTMLHRElement.h"
 #include "JSHTMLHeadElement.h"
 #include "JSHTMLHeadingElement.h"
-#include "JSHTMLHRElement.h"
 #include "JSHTMLHtmlElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLInputElement.h"
 #include "JSHTMLIsIndexElement.h"
+#include "JSHTMLLIElement.h"
 #include "JSHTMLLabelElement.h"
 #include "JSHTMLLegendElement.h"
-#include "JSHTMLLIElement.h"
 #include "JSHTMLLinkElement.h"
 #include "JSHTMLMapElement.h"
 #include "JSHTMLMenuElement.h"
@@ -107,6 +113,12 @@
 #include "JSHTMLScriptElement.h"
 #include "JSHTMLSelectElement.h"
 #include "JSHTMLStyleElement.h"
+#include "JSHTMLTableCaptionElement.h"
+#include "JSHTMLTableCellElement.h"
+#include "JSHTMLTableColElement.h"
+#include "JSHTMLTableElement.h"
+#include "JSHTMLTableRowElement.h"
+#include "JSHTMLTableSectionElement.h"
 #include "JSHTMLTextAreaElement.h"
 #include "JSHTMLTitleElement.h"
 #include "JSHTMLUListElement.h"
@@ -133,7 +145,9 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(body, Body) \
     macro(br, BR) \
     macro(button, Button) \
+    macro(caption, TableCaption) \
     macro(canvas, Canvas) \
+    macro(col, TableCol) \
     macro(del, Mod) \
     macro(dir, Directory) \
     macro(div, Div) \
@@ -165,7 +179,11 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(script, Script) \
     macro(select, Select) \
     macro(style, Style) \
+    macro(table, Table) \
+    macro(tbody, TableSection) \
+    macro(td, TableCell) \
     macro(textarea, TextArea) \
+    macro(tr, TableRow) \
     macro(title, Title) \
     macro(ul, UList) \
     // end of macro
@@ -185,6 +203,7 @@ DOMNode* createJSHTMLWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 #define ADD_TO_HASH_MAP(tag, name) map.set(tag##Tag.localName().impl(), create##name##Wrapper);
 FOR_EACH_TAG(ADD_TO_HASH_MAP)
 #undef ADD_TO_HASH_MAP
+        map.set(colgroupTag.localName().impl(), createTableColWrapper);
         map.set(h2Tag.localName().impl(), createHeadingWrapper);
         map.set(h3Tag.localName().impl(), createHeadingWrapper);
         map.set(h4Tag.localName().impl(), createHeadingWrapper);
@@ -194,6 +213,9 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
         map.set(insTag.localName().impl(), createModWrapper);
         map.set(keygenTag.localName().impl(), createSelectWrapper);
         map.set(listingTag.localName().impl(), createPreWrapper);
+        map.set(tfootTag.localName().impl(), createTableSectionWrapper);
+        map.set(thTag.localName().impl(), createTableCellWrapper);
+        map.set(theadTag.localName().impl(), createTableSectionWrapper);
         map.set(xmpTag.localName().impl(), createPreWrapper);
     }
     CreateHTMLElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());

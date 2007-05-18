@@ -244,6 +244,12 @@ IDL_BINDINGS += \
     html/HTMLScriptElement.idl \
     html/HTMLSelectElement.idl \
     html/HTMLStyleElement.idl \
+    html/HTMLTableCaptionElement.idl \
+    html/HTMLTableCellElement.idl \
+    html/HTMLTableColElement.idl \
+    html/HTMLTableElement.idl \
+    html/HTMLTableRowElement.idl \
+    html/HTMLTableSectionElement.idl \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \

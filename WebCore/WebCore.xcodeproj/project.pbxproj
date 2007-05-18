@@ -2729,6 +2729,16 @@
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
+		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
+		BC06ED9D0BFD660600856E9D /* JSHTMLTableColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */; };
+		BC06ED9E0BFD660600856E9D /* JSHTMLTableColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED9A0BFD660600856E9D /* JSHTMLTableColElement.h */; };
+		BC06ED9F0BFD660600856E9D /* JSHTMLTableRowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED9B0BFD660600856E9D /* JSHTMLTableRowElement.cpp */; };
+		BC06EDA00BFD660600856E9D /* JSHTMLTableRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED9C0BFD660600856E9D /* JSHTMLTableRowElement.h */; };
+		BC06EDE30BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06EDE10BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp */; };
+		BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */; };
+		BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */; };
+		BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */; };
 		BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */; };
 		BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5CE0B2A886F0018461D /* TextBreakIterator.h */; };
 		BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C5CF0B2A886F0018461D /* TextBreakIteratorICU.cpp */; };
@@ -2762,6 +2772,8 @@
 		BC6DB4740A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */; };
 		BC6DB4D40A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
+		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16B8B0979B01400467741 /* DeprecatedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* DeprecatedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16B8C0979B01400467741 /* ArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16B890979B01400467741 /* ArrayImpl.cpp */; };
@@ -5934,6 +5946,16 @@
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
+		BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableSectionElement.cpp; sourceTree = "<group>"; };
+		BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableSectionElement.h; sourceTree = "<group>"; };
+		BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableColElement.cpp; sourceTree = "<group>"; };
+		BC06ED9A0BFD660600856E9D /* JSHTMLTableColElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableColElement.h; sourceTree = "<group>"; };
+		BC06ED9B0BFD660600856E9D /* JSHTMLTableRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableRowElement.cpp; sourceTree = "<group>"; };
+		BC06ED9C0BFD660600856E9D /* JSHTMLTableRowElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableRowElement.h; sourceTree = "<group>"; };
+		BC06EDE10BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCellElement.cpp; sourceTree = "<group>"; };
+		BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCellElement.h; sourceTree = "<group>"; };
+		BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableElement.cpp; sourceTree = "<group>"; };
+		BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableElement.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLStyleSheet.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5975,6 +5997,8 @@
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
+		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
+		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		BCB16B880979B01400467741 /* DeprecatedArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedArray.h; sourceTree = "<group>"; };
 		BCB16B890979B01400467741 /* ArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayImpl.cpp; sourceTree = "<group>"; };
@@ -6442,6 +6466,18 @@
 				E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */,
 				A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */,
 				A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */,
+				BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */,
+				BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */,
+				BC06EDE10BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp */,
+				BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */,
+				BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */,
+				BC06ED9A0BFD660600856E9D /* JSHTMLTableColElement.h */,
+				BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */,
+				BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */,
+				BC06ED9B0BFD660600856E9D /* JSHTMLTableRowElement.cpp */,
+				BC06ED9C0BFD660600856E9D /* JSHTMLTableRowElement.h */,
+				BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */,
+				BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */,
 				A80E7E940A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp */,
 				A80E7E930A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h */,
 				A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */,
@@ -11281,6 +11317,12 @@
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 				37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */,
 				BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */,
+				BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */,
+				BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */,
+				BC06ED9E0BFD660600856E9D /* JSHTMLTableColElement.h in Headers */,
+				BC06EDA00BFD660600856E9D /* JSHTMLTableRowElement.h in Headers */,
+				BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */,
+				BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12657,6 +12699,12 @@
 				37919C190BF375DD00956998 /* ShapeArabic.c in Sources */,
 				BC588B4B0BFA723C00EE679E /* HTMLParserErrorCodes.cpp in Sources */,
 				BCF411780BFCC76A00125622 /* JSHTMLAnchorElementCustom.cpp in Sources */,
+				BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */,
+				BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */,
+				BC06ED9D0BFD660600856E9D /* JSHTMLTableColElement.cpp in Sources */,
+				BC06ED9F0BFD660600856E9D /* JSHTMLTableRowElement.cpp in Sources */,
+				BC06EDE30BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp in Sources */,
+				BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

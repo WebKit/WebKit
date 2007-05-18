@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,12 +124,12 @@ module window {
         attribute HTMLScriptElementConstructor HTMLScriptElement;
         attribute HTMLSelectElementConstructor HTMLSelectElement;
         attribute HTMLStyleElementConstructor HTMLStyleElement;
-//        attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
-//        attribute HTMLTableCellElementConstructor HTMLTableCellElement;
-//        attribute HTMLTableColElementConstructor HTMLTableColElement;
-//        attribute HTMLTableElementConstructor HTMLTableElement;
-//        attribute HTMLTableRowElementConstructor HTMLTableRowElement;
-//        attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
+        attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
+        attribute HTMLTableCellElementConstructor HTMLTableCellElement;
+        attribute HTMLTableColElementConstructor HTMLTableColElement;
+        attribute HTMLTableElementConstructor HTMLTableElement;
+        attribute HTMLTableRowElementConstructor HTMLTableRowElement;
+        attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
         attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
         attribute HTMLTitleElementConstructor HTMLTitleElement;
         attribute HTMLUListElementConstructor HTMLUListElement;

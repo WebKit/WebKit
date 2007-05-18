@@ -88,17 +88,17 @@ HTMLSelectElement: [object HTMLSelectElementConstructor]
 
 HTMLStyleElement: [object HTMLStyleElementConstructor]
 
-HTMLTableCaptionElement: undefined
+HTMLTableCaptionElement: [object HTMLTableCaptionElementConstructor]
 
-HTMLTableCellElement: undefined
+HTMLTableCellElement: [object HTMLTableCellElementConstructor]
 
-HTMLTableColElement: undefined
+HTMLTableColElement: [object HTMLTableColElementConstructor]
 
-HTMLTableElement: undefined
+HTMLTableElement: [object HTMLTableElementConstructor]
 
-HTMLTableRowElement: undefined
+HTMLTableRowElement: [object HTMLTableRowElementConstructor]
 
-HTMLTableSectionElement: undefined
+HTMLTableSectionElement: [object HTMLTableSectionElementConstructor]
 
 HTMLTextAreaElement: [object HTMLTextAreaElementConstructor]
 
