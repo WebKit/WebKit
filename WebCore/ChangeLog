@@ -1,3 +1,14 @@
+2007-05-18  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Correctly implement initialiseSupportedImageMIMETypes.
+
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedImageMIMETypes):
+        * platform/qt/MimeTypeRegistryQt.cpp:
+        (WebCore::):
+
 2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.

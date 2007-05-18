@@ -34,6 +34,9 @@
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #endif
+#if PLATFORM(QT)
+#include <qimagereader.h>
+#endif
 
 namespace WebCore
 {
@@ -77,6 +80,13 @@ static void initialiseSupportedImageMIMETypes()
     supportedImageMIMETypes->remove("application/pdf");
     supportedImageMIMETypes->remove("application/postscript");
 
+#elif PLATFORM(QT)
+    QList<QByteArray> formats = QImageReader::supportedImageFormats();
+    for (size_t i = 0; i < formats.size(); ++i) {
+        String mimeType = MimeTypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
+        supportedImageMIMETypes->add(mimeType);
+        supportedImageResourceMIMETypes->add(mimeType);
+    }
 #else
     // assume that all implementations at least support the following standard
     // image types:
