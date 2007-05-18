@@ -274,8 +274,7 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
             originalURL = [currentItem URL];
     }
 
-    ASSERT(originalURL);
-    if ([download respondsToSelector:@selector(_setOriginatingURL:)])
+    if (originalURL && [download respondsToSelector:@selector(_setOriginatingURL:)])
         [download _setOriginatingURL:originalURL];
 }
 
