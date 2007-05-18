@@ -41,9 +41,13 @@ public:
     
 private:
     Element* addSpanWithClassName(const String&);
+    void addLine(const String& className);
+    void addText(const String& text, const String& className);
 
 private:
     Node* m_current;
+    Node* m_tbody;
+    Node* m_td;
 };
 
 }

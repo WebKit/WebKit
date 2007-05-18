@@ -22,6 +22,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+body {
+    margin: 0
+}
+
+table {
+    border-spacing: 0;
+    counter-reset: lines;
+    white-space: pre-wrap !important;
+    margin: 0;
+    word-break: break-word;
+    font-family: monospace;
+}
+
+td {
+    padding: 0;
+    vertical-align: baseline
+}
+
+.webkit-line-number {
+    padding: 0 2px;
+    min-width: 17px;
+    background-color: rgb(240, 240, 240);
+    border-right: 1px solid rgb(128, 128, 128) !important;
+    -webkit-user-select: none;
+    text-align: right;
+    color: rgb(128, 128, 128);
+    word-break: normal;
+    white-space: nowrap;
+    font-size: 9px;
+    font-family: Helvetica
+}
+
+.webkit-line-number::before {
+    content: counter(lines);
+    counter-increment: lines;
+    -webkit-user-select: none
+}
+
+.webkit-line-content {
+    padding: 0 5px;
+}
+
 .webkit-html-tag {
     color: rgb(136, 18, 128)
 }
