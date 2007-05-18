@@ -1,3 +1,14 @@
+2007-05-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5214338> REGRESSION: / mishandled in 
+        HTML tokenization (13780).
+
+        Reviewed by ggaren
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLTokenizer::parseTag):
+
 2007-05-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

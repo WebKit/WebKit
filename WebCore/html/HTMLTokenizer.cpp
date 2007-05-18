@@ -41,6 +41,7 @@
 #include "HTMLParser.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "Page.h"
 #include "SystemTime.h"
 #include "csshelper.h"
 #include "kjs_proxy.h"
@@ -127,7 +128,8 @@ static inline bool tagMatch(const char* s1, const UChar* s2, unsigned length)
 
 inline void Token::addAttribute(Document* doc, AtomicString& attrName, const AtomicString& v, bool viewSourceMode)
 {
-    if (!attrName.isEmpty() && (viewSourceMode || attrName != "/")) {
+    if (!attrName.isEmpty()) {
+        ASSERT(!attrName.contains('/'));
         Attribute* a = new MappedAttribute(attrName, v);
         if (!attrs)
             attrs = new NamedMappedAttrMap(0);
@@ -958,22 +960,14 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             int ll = min(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
                 UChar curchar = *src;
-                // If we encounter a "/" when scanning an attribute name, treat it as a delimiter.  However, we only do
-                // this if we have a non-empty attribute name.  This allows the degenerate case of <input type=checkbox checked/>
-                // to work (despite it being utterly invalid).
-                if (curchar <= '>' && (curchar >= '<' || curchar <= ' ' || (curchar == '/' && attrName.length() > 0))) {
+                // If we encounter a "/" when scanning an attribute name, treat it as a delimiter.  This allows the 
+                // cases like <input type=checkbox checked/> to work (and accommodates XML-style syntax as per HTML5).
+                if (curchar <= '>' && (curchar >= '<' || curchar <= ' ' || curchar == '/')) {
                     cBuffer[cBufferPos] = '\0';
                     attrName = AtomicString(cBuffer);
                     dest = buffer;
                     *dest++ = 0;
                     state.setTagState(SearchEqual);
-                    // This is a deliberate quirk to match Mozilla and Opera.  We have to do this
-                    // since sites that use the "standards-compliant" path sometimes send
-                    // <script src="foo.js"/>.  Both Moz and Opera will honor this, despite it
-                    // being bogus HTML.  They do not honor the "/" for other tags.  This behavior
-                    // also deviates from WinIE, but in this case we'll just copy Moz and Opera.
-                    if (currToken.tagName == scriptTag && curchar == '>' && attrName == "/")
-                        currToken.flat = true;
                     if (inViewSourceMode())
                         currToken.addViewSourceChar('a');
                     break;
@@ -1004,8 +998,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #endif
             while(!src.isEmpty()) {
                 UChar curchar = *src;
-                // In this mode just ignore any quotes we encounter and treat them like spaces.
-                if (curchar > ' ' && curchar != '\'' && curchar != '"') {
+                // In this mode just ignore any quotes or slashes we encounter and treat them like spaces.
+                if (curchar > ' ' && curchar != '\'' && curchar != '"' && curchar != '/') {
                     if(curchar == '=') {
 #ifdef TOKEN_DEBUG
                         kdDebug(6036) << "found equal" << endl;
@@ -1024,6 +1018,12 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 }
                 if (inViewSourceMode())
                     currToken.addViewSourceChar(curchar);
+                    
+                // This is a deliberate quirk for Dashboard (with a long sad history).  We have to do this
+                // since widgets do <script src="foo.js"/> and expect the tag to close.
+                if (currToken.tagName == scriptTag && curchar == '/' && m_doc->frame() && m_doc->frame()->page()->settings()->usesDashboardBackwardCompatibilityMode())
+                    currToken.flat = true;
+                    
                 ++src;
             }
             break;
