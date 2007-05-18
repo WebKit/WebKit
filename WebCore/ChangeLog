@@ -1,3 +1,33 @@
+2007-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for <rdar://problem/5211122> DRT crash below
+        SVGTimer::applyAnimations when page cache is enabled 
+        (SVG animation timers do not properly cancel themselves)
+
+        There were still a few paths in the SVG Animation code
+        that could cause timers to be created and used.  This 
+        patch inserts addition SVG_EXPERIMENTAL blocks to prevent
+        these timers from being used.
+
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::animationsByElement):
+        (WebCore::SVGTimer::applyAnimations):
+        (WebCore::SVGTimer::notifyAll):
+        (WebCore::SVGTimer::addNotify):
+        (WebCore::SVGTimer::removeNotify):
+        * ksvg2/misc/TimeScheduler.cpp:
+        (WebCore::TimeScheduler::addTimer):
+        (WebCore::TimeScheduler::connectIntervalTimer):
+        (WebCore::TimeScheduler::disconnectIntervalTimer):
+        (WebCore::TimeScheduler::startAnimations):
+        (WebCore::TimeScheduler::toggleAnimations):
+        (WebCore::TimeScheduler::timerFired):
+        * ksvg2/svg/SVGAnimationElement.h:
+
 2007-05-18  Marius Bugge Monsen <mbm@trolltech.com>
 
         Reviewed by Zack Rusin. 

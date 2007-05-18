@@ -50,24 +50,31 @@ TimeScheduler::~TimeScheduler()
 
 void TimeScheduler::addTimer(SVGAnimationElement* element, unsigned ms)
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGTimer* svgTimer = new SVGTimer(this, ms * 0.001, true);
     svgTimer->addNotify(element, true);
     m_timerSet.add(svgTimer);
     m_intervalTimer->addNotify(element, false);
+#endif
 }
 
 void TimeScheduler::connectIntervalTimer(SVGAnimationElement* element)
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     m_intervalTimer->addNotify(element, true);
+#endif
 }
 
 void TimeScheduler::disconnectIntervalTimer(SVGAnimationElement* element)
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     m_intervalTimer->removeNotify(element);
+#endif
 }
 
 void TimeScheduler::startAnimations()
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     m_creationTime = currentTime();
 
     SVGTimerSet::iterator end = m_timerSet.end();
@@ -76,10 +83,12 @@ void TimeScheduler::startAnimations()
         if (svgTimer && !svgTimer->isActive())
             svgTimer->start();
     }
+#endif
 }
 
 void TimeScheduler::toggleAnimations()
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (m_intervalTimer->isActive()) {
         m_intervalTimer->stop();
         m_savedTime = currentTime();
@@ -90,6 +99,7 @@ void TimeScheduler::toggleAnimations()
         }
         m_intervalTimer->start();
     }
+#endif
 }
 
 bool TimeScheduler::animationsPaused() const
@@ -99,6 +109,7 @@ bool TimeScheduler::animationsPaused() const
 
 void TimeScheduler::timerFired(Timer<TimeScheduler>* baseTimer)
 {
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Get the pointer now, because notifyAll could make the document,
     // including this TimeScheduler, go away.
     RefPtr<Document> doc = m_document;
@@ -127,6 +138,7 @@ void TimeScheduler::timerFired(Timer<TimeScheduler>* baseTimer)
 
     // Update any 'dirty' shapes.
     doc->updateRendering();
+#endif
 }
 
 double TimeScheduler::elapsed() const
