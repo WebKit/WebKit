@@ -37,6 +37,8 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
+#include "HistoryItem.h"
+#include "HTMLFormElement.h"
 
 #include "qwebpage.h"
 #include "qwebframe.h"
@@ -523,7 +525,10 @@ String FrameLoaderClientQt::generatedMIMETypeForURLScheme(const String& URLSchem
 
 void FrameLoaderClientQt::frameLoadCompleted()
 {
-    notImplemented();
+    // Note: Can be called multiple times.
+    // Even if already complete, we might have set a previous item on a frame that
+    // didn't do any data loading on the past transaction. Make sure to clear these out.
+    m_frame->loader()->setPreviousHistoryItem(0);
 }
 
 
@@ -855,7 +860,7 @@ Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTM
     FrameLoadType childLoadType = FrameLoadTypeInternal;
 
     childFrame->loader()->load(frameData.url, frameData.referrer, childLoadType,
-                             String(), 0, 0, WTF::HashMap<String, String>());
+                             String(), 0, 0);
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())

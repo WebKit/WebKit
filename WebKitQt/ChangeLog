@@ -1,3 +1,14 @@
+2007-05-17  Adam Treat <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        - Implement frameLoadCompleted
+        - Fix build (by George)
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::frameLoadCompleted):
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2007-05-17  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.
