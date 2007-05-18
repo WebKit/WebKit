@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        Return true to make loading of pages working again
+
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::canHandleRequest):
+
+2007-05-18  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
         Make WebCore::Widget use GtkWidget to fix focus handling.
 
         * WebCore.pro: Add PlatformScrollBar

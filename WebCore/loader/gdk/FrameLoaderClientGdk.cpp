@@ -280,7 +280,7 @@ void FrameLoaderClientGdk::setDefersLoading(bool) { notImplementedGdk(); }
 bool FrameLoaderClientGdk::isArchiveLoadPending(ResourceLoader*) const { notImplementedGdk(); return false; }
 void FrameLoaderClientGdk::cancelPendingArchiveLoad(ResourceLoader*) { notImplementedGdk(); }
 void FrameLoaderClientGdk::clearArchivedResources() { notImplementedGdk(); }
-bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notImplementedGdk(); return false; }
+bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notImplementedGdk(); return true; }
 bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplementedGdk(); return false; }
 bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplementedGdk(); return false; }
 String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplementedGdk(); return String(); }
