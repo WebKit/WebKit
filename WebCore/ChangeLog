@@ -1,3 +1,17 @@
+2007-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Test: fast/frames/inline-object-inside-frameset.html
+        
+        http://bugs.webkit.org/show_bug.cgi?id=13771
+        Assertion failure ASSERT(m_layer) when running Hamachi fuzz tester
+
+        Don't paint inline objects.
+        
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+
 2007-05-19  David Hyatt  <hyatt@apple.com>
 
         Add support for plain text MIME types (CSS/JS/TXT) to view source mode.

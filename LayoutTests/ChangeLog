@@ -1,3 +1,13 @@
+2007-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13771
+        Assertion failure ASSERT(m_layer) when running Hamachi fuzz tester
+        
+        * fast/frames/inline-object-inside-frameset-expected.txt: Added.
+        * fast/frames/inline-object-inside-frameset.html: Added.
+
 2007-05-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

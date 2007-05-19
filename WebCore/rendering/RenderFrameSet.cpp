@@ -140,7 +140,8 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
     for (int r = 0; r < rows; r++) {
         int xPos = 0;
         for (int c = 0; c < cols; c++) {
-            child->paint(paintInfo, tx, ty);
+            if (!child->isInline())
+                child->paint(paintInfo, tx, ty);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
                 paintColumnBorder(paintInfo, IntRect(tx + xPos, ty + yPos, borderThickness, height()));
