@@ -1,3 +1,27 @@
+2007-05-19  David Hyatt  <hyatt@apple.com>
+
+        Add support for plain text MIME types (CSS/JS/TXT) to view source mode.
+        CSS/JS will eventually tokenize via their own special tokenizers so that
+        they can also be syntax-highlighted, but for now just treat them as
+        plain text.
+
+        Reviewed by aroben
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addViewSourceText):
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        * html/HTMLViewSourceDocument.h:
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::TextTokenizer):
+        (WebCore::TextTokenizer::write):
+        * loader/TextDocument.h:
+        (WebCore::TextTokenizer::checkBuffer):
+
 2007-05-18  David Hyatt  <hyatt@apple.com>
 
         Fix a glitch in view source mode attribute names.

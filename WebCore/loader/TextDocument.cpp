@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLViewSourceDocument.h"
 #include "SegmentedString.h"
 #include "Text.h"
 #include "XMLTokenizer.h"
@@ -37,40 +38,21 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
-    
-class TextTokenizer : public Tokenizer {
-public:
-    TextTokenizer(Document* doc);
-
-    virtual bool write(const SegmentedString&, bool appendData);
-    virtual void finish();
-    virtual bool isWaitingForScripts() const;
-    
-    inline void checkBuffer(int len = 10)
-    {
-        if ((m_dest - m_buffer) > m_size - len) {
-            // Enlarge buffer
-            int newSize = max(m_size * 2, m_size + len);
-            int oldOffset = m_dest - m_buffer;
-            m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
-            m_dest = m_buffer + oldOffset;
-            m_size = newSize;
-        }
-    }
-        
-private:
-    Document* m_doc;
-    Element* m_preElement;
-
-    bool m_skipLF;
-    
-    int m_size;
-    UChar* m_buffer;
-    UChar* m_dest;
-};
 
 TextTokenizer::TextTokenizer(Document* doc)
     : m_doc(doc)
+    , m_preElement(0)
+    , m_skipLF(false)
+{    
+    // Allocate buffer
+    m_size = 254;
+    m_buffer = static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size));
+    m_dest = m_buffer;
+}    
+
+TextTokenizer::TextTokenizer(HTMLViewSourceDocument* doc)
+    : Tokenizer(true)
+    , m_doc(doc)
     , m_preElement(0)
     , m_skipLF(false)
 {    
@@ -111,7 +93,7 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
         checkBuffer();
     }
 
-    if (!m_preElement) {
+    if (!m_preElement && !inViewSourceMode()) {
         RefPtr<Element> rootElement = m_doc->createElementNS(xhtmlNamespaceURI, "html", ec);
         m_doc->appendChild(rootElement, ec);
 
@@ -127,6 +109,11 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
     } 
     
     String string = String(m_buffer, m_dest - m_buffer);
+    if (inViewSourceMode()) {
+        static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceText(string);
+        return false;
+    }
+
     unsigned charsLeft = string.length();
     while (charsLeft) {
         // split large text to nodes of manageable size

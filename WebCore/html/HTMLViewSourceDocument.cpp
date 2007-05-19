@@ -23,6 +23,7 @@
  */
 
 #include "config.h"
+#include "DOMImplementation.h"
 #include "HTMLViewSourceDocument.h"
 #include "HTMLTokenizer.h"
 #include "HTMLHtmlElement.h"
@@ -33,6 +34,7 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "Text.h"
+#include "TextDocument.h"
 #include "HTMLNames.h"
 
 namespace WebCore
@@ -40,8 +42,9 @@ namespace WebCore
 
 using namespace HTMLNames;
 
-HTMLViewSourceDocument::HTMLViewSourceDocument(DOMImplementation* implementation, Frame* frame)
+HTMLViewSourceDocument::HTMLViewSourceDocument(DOMImplementation* implementation, Frame* frame, const String& mimeType)
     : HTMLDocument(implementation, frame)
+    , m_type(mimeType)
     , m_current(0)
     , m_tbody(0)
     , m_td(0)
@@ -50,28 +53,40 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(DOMImplementation* implementation
 
 Tokenizer* HTMLViewSourceDocument::createTokenizer()
 {
+    if (implementation()->isTextMIMEType(m_type))
+        return new TextTokenizer(this);
     return new HTMLTokenizer(this);
+}
+
+void HTMLViewSourceDocument::createContainingTable()
+{
+    Element* html = new HTMLHtmlElement(this);
+    addChild(html);
+    html->attach();
+    Element* body = new HTMLBodyElement(this);
+    html->addChild(body);
+    body->attach();
+    Element* table = new HTMLTableElement(this);
+    body->addChild(table);
+    table->attach();
+    m_tbody = new HTMLTableSectionElement(tbodyTag, this);
+    table->addChild(m_tbody);
+    m_tbody->attach();
+    m_current = m_tbody;
+}
+
+void HTMLViewSourceDocument::addViewSourceText(const String& text)
+{
+    if (!m_current)
+        createContainingTable();
+    addText(text, "");
 }
 
 void HTMLViewSourceDocument::addViewSourceToken(Token* token)
 {
-    if (!m_current) {
-        // Go ahead and create our <html> and <body>
-        Element* html = new HTMLHtmlElement(this);
-        addChild(html);
-        html->attach();
-        Element* body = new HTMLBodyElement(this);
-        html->addChild(body);
-        body->attach();
-        Element* table = new HTMLTableElement(this);
-        body->addChild(table);
-        table->attach();
-        m_tbody = new HTMLTableSectionElement(tbodyTag, this);
-        table->addChild(m_tbody);
-        m_tbody->attach();
-        m_current = m_tbody;
-    }
-    
+    if (!m_current)
+        createContainingTable();
+
     if (token->tagName == textAtom)
         addText(token->text.get(), "");
     else if (token->tagName == commentAtom) {

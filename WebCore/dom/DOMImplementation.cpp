@@ -345,8 +345,10 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
 
 PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, bool inViewSourceMode)
 {
-    if (inViewSourceMode)
-        return new HTMLViewSourceDocument(this, frame);
+    if (inViewSourceMode) {
+        if (type == "text/html" || type == "application/xhtml+xml" || type == "image/svg+xml" || isTextMIMEType(type) || isXMLMIMEType(type))
+            return new HTMLViewSourceDocument(this, frame, type);
+    }
 
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
