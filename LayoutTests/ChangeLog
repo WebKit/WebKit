@@ -1,3 +1,11 @@
+2007-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Update test results after r21597.
+
+        * fast/frames/viewsource-attribute-expected.checksum:
+        * fast/frames/viewsource-attribute-expected.png:
+        * fast/frames/viewsource-attribute-expected.txt:
+
 2007-05-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
