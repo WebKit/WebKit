@@ -2,6 +2,32 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13774
+          REGRESSION: Crash emailing blog entry using Google Reader
+
+        Test: fast/table/stale-grid-crash.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::recalcSections): Made const and replaced
+        setNeedsLayout(true) with an assertion that the table is already
+        marked for layout.
+        (WebCore::RenderTable::sectionAbove): Added call to recalcSectionsIfNeeded().
+        (WebCore::RenderTable::sectionBelow): Ditto.
+        (WebCore::RenderTable::cellAbove): Ditto.
+        (WebCore::RenderTable::cellBelow): Ditto.
+        (WebCore::RenderTable::cellBefore): Ditto.
+        (WebCore::RenderTable::cellAfter): Ditto.
+        * rendering/RenderTable.h:
+        Made some private member variables which are used in section recalc mutable.
+        (WebCore::RenderTable::setNeedsSectionRecalc): Moved the call to
+        setNeedsLayout() from recalcSections() into here, because I made
+        recalcSections() const.
+        (WebCore::RenderTable::recalcSectionsIfNeeded): Made const.
+
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - http://bugs.webkit.org/show_bug.cgi?id=13320
           rounded corners with drop shadows are really slow
 

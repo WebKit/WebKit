@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13774
+          REGRESSION: Crash emailing blog entry using Google Reader
+
+        * fast/table/stale-grid-crash-expected.checksum: Added.
+        * fast/table/stale-grid-crash-expected.png: Added.
+        * fast/table/stale-grid-crash-expected.txt: Added.
+        * fast/table/stale-grid-crash.html: Added.
+
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - http://bugs.webkit.org/show_bug.cgi?id=13320
           rounded corners with drop shadows are really slow
 
