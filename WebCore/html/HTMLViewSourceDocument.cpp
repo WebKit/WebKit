@@ -26,8 +26,8 @@
 #include "HTMLViewSourceDocument.h"
 #include "HTMLTokenizer.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
-#include "HTMLPreElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
@@ -122,10 +122,13 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                             if (doctype)
                                 addText(value, "webkit-html-doctype");
                             else {
-                                m_current = addSpanWithClassName("webkit-html-attribute-value");
+                                if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
+                                    m_current = addLink(value);
+                                else
+                                    m_current = addSpanWithClassName("webkit-html-attribute-value");
                                 addText(value, "webkit-html-attribute-value");
                                 if (m_current != m_tbody)
-                                    m_current = m_current->parent();
+                                    m_current = static_cast<Element*>(m_current->parent());
                             }
                             currAttr++;
                         }
@@ -147,8 +150,11 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
 
 Element* HTMLViewSourceDocument::addSpanWithClassName(const String& className)
 {
-    if (m_current == m_tbody)
+    if (m_current == m_tbody) {
         addLine(className);
+        return m_current;
+    }
+
     Element* span = new HTMLElement(spanTag, this);
     Attribute* a = new MappedAttribute(classAttr, className);
     NamedMappedAttrMap* attrs = new NamedMappedAttrMap(0);
@@ -221,6 +227,26 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
     // Set current to m_tbody if the last character was a newline.
     if (text[text.length() - 1] == '\n')
         m_current = m_tbody;
+}
+
+Element* HTMLViewSourceDocument::addLink(const String& url)
+{
+    if (m_current == m_tbody)
+        addLine("webkit-html-tag");
+    
+    // Now create a link for the attribute value instead of a span.
+    Element* anchor = new HTMLAnchorElement(aTag, this);
+    NamedMappedAttrMap* attrs = new NamedMappedAttrMap(0);
+    Attribute* classAttribute = new MappedAttribute(classAttr, "webkit-html-attribute-value");
+    attrs->insertAttribute(classAttribute, true);
+    Attribute* targetAttribute = new MappedAttribute(targetAttr, "_blank");
+    attrs->insertAttribute(targetAttribute, true);
+    Attribute* hrefAttribute = new MappedAttribute(hrefAttr, url);
+    attrs->insertAttribute(hrefAttribute, true);
+    anchor->setAttributeMap(attrs);     
+    m_current->addChild(anchor);
+    anchor->attach();
+    return anchor;
 }
 
 }

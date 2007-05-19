@@ -43,11 +43,12 @@ private:
     Element* addSpanWithClassName(const String&);
     void addLine(const String& className);
     void addText(const String& text, const String& className);
+    Element* addLink(const String& url);
 
 private:
-    Node* m_current;
-    Node* m_tbody;
-    Node* m_td;
+    Element* m_current;
+    Element* m_tbody;
+    Element* m_td;
 };
 
 }

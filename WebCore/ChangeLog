@@ -1,3 +1,16 @@
+2007-05-18  David Hyatt  <hyatt@apple.com>
+
+        "Linkify" view source mode links.
+
+        Reviewed by andersca
+
+        * css/view-source.css:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/HTMLViewSourceDocument.h:
+
 2007-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam
