@@ -436,37 +436,9 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     if (oldFillColor != color)
         setCGFillColor(context, color);
 
-    // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
-    // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
-    // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
-    // be subsumed by the other).
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - topRight.width() * 2, rect.y(),
-                                                  topRight.width() * 2, topRight.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.bottom() - bottomLeft.height() * 2,
-                                                  bottomLeft.width() * 2, bottomLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - bottomRight.width() * 2,
-                                                  rect.bottom() - bottomRight.height() * 2,
-                                                  bottomRight.width() * 2, bottomRight.height() * 2));
-    
-    // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
-    CGContextAddRect(context, CGRectMake(rect.x() + topLeft.width(), rect.y(),
-                                         rect.width() - topLeft.width() - topRight.width(),
-                                         max(topLeft.height(), topRight.height())));
-    CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
-                                         rect.bottom() - max(bottomLeft.height(), bottomRight.height()),
-                                         rect.width() - bottomLeft.width() - bottomRight.width(),
-                                         max(bottomLeft.height(), bottomRight.height())));
-    CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
-                                         max(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
-    CGContextAddRect(context, CGRectMake(rect.right() - max(topRight.width(), bottomRight.width()),
-                                         rect.y() + topRight.height(),
-                                         max(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
-    CGContextAddRect(context, CGRectMake(rect.x() + max(topLeft.width(), bottomLeft.width()),
-                                         rect.y() + max(topLeft.height(), topRight.height()),
-                                         rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
-                                         rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
+    addPath(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
     CGContextFillPath(context);
+
     if (oldFillColor != color)
         setCGFillColor(context, oldFillColor);
 }
@@ -500,59 +472,6 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     CGContextAddEllipseInRect(platformContext(), rect);
     CGContextEOClip(platformContext());
-}
-
-void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-    const IntSize& bottomLeft, const IntSize& bottomRight)
-{
-    if (paintingDisabled())
-        return;
-
-    // Need sufficient width and height to contain these curves.  Sanity check our
-    // corner radii and our width/height values to make sure the curves can all fit.
-    if (static_cast<unsigned>(rect.width()) < static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()) ||
-        static_cast<unsigned>(rect.width()) < static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width()) ||
-        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height()) ||
-        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height()))
-        return;
- 
-    // Clip to our rect.
-    clip(rect);
-
-    // OK, the curves can fit.
-    CGContextRef context = platformContext();
-    
-    // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
-    // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
-    // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
-    // be subsumed by the other).
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - topRight.width() * 2, rect.y(),
-                                                  topRight.width() * 2, topRight.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.bottom() - bottomLeft.height() * 2,
-                                                  bottomLeft.width() * 2, bottomLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - bottomRight.width() * 2,
-                                                  rect.bottom() - bottomRight.height() * 2,
-                                                  bottomRight.width() * 2, bottomRight.height() * 2));
-    
-    // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
-    CGContextAddRect(context, CGRectMake(rect.x() + topLeft.width(), rect.y(),
-                                         rect.width() - topLeft.width() - topRight.width(),
-                                         max(topLeft.height(), topRight.height())));
-    CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
-                                         rect.bottom() - max(bottomLeft.height(), bottomRight.height()),
-                                         rect.width() - bottomLeft.width() - bottomRight.width(),
-                                         max(bottomLeft.height(), bottomRight.height())));
-    CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
-                                         max(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
-    CGContextAddRect(context, CGRectMake(rect.right() - max(topRight.width(), bottomRight.width()),
-                                         rect.y() + topRight.height(),
-                                         max(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
-    CGContextAddRect(context, CGRectMake(rect.x() + max(topLeft.width(), bottomLeft.width()),
-                                         rect.y() + max(topLeft.height(), topRight.height()),
-                                         rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
-                                         rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
-    CGContextClip(context);
 }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
@@ -703,6 +622,17 @@ void GraphicsContext::clip(const Path& path)
     CGContextAddPath(context, path.platformPath());
     CGContextClip(context);
     m_data->clip(path);
+}
+
+void GraphicsContext::clipOut(const Path& path)
+{
+    if (paintingDisabled())
+        return;
+        
+    CGContextBeginPath(platformContext());
+    CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
+    CGContextAddPath(platformContext(), path.platformPath());
+    CGContextEOClip(platformContext());
 }
 
 void GraphicsContext::scale(const FloatSize& size)

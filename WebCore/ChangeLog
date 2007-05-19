@@ -1,3 +1,35 @@
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13320
+          rounded corners with drop shadows are really slow
+
+        Test for a rendering bug fixed by this patch:
+            fast/box-shadow/border-radius-big.html
+
+        No test for the performance ingredient.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip): Made cross-platform.
+        Changed to use a single clipping path. If all the radii cannot be
+        accommodated, clips to a rect.
+        (WebCore::GraphicsContext::clipOutRoundedRect): Changed to use a single
+        clipping path. If all the radii cannot be accommodated, clips out a rect.
+        * platform/graphics/GraphicsContext.h: Added clipOut(const Path&).
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::createRoundedRectangle): Added. Returns a rounded rectangle
+        with the specified radii. If all the radii cannot be accommodated, returns
+        a rectangular path.
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipOut): Added.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect): Changed to use a single path.
+        (WebCore::GraphicsContext::clipOut): Added.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipOut): Added.
+
 2007-05-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

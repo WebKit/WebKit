@@ -723,6 +723,15 @@ void GraphicsContext::clip(const Path& path)
     m_data->p().setClipPath(*path.platformPath());
 }
 
+void GraphicsContext::clipOut(const Path& path)
+{
+    if (paintingDisabled())
+        return;
+        
+    // FIXME: Implement
+    notImplemented();
+}
+
 void GraphicsContext::translate(float x, float y)
 {
     if (paintingDisabled())
@@ -790,76 +799,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
                            rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
 
     path.setFillRule(Qt::OddEvenFill);
-    m_data->p().setClipPath(path, Qt::IntersectClip);
-}
-
-void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft,
-                                         const IntSize& topRight, const IntSize& bottomLeft,
-                                         const IntSize& bottomRight)
-{
-    if (paintingDisabled())
-        return;
-
-    // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
-    // values and our width/height values to make sure the curves can all fit.
-    int requiredWidth = qMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
-    if (requiredWidth > rect.width())
-        return;
-
-    int requiredHeight = qMax(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
-    if (requiredHeight > rect.height())
-        return;
-
-    // Clip to our rect.
-    clip(rect);
-
-    // OK, the curves can fit.
-    QPainterPath path;
-
-    // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
-    // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
-    // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
-    // be subsumed by the other).
-    path.addEllipse(QRectF(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
-    path.addEllipse(QRectF(rect.right() - topRight.width() * 2, rect.y(),
-                           topRight.width() * 2, topRight.height() * 2));
-    path.addEllipse(QRectF(rect.x(), rect.bottom() - bottomLeft.height() * 2,
-                           bottomLeft.width() * 2, bottomLeft.height() * 2));
-    path.addEllipse(QRectF(rect.right() - bottomRight.width() * 2,
-                           rect.bottom() - bottomRight.height() * 2,
-                           bottomRight.width() * 2, bottomRight.height() * 2));
-
-    int topLeftRightHeightMax = qMax(topLeft.height(), topRight.height());
-    int bottomLeftRightHeightMax = qMax(bottomLeft.height(), bottomRight.height());
-
-    int topBottomLeftWidthMax = qMax(topLeft.width(), bottomLeft.width());
-    int topBottomRightWidthMax = qMax(topRight.width(), bottomRight.width());
-
-    // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
-    path.addRect(QRectF(rect.x() + topLeft.width(),
-                        rect.y(),
-                        rect.width() - topLeft.width() - topRight.width(),
-                        topLeftRightHeightMax));
-
-    path.addRect(QRectF(rect.x() + bottomLeft.width(), rect.bottom() - bottomLeftRightHeightMax,
-                        rect.width() - bottomLeft.width() - bottomRight.width(), bottomLeftRightHeightMax));
-
-    path.addRect(QRectF(rect.x(),
-                        rect.y() + topLeft.height(),
-                        topBottomLeftWidthMax,
-                        rect.height() - topLeft.height() - bottomLeft.height()));
-
-    path.addRect(QRectF(rect.right() - topBottomRightWidthMax,
-                        rect.y() + topRight.height(),
-                        topBottomRightWidthMax,
-                        rect.height() - topRight.height() - bottomRight.height()));
-
-    path.addRect(QRectF(rect.x() + topBottomLeftWidthMax,
-                        rect.y() + topLeftRightHeightMax,
-                        rect.width() - topBottomLeftWidthMax - topBottomRightWidthMax,
-                        rect.height() - topLeftRightHeightMax - bottomLeftRightHeightMax));
-
-    path.setFillRule(Qt::WindingFill);
     m_data->p().setClipPath(path, Qt::IntersectClip);
 }
 

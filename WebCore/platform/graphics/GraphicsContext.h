@@ -177,9 +177,10 @@ namespace WebCore {
         void setCompositeOperation(CompositeOperator);
 
         void beginPath();
-        void addPath(const Path& path);
+        void addPath(const Path&);
 
         void clip(const Path&);
+        void clipOut(const Path&);
 
         void scale(const FloatSize&);
         void rotate(float angleInRadians);

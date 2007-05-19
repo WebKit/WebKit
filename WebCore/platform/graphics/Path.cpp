@@ -158,6 +158,48 @@ Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& r
     return path;
 }
 
+Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
+{
+    Path path;
+
+    float width = rectangle.width();
+    float height = rectangle.height();
+    if (width <= 0.0 || height <= 0.0)
+        return path;
+
+    if (width < topLeftRadius.width() + topRightRadius.width()
+            || width < bottomLeftRadius.width() + bottomRightRadius.width()
+            || height < topLeftRadius.height() + bottomLeftRadius.height()
+            || height < topRightRadius.height() + bottomRightRadius.height())
+        // If all the radii cannot be accommodated, return a rect.
+        return createRectangle(rectangle);
+
+    float x = rectangle.x();
+    float y = rectangle.y();
+
+    path.moveTo(FloatPoint(x + topLeftRadius.width(), y));
+
+    path.addLineTo(FloatPoint(x + width - topRightRadius.width(), y));
+
+    path.addBezierCurveTo(FloatPoint(x + width - topRightRadius.width() * (1 - QUARTER), y), FloatPoint(x + width, y + topRightRadius.height() * (1 - QUARTER)), FloatPoint(x + width, y + topRightRadius.height()));
+
+    path.addLineTo(FloatPoint(x + width, y + height - bottomRightRadius.height()));
+
+    path.addBezierCurveTo(FloatPoint(x + width, y + height - bottomRightRadius.height() * (1 - QUARTER)), FloatPoint(x + width - bottomRightRadius.width() * (1 - QUARTER), y + height), FloatPoint(x + width - bottomRightRadius.width(), y + height));
+
+    path.addLineTo(FloatPoint(x + bottomLeftRadius.width(), y + height));
+
+    path.addBezierCurveTo(FloatPoint(x + bottomLeftRadius.width() * (1 - QUARTER), y + height), FloatPoint(x, y + height - bottomLeftRadius.height() * (1 - QUARTER)), FloatPoint(x, y + height - bottomLeftRadius.height()));
+
+    path.addLineTo(FloatPoint(x, y + topLeftRadius.height()));
+
+    path.addBezierCurveTo(FloatPoint(x, y + topLeftRadius.height() * (1 - QUARTER)), FloatPoint(x + topLeftRadius.width() * (1 - QUARTER), y), FloatPoint(x + topLeftRadius.width(), y));
+
+    path.closeSubpath();
+
+    return path;
+}
+
 Path Path::createRectangle(const FloatRect& rectangle)
 {
     Path path;
