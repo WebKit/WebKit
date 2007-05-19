@@ -1,5 +1,15 @@
 2007-05-19  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13783
+          REGRESSION (r21120): Frame resizers not repainted properly when dragged
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13774
