@@ -70,6 +70,8 @@
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <dlfcn.h>
+#import <WebCore/CachedImage.h>
+#import <WebCore/CachedResourceClient.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
@@ -86,7 +88,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/HTMLImageElement.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -94,7 +95,6 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
-#import <WebCore/RenderImage.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -221,6 +221,9 @@ static BOOL forceWebHTMLViewHitTest;
 
 static WebHTMLView *lastHitView;
 
+// We need this to be able to safely reference the CachedImage for the promised drag data
+static CachedResourceClient promisedDataClient;
+
 @interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
 @end
 
@@ -309,7 +312,8 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
-    [promisedDragTIFFDataSource release];
+    if (promisedDragTIFFDataSource)
+        promisedDragTIFFDataSource->deref(&promisedDataClient);
     [super dealloc];
 }
 
@@ -323,7 +327,8 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
-    [promisedDragTIFFDataSource release];
+    if (promisedDragTIFFDataSource)
+        promisedDragTIFFDataSource->deref(&promisedDataClient);
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
@@ -333,7 +338,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     firstResponderTextViewAtMouseDownTime = nil;
     dataSource = nil;
     highlighters = nil;
-    promisedDragTIFFDataSource = nil;
+    promisedDragTIFFDataSource = 0;
 }
 
 @end
@@ -1292,7 +1297,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
 {
-    [self setPromisedDragTIFFDataSource:nil];
+    [self setPromisedDragTIFFDataSource:0];
 }
 
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
@@ -1302,8 +1307,9 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         [pasteboard _web_writePromisedRTFDFromArchive:archive containsImage:[[pasteboard types] containsObject:NSTIFFPboardType]];
         [archive release];
     } else if ([type isEqual:NSTIFFPboardType] && [self promisedDragTIFFDataSource]) {
-        [pasteboard setData:[[self promisedDragTIFFDataSource] _imageTIFFRepresentation] forType:NSTIFFPboardType];
-        [self setPromisedDragTIFFDataSource:nil];
+        if (Image* image = [self promisedDragTIFFDataSource]->image())
+            [pasteboard setData:(NSData *)image->getTIFFRepresentation() forType:NSTIFFPboardType];
+        [self setPromisedDragTIFFDataSource:0];
     }
 }
 
@@ -1761,19 +1767,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                               inContext:context];
                                               
     return nil;
-}
-
-- (DOMElement *)promisedDragTIFFDataSource 
-{
-    return _private->promisedDragTIFFDataSource;
-}
-
-- (void)setPromisedDragTIFFDataSource:(DOMElement *)source
-{
-    [source retain];
-    if (_private->promisedDragTIFFDataSource)
-        [_private->promisedDragTIFFDataSource release];
-    _private->promisedDragTIFFDataSource = source;
 }
 
 @end
@@ -2936,22 +2929,14 @@ done:
 {
     NSFileWrapper *wrapper = nil;
     
-    if (DOMElement *tiffSource = [self promisedDragTIFFDataSource]) {
-        Element *element = core(tiffSource);
-        if (!element->hasTagName(imgTag))
-            goto noPromisedData;
+    if (WebCore::CachedResource* tiffResource = [self promisedDragTIFFDataSource]) {
         
-        HTMLImageElement *imageElement = static_cast<HTMLImageElement *>(element);
-        if (!imageElement->cachedImage() || imageElement->cachedImage()->errorOccurred()) 
-            goto noPromisedData;
-        
-        CachedResource *resource = imageElement->cachedImage();
-        SharedBuffer *buffer = resource->data();
+        SharedBuffer *buffer = tiffResource->data();
         if (!buffer)
             goto noPromisedData;
         
         NSData *data = buffer->createNSData();
-        NSURLResponse *response = resource->response().nsURLResponse();
+        NSURLResponse *response = tiffResource->response().nsURLResponse();
         
         wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
         [wrapper setPreferredFilename:[response suggestedFilename]];
@@ -5201,6 +5186,21 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         _private->interpretKeyEventsParameters = 0;
     }
     return parameters.eventWasHandled;
+}
+
+- (WebCore::CachedImage*)promisedDragTIFFDataSource 
+{
+    return _private->promisedDragTIFFDataSource;
+}
+
+- (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source
+{
+    if (source)
+        source->ref(&promisedDataClient);
+    
+    if (_private->promisedDragTIFFDataSource)
+        _private->promisedDragTIFFDataSource->deref(&promisedDataClient);
+    _private->promisedDragTIFFDataSource = source;
 }
 
 @end

@@ -37,7 +37,7 @@
 @class WebView;
 @class WebFrame;
 @class WebPluginController;
- 
+
 @protocol WebHTMLHighlighter
 - (NSRect)highlightRectForLine:(NSRect)lineRect representedNode:(DOMNode *)node;
 - (void)paintHighlightForBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line representedNode:(DOMNode *)node;
@@ -122,7 +122,4 @@
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
 - (BOOL)markedTextMatchesAreHighlighted;
 - (NSArray *)rectsForTextMatches;
-
-- (DOMElement *)promisedDragTIFFDataSource;
-- (void)setPromisedDragTIFFDataSource:(DOMElement *)source;
 @end

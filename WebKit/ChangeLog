@@ -1,3 +1,42 @@
+2007-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13782 
+        REGRESSION (r21528-r21533): Failing editing/selection/drag-in-iframe in pixel mode
+        
+        r21533 made used a DOMElement as the source for promise data, this meant it had to 
+        clear the dragging pasteboard following the drag.  In DRT a drag is non-blocking
+        so this resulted in us prematurely clearing the pasteboard.  
+        
+        This patch avoids this problem by referencing the source CachedImage rather than the
+        DOMElement, so we don't need to worry about retaining an entire document forever, so
+        we don't need to clear the dragging pasteboard following the drag.
+        
+        * Misc/WebNSPasteboardExtras.mm:
+        (imageFromElement):
+          Extract the underlying CachedImage from a DOMElement
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:source:]):
+          Use a CachedImage instead of a DOMElement
+          
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView pasteboardChangedOwner:]):
+        (-[WebHTMLView pasteboard:provideDataForType:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView WebCore::]):
+        (-[WebHTMLView setPromisedDragTIFFDataSource:WebCore::]):
+          Use CachedImage rather than DOMElement as promised data source
+          
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-05-18  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Brady E.

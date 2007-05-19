@@ -30,13 +30,16 @@
 
 #import "WebArchive.h"
 #import "WebFrameBridge.h"
-#import "WebHTMLViewPrivate.h"
+#import "WebFrameInternal.h"
+#import "WebHTMLViewInternal.h"
 #import "WebNSURLExtras.h"
 #import "WebResourcePrivate.h"
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Element.h>
 #import <WebCore/MimeTypeRegistry.h>
+#import <WebCore/RenderImage.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -242,6 +245,18 @@ static NSArray *_writableTypesForImageWithArchive (void)
     
 }
 
+CachedImage* imageFromElement(DOMElement *domElement) {
+    Element* element = core(domElement);
+    if (!element)
+        return 0;
+    
+    RenderObject* renderer = element->renderer();
+    RenderImage* imageRenderer = static_cast<RenderImage*>(renderer);
+    if (!imageRenderer->cachedImage() || imageRenderer->cachedImage()->errorOccurred()) 
+        return 0;        
+    return imageRenderer->cachedImage();
+}
+
 - (void)_web_writeImage:(NSImage *)image
                 element:(DOMElement *)element
                     URL:(NSURL *)URL 
@@ -259,8 +274,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
         if (image)
             [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
         else if (source && element)
-            [source setPromisedDragTIFFDataSource:element];
-        else
+            [source setPromisedDragTIFFDataSource:imageFromElement(element)];
+        else if (element)
             [self setData:[element _imageTIFFRepresentation] forType:NSTIFFPboardType];
     }
     

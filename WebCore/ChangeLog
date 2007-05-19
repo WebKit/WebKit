@@ -1,3 +1,13 @@
+2007-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam
+
+        No longer need to pass HTMLImageElement and HTMLImageLoader on to WebKit
+        Need to expose CachedResourceClient constructor
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-05-18  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5214338> REGRESSION: / mishandled in 

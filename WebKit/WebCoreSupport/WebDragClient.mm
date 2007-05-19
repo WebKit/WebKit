@@ -104,11 +104,6 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
         [UIDelegate webView:m_webView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
     else
         [topHTMLView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
-    
-    // Forcibly clear the pasteboard at the end of drag, this stops us from writing 
-    // delayed data (RTF/images, etc) on app quit, which we don't want to do given 
-    // the life time for this data should only be the lifetime of the drag.
-    [pasteboard declareTypes:nil owner:nil];
 }
 
 DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& title, Frame* frame)
