@@ -1,5 +1,12 @@
 2007-05-18  David Hyatt  <hyatt@apple.com>
 
+        Fix a glitch in view source mode attribute names.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+
+2007-05-18  David Hyatt  <hyatt@apple.com>
+
         "Linkify" view source mode links.
 
         Reviewed by andersca

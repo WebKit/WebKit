@@ -112,8 +112,14 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                         if (guide->at(i) == 'a') {
                             Attribute* attr = token->attrs->attributeItem(currAttr);
                             String name = attr->name().toString();
-                            String nameClassStr = doctype ? "webkit-html-doctype" : (name == "/" ? "webkit-html-tag" : "webkit-html-attribute-name");
-                            addText(name, nameClassStr);
+                            if (doctype)
+                                addText(name, "webkit-html-doctype");
+                            else {
+                                m_current = addSpanWithClassName("webkit-html-attribute-name");
+                                addText(name, "webkit-html-attribute-name");
+                                if (m_current != m_tbody)
+                                    m_current = static_cast<Element*>(m_current->parent());
+                            }
                             if (attr->value().isNull() || attr->value().isEmpty())
                                 currAttr++;
                         } else {
