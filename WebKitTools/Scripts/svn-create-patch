@@ -59,7 +59,7 @@ sub findModificationType($);
 sub findSourceFileAndRevision($);
 sub fixChangeLogPatch($);
 sub generateDiff($$$);
-sub generateFileList($\%\%);
+sub generateFileList($\%\%\%);
 sub isBinaryMimeType($);
 sub manufacturePatchForAdditionWithHistory($$);
 sub numericcmp($$);
@@ -79,15 +79,19 @@ if (!GetOptions("help" => \$showHelp) || $showHelp) {
 my %paths = processPaths(@ARGV);
 
 # Generate a list of files requiring diffs
-my %textFiles;
+my %sourceFiles;
+my %testFiles;
 my %binaryFiles;
 for my $path (keys %paths) {
-    generateFileList($path, %textFiles, %binaryFiles);
+    generateFileList($path, %sourceFiles, %testFiles, %binaryFiles);
 }
 
-# Generate the diff for text files, then binary files, for easy reviewing
-for my $file (sort pathcmp keys %textFiles) {
-    generateDiff($file, $textFiles{$file}, 0);
+# Generate the diff for source code files, test files then binary files for easy reviewing
+for my $file (sort pathcmp keys %sourceFiles) {
+    generateDiff($file, $sourceFiles{$file}, 0);
+}
+for my $file (sort pathcmp keys %testFiles) {
+    generateDiff($file, $testFiles{$file}, 0);
 }
 for my $file (sort pathcmp keys %binaryFiles) {
     generateDiff($file, $binaryFiles{$file}, 1);
@@ -236,9 +240,9 @@ sub generateDiff($$$)
     }
 }
 
-sub generateFileList($\%\%)
+sub generateFileList($\%\%\%)
 {
-    my ($statPath, $textFiles, $binaryFiles) = @_;
+    my ($statPath, $sourceFiles, $testFiles, $binaryFiles) = @_;
     open STAT, "svn stat '$statPath' |" or die;
     while (my $line = <STAT>) {
         chomp $line;
@@ -249,8 +253,10 @@ sub generateFileList($\%\%)
         if ($modificationType) {
             if (isBinaryMimeType($path)) {
                 $binaryFiles->{$path} = $modificationType;
+            } elsif ((File::Spec->splitdir($path))[0] eq "LayoutTests") {
+                $testFiles->{$path} = $modificationType;
             } else {
-                $textFiles->{$path} = $modificationType;
+                $sourceFiles->{$path} = $modificationType;
             }
         } else {
             print STDERR $line, "\n";

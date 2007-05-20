@@ -1,3 +1,21 @@
+2007-05-20  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13565
+          Change svn-create-patch to put LayoutTests in the end
+
+        In addition to reordering test files under the LayoutTests directory so that they
+        appear after source code files, this patch fixes an issue with prepare-ChangeLog
+        if the first argument passed to it is a file name instead of a directory name.
+
+        * Scripts/prepare-ChangeLog:
+        (isGIT()): If first value in @dirs array is a file, use dirname() to get the directory.
+        (isSVN()): Ditto.
+        * Scripts/svn-create-patch:
+        (generateFileList($\%\%\%)): Differentiate test files in the LayoutTests directory from
+        source code files.
+
 2007-05-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.

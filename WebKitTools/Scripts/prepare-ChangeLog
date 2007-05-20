@@ -1073,7 +1073,9 @@ sub isGit()
 
     my $dir = ".";
     my @dirs = keys(%paths);
-    $dir = $dirs[0] if @dirs;
+
+    $dir = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]) if @dirs;
+
     $isGit = system("cd $dir && git rev-parse > /dev/null 2>&1") == 0;
     return $isGit;
 }
@@ -1085,7 +1087,11 @@ sub isSVN()
 
     my $dir = ".svn";
     my @dirs = keys(%paths);
-    $dir = File::Spec->catdir(($dirs[0], ".svn")) if @dirs;
+
+    if (@dirs) {
+        my $path = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]);
+        $dir = File::Spec->catdir($path, ".svn");
+    }
 
     $isSVN = -d $dir;
     return $isSVN;
