@@ -518,10 +518,10 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
 int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    int bottom = includeSelf && m_width > 0 ? m_height : 0;
     if (!includeOverflowInterior && hasOverflowClip())
-        return bottom;
+        return includeSelf && m_width > 0 ? overflowHeight(false) : 0;
 
+    int bottom = includeSelf && m_width > 0 ? m_height : 0;
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
         // For now, we have to descend into all the children, since we may have a huge abs div inside
@@ -542,10 +542,10 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
 int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    int right = includeSelf && m_height > 0 ? m_width : 0;
     if (!includeOverflowInterior && hasOverflowClip())
-        return right;
+        return includeSelf && m_height > 0 ? overflowWidth(false) : 0;
 
+    int right = includeSelf && m_height > 0 ? m_width : 0;
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
         // For now, we have to descend into all the children, since we may have a huge abs div inside
@@ -566,10 +566,10 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
 int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    int left = includeSelf && m_height > 0 ? 0 : m_width;
     if (!includeOverflowInterior && hasOverflowClip())
-        return left;
+        return includeSelf && m_height > 0 ? overflowLeft(false) : m_width;
 
+    int left = includeSelf && m_height > 0 ? 0 : m_width;
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
         // For now, we have to descend into all the children, since we may have a huge abs div inside

@@ -1830,9 +1830,11 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     // two rectangles (but typically only one).
     RenderStyle* outlineStyle = !isInline() && continuation() ? continuation()->style() : style();
     int ow = outlineStyle->outlineSize();
+    ShadowData* boxShadow = style()->boxShadow();
     int width = abs(newOutlineBox.width() - oldOutlineBox.width());
     if (width) {
-        int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + ow;
+        int shadowRight = boxShadow ? max(boxShadow->x + boxShadow->blur, 0) : 0;
+        int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + max(ow, shadowRight);
         IntRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
             width + borderWidth,
@@ -1845,7 +1847,8 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     }
     int height = abs(newOutlineBox.height() - oldOutlineBox.height());
     if (height) {
-        int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + ow;
+        int shadowBottom = boxShadow ? max(boxShadow->y + boxShadow->blur, 0) : 0;
+        int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + max(ow, shadowBottom);
         IntRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),
@@ -3033,6 +3036,21 @@ IntRect RenderObject::absoluteContentBox() const
     return rect;
 }
 
+void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
+{
+    int outlineSize = !isInline() && continuation() ? continuation()->style()->outlineSize() : style()->outlineSize();
+    if (ShadowData* boxShadow = style()->boxShadow()) {
+        int shadowLeft = min(boxShadow->x - boxShadow->blur - outlineSize, 0);
+        int shadowRight = max(boxShadow->x + boxShadow->blur + outlineSize, 0);
+        int shadowTop = min(boxShadow->y - boxShadow->blur - outlineSize, 0);
+        int shadowBottom = max(boxShadow->y + boxShadow->blur + outlineSize, 0);
+        rect.move(shadowLeft, shadowTop);
+        rect.setWidth(rect.width() - shadowLeft + shadowRight);
+        rect.setHeight(rect.height() - shadowTop + shadowBottom);
+    } else
+        rect.inflate(outlineSize);
+}
+
 IntRect RenderObject::absoluteOutlineBox() const
 {
     IntRect box = borderBox();
@@ -3040,10 +3058,7 @@ IntRect RenderObject::absoluteOutlineBox() const
     absolutePosition(x, y);
     box.move(x, y);
     box.move(view()->layoutDelta());
-    if (!isInline() && continuation())
-        box.inflate(continuation()->style()->outlineSize());
-    else
-        box.inflate(style()->outlineSize());
+    adjustRectForOutlineAndShadow(box);
     return box;
 }
 

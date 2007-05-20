@@ -1786,7 +1786,14 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 
         // If we establish a clip at all, then go ahead and make sure our background
         // rect is intersected with our layer's bounds.
-        backgroundRect.intersect(layerBounds);
+        if (ShadowData* boxShadow = renderer()->style()->boxShadow()) {
+            IntRect shadowRect = layerBounds;
+            shadowRect.move(boxShadow->x, boxShadow->y);
+            shadowRect.inflate(boxShadow->blur);
+            shadowRect.unite(layerBounds);
+            backgroundRect.intersect(shadowRect);
+        } else
+            backgroundRect.intersect(layerBounds);
     }
 }
 

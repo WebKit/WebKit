@@ -288,6 +288,15 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     if (m_overflowWidth < m_width)
         m_overflowWidth = m_width;
 
+    if (!hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow()) {
+            m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur);
+            m_overflowWidth = max(m_overflowWidth, m_width + boxShadow->x + boxShadow->blur);
+            m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
+            m_overflowHeight = max(m_overflowHeight, m_height + boxShadow->y + boxShadow->blur);
+        }
+    }
+
     view()->popLayoutState();
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if

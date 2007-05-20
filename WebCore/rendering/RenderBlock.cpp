@@ -378,25 +378,60 @@ void RenderBlock::removeChild(RenderObject *oldChild)
 
 int RenderBlock::overflowHeight(bool includeInterior) const
 {
-    return (!includeInterior && hasOverflowClip()) ? m_height : m_overflowHeight;
+    if (!includeInterior && hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow())
+            return m_height + max(boxShadow->y + boxShadow->blur, 0);
+        return m_height;
+    }
+    return m_overflowHeight;
 }
 
 int RenderBlock::overflowWidth(bool includeInterior) const
 {
-    return (!includeInterior && hasOverflowClip()) ? m_width : m_overflowWidth;
+    if (!includeInterior && hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow())
+            return m_width + max(boxShadow->x + boxShadow->blur, 0);
+        return m_width;
+    }
+    return m_overflowWidth;
 }
+
 int RenderBlock::overflowLeft(bool includeInterior) const
 {
-    return (!includeInterior && hasOverflowClip()) ? 0 : m_overflowLeft;
+    if (!includeInterior && hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow())
+            return min(boxShadow->x - boxShadow->blur, 0);
+        return 0;
+    }
+    return m_overflowLeft;
 }
 
 int RenderBlock::overflowTop(bool includeInterior) const
 {
-    return (!includeInterior && hasOverflowClip()) ? 0 : m_overflowTop;
+    if (!includeInterior && hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow())
+            return min(boxShadow->y - boxShadow->blur, 0);
+        return 0;
+    }
+    return m_overflowTop;
 }
 
 IntRect RenderBlock::overflowRect(bool includeInterior) const
 {
+    if (!includeInterior && hasOverflowClip()) {
+        IntRect box = borderBox();
+        if (ShadowData* boxShadow = style()->boxShadow()) {
+            int shadowLeft = min(boxShadow->x - boxShadow->blur, 0);
+            int shadowRight = max(boxShadow->x + boxShadow->blur, 0);
+            int shadowTop = min(boxShadow->y - boxShadow->blur, 0);
+            int shadowBottom = max(boxShadow->y + boxShadow->blur, 0);
+            box.move(shadowLeft, shadowTop);
+            box.setWidth(box.width() - shadowLeft + shadowRight);
+            box.setHeight(box.height() - shadowTop + shadowBottom);
+        }
+        return box;
+    }
+
     if (!includeInterior && hasOverflowClip())
         return borderBox();
     int l = overflowLeft(includeInterior);
@@ -591,6 +626,15 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Always ensure our overflow width/height are at least as large as our width/height.
     m_overflowWidth = max(m_overflowWidth, m_width);
     m_overflowHeight = max(m_overflowHeight, m_height);
+
+    if (!hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow()) {
+            m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur);
+            m_overflowWidth = max(m_overflowWidth, m_width + boxShadow->x + boxShadow->blur);
+            m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
+            m_overflowHeight = max(m_overflowHeight, m_height + boxShadow->y + boxShadow->blur);
+        }
+    }
 
     if (!hadColumns)
         view()->popLayoutState();

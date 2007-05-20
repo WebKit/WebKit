@@ -2,6 +2,47 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12729
+          box-shadow disappears when scrolling a div that it falls on/under
+
+        Tests: fast/repaint/box-shadow-dynamic.html
+               fast/repaint/box-shadow-h.html
+               fast/repaint/box-shadow-v.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Factor in box shadow.
+        (WebCore::InlineFlowBox::placeBoxesVertically): Ditto.
+        (WebCore::InlineFlowBox::paint): Account for box shadow when checking if
+        the damage rect intersects.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowHeight): For overflow areas, when asked
+        for the "exterior" overflow, add box shadow overflow.
+        (WebCore::RenderBlock::overflowWidth): Ditto.
+        (WebCore::RenderBlock::overflowLeft): Ditto.
+        (WebCore::RenderBlock::overflowTop): Ditto.
+        (WebCore::RenderBlock::overflowRect): Ditto.
+        (WebCore::RenderBlock::layoutBlock): Factor box shadow into visual overflow.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Ditto.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::lowestPosition): For overflow areas, when asked for
+        the "exterior" extreme position, add box shadow.
+        (WebCore::RenderFlow::rightmostPosition): Ditto.
+        (WebCore::RenderFlow::leftmostPosition): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects): Avoid clipping out box shadow.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): Make sure to paint
+        the box shadow when an edge with a shadow moves.
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow): Helper function
+        that expands a given rectangle to encompass outline and box shadow.
+        (WebCore::RenderObject::absoluteOutlineBox): Changed to include box shadow.
+        * rendering/RenderObject.h:
+
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13783
           REGRESSION (r21120): Frame resizers not repainted properly when dragged
 

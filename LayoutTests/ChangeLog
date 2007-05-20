@@ -1,3 +1,26 @@
+2007-05-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - repaint tests and updated results for http://bugs.webkit.org/show_bug.cgi?id=12729
+          box-shadow disappears when scrolling a div that it falls on/under
+
+        * fast/box-shadow/basic-shadows-expected.checksum:
+        * fast/box-shadow/basic-shadows-expected.png:
+        * fast/box-shadow/basic-shadows-expected.txt:
+        * fast/repaint/box-shadow-dynamic-expected.checksum: Added.
+        * fast/repaint/box-shadow-dynamic-expected.png: Added.
+        * fast/repaint/box-shadow-dynamic-expected.txt: Added.
+        * fast/repaint/box-shadow-dynamic.html: Added.
+        * fast/repaint/box-shadow-h-expected.checksum: Added.
+        * fast/repaint/box-shadow-h-expected.png: Added.
+        * fast/repaint/box-shadow-h-expected.txt: Added.
+        * fast/repaint/box-shadow-h.html: Added.
+        * fast/repaint/box-shadow-v-expected.checksum: Added.
+        * fast/repaint/box-shadow-v-expected.png: Added.
+        * fast/repaint/box-shadow-v-expected.txt: Added.
+        * fast/repaint/box-shadow-v.html: Added.
+
 2007-05-20  Mark Rowe  <mrowe@apple.com>
 
         Update test results after r21597.

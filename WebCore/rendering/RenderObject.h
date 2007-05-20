@@ -863,6 +863,8 @@ protected:
 
     virtual void removeLeftoverAnonymousBoxes();
 
+    void adjustRectForOutlineAndShadow(IntRect&) const;
+
     void arenaDelete(RenderArena*, void* objectBase);
 
 private:

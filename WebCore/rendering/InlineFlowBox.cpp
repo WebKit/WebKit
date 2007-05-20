@@ -246,7 +246,14 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
 {
     // Set our x position.
     setXPos(x);
-    leftPosition = min(x, leftPosition);
+
+    int boxShadowLeft = 0;
+    int boxShadowRight = 0;
+    if (ShadowData* boxShadow = object()->style(m_firstLine)->boxShadow()) {
+        boxShadowLeft = min(boxShadow->x - boxShadow->blur, 0);
+        boxShadowRight = max(boxShadow->x + boxShadow->blur, 0);
+    }
+    leftPosition = min(x + boxShadowLeft, leftPosition);
 
     int startX = x;
     x += borderLeft() + paddingLeft();
@@ -262,8 +269,6 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
             }
             text->setXPos(x);
             
-            // FIXME: Setting this as layout overflow is bad.  We need to have a separate concept of
-            // visual overflow.
             int strokeOverflow = static_cast<int>(ceilf(rt->style()->textStrokeWidth() / 2.0));
             
             // If letter-spacing is negative, we should factor that into right overflow. (Even in RTL, letter-spacing is
@@ -316,8 +321,8 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
     }
 
     x += borderRight() + paddingRight();
-    setWidth(x-startX);
-    rightPosition = max(xPos() + width(), rightPosition);
+    setWidth(x - startX);
+    rightPosition = max(xPos() + width() + boxShadowRight, rightPosition);
 
     return x;
 }
@@ -477,14 +482,19 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
                 overflowTop = min(overflowTop, shadow->y - shadow->blur);
                 overflowBottom = max(overflowBottom, shadow->y + shadow->blur);
             }
+
+            if (ShadowData* boxShadow = curr->object()->style(m_firstLine)->boxShadow()) {
+                overflowTop = min(overflowTop, boxShadow->y - boxShadow->blur);
+                overflowBottom = max(overflowBottom, boxShadow->y + boxShadow->blur);
+            }
+
             if (curr->isInlineFlowBox()) {
                 newHeight += curr->object()->borderTop() + curr->object()->paddingTop() +
                             curr->object()->borderBottom() + curr->object()->paddingBottom();
                 newY -= curr->object()->borderTop() + curr->object()->paddingTop();
                 newBaseline += curr->object()->borderTop() + curr->object()->paddingTop();
             }
-        }
-        else if (!curr->object()->isBR()) {
+        } else if (!curr->object()->isBR()) {
             newY += curr->object()->marginTop();
             newHeight = curr->height() - (curr->object()->marginTop() + curr->object()->marginBottom());
             overflowTop = curr->object()->overflowTop(false);
@@ -561,6 +571,11 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     int xPos = tx + m_x - object()->maximalOutlineSize(paintInfo.phase);
     int w = width() + 2 * object()->maximalOutlineSize(paintInfo.phase);
+    if (ShadowData* boxShadow = object()->style(m_firstLine)->boxShadow()) {
+        int shadowLeft = min(boxShadow->x - boxShadow->blur, 0);
+        xPos += shadowLeft;
+        w += -shadowLeft + max(boxShadow->x + boxShadow->blur, 0);
+    }
     bool intersectsDamageRect = xPos < paintInfo.rect.right() && xPos + w > paintInfo.rect.x();
 
     if (intersectsDamageRect && paintInfo.phase != PaintPhaseChildOutlines) {
