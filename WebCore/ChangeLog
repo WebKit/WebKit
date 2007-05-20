@@ -1,3 +1,13 @@
+2007-05-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13785, O(n^2) counter creation.
+
+        Reviewed by darin
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        (WebCore::RenderCounter::originalText):
+
 2007-05-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
