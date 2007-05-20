@@ -1,3 +1,33 @@
+2007-05-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/5193416> REGRESSION: Selection on large pages extremely slow
+
+        * dom/Document.cpp: (WebCore::Document::removeMarkers): Added an early exit for the common
+        case where there are no markers. Changed code to iterate over all the nodes in the range
+        instead of using TextIterator, which is more efficient.
+        
+        * page/Frame.cpp: (WebCore::Frame::respondToChangedSelection): Added checks for editable,
+        so we don't bother doing work related to spell checking and grammar checking when changing
+        the selection in non-editable text. Also rearranged the code so we only compute the old
+        word boundaries and sentence boundaries when actually needed, and don't do the sentence
+        range checks unless grammar checking is enabled.
+
+        * platform/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIterator): Don't take a locale parameter. Always pass in currentTextBreakLocaleID.
+        (WebCore::characterBreakIterator): Removed local parameter.
+        (WebCore::wordBreakIterator): Ditto.
+        (WebCore::lineBreakIterator): Ditto.
+        (WebCore::sentenceBreakIterator): Ditto.
+
+        * platform/mac/TextBreakIteratorInternalICUMac.mm:
+        (WebCore::getTextBreakLocale): Broke out the code to actually get the locale.
+        (WebCore::currentTextBreakLocaleID): This function now handles only the caching and calls
+        getTextBreakLocale to actually figure it out.
+
+        * editing/visible_units.cpp: Added lots of FIXME comments, but no code change.
+
 2007-05-20  Adam Treat  <adam@staikos.net>
 
         Add -f to cp to deal with some obscure build environments.
@@ -727,7 +757,7 @@
         (WebCore::FrameLoader::mainReceivedCompleteError): Make sure to always check whether the overall
         load completed, even if we think the current frame load is already complete.
 
-2007-05-16  dethbakin  <bdakin@apple.com>
+2007-05-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
 

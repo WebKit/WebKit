@@ -1,12 +1,11 @@
-/* This file is part of the KDE project
- *
+/*
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -35,92 +34,51 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
-#include "Cache.h"
 #include "CachedCSSStyleSheet.h"
-#include "Chrome.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
 #include "EditorClient.h"
-#include "Event.h"
 #include "EventNames.h"
-#include "FloatRect.h"
 #include "FocusController.h"
-#include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLGenericFormElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLObjectElement.h"
 #include "HTMLTableCellElement.h"
-#include "HitTestRequest.h"
-#include "HitTestResult.h"
-#include "IconDatabase.h"
-#include "IconLoader.h"
-#include "ImageDocument.h"
-#include "IndentOutdentCommand.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
-#include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "PlatformScrollBar.h"
 #include "RegularExpression.h"
-#include "RenderListBox.h"
-#include "RenderObject.h"
 #include "RenderPart.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "SegmentedString.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
-#include "TypingCommand.h"
-#include "XMLTokenizer.h"
-#include "cssstyleselector.h"
-#include "htmlediting.h"
-#include "kjs_proxy.h"
-#include "kjs_window.h"
-#include "markup.h"
-#include "visible_units.h"
-#include "xmlhttprequest.h"
-#include <math.h>
-#include <sys/types.h>
-#include <wtf/Platform.h>
-
+#include "XMLNames.h"
 #include "bindings/NP_jsobject.h"
 #include "bindings/npruntime_impl.h"
 #include "bindings/runtime_root.h"
-
-#if !PLATFORM(WIN_OS)
-#include <unistd.h>
-#endif
+#include "kjs_proxy.h"
+#include "kjs_window.h"
+#include "visible_units.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
 #include "XLinkNames.h"
-#include "SVGDocument.h"
-#include "SVGDocumentExtensions.h"
 #endif
-
-#include "XMLNames.h"
 
 using namespace std;
 
 using KJS::JSLock;
-using KJS::JSValue;
-using KJS::Location;
-using KJS::PausedTimeouts;
-using KJS::SavedProperties;
-using KJS::SavedBuiltins;
-using KJS::UString;
 using KJS::Window;
 
 namespace WebCore {
@@ -1803,44 +1761,52 @@ void Frame::scheduleClose()
         chrome->closeWindowSoon();
 }
 
-void Frame::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
+void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeTyping)
 {
     if (document()) {
-        if (editor()->isContinuousSpellCheckingEnabled()) {
-            Selection oldAdjacentWords;
-            Selection oldSelectedSentence;
-            
-            // If this is a change in selection resulting from a delete operation, oldSelection may no longer
-            // be in the document.
-            if (oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
-                VisiblePosition oldStart(oldSelection.visibleStart());
-                oldAdjacentWords = Selection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
-                oldSelectedSentence = Selection(startOfSentence(oldStart), endOfSentence(oldStart));   
+        bool isContinuousSpellCheckingEnabled = editor()->isContinuousSpellCheckingEnabled();
+        bool isContinuousGrammarCheckingEnabled = isContinuousSpellCheckingEnabled && editor()->isGrammarCheckingEnabled();
+        if (isContinuousSpellCheckingEnabled) {
+            Selection newAdjacentWords;
+            Selection newSelectedSentence;
+            if (selectionController()->selection().isContentEditable()) {
+                VisiblePosition newStart(selectionController()->selection().visibleStart());
+                newAdjacentWords = Selection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+                if (isContinuousGrammarCheckingEnabled)
+                    newSelectedSentence = Selection(startOfSentence(newStart), endOfSentence(newStart));
             }
-            
-            VisiblePosition newStart(selectionController()->selection().visibleStart());
-            Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
-            Selection newSelectedSentence(startOfSentence(newStart), endOfSentence(newStart));
-            
+
             // When typing we check spelling elsewhere, so don't redo it here.
-            if (closeTyping && oldAdjacentWords != newAdjacentWords) {
-                editor()->markMisspellings(oldAdjacentWords);
-                
-                if (oldSelectedSentence != newSelectedSentence)
-                    editor()->markBadGrammar(oldSelectedSentence);
+            // If this is a change in selection resulting from a delete operation,
+            // oldSelection may no longer be in the document.
+            if (closeTyping && oldSelection.isContentEditable() && oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
+                VisiblePosition oldStart(oldSelection.visibleStart());
+                Selection oldAdjacentWords = Selection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
+                if (oldAdjacentWords != newAdjacentWords) {
+                    editor()->markMisspellings(oldAdjacentWords);
+                    if (isContinuousGrammarCheckingEnabled) {
+                        Selection oldSelectedSentence = Selection(startOfSentence(oldStart), endOfSentence(oldStart));   
+                        if (oldSelectedSentence != newSelectedSentence)
+                            editor()->markBadGrammar(oldSelectedSentence);
+                    }
+                }
             }
-            
-            // This only erases a marker in the first unit (word or sentence) of the selection.
+
+            // This only erases markers that are in the first unit (word or sentence) of the selection.
             // Perhaps peculiar, but it matches AppKit.
-            document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
-            document()->removeMarkers(newSelectedSentence.toRange().get(), DocumentMarker::Grammar);
-        } else {
-            // When continuous spell checking is off, existing markers disappear after the selection changes.
-            document()->removeMarkers(DocumentMarker::Spelling);
-            document()->removeMarkers(DocumentMarker::Grammar);
+            if (RefPtr<Range> wordRange = newAdjacentWords.toRange())
+                document()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
+            if (RefPtr<Range> sentenceRange = newSelectedSentence.toRange())
+                document()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);
         }
+
+        // When continuous spell checking is off, existing markers disappear after the selection changes.
+        if (!isContinuousSpellCheckingEnabled)
+            document()->removeMarkers(DocumentMarker::Spelling);
+        if (!isContinuousGrammarCheckingEnabled)
+            document()->removeMarkers(DocumentMarker::Grammar);
     }
-    
+
     editor()->respondToChangedSelection(oldSelection);
 }
 

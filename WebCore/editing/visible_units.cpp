@@ -521,45 +521,61 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
 static unsigned startSentenceBoundary(const UChar* characters, unsigned length)
 {
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    // FIXME: The following function can return -1; we don't handle that.
     return textBreakPreceding(iterator, length);
 }
 
 VisiblePosition startOfSentence(const VisiblePosition &c)
 {
+    // FIXME: The sentence break iterator will not stop at paragraph boundaries.
+    // Thus this treats many large documents as one giant sentence.
     return previousBoundary(c, startSentenceBoundary);
 }
 
 static unsigned endSentenceBoundary(const UChar* characters, unsigned length)
 {
+    // FIXME: It's unclear why this starts searching from the end of the buffer.
+    // The word equivalent starts at the start of the buffer, and I think that's correct.
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    // FIXME: The following function can return -1; we don't handle that.
     int start = textBreakPreceding(iterator, length);
     return textBreakFollowing(iterator, start);
 }
 
 VisiblePosition endOfSentence(const VisiblePosition &c)
 {
+    // FIXME: The sentence break iterator will not stop at paragraph boundaries.
+    // Thus this treats many large documents as one giant sentence.
     return nextBoundary(c, endSentenceBoundary);
 }
 
 static unsigned previousSentencePositionBoundary(const UChar* characters, unsigned length)
 {
+    // FIXME: This is identical to startSentenceBoundary. I'm pretty sure that's not right.
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    // FIXME: The following function can return -1; we don't handle that.
     return textBreakPreceding(iterator, length);
 }
 
 VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
+    // FIXME: The sentence break iterator will not stop at paragraph boundaries.
+    // Thus this treats many large documents as one giant sentence.
     return previousBoundary(c, previousSentencePositionBoundary);
 }
 
 static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length)
 {
+    // FIXME: This is too close to endSentenceBoundary. I'm pretty sure it's not right.
     TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    // FIXME: The following function can return -1; we don't handle that.
     return textBreakFollowing(iterator, 0);
 }
 
 VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
+    // FIXME: The sentence break iterator will not stop at paragraph boundaries.
+    // Thus this treats many large documents as one giant sentence.
     return nextBoundary(c, nextSentencePositionBoundary);
 }
 

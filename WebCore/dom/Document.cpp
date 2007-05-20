@@ -2761,20 +2761,27 @@ void Document::addMarker(Range *range, DocumentMarker::MarkerType type, String d
     }
 }
 
-void Document::removeMarkers(Range *range, DocumentMarker::MarkerType markerType)
+void Document::removeMarkers(Range* range, DocumentMarker::MarkerType markerType)
 {
-    // Use a TextIterator to visit the potentially multiple nodes the range covers.
-    for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
-        int exception = 0;
-        unsigned startOffset = textPiece->startOffset(exception);
-        unsigned length = textPiece->endOffset(exception) - startOffset + 1;
-        removeMarkers(textPiece->startContainer(exception), startOffset, length, markerType);
-    }
+    if (m_markers.isEmpty())
+        return;
+
+    ExceptionCode ec = 0;
+    Node* startContainer = range->startContainer(ec);
+    int startOffset = range->startOffset(ec);
+    Node* endContainer = range->endContainer(ec);
+    int endOffset = range->endOffset(ec);
+
+    Node* pastEndNode = range->pastEndNode();
+    for (Node* node = range->startNode(); node != pastEndNode; node = node->traverseNextNode())
+        removeMarkers(node,
+            node == startContainer ? startOffset : 0,
+            node == endContainer ? endOffset : INT_MAX,
+            markerType);
 }
 
-// Markers are stored in order sorted by their location.  They do not overlap each other, as currently
-// required by the drawing code in RenderText.cpp.
+// Markers are stored in order sorted by their location.
+// They do not overlap each other, as currently required by the drawing code in RenderText.cpp.
 
 void Document::addMarker(Node *node, DocumentMarker newMarker) 
 {
@@ -2871,7 +2878,7 @@ void Document::copyMarkers(Node *srcNode, unsigned startOffset, int length, Node
         dstNode->renderer()->repaint();
 }
 
-void Document::removeMarkers(Node *node, unsigned startOffset, int length, DocumentMarker::MarkerType markerType)
+void Document::removeMarkers(Node* node, unsigned startOffset, int length, DocumentMarker::MarkerType markerType)
 {
     if (length <= 0)
         return;
@@ -3006,7 +3013,6 @@ Vector<IntRect> Document::renderedRectsForMarkers(DocumentMarker::MarkerType mar
     
     return result;
 }
-
 
 void Document::removeMarkers(Node* node)
 {

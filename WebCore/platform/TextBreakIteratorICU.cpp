@@ -29,18 +29,14 @@
 namespace WebCore {
 
 static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
-    UBreakIteratorType type, const UChar* string, int length, const char* locale)
+    UBreakIteratorType type, const UChar* string, int length)
 {
     if (!string)
         return 0;
 
     if (!createdIterator) {
-        // The locale is currently ignored when determining character cluster breaks.
-        // This may change in the future, according to Deborah Goldsmith.
-        // FIXME: Presumably we do need to pass the correct locale for word and line
-        // break iterators, though!
         UErrorCode openStatus = U_ZERO_ERROR;
-        iterator = static_cast<TextBreakIterator*>(ubrk_open(type, locale, 0, 0, &openStatus));
+        iterator = static_cast<TextBreakIterator*>(ubrk_open(type, currentTextBreakLocaleID(), 0, 0, &openStatus));
         createdIterator = true;
     }
     if (!iterator)
@@ -59,7 +55,7 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     static bool createdCharacterBreakIterator = false;
     static TextBreakIterator* staticCharacterBreakIterator;
     return setUpIterator(createdCharacterBreakIterator,
-        staticCharacterBreakIterator, UBRK_CHARACTER, string, length, "en_us");
+        staticCharacterBreakIterator, UBRK_CHARACTER, string, length);
 }
 
 TextBreakIterator* wordBreakIterator(const UChar* string, int length)
@@ -67,7 +63,7 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
     static bool createdWordBreakIterator = false;
     static TextBreakIterator* staticWordBreakIterator;
     return setUpIterator(createdWordBreakIterator,
-        staticWordBreakIterator, UBRK_WORD, string, length, "en_us");
+        staticWordBreakIterator, UBRK_WORD, string, length);
 }
 
 TextBreakIterator* lineBreakIterator(const UChar* string, int length)
@@ -75,7 +71,7 @@ TextBreakIterator* lineBreakIterator(const UChar* string, int length)
     static bool createdLineBreakIterator = false;
     static TextBreakIterator* staticLineBreakIterator;
     return setUpIterator(createdLineBreakIterator,
-        staticLineBreakIterator, UBRK_LINE, string, length, "en_us");
+        staticLineBreakIterator, UBRK_LINE, string, length);
 }
 
 TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
@@ -83,7 +79,7 @@ TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
     static bool createdSentenceBreakIterator = false;
     static TextBreakIterator* staticSentenceBreakIterator;
     return setUpIterator(createdSentenceBreakIterator,
-        staticSentenceBreakIterator, UBRK_SENTENCE, string, length, currentTextBreakLocaleID());
+        staticSentenceBreakIterator, UBRK_SENTENCE, string, length);
 }
 
 int textBreakFirst(TextBreakIterator* bi)

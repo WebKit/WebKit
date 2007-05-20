@@ -23,22 +23,15 @@
 
 namespace WebCore {
 
+static const int maxLocaleStringLength = 32;
+
 // This code was swiped from the CarbonCore UnicodeUtilities. One change from that is to use the empty
 // string instead of the "old locale model" as the ultimate fallback. This change is per the UnicodeUtilities
 // engineer.
-//
-// NOTE: this abviously could be fairly expensive to do.  If it turns out to be a bottleneck, it might
-// help to instead put a call in the iterator initializer to set the current text break locale.  Unfortunately,
-// we can not cache it across calls to our API since the result can change without our knowing (AFAIK
-// there are no notifiers for AppleTextBreakLocale and/or AppleLanguages changes).
-const char* currentTextBreakLocaleID()
+static void getTextBreakLocale(char localeStringBuffer[maxLocaleStringLength])
 {
-    const int localeStringLength = 32;
-    static char localeStringBuffer[localeStringLength] = { 0 };
-    char* localeString = &localeStringBuffer[0];
-    
-    // Empty string means "root locale", which what we use if we can't use a pref.
-    
+    // Empty string means "root locale", which is what we use if we can't use a pref.
+
     // We get the parts string from AppleTextBreakLocale pref.
     // If that fails then look for the first language in the AppleLanguages pref.
     CFStringRef prefLocaleStr = (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
@@ -54,18 +47,26 @@ const char* currentTextBreakLocaleID()
             CFRelease(appleLangArr);
         }
     }
-    
     if (prefLocaleStr) {
-        // Canonicalize pref string in case it is not in the canonical format. This call is only available on Tiger and newer.
+        // Canonicalize pref string in case it is not in the canonical format.
         CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, prefLocaleStr);
         if (canonLocaleCFStr) {
-            CFStringGetCString(canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII);
+            CFStringGetCString(canonLocaleCFStr, localeStringBuffer, maxLocaleStringLength, kCFStringEncodingASCII);
             CFRelease(canonLocaleCFStr);
         }
         CFRelease(prefLocaleStr);
     }
-   
-    return localeString;
+}
+
+const char* currentTextBreakLocaleID()
+{
+    static char localeStringBuffer[maxLocaleStringLength];
+    static bool gotTextBreakLocale = false;
+    if (!gotTextBreakLocale) {
+        getTextBreakLocale(localeStringBuffer);
+        gotTextBreakLocale = true;
+    }
+    return localeStringBuffer;
 }
 
 }
