@@ -1,3 +1,22 @@
+2007-05-20  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Geoose Garen
+
+        <rdar://problem/4758919> - Incorrect favicon shown for URL after going back
+
+        When restoring a cached page, we'd try to kick off the icon load for it, which ended up causing 
+        shenanigans with the icon url -> page url mapping.  
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::endIfNotLoading): Only try an icon load if we're not restoring from the page cache
+        (WebCore::FrameLoader::startIconLoader): Added helpful logging that helped me track this down
+        (WebCore::FrameLoader::commitIconURLToIconDatabase): Ditto (and fixed a comment typo)
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::stopLoading): Don't null out the ResourceLoader here, as clearLoadingState() does that
+        (WebCore::IconLoader::finishLoading): Added helpful logging that helped me track this down
+
+
 2007-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
