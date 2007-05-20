@@ -1,4 +1,12 @@
-2007-05-20  Adam Treat  <adam@staikos.net.
+2007-05-20  Adam Treat  <adam@staikos.net>
+
+        Add -f to cp to deal with some obscure build environments.
+
+        Reviewed by George Staikos.
+
+        * move-js-headers.sh:
+
+2007-05-20  Adam Treat  <adam@staikos.net>
 
         Add missing include for auto_ptr
 
