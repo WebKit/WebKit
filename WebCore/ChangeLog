@@ -1,3 +1,11 @@
+2007-05-20  Adam Treat  <adam@staikos.net.
+
+        Add missing include for auto_ptr
+
+        Reviewed by George Staikos.
+
+        * platform/graphics/ImageBuffer.h:
+
 2007-05-19  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13785, O(n^2) counter creation.

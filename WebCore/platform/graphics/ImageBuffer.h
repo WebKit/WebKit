@@ -29,6 +29,7 @@
 
 #include "IntSize.h"
 #include <wtf/OwnPtr.h>
+#include <memory>
 
 #if PLATFORM(CG)
 typedef struct CGImage* CGImageRef;
