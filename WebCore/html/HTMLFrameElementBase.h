@@ -40,6 +40,7 @@ public:
 
     virtual void attach();
 
+    String location() const;
     void setLocation(const String&);
 
     virtual bool isFocusable() const;

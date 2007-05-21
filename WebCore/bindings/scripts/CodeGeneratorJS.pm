@@ -832,6 +832,10 @@ sub GenerateImplementation
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
                 push(@implContent, "        return $name(exec);\n");
+            } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
+                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
+                push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
+                $implIncludes{"Document.h"} = 1;
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                 $constructorType =~ s/Constructor$//;
@@ -1379,6 +1383,11 @@ sub NativeToJSValue
         $implIncludes{"StyleSheetList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
         return "toJS(exec, WTF::getPtr($value), imp)";
+    }
+
+    if ($type eq "Window") {
+        $implIncludes{"kjs_window.h"} = 1;
+        return "Window::retrieve(WTF::getPtr($value))";
     }
 
     if ($codeGenerator->IsSVGAnimatedType($type)) {

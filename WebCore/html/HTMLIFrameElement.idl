@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLIFrameElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLIFrameElement : HTMLElement {
 
                  attribute [ConvertNullToNullString] DOMString       align;
                  attribute [ConvertNullToNullString] DOMString       frameBorder;
@@ -32,8 +32,15 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       scrolling;
                  attribute [ConvertNullToNullString] DOMString       src;
                  attribute [ConvertNullToNullString] DOMString       width;
+
         // Introduced in DOM Level 2:
-        readonly attribute Document        contentDocument;
+        readonly attribute [CheckFrameSecurity] Document        contentDocument;
+
+        // Extensions
+#if defined(LANGUAGE_JAVASCRIPT)
+        // FIXME: this need not be JS only. See http://bugs.webkit.org/show_bug.cgi?id=13798
+        readonly attribute [CheckFrameSecurity] Window          contentWindow;
+#endif
 
     };
 

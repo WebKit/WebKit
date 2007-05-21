@@ -331,38 +331,40 @@ all : \
     JSHTMLBRElement.h \
     JSHTMLButtonElement.h \
     JSHTMLCanvasElement.h \
+    JSHTMLDListElement.h \
     JSHTMLDirectoryElement.h \
     JSHTMLDivElement.h \
-    JSHTMLDListElement.h \
     JSHTMLDocument.h \
     JSHTMLElement.h \
     JSHTMLFieldSetElement.h \
     JSHTMLFontElement.h \
     JSHTMLFormElement.h \
+    JSHTMLFrameElement.h \
+    JSHTMLHRElement.h \
     JSHTMLHeadElement.h \
     JSHTMLHeadingElement.h \
-    JSHTMLHRElement.h \
-    JSHTMLImageElement.h \
-    JSHTMLIsIndexElement.h \
     JSHTMLHtmlElement.h \
+    JSHTMLIFrameElement.h \
+    JSHTMLImageElement.h \
     JSHTMLInputElement.h \
     JSHTMLInputElementBaseTable.cpp \
+    JSHTMLIsIndexElement.h \
+    JSHTMLLIElement.h \
     JSHTMLLabelElement.h \
     JSHTMLLegendElement.h \
-    JSHTMLLIElement.h \
     JSHTMLLinkElement.h \
-    JSHTMLMenuElement.h \
-    JSHTMLOptionElement.h \
-    JSHTMLOptionsCollection.h \
-    JSHTMLOptGroupElement.h \
-    JSHTMLQuoteElement.h \
     JSHTMLMapElement.h \
+    JSHTMLMenuElement.h \
     JSHTMLMetaElement.h \
     JSHTMLModElement.h \
     JSHTMLOListElement.h \
+    JSHTMLOptGroupElement.h \
+    JSHTMLOptionElement.h \
+    JSHTMLOptionsCollection.h \
     JSHTMLParagraphElement.h \
     JSHTMLParamElement.h \
     JSHTMLPreElement.h \
+    JSHTMLQuoteElement.h \
     JSHTMLScriptElement.h \
     JSHTMLSelectElement.h \
     JSHTMLStyleElement.h \

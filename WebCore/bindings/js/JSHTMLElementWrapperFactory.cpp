@@ -35,10 +35,12 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHeadingElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLIsIndexElement.h"
@@ -88,10 +90,12 @@
 #include "JSHTMLFieldSetElement.h"
 #include "JSHTMLFontElement.h"
 #include "JSHTMLFormElement.h"
+#include "JSHTMLFrameElement.h"
 #include "JSHTMLHRElement.h"
 #include "JSHTMLHeadElement.h"
 #include "JSHTMLHeadingElement.h"
 #include "JSHTMLHtmlElement.h"
+#include "JSHTMLIFrameElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSHTMLInputElement.h"
 #include "JSHTMLIsIndexElement.h"
@@ -145,20 +149,22 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(body, Body) \
     macro(br, BR) \
     macro(button, Button) \
-    macro(caption, TableCaption) \
     macro(canvas, Canvas) \
+    macro(caption, TableCaption) \
     macro(col, TableCol) \
     macro(del, Mod) \
     macro(dir, Directory) \
     macro(div, Div) \
     macro(dl, DList) \
     macro(fieldset, FieldSet) \
-    macro(form, Form) \
     macro(font, Font) \
+    macro(form, Form) \
+    macro(frame, Frame) \
     macro(h1, Heading) \
     macro(head, Head) \
     macro(hr, HR) \
     macro(html, Html) \
+    macro(iframe, IFrame) \
     macro(img, Image) \
     macro(input, Input) \
     macro(isindex, IsIndex) \

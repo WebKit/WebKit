@@ -30,7 +30,7 @@ HTMLFontElement: [object HTMLFontElementConstructor]
 
 HTMLFormElement: [object HTMLFormElementConstructor]
 
-HTMLFrameElement: undefined
+HTMLFrameElement: [object HTMLFrameElementConstructor]
 
 HTMLFrameSetElement: undefined
 
@@ -42,7 +42,7 @@ HTMLHRElement: [object HTMLHRElementConstructor]
 
 HTMLHtmlElement: [object HTMLHtmlElementConstructor]
 
-HTMLIFrameElement: undefined
+HTMLIFrameElement: [object HTMLIFrameElementConstructor]
 
 HTMLImageElement: [object HTMLImageElementConstructor]
 

@@ -1,3 +1,31 @@
+2007-05-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam and Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13791
+        Autogenerate the JS bindings for the HTMLIFrameElement and HTMLFrameElement.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLAnchorElementCustom.cpp:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::location):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::contentWindow):
+        * html/HTMLIFrameElement.idl:
+        * page/DOMWindow.idl:
+
 2007-05-21  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

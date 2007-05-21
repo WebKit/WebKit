@@ -193,6 +193,11 @@ void HTMLFrameElementBase::willRemove()
     HTMLElement::willRemove();
 }
 
+String HTMLFrameElementBase::location() const
+{
+    return src();
+}
+
 void HTMLFrameElementBase::setLocation(const String& str)
 {
     if (m_URL == str)

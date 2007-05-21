@@ -95,13 +95,13 @@ module window {
         attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
         attribute HTMLFontElementConstructor HTMLFontElement;
         attribute HTMLFormElementConstructor HTMLFormElement;
-//        attribute HTMLFrameElementConstructor HTMLFrameElement;
+        attribute HTMLFrameElementConstructor HTMLFrameElement;
 //        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
         attribute HTMLHeadElementConstructor HTMLHeadElement;
         attribute HTMLHeadingElementConstructor HTMLHeadingElement;
         attribute HTMLHRElementConstructor HTMLHRElement;
         attribute HTMLHtmlElementConstructor HTMLHtmlElement;
-//        attribute HTMLIFrameElementConstructor HTMLIFrameElement;
+        attribute HTMLIFrameElementConstructor HTMLIFrameElement;
         attribute HTMLImageElementConstructor HTMLImageElement;
         attribute HTMLInputElementConstructor HTMLInputElement;
         attribute HTMLIsIndexElementConstructor HTMLIsIndexElement;

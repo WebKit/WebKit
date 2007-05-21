@@ -410,11 +410,10 @@ void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value
 
 // -------------------------------------------------------------------------
 
+const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
+
 const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
-const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
 
@@ -423,9 +422,7 @@ const ClassInfo* JSHTMLElement::classInfo() const
     static HashMap<AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
         classInfoMap.set(embedTag.localName().impl(), &embed_info);
-        classInfoMap.set(frameTag.localName().impl(), &frame_info);
         classInfoMap.set(framesetTag.localName().impl(), &frameSet_info);
-        classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
     }
@@ -440,8 +437,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
 const JSHTMLElement::Accessors JSHTMLElement::frameSet_accessors = { &JSHTMLElement::frameSetGetter, &JSHTMLElement::frameSetSetter };
-const JSHTMLElement::Accessors JSHTMLElement::frame_accessors = { &JSHTMLElement::frameGetter, &JSHTMLElement::frameSetter };
-const JSHTMLElement::Accessors JSHTMLElement::iFrame_accessors = { &JSHTMLElement::iFrameGetter, &JSHTMLElement::iFrameSetter };
 const JSHTMLElement::Accessors JSHTMLElement::marquee_accessors = { &JSHTMLElement::marqueeGetter, &JSHTMLElement::marqueeSetter };
 
 const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
@@ -449,9 +444,7 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
     static HashMap<AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
         accessorMap.add(embedTag.localName().impl(), &embed_accessors);
-        accessorMap.add(frameTag.localName().impl(), &frame_accessors);
         accessorMap.add(framesetTag.localName().impl(), &frameSet_accessors);
-        accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
     }
@@ -516,36 +509,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 cols          KJS::JSHTMLElement::FrameSetCols                  DontDelete
 rows          KJS::JSHTMLElement::FrameSetRows                  DontDelete
 @end
-@begin HTMLFrameElementTable 9
-  contentDocument KJS::JSHTMLElement::FrameContentDocument        DontDelete|ReadOnly
-  contentWindow   KJS::JSHTMLElement::FrameContentWindow          DontDelete|ReadOnly
-  frameBorder     KJS::JSHTMLElement::FrameFrameBorder            DontDelete
-  longDesc        KJS::JSHTMLElement::FrameLongDesc               DontDelete
-  marginHeight    KJS::JSHTMLElement::FrameMarginHeight           DontDelete
-  marginWidth     KJS::JSHTMLElement::FrameMarginWidth            DontDelete
-  name            KJS::JSHTMLElement::FrameName                   DontDelete
-  noResize        KJS::JSHTMLElement::FrameNoResize               DontDelete
-  width           KJS::JSHTMLElement::FrameWidth                  DontDelete|ReadOnly
-  height          KJS::JSHTMLElement::FrameHeight                 DontDelete|ReadOnly
-  scrolling       KJS::JSHTMLElement::FrameScrolling              DontDelete
-  src             KJS::JSHTMLElement::FrameSrc                    DontDelete
-  location        KJS::JSHTMLElement::FrameLocation               DontDelete
-@end
-@begin HTMLIFrameElementTable 12
-  align           KJS::JSHTMLElement::IFrameAlign                 DontDelete
-  contentDocument KJS::JSHTMLElement::IFrameContentDocument       DontDelete|ReadOnly
-  contentWindow   KJS::JSHTMLElement::IFrameContentWindow         DontDelete|ReadOnly
-  frameBorder     KJS::JSHTMLElement::IFrameFrameBorder           DontDelete
-  height          KJS::JSHTMLElement::IFrameHeight                DontDelete
-  longDesc        KJS::JSHTMLElement::IFrameLongDesc              DontDelete
-  marginHeight    KJS::JSHTMLElement::IFrameMarginHeight          DontDelete
-  marginWidth     KJS::JSHTMLElement::IFrameMarginWidth           DontDelete
-  name            KJS::JSHTMLElement::IFrameName                  DontDelete
-  scrolling       KJS::JSHTMLElement::IFrameScrolling             DontDelete
-  src             KJS::JSHTMLElement::IFrameSrc                   DontDelete
-  width           KJS::JSHTMLElement::IFrameWidth                 DontDelete
-@end
-
 @begin HTMLMarqueeElementTable 2
   start           KJS::JSHTMLElement::MarqueeStart                DontDelete|Function 0
   stop            KJS::JSHTMLElement::MarqueeStop                 DontDelete|Function 0
@@ -714,54 +677,6 @@ JSValue *JSHTMLElement::frameSetGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::frameGetter(ExecState* exec, int token) const
-{
-    HTMLFrameElement& frameElement = *static_cast<HTMLFrameElement*>(impl());
-    switch (token) {
-        case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
-                                          toJS(exec, frameElement.contentDocument()) : jsUndefined();
-        case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
-                                        ? Window::retrieve(frameElement.contentFrame())
-                                        : jsUndefined();
-        case FrameFrameBorder:     return jsString(frameElement.frameBorder());
-        case FrameLongDesc:        return jsString(frameElement.longDesc());
-        case FrameMarginHeight:    return jsString(frameElement.marginHeight());
-        case FrameMarginWidth:     return jsString(frameElement.marginWidth());
-        case FrameName:            return jsString(frameElement.name());
-        case FrameNoResize:        return jsBoolean(frameElement.noResize());
-        case FrameWidth:           return jsNumber(frameElement.width());
-        case FrameHeight:          return jsNumber(frameElement.height());
-        case FrameScrolling:       return jsString(frameElement.scrolling());
-        case FrameSrc:
-        case FrameLocation:        return jsString(frameElement.src());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::iFrameGetter(ExecState* exec, int token) const
-{
-    HTMLIFrameElement& iFrame = *static_cast<HTMLIFrameElement*>(impl());
-    switch (token) {
-        case IFrameAlign:                return jsString(iFrame.align());
-          // ### security check ?
-        case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
-                                      toJS(exec, iFrame.contentDocument()) : jsUndefined();
-        case IFrameContentWindow:   return checkNodeSecurity(exec,iFrame.contentDocument()) 
-                                        ? Window::retrieve(iFrame.contentFrame())
-                                        : jsUndefined();
-        case IFrameFrameBorder:     return jsString(iFrame.frameBorder());
-        case IFrameHeight:          return jsString(iFrame.height());
-        case IFrameLongDesc:        return jsString(iFrame.longDesc());
-        case IFrameMarginHeight:    return jsString(iFrame.marginHeight());
-        case IFrameMarginWidth:     return jsString(iFrame.marginWidth());
-        case IFrameName:            return jsString(iFrame.name());
-        case IFrameScrolling:       return jsString(iFrame.scrolling());
-        case IFrameSrc:             return jsString(iFrame.src());
-        case IFrameWidth:           return jsString(iFrame.width());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::marqueeGetter(ExecState* exec, int token) const
 {
     // FIXME: Find out what WinIE exposes as properties and implement this.
@@ -886,15 +801,15 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
         }
     }
 #if ENABLE(SVG)
-  else if (element.hasLocalName(objectTag)) {
-      HTMLObjectElement& object = static_cast<HTMLObjectElement&>(element);
-      if (id == JSHTMLElement::ObjectGetSVGDocument)
-          return checkNodeSecurity(exec, object.getSVGDocument(exception)) ? toJS(exec, object.getSVGDocument(exception)) : jsUndefined();
-  } else if (element.hasLocalName(embedTag)) {
-      HTMLEmbedElement& embed = static_cast<HTMLEmbedElement&>(element);
-      if (id == JSHTMLElement::EmbedGetSVGDocument)
-          return checkNodeSecurity(exec, embed.getSVGDocument(exception)) ? toJS(exec, embed.getSVGDocument(exception)) : jsUndefined();
-  }
+    else if (element.hasLocalName(objectTag)) {
+        HTMLObjectElement& object = static_cast<HTMLObjectElement&>(element);
+        if (id == JSHTMLElement::ObjectGetSVGDocument)
+            return checkNodeSecurity(exec, object.getSVGDocument(exception)) ? toJS(exec, object.getSVGDocument(exception)) : jsUndefined();
+    } else if (element.hasLocalName(embedTag)) {
+        HTMLEmbedElement& embed = static_cast<HTMLEmbedElement&>(element);
+        if (id == JSHTMLElement::EmbedGetSVGDocument)
+            return checkNodeSecurity(exec, embed.getSVGDocument(exception)) ? toJS(exec, embed.getSVGDocument(exception)) : jsUndefined();
+    }
 #endif
 
     return jsUndefined();
@@ -972,41 +887,6 @@ void JSHTMLElement::frameSetSetter(ExecState* exec, int token, JSValue* value)
     switch (token) {
         case FrameSetCols:            { frameSet.setCols(valueToStringWithNullCheck(exec, value)); return; }
         case FrameSetRows:            { frameSet.setRows(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::frameSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLFrameElement& frameElement = *static_cast<HTMLFrameElement*>(impl());
-    switch (token) {
-        // read-only: FrameContentDocument:
-        case FrameFrameBorder:     { frameElement.setFrameBorder(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameLongDesc:        { frameElement.setLongDesc(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameMarginHeight:    { frameElement.setMarginHeight(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameMarginWidth:     { frameElement.setMarginWidth(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameName:            { frameElement.setName(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameNoResize:        { frameElement.setNoResize(value->toBoolean(exec)); return; }
-        case FrameScrolling:       { frameElement.setScrolling(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameSrc:             { frameElement.setSrc(valueToStringWithNullCheck(exec, value)); return; }
-        case FrameLocation:        { frameElement.setLocation(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::iFrameSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLIFrameElement& iFrame = *static_cast<HTMLIFrameElement*>(impl());
-    switch (token) {
-        case IFrameAlign:           { iFrame.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        // read-only: IFrameContentDocument
-        case IFrameFrameBorder:     { iFrame.setFrameBorder(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameHeight:          { iFrame.setHeight(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameLongDesc:        { iFrame.setLongDesc(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameMarginHeight:    { iFrame.setMarginHeight(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameMarginWidth:     { iFrame.setMarginWidth(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameName:            { iFrame.setName(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameScrolling:       { iFrame.setScrolling(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameSrc:             { iFrame.setSrc(valueToStringWithNullCheck(exec, value)); return; }
-        case IFrameWidth:           { iFrame.setWidth(valueToStringWithNullCheck(exec, value)); return; }
     }
 }
 
