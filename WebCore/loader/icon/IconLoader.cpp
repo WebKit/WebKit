@@ -131,7 +131,7 @@ void IconLoader::finishLoading(const KURL& iconURL)
 {
     // <rdar://5071341> - Crash in IconLoader::finishLoading()
     // In certain circumstance where there is no favicon and the site's 404 page is large and complex, the IconLoader can get 
-    // cancelled/failed twice.  Reproducibility of this phenomenom is unknown, so we'd like to catch this case in debug builds,
+    // cancelled/failed twice.  Reproducibility of this phenomenon is unknown, so we'd like to catch this case in debug builds,
     // but must handle it gracefully in release
     ASSERT(m_resourceLoader);
     if (!iconURL.isEmpty() && m_resourceLoader) {
