@@ -76,13 +76,13 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
+#import "WebPanelAuthenticationHandler.h"
 #import "WebPasteboardHelper.h"
 #import "WebPDFView.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
-#import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
@@ -1497,6 +1497,12 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
         return;
     return _private->page->setDefersLoading(defer);
 }
+
+- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
+{
+    NSWindow *window = [self hostWindow] ? [self hostWindow] : [self window]; 
+    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window]; 
+} 
 
 @end
 

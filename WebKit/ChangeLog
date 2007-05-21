@@ -1,3 +1,13 @@
+2007-05-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin (Sarge)
+
+        <rdar://problem/5217124> - Re-add mistakenly removed SPI
+
+        * WebView/WebView.mm:
+        (-[WebView handleAuthenticationForResource:challenge:fromDataSource:]):
+        * WebView/WebViewPrivate.h:
+
 2007-05-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Ada.
