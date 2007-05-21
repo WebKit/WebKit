@@ -1,3 +1,9 @@
+2007-05-21  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        * Api/qwebnetworkinterface.h: Export the net API.
+
 2007-05-21  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

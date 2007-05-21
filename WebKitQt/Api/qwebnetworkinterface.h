@@ -27,9 +27,11 @@
 #include <qhttp.h>
 #include <qbytearray.h>
 
+#include <qwebkitglobal.h>
+
 class QWebNetworkJobPrivate;
 
-class QWebNetworkJob
+class QWEBKIT_EXPORT QWebNetworkJob
 {
 public:
     QUrl url() const;
@@ -74,7 +76,7 @@ T *QWebNetworkJob::handle() const
 
 class QWebNetworkInterfacePrivate;
 
-class QWebNetworkInterface : public QObject
+class QWEBKIT_EXPORT QWebNetworkInterface : public QObject
 {
     Q_OBJECT
 public:
