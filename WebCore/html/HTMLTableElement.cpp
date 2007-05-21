@@ -526,7 +526,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
 {
     MappedAttribute attr(cellborderAttr, m_rulesAttr == AllRules ? "solid-all" : 
                                          (m_rulesAttr == ColsRules ? "solid-cols" : 
-                                         (m_rulesAttr == RowsRules ? "solid-rows" : (!m_borderAttr ? "none" : (m_borderColorAttr ? "solid" : "inset")))));
+                                         (m_rulesAttr == RowsRules ? "solid-rows" : (!m_borderAttr || m_rulesAttr == GroupsRules ? "none" : (m_borderColorAttr ? "solid" : "inset")))));
 
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
@@ -549,7 +549,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
             decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
             decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
             decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
-        } else if (m_borderAttr || m_rulesAttr == AllRules) {
+        } else if (m_rulesAttr != GroupsRules && (m_borderAttr || m_rulesAttr == AllRules)) {
             decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
              int v = (m_borderColorAttr || m_rulesAttr == AllRules) ? CSS_VAL_SOLID : CSS_VAL_INSET;
             decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);

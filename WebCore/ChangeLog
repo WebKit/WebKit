@@ -1,3 +1,15 @@
+2007-05-20  David Hyatt  <hyatt@apple.com>
+
+        Half of a fix for 13793, make sure rules=groups and border behave properly
+        together.
+
+        Reviewed by mitz
+
+        No tests added, two Mozilla table tests now pass that failed before.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::getSharedCellDecl):
+
 2007-05-20  Brady Eidson <beidson@apple.com>
 
         Reviewed by Geoose Garen
