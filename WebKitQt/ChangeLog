@@ -1,3 +1,14 @@
+2007-05-21  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Simon
+
+        Remove the userHandle methods from QWebnetworkJob again.
+        They don't really give us anything and just clutter the API.
+
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+
 2007-05-21  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

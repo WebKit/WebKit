@@ -41,7 +41,6 @@ public:
     QHttpResponseHeader response;
 
     WebCore::ResourceHandle *resourceHandle;
-    void *userHandle;
     bool redirected;
 
     void setURL(const QUrl &u);

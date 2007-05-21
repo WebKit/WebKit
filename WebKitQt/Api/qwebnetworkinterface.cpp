@@ -167,23 +167,6 @@ bool QWebNetworkJob::deref()
 }
 
 /*!
-  \internal
-*/
-void QWebNetworkJob::setUserHandle(void *handle)
-{
-    d->userHandle = handle;
-}
-
-/*!
-  \internal
-*/
-void *QWebNetworkJob::userHandle() const
-{
-    return d->userHandle;
-}
-
-
-/*!
   \class QWebNetworkManager
   \internal
 */
