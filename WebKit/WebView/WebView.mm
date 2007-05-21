@@ -1085,6 +1085,10 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request
 {
+    // FIXME: If <rdar://problem/5217309> gets fixed, this check can be removed
+    if (!request)
+        return NO;
+    
     if ([NSURLConnection canHandleRequest:request]) {
         return YES;
     }

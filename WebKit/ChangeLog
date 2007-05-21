@@ -1,3 +1,14 @@
+2007-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Ada.
+
+        <rdar://problem/5200816> REGRESSION: With Shiira 1.2.2 , I can't open embedded link in flash object by clicking (http:/www.adobe.com )
+        
+        Null check the request.
+        
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:]):
+
 2007-05-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
