@@ -570,7 +570,7 @@ void RenderTable::appendColumn(int span)
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-RenderTableCol* RenderTable::colElement(int col) const
+RenderTableCol* RenderTable::colElement(int col, bool* startEdge, bool* endEdge) const
 {
     if (!m_hasColElements)
         return 0;
@@ -582,9 +582,16 @@ RenderTableCol* RenderTable::colElement(int col) const
             RenderTableCol* colElem = static_cast<RenderTableCol*>(child);
             int span = colElem->span();
             if (!colElem->firstChild()) {
+                int startCol = cCol;
+                int endCol = cCol + span - 1;
                 cCol += span;
-                if (cCol > col)
+                if (cCol > col) {
+                    if (startEdge)
+                        *startEdge = startCol == col;
+                    if (endEdge)
+                        *endEdge = endCol == col;
                     return colElem;
+                }
             }
 
             RenderObject* next = child->firstChild();

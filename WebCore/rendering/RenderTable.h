@@ -160,7 +160,7 @@ public:
                (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
-    RenderTableCol* colElement(int col) const;
+    RenderTableCol* colElement(int col, bool* startEdge = 0, bool* endEdge = 0) const;
 
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc()

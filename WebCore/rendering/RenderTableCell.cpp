@@ -329,8 +329,10 @@ CollapsedBorderValue RenderTableCell::collapsedLeftBorder(bool rtl) const
     }
     
     // (5) Our column's left border.
-    RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? colSpan() - 1 : 0));
-    if (colElt) {
+    bool startColEdge;
+    bool endColEdge;
+    RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? colSpan() - 1 : 0), &startColEdge, &endColEdge);
+    if (colElt && (!rtl ? startColEdge : endColEdge)) {
         result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
         if (!result.exists())
             return result;
@@ -338,8 +340,8 @@ CollapsedBorderValue RenderTableCell::collapsedLeftBorder(bool rtl) const
     
     // (6) The right border of the column to the left.
     if (!leftmostColumn) {
-        colElt = tableElt->colElement(col() + (rtl ? colSpan() : -1));
-        if (colElt) {
+        colElt = tableElt->colElement(col() + (rtl ? colSpan() : -1), &startColEdge, &endColEdge);
+        if (colElt && (!rtl ? endColEdge : startColEdge)) {
             result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
             if (!result.exists())
                 return result;
@@ -390,8 +392,10 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder(bool rtl) const
     }
     
     // (5) Our column's right border.
-    RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? 0 : colSpan() - 1));
-    if (colElt) {
+    bool startColEdge;
+    bool endColEdge;
+    RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? 0 : colSpan() - 1), &startColEdge, &endColEdge);
+    if (colElt && (!rtl ? endColEdge : startColEdge)) {
         result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
         if (!result.exists())
             return result;
@@ -399,8 +403,8 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder(bool rtl) const
     
     // (6) The left border of the column to the right.
     if (!rightmostColumn) {
-        colElt = tableElt->colElement(col() + (rtl ? -1 : colSpan()));
-        if (colElt) {
+        colElt = tableElt->colElement(col() + (rtl ? -1 : colSpan()), &startColEdge, &endColEdge);
+        if (colElt && (!rtl ? startColEdge : endColEdge)) {
             result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
             if (!result.exists())
                 return result;

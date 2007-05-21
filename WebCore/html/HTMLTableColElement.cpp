@@ -38,7 +38,7 @@ using namespace HTMLNames;
 HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Document *doc)
     : HTMLTablePartElement(tagName, doc)
 {
-    _span = (tagName.matches(colgroupTag) ? 0 : 1);
+    _span = 1;
 }
 
 HTMLTagStatus HTMLTableColElement::endTagRequirement() const

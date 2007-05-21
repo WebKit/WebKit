@@ -1,3 +1,24 @@
+2007-05-21  David Hyatt  <hyatt@apple.com>
+
+        Second half of fix for 13793, make sure rules=groups works properly with
+        spanning colgroups.
+
+        Also make sure colgroups get an actual span of 1 (instead of incorrectly
+        giving them a span of 0).
+
+        Reviewed by mitz
+
+        fast/table/colgroup-spanning-groups-rules.html
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::HTMLTableColElement):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::colElement):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder):
+        (WebCore::RenderTableCell::collapsedRightBorder):
+
 2007-05-20  David Hyatt  <hyatt@apple.com>
 
         Half of a fix for 13793, make sure rules=groups and border behave properly
