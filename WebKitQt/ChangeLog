@@ -1,3 +1,73 @@
+2007-05-21  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
+        Add an API layer for network downloads. Basically QWebnetworkInterface
+        is an interface class for downloading resources. QWebnetworkJob describes
+        the actual object to download.
+
+        QWebNetworkInterface has a default implementation that replaces the
+        old ResourceHandleManager class in the Qt port.
+
+        * Api/qwebnetworkinterface.cpp: Added.
+        (QWebNetworkJobPrivate::setURL):
+        (QWebNetworkJob::QWebNetworkJob):
+        (QWebNetworkJob::~QWebNetworkJob):
+        (QWebNetworkJob::url):
+        (QWebNetworkJob::postData):
+        (QWebNetworkJob::request):
+        (QWebNetworkJob::response):
+        (QWebNetworkJob::setResponse):
+        (QWebNetworkJob::cancelled):
+        (QWebNetworkJob::ref):
+        (QWebNetworkJob::deref):
+        (QWebNetworkJob::setUserHandle):
+        (QWebNetworkJob::userHandle):
+        (QWebNetworkManager::QWebNetworkManager):
+        (QWebNetworkManager::self):
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        (QWebNetworkInterface::setDefaultInterface):
+        (QWebNetworkInterface::defaultInterface):
+        (QWebNetworkInterface::QWebNetworkInterface):
+        (QWebNetworkInterface::~QWebNetworkInterface):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (LoaderThread::LoaderThread):
+        (LoaderThread::run):
+        (FileLoader::FileLoader):
+        (FileLoader::request):
+        (FileLoader::sendData):
+        (FileLoader::parseDataUrl):
+        (WebCoreHttp::WebCoreHttp):
+        (WebCoreHttp::~WebCoreHttp):
+        (WebCoreHttp::request):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::getConnection):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::onStateChanged):
+        (WebCoreHttp::cancel):
+        (HostInfo::HostInfo):
+        (qHash):
+        (operator==):
+        (NetworkLoader::NetworkLoader):
+        (NetworkLoader::~NetworkLoader):
+        (NetworkLoader::request):
+        (NetworkLoader::connectionClosed):
+        (NetworkLoader::cancel):
+        * Api/qwebnetworkinterface.h: Added.
+        (QWebNetworkJob::setHandle):
+        (QWebNetworkJob::handle):
+        * Api/qwebnetworkinterface_p.h: Added.
+        (WebCore::LoaderThread::):
+        (WebCore::LoaderThread::waitForSetup):
+        (WebCore::HostInfo::HostInfo):
+
 2007-05-18  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Nikolas.

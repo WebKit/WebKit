@@ -136,11 +136,12 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 MANUALMOC =
 qt-port:MANUALMOC += \
-    $$PWD/platform/network/qt/ResourceHandleManagerQt.h \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKitQt/Api/qwebframe.h \
     $$PWD/../WebKitQt/Api/qwebpage.h \
+    $$PWD/../WebKitQt/Api/qwebnetworkinterface.h \
+    $$PWD/../WebKitQt/Api/qwebnetworkinterface_p.h \
     $$PWD/../WebKitQt/Api/qcookiejar.h \
     $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
@@ -709,7 +710,6 @@ qt-port:SOURCES += \
     platform/graphics/qt/IntRectQt.cpp \
     platform/graphics/qt/IntSizeQt.cpp \
     platform/graphics/qt/PathQt.cpp \
-    platform/network/qt/ResourceHandleManagerQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
     editing/qt/EditorQt.cpp \
     history/qt/CachedPageQt.cpp \
@@ -754,6 +754,7 @@ qt-port:SOURCES += \
     ../WebKitQt/WebCoreSupport/EditCommandQt.cpp \
     ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKitQt/Api/qwebframe.cpp \
+    ../WebKitQt/Api/qwebnetworkinterface.cpp \
     ../WebKitQt/Api/qcookiejar.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebpagehistory.cpp

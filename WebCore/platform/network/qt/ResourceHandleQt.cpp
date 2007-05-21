@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Trolltech AS
  *
  * All rights reserved.
  *
@@ -27,18 +28,15 @@
 
 #include "config.h"
 
-#if PLATFORM(KDE)
-#include <kio/job.h>
-#endif
-
 #include <QRegExp>
 
 #include "Frame.h"
 #include "DocLoader.h"
 #include "ResourceHandle.h"
 #include "DeprecatedString.h"
-#include "ResourceHandleManagerQt.h"
 #include "ResourceHandleInternal.h"
+#include "qwebnetworkinterface_p.h"
+
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -50,20 +48,32 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 ResourceHandle::~ResourceHandle()
 {
-    cancel();
+    if (d->m_job)
+        cancel();
 }
 
 bool ResourceHandle::start(Frame* frame)
 {
-    ASSERT(frame);
+    if (!frame)
+        return false;
 
-    ResourceHandleManager::self()->add(this);
-    return true;
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if (!frame->page())
+        return false;
+
+    // check for (probably) broken requests
+    if (method() != "GET" && method() != "POST") {
+        notImplemented();
+        return false;
+    }
+
+    return QWebNetworkManager::self()->add(this);
 }
 
 void ResourceHandle::cancel()
 {
-    ResourceHandleManager::self()->cancel(this);
+    QWebNetworkManager::self()->cancel(this);
 }
 
 bool ResourceHandle::loadsBlocked()

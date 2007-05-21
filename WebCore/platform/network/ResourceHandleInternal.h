@@ -45,7 +45,7 @@
 #endif
 
 #if PLATFORM(QT)
-#include <QString>
+class QWebNetworkJob;
 #endif
 
 #if PLATFORM(MAC)
@@ -93,6 +93,9 @@ namespace WebCore {
             , m_url(0)
             , m_customHeaders(0)
 #endif
+#if PLATFORM(QT)
+            , m_job(0)
+#endif
 #if PLATFORM(MAC)
             , m_currentMacChallenge(nil)
 #elif USE(CFNETWORK)
@@ -138,6 +141,9 @@ namespace WebCore {
         CURL* m_handle;
         char* m_url;
         struct curl_slist* m_customHeaders;        
+#endif
+#if PLATFORM(QT)
+        QWebNetworkJob *m_job;
 #endif
 #if PLATFORM(MAC)
         NSURLAuthenticationChallenge *m_currentMacChallenge;
