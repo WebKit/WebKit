@@ -40,12 +40,23 @@ td {
     vertical-align: baseline
 }
 
-.webkit-line-number {
+.webkit-line-gutter-backdrop, .webkit-line-number {
     padding: 0 2px;
     min-width: 21px;
     background-color: rgb(240, 240, 240);
     border-right: 1px solid rgb(128, 128, 128) !important;
     -webkit-user-select: none;
+}
+
+.webkit-line-gutter-backdrop {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    height: 100%
+}
+
+.webkit-line-number {
     text-align: right;
     color: rgb(128, 128, 128);
     word-break: normal;

@@ -29,6 +29,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
@@ -66,6 +67,17 @@ void HTMLViewSourceDocument::createContainingTable()
     Element* body = new HTMLBodyElement(this);
     html->addChild(body);
     body->attach();
+    
+    // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
+    // document.
+    Element* div = new HTMLDivElement(this);
+    Attribute* a = new MappedAttribute(classAttr, "webkit-line-gutter-backdrop");
+    NamedMappedAttrMap* attrs = new NamedMappedAttrMap(0);
+    attrs->insertAttribute(a, true);   
+    div->setAttributeMap(attrs);     
+    body->addChild(div);
+    div->attach();
+
     Element* table = new HTMLTableElement(this);
     body->addChild(table);
     table->attach();

@@ -1,5 +1,16 @@
 2007-05-21  David Hyatt  <hyatt@apple.com>
 
+        Make a line gutter backdrop so that tiny view source docs don't look
+        bad.
+
+        Reviewed by aroben
+
+        * css/view-source.css:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+
+2007-05-21  David Hyatt  <hyatt@apple.com>
+
         Make sure to distinguish between links to internal resources and
         real links (anchors) in view source mode.
 
