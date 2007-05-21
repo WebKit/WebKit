@@ -26,6 +26,9 @@ fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 
 
+# missing stuff in DRT
+fast/frames/inline-object-inside-frameset.html
+
 # infinite hangs
 editing/selection/extend-by-word-002.html
 

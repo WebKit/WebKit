@@ -1,3 +1,21 @@
+2007-05-21  Lars Knoll <lars@trolltech.com>
+
+        Updating and adding test cases.
+
+        * qt/Skipped:
+        * qt/fast/box-shadow/basic-shadows-expected.txt:
+        * qt/fast/box-shadow/border-radius-big-expected.txt: Added.
+        * qt/fast/css/fieldset-display-row-expected.txt: Added.
+        * qt/fast/frames/viewsource-attribute-expected.txt:
+        * qt/fast/table/colgroup-spanning-groups-rules-expected.txt: Added.
+        * qt/fast/table/stale-grid-crash-expected.txt: Added.
+        * qt/fast/table/tableInsideCaption-expected.txt: Added.
+        * qt/fast/text/international/bidi-menulist-expected.txt: Added.
+        * qt/tables/mozilla/bugs/bug48028-1-expected.txt:
+        * qt/tables/mozilla/bugs/bug48028-2-expected.txt:
+        * qt/tables/mozilla/bugs/bug55789-expected.txt:
+        * qt/tables/mozilla_expected_failures/core/captions1-expected.txt:
+
 2007-05-16  Lars Knoll <lars@trolltech.com>
 
         Update layout tests for error handling changes.

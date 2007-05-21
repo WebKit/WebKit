@@ -13,16 +13,23 @@ layer at (0,0) size 800x600
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
             RenderBlock {HTML} at (0,0) size 300x150
-              RenderBody {BODY} at (8,8) size 284x128
-                RenderBlock {PRE} at (0,0) size 284x19
-                  RenderInline {SPAN} at (0,0) size 24x17 [color=#881280]
-                    RenderText {#text} at (0,1) size 24x17
-                      text run at (0,1) width 24: "<p>"
-                  RenderText {#text} at (24,1) size 88x17
-                    text run at (24,1) width 88: "hello world"
-                  RenderInline {SPAN} at (0,0) size 32x17 [color=#881280]
-                    RenderText {#text} at (112,1) size 32x17
-                      text run at (112,1) width 32: "</p>"
+              RenderBody {BODY} at (0,0) size 300x150
+                RenderTable {TABLE} at (0,0) size 180x19
+                  RenderTableSection {TBODY} at (0,0) size 180x19
+                    RenderTableRow {TR} at (0,0) size 180x19
+                      RenderTableCell {TD} at (0,4) size 26x13 [color=#808080] [bgcolor=#F0F0F0] [border: none (1px solid #808080) none] [r=0 c=0 rs=1 cs=1]
+                        RenderInline (generated) at (0,0) size 5x13
+                          RenderCounter at (18,0) size 5x13
+                            text run at (18,0) width 5: "1"
+                      RenderTableCell {TD} at (26,0) size 154x19 [r=0 c=1 rs=1 cs=1]
+                        RenderInline {SPAN} at (0,0) size 24x17 [color=#881280]
+                          RenderText {#text} at (5,1) size 24x17
+                            text run at (5,1) width 24: "<p>"
+                        RenderText {#text} at (29,1) size 88x17
+                          text run at (29,1) width 88: "hello world"
+                        RenderInline {SPAN} at (0,0) size 32x17 [color=#881280]
+                          RenderText {#text} at (117,1) size 32x17
+                            text run at (117,1) width 32: "</p>"
         RenderText {#text} at (304,140) size 4x19
           text run at (304,140) width 4: " "
         RenderPartObject {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
@@ -36,16 +43,23 @@ layer at (0,0) size 800x600
                     RenderView at (0,0) size 300x150
                   layer at (0,0) size 300x150
                     RenderBlock {HTML} at (0,0) size 300x150
-                      RenderBody {BODY} at (8,8) size 284x128
-                        RenderBlock {PRE} at (0,0) size 284x19
-                          RenderInline {SPAN} at (0,0) size 24x17 [color=#881280]
-                            RenderText {#text} at (0,1) size 24x17
-                              text run at (0,1) width 24: "<p>"
-                          RenderText {#text} at (24,1) size 88x17
-                            text run at (24,1) width 88: "hello world"
-                          RenderInline {SPAN} at (0,0) size 32x17 [color=#881280]
-                            RenderText {#text} at (112,1) size 32x17
-                              text run at (112,1) width 32: "</p>"
+                      RenderBody {BODY} at (0,0) size 300x150
+                        RenderTable {TABLE} at (0,0) size 180x19
+                          RenderTableSection {TBODY} at (0,0) size 180x19
+                            RenderTableRow {TR} at (0,0) size 180x19
+                              RenderTableCell {TD} at (0,4) size 26x13 [color=#808080] [bgcolor=#F0F0F0] [border: none (1px solid #808080) none] [r=0 c=0 rs=1 cs=1]
+                                RenderInline (generated) at (0,0) size 5x13
+                                  RenderCounter at (18,0) size 5x13
+                                    text run at (18,0) width 5: "1"
+                              RenderTableCell {TD} at (26,0) size 154x19 [r=0 c=1 rs=1 cs=1]
+                                RenderInline {SPAN} at (0,0) size 24x17 [color=#881280]
+                                  RenderText {#text} at (5,1) size 24x17
+                                    text run at (5,1) width 24: "<p>"
+                                RenderText {#text} at (29,1) size 88x17
+                                  text run at (29,1) width 88: "hello world"
+                                RenderInline {SPAN} at (0,0) size 32x17 [color=#881280]
+                                  RenderText {#text} at (117,1) size 32x17
+                                    text run at (117,1) width 32: "</p>"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

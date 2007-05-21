@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: line 37: Value undefined (result of expression document.getElementsById) is not object.
-layer at (0,0) size 800x1180
+layer at (0,0) size 800x1182
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1180
-  RenderBlock {HTML} at (0,0) size 800x1180
-    RenderBody {BODY} at (8,8) size 784x1164
+layer at (0,0) size 800x1182
+  RenderBlock {HTML} at (0,0) size 800x1182
+    RenderBody {BODY} at (8,8) size 784x1166
       RenderBlock {CENTER} at (0,0) size 784x19
         RenderText {#text} at (328,0) size 128x19
           text run at (328,0) width 128: "bottom caption tests"
@@ -131,12 +131,17 @@ layer at (0,0) size 800x1180
       RenderBlock (anonymous) at (0,740) size 784x19
         RenderText {#text} at (0,0) size 153x19
           text run at (0,0) width 153: "table 6 - table gets taller"
-      RenderTable {TABLE} at (5,769) size 104x118 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (10,91) size 74x25 [border: (3px solid #800080)]
+      RenderTable {TABLE} at (5,769) size 104x120 [border: (10px solid #008000)]
+        RenderTableSection {TBODY} at (10,10) size 84x25
+          RenderTableRow {TR} at (0,2) size 84x21
+            RenderTableCell {TD} at (2,2) size 46x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 44x19
+                text run at (1,1) width 44: "foo foo"
+        RenderBlock {CAPTION} at (10,93) size 74x25 [border: (3px solid #800080)]
           RenderText {#text} at (5,3) size 46x19
             text run at (5,3) width 46: "caption"
           RenderBlock {INPUT} at (53,6) size 13x13 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (10,10) size 84x71
+        RenderTableSection {TBODY} at (10,35) size 84x48
           RenderTableRow {TR} at (0,2) size 84x21
             RenderTableCell {TD} at (2,2) size 46x21 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
@@ -151,14 +156,10 @@ layer at (0,0) size 800x1180
             RenderTableCell {TD} at (50,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-          RenderTableRow {TR} at (0,48) size 84x21
-            RenderTableCell {TD} at (2,48) size 46x21 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 44x19
-                text run at (1,1) width 44: "foo foo"
-      RenderBlock (anonymous) at (0,892) size 784x19
+      RenderBlock (anonymous) at (0,894) size 784x19
         RenderText {#text} at (0,0) size 141x19
           text run at (0,0) width 141: "table 7 - insert caption"
-      RenderTable {TABLE} at (5,921) size 90x95 [border: (10px solid #008000)]
+      RenderTable {TABLE} at (5,923) size 90x95 [border: (10px solid #008000)]
         RenderTableSection {TBODY} at (10,10) size 70x48
           RenderTableRow {TR} at (0,2) size 70x21
             RenderTableCell {TD} at (2,2) size 32x21 [r=0 c=0 rs=1 cs=1]
@@ -177,10 +178,10 @@ layer at (0,0) size 800x1180
         RenderBlock {CAPTION} at (10,68) size 60x25 [border: (3px solid #800080)]
           RenderText {#text} at (3,3) size 53x19
             text run at (3,3) width 53: "new cap"
-      RenderBlock (anonymous) at (0,1021) size 784x19
+      RenderBlock (anonymous) at (0,1023) size 784x19
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "table 8 - remove caption"
-      RenderTable {TABLE} at (5,1050) size 90x114 [border: (10px solid #008000)]
+      RenderTable {TABLE} at (5,1052) size 90x114 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,68) size 60x44 [border: (3px solid #800080)]
           RenderText {#text} at (7,3) size 46x19
             text run at (7,3) width 46: "caption"
