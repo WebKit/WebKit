@@ -96,7 +96,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
         }
     } else {
         // Handle the tag.
-        bool doctype = token->tagName.startsWith("!DOCTYPE", true);
+        bool doctype = token->tagName.startsWith("!DOCTYPE", false);
         
         String classNameStr = doctype ? "webkit-html-doctype" : "webkit-html-tag";
         m_current = addSpanWithClassName(classNameStr);
@@ -143,8 +143,9 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                             if (doctype)
                                 addText(value, "webkit-html-doctype");
                             else {
+                                // FIXME: XML could use namespace prefixes and confuse us.
                                 if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
-                                    m_current = addLink(value);
+                                    m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));
                                 else
                                     m_current = addSpanWithClassName("webkit-html-attribute-value");
                                 addText(value, "webkit-html-attribute-value");
@@ -250,7 +251,7 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
         m_current = m_tbody;
 }
 
-Element* HTMLViewSourceDocument::addLink(const String& url)
+Element* HTMLViewSourceDocument::addLink(const String& url, bool isAnchor)
 {
     if (m_current == m_tbody)
         addLine("webkit-html-tag");
@@ -258,7 +259,12 @@ Element* HTMLViewSourceDocument::addLink(const String& url)
     // Now create a link for the attribute value instead of a span.
     Element* anchor = new HTMLAnchorElement(aTag, this);
     NamedMappedAttrMap* attrs = new NamedMappedAttrMap(0);
-    Attribute* classAttribute = new MappedAttribute(classAttr, "webkit-html-attribute-value");
+    String classValueStr("webkit-html-attribute-value");
+    if (isAnchor)
+        classValueStr += " webkit-html-external-link";
+    else
+        classValueStr += " webkit-html-resource-link";
+    Attribute* classAttribute = new MappedAttribute(classAttr, classValueStr);
     attrs->insertAttribute(classAttribute, true);
     Attribute* targetAttribute = new MappedAttribute(targetAttr, "_blank");
     attrs->insertAttribute(targetAttribute, true);

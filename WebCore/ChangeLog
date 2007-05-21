@@ -1,3 +1,16 @@
+2007-05-21  David Hyatt  <hyatt@apple.com>
+
+        Make sure to distinguish between links to internal resources and
+        real links (anchors) in view source mode.
+
+        Reviewed by aroben
+
+        * css/view-source.css:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/HTMLViewSourceDocument.h:
+
 2007-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam and Darin.

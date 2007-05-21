@@ -45,7 +45,7 @@ private:
     Element* addSpanWithClassName(const String&);
     void addLine(const String& className);
     void addText(const String& text, const String& className);
-    Element* addLink(const String& url);
+    Element* addLink(const String& url, bool isAnchor);
 
 private:
     String m_type;
