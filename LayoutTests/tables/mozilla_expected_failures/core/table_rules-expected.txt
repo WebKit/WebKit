@@ -21,76 +21,76 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 31: "none"
       RenderBlock (anonymous) at (0,43) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,61) size 115x85 [border: none]
-        RenderTableSection {TBODY} at (0,0) size 114x42 [border: (1px solid #808080) none (1px solid #808080) none]
-          RenderTableRow {TR} at (0,0) size 114x21
-            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,61) size 114x83 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 113x41 [border: (1px solid #808080) none (1px solid #808080) none]
+          RenderTableRow {TR} at (0,0) size 113x21
+            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x18
                 text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,0) size 81x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 78x18
-                text run at (2,2) width 78: "row group 1"
-          RenderTableRow {TR} at (0,21) size 114x21
-            RenderTableCell {TD} at (0,21) size 33x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (33,0) size 80x21 [border: (1px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 78x18
+                text run at (1,2) width 78: "row group 1"
+          RenderTableRow {TR} at (0,21) size 113x20
+            RenderTableCell {TD} at (0,21) size 33x20 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,1) size 30x18
+                text run at (2,1) width 30: "rules"
+            RenderTableCell {TD} at (33,21) size 80x20 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 78x18
+                text run at (1,1) width 78: "row group 1"
+        RenderTableSection {TBODY} at (0,41) size 113x41 [border: (1px solid #808080) none (1px solid #808080) none]
+          RenderTableRow {TR} at (0,0) size 113x21
+            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x18
                 text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,21) size 81x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 78x18
-                text run at (2,2) width 78: "row group 1"
-        RenderTableSection {TBODY} at (0,42) size 114x42 [border: (1px solid #808080) none (1px solid #808080) none]
-          RenderTableRow {TR} at (0,0) size 114x21
-            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x18
-                text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,0) size 81x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 78x18
-                text run at (2,2) width 78: "row group 2"
-          RenderTableRow {TR} at (0,21) size 114x21
-            RenderTableCell {TD} at (0,21) size 33x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x18
-                text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,21) size 81x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 78x18
-                text run at (2,2) width 78: "row group 2"
-      RenderBlock (anonymous) at (0,146) size 784x18
+            RenderTableCell {TD} at (33,0) size 80x21 [border: (1px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 78x18
+                text run at (1,2) width 78: "row group 2"
+          RenderTableRow {TR} at (0,21) size 113x20
+            RenderTableCell {TD} at (0,21) size 33x20 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,1) size 30x18
+                text run at (2,1) width 30: "rules"
+            RenderTableCell {TD} at (33,21) size 80x20 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 78x18
+                text run at (1,1) width 78: "row group 2"
+      RenderBlock (anonymous) at (0,144) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,164) size 217x43 [border: none]
+      RenderTable {TABLE} at (0,162) size 214x42 [border: none]
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 216x42 [border: (1px solid #808080) none (1px solid #808080) none]
-          RenderTableRow {TR} at (0,0) size 216x21
-            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,0) size 213x41 [border: (1px solid #808080) none (1px solid #808080) none]
+          RenderTableRow {TR} at (0,0) size 213x21
+            RenderTableCell {TD} at (0,0) size 33x21 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x18
                 text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,0) size 75x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x18
-                text run at (2,2) width 72: "col group 1"
-            RenderTableCell {TD} at (108,0) size 33x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x18
-                text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (141,0) size 75x21 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x18
-                text run at (2,2) width 72: "col group 2"
-          RenderTableRow {TR} at (0,21) size 216x21
-            RenderTableCell {TD} at (0,21) size 33x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x18
-                text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (33,21) size 75x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x18
-                text run at (2,2) width 72: "col group 1"
-            RenderTableCell {TD} at (108,21) size 33x21 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x18
-                text run at (2,2) width 30: "rules"
-            RenderTableCell {TD} at (141,21) size 75x21 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x18
-                text run at (2,2) width 72: "col group 2"
-      RenderBlock (anonymous) at (0,207) size 784x18
+            RenderTableCell {TD} at (33,0) size 74x21 [border: (1px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 72x18
+                text run at (1,2) width 72: "col group 1"
+            RenderTableCell {TD} at (107,0) size 32x21 [border: (1px none #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 30x18
+                text run at (1,2) width 30: "rules"
+            RenderTableCell {TD} at (139,0) size 74x21 [border: (1px none #000000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 72x18
+                text run at (1,2) width 72: "col group 2"
+          RenderTableRow {TR} at (0,21) size 213x20
+            RenderTableCell {TD} at (0,21) size 33x20 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,1) size 30x18
+                text run at (2,1) width 30: "rules"
+            RenderTableCell {TD} at (33,21) size 74x20 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 72x18
+                text run at (1,1) width 72: "col group 1"
+            RenderTableCell {TD} at (107,21) size 32x20 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x18
+                text run at (1,1) width 30: "rules"
+            RenderTableCell {TD} at (139,21) size 74x20 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 72x18
+                text run at (1,1) width 72: "col group 2"
+      RenderBlock (anonymous) at (0,204) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,225) size 67x43 [border: none]
+      RenderTable {TABLE} at (0,222) size 67x43 [border: none]
         RenderTableSection {TBODY} at (0,0) size 66x42
           RenderTableRow {TR} at (0,0) size 66x21
             RenderTableCell {TD} at (0,0) size 33x21 [border: (1px solid #808080) none none (1px none #808080)] [r=0 c=0 rs=1 cs=1]
@@ -106,9 +106,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (33,21) size 33x21 [border: (1px solid #808080) none none none] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,2) size 31x18
                 text run at (1,2) width 31: "rows"
-      RenderBlock (anonymous) at (0,268) size 784x18
+      RenderBlock (anonymous) at (0,265) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,286) size 62x42 [border: none]
+      RenderTable {TABLE} at (0,283) size 62x42 [border: none]
         RenderTableSection {TBODY} at (0,0) size 61x41
           RenderTableRow {TR} at (0,0) size 61x21
             RenderTableCell {TD} at (0,0) size 33x21 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -124,9 +124,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (33,21) size 28x20 [border: none none none (1px solid #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,1) size 25x18
                 text run at (2,1) width 25: "cols"
-      RenderBlock (anonymous) at (0,328) size 784x18
+      RenderBlock (anonymous) at (0,325) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,346) size 52x43 [border: none]
+      RenderTable {TABLE} at (0,343) size 52x43 [border: none]
         RenderTableSection {TBODY} at (0,0) size 51x42
           RenderTableRow {TR} at (0,0) size 51x21
             RenderTableCell {TD} at (0,0) size 33x21 [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -142,5 +142,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (33,21) size 18x21 [border: (1px solid #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x18
                 text run at (2,2) width 15: "all"
-      RenderBlock (anonymous) at (0,389) size 784x18
+      RenderBlock (anonymous) at (0,386) size 784x18
         RenderBR {BR} at (0,0) size 0x18
