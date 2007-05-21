@@ -1,5 +1,11 @@
 2007-05-21  Brady Eidson  <beidson@apple.com>
 
+        Making the importance of my last change more clear
+
+        * WebView/WebViewPrivate.h: "Leave for Dashboard, people!"
+
+2007-05-21  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Kevin (Sarge)
 
         <rdar://problem/5217124> - Re-add mistakenly removed SPI

@@ -398,7 +398,8 @@ Could be worth adding to the API.
 - (BOOL)defersCallbacks; // called by QuickTime plug-in
 - (void)setDefersCallbacks:(BOOL)defer; // called by QuickTime plug-in
 
-// Re-adding this for the third time - please see <rdar://problem/5217124> for details 
+// <rdar://problem/5217124> Clients other than dashboard, don't use this.
+// Do not remove until Dashboard has moved off it
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
 @end
