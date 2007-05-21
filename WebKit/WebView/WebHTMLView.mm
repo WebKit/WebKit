@@ -3087,7 +3087,7 @@ noPromisedData:
     for (i = 0; i != n; ++i) {
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
-        if ([[subframe dataSource] _isDocumentHTML]) {
+        if ([[subframe _dataSource] _isDocumentHTML]) {
             [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:adjustViewSize];
         }
     }

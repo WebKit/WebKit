@@ -159,7 +159,7 @@ bool WebFrameLoaderClient::privateBrowsingEnabled() const
 void WebFrameLoaderClient::makeDocumentView()
 {
     WebFrameView *v = m_webFrame->_private->webFrameView;
-    WebDataSource *ds = [m_webFrame.get() dataSource];
+    WebDataSource *ds = [m_webFrame.get() _dataSource];
 
     NSView <WebDocumentView> *documentView = [v _makeDocumentViewForDataSource:ds];
     if (!documentView)
@@ -210,7 +210,7 @@ void WebFrameLoaderClient::forceLayoutForNonHTML()
     
     // Tell the just loaded document to layout.  This may be necessary
     // for non-html content that needs a layout message.
-    if (!([[m_webFrame.get() dataSource] _isDocumentHTML])) {
+    if (!([[m_webFrame.get() _dataSource] _isDocumentHTML])) {
         [thisDocumentView setNeedsLayout:YES];
         [thisDocumentView layout];
         [thisDocumentView setNeedsDisplay:YES];
@@ -954,7 +954,7 @@ void WebFrameLoaderClient::didFinishLoad()
 
 void WebFrameLoaderClient::prepareForDataSourceReplacement()
 {
-    if (![m_webFrame.get() dataSource]) {
+    if (![m_webFrame.get() _dataSource]) {
         ASSERT(!core(m_webFrame.get())->tree()->childCount());
         return;
     }
@@ -1147,7 +1147,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 bool WebFrameLoaderClient::canCachePage() const
 {
     // We can only cache HTML pages right now
-    return [[[m_webFrame.get() dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]];
+    return [[[m_webFrame.get() _dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]];
 }
 
 Frame* WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

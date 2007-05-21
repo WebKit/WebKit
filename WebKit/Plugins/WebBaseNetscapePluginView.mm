@@ -1447,7 +1447,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (WebDataSource *)dataSource
 {
     WebFrame *webFrame = kit(core(element)->document()->frame());
-    return [webFrame dataSource];
+    return [webFrame _dataSource];
 }
 
 - (WebFrame *)webFrame

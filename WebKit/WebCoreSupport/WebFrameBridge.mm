@@ -321,7 +321,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (WebDataSource *)dataSource
 {
     ASSERT(_frame != nil);
-    WebDataSource *dataSource = [_frame dataSource];
+    WebDataSource *dataSource = [_frame _dataSource];
 
     ASSERT(dataSource != nil);
 
@@ -530,7 +530,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)redirectDataToPlugin:(NSView *)pluginView
 {
-    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[_frame dataSource] representation];
+    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[_frame _dataSource] representation];
 
     if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
         [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];

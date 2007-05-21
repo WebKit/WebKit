@@ -1,3 +1,59 @@
+2007-05-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        <rdar://problem/5205358> REGRESSION (r21367): All messages appear entirely blank when running Mail off of tip of tree WebKit
+        
+        The fix is to return nil from [WebFrame dataSource] when it has not loaded anything but the fake
+        empty initial document. However, WebKit still needs the real data source internally, so I also
+        added a [WebFrame _dataSource] method that skips this check, and made WebKit use it throughout.
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (fileWrapperForElement):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView dataSource]):
+        * Plugins/WebNullPluginView.mm:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController URLPolicyCheckReferrer]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge dataSource]):
+        (-[WebFrameBridge redirectDataToPlugin:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::makeDocumentView):
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        (WebFrameLoaderClient::canCachePage):
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory bridgeForView:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebArchiver.mm:
+        (+[WebArchiver archiveFrame:]):
+        (+[WebArchiver archiveMainResourceForFrame:]):
+        (+[WebArchiver _archiveWithMarkupString:fromFrame:nodes:]):
+        (+[WebArchiver archiveSelectionInFrame:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _addChild:]):
+        (-[WebFrame _dataSource]):
+        (-[WebFrame DOMDocument]):
+        (-[WebFrame dataSource]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        * WebView/WebRenderNode.mm:
+        (-[WebRenderNode initWithWebFrameView:]):
+        * WebView/WebView.mm:
+        (-[WebView _mainFrameOverrideEncoding]):
+        (-[WebView mainFrameURL]):
+        (-[WebView mainFrameTitle]):
+        (-[WebView mainFrameIcon]):
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebView replaceSelectionWithArchive:]):
+        (-[WebView _isLoading]):
+        (-[WebView _performTextSizingSelector:withObject:onTrackingDocs:selForNonTrackingDocs:newScaleFactor:]):
+        (-[WebView _notifyTextSizeMultiplierChanged]):
+
 2007-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

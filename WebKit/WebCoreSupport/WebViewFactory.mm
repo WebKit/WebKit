@@ -90,7 +90,7 @@
     
     while (aView) {
         if ([aView isKindOfClass:[WebHTMLView class]]) {
-            return [[[(WebHTMLView *)aView _frame] dataSource] _bridge];
+            return [[[(WebHTMLView *)aView _frame] _dataSource] _bridge];
         }
         aView = [aView superview];
     }

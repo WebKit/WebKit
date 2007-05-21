@@ -379,7 +379,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 
 - (NSString *)URLPolicyCheckReferrer
 {
-    NSURL *responseURL = [[[[self webFrame] dataSource] response] URL];
+    NSURL *responseURL = [[[[self webFrame] _dataSource] response] URL];
     ASSERT(responseURL);
     return [responseURL _web_originalDataAsString];
 }

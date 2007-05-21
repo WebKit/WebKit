@@ -164,6 +164,12 @@ struct WebCoreHistoryItem;
 - (void)_attachScriptDebugger;
 - (void)_detachScriptDebugger;
 
+// dataSource reports null for the initial empty document's data source; this is needed
+// to preserve compatibility with Mail and Safari among others. But internal to WebKit,
+// we need to be able to get the initial data source as well, so the _dataSource method
+// should be used instead.
+- (WebDataSource *)_dataSource;
+
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

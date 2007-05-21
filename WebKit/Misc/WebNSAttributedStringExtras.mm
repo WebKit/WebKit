@@ -94,7 +94,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
     const AtomicString& attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = KURL(e->document()->completeURL(attr.deprecatedString())).getNSURL();
-        wrapper = [[kit(e->document()->frame()) dataSource] _fileWrapperForURL:URL];
+        wrapper = [[kit(e->document()->frame()) _dataSource] _fileWrapperForURL:URL];
     }
     if (!wrapper) {
         RenderImage* renderer = static_cast<RenderImage*>(e->renderer());

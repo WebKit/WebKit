@@ -320,7 +320,7 @@ WebView *getWebView(WebFrame *webFrame)
         }
     }
 
-    WebArchive *archive = [[self dataSource] _popSubframeArchiveWithName:[childFrame name]];
+    WebArchive *archive = [[self _dataSource] _popSubframeArchiveWithName:[childFrame name]];
     if (archive)
         [childFrame loadArchive:archive];
     else
@@ -346,8 +346,8 @@ WebView *getWebView(WebFrame *webFrame)
 - (void)_addChild:(WebFrame *)child
 {
     core(self)->tree()->appendChild(adoptRef(core(child)));
-    if ([child dataSource])
-        [[child dataSource] _documentLoader]->setOverrideEncoding([[self dataSource] _documentLoader]->overrideEncoding());  
+    if ([child _dataSource])
+        [[child _dataSource] _documentLoader]->setOverrideEncoding([[self _dataSource] _documentLoader]->overrideEncoding());  
 }
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse
@@ -574,6 +574,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     [dataSource(loader) _addToUnarchiveState:archive];
 }
 
+- (WebDataSource *)_dataSource
+{
+    FrameLoader* frameLoader = [self _frameLoader];
+
+    if (!frameLoader)
+        return nil;
+
+    return dataSource(frameLoader->documentLoader());
+}
+
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -735,7 +745,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // FIXME: <rdar://problem/5145841> When loading a custom view/representation 
     // into a web frame, the old document can still be around. This makes sure that
     // we'll return nil in those cases.
-    if (![[self dataSource] _isDocumentHTML]) 
+    if (![[self _dataSource] _isDocumentHTML]) 
         return nil; 
 
     Document* document = coreFrame->document();
@@ -765,8 +775,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebDataSource *)dataSource
 {
-    FrameLoader* frameLoader = [self _frameLoader];
-    return frameLoader ? dataSource(frameLoader->documentLoader()) : nil;
+    if (![self _frameLoader]->frameHasLoaded())
+        return nil;
+
+    return [self _dataSource];
 }
 
 - (void)loadRequest:(NSURLRequest *)request

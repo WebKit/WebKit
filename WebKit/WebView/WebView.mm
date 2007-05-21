@@ -2163,7 +2163,7 @@ NS_ENDHANDLER
 {
     WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
     if (dataSource == nil)
-        dataSource = [[self mainFrame] dataSource];
+        dataSource = [[self mainFrame] _dataSource];
     if (dataSource == nil)
         return nil;
     return [dataSource _documentLoader]->overrideEncoding();
@@ -2487,7 +2487,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     WebDataSource *ds;
     ds = [[self mainFrame] provisionalDataSource];
     if (!ds)
-        ds = [[self mainFrame] dataSource];
+        ds = [[self mainFrame] _dataSource];
     return [[[ds request] URL] _web_originalDataAsString];
 }
 
@@ -2499,13 +2499,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSString *)mainFrameTitle
 {
-    NSString *mainFrameTitle = [[[self mainFrame] dataSource] pageTitle];
+    NSString *mainFrameTitle = [[[self mainFrame] _dataSource] pageTitle];
     return (mainFrameTitle != nil) ? mainFrameTitle : (NSString *)@"";
 }
 
 - (NSImage *)mainFrameIcon
 {
-    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] _dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
 }
 
 - (DOMDocument *)mainFrameDocument
@@ -2683,7 +2683,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     } else if (action == @selector(makeTextStandardSize:)) {
         return [self canMakeTextStandardSize];
     } else if (action == @selector(reload:)) {
-        return [[self mainFrame] dataSource] != nil;
+        return [[self mainFrame] _dataSource] != nil;
     } else if (action == @selector(stopLoading:)) {
         return [self _isLoading];
     } else if (action == @selector(toggleContinuousSpellChecking:)) {
@@ -3370,7 +3370,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)replaceSelectionWithArchive:(WebArchive *)archive
 {
-    [[[[self _bridgeForSelectedOrMainFrame] webFrame] dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
+    [[[[self _bridgeForSelectedOrMainFrame] webFrame] _dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
 }
 
 - (void)deleteSelection
@@ -3494,7 +3494,7 @@ static WebFrameView *containingFrameView(NSView *view)
 - (BOOL)_isLoading
 {
     WebFrame *mainFrame = [self mainFrame];
-    return [[mainFrame dataSource] isLoading]
+    return [[mainFrame _dataSource] isLoading]
         || [[mainFrame provisionalDataSource] isLoading];
 }
 
@@ -3608,7 +3608,7 @@ static WebFrameView *containingFrameView(NSView *view)
 // to that new factor before we send sel to any of them. 
 - (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor
 {
-    if ([[self mainFrame] dataSource] == nil)
+    if ([[self mainFrame] _dataSource] == nil)
         return NO;
     
     BOOL foundSome = NO;
@@ -3644,7 +3644,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (void)_notifyTextSizeMultiplierChanged
 {
-    if ([[self mainFrame] dataSource] == nil)
+    if ([[self mainFrame] _dataSource] == nil)
         return;
 
     NSArray *docViews = [[self mainFrame] _documentViews];
