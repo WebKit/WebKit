@@ -25,6 +25,12 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(MAC)
+#ifndef __OBJC__
+class NSView;
+#endif
+#endif
+
 namespace WebCore {
 
     class ChromeClient;
@@ -97,6 +103,9 @@ namespace WebCore {
         void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
         void updateBackingStore();
 
+#if PLATFORM(MAC)
+        void focusNSView(NSView*);
+#endif
     private:
         Page* m_page;
         ChromeClient* m_client;

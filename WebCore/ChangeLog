@@ -1,3 +1,21 @@
+2007-05-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13796
+        Crash in [NSInputContext currentInputContext] when you click on this map
+
+        This is another case of <rdar://problem/5171145> Safari crashed closing tab in NSInputContext updateInputContexts
+
+        Test: fast/frames/frame-display-none-focus.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added ChromeMac.mm
+        * page/Chrome.h:
+        * page/mac/ChromeMac.mm: Added.
+        (WebCore::Chrome::focusNSView): Moved code from Widget::setFocus so it can be used whenever we need to make a view the first responder.
+        * page/mac/EventHandlerMac.mm: (WebCore::EventHandler::focusDocumentView): Calls focusNSView.
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::setFocus): Calls focusNSView.
+
 2007-05-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

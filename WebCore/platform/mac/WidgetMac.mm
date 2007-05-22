@@ -32,6 +32,7 @@
 #import "Font.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
+#import "Page.h"
 #import "PlatformMouseEvent.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
@@ -127,25 +128,9 @@ void Widget::setFocus()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
  
     NSView *view = [getView() _webcore_effectiveFirstResponder];
-    WebCoreFrameBridge *bridge = frame->bridge();
-    id firstResponder = [bridge firstResponder];
-    if (firstResponder && firstResponder == view)
-        return;
-
-    if (![view window] || ![view superview] || ![view acceptsFirstResponder])
-        return;
-
-    NSResponder *oldFirstResponder = [bridge firstResponder];
-
-    [bridge makeFirstResponder:view];
-
-    // Setting focus can actually cause a style change which might
-    // remove the view from its superview while it's being made
-    // first responder. This confuses AppKit so we must restore
-    // the old first responder.
-    if (![view superview])
-        [bridge makeFirstResponder:oldFirstResponder];
-
+    if (Page* page = frame->page())
+        page->chrome()->focusNSView(view);
+    
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

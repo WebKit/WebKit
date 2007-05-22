@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                window.focus();
+                if (parent.location.href.indexOf('?') == -1) {
+                    parent.location.href= parent.location.href + "?";
+                }
+            }
+        </script>
+    </head>
+    <body onload="test()">
+    Test
+    </body>
+</html>

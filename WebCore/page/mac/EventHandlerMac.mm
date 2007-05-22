@@ -150,16 +150,15 @@ bool EventHandler::keyEvent(NSEvent *event)
 
 void EventHandler::focusDocumentView()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (FrameView* frameView = m_frame->view()) {
-        if (NSView *documentView = frameView->getDocumentView()) {
-            if ([m_frame->bridge() firstResponder] != documentView)
-                [m_frame->bridge() makeFirstResponder:documentView];
-        }
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-    if (Page* page = m_frame->page())
-        page->focusController()->setFocusedFrame(m_frame);
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (FrameView* frameView = m_frame->view())
+        if (NSView *documentView = frameView->getDocumentView())
+            page->chrome()->focusNSView(documentView);
+    
+    page->focusController()->setFocusedFrame(m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)

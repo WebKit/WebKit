@@ -1,3 +1,14 @@
+2007-05-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13796
+        Crash in [NSInputContext currentInputContext] when you click on this map
+
+        * fast/frames/frame-display-none-focus-expected.txt: Added.
+        * fast/frames/frame-display-none-focus.html: Added.
+        * fast/frames/resources/iframe-focus.html: Added.
+
 2007-05-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
