@@ -107,6 +107,7 @@ namespace WebCore {
         void focusNSView(NSView*);
 #endif
     private:
+
         Page* m_page;
         ChromeClient* m_client;
     };

@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        A little cleanup from my last checkin.
+
+        * page/Chrome.h: Formatting change.
+        * page/mac/ChromeMac.mm: Fixed copyright.
+
+2007-05-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=13796
         Crash in [NSInputContext currentInputContext] when you click on this map
 
