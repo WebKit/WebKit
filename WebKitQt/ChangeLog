@@ -1,3 +1,10 @@
+2007-05-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add): Fix http headers for POST.
+
 2007-05-21  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Simon
