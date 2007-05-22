@@ -128,15 +128,6 @@
 
         Reviewed by George Staikos.
 
-        Implement forceLayoutForNonHTML
-
-        * WebCoreSupport/FrameLoaderClientQt.cpp:
-        (WebCore::FrameLoaderClientQt::forceLayoutForNonHTML):
-
-2007-05-17  Adam Treat  <adam@staikos.net>
-
-        Reviewed by George Staikos.
-
         Implement canShowMIMEType
 
         * WebCoreSupport/FrameLoaderClientQt.cpp:
