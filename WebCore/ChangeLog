@@ -1,3 +1,32 @@
+2007-05-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13803
+        Autogenerate the JS bindings for the HTMLMarqueeElement.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSRule::getOwnPropertySlot): Fix possible null pointer issue.
+        (KJS::DOMCSSRule::put): Fix possible null pointer issue.
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::JSHTMLElement::getOwnPropertySlot): Fix null pointer issue.
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::JSHTMLElement::put):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::start):
+        (WebCore::HTMLMarqueeElement::stop):
+        * html/HTMLMarqueeElement.h: Add start() and stop() functions.
+        * html/HTMLMarqueeElement.idl: Added.
+        * page/DOMWindow.idl: Add marquee constructor.
+
 2007-05-21  Adele Peterson  <adele@apple.com>
 
         Fix by Darin, reviewed by me.

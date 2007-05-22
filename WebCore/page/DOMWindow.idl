@@ -134,6 +134,7 @@ module window {
         attribute HTMLTitleElementConstructor HTMLTitleElement;
         attribute HTMLUListElementConstructor HTMLUListElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
+        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
 
         attribute HTMLDocumentConstructor HTMLDocument;
         attribute MutationEventConstructor MutationEvent;

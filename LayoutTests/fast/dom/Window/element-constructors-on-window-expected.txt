@@ -114,4 +114,6 @@ HTMLDelElement: undefined
 
 HTMLEmbedElement: undefined
 
+HTMLMarqueeElement: [object HTMLMarqueeElementConstructor]
+
 

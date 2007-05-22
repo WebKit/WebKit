@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2007 Apple Inc.
+ *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
+#include "HTMLMarqueeElement.h"
 #include "HTMLMenuElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLModElement.h"
@@ -104,6 +105,7 @@
 #include "JSHTMLLegendElement.h"
 #include "JSHTMLLinkElement.h"
 #include "JSHTMLMapElement.h"
+#include "JSHTMLMarqueeElement.h"
 #include "JSHTMLMenuElement.h"
 #include "JSHTMLMetaElement.h"
 #include "JSHTMLModElement.h"
@@ -175,6 +177,7 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(map, Map) \
     macro(menu, Menu) \
     macro(meta, Meta) \
+    macro(marquee, Marquee) \
     macro(ol, OList) \
     macro(optgroup, OptGroup) \
     macro(option, Option) \

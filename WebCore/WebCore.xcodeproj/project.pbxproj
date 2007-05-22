@@ -2764,6 +2764,9 @@
 		BC4918C70BFEA050009D6316 /* JSHTMLFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */; };
 		BC4918C80BFEA050009D6316 /* JSHTMLIFrameElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */; };
 		BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4918C30BFEA050009D6316 /* JSHTMLIFrameElement.h */; };
+		BC491B4F0C023E2D009D6316 /* HTMLMarqueeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC491B4E0C023E2D009D6316 /* HTMLMarqueeElement.idl */; };
+		BC491B780C023EFD009D6316 /* JSHTMLMarqueeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC491B760C023EFD009D6316 /* JSHTMLMarqueeElement.cpp */; };
+		BC491B790C023EFD009D6316 /* JSHTMLMarqueeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC491B770C023EFD009D6316 /* JSHTMLMarqueeElement.h */; };
 		BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */; };
 		BC588B4B0BFA723C00EE679E /* HTMLParserErrorCodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */; };
 		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
@@ -5990,6 +5993,9 @@
 		BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameElement.h; sourceTree = "<group>"; };
 		BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLIFrameElement.cpp; sourceTree = "<group>"; };
 		BC4918C30BFEA050009D6316 /* JSHTMLIFrameElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLIFrameElement.h; sourceTree = "<group>"; };
+		BC491B4E0C023E2D009D6316 /* HTMLMarqueeElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMarqueeElement.idl; sourceTree = "<group>"; };
+		BC491B760C023EFD009D6316 /* JSHTMLMarqueeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMarqueeElement.cpp; sourceTree = "<group>"; };
+		BC491B770C023EFD009D6316 /* JSHTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMarqueeElement.h; sourceTree = "<group>"; };
 		BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParserErrorCodes.h; sourceTree = "<group>"; };
 		BC588B4A0BFA723C00EE679E /* HTMLParserErrorCodes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserErrorCodes.cpp; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
@@ -6338,10 +6344,8 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BC4918C00BFEA050009D6316 /* JSHTMLFrameElement.cpp */,
-				BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */,
-				BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */,
-				BC4918C30BFEA050009D6316 /* JSHTMLIFrameElement.h */,
+				BC491B760C023EFD009D6316 /* JSHTMLMarqueeElement.cpp */,
+				BC491B770C023EFD009D6316 /* JSHTMLMarqueeElement.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
@@ -6426,6 +6430,8 @@
 				1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */,
 				A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */,
 				A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */,
+				BC4918C00BFEA050009D6316 /* JSHTMLFrameElement.cpp */,
+				BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */,
 				A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */,
 				A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */,
 				1AE2AA1A0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp */,
@@ -6434,6 +6440,8 @@
 				1AE2AA1D0A1CDAB400B42B25 /* JSHTMLHRElement.h */,
 				1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */,
 				1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */,
+				BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */,
+				BC4918C30BFEA050009D6316 /* JSHTMLIFrameElement.h */,
 				1AE2AA930A1CDD2D00B42B25 /* JSHTMLImageElement.cpp */,
 				1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */,
 				A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */,
@@ -8232,6 +8240,7 @@
 				1AE2AAF70A1CE58600B42B25 /* HTMLMapElement.idl */,
 				A8EA7C9E0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp */,
 				A8EA7C9D0A192B9C00A8EF5F /* HTMLMarqueeElement.h */,
+				BC491B4E0C023E2D009D6316 /* HTMLMarqueeElement.idl */,
 				A8EA79EC0A1916DF00A8EF5F /* HTMLMenuElement.cpp */,
 				A8EA79E80A1916DF00A8EF5F /* HTMLMenuElement.h */,
 				1AE2AE430A1D269E00B42B25 /* HTMLMenuElement.idl */,
@@ -11337,6 +11346,7 @@
 				BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */,
 				BC4918C70BFEA050009D6316 /* JSHTMLFrameElement.h in Headers */,
 				BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */,
+				BC491B790C023EFD009D6316 /* JSHTMLMarqueeElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11447,6 +11457,7 @@
 				933A142F0B7D188600A53FFD /* TextEvent.idl in Resources */,
 				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
 				464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */,
+				BC491B4F0C023E2D009D6316 /* HTMLMarqueeElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12721,6 +12732,7 @@
 				BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */,
 				BC4918C60BFEA050009D6316 /* JSHTMLFrameElement.cpp in Sources */,
 				BC4918C80BFEA050009D6316 /* JSHTMLIFrameElement.cpp in Sources */,
+				BC491B780C023EFD009D6316 /* JSHTMLMarqueeElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

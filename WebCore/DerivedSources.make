@@ -354,6 +354,7 @@ all : \
     JSHTMLLegendElement.h \
     JSHTMLLinkElement.h \
     JSHTMLMapElement.h \
+    JSHTMLMarqueeElement.h \
     JSHTMLMenuElement.h \
     JSHTMLMetaElement.h \
     JSHTMLModElement.h \
