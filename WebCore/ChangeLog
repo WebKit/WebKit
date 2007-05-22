@@ -1,3 +1,20 @@
+2007-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5206089> REGRESSION: hovering over amazon.com "product categories"
+          tab makes page content disappear
+
+        The contentWindow property was doing a cross-frame security check, but it shouldn't.
+        Window objects are responsible for protecting themselves from cross-frame activity.
+        Because contentWindow returned undefined, we then ended up setting visibility on the
+        body of the main frame to "hidden".
+
+        No layout test yet. When we make cross-domain tests, we should include this one.
+
+        * html/HTMLFrameElement.idl: Removed CheckFrameSecurity attribute from contentWindow.
+        * html/HTMLIFrameElement.idl: Ditto.
+
 2007-05-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
