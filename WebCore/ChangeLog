@@ -1,5 +1,13 @@
 2007-05-21  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by George Staikos.
+
+        Fix Qt build.
+
+        * WebCore.pro: add missing IDL files.
+
+2007-05-21  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13803

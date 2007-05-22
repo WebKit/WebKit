@@ -219,10 +219,12 @@ IDL_BINDINGS += \
     html/HTMLFieldSetElement.idl \
     html/HTMLFontElement.idl \
     html/HTMLFormElement.idl \
+    html/HTMLFrameElement.idl \
     html/HTMLHeadElement.idl \
     html/HTMLHeadingElement.idl \
     html/HTMLHRElement.idl \
     html/HTMLHtmlElement.idl \
+    html/HTMLIFrameElement.idl \
     html/HTMLImageElement.idl \
     html/HTMLInputElement.idl \
     html/HTMLIsIndexElement.idl \
@@ -231,6 +233,7 @@ IDL_BINDINGS += \
     html/HTMLLIElement.idl \
     html/HTMLLinkElement.idl \
     html/HTMLMapElement.idl \
+    html/HTMLMarqueeElement.idl \
     html/HTMLMenuElement.idl \
     html/HTMLMetaElement.idl \
     html/HTMLModElement.idl \
