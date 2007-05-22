@@ -1,3 +1,16 @@
+2007-05-21  Adele Peterson  <adele@apple.com>
+
+        Fix by Darin, reviewed by me.
+
+        Fix for <rdar://problem/5171145> Safari crashed closing tab in NSInputContext updateInputContexts
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::safeRemoveFromSuperview): Added. If the view is the window's first responder, then 
+         set the window's first responder to nil so we don't leave the window pointing to a view that's no longer in it.
+        (WebCore::Widget::setFocus): Don't attempt to focus the view if it has no window.
+        (WebCore::Widget::removeFromSuperview): Call safeRemoveFromSuperview.
+        (WebCore::Widget::afterMouseDown): ditto.
+
 2007-05-21  David Hyatt  <hyatt@apple.com>
 
         Make a line gutter backdrop so that tiny view source docs don't look

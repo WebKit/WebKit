@@ -1,3 +1,12 @@
+2007-05-21  Adele Peterson  <adele@apple.com>
+
+        Fix by Darin, reviewed by me.
+
+        Fix for <rdar://problem/5171145> Safari crashed closing tab in NSInputContext updateInputContexts
+
+        * WebView/WebFrameView.mm: (-[WebFrameView _setDocumentView:]): If the old view is the first responder,
+        then set the window's first responder to nil so we don't leave the window pointing to a view that's no longer in it.
+
 2007-05-21  Brady Eidson  <beidson@apple.com>
 
         Making the importance of my last change more clear

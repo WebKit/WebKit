@@ -51,6 +51,18 @@ public:
     bool removeFromSuperviewSoon;
 };
 
+static void safeRemoveFromSuperview(NSView *view)
+{
+    // If the the view is the first responder, then set the window's first responder to nil so
+    // we don't leave the window pointing to a view that's no longer in it.
+    NSWindow *window = [view window];
+    NSResponder *firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:view])
+        [window makeFirstResponder:nil];
+
+    [view removeFromSuperview];
+}
+
 Widget::Widget() : data(new WidgetPrivate)
 {
     data->view = nil;
@@ -120,7 +132,7 @@ void Widget::setFocus()
     if (firstResponder && firstResponder == view)
         return;
 
-    if (![view superview] || ![view acceptsFirstResponder])
+    if (![view window] || ![view superview] || ![view acceptsFirstResponder])
         return;
 
     NSResponder *oldFirstResponder = [bridge firstResponder];
@@ -264,7 +276,7 @@ void Widget::removeFromSuperview()
     else {
         data->removeFromSuperviewSoon = false;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [getOuterView() removeFromSuperview];
+        safeRemoveFromSuperview(getOuterView());
         END_BLOCK_OBJC_EXCEPTIONS;
     }
 }
@@ -282,7 +294,7 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
 {
     if (!widget) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [view removeFromSuperview];
+        safeRemoveFromSuperview(view);
         END_BLOCK_OBJC_EXCEPTIONS;
     } else {
         ASSERT(widget->data->mustStayInWindow);

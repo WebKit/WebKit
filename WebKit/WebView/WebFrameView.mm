@@ -165,6 +165,13 @@ enum {
     // tree, so must do this before setDocumentView:.
     [sv setDocumentCursor:[NSCursor arrowCursor]];
 
+    // If the old view is the first responder, then set the window's first responder to nil so
+    // we don't leave the window pointing to a view that's no longer in it.
+    NSWindow *window = [sv window];
+    NSResponder *firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:[sv documentView]])
+        [window makeFirstResponder:nil];
+
     [sv setDocumentView:view];
     [sv setSuppressLayout:NO];
 }
