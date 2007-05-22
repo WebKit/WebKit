@@ -464,7 +464,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   innerText     KJS::JSHTMLElement::ElementInnerText DontDelete
   outerHTML     KJS::JSHTMLElement::ElementOuterHTML DontDelete
   outerText     KJS::JSHTMLElement::ElementOuterText DontDelete
-  document      KJS::JSHTMLElement::ElementDocument  DontDelete|ReadOnly
 # IE extension
   children      KJS::JSHTMLElement::ElementChildren  DontDelete|ReadOnly
   contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
@@ -695,8 +694,6 @@ JSValue *JSHTMLElement::getValueProperty(ExecState* exec, int token) const
             return jsString(element.outerHTML());
         case ElementOuterText:
             return jsString(element.outerText());
-        case ElementDocument:
-            return toJS(exec,element.ownerDocument());
         case ElementChildren:
             return getHTMLCollection(exec, element.children().get());
         case ElementContentEditable:

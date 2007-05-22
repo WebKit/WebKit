@@ -303,7 +303,7 @@ TreeElement.prototype._attach = function()
         if (this._listItemNode && this._listItemNode.parentNode)
             this._listItemNode.parentNode.removeChild(this._listItemNode);
 
-        this._listItemNode = this.treeOutline._childrenListNode.document.createElement("li");
+        this._listItemNode = this.treeOutline._childrenListNode.ownerDocument.createElement("li");
         this._listItemNode.treeElement = this;
         this._listItemNode.innerHTML = this.title;
 
@@ -415,7 +415,7 @@ TreeElement.prototype.expand = function()
         if (this.refreshChildren)
             this.children = [];
 
-        this._childrenListNode = this.treeOutline._childrenListNode.document.createElement("ol");
+        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
         this._childrenListNode.parentTreeElement = this;
         this._childrenListNode.addStyleClass("children");
 

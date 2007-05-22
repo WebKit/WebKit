@@ -101,7 +101,7 @@ namespace KJS {
            FrameSetCols, FrameSetRows, 
            GetContext,
            ElementInnerHTML, ElementId, ElementDir, ElementLang,
-           ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
+           ElementClassName, ElementInnerText, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText
     };
   private:

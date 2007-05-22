@@ -1,3 +1,19 @@
+2007-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/5215830> REGRESSION: ebay.com layout is wrong
+
+        The code on ebay was looking for the "document" property on a iframe.
+        We changed that to be the ownerDocument rather than the contentDocument,
+        which was not what ebay was expecting. The best fix seems to be removing
+        the document property altogether.
+
+        Test: fast/dom/iframe-document.html
+
+        * bindings/js/kjs_html.h: Remove ElementDocument.
+        * bindings/js/kjs_html.cpp: (KJS::JSHTMLElement::getValueProperty): Ditto.
+
 2007-05-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,10 @@
+2007-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * WebInspector/webInspector/treeoutline.js: Use ownerDocument instead of non-standard
+        document property.
+
 2007-05-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

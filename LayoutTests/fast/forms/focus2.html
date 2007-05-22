@@ -79,26 +79,26 @@ function addElements(parentElement)
 
     // Form elements
     for (var i = 0; i < inputTypes.length; ++i) { //>
-        var input = parentElement.document.createElement('input');
+        var input = parentElement.ownerDocument.createElement('input');
         input.type = inputTypes[i];
         addEventListeners(input);
         parentElement.appendChild(input);
     }
     
     // Textarea
-    var textarea = parentElement.document.createElement('textarea');
+    var textarea = parentElement.ownerDocument.createElement('textarea');
     addEventListeners(textarea);
     parentElement.appendChild(textarea);
     
     // Contenteditable
-    var div = parentElement.document.createElement('div');
+    var div = parentElement.ownerDocument.createElement('div');
     div.contentEditable = true;
     div.style.border = "1px solid black";
     addEventListeners(div);
     parentElement.appendChild(div);
 
     // Anchor
-    var anchor = parentElement.document.createElement('a');
+    var anchor = parentElement.ownerDocument.createElement('a');
     anchor.innerHTML = "anchor";
     anchor.href = "javascript:";
     addEventListeners(anchor);
