@@ -3,7 +3,7 @@ if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
 <body>
-<p>This test deletes the contents of a sub-list.  Since it is fully selected, it should be removed.  But the list item below it should remain. <b>The fact that the caret ends up in an orphaned list child might be considered a bug.</b></p>
+<p>This test deletes the contents of a sub-list.  Then it deletes the empty list item. The list item below it should remain.</p>
 <div id="div" contentEditable="true"><ul><ul><li>foo</li></ul><li><br></li></ul></div>
 
 <script>
@@ -12,6 +12,7 @@ var sel = window.getSelection();
 
 sel.setPosition(div, 0);
 sel.modify("extend", "forward", "word");
+document.execCommand("Delete");
 document.execCommand("Delete");
 </script>
 </body>

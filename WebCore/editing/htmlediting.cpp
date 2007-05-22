@@ -411,9 +411,6 @@ bool isSpecialElement(const Node *n)
     if (n->isLink())
         return true;
 
-    if (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag))
-        return true;
-
     RenderObject *renderer = n->renderer();
     if (!renderer)
         return false;

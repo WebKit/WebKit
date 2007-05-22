@@ -1,3 +1,31 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4875189> List is deleted when replacing contents with Chinese/Japanese characters
+
+        Moved from unsupported-content because we've supported editing lists
+        for a while now:
+        * editing/deleting/4875189-expected.checksum: Added.
+        * editing/deleting/4875189-expected.png: Added.
+        * editing/deleting/4875189-expected.txt: Added.
+        * editing/deleting/4875189.html: Added.
+        * editing/unsupported-content/list-delete-002-expected.checksum: Removed.
+        * editing/unsupported-content/list-delete-002-expected.png: Removed.
+        * editing/unsupported-content/list-delete-002-expected.txt: Removed.
+        * editing/unsupported-content/list-delete-002.html: Removed.
+        
+        Reflects new behavior:
+        * editing/deleting/delete-select-all-003-expected.checksum:
+        * editing/deleting/delete-select-all-003-expected.png:
+        * editing/deleting/delete-select-all-003-expected.txt:
+        
+        Ditto and also removed a FIXME:
+        * editing/deleting/list-item-1-expected.checksum:
+        * editing/deleting/list-item-1-expected.png:
+        * editing/deleting/list-item-1-expected.txt:
+        * editing/deleting/list-item-1.html:
+
 2007-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by.

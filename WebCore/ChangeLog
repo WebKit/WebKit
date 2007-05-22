@@ -1,3 +1,17 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4875189> 
+        List is deleted when replacing contents with Chinese/Japanese characters
+
+        * editing/htmlediting.cpp:
+        (WebCore::isSpecialElement): Lists are no longer special.
+        They can be removed by removing their content and then 
+        then hitting delete inside of the empty list item that's 
+        left over. Even when that list item is the first thing 
+        in the editable region.
+
 2007-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
