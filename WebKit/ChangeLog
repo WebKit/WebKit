@@ -1,3 +1,11 @@
+2007-05-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Adding some asserts to help detect other cases of <rdar://problem/5171145>
+
+        * WebCoreSupport/WebFrameBridge.mm: (-[WebFrameBridge makeFirstResponder:]):
+
 2007-05-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin (Sarge)

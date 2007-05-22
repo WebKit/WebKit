@@ -270,6 +270,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     ASSERT(_frame != nil);
     WebView *webView = [self webView];
+    ASSERT([view isKindOfClass:[NSView class]]);
+    ASSERT([(NSView *)view window]);
+    ASSERT([(NSView *)view window] == [webView window]);
     [webView _pushPerformingProgrammaticFocus];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
     [webView _popPerformingProgrammaticFocus];
