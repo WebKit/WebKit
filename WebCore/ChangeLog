@@ -1,3 +1,22 @@
+2007-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+        
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13789 
+        -- SVGLocatable::getScreenCTM() faulty
+        
+        Needed to update SVGLength to handle the case where the SVGElement is
+        not the root document element -- we do this by falling back on the 
+        renderer for the context.
+        
+        For <svg> elements embedded as mixed content in xhtml we consider the
+        absolutePosition of the parent to be the origin for the <svg> element.
+
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getScreenCTM):
+
 2007-05-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

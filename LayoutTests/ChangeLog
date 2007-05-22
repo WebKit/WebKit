@@ -1,3 +1,14 @@
+2007-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+        
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=13789
+
+        * svg/custom/getscreenctm-in-mixed-content-expected.checksum: Added.
+        * svg/custom/getscreenctm-in-mixed-content-expected.png: Added.
+        * svg/custom/getscreenctm-in-mixed-content-expected.txt: Added.
+        * svg/custom/getscreenctm-in-mixed-content.xhtml: Added.
+
 2007-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2007 Apple Inc.  All rights reserved.
 
     This file is part of the KDE project
 
@@ -335,8 +336,25 @@ AffineTransform SVGSVGElement::getCTM() const
 
 AffineTransform SVGSVGElement::getScreenCTM() const
 {
+    // FIXME: This assumes that any <svg> element not immediately descending from another SVGElement 
+    // has *no* svg ancestors
+    document()->updateLayoutIgnorePendingStylesheets();
+    float rootX = x().value();
+    float rootY = y().value();
+    
+    if (RenderObject* renderer = this->renderer()) {
+        renderer = renderer->parent();
+        if (renderer && !(renderer->element() && renderer->element()->isSVGElement())) {
+            int tx = 0;
+            int ty = 0;
+            renderer->absolutePosition(tx, ty, true);
+            rootX += tx;
+            rootY += ty;
+        }
+    }
+    
     AffineTransform mat = SVGStyledLocatableElement::getScreenCTM();
-    mat.translate(x().value(), y().value());
+    mat.translate(rootX, rootY);
 
     if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
         AffineTransform viewBox = viewBoxToViewTransform(width().value(), height().value());
