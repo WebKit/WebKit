@@ -1,3 +1,17 @@
+2007-05-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5084400> -[DOMRange lineBoxRects] returns an empty array when the DOM nodes have just been created
+
+        Do a updateLayoutIgnorePendingStylesheets before asking the Node or Range for it's box rects.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode boundingBox]):
+        (-[DOMNode lineBoxRects]):
+        (-[DOMRange boundingBox]):
+        (-[DOMRange lineBoxRects]):
+
 2007-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by George Staikos.
