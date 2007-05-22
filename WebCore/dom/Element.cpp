@@ -971,7 +971,7 @@ void Element::focus(bool restorePreviousSelection)
         return;
     
     if (Page* page = doc->page())
-        page->focusController()->setFocusedNode(this);
+        page->focusController()->setFocusedNode(this, doc->frame());
 
     if (!isFocusable()) {
         setNeedsFocusAppearanceUpdate(true);
@@ -1014,7 +1014,7 @@ void Element::blur()
     Document* doc = document();
     if (doc->focusedNode() == this) {
         if (doc->frame())
-            doc->frame()->page()->focusController()->setFocusedNode(0);
+            doc->frame()->page()->focusController()->setFocusedNode(0, doc->frame());
         else
             doc->setFocusedNode(0);
     }

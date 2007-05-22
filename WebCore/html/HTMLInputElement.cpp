@@ -195,7 +195,7 @@ void HTMLInputElement::focus(bool restorePreviousSelection)
         if (!supportsFocus())
             return;
         if (Page* page = doc->page())
-            page->focusController()->setFocusedNode(this);
+            page->focusController()->setFocusedNode(this, doc->frame());
         // FIXME: Should isFocusable do the updateLayout?
         if (!isFocusable()) {
             setNeedsFocusAppearanceUpdate(true);

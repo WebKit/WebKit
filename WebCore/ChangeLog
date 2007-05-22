@@ -1,3 +1,35 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5213963>
+        REGRESSION(r21467): Active selection remains in text field after clicking on a button
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Call
+        FocusController::setFocusedNode, because Document::setFocusedNode
+        no longer clears the selection.
+        Begin passing the new focused frame to 
+        FocusController::setFocusedNode, because when the 
+        new focus node is null, the selection should only be 
+        cleared if the focused frame isn't changing.
+        (WebCore::Element::focus): Begin passing the new focused
+        frame.
+        (WebCore::Element::blur): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::focus): Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::focus): Ditto.
+        * page/Frame.cpp:
+        (WebCore::Frame::setFocusedNodeIfNeeded): Ditto.
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded): Take in the new
+        focused frame.  If it's not changing, don't clear the
+        selection.
+        (WebCore::FocusController::setFocusedNode): Take
+        in the new focused frame.
+        * page/FocusController.h:
+
 2007-05-22  Marius Bugge Monsen  <mbm@trolltech.com>
 
         Reviewed by Zack.

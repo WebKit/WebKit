@@ -48,7 +48,7 @@ namespace WebCore {
         bool advanceFocus(KeyboardEvent*);
         bool advanceFocus(FocusDirection, KeyboardEvent*);
         
-        bool setFocusedNode(Node*);
+        bool setFocusedNode(Node*, PassRefPtr<Frame>);
 
     private:
         Page* m_page;

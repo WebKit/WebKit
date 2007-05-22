@@ -1,3 +1,20 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5213963> 
+        REGRESSION(r21467): Active selection remains in text field after clicking on a button
+
+        Demonstrates bug:
+        * editing/selection/5213963-expected.checksum: Added.
+        * editing/selection/5213963-expected.png: Added.
+        * editing/selection/5213963-expected.txt: Added.
+        * editing/selection/5213963.html: Added.
+        We now clear the selection on mouse down (but not before
+        the mousedown event is fired):
+        * fast/forms/focus-selection-input-expected.txt:
+        * fast/forms/focus-selection-textarea-expected.txt:
+
 2007-05-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

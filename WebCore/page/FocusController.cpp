@@ -220,12 +220,12 @@ static bool relinquishesEditingFocus(Node *node)
     return frame->editor()->shouldEndEditing(rangeOfContents(root).get());
 }
 
-static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Node* newFocusedNode)
+static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFrame, Node* newFocusedNode)
 {
-    if (!oldFocusedFrame)
+    if (!oldFocusedFrame || !newFocusedFrame)
         return;
         
-    if (newFocusedNode && oldFocusedFrame->document() != newFocusedNode->document())
+    if (oldFocusedFrame->document() != newFocusedFrame->document())
         return;
     
     SelectionController* s = oldFocusedFrame->selectionController();
@@ -239,7 +239,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Node* newFocusedNode)
     s->clear();
 }
 
-bool FocusController::setFocusedNode(Node* node)
+bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFrame)
 {
     RefPtr<Frame> oldFocusedFrame = focusedFrame();
     RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
@@ -251,7 +251,7 @@ bool FocusController::setFocusedNode(Node* node)
     if (oldFocusedNode && oldFocusedNode->rootEditableElement() == oldFocusedNode && !relinquishesEditingFocus(oldFocusedNode))
         return false;
         
-    clearSelectionIfNeeded(oldFocusedFrame.get(), node);
+    clearSelectionIfNeeded(oldFocusedFrame.get(), newFocusedFrame.get(), node);
     
     if (!node) {
         if (oldDocument)
@@ -260,7 +260,6 @@ bool FocusController::setFocusedNode(Node* node)
     }
     
     RefPtr<Document> newDocument = node ? node->document() : 0;
-    RefPtr<Frame> newFocusedFrame = newDocument ? newDocument->frame() : 0;
     
     if (newDocument && newDocument->focusedNode() == node)
         return true;
