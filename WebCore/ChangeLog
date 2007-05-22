@@ -1,3 +1,15 @@
+2007-05-22  Marius Bugge Monsen  <mbm@trolltech.com>
+
+        Reviewed by Zack.
+
+        Implement some more functions in ClipboardQt.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::types):
+
 2007-05-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.
