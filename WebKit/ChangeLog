@@ -1,3 +1,14 @@
+2007-05-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin (Sarge)
+
+        <rdar://problem/5219885> - Crash after closing a inline popup ad at http://news.yahoo.com/
+
+        This regressed in http://trac.webkit.org/projects/webkit/changeset/21618
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame dataSource]): Null check the frameloader
+
 2007-05-21  Adele Peterson  <adele@apple.com>
 
         Fix by Darin, reviewed by me.

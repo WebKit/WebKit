@@ -775,7 +775,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebDataSource *)dataSource
 {
-    if (![self _frameLoader]->frameHasLoaded())
+    FrameLoader* loader = [self _frameLoader];
+    if (!loader || !loader->frameHasLoaded())
         return nil;
 
     return [self _dataSource];
