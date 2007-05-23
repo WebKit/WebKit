@@ -1,3 +1,16 @@
+2007-05-23  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5221838> REGRESSION (r21581): no content in idisk
+        window at mac.com.
+
+        Back out the change to make self-closed <script/> into a Dashboard quirk
+        only.
+
+        Reviewed by aroben
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+
 2007-05-23  Patti  <patti@apple.com>
 
         Reviewed by David Harrison.

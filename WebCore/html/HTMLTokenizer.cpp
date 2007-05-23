@@ -1019,9 +1019,9 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 if (inViewSourceMode())
                     currToken.addViewSourceChar(curchar);
                     
-                // This is a deliberate quirk for Dashboard (with a long sad history).  We have to do this
+                // This is a deliberate quirk for (with a long sad history).  We have to do this
                 // since widgets do <script src="foo.js"/> and expect the tag to close.
-                if (currToken.tagName == scriptTag && curchar == '/' && m_doc->frame() && m_doc->frame()->page()->settings()->usesDashboardBackwardCompatibilityMode())
+                if (currToken.tagName == scriptTag && curchar == '/')
                     currToken.flat = true;
                     
                 ++src;
