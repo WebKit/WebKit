@@ -1,3 +1,47 @@
+2007-05-23  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack, discussed also with Lars.
+
+        Make it possible to specify a per-QWebPage network interface (needed
+        for the KDE KIO integration).
+
+        Merged the file and the network loader into
+        QWebNetworkInterface(Private), which simplifies the loading code.
+
+        When receiving a redirection don't emit the data of the redirected job
+        to the document. (otherwise the kind of "This page has moved" text
+        appears right on top of the real page content)
+
+        * Api/qwebnetworkinterface.cpp:
+        (qHash):
+        (operator==):
+        (QWebNetworkJob::QWebNetworkJob):
+        (QWebNetworkJob::networkInterface):
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        (QWebNetworkInterfacePrivate::sendFileData):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+        (QWebNetworkInterfacePrivate::addHttpJob):
+        (QWebNetworkInterfacePrivate::httpConnectionClosed):
+        (QWebNetworkInterface::setDefaultInterface):
+        (QWebNetworkInterface::QWebNetworkInterface):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::cancel):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::setNetworkInterface):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
 2007-05-23  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

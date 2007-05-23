@@ -36,6 +36,9 @@
 #include "DeprecatedString.h"
 #include "ResourceHandleInternal.h"
 #include "qwebnetworkinterface_p.h"
+#include "qwebpage_p.h"
+#include "ChromeClientQt.h"
+#include "Page.h"
 
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
@@ -57,9 +60,10 @@ bool ResourceHandle::start(Frame* frame)
     if (!frame)
         return false;
 
+    Page *page = frame->page();
     // If we are no longer attached to a Page, this must be an attempted load from an
     // onUnload handler, so let's just block it.
-    if (!frame->page())
+    if (!page)
         return false;
 
     // check for (probably) broken requests
@@ -68,7 +72,9 @@ bool ResourceHandle::start(Frame* frame)
         return false;
     }
 
-    return QWebNetworkManager::self()->add(this);
+    ChromeClientQt *client = static_cast<ChromeClientQt *>(page->chrome()->client());
+    QWebPagePrivate *webPage = client->m_webPage->d;
+    return QWebNetworkManager::self()->add(this, webPage->networkInterface);
 }
 
 void ResourceHandle::cancel()

@@ -56,6 +56,8 @@ public:
     QWebPage *q;
     QUndoStack *undoStack;
 
+    QWebNetworkInterface *networkInterface;
+
     bool modified;
 };
 

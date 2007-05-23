@@ -77,6 +77,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
     undoStack = 0;
     mainFrame = 0;
+    networkInterface = 0;
 }
 
 QWebPagePrivate::~QWebPagePrivate()
@@ -277,6 +278,16 @@ void QWebPage::dropEvent(QDropEvent *ev)
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(d->page->dragController()->performDrag(&dragData));
     ev->accept();
+}
+
+void QWebPage::setNetworkInterface(QWebNetworkInterface *interface)
+{
+    d->networkInterface = interface;
+}
+
+QWebNetworkInterface *QWebPage::networkInterface() const
+{
+    return d->networkInterface;
 }
 
 #include "qwebpage.moc"

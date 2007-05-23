@@ -45,6 +45,16 @@ static QWebNetworkManager *manager = 0;
 
 using namespace WebCore;
 
+uint qHash(const HostInfo &info)
+{
+    return qHash(info.host) + info.port;
+}
+
+static bool operator==(const HostInfo &i1, const HostInfo &i2)
+{
+    return i1.port == i2.port && i1.host == i2.host;
+}
+
 void QWebNetworkJobPrivate::setURL(const QUrl &u)
 {
     url = u;
@@ -79,6 +89,7 @@ QWebNetworkJob::QWebNetworkJob()
 {
     d->ref = 1;
     d->redirected = false;
+    d->interface = 0;
 }
 
 /*!
@@ -163,6 +174,14 @@ bool QWebNetworkJob::deref()
 }
 
 /*!
+   Returns the network interface that is associated with this job.
+*/
+QWebNetworkInterface *QWebNetworkJob::networkInterface() const
+{
+    return d->interface;
+}
+
+/*!
   \class QWebNetworkManager
   \internal
 */
@@ -179,13 +198,19 @@ QWebNetworkManager *QWebNetworkManager::self()
     return manager;
 }
 
-bool QWebNetworkManager::add(ResourceHandle *handle)
+bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *interface)
 {
     ASSERT(resource);
+
+    if (!interface)
+        interface = default_interface;
+
+    ASSERT(interface);
 
     QWebNetworkJob *job = new QWebNetworkJob();
     handle->getInternal()->m_job = job;
     job->d->resourceHandle = handle;
+    job->d->interface = interface;
 
     KURL url = handle->url();
     QUrl qurl = QString(url.url());
@@ -222,8 +247,8 @@ bool QWebNetworkManager::add(ResourceHandle *handle)
 
     DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.toString();
 
-    default_interface->addJob(job);
-    
+    interface->addJob(job);
+
     return true;
 }
 
@@ -233,7 +258,7 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
     if (!job)
         return;
     job->d->resourceHandle = 0;
-    default_interface->cancelJob(job);
+    job->d->interface->cancelJob(job);
     handle->getInternal()->m_job = 0;
 }
 
@@ -318,6 +343,9 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
     if (!client)
         return;
 
+    if (job->d->redirected)
+        return; // don't emit the "Document has moved here" type of HTML
+
     DEBUG() << "receivedData" << job->d->url.path();
     client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
     
@@ -334,7 +362,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 
     if (job->d->redirected) {
         job->d->redirected = false;
-        default_interface->addJob(job);
+        job->d->interface->addJob(job);
         return;
     }
     job->d->resourceHandle->getInternal()->m_job = 0;
@@ -356,217 +384,21 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
     job->deref();
 }
 
-
-/*!
-  \class QWebNetworkInterface
-
-  The QWebNetworkInterface class provides an abstraction layer for
-  WebKit's network interface.  It allows to completely replace or
-  extend the builtin network layer.
-
-  QWebNetworkInterface contains two virtual methods, addJob and
-  cancelJob that have to be reimplemented when implementing your own
-  networking layer.
-
-  QWebNetworkInterface can by default handle the http, https, file and
-  data URI protocols.
-  
-*/
-
-/*!
-  Sets a new default interface that will be used by all of WebKit
-  for downloading data from the internet.
-*/
-void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInterface)
-{
-    if (default_interface == defaultInterface)
-        return;
-    if (default_interface)
-        delete default_interface;
-    default_interface = defaultInterface;
-    QObject::connect(default_interface, SIGNAL(started(QWebNetworkJob*)),
-                     manager, SLOT(started(QWebNetworkJob*)), Qt::QueuedConnection);
-    QObject::connect(default_interface, SIGNAL(data(QWebNetworkJob*, const QByteArray &)),
-                     manager, SLOT(data(QWebNetworkJob*, const QByteArray &)), Qt::QueuedConnection);
-    QObject::connect(default_interface, SIGNAL(finished(QWebNetworkJob*, int)),
-                     manager, SLOT(finished(QWebNetworkJob*, int)), Qt::QueuedConnection);
-}
-
-/*!
-  Returns the default interface that will be used by WebKit. If no
-  default interface has been set, QtWebkit will create an instance of
-  QWebNetworkInterface to do the work.
-*/
-QWebNetworkInterface *QWebNetworkInterface::defaultInterface()
-{
-    if (!default_interface)
-        setDefaultInterface(new QWebNetworkInterface);
-    return default_interface;
-}
-
-
-/*!
-  Constructs a QWebNetworkInterface object.
-*/
-QWebNetworkInterface::QWebNetworkInterface()
-    : QObject(0)
-{
-    d = new QWebNetworkInterfacePrivate;
-    if (!manager)
-        manager = new QWebNetworkManager;
-    d->fileLoader = new LoaderThread(this);
-    d->fileLoader->start();
-    d->fileLoader->waitForSetup();
-
-    d->networkLoader = new NetworkLoader(this);
-    connect(d->networkLoader, SIGNAL(receivedResponse(QWebNetworkJob*)),
-            this, SIGNAL(started(QWebNetworkJob*)));
-    connect(d->networkLoader, SIGNAL(receivedData(QWebNetworkJob*, QByteArray)),
-            this, SIGNAL(data(QWebNetworkJob*, QByteArray)));
-    connect(d->networkLoader, SIGNAL(receivedFinished(QWebNetworkJob*, int)),
-            this, SIGNAL(finished(QWebNetworkJob*, int)));
-}
-
-/*!
-  Destructs the QWebNetworkInterface object.
-*/
-QWebNetworkInterface::~QWebNetworkInterface()
-{
-    delete d;
-}
-
-/*!
-  This virtual method gets called whenever QtWebkit needs to add a
-  new job to download.
-
-  The QWebNetworkInterface should process this job, by first emitting
-  the started signal, then emitting data repeatedly as new data for
-  the Job is available, and finally ending the job with emitting a
-  finished signal.
-
-  After the finished signal has been emitted, the QWebNetworkInterface
-  is not allowed to access the job anymore.
-*/
-void QWebNetworkInterface::addJob(QWebNetworkJob *job)
-{
-    QString protocol = job->url().scheme();
-    if (protocol == QLatin1String("http")) {
-        //DEBUG() << "networkRequest";
-        d->networkLoader->request(job);
-        return;
-    }
-
-    // "file", "data" and all unhandled stuff go through here
-    //DEBUG() << "fileRequest";
-    job->ref();
-    emit manager->fileRequest(job);
-}
-
-/*!
-  This virtual method gets called whenever QtWebkit needs to cancel a
-  new job.
-
-  The QWebNetworkInterface acknowledge the canceling of the job, by
-  emitting the finished signal with an error code of 1. After emitting
-  the finished signal, the interface should not access the job
-  anymore.
-*/
-void QWebNetworkInterface::cancelJob(QWebNetworkJob *job)
-{
-    QString protocol = job->url().scheme();
-    if (protocol == QLatin1String("http")) 
-        d->networkLoader->cancel(job);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-LoaderThread::LoaderThread(QWebNetworkInterface *manager)
-    : QThread(manager), m_loader(0), m_manager(manager), m_setup(false)
-{
-}
-
-void LoaderThread::run()
-{
-    m_loader = new FileLoader;
-    connect(manager, SIGNAL(fileRequest(QWebNetworkJob*)),
-            m_loader, SLOT(request(QWebNetworkJob*)));
-    connect(m_loader, SIGNAL(receivedResponse(QWebNetworkJob*)),
-            m_manager, SIGNAL(started(QWebNetworkJob*)));
-    connect(m_loader, SIGNAL(receivedData(QWebNetworkJob*, QByteArray)),
-            m_manager, SIGNAL(data(QWebNetworkJob*, QByteArray)));
-    connect(m_loader, SIGNAL(receivedFinished(QWebNetworkJob*, int)),
-            m_manager, SIGNAL(finished(QWebNetworkJob*, int)));
-    DEBUG() << "calling exec";
-    m_setup = true;
-    exec();
-    DEBUG() << "done exec";
-    delete m_loader;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-FileLoader::FileLoader()
-    : QObject(0)
-{
-    DEBUG() << "FileLoader::FileLoader";
-}
-
-
-void FileLoader::request(QWebNetworkJob* job)
-{
-    if (!job->deref())
-        return;
-    
-    DEBUG() << "FileLoader::request" << job->url();
-
-    if (job->cancelled()) {
-        sendData(job, 400, QByteArray());
-        return;
-    }
-
-    QUrl url = job->url();
-    QString protocol = url.scheme();
-    if (protocol == QLatin1String("data")) {
-        parseDataUrl(job);
-        return;
-    }
-
-    int statusCode = 200;
-    QByteArray data;
-    if (!(protocol.isEmpty() || protocol == QLatin1String("file"))) {
-        statusCode = 404;
-    } else if (job->postData().isEmpty()) {
-        QFile f(url.path());
-        DEBUG() << "opening" << QString(url.path());
-
-        if (f.open(QIODevice::ReadOnly)) {
-            QHttpResponseHeader response;
-            response.setStatusLine(200);
-            job->setResponse(response);
-            data = f.readAll();
-        } else {
-            statusCode = 404;
-        }
-    } else {
-        statusCode = 404;
-    }
-    sendData(job, statusCode, data);
-}
-
-void FileLoader::sendData(QWebNetworkJob* job, int statusCode, const QByteArray &data)
+void QWebNetworkInterfacePrivate::sendFileData(QWebNetworkJob* job, int statusCode, const QByteArray &data)
 {
     int error = statusCode >= 400 ? 1 : 0;
     if (!job->cancelled()) {
         QHttpResponseHeader response;
         response.setStatusLine(statusCode);
-        emit receivedResponse(job);
+        job->setResponse(response);
+        emit q->started(job);
         if (!data.isEmpty())
-            emit receivedData(job, data);
+            emit q->data(job, data);
     }
-    emit receivedFinished(job, error);
+    emit q->finished(job, error);
 }
 
-void FileLoader::parseDataUrl(QWebNetworkJob* job)
+void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
 {
     QByteArray data = job->url().toString().toLatin1();
     //qDebug() << "handling data url:" << data; 
@@ -612,14 +444,182 @@ void FileLoader::parseDataUrl(QWebNetworkJob* job)
     response.setContentLength(data.size());
     job->setResponse(response);
 
-    sendData(job, statusCode, data);
+    sendFileData(job, statusCode, data);
+}
+
+void QWebNetworkInterfacePrivate::addHttpJob(QWebNetworkJob *job)
+{
+    HostInfo hostInfo(job->url());
+    WebCoreHttp *httpConnection = m_hostMapping.value(hostInfo);
+    if (!httpConnection) {
+        // #### fix custom ports
+        DEBUG() << "   new connection to" << hostInfo.host << hostInfo.port;
+        httpConnection = new WebCoreHttp(q, hostInfo);
+        QObject::connect(httpConnection, SIGNAL(connectionClosed(const WebCore::HostInfo&)),
+                         q, SLOT(httpConnectionClosed(const WebCore::HostInfo&)));
+
+        m_hostMapping[hostInfo] = httpConnection;
+    }
+    httpConnection->request(job);
+}
+
+void QWebNetworkInterfacePrivate::httpConnectionClosed(const WebCore::HostInfo &info)
+{
+    WebCoreHttp *connection = m_hostMapping.take(info);
+    delete connection;
+}
+
+/*!
+  \class QWebNetworkInterface
+
+  The QWebNetworkInterface class provides an abstraction layer for
+  WebKit's network interface.  It allows to completely replace or
+  extend the builtin network layer.
+
+  QWebNetworkInterface contains two virtual methods, addJob and
+  cancelJob that have to be reimplemented when implementing your own
+  networking layer.
+
+  QWebNetworkInterface can by default handle the http, https, file and
+  data URI protocols.
+  
+*/
+
+/*!
+  Sets a new default interface that will be used by all of WebKit
+  for downloading data from the internet.
+*/
+void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInterface)
+{
+    if (default_interface == defaultInterface)
+        return;
+    if (default_interface)
+        delete default_interface;
+    default_interface = defaultInterface;
+}
+
+/*!
+  Returns the default interface that will be used by WebKit. If no
+  default interface has been set, QtWebkit will create an instance of
+  QWebNetworkInterface to do the work.
+*/
+QWebNetworkInterface *QWebNetworkInterface::defaultInterface()
+{
+    if (!default_interface)
+        setDefaultInterface(new QWebNetworkInterface);
+    return default_interface;
 }
 
 
+/*!
+  Constructs a QWebNetworkInterface object.
+*/
+QWebNetworkInterface::QWebNetworkInterface(QObject *parent)
+    : QObject(parent)
+{
+    d = new QWebNetworkInterfacePrivate;
+    d->q = this;
+
+    if (!manager)
+        manager = new QWebNetworkManager;
+
+    QObject::connect(this, SIGNAL(started(QWebNetworkJob*)),
+                     manager, SLOT(started(QWebNetworkJob*)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(data(QWebNetworkJob*, const QByteArray &)),
+                     manager, SLOT(data(QWebNetworkJob*, const QByteArray &)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(finished(QWebNetworkJob*, int)),
+                     manager, SLOT(finished(QWebNetworkJob*, int)), Qt::QueuedConnection);
+}
+
+/*!
+  Destructs the QWebNetworkInterface object.
+*/
+QWebNetworkInterface::~QWebNetworkInterface()
+{
+    delete d;
+}
+
+/*!
+  This virtual method gets called whenever QtWebkit needs to add a
+  new job to download.
+
+  The QWebNetworkInterface should process this job, by first emitting
+  the started signal, then emitting data repeatedly as new data for
+  the Job is available, and finally ending the job with emitting a
+  finished signal.
+
+  After the finished signal has been emitted, the QWebNetworkInterface
+  is not allowed to access the job anymore.
+*/
+void QWebNetworkInterface::addJob(QWebNetworkJob *job)
+{
+    QString protocol = job->url().scheme();
+    if (protocol == QLatin1String("http")) {
+        //DEBUG() << "networkRequest";
+        d->addHttpJob(job);
+        return;
+    }
+
+    // "file", "data" and all unhandled stuff go through here
+    //DEBUG() << "fileRequest";
+    DEBUG() << "FileLoader::request" << job->url();
+
+    if (job->cancelled()) {
+        d->sendFileData(job, 400, QByteArray());
+        return;
+    }
+
+    QUrl url = job->url();
+    if (protocol == QLatin1String("data")) {
+        d->parseDataUrl(job);
+        return;
+    }
+
+    int statusCode = 200;
+    QByteArray data;
+    if (!(protocol.isEmpty() || protocol == QLatin1String("file"))) {
+        statusCode = 404;
+    } else if (job->postData().isEmpty()) {
+        QFile f(url.path());
+        DEBUG() << "opening" << QString(url.path());
+
+        if (f.open(QIODevice::ReadOnly)) {
+            QHttpResponseHeader response;
+            response.setStatusLine(200);
+            job->setResponse(response);
+            data = f.readAll();
+        } else {
+            statusCode = 404;
+        }
+    } else {
+        statusCode = 404;
+    }
+    d->sendFileData(job, statusCode, data);
+}
+
+/*!
+  This virtual method gets called whenever QtWebkit needs to cancel a
+  new job.
+
+  The QWebNetworkInterface acknowledge the canceling of the job, by
+  emitting the finished signal with an error code of 1. After emitting
+  the finished signal, the interface should not access the job
+  anymore.
+*/
+void QWebNetworkInterface::cancelJob(QWebNetworkJob *job)
+{
+    QString protocol = job->url().scheme();
+    if (protocol == QLatin1String("http")) {
+        WebCoreHttp *httpConnection = d->m_hostMapping.value(job->url());
+        if (httpConnection)
+            httpConnection->cancel(job);
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
-WebCoreHttp::WebCoreHttp(NetworkLoader* parent, const HostInfo &hi)
+WebCoreHttp::WebCoreHttp(QWebNetworkInterface* parent, const HostInfo &hi)
     : info(hi),
-      m_loader(parent),
+      m_networkInterface(parent),
       m_inCancel(false)
 {
     for (int i = 0; i < 2; ++i) {
@@ -663,7 +663,7 @@ void WebCoreHttp::scheduleNextRequest()
     while (!job && !m_pendingRequests.isEmpty()) {
         job = m_pendingRequests.takeFirst();
         if (job->cancelled()) {
-            emit m_loader->receivedFinished(job, 1);
+            emit m_networkInterface->finished(job, 1);
             job = 0;
         }
     }
@@ -704,7 +704,7 @@ void WebCoreHttp::onResponseHeaderReceived(const QHttpResponseHeader &resp)
 
     job->setResponse(resp);
 
-    emit m_loader->receivedResponse(job);
+    emit m_networkInterface->started(job);
 }
 
 void WebCoreHttp::onReadyRead()
@@ -717,7 +717,7 @@ void WebCoreHttp::onReadyRead()
     QByteArray data;
     data.resize(http->bytesAvailable());
     http->read(data.data(), data.length());
-    emit m_loader->receivedData(req, data);
+    emit m_networkInterface->data(req, data);
 }
 
 void WebCoreHttp::onRequestFinished(int, bool error)
@@ -738,9 +738,9 @@ void WebCoreHttp::onRequestFinished(int, bool error)
         QByteArray data;
         data.resize(http->bytesAvailable());
         http->read(data.data(), data.length());
-        emit m_loader->receivedData(req, data);
+        emit m_networkInterface->data(req, data);
     }
-    emit m_loader->receivedFinished(req, error ? 1 : 0);
+    emit m_networkInterface->finished(req, error ? 1 : 0);
 
     connection[c].current = 0;
     scheduleNextRequest();
@@ -770,7 +770,7 @@ void WebCoreHttp::cancel(QWebNetworkJob* request)
     m_inCancel = false;
 
     if (doEmit)
-        emit m_loader->receivedFinished(request, 1);
+        emit m_networkInterface->finished(request, 1);
 
     if (m_pendingRequests.isEmpty()
         && !connection[0].current && !connection[1].current)
@@ -788,58 +788,6 @@ HostInfo::HostInfo(const QUrl& url)
         else if (protocol == QLatin1String("https"))
             port = 443;
     }
-}
-
-
-uint qHash(const HostInfo &info)
-{
-    return qHash(info.host) + info.port;
-}
-
-static bool operator==(const HostInfo &i1, const HostInfo &i2)
-{
-    return i1.port == i2.port && i1.host == i2.host;
-}
-
-
-NetworkLoader::NetworkLoader(QObject *parent)
-    : QObject(parent)
-{
-}
-
-NetworkLoader::~NetworkLoader()
-{
-}
-
-void NetworkLoader::request(QWebNetworkJob* job)
-{
-    DEBUG() << "NetworkLoader::request";
-    HostInfo hostInfo(job->url());
-    WebCoreHttp *httpConnection = m_hostMapping.value(hostInfo);
-    if (!httpConnection) {
-        // #### fix custom ports
-        DEBUG() << "   new connection to" << hostInfo.host << hostInfo.port;
-        httpConnection = new WebCoreHttp(this, hostInfo);
-        connect(httpConnection, SIGNAL(connectionClosed(const HostInfo&)),
-                this, SLOT(connectionClosed(const HostInfo&)));
-
-        m_hostMapping[hostInfo] = httpConnection;
-    }
-    httpConnection->request(job);
-}
-void NetworkLoader::connectionClosed(const HostInfo& info)
-{
-    DEBUG() << "Disconnected";
-    WebCoreHttp *connection = m_hostMapping.take(info);
-    delete connection;
-}
-
-void NetworkLoader::cancel(QWebNetworkJob* job)
-{
-    DEBUG() << "NetworkLoader::cancel";
-    WebCoreHttp *httpConnection = m_hostMapping.value(job->url());
-    if (httpConnection)
-        httpConnection->cancel(job);
 }
 
 #include "qwebnetworkinterface_p.moc"

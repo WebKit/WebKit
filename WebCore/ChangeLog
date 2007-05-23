@@ -1,3 +1,14 @@
+2007-05-23  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack, discussed also with Lars.
+
+        Make it possible to have per-QWebPage network interface
+        implementations.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start): Pass the page's network interface to
+        the network manager.
+
 2007-05-23  Rob Buis  <buis@kde.org>
 
         Reviewed by Dave Hyatt.
