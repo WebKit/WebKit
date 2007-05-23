@@ -1,3 +1,16 @@
+2007-05-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=13801
+        Crash when loading nonexisting symbol
+
+        * svg/custom/use-referencing-nonexisting-symbol-expected.checksum: Added.
+        * svg/custom/use-referencing-nonexisting-symbol-expected.png: Added.
+        * svg/custom/use-referencing-nonexisting-symbol-expected.txt: Added.
+        * svg/custom/use-referencing-nonexisting-symbol.svg: Added.
+
 2007-05-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.

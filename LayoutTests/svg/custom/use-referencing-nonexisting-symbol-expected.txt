@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (5,2) size 59x69
+      RenderSVGContainer {use} at (5,2) size 59x69
+        RenderSVGContainer {g} at (5,2) size 59x69
+          RenderSVGContainer {svg} at (146.88,18.75) size 553.12x646.88
+            RenderPath {rect} at (146.88,46.88) size 553.12x553.12 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,5.00L64.00,5.00L64.00,64.00L5.00,64.00"]
+            RenderSVGText {text} at (17,56) size 800x69
+              RenderSVGInlineText {#text} at (0,-54) size 43x69
+                text run at (0,-54) width 43: "A"

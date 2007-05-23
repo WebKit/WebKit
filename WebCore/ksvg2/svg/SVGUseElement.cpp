@@ -239,10 +239,9 @@ void SVGUseElement::buildPendingResource()
     String id = SVGURIReference::getTarget(href());
     Element* targetElement = ownerDocument()->getElementById(id); 
     SVGElement* target = svg_dynamic_cast(targetElement);
-    ASSERT(target);
 
     // Do not allow self-referencing.
-    if (target == this)
+    if (!target || target == this)
         return;
 
     // Why a seperated instance/shadow tree? SVG demands it:

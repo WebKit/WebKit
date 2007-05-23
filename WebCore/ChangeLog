@@ -1,3 +1,15 @@
+2007-05-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13801
+        Crash when loading nonexisting symbol
+
+        Check for referenced element and when not found just return.
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+
 2007-05-22  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Adam.
