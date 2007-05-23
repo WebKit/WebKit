@@ -879,6 +879,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     // high-priority properties first, i.e., those properties that other properties depend on.
     // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
     // and (4) normal important.
+    m_lineHeightValue = 0;
     applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
     if (!resolveForRootDefault) {
         applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
@@ -889,7 +890,11 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     // If our font got dirtied, go ahead and update it now.
     if (fontDirty)
         updateFont();
-    
+
+    // Line-height is set when we are sure we decided on the font-size
+    if (m_lineHeightValue)
+        applyProperty(CSS_PROP_LINE_HEIGHT, m_lineHeightValue);
+
     // Now do the normal priority UA properties.
     applyDeclarations(false, false, firstUARule, lastUARule);
     
@@ -949,6 +954,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
         parentStyle = style;
     style->noninherited_flags._styleType = pseudoStyle;
     
+    m_lineHeightValue = 0;
     // High-priority properties.
     applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
     applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
@@ -958,6 +964,10 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     // If our font got dirtied, go ahead and update it now.
     if (fontDirty)
         updateFont();
+
+    // Line-height is set when we are sure we decided on the font-size
+    if (m_lineHeightValue)
+        applyProperty(CSS_PROP_LINE_HEIGHT, m_lineHeightValue);
     
     // Now do the normal priority properties.
     applyDeclarations(false, false, firstUARule, lastUARule);
@@ -1751,6 +1761,10 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
             if (isImportant == current.isImportant()) {
                 bool first;
                 switch(current.id()) {
+                    case CSS_PROP_LINE_HEIGHT:
+                        m_lineHeightValue = current.value();
+                        first = !applyFirst; // we apply line-height later
+                        break;
                     case CSS_PROP_COLOR:
                     case CSS_PROP_DIRECTION:
                     case CSS_PROP_DISPLAY:
@@ -1769,7 +1783,6 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                         first = false;
                         break;
                 }
-                
                 if (first == applyFirst)
                     applyProperty(current.id(), current.value());
             }
@@ -3515,16 +3528,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit) {
             FontDescription fontDescription = parentStyle->fontDescription();
             style->setLineHeight(parentStyle->lineHeight());
+            m_lineHeightValue = 0;
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
         } else if (isInitial) {
             FontDescription fontDescription;
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
             style->setLineHeight(RenderStyle::initialLineHeight());
+            m_lineHeightValue = 0;
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
         } else if (primitiveValue) {
             style->setLineHeight(RenderStyle::initialLineHeight());
+            m_lineHeightValue = 0;
             FontDescription fontDescription;
             theme()->systemFont(primitiveValue->getIdent(), fontDescription);
             // Double-check and see if the theme did anything.  If not, don't bother updating the font.
@@ -3544,13 +3560,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             applyProperty(CSS_PROP_FONT_WEIGHT, font->weight.get());
             applyProperty(CSS_PROP_FONT_SIZE, font->size.get());
 
-            // Line-height can depend on font().pixelSize(), so we have to update the font
-            // before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
-            // good enough: style="font:1em/1em; font-size:36px" should have a line-height of 36px.
-            if (fontDirty)
-                CSSStyleSelector::style->font().update();
-            
-            applyProperty(CSS_PROP_LINE_HEIGHT, font->lineHeight.get());
+            m_lineHeightValue = font->lineHeight.get();
             applyProperty(CSS_PROP_FONT_FAMILY, font->family.get());
         }
         return;

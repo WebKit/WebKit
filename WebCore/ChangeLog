@@ -1,3 +1,20 @@
+2007-05-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by Dave Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13174
+        line-height in font shorthand does not override a previously stated line-height property
+
+        Make sure line-height is calculated against definite font-size and
+        uses the last set line-height, ie. directly or through font shorthand.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/cssstyleselector.h:
+
 2007-05-23  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack and Valgrind

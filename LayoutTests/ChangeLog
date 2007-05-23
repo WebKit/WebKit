@@ -1,5 +1,26 @@
 2007-05-23  Rob Buis  <buis@kde.org>
 
+        Reviewed by Dave Hyatt.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=13174
+        line-height in font shorthand does not override a previously stated line-height property
+
+        The two changed results are improvements.
+
+        * css1/font_properties/font-expected.checksum:
+        * css1/font_properties/font-expected.png:
+        * css1/font_properties/font-expected.txt:
+        * fast/css/line-height-font-order-expected.checksum: Added.
+        * fast/css/line-height-font-order-expected.png: Added.
+        * fast/css/line-height-font-order-expected.txt: Added.
+        * fast/css/line-height-font-order.html: Added.
+        * tables/mozilla/bugs/bug83786-expected.checksum:
+        * tables/mozilla/bugs/bug83786-expected.png:
+        * tables/mozilla/bugs/bug83786-expected.txt:
+
+2007-05-23  Rob Buis  <buis@kde.org>
+
         Reviewed by Darin.
 
         Test for:
