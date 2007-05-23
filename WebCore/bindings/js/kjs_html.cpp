@@ -111,24 +111,9 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 }
 
 /*
-
 @begin JSHTMLElementPrototypeTable 0
 @end
-
-@begin HTMLElementTable 14
-  id            KJS::JSHTMLElement::ElementId     DontDelete
-  lang          KJS::JSHTMLElement::ElementLang   DontDelete
-  dir           KJS::JSHTMLElement::ElementDir    DontDelete
-### isn't this "class" in the HTML spec?
-  className     KJS::JSHTMLElement::ElementClassName DontDelete
-  innerHTML     KJS::JSHTMLElement::ElementInnerHTML DontDelete
-  innerText     KJS::JSHTMLElement::ElementInnerText DontDelete
-  outerHTML     KJS::JSHTMLElement::ElementOuterHTML DontDelete
-  outerText     KJS::JSHTMLElement::ElementOuterText DontDelete
-# IE extension
-  children      KJS::JSHTMLElement::ElementChildren  DontDelete|ReadOnly
-  contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
-  isContentEditable KJS::JSHTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
+@begin HTMLElementTable 0
 @end
 @begin HTMLObjectElementTable 20
   form            KJS::JSHTMLElement::ObjectForm            DontDelete|ReadOnly
@@ -333,37 +318,7 @@ JSValue *JSHTMLElement::frameSetGetter(ExecState* exec, int token) const
 
 JSValue *JSHTMLElement::getValueProperty(ExecState* exec, int token) const
 {
-    // Check our set of generic properties first.
-    HTMLElement &element = *static_cast<HTMLElement*>(impl());
-    switch (token) {
-        case ElementId:
-            // iht.com relies on this value being "" when no id is present. Other browsers do this as well.
-            // So we use jsString() instead of jsStringOrNull() here.
-            return jsString(element.id());
-        case ElementLang:
-            return jsString(element.lang());
-        case ElementDir:
-            return jsString(element.dir());
-        case ElementClassName:
-            return jsString(element.className());
-        case ElementInnerHTML:
-            return jsString(element.innerHTML());
-        case ElementInnerText:
-            impl()->document()->updateLayoutIgnorePendingStylesheets();
-            return jsString(element.innerText());
-        case ElementOuterHTML:
-            return jsString(element.outerHTML());
-        case ElementOuterText:
-            return jsString(element.outerText());
-        case ElementChildren:
-            return getHTMLCollection(exec, element.children().get());
-        case ElementContentEditable:
-            return jsString(element.contentEditable());
-        case ElementIsContentEditable:
-            return jsBoolean(element.isContentEditable());
-    }
-
-    // Now check the properties specific to our element type.
+    // Check the properties specific to our element type.
     const Accessors* access = accessors();
     if (access && access->m_getter)
         return (this->*(access->m_getter))(exec, token);
@@ -526,41 +481,7 @@ void JSHTMLElement::frameSetSetter(ExecState* exec, int token, JSValue* value)
 
 void JSHTMLElement::putValueProperty(ExecState* exec, int token, JSValue *value, int)
 {
-    DOMExceptionTranslator exception(exec);
- 
-    // Check our set of generic properties first.
-    HTMLElement &element = *static_cast<HTMLElement*>(impl());
-    switch (token) {
-        case ElementId:
-            element.setId(valueToStringWithNullCheck(exec, value));
-            return;
-        case ElementLang:
-            element.setLang(valueToStringWithNullCheck(exec, value));
-            return;
-        case ElementDir:
-            element.setDir(valueToStringWithNullCheck(exec, value));
-            return;
-        case ElementClassName:
-            element.setClassName(valueToStringWithNullCheck(exec, value));
-            return;
-        case ElementInnerHTML:
-            element.setInnerHTML(valueToStringWithNullCheck(exec, value), exception);
-            return;
-        case ElementInnerText:
-            element.setInnerText(valueToStringWithNullCheck(exec, value), exception);
-            return;
-        case ElementOuterHTML:
-            element.setOuterHTML(valueToStringWithNullCheck(exec, value), exception);
-            return;
-        case ElementOuterText:
-            element.setOuterText(valueToStringWithNullCheck(exec, value), exception);
-            return;
-        case ElementContentEditable:
-            element.setContentEditable(valueToStringWithNullCheck(exec, value));
-            return;
-    }
-
-    // Now check for properties that apply to a specific element type.
+    // Check for properties that apply to a specific element type.
     const Accessors* access = accessors();
     if (access && access->m_setter)
         return (this->*(access->m_setter))(exec, token, value);

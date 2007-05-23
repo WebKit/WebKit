@@ -79,11 +79,7 @@ namespace KJS {
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
            ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument, ObjectGetSVGDocument,
            EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth, EmbedGetSVGDocument,
-           FrameSetCols, FrameSetRows, 
-           GetContext,
-           ElementInnerHTML, ElementId, ElementDir, ElementLang,
-           ElementClassName, ElementInnerText, ElementChildren, ElementContentEditable,
-           ElementIsContentEditable, ElementOuterHTML, ElementOuterText
+           FrameSetCols, FrameSetRows
     };
   private:
     static JSValue* framesetNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);

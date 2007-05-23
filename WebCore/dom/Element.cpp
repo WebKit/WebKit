@@ -1030,12 +1030,13 @@ void Element::stopUpdateFocusAppearanceTimer()
 
 String Element::innerText() const
 {
+    // We need to update layout, since plainText uses line boxes in the render tree.
+    document()->updateLayoutIgnorePendingStylesheets();
+
     if (!renderer())
         return textContent(true);
 
-    // We need to update layout, since plainText uses line boxes in the render tree.
-    document()->updateLayoutIgnorePendingStylesheets();
-    return plainText(rangeOfContents(const_cast<Element *>(this)).get());
+    return plainText(rangeOfContents(const_cast<Element*>(this)).get());
 }
 
 String Element::outerText() const

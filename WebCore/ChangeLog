@@ -1,3 +1,20 @@
+2007-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Part one of patch for http://bugs.webkit.org/show_bug.cgi?id=13830
+        Auto-generate JS DOM bindings for HTMLDocument and most of the rest
+        of HTMLElement
+
+        - Just the HTMLElement part.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::getValueProperty):
+        (KJS::JSHTMLElement::putValueProperty):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * html/HTMLElement.idl:
+
 2007-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
