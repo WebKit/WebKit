@@ -1,3 +1,19 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        http://bugs.webkit.org/show_bug.cgi?id=13804
+        REGRESSION(r21611): Several new layout test pixel failures (misspelling markers)
+
+        * editing/selection/13804-expected.checksum: Added.
+        * editing/selection/13804-expected.png: Added.
+        * editing/selection/13804-expected.txt: Added.
+        * editing/selection/13804.html: Added.
+        These were missing:
+        * editing/selection/5076323-1-expected.png: Added.
+        * editing/selection/5076323-2-expected.png: Added.
+        * editing/selection/5076323-3-expected.png: Added.
+
 2007-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

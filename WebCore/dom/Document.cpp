@@ -2768,16 +2768,15 @@ void Document::removeMarkers(Range* range, DocumentMarker::MarkerType markerType
 
     ExceptionCode ec = 0;
     Node* startContainer = range->startContainer(ec);
-    int startOffset = range->startOffset(ec);
     Node* endContainer = range->endContainer(ec);
-    int endOffset = range->endOffset(ec);
 
     Node* pastEndNode = range->pastEndNode();
-    for (Node* node = range->startNode(); node != pastEndNode; node = node->traverseNextNode())
-        removeMarkers(node,
-            node == startContainer ? startOffset : 0,
-            node == endContainer ? endOffset : INT_MAX,
-            markerType);
+    for (Node* node = range->startNode(); node != pastEndNode; node = node->traverseNextNode()) {
+        int startOffset = node == startContainer ? range->startOffset(ec) : 0;
+        int endOffset = node == endContainer ? range->endOffset(ec) : INT_MAX;
+        int length = endOffset - startOffset;
+        removeMarkers(node, startOffset, length, markerType);
+    }
 }
 
 // Markers are stored in order sorted by their location.
@@ -2891,12 +2890,12 @@ void Document::removeMarkers(Node* node, unsigned startOffset, int length, Docum
     Vector<IntRect>& rects = vectorPair->second;
     ASSERT(markers.size() == rects.size());
     bool docDirty = false;
-    unsigned endOffset = startOffset + length - 1;
+    unsigned endOffset = startOffset + length;
     for (size_t i = 0; i < markers.size();) {
         DocumentMarker marker = markers[i];
 
         // markers are returned in order, so stop if we are now past the specified range
-        if (marker.startOffset > endOffset)
+        if (marker.startOffset >= endOffset)
             break;
         
         // skip marker that is wrong type or before target

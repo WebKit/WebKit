@@ -1,3 +1,23 @@
+2007-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin, who found the fix independently.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13804
+        REGRESSION(r21611): Several new layout test pixel failures (misspelling markers)
+        
+        r21611 exposed a bug in the way removeMarkers computes
+        the end of the range to remove markers from.  It also
+        introduced a bug: removeMarkers expects a startOffset
+        and a length, not a startOffset and an endOffset (added 
+        a layout test).
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeMarkers): The other removeMarkers
+        expects a startOffset and a length, not a startOffset and
+        an endOffset.
+        (WebCore::Document::removeMarkers): Fixed the endOffset
+        from length and startOffset calculation.
+
 2007-05-22  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13802, background colors can't be reset to default
