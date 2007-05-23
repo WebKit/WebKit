@@ -1,5 +1,29 @@
 2007-05-23  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack
+
+        Don't do HTTP downloads in a second thread. Simplifies
+        the code significantly and fixes crashes on some
+        Web pages.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkInterface::QWebNetworkInterface):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (LoaderThread::LoaderThread):
+        (LoaderThread::run):
+        (WebCoreHttp::cancel):
+        (NetworkLoader::NetworkLoader):
+        (NetworkLoader::request):
+        (NetworkLoader::cancel):
+        * Api/qwebnetworkinterface_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveContentLength):
+
+2007-05-23  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Simon.
 
         * Api/qwebnetworkinterface.cpp:

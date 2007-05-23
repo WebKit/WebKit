@@ -67,8 +67,6 @@ public slots:
     void finished(QWebNetworkJob *, int errorCode);
 
 signals:
-    void networkRequest(QWebNetworkJob*);
-    void networkCancel(QWebNetworkJob*);
     void fileRequest(QWebNetworkJob*);
 
 private:
@@ -82,17 +80,12 @@ namespace WebCore {
     class LoaderThread : public QThread {
         Q_OBJECT
     public:
-        enum Type {
-            Network,
-            File
-        };
-        LoaderThread(QWebNetworkInterface *manager, Type type);
+        LoaderThread(QWebNetworkInterface *manager);
 
         void waitForSetup() { while (!m_setup); }
     protected:
         void run();
     private:
-        Type m_type;
         QObject* m_loader;
         QWebNetworkInterface* m_manager;
         volatile bool m_setup;
@@ -136,7 +129,7 @@ namespace WebCore {
         void request(QWebNetworkJob* resource);
         void cancel(QWebNetworkJob*);
 
-        signals:
+    signals:
         void connectionClosed(const HostInfo &);
 
              private slots:
@@ -153,7 +146,7 @@ namespace WebCore {
         HostInfo info;
     private:
         NetworkLoader* m_loader;
-        QList<QWebNetworkJob*> m_pendingRequests;
+        QList<QWebNetworkJob *> m_pendingRequests;
         struct HttpConnection {
             QHttp *http;
             QWebNetworkJob *current;
@@ -165,7 +158,7 @@ namespace WebCore {
     class NetworkLoader : public QObject {
         Q_OBJECT
     public:
-        NetworkLoader();
+        NetworkLoader(QObject *parent);
         ~NetworkLoader();
 
 
@@ -174,7 +167,7 @@ namespace WebCore {
         void cancel(QWebNetworkJob*);
         void connectionClosed(const HostInfo &);
 
-        signals:
+    signals:
         void receivedResponse(QWebNetworkJob* resource);
         void receivedData(QWebNetworkJob* resource, const QByteArray &data);
         void receivedFinished(QWebNetworkJob* resource, int errorCode);
@@ -188,7 +181,7 @@ namespace WebCore {
 class QWebNetworkInterfacePrivate
 {
 public:
-    WebCore::LoaderThread *networkLoader;
+    WebCore::NetworkLoader *networkLoader;
     WebCore::LoaderThread *fileLoader;
 };
 

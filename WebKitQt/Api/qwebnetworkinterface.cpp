@@ -189,7 +189,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle)
 
     KURL url = handle->url();
     QUrl qurl = QString(url.url());
-    qDebug() << QString(url.path() + url.query());
+    //qDebug() << QString(url.path() + url.query());
     job->d->request = QHttpRequestHeader(handle->method(), url.path() + url.query());
     job->d->request.setValue(QLatin1String("User-Agent"),
                              QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
@@ -220,7 +220,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle)
         qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.toString()));
     }
 
-    qDebug() << "QWebNetworkManager::add:" <<  job->d->request.toString();
+    DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.toString();
 
     default_interface->addJob(job);
     
@@ -414,13 +414,17 @@ QWebNetworkInterface::QWebNetworkInterface()
     d = new QWebNetworkInterfacePrivate;
     if (!manager)
         manager = new QWebNetworkManager;
-    d->fileLoader = new LoaderThread(this, LoaderThread::File);
+    d->fileLoader = new LoaderThread(this);
     d->fileLoader->start();
-    d->networkLoader = new LoaderThread(this, LoaderThread::Network);
-    d->networkLoader->start();
-
     d->fileLoader->waitForSetup();
-    d->networkLoader->waitForSetup();
+
+    d->networkLoader = new NetworkLoader(this);
+    connect(d->networkLoader, SIGNAL(receivedResponse(QWebNetworkJob*)),
+            this, SIGNAL(started(QWebNetworkJob*)));
+    connect(d->networkLoader, SIGNAL(receivedData(QWebNetworkJob*, QByteArray)),
+            this, SIGNAL(data(QWebNetworkJob*, QByteArray)));
+    connect(d->networkLoader, SIGNAL(receivedFinished(QWebNetworkJob*, int)),
+            this, SIGNAL(finished(QWebNetworkJob*, int)));
 }
 
 /*!
@@ -445,16 +449,16 @@ QWebNetworkInterface::~QWebNetworkInterface()
 */
 void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 {
-    job->ref();
     QString protocol = job->url().scheme();
     if (protocol == QLatin1String("http")) {
         //DEBUG() << "networkRequest";
-        emit manager->networkRequest(job);
+        d->networkLoader->request(job);
         return;
     }
 
     // "file", "data" and all unhandled stuff go through here
     //DEBUG() << "fileRequest";
+    job->ref();
     emit manager->fileRequest(job);
 }
 
@@ -470,36 +474,23 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 void QWebNetworkInterface::cancelJob(QWebNetworkJob *job)
 {
     QString protocol = job->url().scheme();
-    if (protocol == QLatin1String("http")) {
-        job->ref();
-        emit manager->networkCancel(job);
-    }
+    if (protocol == QLatin1String("http")) 
+        d->networkLoader->cancel(job);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-LoaderThread::LoaderThread(QWebNetworkInterface *manager, Type type)
-    : QThread(manager), m_type(type), m_loader(0), m_manager(manager), m_setup(false)
+LoaderThread::LoaderThread(QWebNetworkInterface *manager)
+    : QThread(manager), m_loader(0), m_manager(manager), m_setup(false)
 {
 }
 
 void LoaderThread::run()
 {
-    switch (m_type) {
-    case Network:
-        m_loader = new NetworkLoader;
-        connect(manager, SIGNAL(networkRequest(QWebNetworkJob*)),
-                m_loader, SLOT(request(QWebNetworkJob*)));
-        connect(manager, SIGNAL(networkCancel(QWebNetworkJob*)),
-                m_loader, SLOT(cancel(QWebNetworkJob*)));
-        break;
-    case File:
-        m_loader = new FileLoader;
-        connect(manager, SIGNAL(fileRequest(QWebNetworkJob*)),
-                m_loader, SLOT(request(QWebNetworkJob*)));
-        break;
-    }
+    m_loader = new FileLoader;
+    connect(manager, SIGNAL(fileRequest(QWebNetworkJob*)),
+            m_loader, SLOT(request(QWebNetworkJob*)));
     connect(m_loader, SIGNAL(receivedResponse(QWebNetworkJob*)),
             m_manager, SIGNAL(started(QWebNetworkJob*)));
     connect(m_loader, SIGNAL(receivedData(QWebNetworkJob*, QByteArray)),
@@ -774,7 +765,8 @@ void WebCoreHttp::cancel(QWebNetworkJob* request)
             doEmit = false;
         }
     }
-    m_pendingRequests.removeAll(request);
+    if (!m_pendingRequests.removeAll(request))
+        doEmit = false;
     m_inCancel = false;
 
     if (doEmit)
@@ -810,8 +802,8 @@ static bool operator==(const HostInfo &i1, const HostInfo &i2)
 }
 
 
-NetworkLoader::NetworkLoader()
-    : QObject(0)
+NetworkLoader::NetworkLoader(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -821,8 +813,6 @@ NetworkLoader::~NetworkLoader()
 
 void NetworkLoader::request(QWebNetworkJob* job)
 {
-    if (!job->deref())
-        return;
     DEBUG() << "NetworkLoader::request";
     HostInfo hostInfo(job->url());
     WebCoreHttp *httpConnection = m_hostMapping.value(hostInfo);
@@ -850,7 +840,6 @@ void NetworkLoader::cancel(QWebNetworkJob* job)
     WebCoreHttp *httpConnection = m_hostMapping.value(job->url());
     if (httpConnection)
         httpConnection->cancel(job);
-    job->deref();
 }
 
 #include "qwebnetworkinterface_p.moc"
