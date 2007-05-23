@@ -1,3 +1,61 @@
+2007-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Part two of patch for http://bugs.webkit.org/show_bug.cgi?id=13830
+        Auto-generate JS DOM bindings for HTMLDocument and most of the rest
+        of HTMLElement
+
+        - Just the HTMLDocument part.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLDocumentCustom.cpp: Added.
+        (WebCore::JSHTMLDocument::canGetItemsForName):
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::JSHTMLDocument::all):
+        (WebCore::JSHTMLDocument::setAll):
+        (WebCore::JSHTMLDocument::location):
+        (WebCore::JSHTMLDocument::setLocation):
+        (WebCore::JSHTMLDocument::open):
+        (WebCore::writeHelper):
+        (WebCore::JSHTMLDocument::write):
+        (WebCore::JSHTMLDocument::writeln):
+        (WebCore::JSHTMLDocument::clear):
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_html.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/scripts/CodeGeneratorJS.pm: Add [Deletable] property
+        for Document.all and fix HasOverridingNameGetter to allow correct
+        prototype chain
+        * dom/Document.cpp:
+        (WebCore::Document::plugins): adds alias to embeds() for bindings
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::width):
+        (WebCore::HTMLDocument::height):
+        (WebCore::HTMLDocument::dir):
+        (WebCore::HTMLDocument::setDir):
+        (WebCore::HTMLDocument::designMode):
+        (WebCore::HTMLDocument::setDesignMode):
+        (WebCore::HTMLDocument::bgColor):
+        (WebCore::HTMLDocument::setBgColor):
+        (WebCore::HTMLDocument::fgColor):
+        (WebCore::HTMLDocument::setFgColor):
+        (WebCore::HTMLDocument::alinkColor):
+        (WebCore::HTMLDocument::setAlinkColor):
+        (WebCore::HTMLDocument::linkColor):
+        (WebCore::HTMLDocument::setLinkColor):
+        (WebCore::HTMLDocument::vlinkColor):
+        (WebCore::HTMLDocument::setVlinkColor):
+        (WebCore::HTMLDocument::captureEvents):
+        (WebCore::HTMLDocument::releaseEvents):
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.idl:
+
 2007-05-23  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5221838> REGRESSION (r21581): no content in idisk

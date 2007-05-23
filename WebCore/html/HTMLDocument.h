@@ -44,6 +44,29 @@ public:
 
     void setBody(HTMLElement*, ExceptionCode&);
 
+    int width() const;
+    int height() const;
+
+    String dir();
+    void setDir(const String&);
+
+    String designMode() const;
+    void setDesignMode(const String&);
+
+    String bgColor();
+    void setBgColor(const String&);
+    String fgColor();
+    void setFgColor(const String&);
+    String alinkColor();
+    void setAlinkColor(const String&);
+    String linkColor();
+    void setLinkColor(const String&);
+    String vlinkColor();
+    void setVlinkColor(const String&);
+
+    void captureEvents();
+    void releaseEvents();
+
     virtual Tokenizer* createTokenizer();
 
     virtual bool childAllowed(Node*);

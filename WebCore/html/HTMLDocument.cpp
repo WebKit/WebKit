@@ -61,6 +61,8 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
@@ -114,6 +116,168 @@ void HTMLDocument::setBody(HTMLElement* newBody, ExceptionCode& ec)
         documentElement()->appendChild(newBody, ec);
     else
         documentElement()->replaceChild(newBody, b, ec);
+}
+
+int HTMLDocument::width() const
+{
+    FrameView* frameView = view();
+    return frameView ? frameView->contentsWidth() : 0;
+}
+
+int HTMLDocument::height() const
+{
+    FrameView* frameView = view();
+    return frameView ? frameView->contentsHeight() : 0;
+}
+
+String HTMLDocument::dir()
+{
+    HTMLElement* b = body();
+    if (!b)
+        return String();
+    return b->dir();
+}
+
+void HTMLDocument::setDir(const String& value)
+{
+    HTMLElement* b = body();
+    if (b)
+        b->setDir(value);
+}
+
+String HTMLDocument::designMode() const
+{
+    return inDesignMode() ? "on" : "off";
+}
+
+void HTMLDocument::setDesignMode(const String& value)
+{
+    InheritedBool mode;
+    if (equalIgnoringCase(value, "on"))
+        mode = on;
+    else if (equalIgnoringCase(value, "off"))
+        mode = off;
+    else
+        mode = inherit;
+    Document::setDesignMode(mode);
+}
+
+String HTMLDocument::bgColor()
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (!bodyElement)
+        return String();
+    return bodyElement->bgColor();
+}
+
+void HTMLDocument::setBgColor(const String& value)
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (bodyElement)
+        bodyElement->setBgColor(value);
+}
+
+String HTMLDocument::fgColor()
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (!bodyElement)
+        return String();
+    return bodyElement->text();
+}
+
+void HTMLDocument::setFgColor(const String& value)
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (bodyElement)
+        bodyElement->setText(value);
+}
+
+String HTMLDocument::alinkColor()
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (!bodyElement)
+        return String();
+    return bodyElement->aLink();
+}
+
+void HTMLDocument::setAlinkColor(const String& value)
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (bodyElement) {
+        // This check is a bit silly, but some benchmarks like to set the
+        // document's link colors over and over to the same value and we
+        // don't want to incur a style update each time.
+        if (bodyElement->aLink() != value)
+            bodyElement->setALink(value);
+    }
+}
+
+String HTMLDocument::linkColor()
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (!bodyElement)
+        return String();
+    return bodyElement->link();
+}
+
+void HTMLDocument::setLinkColor(const String& value)
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (bodyElement) {
+        // This check is a bit silly, but some benchmarks like to set the
+        // document's link colors over and over to the same value and we
+        // don't want to incur a style update each time.
+        if (bodyElement->link() != value)
+            bodyElement->setLink(value);
+    }
+}
+
+String HTMLDocument::vlinkColor()
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (!bodyElement)
+        return String();
+    return bodyElement->vLink();
+}
+
+void HTMLDocument::setVlinkColor(const String& value)
+{
+    HTMLElement* b = body();
+    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(b) : 0;
+
+    if (bodyElement) {
+        // This check is a bit silly, but some benchmarks like to set the
+        // document's link colors over and over to the same value and we
+        // don't want to incur a style update each time.
+        if (bodyElement->vLink() != value)
+            bodyElement->setVLink(value);
+    }
+}
+
+void HTMLDocument::captureEvents()
+{
+}
+
+void HTMLDocument::releaseEvents()
+{
 }
 
 Tokenizer *HTMLDocument::createTokenizer()

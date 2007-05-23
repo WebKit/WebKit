@@ -3329,6 +3329,12 @@ PassRefPtr<HTMLCollection> Document::embeds()
     return new HTMLCollection(this, HTMLCollection::DocEmbeds);
 }
 
+PassRefPtr<HTMLCollection> Document::plugins()
+{
+    // This is an alias for embeds() required for the JS DOM bindings.
+    return new HTMLCollection(this, HTMLCollection::DocEmbeds);
+}
+
 PassRefPtr<HTMLCollection> Document::objects()
 {
     return new HTMLCollection(this, HTMLCollection::DocObjects);

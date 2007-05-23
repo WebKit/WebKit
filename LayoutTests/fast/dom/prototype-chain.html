@@ -36,6 +36,9 @@ function test()
     
     e = document.getElementById("div");
     printPrototypes(e);
+
+    e = document.createElement("form");
+    printPrototypes(e);
     
     e = document.createEvent("UIEvents");
     printPrototypes(e);

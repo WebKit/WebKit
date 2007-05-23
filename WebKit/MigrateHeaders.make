@@ -93,6 +93,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDirectoryElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDivElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDocument.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLDocumentPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLEmbedElement.h \

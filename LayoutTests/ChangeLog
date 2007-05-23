@@ -1,3 +1,17 @@
+2007-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Update tests for http://bugs.webkit.org/show_bug.cgi?id=13830
+        Auto-generate JS DOM bindings for HTMLDocument and most of 
+        the rest of HTMLElement
+
+        - Corrects prototype chain for JSHTMLDocument and adds test
+          for HTMLFormElement.
+
+        * fast/dom/prototype-chain-expected.txt:
+        * fast/dom/prototype-chain.html:
+
 2007-05-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by.

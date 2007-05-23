@@ -137,7 +137,7 @@ namespace KJS {
   JSValue* getRuntimeObject(ExecState*, WebCore::Node*);
   JSValue* toJS(ExecState*, PassRefPtr<WebCore::Node>);
   JSValue* toJS(ExecState*, WebCore::NamedNodeMap*);
-  JSValue* toJS(ExecState*, PassRefPtr<WebCore::NodeList>);
+  JSValue* toJS(ExecState*, WebCore::NodeList*);
   JSValue* toJS(ExecState*, WebCore::EventTarget*);
   JSObject* getNodeConstructor(ExecState*);
   JSObject* getDOMExceptionConstructor(ExecState*);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,11 +20,14 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLDocument, GenerateConstructor] HTMLDocument : Document {
-#if !defined(LANGUAGE_JAVASCRIPT)
+    interface [GenerateConstructor, HasOverridingNameGetter] HTMLDocument : Document {
                  attribute [ConvertNullToNullString] DOMString title;
         readonly attribute DOMString referrer;
+#if defined(LANGUAGE_JAVASCRIPT)
+                 attribute DOMString domain;
+#else
         readonly attribute DOMString domain;
+#endif
         readonly attribute DOMString URL;
                 
         // FIXME: the DOM spec does NOT have this attribute
@@ -43,17 +46,45 @@ module html {
                  attribute [ConvertNullToNullString] DOMString cookie
                      /*setter raises (DOMException)*/;
 
-        void               open();
-        void               close();
-        void               write(in DOMString text);
-        void               writeln(in DOMString text);
-        NodeList           getElementsByName(in DOMString elementName);
+        [Custom] void open();
+        void close();
+        [Custom] void write(in DOMString text);
+        [Custom] void writeln(in DOMString text);
+        NodeList getElementsByName(in DOMString elementName);
 
-        // non-standard
+        // Extensions
+        Element getElementById(in DOMString elementId);
 
-        Element            getElementById(in DOMString elementId);
+        readonly attribute HTMLCollection embeds;
+        readonly attribute HTMLCollection plugins;
+        readonly attribute HTMLCollection scripts;
+
+        readonly attribute DOMString lastModified;
+
+#if defined(LANGUAGE_JAVASCRIPT)
+        // FIXME: These should eventually be available (if they are wanted) for all languages.
+
+                 attribute [Custom, Deletable] HTMLCollection all;
+
+                 attribute [Custom] Window location;
+
+        [Custom] void clear();
 #endif
+
+        void captureEvents();
+        void releaseEvents();
+
+        readonly attribute long width;
+        readonly attribute long height;
+                 attribute [ConvertNullToNullString] DOMString dir;
+                 attribute [ConvertNullToNullString] DOMString designMode;
+
+        // Deprecated attributes
+                 attribute [ConvertNullToNullString] DOMString bgColor;
+                 attribute [ConvertNullToNullString] DOMString fgColor;
+                 attribute [ConvertNullToNullString] DOMString alinkColor;
+                 attribute [ConvertNullToNullString] DOMString linkColor;
+                 attribute [ConvertNullToNullString] DOMString vlinkColor;
     };
 
 }
-    

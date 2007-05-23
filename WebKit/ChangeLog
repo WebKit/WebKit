@@ -1,3 +1,14 @@
+2007-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13830
+        Auto-generate JS DOM bindings for HTMLDocument and most of the rest
+        of HTMLElement
+
+        * MigrateHeaders.make: add DOMHTMLDocumentPrivate.h
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-05-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006 Apple Computer, Inc.
+# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
 #
 # This file is part of the KDE project
 #
@@ -572,8 +572,10 @@ sub GenerateImplementation
                                        : WK_ucfirst($attribute->signature->name) . "AttrNum");
             push(@hashValues, $value);
 
-            my $special = "DontDelete";
-            $special .= "|ReadOnly" if ($attribute->type =~ /readonly/);
+            my @specials = ();
+            push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
+            push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
+            my $special = (@specials > 0) ? join("|", @specials) : "0";
             push(@hashSpecials, $special);
 
             my $numParameters = "0";
@@ -652,7 +654,10 @@ sub GenerateImplementation
         my $value = $className . "::" . WK_ucfirst($name) . "FuncNum";
         push(@hashValues, $value);
 
-        my $special = "DontDelete|Function";
+        my @specials = ();
+        push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
+        push(@specials, "Function");        
+        my $special = (@specials > 0) ? join("|", @specials) : "0";
         push(@hashSpecials, $special);
 
         my $numParameters = @{$function->parameters};
@@ -783,12 +788,6 @@ sub GenerateImplementation
             push(@implContent, "        slot.setStaticEntry(this, entry, staticValueGetter<$className>);\n");
             push(@implContent, "        return true;\n");
             push(@implContent, "    }\n");
-        }
-
-        if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
-            # if it has a prototype, we need to check that first too
-            push(@implContent, "    if (prototype()->isObject() && static_cast<JSObject*>(prototype())->hasProperty(exec, propertyName))\n");
-            push(@implContent, "        return false;\n");
         }
 
         if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
@@ -1422,8 +1421,13 @@ sub NativeToJSValue
     } elsif ($type eq "Event") {
         $implIncludes{"kjs_events.h"} = 1;
         $implIncludes{"Event.h"} = 1;
-    } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
+    } elsif ($type eq "NodeList") {
         $implIncludes{"kjs_dom.h"} = 1;
+        $implIncludes{"NodeList.h"} = 1;
+        $implIncludes{"NameNodeList.h"} = 1;
+    } elsif ($type eq "NamedNodeMap") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        $implIncludes{"NamedNodeMap.h"} = 1;
     } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
         $implIncludes{"CSSStyleSheet.h"} = 1;
         $implIncludes{"MediaList.h"} = 1;
