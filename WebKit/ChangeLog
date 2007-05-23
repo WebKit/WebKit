@@ -1,3 +1,14 @@
+2007-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13833
+        Add ObjC DOM binding for HTMLMarqeeElement
+
+        - Also adds missing DOMHTMLFramePrivate.
+
+        * MigrateHeaders.make:
+
 2007-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -156,6 +156,7 @@ static void createElementClassMap()
     addElementClass(HTMLNames::linkTag, [DOMHTMLLinkElement class]);
     addElementClass(HTMLNames::listingTag, [DOMHTMLPreElement class]);
     addElementClass(HTMLNames::mapTag, [DOMHTMLMapElement class]);
+    addElementClass(HTMLNames::marqueeTag, [DOMHTMLMarqueeElement class]);
     addElementClass(HTMLNames::menuTag, [DOMHTMLMenuElement class]);
     addElementClass(HTMLNames::metaTag, [DOMHTMLMetaElement class]);
     addElementClass(HTMLNames::objectTag, [DOMHTMLObjectElement class]);

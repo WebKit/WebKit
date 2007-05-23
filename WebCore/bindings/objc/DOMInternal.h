@@ -100,6 +100,7 @@
 #import "DOMHTMLLegendElementInternal.h"
 #import "DOMHTMLLinkElementInternal.h"
 #import "DOMHTMLMapElementInternal.h"
+#import "DOMHTMLMarqueeElementInternal.h"
 #import "DOMHTMLMenuElementInternal.h"
 #import "DOMHTMLMetaElementInternal.h"
 #import "DOMHTMLModElementInternal.h"

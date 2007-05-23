@@ -59,6 +59,7 @@
 #import <WebCore/DOMHTMLLegendElement.h>
 #import <WebCore/DOMHTMLLinkElement.h>
 #import <WebCore/DOMHTMLMapElement.h>
+#import <WebCore/DOMHTMLMarqueeElement.h>
 #import <WebCore/DOMHTMLMenuElement.h>
 #import <WebCore/DOMHTMLMetaElement.h>
 #import <WebCore/DOMHTMLModElement.h>

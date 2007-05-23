@@ -106,6 +106,7 @@ all : \
     DOMHTMLLegendElement.h \
     DOMHTMLLinkElement.h \
     DOMHTMLMapElement.h \
+    DOMHTMLMarqueeElement.h \
     DOMHTMLMenuElement.h \
     DOMHTMLMetaElement.h \
     DOMHTMLModElement.h \

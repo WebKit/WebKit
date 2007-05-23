@@ -1,3 +1,21 @@
+2007-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13833
+        Add ObjC DOM binding for HTMLMarqeeElement
+
+        - Also adds missing DOMHTMLFramePrivate.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMHTML.h:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+
 2007-05-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin, who found the fix independently.

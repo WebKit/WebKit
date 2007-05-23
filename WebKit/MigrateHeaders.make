@@ -1,4 +1,4 @@
-# Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -101,6 +101,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLFormElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHRElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadElement.h \
@@ -121,6 +122,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLinkElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLLinkElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLMapElement.h \
+    $(PUBLIC_HEADERS_DIR)/DOMHTMLMarqueeElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLMenuElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLMetaElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLModElement.h \
