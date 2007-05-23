@@ -1,3 +1,27 @@
+2007-05-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13802, background colors can't be reset to default
+        color.  Fix the value cssText method to do the right thing for background
+        and background-position values.
+
+        Reviewed by beth
+
+        fast/dom/background-shorthand-csstext.html
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue:::m_implicit):
+        (WebCore::CSSInitialValue::isImplicitInitialValue):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue):
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImplicitInitialValue):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBackgroundShorthand):
+        (WebCore::CSSParser::parseShorthand):
+
 2007-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -514,7 +514,7 @@ bool CSSParser::parseValue(int propId, bool important)
     else if (id == CSS_VAL_INITIAL) {
         if (num != 1)
             return false;
-        addProperty(propId, new CSSInitialValue(), important);
+        addProperty(propId, new CSSInitialValue(false), important);
         return true;
     }
 
@@ -1553,9 +1553,9 @@ bool CSSParser::parseBackgroundShorthand(bool important)
                     goto fail;
 
                 if (!parsedProperty[i] && properties[i] != CSS_PROP_BACKGROUND_COLOR) {
-                    addBackgroundValue(values[i], new CSSInitialValue());
+                    addBackgroundValue(values[i], new CSSInitialValue(true));
                     if (properties[i] == CSS_PROP_BACKGROUND_POSITION)
-                        addBackgroundValue(positionYValue, new CSSInitialValue());
+                        addBackgroundValue(positionYValue, new CSSInitialValue(true));
                 }
                 parsedProperty[i] = false;
             }
@@ -1586,9 +1586,9 @@ bool CSSParser::parseBackgroundShorthand(bool important)
     // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i]) {
-            addBackgroundValue(values[i], new CSSInitialValue());
+            addBackgroundValue(values[i], new CSSInitialValue(true));
             if (properties[i] == CSS_PROP_BACKGROUND_POSITION)
-                addBackgroundValue(positionYValue, new CSSInitialValue());
+                addBackgroundValue(positionYValue, new CSSInitialValue(true));
         }
     }
     
@@ -1642,7 +1642,7 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     m_implicitShorthand = true;
     for (int i = 0; i < numProperties; ++i) {
         if (!fnd[i])
-            addProperty(properties[i], new CSSInitialValue(), important);
+            addProperty(properties[i], new CSSInitialValue(true), important);
     }
     m_implicitShorthand = false;
 

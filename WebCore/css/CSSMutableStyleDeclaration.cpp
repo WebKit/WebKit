@@ -28,9 +28,12 @@
 #include "CSSPropertyNames.h"
 #include "CSSProperty.h"
 #include "CSSStyleSheet.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "StyledElement.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -81,13 +84,13 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             // FIXME: Is this correct? The code in cssparser.cpp is confusing
             const int properties[2] = { CSS_PROP_BACKGROUND_POSITION_X,
                                         CSS_PROP_BACKGROUND_POSITION_Y };
-            return getShorthandValue(properties, 2);
+            return getLayeredShorthandValue(properties, 2);
         }
         case CSS_PROP_BACKGROUND: {
-            const int properties[5] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT,
-                                        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION,
-                                        CSS_PROP_BACKGROUND_COLOR };
-            return getShorthandValue(properties, 5);
+            const int properties[6] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT,
+                                        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION_X,
+                                        CSS_PROP_BACKGROUND_POSITION_Y, CSS_PROP_BACKGROUND_COLOR };
+            return getLayeredShorthandValue(properties, 6);
         }
         case CSS_PROP_BORDER: {
             const int properties[3] = { CSS_PROP_BORDER_WIDTH, CSS_PROP_BORDER_STYLE,
@@ -169,6 +172,65 @@ String CSSMutableStyleDeclaration::get4Values( const int* properties ) const
             res += value->cssText();
         }
     }
+    return res;
+}
+
+String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* properties, unsigned number) const
+{
+    String res;
+    unsigned i;
+    unsigned j;
+
+    // Begin by collecting the properties into an array.
+    Vector< RefPtr<CSSValue> > values(number);
+    unsigned numLayers = 0;
+    
+    for (i = 0; i < number; ++i) {
+        values[i] = getPropertyCSSValue(properties[i]);
+        if (values[i]) {
+            if (values[i]->isValueList()) {
+                CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
+                numLayers = max(valueList->length(), numLayers);
+            } else
+                numLayers = max(1U, numLayers);
+        }
+    }
+    
+    // Now stitch the properties together.  Implicit initial values are flagged as such and
+    // can safely be omitted.
+    for (i = 0; i < numLayers; i++) {
+        String layerRes;
+        for (j = 0; j < number; j++) {
+            RefPtr<CSSValue> value;
+            if (values[j]) {
+                if (values[j]->isValueList())
+                    value = static_cast<CSSValueList*>(values[j].get())->item(i);
+                else {
+                    value = values[j];
+                    
+                    // Color only belongs in the last layer.
+                    if (properties[j] == CSS_PROP_BACKGROUND_COLOR) {
+                        if (i != numLayers - 1)
+                            value = 0;
+                    } else if (i != 0) // Other singletons only belong in the first layer.
+                        value = 0;
+                }
+            }
+            
+            if (value && !value->isImplicitInitialValue()) {
+                if (!layerRes.isNull())
+                    layerRes += " ";
+                layerRes += value->cssText();
+            }
+        }
+        
+        if (!layerRes.isNull()) {
+            if (!res.isNull())
+                res += ", ";
+            res += layerRes;
+        }
+    }
+
     return res;
 }
 

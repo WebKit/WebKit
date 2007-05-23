@@ -29,8 +29,17 @@ namespace WebCore {
 
 class CSSInitialValue : public CSSValue {
 public:
+    CSSInitialValue(bool implicit)
+    :m_implicit(implicit)
+    {}
+
     virtual unsigned short cssValueType() const;
     virtual String cssText() const;
+        
+    virtual bool isImplicitInitialValue() const { return m_implicit; }
+
+private:
+    bool m_implicit;
 };
 
 } // namespace WebCore
