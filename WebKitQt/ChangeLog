@@ -1,3 +1,10 @@
+2007-05-23  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow): Fix loading progress signal/slot connection.
+
 2007-05-22  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

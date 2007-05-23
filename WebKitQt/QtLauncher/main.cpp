@@ -52,13 +52,13 @@ public:
 public slots:
     void startLoad()
     {
-        setValue(int(m_progress*100));
+        setValue(m_progress);
         show();
     }
-    void changeLoad(double change)
+    void changeLoad(int change)
     {
         m_progress = change;
-        setValue(int(change*100));
+        setValue(change);
     }
     void endLoad()
     {
@@ -67,7 +67,7 @@ public slots:
     }
 
 protected:
-    qreal m_progress;
+    int m_progress;
 };
 
 class HoverLabel : public QWidget {
@@ -277,8 +277,8 @@ public:
                           info->sizeHint().height());
         connect(page, SIGNAL(loadStarted(QWebFrame*)),
                 info, SLOT(startLoad()));
-        connect(page, SIGNAL(loadProgressChanged(double)),
-                info, SLOT(changeLoad(double)));
+        connect(page, SIGNAL(loadProgressChanged(int)),
+                info, SLOT(changeLoad(int)));
         connect(page, SIGNAL(loadFinished(QWebFrame*)),
                 info, SLOT(endLoad()));
         connect(page, SIGNAL(loadFinished(QWebFrame*)),
