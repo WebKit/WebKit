@@ -1,3 +1,12 @@
+2007-05-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack and Valgrind
+
+        Initialize variable.
+
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-05-23  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
