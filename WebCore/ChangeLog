@@ -1,5 +1,13 @@
 2007-05-22  Sam Weinig  <sam@webkit.org>
 
+        Rubber stamped by Adam.
+
+        Fix license.
+
+        * bindings/js/JSHTMLAnchorElementCustom.cpp:
+
+2007-05-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13833
