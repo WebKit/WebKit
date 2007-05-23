@@ -1,3 +1,30 @@
+2007-05-23  Patti  <patti@apple.com>
+
+        Reviewed by David Harrison.
+
+        <rdar://problem/5078453> AXNext/PrevLineEndTextMarkerForTextMarker returns kAXErrorNoValue for attachment range
+        
+        Floating objects, such as aligned images, are not included as part of any line.  So when the given 
+        text marker is on the floating object, the returned line edge cannot be found and asserts are fired.
+        In addition, this paints an inconsistent text layout (in the accessibility sense) of where the floating 
+        object resides.  Character/word methods report floating object at the beginning of the text line(s).  Yet
+        line methods never present floating objects anywhere.  
+        To fix this, the ax line methods will now do more checking to ensure floating object nodes are included
+        when determining the line range/position. That way, assistive apps won't get stuck using the line methods 
+        to read line-by-line
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (updateAXLineStartForVisiblePosition):
+        Added a helper method to adjust line start position to account for floating objects
+        (-[WebCoreAXObject doAXLeftLineTextMarkerRangeForTextMarker:]):
+        (-[WebCoreAXObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[WebCoreAXObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[WebCoreAXObject doAXPreviousLineStartTextMarkerForTextMarker:]):
+        Fixed up line routines to include floating object nodes in line position calculation.
+        startOfLine/endOLine may return null for position next to a floating position.  So now there's extra checks to prevent
+        returning null line position/ranges back to AX.
+
+
 2007-05-23  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack, discussed also with Lars.

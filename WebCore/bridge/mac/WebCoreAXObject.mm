@@ -1767,6 +1767,31 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
+
+static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition& visiblePosition)
+{
+    // A line in the accessibility sense should include floating objects, such as aligned image, as part of a line.
+    // So let's update the position to include that.
+    VisiblePosition tempPosition;
+    VisiblePosition startPosition = visiblePosition;
+    Position p;
+    RenderObject* renderer;
+    while (true) {
+        tempPosition = startPosition.previous();
+        if (tempPosition.isNull())
+            break;
+        p = tempPosition.deepEquivalent();
+        if (!p.node())
+            break;
+        renderer = p.node()->renderer();
+        if (!renderer || renderer->inlineBox(p.offset(), tempPosition.affinity()) || (renderer->isRenderBlock() && p.offset() == 0))
+            break;
+        startPosition = tempPosition;
+    }
+    
+    return startPosition;
+}
+
 - (id)doAXLeftLineTextMarkerRangeForTextMarker: (WebCoreTextMarker*) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
@@ -1780,6 +1805,19 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
     
     VisiblePosition startPosition = startOfLine(prevVisiblePos);
+
+    // keep searching for a valid line start position.  Unless the textmarker is at the very beginning, there should
+    // always be a valid line range.  However, startOfLine will return null for position next to a floating object, 
+    // since floating object doesn't really belong to any line.  
+    // This check will reposition the marker before the floating object, to ensure we get a line start.
+    if (startPosition.isNull()) {
+        while (startPosition.isNull() && prevVisiblePos.isNotNull()) {
+            prevVisiblePos = prevVisiblePos.previous();
+            startPosition = startOfLine(prevVisiblePos);
+        }
+    } else 
+        startPosition = updateAXLineStartForVisiblePosition(startPosition);
+    
     VisiblePosition endPosition = endOfLine(prevVisiblePos);
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
@@ -1796,7 +1834,25 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
         
     VisiblePosition startPosition = startOfLine(nextVisiblePos);
+    
+    // fetch for a valid line start position
+    if (startPosition.isNull() ) {
+        startPosition = visiblePos;
+        nextVisiblePos = nextVisiblePos.next();
+    } else 
+        startPosition = updateAXLineStartForVisiblePosition(startPosition);
+    
     VisiblePosition endPosition = endOfLine(nextVisiblePos);
+
+    // as long as the position hasn't reached the end of the doc,  keep searching for a valid line end position
+    // Unless the textmarker is at the very end, there should always be a valid line range.  However, endOfLine will 
+    // return null for position by a floating object, since floating object doesn't really belong to any line.  
+    // This check will reposition the marker after the floating object, to ensure we get a line end.
+    while (endPosition.isNull() && nextVisiblePos.isNotNull()) {
+        nextVisiblePos = nextVisiblePos.next();
+        endPosition = endOfLine(nextVisiblePos);
+    }
+    
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1860,6 +1916,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
         
     VisiblePosition endPosition = endOfLine(nextVisiblePos);
+
+    // as long as the position hasn't reached the end of the doc,  keep searching for a valid line end position
+    // There are cases like when the position is next to a floating object that'll return null for end of line. This code will avoid returning null.
+    while (endPosition.isNull() && nextVisiblePos.isNotNull()) {
+        nextVisiblePos = nextVisiblePos.next();
+        endPosition = endOfLine(nextVisiblePos);
+    }
+    
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
@@ -1875,6 +1939,17 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
         
     VisiblePosition startPosition = startOfLine(prevVisiblePos);
+
+    // as long as the position hasn't reached the beginning of the doc,  keep searching for a valid line start position
+    // There are cases like when the position is next to a floating object that'll return null for start of line. This code will avoid returning null.
+    if (startPosition.isNull()) {
+        while (startPosition.isNull() && prevVisiblePos.isNotNull()) {
+            prevVisiblePos = prevVisiblePos.previous();
+            startPosition = startOfLine(prevVisiblePos);
+        }
+    } else 
+        startPosition = updateAXLineStartForVisiblePosition(startPosition);
+    
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
