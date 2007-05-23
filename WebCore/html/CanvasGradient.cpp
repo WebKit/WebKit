@@ -116,6 +116,13 @@ void CanvasGradient::getColor(float value, float* r, float* g, float* b, float* 
     ASSERT(value >= 0);
     ASSERT(value <= 1);
 
+    if (m_stops.isEmpty()) {
+        *r = 0;
+        *g = 0;
+        *b = 0;
+        *a = 0;
+        return;
+    }
     if (value <= 0) {
         *r = m_stops.first().red;
         *g = m_stops.first().green;

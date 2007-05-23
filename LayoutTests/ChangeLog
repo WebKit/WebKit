@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        Test for:
+        http://bugs.webkit.org/show_bug.cgi?id=13784
+        REGRESSION (r13744-13750): Crash with empty gradient when drawing to canvas
+
+        * fast/canvas/fillrect-gradient-zero-stops-expected.checksum: Added.
+        * fast/canvas/fillrect-gradient-zero-stops-expected.png: Added.
+        * fast/canvas/fillrect-gradient-zero-stops-expected.txt: Added.
+        * fast/canvas/fillrect-gradient-zero-stops.html: Added.
+
+2007-05-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
         Testcase for:
         http://bugs.webkit.org/show_bug.cgi?id=13801
         Crash when loading nonexisting symbol
