@@ -1,3 +1,16 @@
+2007-05-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - rdar://problem/5183523
+        - We now check the document's URL to see if it can load a resource in the case of a URL click, instead of checking the referrer, which is blank for local files.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::open):
+        * platform/PlatformString.h:
+        (WebCore::debugPrintString):
+
 2007-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

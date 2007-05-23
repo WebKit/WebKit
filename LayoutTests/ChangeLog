@@ -14,6 +14,19 @@
 
 2007-05-23  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin.
+
+        - rdar://problem/5183523
+        - Tests for a fix for a regression with Excel worksheets.  We now check the document's URL to see if it can load a resource in the case of a URL click, instead of checking the referrer, which is blank for local files.
+
+        * fast/dom/frame-loading-via-document-write-expected.txt: Added.
+        * fast/dom/frame-loading-via-document-write.html: Added.
+        * fast/dom/resources/frame-loading-via-document-write.js: Added.
+        * fast/dom/resources/green250x50.png: Added.
+        * fast/dom/resources/success.html: Added.
+
+2007-05-23  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by.
 
         - Fixed build breakage.
