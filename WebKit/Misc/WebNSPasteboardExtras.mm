@@ -234,8 +234,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
     // or the main resource (standalone image case).
     NSArray *subresources = [archive subresources];
     WebResource *resource = [archive mainResource];
-    if (containsImage && !MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType])
-        && [subresources count] > 0)
+    if (containsImage && [subresources count] > 0 
+        && MimeTypeRegistry::isSupportedImageResourceMIMEType([[subresources objectAtIndex:0] MIMEType]))
         resource = (WebResource *)[subresources objectAtIndex:0];
     ASSERT(resource != nil);
     

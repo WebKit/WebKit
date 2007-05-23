@@ -1,3 +1,15 @@
+2007-05-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5223782> REGRESSION: Can't drag and drop a standalone image
+
+        The main resource for a standalone image webarchive has the same mimetype as the
+        underlying image.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writePromisedRTFDFromArchive:containsImage:]):
+
 2007-05-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.
