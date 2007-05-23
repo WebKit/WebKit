@@ -1,3 +1,15 @@
+2007-05-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkJobPrivate::setURL):
+        (QWebNetworkManager::started):
+            Fix Host: line in HTTP headers and resolving of relative URLs
+            when redirecting.
+        * Api/qwebnetworkinterface_p.h:
+            Clean up qHash forward declaration a bit.
+
 2007-05-23  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

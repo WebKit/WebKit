@@ -24,6 +24,11 @@
 
 #include "qwebnetworkinterface.h"
 #include <qthread.h>
+
+namespace WebCore {
+    struct HostInfo;
+};
+uint qHash(const WebCore::HostInfo &info);
 #include <qhash.h>
 
 namespace WebCore {
@@ -121,7 +126,6 @@ namespace WebCore {
         int port;
     };
 
-    
     class WebCoreHttp : public QObject
     {
         Q_OBJECT
