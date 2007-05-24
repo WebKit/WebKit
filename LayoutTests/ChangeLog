@@ -1,3 +1,15 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13800
+          REGRESSION: Moving a slider moves another unrelated slider
+
+        * fast/forms/slider-thumb-shared-style-expected.checksum: Added.
+        * fast/forms/slider-thumb-shared-style-expected.png: Added.
+        * fast/forms/slider-thumb-shared-style-expected.txt: Added.
+        * fast/forms/slider-thumb-shared-style.html: Added.
+
 2007-05-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

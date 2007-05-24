@@ -1,3 +1,20 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13800
+          REGRESSION: Moving a slider moves another unrelated slider
+
+        Test: fast/forms/slider-thumb-shared-style.html
+
+        RenderSlider mutates the thumb's style, therefore it must not be shared
+        with another slider's thumb, a situation that could occur if the sliders
+        themselves shared style.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::createThumbStyle): Always use a private copy for
+        the thumb style.
+
 2007-05-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

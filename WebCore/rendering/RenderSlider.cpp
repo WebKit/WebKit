@@ -176,8 +176,13 @@ void RenderSlider::setStyle(RenderStyle* newStyle)
 
 RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle)
 {
-    RenderStyle* style = getPseudoStyle(RenderStyle::SLIDER_THUMB);
-    if (!style)
+    RenderStyle* style;
+
+    RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SLIDER_THUMB);
+    if (pseudoStyle)
+        // We may be sharing style with another slider, but we must not share the thumb style.
+        style = new (renderArena()) RenderStyle(pseudoStyle);
+    else
         style = new (renderArena()) RenderStyle();
 
     if (parentStyle)
