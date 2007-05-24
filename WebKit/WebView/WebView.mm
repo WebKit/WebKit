@@ -859,6 +859,7 @@ static bool debugWidget = true;
     settings->setLoadsImagesAutomatically([preferences loadsImagesAutomatically]);
     settings->setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
+    settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     if ([preferences userStyleSheetEnabled]) {

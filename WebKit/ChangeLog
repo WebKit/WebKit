@@ -1,3 +1,20 @@
+2007-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/3663808> Resize large images to fit in the browser window
+        
+        Add new WebPreferences SPI.
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences enableAutomaticImageResizing]):
+        (-[WebPreferences setEnableAutomaticImageResizing:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2007-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

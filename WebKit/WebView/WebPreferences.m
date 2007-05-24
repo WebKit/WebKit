@@ -216,6 +216,7 @@ NS_ENDHANDLER
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitTextAreasAreResizablePreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShrinksStandaloneImagesToFit,
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
@@ -618,6 +619,16 @@ NS_ENDHANDLER
 - (void)setTextAreasAreResizable:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitTextAreasAreResizablePreferenceKey];
+}
+
+- (BOOL)shrinksStandaloneImagesToFit
+{
+    return [self _boolValueForKey:WebKitShrinksStandaloneImagesToFit];
+}
+
+- (void)setShrinksStandaloneImagesToFit:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShrinksStandaloneImagesToFit];
 }
 
 - (size_t)_pageCacheSize

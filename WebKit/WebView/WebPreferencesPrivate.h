@@ -54,6 +54,9 @@ typedef enum {
 - (PDFDisplayMode)PDFDisplayMode;
 - (void)setPDFDisplayMode:(PDFDisplayMode)mode;
 
+- (BOOL)shrinksStandaloneImagesToFit;
+- (void)setShrinksStandaloneImagesToFit:(BOOL)flag;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
