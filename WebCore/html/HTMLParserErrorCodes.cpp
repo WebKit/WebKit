@@ -44,10 +44,12 @@ const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode errorCode)
         "%tag1 is not allowed inside %tag2. Inserting %tag1 before the <table> instead.",
         "%tag1 misplaced in <table>. Creating %tag2 and putting %tag1 inside it.",
         "</br> encountered.  Converting </br> into <br>.",
-        "XML self-closing tag syntax used on %tag1. The tag will not be closed."
+        "XML self-closing tag syntax used on %tag1. The tag will not be closed.",
+        "Stray </p> encountered.  Converting </p> into <p></p>.",
+        "Stray %tag1 encountered.  Ignoring close tag."
     };
      
-    if (errorCode >= MisplacedTablePartError && errorCode <= TablePartRequiredError)
+    if (errorCode >= MisplacedTablePartError && errorCode <= StrayCloseTagError)
         return errors[errorCode];
     return 0;
 }

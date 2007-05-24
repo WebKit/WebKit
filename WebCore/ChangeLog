@@ -1,3 +1,22 @@
+2007-05-24  David Hyatt  <hyatt@apple.com>
+
+        Add error reporting for the </p> -> <p></p> quirk.
+
+        Add error reporting when a stray close tag is encountered with no
+        corresponding open tag.
+
+        Reviewed by adele
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::processCloseTag):
+        (WebCore::HTMLParser::popBlock):
+        * html/HTMLParser.h:
+        (WebCore::HTMLParser::popBlock):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+
 2007-05-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by.

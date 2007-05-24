@@ -103,8 +103,8 @@ private:
     bool handleError(Node*, bool flat, const AtomicString& localName, int tagPriority);
     
     void pushBlock(const AtomicString& tagName, int level);
-    void popBlock(const AtomicString& tagName);
-    void popBlock(const QualifiedName& qName) { return popBlock(qName.localName()); } // Convenience function for readability.
+    void popBlock(const AtomicString& tagName, bool reportErrors = false);
+    void popBlock(const QualifiedName& qName, bool reportErrors = false) { return popBlock(qName.localName(), reportErrors); } // Convenience function for readability.
     void popOneBlock();
     void moveOneBlockToStack(HTMLStackElem*& head);
     inline HTMLStackElem* popOneBlockCommon();
@@ -129,10 +129,10 @@ private:
     void startBody(); // inserts the isindex element
     PassRefPtr<Node> handleIsindex(Token*);
 
-    void reportError(HTMLParserErrorCode errorCode, const AtomicString* tagName1 = 0, const AtomicString* tagName2 = 0)
-    { if (!m_reportErrors) return; reportErrorToConsole(errorCode, tagName1, tagName2); }
+    void reportError(HTMLParserErrorCode errorCode, const AtomicString* tagName1 = 0, const AtomicString* tagName2 = 0, bool closeTags = false)
+    { if (!m_reportErrors) return; reportErrorToConsole(errorCode, tagName1, tagName2, closeTags); }
 
-    void reportErrorToConsole(HTMLParserErrorCode, const AtomicString* tagName1, const AtomicString* tagName2);
+    void reportErrorToConsole(HTMLParserErrorCode, const AtomicString* tagName1, const AtomicString* tagName2, bool closeTags);
     
     Document* document;
 

@@ -42,7 +42,9 @@ enum HTMLParserErrorCode {
     StrayTableContentError,
     TablePartRequiredError,
     MalformedBRError,
-    IncorrectXMLSelfCloseError
+    IncorrectXMLSelfCloseError,
+    StrayParagraphCloseError,
+    StrayCloseTagError
 };
 
 const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode);

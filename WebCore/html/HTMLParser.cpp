@@ -822,7 +822,7 @@ void HTMLParser::processCloseTag(Token* t)
     // Support for really broken html.
     // we never close the body tag, since some stupid web pages close it before the actual end of the doc.
     // let's rely on the end() call to close things.
-    if (t->tagName == htmlTag || t->tagName == bodyTag)
+    if (t->tagName == htmlTag || t->tagName == bodyTag || t->tagName == commentAtom)
         return;
     
     if (t->tagName == formTag)
@@ -831,7 +831,7 @@ void HTMLParser::processCloseTag(Token* t)
         m_currentMapElement = 0;
         
     HTMLStackElem* oldElem = blockStack;
-    popBlock(t->tagName);
+    popBlock(t->tagName, true);
     if (oldElem == blockStack && t->tagName == pTag) {
         // We encountered a stray </p>.  Amazingly Gecko, WinIE, and MacIE all treat
         // this as a valid break, i.e., <p></p>.  So go ahead and make the empty
@@ -839,6 +839,7 @@ void HTMLParser::processCloseTag(Token* t)
         t->beginTag = true;
         parseToken(t);
         popBlock(t->tagName);
+        reportError(StrayParagraphCloseError);
     }
 }
 
@@ -1192,7 +1193,7 @@ void HTMLParser::pushBlock(const AtomicString& tagName, int level)
     didRefCurrent = false;
 }
 
-void HTMLParser::popBlock(const AtomicString& tagName)
+void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
 {
     HTMLStackElem* elem = blockStack;
     
@@ -1204,8 +1205,11 @@ void HTMLParser::popBlock(const AtomicString& tagName)
         elem = elem->next;
     }
 
-    if (!elem)
+    if (!elem) {
+        if (reportErrors)
+            reportError(StrayCloseTagError, &tagName);
         return;
+    }
 
     if (maxLevel > elem->level) {
         // We didn't match because the tag is in a different scope, e.g.,
@@ -1397,7 +1401,7 @@ void HTMLParser::finished()
         document->finishedParsing();
 }
 
-void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const AtomicString* tagName1, const AtomicString* tagName2)
+void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const AtomicString* tagName1, const AtomicString* tagName2, bool closeTags)
 {    
     Frame* frame = document->frame();
     if (!frame)
@@ -1418,7 +1422,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
         else if (*tagName1 == "#comment")
             tag1 = "<!-- comment -->";
         else
-            tag1 = "<" + *tagName1 + ">";
+            tag1 = (closeTags ? "</" : "<") + *tagName1 + ">";
     }
     if (tagName2) {
         if (*tagName2 == "#text")
@@ -1426,7 +1430,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
         else if (*tagName2 == "#comment")
             tag2 = "<!-- comment -->";
         else
-            tag2 = "<" + *tagName2 + ">";
+            tag2 = (closeTags ? "</" : "<") + *tagName2 + ">";
     }
         
     const char* errorMsg = htmlParserErrorMessageTemplate(errorCode);
