@@ -44,10 +44,12 @@ enum HTMLParserErrorCode {
     MalformedBRError,
     IncorrectXMLSelfCloseError,
     StrayParagraphCloseError,
-    StrayCloseTagError
+    StrayCloseTagError,
+    IncorrectXMLCloseScriptWarning
 };
 
 const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode);
+bool isWarning(HTMLParserErrorCode);
 
 }
 

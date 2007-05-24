@@ -46,12 +46,18 @@ const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode errorCode)
         "</br> encountered.  Converting </br> into <br>.",
         "XML self-closing tag syntax used on %tag1. The tag will not be closed.",
         "Stray </p> encountered.  Converting </p> into <p></p>.",
-        "Stray %tag1 encountered.  Ignoring close tag."
+        "Stray %tag1 encountered.  Ignoring close tag.",
+        "XML self-closing tag syntax used on <script>.  The tag will be closed by WebKit, but not all engines do this.  Change to <script></script> instead for best cross-browser compatibility."
     };
      
-    if (errorCode >= MisplacedTablePartError && errorCode <= StrayCloseTagError)
+    if (errorCode >= MisplacedTablePartError && errorCode <= IncorrectXMLCloseScriptWarning)
         return errors[errorCode];
     return 0;
+}
+
+bool isWarning(HTMLParserErrorCode code)
+{
+    return code >= IncorrectXMLCloseScriptWarning;
 }
 
 }
