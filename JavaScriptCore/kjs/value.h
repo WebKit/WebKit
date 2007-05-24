@@ -56,7 +56,7 @@ struct ClassInfo;
  */
 class JSValue {
     friend class JSCell; // so it can derive from this class
-    friend class Collector; // so it can call downcast()
+    friend class Collector; // so it can call asCell()
 
 private:
     JSValue();
@@ -108,8 +108,8 @@ public:
 
 private:
     // Implementation details.
-    JSCell *downcast();
-    const JSCell *downcast() const;
+    JSCell *asCell();
+    const JSCell *asCell() const;
 
     // Give a compile time error if we try to copy one of these.
     JSValue(const JSValue&);
@@ -233,13 +233,13 @@ inline void JSCell::mark()
     return Collector::markCell(this);
 }
 
-inline JSCell *JSValue::downcast()
+inline JSCell *JSValue::asCell()
 {
     ASSERT(!JSImmediate::isImmediate(this));
     return static_cast<JSCell *>(this);
 }
 
-inline const JSCell *JSValue::downcast() const
+inline const JSCell *JSValue::asCell() const
 {
     ASSERT(!JSImmediate::isImmediate(this));
     return static_cast<const JSCell *>(this);
@@ -267,17 +267,17 @@ inline bool JSValue::isBoolean() const
 
 inline bool JSValue::isNumber() const
 {
-    return JSImmediate::isNumber(this) || !JSImmediate::isImmediate(this) && downcast()->isNumber();
+    return JSImmediate::isNumber(this) || !JSImmediate::isImmediate(this) && asCell()->isNumber();
 }
 
 inline bool JSValue::isString() const
 {
-    return !JSImmediate::isImmediate(this) && downcast()->isString();
+    return !JSImmediate::isImmediate(this) && asCell()->isString();
 }
 
 inline bool JSValue::isObject() const
 {
-    return !JSImmediate::isImmediate(this) && downcast()->isObject();
+    return !JSImmediate::isImmediate(this) && asCell()->isObject();
 }
 
 inline bool JSValue::getBoolean(bool& v) const
@@ -301,32 +301,32 @@ inline bool JSValue::getNumber(double& v) const
         v = JSImmediate::toDouble(this);
         return true;
     }
-    return downcast()->getNumber(v);
+    return asCell()->getNumber(v);
 }
 
 inline double JSValue::getNumber() const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : downcast()->getNumber();
+    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : asCell()->getNumber();
 }
 
 inline bool JSValue::getString(UString& s) const
 {
-    return !JSImmediate::isImmediate(this) && downcast()->getString(s);
+    return !JSImmediate::isImmediate(this) && asCell()->getString(s);
 }
 
 inline UString JSValue::getString() const
 {
-    return JSImmediate::isImmediate(this) ? UString() : downcast()->getString();
+    return JSImmediate::isImmediate(this) ? UString() : asCell()->getString();
 }
 
 inline JSObject *JSValue::getObject()
 {
-    return JSImmediate::isImmediate(this) ? 0 : downcast()->getObject();
+    return JSImmediate::isImmediate(this) ? 0 : asCell()->getObject();
 }
 
 inline const JSObject *JSValue::getObject() const
 {
-    return JSImmediate::isImmediate(this) ? 0 : downcast()->getObject();
+    return JSImmediate::isImmediate(this) ? 0 : asCell()->getObject();
 }
 
 inline bool JSValue::getUInt32(uint32_t& v) const
@@ -338,48 +338,48 @@ inline bool JSValue::getUInt32(uint32_t& v) const
         v = static_cast<uint32_t>(d);
         return JSImmediate::isNumber(this);
     }
-    return downcast()->getUInt32(v);
+    return asCell()->getUInt32(v);
 }
 
 inline void JSValue::mark()
 {
     ASSERT(!JSImmediate::isImmediate(this)); // callers should check !marked() before calling mark()
-    downcast()->mark();
+    asCell()->mark();
 }
 
 inline bool JSValue::marked() const
 {
-    return JSImmediate::isImmediate(this) || downcast()->marked();
+    return JSImmediate::isImmediate(this) || asCell()->marked();
 }
 
 inline JSType JSValue::type() const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::type(this) : downcast()->type();
+    return JSImmediate::isImmediate(this) ? JSImmediate::type(this) : asCell()->type();
 }
 
 inline JSValue *JSValue::toPrimitive(ExecState *exec, JSType preferredType) const
 {
-    return JSImmediate::isImmediate(this) ? const_cast<JSValue *>(this) : downcast()->toPrimitive(exec, preferredType);
+    return JSImmediate::isImmediate(this) ? const_cast<JSValue *>(this) : asCell()->toPrimitive(exec, preferredType);
 }
 
 inline bool JSValue::toBoolean(ExecState *exec) const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : downcast()->toBoolean(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : asCell()->toBoolean(exec);
 }
 
 inline double JSValue::toNumber(ExecState *exec) const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : downcast()->toNumber(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : asCell()->toNumber(exec);
 }
 
 inline UString JSValue::toString(ExecState *exec) const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::toString(this) : downcast()->toString(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toString(this) : asCell()->toString(exec);
 }
 
 inline JSObject* JSValue::toObject(ExecState* exec) const
 {
-    return JSImmediate::isImmediate(this) ? JSImmediate::toObject(this, exec) : downcast()->toObject(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toObject(this, exec) : asCell()->toObject(exec);
 }
 
 } // namespace

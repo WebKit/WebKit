@@ -542,7 +542,7 @@ inline bool JSCell::isObject(const ClassInfo *info) const
 // this method is here to be after the inline declaration of JSCell::isObject
 inline bool JSValue::isObject(const ClassInfo *c) const
 {
-    return !JSImmediate::isImmediate(this) && downcast()->isObject(c);
+    return !JSImmediate::isImmediate(this) && asCell()->isObject(c);
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference

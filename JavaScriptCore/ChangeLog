@@ -1,3 +1,40 @@
+2007-05-24  Luciano Montanaro  <mikelima@cirulla.net>
+
+        Reviewed by Darin
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13855
+        Port patch 666176 to JavaScriptCore
+
+        - Renamed JSValue::downcast() to JSValue::asCell() which makes the
+        function meaning cleaner. It's modeled after Harri Porten change in 
+        KDE trunk.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::protect):
+        (KJS::Collector::unprotect):
+        (KJS::Collector::collectOnMainThreadOnly):
+        * kjs/object.h:
+        (KJS::JSValue::isObject):
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction):
+        * kjs/value.h:
+        (KJS::JSValue::asCell):
+        (KJS::JSValue::isNumber):
+        (KJS::JSValue::isString):
+        (KJS::JSValue::isObject):
+        (KJS::JSValue::getNumber):
+        (KJS::JSValue::getString):
+        (KJS::JSValue::getObject):
+        (KJS::JSValue::getUInt32):
+        (KJS::JSValue::mark):
+        (KJS::JSValue::marked):
+        (KJS::JSValue::type):
+        (KJS::JSValue::toPrimitive):
+        (KJS::JSValue::toBoolean):
+        (KJS::JSValue::toNumber):
+        (KJS::JSValue::toString):
+        (KJS::JSValue::toObject):
+
 2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

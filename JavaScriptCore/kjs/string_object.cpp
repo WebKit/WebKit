@@ -551,7 +551,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
           // if there are no matches at all, it's important to return
           // Null instead of an empty array, because this matches
           // other browsers and because Null is a false value.
-          result = jsNull(); 
+          result = jsNull();
         } else {
           result = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
         }

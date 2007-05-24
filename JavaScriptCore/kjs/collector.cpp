@@ -630,7 +630,7 @@ void Collector::protect(JSValue *k)
     if (JSImmediate::isImmediate(k))
       return;
 
-    protectedValues().add(k->downcast());
+    protectedValues().add(k->asCell());
 }
 
 void Collector::unprotect(JSValue *k)
@@ -642,7 +642,7 @@ void Collector::unprotect(JSValue *k)
     if (JSImmediate::isImmediate(k))
       return;
 
-    protectedValues().remove(k->downcast());
+    protectedValues().remove(k->asCell());
 }
 
 void Collector::collectOnMainThreadOnly(JSValue* value)
@@ -654,7 +654,7 @@ void Collector::collectOnMainThreadOnly(JSValue* value)
     if (JSImmediate::isImmediate(value))
       return;
 
-    JSCell* cell = value->downcast();
+    JSCell* cell = value->asCell();
     cellBlock(cell)->collectOnMainThreadOnly.set(cellOffset(cell));
     ++mainThreadOnlyObjectCount;
 }
