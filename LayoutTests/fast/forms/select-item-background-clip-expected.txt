@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
             text run at (0,18) width 158: "not clipped to the list box"
         RenderText {#text} at (158,18) size 4x18
           text run at (158,18) width 4: "."
-      RenderBlock (anonymous) at (0,52) size 784x54
-        RenderListBox {SELECT} at (2,0) size 55x54 [bgcolor=#FFFFFF] [border: (3px solid #0000FF)]
+      RenderBlock (anonymous) at (0,52) size 784x58
+        RenderListBox {SELECT} at (2,0) size 55x58 [bgcolor=#FFFFFF] [border: (3px solid #0000FF)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

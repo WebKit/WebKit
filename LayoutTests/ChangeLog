@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=13823
+          REGRESSION: fast/forms/select-item-background-clip.html failing pixel test
+
+        Updated the test and the results.
+
+        * fast/forms/select-item-background-clip-expected.checksum:
+        * fast/forms/select-item-background-clip-expected.png:
+        * fast/forms/select-item-background-clip-expected.txt:
+        * fast/forms/select-item-background-clip.html:
+
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=13800
           REGRESSION: Moving a slider moves another unrelated slider
 
