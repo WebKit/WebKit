@@ -11,4 +11,3 @@ after send(): Loaded
   ResponseText: ""
   ResponseXML: null
   ResponseXML serialized: n/a
-

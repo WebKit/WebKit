@@ -5,4 +5,3 @@ SUCCESS (document.images[0].longDesc = file:///does/not/exist/test-description.h
 After changing the base URL:
 
 SUCCESS (document.images[0].longDesc = file:///also/does/not/exist/test-description.html)
-

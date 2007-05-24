@@ -8,4 +8,3 @@ This tests moving the caret in content of mixed editability. The caret should ju
 editablenoneditableeditable
 Success
 Success
-

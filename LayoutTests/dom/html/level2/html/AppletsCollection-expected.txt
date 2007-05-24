@@ -14,5 +14,3 @@ Applets length is currently 0
 
 
 Applets length is currently 0
-
-

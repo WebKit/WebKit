@@ -8,4 +8,3 @@ After changing the base URL:
 
 SUCCESS (document.images[0].src = file:///does/not/exist/test.jpg)
 SUCCESS (IconImages['grey'].src = file:///also/does/not/exist/test.jpg)
-

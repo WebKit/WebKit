@@ -13,5 +13,3 @@ upper(ǰ) = J̌ (should be J̌)
 upper(ﬃ) = FFI (should be FFI)
 
 lower(Ĳ) = ĳ (should be ij)
-
-

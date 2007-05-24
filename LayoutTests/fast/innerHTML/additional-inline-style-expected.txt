@@ -5,4 +5,3 @@ This tests that .innerHTML does not introduce additional inline style.
 The following markup should not include a style attribute:
 
 <span></span>
-

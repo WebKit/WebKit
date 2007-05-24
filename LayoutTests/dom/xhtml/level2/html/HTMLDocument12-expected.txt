@@ -1,4 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLDocument12
 Status	failure
 Message	cookieLink: assertEquals failed, actual null, expected .
-

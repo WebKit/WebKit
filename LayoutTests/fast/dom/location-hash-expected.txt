@@ -18,4 +18,3 @@ PASS: window.location == originalLocation should be true and is.
 PASS: window.location.hash should be #foo and is.
 PASS: window.location == originalLocation + '#foo' should be true and is.
 SUCCESS!
-

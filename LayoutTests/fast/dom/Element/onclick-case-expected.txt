@@ -2,5 +2,3 @@ This tests whether an element's onclick attribute can be a function named "OnCli
 
 
 Hooray! All is well!
-
-

@@ -4,4 +4,3 @@ TEST PASSED: Child rule did not affect the table.
 
 This text should not be bold.
 This text should be bold.
-

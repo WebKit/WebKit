@@ -59,5 +59,3 @@
 * The indexOf Boolean 'true' is 2
 * The indexOf Number '5' is 3
 * The indexOf Number '9' is 5
-
-

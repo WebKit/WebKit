@@ -7,4 +7,3 @@ As of this writing we can't use DOM events to type into a search field, so the t
 The two rows below should match.
 0.5 0.4 0.3 0.2 0.2 0
 0.5 0.4 0.3 0.2 0.2 0
-

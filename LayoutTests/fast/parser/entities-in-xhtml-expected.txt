@@ -266,4 +266,3 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 9827	2663	clubs	♣	♣	♣
 9829	2665	hearts	♥	♥	♥
 9830	2666	diams	♦	♦	♦
-

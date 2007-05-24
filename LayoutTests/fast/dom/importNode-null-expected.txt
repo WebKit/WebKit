@@ -2,4 +2,3 @@ This page tests calling document.importNode(null). If it passes, you'll see a "P
 
 caught exception: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 PASS: importNode(null) didn't crash
-

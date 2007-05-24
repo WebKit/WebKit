@@ -77,5 +77,3 @@ PASS -- testing: foo/bar/baz+xml -- responseXML: null
 PASS -- testing: foo?bar/baz+xml -- responseXML: null
 
 PASS -- testing: foo=bar/baz+xml -- responseXML: null
-
-

@@ -27,4 +27,3 @@ PASS: attributes.getNamedItem('foo:attr') should be null and is.
 PASS: attributes.length should be 2 and is.
 PASS: attributes.getNamedItem('attr') should be null and is.
 PASS: attributes.length should be 1 and is.
-

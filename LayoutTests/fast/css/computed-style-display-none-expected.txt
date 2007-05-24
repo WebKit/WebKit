@@ -1,2 +1,1 @@
 Test succeeded! The value of display is 'none'.
-

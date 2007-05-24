@@ -5,5 +5,3 @@ encoding: utf-8
 Resetting encoding...
 cssText: @charset "koi8-r";
 encoding: koi8-r
-
-

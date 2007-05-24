@@ -4,6 +4,4 @@ If the test passes, you should see one line saying "focused" and the text field 
 
 Information:
 
-
 focused
-

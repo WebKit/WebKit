@@ -14,5 +14,3 @@ ondragover right target
 ondrop right target
 ondragend src
 These results are just "sensible" at the moment, meaning that all the events fire on the right elements, nothing more. The order in particular can rightfully change.
-
-

@@ -21,4 +21,3 @@ WKFOOBAR("123"): WKFOOBAR(3 bytes), Content-Type: application/xml
 SEARCH(""): SEARCH(0 bytes), Content-Type: application/xml
 SEARCH(null): SEARCH(0 bytes), Content-Type: null
 SEARCH("123"): SEARCH(3 bytes), Content-Type: application/xml
-

@@ -4,4 +4,3 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 This tests Selection::removeAllRanges().
 
 This should not be selected.
-

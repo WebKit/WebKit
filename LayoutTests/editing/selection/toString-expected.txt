@@ -3,4 +3,3 @@ This tests Selection::toString(): that it exists, that it returns the same resul
 
 hello world
 Success
-

@@ -3,4 +3,3 @@ This tests for a bug that would cause paragraphs before and after indented conte
 foo
 bar
 baz
-

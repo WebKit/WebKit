@@ -9,5 +9,3 @@
 !foo div child count: 0
 
 !doctype div child count: 0
-
-

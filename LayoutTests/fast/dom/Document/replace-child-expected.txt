@@ -4,4 +4,3 @@ SUCCESS: <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3
 replacing element with doctype
 SUCCESS: <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 SUCCESS - All tests succeeded!
-

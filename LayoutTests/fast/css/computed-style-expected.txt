@@ -137,4 +137,3 @@ overflow: visible;
 -webkit-match-nearest-mail-blockquote-color: normal;
 -webkit-text-size-adjust: auto;
 
-

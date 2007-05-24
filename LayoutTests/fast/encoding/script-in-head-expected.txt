@@ -3,4 +3,3 @@ Test for bug 12165: text encoding problem at jn.sapo.pt
 Should see a success message below.
 
 SUССЕSS
-

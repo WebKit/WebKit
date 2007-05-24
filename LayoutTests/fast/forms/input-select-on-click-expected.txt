@@ -5,5 +5,3 @@ The test runs only under DumpRenderTree with eventSender; if you test by hand th
 
 
 PASS
-
-

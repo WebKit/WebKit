@@ -2,4 +2,3 @@ This tests that when newlines are pasted into text fields, the text gets truncat
 
 
 Passed.
-

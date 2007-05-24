@@ -3,4 +3,3 @@ This page tests for a crash when accessing a custom property on a DOM object aft
 If the test passes, you'll see a 'PASS' message below.
 
 PASS: you didn't crash
-

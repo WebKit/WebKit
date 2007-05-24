@@ -2,5 +2,3 @@ This should not be red.
 This tests for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5983 REGRESSION: onmouseover-powered navbar at MacNN renders incorrectly.
 
 Test result: PASS
-
-

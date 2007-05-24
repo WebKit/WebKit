@@ -4,4 +4,3 @@ This tests XMLSerializer on different node types. If the test is successful, the
 <!-- A comment -->
 <test><child1>First child</child1><child2 attr="an attribute">Second child</child2><!-- A comment --></test>
 <test><child1>First child</child1><child2 attr="an attribute">Second child</child2><!-- A comment --></test>
-

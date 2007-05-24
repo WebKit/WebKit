@@ -46,4 +46,3 @@ Second header
 First list element
 Second list element
 This line contains  an image.
-

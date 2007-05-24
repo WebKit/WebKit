@@ -1,3 +1,15 @@
+2007-05-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix problems where unrendered nodes were affecting on plain text serialization
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance): Don't call handleXXX functions or exitNode for
+        nodes without renderers.
+        (WebCore::shouldEmitNewlineAfterNode): Only consider rendered nodes when deciding
+        if this is the last node in the document.
+
 2007-05-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

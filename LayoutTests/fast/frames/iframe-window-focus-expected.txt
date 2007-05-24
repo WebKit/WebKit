@@ -2,4 +2,3 @@ This tests that focusing an editable iframe's window works correctly and allows 
 
 TEST
 PASS
-

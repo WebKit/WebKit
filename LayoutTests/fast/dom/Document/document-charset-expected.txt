@@ -27,5 +27,3 @@ Setting characterSet to KOI8-R (expected to fail, matching Firefox)...
  document.characterSet: UTF-8
 
  document.inputEncoding: UTF-8
-
-

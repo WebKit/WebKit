@@ -9,4 +9,3 @@ Move the mouse outside the button.
 Mouse up.
 
 PASS: mouse up event did not fire
-

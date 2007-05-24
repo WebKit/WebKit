@@ -8,5 +8,3 @@ keypress - key: U+0009@0 (keyCode/charCode: 9/9) modifiers: false,false,false,fa
 keydown - key: U+0009@0 (keyCode/charCode: 9/9) modifiers: false,false,true,false
 
 keypress - key: U+0009@0 (keyCode/charCode: 9/9) modifiers: false,false,true,false
-
-

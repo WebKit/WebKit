@@ -9,5 +9,3 @@ And the following text area should have text in it:
 
 
 Test succeeded!
-
-

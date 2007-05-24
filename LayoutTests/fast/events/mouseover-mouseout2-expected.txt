@@ -65,4 +65,3 @@ mouseover on t6
 mouseout on t6
 
 SUCCESS
-

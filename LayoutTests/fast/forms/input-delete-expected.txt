@@ -2,4 +2,3 @@ This tests that calling setSelectionRange on a text field will correctly close t
 
 
 Passed
-

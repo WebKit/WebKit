@@ -38,7 +38,6 @@ Testing parent and ancestor ops
 Test:see source
 Desired Result: true
 Result:true
-
 Testing basic xsl:apply-templates
 Test:<xsl:apply-templates/>
 Desired Result:element x, element y, element z
@@ -170,4 +169,3 @@ Automatic Result Type Conversion
 Test:	 <xsl:value-of select="'747' + 8"/>
 Desired Result:	755
 Result:	755
-

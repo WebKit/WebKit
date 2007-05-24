@@ -7,5 +7,3 @@ So, if the test succeeds, the text below should say that we're at the left but n
 Scroll position is at left and not at top.
 
 This is very tall line that's here at the end so we have a vertical scroll bar.
-
-

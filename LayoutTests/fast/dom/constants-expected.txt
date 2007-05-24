@@ -94,4 +94,3 @@ PASS: window.Event.FOCUS should be 4096 and is.
 PASS: window.Event.BLUR should be 8192 and is.
 PASS: window.Event.SELECT should be 16384 and is.
 PASS: window.Event.CHANGE should be 32768 and is.
-

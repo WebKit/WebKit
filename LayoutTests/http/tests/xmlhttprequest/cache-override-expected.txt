@@ -26,4 +26,3 @@ async: If-None-Match override (none match): status = 200
 async: If-Range override: status = 206
 async: If-Range override (none match): status = 200
 async: If-Modified-Since override (uncached response): status = 304
-

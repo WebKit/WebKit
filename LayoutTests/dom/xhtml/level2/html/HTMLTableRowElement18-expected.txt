@@ -1,4 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLTableRowElement18
 Status	failure
 Message	HTMLTableRowElement18: assertTrue failed
-

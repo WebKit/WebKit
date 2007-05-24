@@ -2,4 +2,3 @@ testname
 testdescription — from file “testfilename”.
 MIME Type	Description	Extensions
 testtype	testdescription	testsuffixes
-

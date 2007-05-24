@@ -5,5 +5,3 @@ Should say SUCCESS twice
 SUССESS
 
 SUССESS
-
-

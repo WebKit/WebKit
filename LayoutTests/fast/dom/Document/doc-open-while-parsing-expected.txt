@@ -3,5 +3,3 @@ Test for a possible problem related to bug 4395: REGRESSION: document.open doesn
 This line should appear second.
 
 Last line.
-
-

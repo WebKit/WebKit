@@ -10,4 +10,3 @@ http://bugzilla.opendarwin.org/show_bug.cgi?id=9358
 
 Assertion fails when all characters are deleted: 
 SUCCESS if the test didn't crash and you see this message.
-

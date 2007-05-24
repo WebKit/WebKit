@@ -18,5 +18,3 @@ four spaces: "    "
 Testing space-only runs (1..2...3....4.5)
 total length: 9
 (0, 100): 1 2 3 4 5{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
-
-

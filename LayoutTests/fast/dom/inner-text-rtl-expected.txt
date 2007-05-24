@@ -5,5 +5,3 @@ The following lines should be identical.
 בבקשה select and copy this sentence.
 
 בבקשה select and copy this sentence.
-
-

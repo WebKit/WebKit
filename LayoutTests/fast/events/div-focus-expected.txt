@@ -2,4 +2,3 @@ This test checks that non-form-control elements connect onfocus and onblur to th
 focus
 blur
 Text 
-

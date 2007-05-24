@@ -3,5 +3,3 @@ Test that setting document.title creates a title element and appends it to the d
 Expected 0, got 0: PASS
 
 Expected 1, got 1: PASS
-
-

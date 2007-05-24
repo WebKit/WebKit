@@ -6,5 +6,3 @@
 0000000000000000 ('ldt ')
 FFFFFFFF3C637000 ('ldt ')
 Invalid Date ('utxt')
-
-

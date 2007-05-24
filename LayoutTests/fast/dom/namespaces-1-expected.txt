@@ -17,5 +17,3 @@ d element (empty namespace)
 d element (null namespace)
 
 3
-
-

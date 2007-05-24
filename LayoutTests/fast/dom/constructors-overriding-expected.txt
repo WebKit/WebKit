@@ -8,4 +8,3 @@ PASS: window.XMLHttpRequest should be 1 and is.
 PASS: window.XMLSerializer should be 1 and is.
 PASS: window.DOMParser should be 1 and is.
 PASS: window.XSLTProcessor should be 1 and is.
-

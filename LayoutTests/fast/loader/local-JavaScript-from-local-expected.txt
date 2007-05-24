@@ -1,4 +1,3 @@
 This test is to see if a local file can run a local script.
 
 Test Passed.
-

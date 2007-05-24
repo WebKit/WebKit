@@ -3,4 +3,3 @@ This tests for a bug in moveParagraphs that would cause an empty paragraph to co
 There should be an empty paragraph below this one.
 
 There should be an empty paragraph above this one.
-

@@ -54,4 +54,3 @@ Clicking 5 times
 [Mouse Up] Button: 0 Click Count: 5
 [Mouse Click] Button: 0 Click Count: 5
 
-

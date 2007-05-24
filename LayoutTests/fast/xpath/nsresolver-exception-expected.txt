@@ -1,3 +1,2 @@
 CONSOLE MESSAGE: line 14: Value undefined (result of expression window.foobar) is not object.
 SUCCESS
-

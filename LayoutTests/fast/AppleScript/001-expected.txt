@@ -17,5 +17,3 @@ do JavaScript - converting to AppleScript types ('utxt')
 msng ('type')
 (null)
 [object Object] ('utxt')
-
-

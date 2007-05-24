@@ -14,4 +14,3 @@ CONSOLE MESSAGE: line 1: Refused to set unsafe header VIA
 Test that setRequestHeader cannot be used to alter security-sensitive headers.
 
 SUCCESS
-

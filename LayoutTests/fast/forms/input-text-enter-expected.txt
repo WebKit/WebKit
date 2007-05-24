@@ -3,5 +3,3 @@ This test selects some characters, then simulates a press of the Enter key (mark
 
 
 Content of input after pressing return is "12345678". It should be "12345678".
-
-

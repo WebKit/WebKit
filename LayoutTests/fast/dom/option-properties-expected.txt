@@ -6,4 +6,3 @@ PASS: document.getElementById('sel').options.selectedIndex should be 1 and is.
 PASS: document.getElementById('sel').options[1].selected should be true and is.
 PASS: document.getElementById('sel').options[1].text should be PASS and is.
 
-

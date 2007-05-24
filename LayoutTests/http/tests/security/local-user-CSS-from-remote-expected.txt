@@ -3,4 +3,3 @@ To run this test manually you must set your user style sheet in your Safari pref
 If the background is yellow then the user stylesheet was loaded.
 
 Test Passed: Local user stylesheet loaded.
-

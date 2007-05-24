@@ -9,4 +9,3 @@ The onclick fire order should be: li, ul
 onclick: li
 onclick: ul
 
-

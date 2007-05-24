@@ -13,4 +13,3 @@ send()
 PASS: req.send(null) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS: req.setRequestHeader("Foo", "bar") threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS: req.getResponseHeader() threw exception SyntaxError: Not enough arguments.
-

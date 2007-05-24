@@ -14,4 +14,3 @@ Successfully set display to "block" with setProperty; cssText is now: "top: 0px;
 Successfully set display to "foobar" with setProperty; cssText is now: "top: 0px; display: none; bottom: 1px; ".
 Successfully set display to "" with setProperty; cssText is now: "top: 0px; bottom: 1px; ".
 Successfully set display to null with setProperty; cssText is now: "top: 0px; bottom: 1px; ".
-

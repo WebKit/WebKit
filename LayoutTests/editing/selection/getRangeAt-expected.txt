@@ -5,4 +5,3 @@ hello
 [object Range]
 [object Text]
 [object Text]
-

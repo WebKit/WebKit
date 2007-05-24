@@ -12,4 +12,3 @@ PASS: doc.getElementsByTagName('body').length should be 1 and is.
 PASS: doc.title should be and is.
 [document with null title]
 PASS: doc.title should be null and is.
-

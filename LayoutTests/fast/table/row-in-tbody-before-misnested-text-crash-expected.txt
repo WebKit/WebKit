@@ -3,4 +3,3 @@ This test checks whether a particular odd arrangement of DOM nodes results in re
  xxx
 Whee
 QQQ
-

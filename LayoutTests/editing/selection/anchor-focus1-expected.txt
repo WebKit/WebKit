@@ -8,4 +8,3 @@ This tests the anchorNode, anchorOffset, focusNode and focusOffset properties of
 text
 Anchor ([object Text], 0) is correct.
 Focus ([object Text], 4) is correct.
-

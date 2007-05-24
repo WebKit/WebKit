@@ -8,5 +8,3 @@ SUCCESS (value: "bar")
 SUCCESS (value: "content-type")
 
 SUCCESS (value: "text/html; charset=UTF-8")
-
-

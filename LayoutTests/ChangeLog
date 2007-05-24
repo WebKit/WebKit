@@ -1,3 +1,11 @@
+2007-05-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - updated the many tests with an extra newline or two at the end
+          because of the bug where plain-text serialization will consider
+          nodes that are not rendered
+
 2007-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

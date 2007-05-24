@@ -3,5 +3,3 @@ This tests that access to a form's element named "action" overrides the "action"
 If the test passes, the next paragraph will say "Test Passed".
 
 Test Passed
-
-

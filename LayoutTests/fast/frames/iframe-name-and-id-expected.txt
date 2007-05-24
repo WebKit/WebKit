@@ -7,7 +7,6 @@ frames[0].name (should be frame0_name): frame0_name
 
 frames[0].id (should be undefined): undefined
 
-
 frames[0].name (should be frame0_newname): frame0_newname
 
 frames[0].id (should be frame0_newid): frame0_newid

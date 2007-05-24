@@ -38,4 +38,3 @@ Success: document.execCommand("Cut") == true
 Success: document.queryCommandEnabled("Undo") == true
 Success: document.execCommand("Undo") == true
 Success: document.queryCommandEnabled("Redo") == true
-

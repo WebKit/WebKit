@@ -121,4 +121,3 @@ Success
 Success
 8.2 verify that stylesheet has been cleared:
 Success
-

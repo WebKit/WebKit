@@ -3,4 +3,3 @@ Test for bug 7640: Menu items are displayed as "undefined".
 Node.item() should not exist.
 
 SUCCESS
-

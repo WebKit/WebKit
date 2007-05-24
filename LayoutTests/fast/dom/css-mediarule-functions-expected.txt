@@ -10,4 +10,3 @@ PASS: Exception raised successfully. Type: Error: SYNTAX_ERR: DOM Exception 12
 PASS: No exception raised! Rule at position 'length - 1' deleted successfully.
 PASS: Exception raised successfully. Type: Error: INDEX_SIZE_ERR: DOM Exception 1
 PASS: Exception raised successfully. Type: Error: INDEX_SIZE_ERR: DOM Exception 1
-

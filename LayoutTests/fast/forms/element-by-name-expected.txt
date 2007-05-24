@@ -5,5 +5,3 @@ If the test succeeds, there will be a line below that says "form element was fou
 
 
 Form element was found.
-
-

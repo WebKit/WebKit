@@ -10,5 +10,3 @@ Testing text with br elements (<div><br></div>hello<br>)
 (7, 1):
 (100, 0): undefined
 (100, 100): undefined
-
-

@@ -8,4 +8,3 @@ eventListener3: this = [object JSXMLHttpRequest]
 onload: this = [object JSXMLHttpRequest]
 eventListener: this = [object JSXMLHttpRequest]
 eventListener2: this = [object JSXMLHttpRequest]
-

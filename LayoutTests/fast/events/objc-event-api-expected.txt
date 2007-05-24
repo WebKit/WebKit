@@ -339,5 +339,3 @@ event type:      mousemove
   modifier keys: c:0 s:0 a:0 m:0
 Test
 This tests that DOMEvents are correctly handed to the ObjC API. See bug 9181.
-
-

@@ -1,4 +1,3 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLTableSectionElement28
 Status	failure
 Message	HTMLTableSectionElement28: assertTrue failed
-

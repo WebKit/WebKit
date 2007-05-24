@@ -169,18 +169,22 @@ void TextIterator::advance()
             return;
         }
         
-        // handle current node according to its type
-        if (!m_handledNode) {
-            RenderObject *renderer = m_node->renderer();
-            if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) // FIXME: What about CDATA_SECTION_NODE?
-                m_handledNode = handleTextNode();
-            else if (renderer && (renderer->isImage() || renderer->isWidget() || (renderer->element() && renderer->element()->isControl())))
-                m_handledNode = handleReplacedElement();
-            else
-                m_handledNode = handleNonTextNode();
-
-            if (m_positionNode)
-                return;
+        RenderObject *renderer = m_node->renderer();
+        if (!renderer) {
+            m_handledNode = true;
+            m_handledChildren = true;
+        } else {
+            // handle current node according to its type
+            if (!m_handledNode) {
+                if (renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) // FIXME: What about CDATA_SECTION_NODE?
+                    m_handledNode = handleTextNode();
+                else if (renderer && (renderer->isImage() || renderer->isWidget() || (renderer->element() && renderer->element()->isControl())))
+                    m_handledNode = handleReplacedElement();
+                else
+                    m_handledNode = handleNonTextNode();
+                if (m_positionNode)
+                    return;
+            }
         }
 
         // find a new current node to handle in depth-first manner,
@@ -194,8 +198,10 @@ void TextIterator::advance()
                 while (!next && m_node->parentNode()) {
                     if (pastEnd && m_node->parentNode() == m_endContainer || m_endContainer->isDescendantOf(m_node->parentNode()))
                         return;
+                    bool haveRenderer = m_node->renderer();
                     m_node = m_node->parentNode();
-                    exitNode();
+                    if (haveRenderer)
+                        exitNode();
                     if (m_positionNode) {
                         m_handledNode = true;
                         m_handledChildren = true;
@@ -454,7 +460,14 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node* node)
 static bool shouldEmitNewlineAfterNode(Node* node)
 {
     // FIXME: It should be better but slower to create a VisiblePosition here.
-    return shouldEmitNewlinesBeforeAndAfterNode(node) && node->traverseNextSibling();
+    if (!shouldEmitNewlinesBeforeAndAfterNode(node))
+        return false;
+    // Check if this is the very last renderer in the document.
+    // If so, then we should not emit a newline.
+    while ((node = node->traverseNextSibling()))
+        if (node->renderer())
+            return true;
+    return false;
 }
 
 static bool shouldEmitNewlineBeforeNode(Node* node)

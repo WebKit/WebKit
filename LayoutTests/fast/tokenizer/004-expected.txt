@@ -170,4 +170,3 @@ These scripts should not execute
 "javascript" language, "bogus" type
 empty string type, "bogus" language
 empty string language, "bogus" type
-
