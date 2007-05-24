@@ -1,3 +1,15 @@
+2007-05-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by.
+
+        - Rolling back change to fix the build until I have a good fix for data: urls.
+
+        * ChangeLog:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::open):
+        * platform/String.cpp:
+
 2007-05-24  David Hyatt  <hyatt@apple.com>
 
         Add two more error messages to the HTMLParser.

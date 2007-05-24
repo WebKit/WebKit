@@ -510,11 +510,3 @@ WebCore::String* string(const char* s)
     return new WebCore::String(s);
 }
 #endif
-
-#ifndef NDEBUG
-void dump(const WebCore::String* s)
-{
-    if(s)
-        printf("%s\n", s->ascii().data());
-}
-#endif

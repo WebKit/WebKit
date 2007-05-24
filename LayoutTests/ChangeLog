@@ -1,3 +1,21 @@
+2007-05-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by.
+
+        - Rolling back change to fix the build until I have a good fix for data: urls.
+
+        * ChangeLog:
+        * fast/dom/HTMLHeadElement/resources/head-check.js:
+        * fast/dom/frame-loading-via-document-write-expected.txt: Removed.
+        * fast/dom/frame-loading-via-document-write.html: Removed.
+        * fast/dom/resources/frame-loading-via-document-write.js: Removed.
+        * fast/dom/resources/green250x50.png: Removed.
+        * fast/dom/resources/success.html: Removed.
+        * http/tests/security/frame-loading-via-document-write-expected.txt: Removed.
+        * http/tests/security/frame-loading-via-document-write.html: Removed.
+        * http/tests/security/resources/frame-loading-via-document-write.js: Removed.
+        * http/tests/security/resources/success.html: Removed.
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
@@ -53,19 +71,6 @@
 
         * fast/dom/prototype-chain-expected.txt:
         * fast/dom/prototype-chain.html:
-
-2007-05-23  Kevin McCullough  <kmccullough@apple.com>
-
-        Reviewed by Darin.
-
-        - rdar://problem/5183523
-        - Tests for a fix for a regression with Excel worksheets.  We now check the document's URL to see if it can load a resource in the case of a URL click, instead of checking the referrer, which is blank for local files.
-
-        * fast/dom/frame-loading-via-document-write-expected.txt: Added.
-        * fast/dom/frame-loading-via-document-write.html: Added.
-        * fast/dom/resources/frame-loading-via-document-write.js: Added.
-        * fast/dom/resources/green250x50.png: Added.
-        * fast/dom/resources/success.html: Added.
 
 2007-05-23  Kevin McCullough  <kmccullough@apple.com>
 
