@@ -52,7 +52,7 @@ class Node;
  */
 class Token {
 public:
-    Token() : beginTag(true), flat(false), m_sourceInfo(0) { }
+    Token() : beginTag(true), flat(false), brokenXMLStyle(false), m_sourceInfo(0) { }
     ~Token() { }
 
     void addAttribute(Document*, AtomicString& attrName, const AtomicString& v, bool viewSourceMode);
@@ -67,6 +67,7 @@ public:
         tagName = nullAtom;
         beginTag = true;
         flat = false;
+        brokenXMLStyle = false;
         if (m_sourceInfo)
             m_sourceInfo->clear();
     }
@@ -78,6 +79,7 @@ public:
     AtomicString tagName;
     bool beginTag;
     bool flat;
+    bool brokenXMLStyle;
     OwnPtr<Vector<UChar> > m_sourceInfo;
 };
 

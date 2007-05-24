@@ -195,8 +195,10 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
     }
 
     // Apparently some sites use </br> instead of <br>. Be compatible with IE and Firefox and treat this like <br>.
-    if (t->isCloseTag(brTag) && document->inCompatMode())
+    if (t->isCloseTag(brTag) && document->inCompatMode()) {
+        reportError(MalformedBRError);
         t->beginTag = true;
+    }
 
     if (!t->beginTag) {
         processCloseTag(t);
@@ -238,6 +240,11 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         if (isHeaderTag(t->tagName))
             // Do not allow two header tags to be nested if the intervening tags are inlines.
             popNestedHeaderTag();
+            
+        // If the node does not have a forbidden end tag requirement, and if the broken XML self-closing
+        // syntax was used, report an error.
+        if (t->brokenXMLStyle && e->endTagRequirement() != TagStatusForbidden)
+            reportError(IncorrectXMLSelfCloseError, &t->tagName);
     }
 
     if (!insertNode(n.get(), t->flat)) {

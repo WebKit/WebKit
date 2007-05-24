@@ -40,7 +40,9 @@ enum HTMLParserErrorCode {
     MisplacedCaptionContentError,
     MisplacedTableError,
     StrayTableContentError,
-    TablePartRequiredError
+    TablePartRequiredError,
+    MalformedBRError,
+    IncorrectXMLSelfCloseError
 };
 
 const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode);

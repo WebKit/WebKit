@@ -1,3 +1,25 @@
+2007-05-24  David Hyatt  <hyatt@apple.com>
+
+        Add two more error messages to the HTMLParser.
+
+        Report when the </br> -> <br> quirk is triggered.
+
+        Also report whenever the broken XML self-closing tag syntax is used on
+        tags that can actually have an end tag (either optional or required).
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+        (WebCore::):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLTokenizer.h:
+        (WebCore::Token::reset):
+
 2007-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.
