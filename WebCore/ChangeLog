@@ -1,3 +1,11 @@
+2007-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Uncomment HTMLFramesSetElement constructor now that it exists.
+
+        * page/DOMWindow.idl:
+
 2007-05-24  Anders Carlsson  <andersca@apple.com>
 
         Try fixing the buildbot build.

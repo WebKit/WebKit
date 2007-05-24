@@ -32,7 +32,7 @@ HTMLFormElement: [object HTMLFormElementConstructor]
 
 HTMLFrameElement: [object HTMLFrameElementConstructor]
 
-HTMLFrameSetElement: undefined
+HTMLFrameSetElement: [object HTMLFrameSetElementConstructor]
 
 HTMLHeadElement: [object HTMLHeadElementConstructor]
 

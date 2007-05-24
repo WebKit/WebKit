@@ -96,7 +96,7 @@ module window {
         attribute HTMLFontElementConstructor HTMLFontElement;
         attribute HTMLFormElementConstructor HTMLFormElement;
         attribute HTMLFrameElementConstructor HTMLFrameElement;
-//        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
+        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
         attribute HTMLHeadElementConstructor HTMLHeadElement;
         attribute HTMLHeadingElementConstructor HTMLHeadingElement;
         attribute HTMLHRElementConstructor HTMLHRElement;
