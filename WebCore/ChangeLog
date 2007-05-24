@@ -1,5 +1,18 @@
 2007-05-24  David Hyatt  <hyatt@apple.com>
 
+        Add error reporting for residual style.
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::reopenResidualStyleTags):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+
+2007-05-24  David Hyatt  <hyatt@apple.com>
+
         Report <script/> as a warning instead of an error for now, since we
         actually do close it.  (Sigh.)
 

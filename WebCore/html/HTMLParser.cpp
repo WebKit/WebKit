@@ -1029,7 +1029,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
                     // Create a clone of this element.
                     // We call releaseRef to get a raw pointer since we plan to hand over ownership to currElem.
                     Node* currNode = currElem->node->cloneNode(false).releaseRef();
-
+                    reportError(ResidualStyleError, &currNode->localName());
+    
                     // Change the stack element's node to point to the clone.
                     // The stack element adopts the reference we obtained above by calling release().
                     currElem->derefNode();
@@ -1074,6 +1075,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         // Step 2: Clone |residualElem|.
         RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
         Node* newNodePtr = newNode.get();
+        reportError(ResidualStyleError, &newNode->localName());
 
         // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
         // before we've put |newElem| into the document.  That way we'll only do one attachment of all
@@ -1158,6 +1160,7 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTab
     while (elem) {
         // Create a shallow clone of the DOM node for this element.
         RefPtr<Node> newNode = elem->node->cloneNode(false); 
+        reportError(ResidualStyleError, &newNode->localName());
 
         // Append the new node. In the malformed table case, we need to insert before the table,
         // which will be the last child.

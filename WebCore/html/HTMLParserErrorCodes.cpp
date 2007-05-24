@@ -47,6 +47,7 @@ const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode errorCode)
         "XML self-closing tag syntax used on %tag1. The tag will not be closed.",
         "Stray </p> encountered.  Converting </p> into <p></p>.",
         "Stray %tag1 encountered.  Ignoring close tag.",
+        "%tag1 misnested or not properly closed.  Cloning %tag1 in order to preserve the styles applied by it.",
         "XML self-closing tag syntax used on <script>.  The tag will be closed by WebKit, but not all engines do this.  Change to <script></script> instead for best cross-browser compatibility."
     };
      
