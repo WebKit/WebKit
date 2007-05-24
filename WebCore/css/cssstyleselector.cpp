@@ -3105,7 +3105,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setHasAutoZIndex();
             return;
         }
-        style->setZIndex((int)primitiveValue->getFloatValue());
+        
+        // FIXME: Should clamp all sorts of other integer properties too.
+        const double minIntAsDouble = INT_MIN;
+        const double maxIntAsDouble = INT_MAX;
+        style->setZIndex(max(minIntAsDouble, min(primitiveValue->getFloatValue(), maxIntAsDouble)));
         return;
     }
     case CSS_PROP_WIDOWS:
@@ -4026,7 +4030,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
             style->setMarqueeLoopCount(-1); // -1 means repeat forever.
         else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
-            style->setMarqueeLoopCount((int)(primitiveValue->getFloatValue()));
+            style->setMarqueeLoopCount((int)primitiveValue->getFloatValue());
         return;
     }
     case CSS_PROP__WEBKIT_MARQUEE_SPEED: {

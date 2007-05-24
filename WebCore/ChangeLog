@@ -1,3 +1,16 @@
+2007-05-23  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5222611> REGRESSION: Paint ordering problems at
+        http://buymeasoda.com/dev/issues/image_onload/image_onload.html
+
+        Clamp z-index so that values that exceed maxint (or that are below minint)
+        are clamped to those values.
+
+        Reviewed by darin
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2007-05-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by David Hyatt.
