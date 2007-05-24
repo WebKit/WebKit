@@ -226,6 +226,12 @@ void HTMLViewSourceDocument::addLine(const String& className)
     td->attach();
     m_current = m_td = td;
 
+#ifdef DEBUG_LINE_NUMBERS
+    Text* lineNumberText = new Text(this, String::number(tokenizer()->lineNumber() + 1) + " ");
+    td->addChild(lineNumberText);
+    lineNumberText->attach();
+#endif
+
     // Open up the needed spans.
     if (!className.isEmpty()) {
         if (className == "webkit-html-attribute-name" || className == "webkit-html-attribute-value")

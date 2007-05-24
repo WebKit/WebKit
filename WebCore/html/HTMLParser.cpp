@@ -1417,7 +1417,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
         return;
 
     HTMLTokenizer* htmlTokenizer = static_cast<HTMLTokenizer*>(document->tokenizer());
-    int lineNumber = htmlTokenizer->tagStartLineNumber() + 1;
+    int lineNumber = htmlTokenizer->lineNumber() + 1;
 
     AtomicString tag1;
     AtomicString tag2;

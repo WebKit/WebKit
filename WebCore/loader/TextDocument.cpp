@@ -87,7 +87,7 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
             m_skipLF = false;
         }
         
-        ++str;
+        str.advance(0);
         
         // Maybe enlarge the buffer
         checkBuffer();

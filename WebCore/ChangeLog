@@ -1,3 +1,40 @@
+2007-05-24  David Hyatt  <hyatt@apple.com>
+
+        Rework how HTML handles line numbering so that it is not fooled by
+        \r without a following \n and so that document.write doesn't lead
+        to line numbering confusion.
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processListing):
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseServer):
+        (WebCore::HTMLTokenizer::parseProcessingInstruction):
+        (WebCore::HTMLTokenizer::parseText):
+        (WebCore::HTMLTokenizer::parseEntity):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::processToken):
+        (WebCore::HTMLTokenizer::setSrc):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::lineNumberPtr):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addLine):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+        * platform/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::clear):
+        * platform/SegmentedString.h:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::escaped):
+
 2007-05-23  David Hyatt  <hyatt@apple.com>
 
         Make the delete/InsertRows/Cells methods as well as the rowIndex method
