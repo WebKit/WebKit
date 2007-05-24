@@ -220,6 +220,7 @@ IDL_BINDINGS += \
     html/HTMLFontElement.idl \
     html/HTMLFormElement.idl \
     html/HTMLFrameElement.idl \
+    html/HTMLFrameSetElement.idl \
     html/HTMLHeadElement.idl \
     html/HTMLHeadingElement.idl \
     html/HTMLHRElement.idl \
@@ -270,6 +271,7 @@ SOURCES += \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
+    bindings/js/JSHTMLFrameSetElementCustom.cpp \
     bindings/js/JSHTMLInputElementBase.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \

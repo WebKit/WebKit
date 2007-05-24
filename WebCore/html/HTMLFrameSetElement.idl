@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserve
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLFrameSetElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor, HasOverridingNameGetter] HTMLFrameSetElement : HTMLElement {
 
         attribute [ConvertNullToNullString] DOMString cols;
         attribute [ConvertNullToNullString] DOMString rows;

@@ -341,6 +341,7 @@ all : \
     JSHTMLFontElement.h \
     JSHTMLFormElement.h \
     JSHTMLFrameElement.h \
+    JSHTMLFrameSetElement.h \
     JSHTMLHRElement.h \
     JSHTMLHeadElement.h \
     JSHTMLHeadingElement.h \

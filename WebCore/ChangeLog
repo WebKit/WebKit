@@ -1,3 +1,26 @@
+2007-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13853
+        Autogenerate the JS bindings for the HTMLFrameSetElement
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        * bindings/js/JSHTMLFrameSetCustom.cpp: Added.
+        (WebCore::JSHTMLFrameSetElement::canGetItemsForName):
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::JSHTMLElement::getOwnPropertySlot):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * html/HTMLFrameSetElement.idl:
+
 2007-05-24  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by andersca

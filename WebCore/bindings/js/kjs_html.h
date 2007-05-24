@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2006, 2007 Apple Inc.
+ *  Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,33 +57,28 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
 
-    static const ClassInfo object_info, embed_info, frameSet_info;
+    static const ClassInfo object_info, embed_info;
 
     // FIXME: Might make sense to combine this with ClassInfo some day.
     typedef JSValue* (JSHTMLElement::*GetterFunction)(ExecState*, int token) const;
     typedef void (JSHTMLElement::*SetterFunction)(ExecState*, int token, JSValue*);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
-    static const Accessors object_accessors, embed_accessors, frameSet_accessors;
+    static const Accessors object_accessors, embed_accessors;
 
     JSValue* objectGetter(ExecState* exec, int token) const;
     void  objectSetter(ExecState*, int token, JSValue*);
     JSValue* embedGetter(ExecState*, int token) const;
     void  embedSetter(ExecState*, int token, JSValue*);
-    JSValue* frameSetGetter(ExecState* exec, int token) const;
-    void  frameSetSetter(ExecState*, int token, JSValue*);
 
     enum {
            ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
            ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument, ObjectGetSVGDocument,
-           EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth, EmbedGetSVGDocument,
-           FrameSetCols, FrameSetRows
+           EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth, EmbedGetSVGDocument
     };
   private:
-    static JSValue* framesetNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* frameWindowPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* runtimeObjectGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* runtimeObjectPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
   };

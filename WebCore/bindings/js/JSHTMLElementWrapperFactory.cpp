@@ -36,6 +36,7 @@
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHeadingElement.h"
@@ -92,6 +93,7 @@
 #include "JSHTMLFontElement.h"
 #include "JSHTMLFormElement.h"
 #include "JSHTMLFrameElement.h"
+#include "JSHTMLFrameSetElement.h"
 #include "JSHTMLHRElement.h"
 #include "JSHTMLHeadElement.h"
 #include "JSHTMLHeadingElement.h"
@@ -162,6 +164,7 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(font, Font) \
     macro(form, Form) \
     macro(frame, Frame) \
+    macro(frameset, FrameSet) \
     macro(h1, Heading) \
     macro(head, Head) \
     macro(hr, HR) \
