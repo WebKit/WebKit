@@ -117,6 +117,9 @@ namespace WebCore {
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
+        void setShrinksStandaloneImagesToFit(bool);
+        bool shrinksStandaloneImagesToFit() const { return m_shrinksStandaloneImagesToFit; }
+        
     private:
         String m_defaultTextEncodingName;
         KURL m_userStyleSheetLocation;
@@ -141,7 +144,8 @@ namespace WebCore {
         bool m_textAreasAreResizable : 1;
         bool m_usesDashboardBackwardCompatibilityMode : 1;
         bool m_needsAcrobatFrameReloadingQuirk : 1;
-        bool m_isDOMPasteAllowed: 1;
+        bool m_isDOMPasteAllowed : 1;
+        bool m_shrinksStandaloneImagesToFit : 1;
     };
 
 } // namespace WebCore

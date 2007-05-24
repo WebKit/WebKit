@@ -1,5 +1,58 @@
 2007-05-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        <rdar://problem/3663808> Resize large images to fit in the browser window
+        
+        * WebCore.exp:
+        Add new settings method.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageEventListener::ImageEventListener):
+        New class that handles resize events and click events and forwards them to the image document.
+        
+        (WebCore::ImageTokenizer::ImageTokenizer):
+        (WebCore::ImageTokenizer::writeRawData):
+        (WebCore::ImageTokenizer::finish):
+        (WebCore::ImageDocument::ImageDocument):
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::cachedImage):
+        Let the ImageDocument class keep track of its document structure.
+        
+        (WebCore::ImageDocument::scale):
+        Returns the scale that should be used when resizing the image.
+        
+        (WebCore::ImageDocument::resizeImage):
+        Update the image size.
+        
+        (WebCore::ImageDocument::imageClicked):
+        Toggle between resized and not resized. When restoring the size, scroll the image so that the area under
+        the mouse stays the same.
+        
+        (WebCore::ImageDocument::imageChanged):
+        When the image size is known, resize the image if needed.
+        
+        (WebCore::ImageDocument::restoreImageSize):
+        Restore the image size.
+        
+        (WebCore::ImageDocument::imageNeedsResizing):
+        Return whether the image is too big for its window or not.
+        
+        (WebCore::ImageDocument::windowSizeChanged):
+        Called when the window's size changes. Determine if the window fits or not and resize it if it doesn't fit.
+        
+        (WebCore::ImageEventListener::handleEvent):
+        Forward events to the image document.
+        
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setEnableAutomaticImageResizing):
+        * page/Settings.h:
+        (WebCore::Settings::enableAutomaticImageResizing):
+        Add new setting.
+        
+2007-05-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         Add -webkit-zoom-in and -webkit-zoom-out cursors.

@@ -30,7 +30,8 @@ namespace WebCore {
     
 class DOMImplementation;
 class FrameView;
-    
+class HTMLImageElement;
+
 class ImageDocument : public HTMLDocument
 {
 public:
@@ -39,6 +40,30 @@ public:
     virtual bool isImageDocument() const { return true; }
     
     virtual Tokenizer* createTokenizer();
+    
+    CachedImage* cachedImage();
+    HTMLImageElement* imageElement() const { return m_imageElement; }
+    
+    void windowSizeChanged();
+    void imageChanged();
+    void imageClicked(int x, int y);
+private:
+    void createDocumentStructure();
+    void resizeImageToFit();
+    void restoreImageSize();
+    bool imageFitsInWindow() const;
+    float scale() const;
+    
+    HTMLImageElement* m_imageElement;
+    
+    // Whether enough of the image has been loaded to determine its size
+    bool m_imageSizeIsKnown;
+    
+    // Whether the image is shrunk to fit or not
+    bool m_didShrinkImage;
+    
+    // Whether the image should be shrunk or not
+    bool m_shouldShrinkImage;
 };
     
 }
