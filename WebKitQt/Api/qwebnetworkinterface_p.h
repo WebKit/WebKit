@@ -63,6 +63,9 @@ public:
     bool add(WebCore::ResourceHandle *resourceHandle, QWebNetworkInterface *interface);
     void cancel(WebCore::ResourceHandle *resourceHandle);
 
+    void addHttpJob(QWebNetworkJob *job);
+    void cancelHttpJob(QWebNetworkJob *job);
+
 public slots:
     void started(QWebNetworkJob *);
     void data(QWebNetworkJob *, const QByteArray &data);
@@ -71,9 +74,13 @@ public slots:
 signals:
     void fileRequest(QWebNetworkJob*);
 
+private slots:
+    void httpConnectionClosed(const WebCore::HostInfo &);
+
 private:
     friend class QWebNetworkInterface;
     QWebNetworkManager();
+    QHash<WebCore::HostInfo, WebCore::WebCoreHttp *> m_hostMapping;
 };
 
 
@@ -93,7 +100,7 @@ namespace WebCore {
     {
         Q_OBJECT
     public:
-        WebCoreHttp(QWebNetworkInterface* parent, const HostInfo&);
+        WebCoreHttp(QObject *parent, const HostInfo&);
         ~WebCoreHttp();
 
         void request(QWebNetworkJob* resource);
@@ -115,7 +122,6 @@ namespace WebCore {
     public:
         HostInfo info;
     private:
-        QWebNetworkInterface* m_networkInterface;
         QList<QWebNetworkJob *> m_pendingRequests;
         struct HttpConnection {
             QHttp *http;
@@ -133,11 +139,6 @@ public:
     void sendFileData(QWebNetworkJob* job, int statusCode, const QByteArray &data);
     void parseDataUrl(QWebNetworkJob* job);
 
-    void addHttpJob(QWebNetworkJob *job);
-
-    void httpConnectionClosed(const WebCore::HostInfo &);
-
-    QHash<WebCore::HostInfo, WebCore::WebCoreHttp *> m_hostMapping;
     QWebNetworkInterface *q;
 };
 

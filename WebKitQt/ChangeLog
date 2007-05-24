@@ -1,5 +1,27 @@
 2007-05-23  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Zack, idea from Lars.
+
+        Share WebCoreHttp and therefore HTTP connections among multiple
+        QWebNetworkInterface instances by moving the code into
+        QWebNetworkManager.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::addHttpJob):
+        (QWebNetworkManager::cancelHttpJob):
+        (QWebNetworkManager::httpConnectionClosed):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::cancel):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+
+2007-05-23  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Zack, discussed also with Lars.
 
         Make it possible to specify a per-QWebPage network interface (needed

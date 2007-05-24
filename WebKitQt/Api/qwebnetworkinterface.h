@@ -82,7 +82,6 @@ signals:
     void finished(QWebNetworkJob*, int errorCode);
 
 private:
-    Q_PRIVATE_SLOT(d, void httpConnectionClosed(const WebCore::HostInfo &));
     friend class QWebNetworkInterfacePrivate;
     friend class WebCore::WebCoreHttp;
     QWebNetworkInterfacePrivate *d;
