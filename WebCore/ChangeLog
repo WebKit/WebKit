@@ -1,3 +1,10 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Speculative buildbot build fix.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2007-05-24  Adam Roben  <aroben@apple.com>
 
         Made Chrome::addMessageToConsole more flexible

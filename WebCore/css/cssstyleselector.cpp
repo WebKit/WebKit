@@ -3109,7 +3109,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // FIXME: Should clamp all sorts of other integer properties too.
         const double minIntAsDouble = INT_MIN;
         const double maxIntAsDouble = INT_MAX;
-        style->setZIndex(max(minIntAsDouble, min(primitiveValue->getFloatValue(), maxIntAsDouble)));
+        style->setZIndex(static_cast<int>(max(minIntAsDouble, min(primitiveValue->getFloatValue(), maxIntAsDouble))));
         return;
     }
     case CSS_PROP_WIDOWS:
