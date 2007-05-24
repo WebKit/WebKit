@@ -1,3 +1,14 @@
+2007-05-24  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix multipart/form-data HTTP POSTs. The content-type wasn't set
+        correctly. Fortunately WebCore does it already, so there's no need
+        for us to do it since we already transfer all HTTP header fields :)
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+
 2007-05-23  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack, idea from Lars.
