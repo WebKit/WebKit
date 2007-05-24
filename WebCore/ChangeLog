@@ -1,3 +1,14 @@
+2007-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Rename JSHTMLFrameSetCustom.cpp to JSHTMLFrameSetElementCustom.cpp
+        for consistency.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLFrameSetCustom.cpp: Removed.
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp: Added.
+
 2007-05-24  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5208440> (13753)

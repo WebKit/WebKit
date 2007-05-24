@@ -2791,7 +2791,6 @@
 		BC6E2B1A0C04B93600444EF8 /* DOMHTMLDocumentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6E2B190C04B93600444EF8 /* DOMHTMLDocumentPrivate.h */; };
 		BC6E2B290C04B95400444EF8 /* DOMHTMLDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC6E2B190C04B93600444EF8 /* DOMHTMLDocumentPrivate.h */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC926F7D0C05520F0082776B /* JSHTMLFrameSetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC926F7C0C05520F0082776B /* JSHTMLFrameSetCustom.cpp */; };
 		BC926F800C0552470082776B /* JSHTMLFrameSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */; };
 		BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
@@ -2833,6 +2832,7 @@
 		BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */; };
 		BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */; };
 		BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCFBAE70B5152ED0001F1D7 /* Tokenizer.h */; };
+		BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; };
 		BCEA4798097CAAC80094C9E4 /* csshelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4785097CAAC80094C9E4 /* csshelper.cpp */; };
@@ -6038,7 +6038,6 @@
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
-		BC926F7C0C05520F0082776B /* JSHTMLFrameSetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetCustom.cpp; sourceTree = "<group>"; };
 		BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElement.cpp; sourceTree = "<group>"; };
 		BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameSetElement.h; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
@@ -6081,6 +6080,7 @@
 		BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLViewSourceDocument.h; sourceTree = "<group>"; };
 		BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLViewSourceDocument.cpp; sourceTree = "<group>"; };
 		BCCFBAE70B5152ED0001F1D7 /* Tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Tokenizer.h; sourceTree = "<group>"; };
+		BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElementCustom.cpp; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
 		BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y; sourceTree = "<group>"; };
@@ -9088,7 +9088,7 @@
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
 				A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */,
-				BC926F7C0C05520F0082776B /* JSHTMLFrameSetCustom.cpp */,
+				BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */,
 				A80E7E640A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp */,
 				A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */,
 				A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */,
@@ -11431,6 +11431,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11445,6 +11446,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12785,8 +12787,8 @@
 				BC5156E90C03B741008BB0EE /* DOMHTMLMarqueeElement.mm in Sources */,
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				BC51580B0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp in Sources */,
-				BC926F7D0C05520F0082776B /* JSHTMLFrameSetCustom.cpp in Sources */,
 				BC926F800C0552470082776B /* JSHTMLFrameSetElement.cpp in Sources */,
+				BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
