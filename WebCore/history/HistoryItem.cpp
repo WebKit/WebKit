@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HistoryItem.h"
 
+#include "Document.h"
 #include "CachedPage.h"
 #include "FrameLoader.h"
 #include "IconDatabase.h"
@@ -202,6 +203,7 @@ void HistoryItem::setURL(const KURL& url)
 {
     setURLString(url.url());
     setCachedPage(0);
+    clearDocumentState();
 }
 
 void HistoryItem::setOriginalURLString(const String& urlString)
@@ -379,6 +381,12 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
 FormData* HistoryItem::formData()
 {
     return m_formData.get();
+}
+
+bool HistoryItem::isCurrentDocument(Document* doc) const
+{
+    // FIXME: We should find a better way to check if this is the current document.
+    return urlString() == doc->URL();
 }
 
 void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)

@@ -1,3 +1,13 @@
+2007-05-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5211921> Form values sometimes get transposed (iGoogle)
+
+        * fast/history/redirect-load-no-form-restoration-expected.txt: Added.
+        * fast/history/redirect-load-no-form-restoration.html: Added.
+        * fast/history/resources/redirect-load.html: Added.
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

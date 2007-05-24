@@ -1,3 +1,17 @@
+2007-05-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5211921> Form values sometimes get transposed (iGoogle)
+
+        Test: fast/history/redirect-load-no-form-restoration.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setURL): Clear the document state when the url changes for a HistoryItem.
+        (WebCore::HistoryItem::isCurrentDocument): Added. Compares the HistoryItem url to the document's url.  This might not be the best way to do this, but it works for now.
+        * history/HistoryItem.h:
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::saveDocumentState): Only set the document (and form) state if the document is current for the history item.
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
