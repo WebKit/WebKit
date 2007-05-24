@@ -1,3 +1,67 @@
+2007-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix <rdar://problem/5226451> REGRESSION (21618): Mail block quotes
+          are missing the lines on the side
+
+        This patch fixes three problems:
+
+        1) makes the "skip canLoad check" boolean also skip the check
+           that prevents any loads while the document is in provisional
+           state; this is the proximate cause of the bug
+
+        * loader/SubresourceLoader.cpp: (WebCore::SubresourceLoader::create):
+        Don't check the frame's state if skipCanLoadCheck is true.
+
+        2) moves the "skip canLoad check" boolean to the Request object;
+           the old implementation would cause that flag to affect the
+           new request we served, which might not be the resource with
+           that flag set
+
+        3) fixes error-handling code path that would leak requests
+
+        * html/HTMLImageLoader.cpp: (WebCore::HTMLImageLoader::updateFromElement):
+        Pass false to the CachedImage constructor to indicate we are not making
+        this object for the cache.
+
+        * loader/Cache.cpp:
+        (WebCore::createResource): Pass true to the CachedImage constructor to
+        indicate we are making this object for the cache.
+        (WebCore::Cache::requestResource): Add new code that assumes the object
+        will already have the inCache bit set, and that will delete the object
+        and return 0 if the cache is disabled and the load failed.
+
+        * loader/CachedImage.h:
+        * loader/CachedImage.cpp: (WebCore::CachedImage::CachedImage):
+        Added a forCache boolean parameter. Always false for the constructor
+        that's only used outside the cache code, and passed in as a boolean
+        for the constructor that's used both in cache and outside cache.
+
+        * loader/CachedResource.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource): Added a forCache boolean
+        parameter that determines the initial state of the m_inCache flag.
+        This is needed to prevent a resource from being destroyed if an
+        error occurs during the initial load.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestCSSStyleSheet): Added FIXME.
+        (WebCore::DocLoader::setLoadInProgress): Added null check.
+
+        * loader/Request.h:
+        * loader/Request.cpp: (WebCore::Request::Request):
+        Added a shouldSkipCanLoadCheck boolean here, since we need to track
+        this for each request.
+
+        * loader/loader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load): Pass the skipCanLoadCheck boolean to the
+        Request constructor rather than to the servePendingRequests function.
+        (WebCore::Loader::servePendingRequests): Add a loop so we can handle
+        cases where the request fails immediately without leaking the request
+        and thinking that we're loading forever.
+
 2007-05-24  David Hyatt  <hyatt@apple.com>
 
         Add error reporting for residual style.

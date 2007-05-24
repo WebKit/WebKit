@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +18,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLImageLoader.h"
 
@@ -95,7 +94,7 @@ void HTMLImageLoader::updateFromElement()
     if (!attr.isEmpty()) {
         if (m_loadManually) {
             doc->docLoader()->setAutoLoadImages(false);
-            newImage = new CachedImage(doc->docLoader(), parseURL(attr));
+            newImage = new CachedImage(doc->docLoader(), parseURL(attr), false /* not for cache */);
             newImage->setLoading(true);
             doc->docLoader()->m_docResources.set(newImage->url(), newImage);
         } else

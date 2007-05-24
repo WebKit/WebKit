@@ -1,9 +1,7 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
-    Copyright (C) 2004, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,30 +17,20 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-
-    This class provides all functionality needed for loading images, style sheets and html
-    pages from the web. It has a memory cache for these objects.
 */
 
 #ifndef loader_h
 #define loader_h
 
+#include "DeprecatedPtrList.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/HashMap.h>
-#include "DeprecatedPtrList.h"
-
-#ifdef __OBJC__
-@class NSData;
-#else
-class NSData;
-#endif
 
 namespace WebCore {
 
     class CachedResource;
     class DocLoader;
     class Request;
-    class String;
 
     class Loader : private SubresourceLoaderClient {
     public:
@@ -52,6 +40,7 @@ namespace WebCore {
         void load(DocLoader*, CachedResource*, bool incremental = true, bool skipCanLoadCheck = false);
 
         void cancelRequests(DocLoader*);
+
     private:
         virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
         virtual void didReceiveData(SubresourceLoader*, const char*, int);
@@ -59,7 +48,7 @@ namespace WebCore {
         virtual void didFail(SubresourceLoader*, const ResourceError&);
         void didFail(SubresourceLoader*, bool cancelled = false);
 
-        void servePendingRequests(bool skipCanLoadCheck = false);
+        void servePendingRequests();
 
         DeprecatedPtrList<Request> m_requestsPending;
         typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;

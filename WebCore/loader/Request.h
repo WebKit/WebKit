@@ -1,10 +1,8 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,9 +18,6 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-
-    This class provides all functionality needed for loading images, style sheets and html
-    pages from the web. It has a memory cache for these objects.
 */
 
 #ifndef Request_h
@@ -37,7 +32,7 @@ namespace WebCore {
 
     class Request {
     public:
-        Request(DocLoader*, CachedResource*, bool incremental);
+        Request(DocLoader*, CachedResource*, bool incremental, bool skipCanLoadCheck);
         ~Request();
         
         Vector<char>& buffer() { return m_buffer; }
@@ -50,12 +45,15 @@ namespace WebCore {
         bool isMultipart() { return m_multipart; }
         void setIsMultipart(bool b = true) { m_multipart = b; }
 
+        bool shouldSkipCanLoadCheck() const { return m_shouldSkipCanLoadCheck; }
+
     private:
         Vector<char> m_buffer;
         CachedResource* m_object;
         DocLoader* m_docLoader;
         bool m_incremental;
         bool m_multipart;
+        bool m_shouldSkipCanLoadCheck;
     };
 
 } //namespace WebCore

@@ -2,7 +2,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,9 +18,6 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-
-    This class provides all functionality needed for loading images, style sheets and html
-    pages from the web. It has a memory cache for these objects.
 */
 
 #include "config.h"
@@ -64,7 +61,7 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
     switch (type) {
     case CachedResource::ImageResource:
         // User agent images need to null check the docloader.  No other resources need to.
-        return new CachedImage(docLoader, url.url());
+        return new CachedImage(docLoader, url.url(), true /* for cache */);
     case CachedResource::CSSStyleSheet:
         return new CachedCSSStyleSheet(docLoader, url.url(), *charset, skipCanLoadCheck);
     case CachedResource::Script:
@@ -106,12 +103,23 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
             return 0;
         }
 
-        // The resource does not exist.  Create it.
+        // The resource does not exist. Create it.
         resource = createResource(type, docLoader, url, charset, skipCanLoadCheck);
         ASSERT(resource);
-        resource->setInCache(!disabled());
+        ASSERT(resource->inCache());
         if (!disabled())
             m_resources.set(url.url(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
+        else {
+            // Kick the resource out of the cache, because the cache is disabled.
+            resource->setInCache(false);
+            if (resource->errorOccurred()) {
+                // We don't support immediate loads, but we do support immediate failure.
+                // In that case we should to delete the resource now and return 0 because otherwise
+                // it would leak if no ref/deref was ever done on it.
+                delete resource;
+                return 0;
+            }
+        }
     }
 
     // This will move the resource to the front of its LRU list and increase its access count.
