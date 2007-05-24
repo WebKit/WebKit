@@ -1,4 +1,3 @@
-<<<<<<< .mine
 2007-05-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by David Hyatt.
@@ -11,7 +10,6 @@
         * fast/css/stale-style-selector-crash-2-expected.txt: Added.
         * fast/css/stale-style-selector-crash-2.html: Added.
 
-=======
 2007-05-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
@@ -34,7 +32,6 @@
         * fast/dom/prototype-chain-expected.txt:
         * fast/dom/prototype-chain.html:
 
->>>>>>> .r21688
 2007-05-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
