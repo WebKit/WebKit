@@ -5892,6 +5892,13 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return [[self _bridge] stringForRange:[self _documentRange]];
 }
 
+- (NSAttributedString *)textStorage
+{
+    NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
+    // We have to return an empty string rather than null to prevent TSM from calling -string
+    return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
+}
+
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
 {
     NSAttributedString *attributedString;

@@ -1,3 +1,32 @@
+2007-05-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam, Darin, and Geoff.
+
+        Fix for <rdar://problem/5000470> REGRESSION: The IM reconvert
+        function returns incorrect symbol due to inconsistent range
+        domains in TSM
+
+        Text Services Management uses ranges provided by the
+        NSTextInput API to index into the string return by
+        -[WebHTMLView string]. As a result some input methods
+        incorrectly get their candidate text from the beginning
+        of the document instead of from the input element.
+
+        TSM prefers to query -textStorage over -string so as a
+        workaround we provide an implementation of -textStorage that
+        returns the content of the current text input.  TSM only ever
+        queries the result of textStorage as an NSAttributedString so
+        we do not need to implement a fake NSTextStorage class
+
+        This should not cause harm to anything else as textStorage is
+        actually a method on NSTextView, which we clearly are not. TSM
+        only queries the method because it uses respondsToSelector to
+        control behaviour.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView textStorage]):
+
+
 2007-05-24  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Hatcher.
