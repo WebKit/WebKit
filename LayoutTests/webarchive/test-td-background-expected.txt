@@ -12,9 +12,12 @@
 &lt;/script&gt;
 &lt;/head&gt;&lt;body&gt;
   &lt;table&gt;
-    &lt;tbody&gt;&lt;tr&gt;&lt;td background="resources/apple.gif"&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td background="resources/apple.gif"&gt;
         &lt;p style="width: 52px; height: 64px;"&gt;&lt;/p&gt;
-      &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;&lt;/table&gt;
 
 
 &lt;/body&gt;&lt;/html&gt;</string>

@@ -12,7 +12,9 @@
 &lt;/script&gt;
 &lt;/head&gt;&lt;body&gt;
   &lt;table background="resources/apple.gif" style="width: 52px; height: 64px;"&gt;
-    &lt;tbody&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;&lt;/table&gt;
 
 
 &lt;/body&gt;&lt;/html&gt;</string>
