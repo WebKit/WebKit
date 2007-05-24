@@ -25,7 +25,6 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
-#include "InspectorController.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include <wtf/PassRefPtr.h>
