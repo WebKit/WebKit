@@ -404,7 +404,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSMutableURLRequest *)request
 {
-    if (!_private->loader->frameLoader()->frameHasLoaded())
+    FrameLoader* frameLoader = _private->loader->frameLoader();
+    if (!frameLoader || !frameLoader->frameHasLoaded())
         return nil;
 
     // FIXME: this cast is dubious

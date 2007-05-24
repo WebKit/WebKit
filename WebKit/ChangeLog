@@ -1,3 +1,14 @@
+2007-05-24  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5225343> REGRESSION: With View Source window opened, navigating to a different URL in the browser window results in a crash at WebCore::FrameLoader::frameHasLoaded()
+        
+        _private->loader->frameLoader() was not being nil checked.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource request]):
+        Add nil check for _private->loader->frameLoader() 
+
 2007-05-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
