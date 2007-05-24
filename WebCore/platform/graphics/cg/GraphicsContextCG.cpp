@@ -369,7 +369,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
 
 void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || !fillColor().alpha() && (strokeThickness() <= 0 || strokeStyle() == NoStroke))
         return;
 
     if (npoints <= 1)
@@ -387,10 +387,12 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (fillColor().alpha())
-        CGContextEOFillPath(context);
-
-    if (strokeStyle() != NoStroke)
+    if (fillColor().alpha()) {
+        if (strokeStyle() != NoStroke)
+            CGContextDrawPath(context, kCGPathEOFillStroke);
+        else
+            CGContextEOFillPath(context);
+    } else
         CGContextStrokePath(context);
 
     CGContextRestoreGState(context);

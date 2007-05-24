@@ -1,3 +1,15 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13837
+          Separator in new <select> widget disappears when block element with border is in document.
+
+        * fast/forms/menulist-separator-painting-expected.checksum: Added.
+        * fast/forms/menulist-separator-painting-expected.png: Added.
+        * fast/forms/menulist-separator-painting-expected.txt: Added.
+        * fast/forms/menulist-separator-painting.html: Added.
+
 2007-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

@@ -1,3 +1,20 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13837
+          Separator in new <select> widget disappears when block element with border is in document.
+
+        Test: fast/forms/menulist-separator-painting.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawConvexPolygon): Changed this function to
+        actually do both filling and stroking when needed, even though all existing
+        callers set the stroke to none.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButton): Added calls to set the stroke
+        style and thickness when painting the arrows and the separator.
+
 2007-05-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.

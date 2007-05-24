@@ -861,7 +861,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::Pa
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
 
     paintInfo.context->setFillColor(o->style()->color());
-    paintInfo.context->setStrokeColor(o->style()->color());
+    paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
     arrow1[0] = FloatPoint(leftEdge, centerY - spaceBetweenArrows / 2.0f);
@@ -881,10 +881,14 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::Pa
 
     Color leftSeparatorColor(0, 0, 0, 40);
     Color rightSeparatorColor(255, 255, 255, 40);
+
+    // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2;
     int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft); // FIXME: Round?
 
     // Draw the separator to the left of the arrows
+    paintInfo.context->setStrokeThickness(1.0f);
+    paintInfo.context->setStrokeStyle(SolidStroke);
     paintInfo.context->setStrokeColor(leftSeparatorColor);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator, bounds.bottom()));
