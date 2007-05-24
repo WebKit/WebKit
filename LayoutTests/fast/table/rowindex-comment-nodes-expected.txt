@@ -1,0 +1,8 @@
+This page tests whether or not comment nodes disrupt the row index of rows in a table.
+
+Row One
+Row two
+FAIL: document.getElementById('tr1').rowIndex == 1 should be true but instead is false.
+FAIL: document.getElementById('tr2').rowIndex == 2 should be true but instead is false.
+FAIL: document.getElementById('tr3').rowIndex == 2 should be true but instead is TypeError: Null value.
+
