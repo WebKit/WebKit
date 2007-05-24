@@ -136,7 +136,7 @@ void Settings::setDefaultFontSize(int defaultFontSize)
 
 void Settings::setDefaultFixedFontSize(int defaultFontSize)
 {
-    if (m_defaultFontSize == defaultFontSize)
+    if (m_defaultFixedFontSize == defaultFontSize)
         return;
 
     m_defaultFixedFontSize = defaultFontSize;

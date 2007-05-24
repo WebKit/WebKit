@@ -1,3 +1,13 @@
+2007-05-24  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by andersca
+
+        Fixing check for incorrent font size - it should
+        check fixed not normal.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setDefaultFixedFontSize):
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Speculative buildbot build fix.
