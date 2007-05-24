@@ -853,8 +853,8 @@ void HTMLSelectElement::menuListOnChange()
     ASSERT(usesMenuList());
     int selected = selectedIndex();
     if (m_lastOnChangeIndex != selected) {
-        onChange();
         m_lastOnChangeIndex = selected;
+        onChange();
     }
 }
 

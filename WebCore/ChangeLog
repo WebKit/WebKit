@@ -1,3 +1,16 @@
+2007-05-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13857
+          REGRESSION: onChange function applied to select element executes twice when focus is set
+
+        Test: fast/forms/select-double-onchange.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListOnChange): Changed to update m_lastOnChangeIndex
+        before dispatching the change event to avoid reentrancy.
+
 2007-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
