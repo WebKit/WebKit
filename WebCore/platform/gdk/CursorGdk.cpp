@@ -243,4 +243,14 @@ const Cursor& notAllowedCursor()
     return pointerCursor();
 }
 
+const Cursor& zoomInCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& zoomOutCursor()
+{
+    return pointerCursor();
+}
+
 }

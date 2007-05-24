@@ -1,3 +1,13 @@
+2007-05-23  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Adam.
+
+        Fix the gdk build following changes in r21685.
+
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+
 2007-05-23  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5222611> REGRESSION: Paint ordering problems at
