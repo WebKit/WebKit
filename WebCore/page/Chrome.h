@@ -43,6 +43,19 @@ namespace WebCore {
     
     struct FrameLoadRequest;
     
+    enum MessageSource {
+        HTMLMessageSource,
+        XMLMessageSource,
+        JSMessageSource,
+        CSSMessageSource
+    };
+
+    enum MessageLevel {
+        LogMessageLevel,
+        WarningMessageLevel,
+        ErrorMessageLevel
+    };
+
     class Chrome {
     public:
         Chrome(Page*, ChromeClient*);
@@ -85,7 +98,7 @@ namespace WebCore {
         
         void setResizable(bool) const;
 
-        void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
+        void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
 
         bool canRunBeforeUnloadConfirmPanel();
         bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);

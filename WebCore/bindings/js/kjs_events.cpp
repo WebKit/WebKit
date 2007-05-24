@@ -139,7 +139,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
             if (Interpreter::shouldPrintExceptions())
                 printf("(event handler):%s\n", message.utf8().data());
             if (Page* page = frame->page())
-                page->chrome()->addMessageToConsole(message, lineNumber, sourceURL);
+                page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
             exec->clearException();
         } else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())

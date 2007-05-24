@@ -25,6 +25,7 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include <wtf/PassRefPtr.h>
@@ -187,9 +188,10 @@ void Chrome::setResizable(bool b) const
     m_client->setResizable(b);
 }
 
-void Chrome::addMessageToConsole(const String &message, unsigned lineNumber, const String &sourceURL)
+void Chrome::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
-    m_client->addMessageToConsole(message, lineNumber, sourceURL);
+    if (source == JSMessageSource && level == ErrorMessageLevel)
+        m_client->addMessageToConsole(message, lineNumber, sourceID);
 }
 
 bool Chrome::canRunBeforeUnloadConfirmPanel()

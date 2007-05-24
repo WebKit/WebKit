@@ -86,7 +86,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
         int lineNumber = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
         UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
         if (Page* page = m_frame->page())
-            page->chrome()->addMessageToConsole(errorMessage, lineNumber, sourceURL);
+            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, sourceURL);
     }
 
     return 0;

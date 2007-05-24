@@ -2013,7 +2013,7 @@ void FrameLoader::reportLocalLoadFailed(const Page* page, const String& url)
 {
     ASSERT(!url.isEmpty());
     if(page)
-        page->chrome()->addMessageToConsole("Not allowed to load local resource: " + url, 0, String());
+        page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Not allowed to load local resource: " + url, 0, String());
 }
 
 bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
