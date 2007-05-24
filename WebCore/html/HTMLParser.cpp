@@ -492,71 +492,57 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 popBlock(localName); // end the table
                 handled = true;      // ...and start a new one
             } else {
-                bool possiblyMoveStrayContent = true;
                 ExceptionCode ec = 0;
-                if (n->isTextNode()) {
-                    Text* t = static_cast<Text*>(n);
-                    if (t->containsOnlyWhitespace())
-                        return false;
-                    StringImpl* i = t->string();
-                    unsigned int pos = 0;
-                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == noBreakSpace))
-                        pos++;
-                    if (pos == i->length())
-                        possiblyMoveStrayContent = false;
-                }
-                if (possiblyMoveStrayContent) {
-                    Node* node = current;
+                Node* node = current;
+                Node* parent = node->parentNode();
+                // A script may have removed the current node's parent from the DOM
+                // http://bugs.webkit.org/show_bug.cgi?id=7137
+                // FIXME: we should do real recovery here and re-parent with the correct node.
+                if (!parent)
+                    return false;
+                Node* grandparent = parent->parentNode();
+
+                if (n->isTextNode() ||
+                    (h->hasLocalName(trTag) &&
+                     isTableSection(parent) && grandparent->hasTagName(tableTag)) ||
+                     ((!n->hasTagName(tdTag) && !n->hasTagName(thTag) &&
+                       !n->hasTagName(formTag) && !n->hasTagName(scriptTag)) && isTableSection(node) &&
+                     parent->hasTagName(tableTag))) {
+                    node = (node->hasTagName(tableTag)) ? node :
+                            ((node->hasTagName(trTag)) ? grandparent : parent);
                     Node* parent = node->parentNode();
-                    // A script may have removed the current node's parent from the DOM
-                    // http://bugs.webkit.org/show_bug.cgi?id=7137
-                    // FIXME: we should do real recovery here and re-parent with the correct node.
                     if (!parent)
                         return false;
-                    Node* grandparent = parent->parentNode();
-
-                    if (n->isTextNode() ||
-                        (h->hasLocalName(trTag) &&
-                         isTableSection(parent) && grandparent->hasTagName(tableTag)) ||
-                         ((!n->hasTagName(tdTag) && !n->hasTagName(thTag) &&
-                           !n->hasTagName(formTag) && !n->hasTagName(scriptTag)) && isTableSection(node) &&
-                         parent->hasTagName(tableTag))) {
-                        node = (node->hasTagName(tableTag)) ? node :
-                                ((node->hasTagName(trTag)) ? grandparent : parent);
-                        Node* parent = node->parentNode();
-                        if (!parent)
-                            return false;
-                        parent->insertBefore(n, node, ec);
-                        if (!ec) {
-                            reportError(StrayTableContentError, &localName, &currentTagName);
-                            if (n->isHTMLElement() && tagPriority > 0 && 
-                                !flat && static_cast<HTMLElement*>(n)->endTagRequirement() != TagStatusForbidden)
-                            {
-                                pushBlock(localName, tagPriority);
-                                setCurrent(n);
-                                inStrayTableContent++;
-                                blockStack->strayTableContent = true;
-                            }
-                            return true;
-                        }
-                    }
-
+                    parent->insertBefore(n, node, ec);
                     if (!ec) {
-                        if (current->hasTagName(trTag)) {
-                            reportError(TablePartRequiredError, &localName, &tdTag.localName());
-                            e = new HTMLTableCellElement(tdTag, document);
-                        } else if (current->hasTagName(tableTag)) {
-                            // Don't report an error in this case, since making a <tbody> happens all the time when you have <table><tr>,
-                            // and it isn't really a parse error per se.
-                            e = new HTMLTableSectionElement(tbodyTag, document); 
-                        } else {
-                            reportError(TablePartRequiredError, &localName, &trTag.localName());
-                            e = new HTMLTableRowElement(document);
+                        reportError(StrayTableContentError, &localName, &currentTagName);
+                        if (n->isHTMLElement() && tagPriority > 0 && 
+                            !flat && static_cast<HTMLElement*>(n)->endTagRequirement() != TagStatusForbidden)
+                        {
+                            pushBlock(localName, tagPriority);
+                            setCurrent(n);
+                            inStrayTableContent++;
+                            blockStack->strayTableContent = true;
                         }
-
-                        insertNode(e);
-                        handled = true;
+                        return true;
                     }
+                }
+
+                if (!ec) {
+                    if (current->hasTagName(trTag)) {
+                        reportError(TablePartRequiredError, &localName, &tdTag.localName());
+                        e = new HTMLTableCellElement(tdTag, document);
+                    } else if (current->hasTagName(tableTag)) {
+                        // Don't report an error in this case, since making a <tbody> happens all the time when you have <table><tr>,
+                        // and it isn't really a parse error per se.
+                        e = new HTMLTableSectionElement(tbodyTag, document); 
+                    } else {
+                        reportError(TablePartRequiredError, &localName, &trTag.localName());
+                        e = new HTMLTableRowElement(document);
+                    }
+
+                    insertNode(e);
+                    handled = true;
                 }
             }
         } else if (h->hasLocalName(objectTag)) {
@@ -577,10 +563,8 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 popBlock(localName);
             }
         } else if (h->hasLocalName(colgroupTag)) {
-            if (!n->isTextNode()) {
-                popBlock(currentTagName);
-                handled = true;
-            }
+            popBlock(currentTagName);
+            handled = true;
         } else if (!h->hasLocalName(bodyTag)) {
             if (isInline(current)) {
                 popInlineBlocks();

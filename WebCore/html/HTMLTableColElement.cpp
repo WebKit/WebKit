@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "RenderTableCol.h"
 #include "HTMLTableElement.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -53,7 +54,12 @@ int HTMLTableColElement::tagPriority() const
 
 bool HTMLTableColElement::checkDTD(const Node* newChild)
 {
-    return hasLocalName(colgroupTag) && newChild->hasTagName(colTag);
+    if (hasLocalName(colTag))
+        return false;
+    
+    if (newChild->isTextNode())
+        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
+    return newChild->hasTagName(colTag);
 }
 
 bool HTMLTableColElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -37,6 +37,7 @@
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableSectionElement.h"
 #include "RenderTable.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -64,7 +65,9 @@ HTMLTableElement::~HTMLTableElement()
 
 bool HTMLTableElement::checkDTD(const Node* newChild)
 {
-    return newChild->isTextNode() || newChild->hasTagName(captionTag) ||
+    if (newChild->isTextNode())
+        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
+    return newChild->hasTagName(captionTag) ||
            newChild->hasTagName(colTag) || newChild->hasTagName(colgroupTag) ||
            newChild->hasTagName(theadTag) || newChild->hasTagName(tfootTag) ||
            newChild->hasTagName(tbodyTag) || newChild->hasTagName(formTag) ||

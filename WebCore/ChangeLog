@@ -1,3 +1,22 @@
+2007-05-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5208440> (13753)
+
+        REGRESSION: Raw text needs to be pulled outside of tables
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::checkDTD):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::checkDTD):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::checkDTD):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::checkDTD):
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
