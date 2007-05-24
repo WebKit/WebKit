@@ -757,6 +757,10 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             return notAllowedCursor();
         case CURSOR_DEFAULT:
             return pointerCursor();
+        case CURSOR_WEBKIT_ZOOM_IN:
+            return zoomInCursor();
+        case CURSOR_WEBKIT_ZOOM_OUT:
+            return zoomOutCursor();
     }
     return pointerCursor();
 }

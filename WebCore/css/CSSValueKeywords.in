@@ -274,6 +274,8 @@ alias
 progress
 no-drop
 not-allowed
+-webkit-zoom-in
+-webkit-zoom-out
 e-resize
 ne-resize
 nw-resize

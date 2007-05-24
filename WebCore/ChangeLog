@@ -1,3 +1,23 @@
+2007-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add -webkit-zoom-in and -webkit-zoom-out cursors.
+        
+        * Resources/zoomInCursor.png: Added.
+        * Resources/zoomOutCursor.png: Added.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+
 2007-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

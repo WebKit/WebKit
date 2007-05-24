@@ -151,6 +151,18 @@ const Cursor& aliasCursor()
     return c;
 }
 
+const Cursor& zoomInCursor()
+{
+    static Cursor c = leakNamedCursor("zoomInCursor", 7, 7);
+    return c;
+}
+
+const Cursor& zoomOutCursor()
+{
+    static Cursor c = leakNamedCursor("zoomOutCursor", 7, 7);
+    return c;
+}
+
 const Cursor& copyCursor()
 {
     static Cursor c = leakNamedCursor("copyCursor", 3, 2);

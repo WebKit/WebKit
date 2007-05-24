@@ -824,6 +824,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 case CURSOR_NOT_ALLOWED:
                     value = new CSSPrimitiveValue(CSS_VAL_NOT_ALLOWED);
                     break;
+                case CURSOR_WEBKIT_ZOOM_IN:
+                    value = new CSSPrimitiveValue(CSS_VAL__WEBKIT_ZOOM_IN);
+                    break;
+                case CURSOR_WEBKIT_ZOOM_OUT:
+                    value = new CSSPrimitiveValue(CSS_VAL__WEBKIT_ZOOM_OUT);
+                    break;
                 case CURSOR_E_RESIZE:
                     value = new CSSPrimitiveValue(CSS_VAL_E_RESIZE);
                     break;
