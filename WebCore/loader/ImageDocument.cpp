@@ -179,6 +179,9 @@ void ImageDocument::resizeImageToFit()
     float scale = this->scale();
     m_imageElement->setWidth(imageSize.width() * scale);
     m_imageElement->setHeight(imageSize.height() * scale);
+    
+    ExceptionCode ec;
+    m_imageElement->style()->setProperty("cursor", "-webkit-zoom-in", ec);
 }
 
 void ImageDocument::imageClicked(int x, int y)
@@ -231,6 +234,12 @@ void ImageDocument::restoreImageSize()
     m_imageElement->setWidth(m_imageElement->cachedImage()->imageSize().width());
     m_imageElement->setHeight(m_imageElement->cachedImage()->imageSize().height());
     
+    ExceptionCode ec;
+    if (imageFitsInWindow())
+        m_imageElement->style()->setProperty("cursor", "pointer", ec);
+    else
+        m_imageElement->style()->setProperty("cursor", "-webkit-zoom-out", ec);
+        
     m_didShrinkImage = false;
 }
 

@@ -1,3 +1,19 @@
+2007-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5224749> Show a zoom/unzoom cursor for resizable image documents
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Install the zoom cursors.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        Set the cursor to the zoom in cursor.
+        
+        (WebCore::ImageDocument::restoreImageSize):
+        If the image fits, reset the cursor. Otherwise, set it to the zoom in cursor.
+
 2007-05-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

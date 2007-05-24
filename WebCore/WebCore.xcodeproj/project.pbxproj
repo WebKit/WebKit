@@ -136,6 +136,8 @@
 		1A98955D0AA78149005EF5EF /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A98955B0AA78149005EF5EF /* CString.h */; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
 		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
+		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
+		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
 		1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */; };
 		1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */; };
@@ -3280,6 +3282,8 @@
 		1A98955B0AA78149005EF5EF /* CString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CString.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
+		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
+		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
 		1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
 		1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathEvaluator.idl; sourceTree = "<group>"; };
@@ -6324,6 +6328,8 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1AB1AE780C051FDE00139F4F /* zoomInCursor.png */,
+				1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */,
 				464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */,
 				464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */,
 				46BD16E20B279473001F0839 /* noneCursor.png */,
@@ -11489,6 +11495,8 @@
 				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
 				464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */,
 				BC491B4F0C023E2D009D6316 /* HTMLMarqueeElement.idl in Resources */,
+				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
+				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
