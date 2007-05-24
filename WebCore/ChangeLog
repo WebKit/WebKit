@@ -1,3 +1,11 @@
+2007-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Try fixing the buildbot build.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::imageClicked):
+
 2007-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

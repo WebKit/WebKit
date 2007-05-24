@@ -177,8 +177,8 @@ void ImageDocument::resizeImageToFit()
     IntSize imageSize = m_imageElement->cachedImage()->imageSize();
 
     float scale = this->scale();
-    m_imageElement->setWidth(imageSize.width() * scale);
-    m_imageElement->setHeight(imageSize.height() * scale);
+    m_imageElement->setWidth(static_cast<int>(imageSize.width() * scale));
+    m_imageElement->setHeight(static_cast<int>(imageSize.height() * scale));
     
     ExceptionCode ec;
     m_imageElement->style()->setProperty("cursor", "-webkit-zoom-in", ec);
@@ -200,8 +200,8 @@ void ImageDocument::imageClicked(int x, int y)
         
         float scale = this->scale();
         
-        int scrollX = x / scale - (float)frame()->view()->width() / 2;
-        int scrollY = y / scale - (float)frame()->view()->height() / 2;
+        int scrollX = static_cast<int>(x / scale - (float)frame()->view()->width() / 2);
+        int scrollY = static_cast<int>(y / scale - (float)frame()->view()->height() / 2);
         
         frame()->view()->setContentsPos(scrollX, scrollY);
     }
