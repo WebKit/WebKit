@@ -121,7 +121,8 @@ void HTMLOptGroupElement::setLabel(const String &value)
 
 bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 {
-    return newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag);
+    // Make sure to keep this in sync with <select> (other than not allowing an optgroup).
+    return newChild->isTextNode() || newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag) || newChild->hasTagName(HTMLNames::scriptTag);
 }
 
 void HTMLOptGroupElement::attach()

@@ -101,6 +101,7 @@ HTMLSelectElement::~HTMLSelectElement()
 
 bool HTMLSelectElement::checkDTD(const Node* newChild)
 {
+    // Make sure to keep <optgroup> in sync with this.
     return newChild->isTextNode() || newChild->hasTagName(optionTag) || newChild->hasTagName(optgroupTag) || newChild->hasTagName(hrTag) ||
            newChild->hasTagName(scriptTag);
 }

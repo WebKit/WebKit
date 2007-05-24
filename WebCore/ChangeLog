@@ -1,5 +1,19 @@
 2007-05-23  David Hyatt  <hyatt@apple.com>
 
+        <optgroup> should allow <script> and text nodes inside it, just like
+        <select> does.
+
+        Reviewed by aroben
+
+        fast/forms/stuff-on-my-optgroup.html
+
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::checkDTD):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::checkDTD):
+
+2007-05-23  David Hyatt  <hyatt@apple.com>
+
         Framesets should allow whitespace text nodes as children.
 
         Reviewed by aroben
