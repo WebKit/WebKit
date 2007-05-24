@@ -1,3 +1,12 @@
+2007-05-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove the OBJC_NEW_PROPERTIES #ifdef and only export the new @property syntax.
+
+        * bindings/objc/DOMObject.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2007-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

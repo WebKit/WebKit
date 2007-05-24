@@ -711,9 +711,6 @@ sub GenerateHeader
     my @headerAttributes = ();
     my @privateHeaderAttributes = ();
 
-    my @headerAttributesOldStyle = ();
-    my @privateHeaderAttributesOldStyle = ();
-
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
         # Add ivars, if any, first
@@ -773,12 +770,6 @@ sub GenerateHeader
                 $property .= "\n";
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
-
-                my $oldStyleProperty = "\@property" . ($attributeIsReadonly ? "(readonly)" : "");
-                $oldStyleProperty .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
-
-                push(@headerAttributesOldStyle, $oldStyleProperty) if $public;
-                push(@privateHeaderAttributesOldStyle, $oldStyleProperty) unless $public;
             } else {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
@@ -794,11 +785,7 @@ sub GenerateHeader
             }
         }
 
-        push(@headerContent, "#ifdef OBJC_NEW_PROPERTIES\n") if $buildingForLeopardOrLater;
         push(@headerContent, @headerAttributes) if @headerAttributes > 0;
-        push(@headerContent, "#else\n") if $buildingForLeopardOrLater;
-        push(@headerContent, @headerAttributesOldStyle) if @headerAttributesOldStyle > 0 and $buildingForLeopardOrLater;
-        push(@headerContent, "#endif\n") if $buildingForLeopardOrLater;
     }
 
     my @headerFunctions = ();
@@ -914,11 +901,7 @@ sub GenerateHeader
 
         @privateHeaderContent = ();
         push(@privateHeaderContent, "\@interface $className (" . $className . "Private)\n");
-        push(@privateHeaderContent, "#ifdef OBJC_NEW_PROPERTIES\n") if $buildingForLeopardOrLater;
         push(@privateHeaderContent, @privateHeaderAttributes) if @privateHeaderAttributes > 0;
-        push(@privateHeaderContent, "#else\n") if $buildingForLeopardOrLater;
-        push(@privateHeaderContent, @privateHeaderAttributesOldStyle) if @privateHeaderAttributesOldStyle > 0 and $buildingForLeopardOrLater;
-        push(@privateHeaderContent, "#endif\n") if $buildingForLeopardOrLater;
         push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
