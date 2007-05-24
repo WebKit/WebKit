@@ -7,19 +7,15 @@ if (window.layoutTestController) {
 }
 
 function testAndLoadNext() {
-alert("Hey");
     iframe = document.getElementById("iframe");
     if (iframe.src.substring(0, 5) == "data:") {
-alert("YOU");
         iframe.src = "resources/head-check-" + currentTest + ".html";
         return;
     }
-alert("Get");
     debug("Testing: " + iframe.src.substring(iframe.src.lastIndexOf("/") + 1));
     shouldBe("iframe.contentWindow.document.getElementsByTagName('head').length", "1");
     shouldBe("iframe.contentWindow.document.firstChild.firstChild.nodeName.toLowerCase()", "'head'");
     debug("");
-alert("hi");
     if (currentTest < maxTests) {
         currentTest++;
         iframe.src = "data:text/html,";

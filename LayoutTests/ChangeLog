@@ -2,6 +2,14 @@
 
         Reviewed by.
 
+        - Do you ever feel like Charlie Brown? *sigh*
+
+        * fast/dom/HTMLHeadElement/resources/head-check.js:
+
+2007-05-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by.
+
         - Rolling back change to fix the build until I have a good fix for data: urls.
 
         * ChangeLog:
