@@ -646,8 +646,9 @@ public:
 
 protected:
     CSSStyleSelector* m_styleSelector;
-    Frame* m_frame;
+    bool m_didCalculateStyleSelector;
 
+    Frame* m_frame;
     DocLoader* m_docLoader;
     Tokenizer* m_tokenizer;
     bool m_wellFormed;

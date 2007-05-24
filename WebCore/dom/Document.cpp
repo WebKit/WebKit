@@ -308,6 +308,7 @@ Document::Document(DOMImplementation* impl, Frame* frame)
     m_usesFirstLineRules = false;
 
     m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
+    m_didCalculateStyleSelector = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
     m_pendingSheetLayout = NoLayoutWithPendingSheets;
@@ -1912,8 +1913,9 @@ void Document::stylesheetLoaded()
 
 void Document::updateStyleSelector()
 {
-    // Don't bother updating, since we haven't loaded all our style info yet.
-    if (!haveStylesheetsLoaded())
+    // Don't bother updating, since we haven't loaded all our style info yet
+    // and haven't calculated the style selector for the first time.
+    if (!m_didCalculateStyleSelector && !haveStylesheetsLoaded())
         return;
 
     if (didLayoutWithPendingStylesheets() && m_pendingStylesheets <= 0) {
@@ -2068,6 +2070,7 @@ void Document::recalcStyleSelector()
         usersheet += m_printSheet;
     m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), !inCompatMode());
     m_styleSelector->setEncodedURL(m_url);
+    m_didCalculateStyleSelector = true;
 }
 
 void Document::setHoverNode(PassRefPtr<Node> newHoverNode)

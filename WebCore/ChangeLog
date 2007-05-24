@@ -1,3 +1,29 @@
+2007-05-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13563
+          REGRESSION: Crash loading message in Yahoo! Mail
+
+        Tests: fast/css/stale-style-selector-crash-1.html
+               fast/css/stale-style-selector-crash-2.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize the m_didCalculateStyleSelector
+        flag to 'false'.
+        (WebCore::Document::updateStyleSelector): Do not bail out if we have ever
+        calculated a non-trivial style selector, even if at the moment we are
+        pending style sheets. We could have calculated a non-trivial selector
+        already either because at some point there were no pending style sheets
+        (so the currently pending ones were added dynamically) or because we were
+        forced to do a layout ignoring pending style sheets. Either way, once
+        there is a style selector, we need to keep it up to date, otherwise we can
+        crash under recalcStyle() during updateRendering() or simply not recalculate
+        style correctly for dynamic changes.
+        (WebCore::Document::recalcStyleSelector): Set m_didCalculateStyleSelector
+        to 'true' when creating a new style selector.
+        * dom/Document.h:
+
 2007-05-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
