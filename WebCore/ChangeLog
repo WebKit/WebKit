@@ -1,5 +1,22 @@
 2007-05-23  David Hyatt  <hyatt@apple.com>
 
+        Make the delete/InsertRows/Cells methods as well as the rowIndex method
+        able to work properly even when whitespace or comment nodes are present.
+
+        Reviewed by aroben
+
+        fast/table/rowindex-comment-nodes.html
+
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::rowIndex):
+        (WebCore::HTMLTableRowElement::insertCell):
+        (WebCore::HTMLTableRowElement::deleteCell):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::insertRow):
+        (WebCore::HTMLTableSectionElement::deleteRow):
+
+2007-05-23  David Hyatt  <hyatt@apple.com>
+
         <optgroup> should allow <script> and text nodes inside it, just like
         <select> does.
 
