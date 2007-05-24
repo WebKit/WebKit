@@ -272,10 +272,19 @@ const Cursor& noneCursor()
 
 const Cursor& notAllowedCursor()
 {
-   //FIXME: Build fix -- what is correct here?
+   // FIXME: Build fix -- what is correct here?
    return Cursors::self()->BlankCursor;
 }
 
+const Cursor& zoomInCursor()
+{
+    return Cursors::self()->PointerCursor;
+}
+
+const Cursor& zoomOutCursor()
+{
+    return Cursors::self()->PointerCursor;
+}
 
 }
 
