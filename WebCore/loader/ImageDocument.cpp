@@ -236,7 +236,7 @@ void ImageDocument::restoreImageSize()
     
     ExceptionCode ec;
     if (imageFitsInWindow())
-        m_imageElement->style()->setProperty("cursor", "pointer", ec);
+        m_imageElement->style()->removeProperty("cursor", ec);
     else
         m_imageElement->style()->setProperty("cursor", "-webkit-zoom-out", ec);
         

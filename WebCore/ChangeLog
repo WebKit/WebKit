@@ -1,3 +1,11 @@
+2007-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin (Sorta).
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::restoreImageSize):
+        Use removeProperty here.
+
 2007-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
