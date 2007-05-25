@@ -854,8 +854,8 @@ void RenderTextControl::addSearchResult()
     if (value.isEmpty())
         return;
 
-    Frame* frame = document()->frame();
-    if (!frame || frame->settings()->privateBrowsingEnabled())
+    Settings* settings = document()->settings();
+    if (!settings || settings->privateBrowsingEnabled())
         return;
 
     int size = static_cast<int>(m_recentSearches.size());

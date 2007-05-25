@@ -58,7 +58,6 @@
 #include "ProcessingInstruction.h"
 #include "Range.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"

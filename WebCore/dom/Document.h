@@ -80,6 +80,7 @@ namespace WebCore {
     class Range;
     class RegisteredEventListener;
     class RenderArena;
+    class Settings;
     class StyleSheet;
     class StyleSheetList;
     class Text;
@@ -302,6 +303,7 @@ public:
     FrameView* view() const; // can be NULL
     Frame* frame() const; // can be NULL
     Page* page() const; // can be NULL
+    Settings* settings() const; // can be NULL
 
     PassRefPtr<Range> createRange();
 

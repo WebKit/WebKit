@@ -56,9 +56,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_dragController(new DragController(this, dragClient))
     , m_focusController(new FocusController(this))
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
-    , m_backForwardList(new BackForwardList)
-    , m_settings(new Settings)
+    , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
+    , m_backForwardList(new BackForwardList)
     , m_editorClient(editorClient)
     , m_frameCount(0)
     , m_tabKeyCyclesThroughElements(true)
@@ -179,17 +179,6 @@ void Page::setNeedsReapplyStyles()
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
             frame->setNeedsReapplyStyles();
-}
-
-void Page::setNeedsReapplyStylesForSettingsChange(Settings* settings)
-{
-    if (!allPages)
-        return;
-    HashSet<Page*>::iterator end = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            if (frame->settings() == settings)
-                frame->setNeedsReapplyStyles();
 }
 
 const Selection& Page::selection() const

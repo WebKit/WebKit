@@ -664,6 +664,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
 
             // If the link is editable, then we need to check the settings to see whether or not the link should be followed
             if (editable) {
+                ASSERT(frame->settings());
                 switch(frame->settings()->editableLinkBehavior()) {
                     default:
                     case EditableLinkDefaultBehavior:

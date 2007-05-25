@@ -61,6 +61,7 @@
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "XMLNames.h"
@@ -157,8 +158,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
         ownerElement->m_contentFrame = this;
     }
 
-    setSettings(page->settings());
-
 #ifndef NDEBUG
     ++FrameCounter::count;
 #endif
@@ -247,7 +246,8 @@ void Frame::setView(FrameView* view)
 
 KJSProxy *Frame::scriptProxy()
 {
-    if (!settings()->isJavaScriptEnabled())
+    Settings* settings = this->settings();
+    if (!settings || !settings->isJavaScriptEnabled())
         return 0;
 
     if (!d->m_jscript)
@@ -276,9 +276,9 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
         d->m_doc->attach();
 }
 
-const Settings *Frame::settings() const
+Settings* Frame::settings() const
 {
-  return d->m_settings;
+    return d->m_page ? d->m_page->settings() : 0;
 }
 
 void Frame::setUserStyleSheetLocation(const KURL& url)
@@ -691,9 +691,9 @@ String Frame::jsDefaultStatusBarText() const
 void Frame::reparseConfiguration()
 {
     if (d->m_doc)
-        d->m_doc->docLoader()->setAutoLoadImages(d->m_settings->loadsImagesAutomatically());
+        d->m_doc->docLoader()->setAutoLoadImages(d->m_page && d->m_page->settings()->loadsImagesAutomatically());
         
-    const KURL& userStyleSheetLocation = d->m_settings->userStyleSheetLocation();
+    const KURL userStyleSheetLocation = d->m_page ? d->m_page->settings()->userStyleSheetLocation() : KURL();
     if (!userStyleSheetLocation.isEmpty())
         setUserStyleSheetLocation(userStyleSheetLocation);
     else
@@ -1039,7 +1039,8 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
 
 KJS::Bindings::RootObject* Frame::bindingRootObject()
 {
-    if (!settings()->isJavaScriptEnabled())
+    Settings* settings = this->settings();
+    if (!settings || !settings->isJavaScriptEnabled())
         return 0;
 
     if (!d->m_bindingRootObject) {
@@ -1059,7 +1060,8 @@ PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle
 NPObject* Frame::windowScriptNPObject()
 {
     if (!d->m_windowScriptNPObject) {
-        if (settings()->isJavaScriptEnabled()) {
+        Settings* settings = this->settings();
+        if (settings && settings->isJavaScriptEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSObject* win = KJS::Window::retrieveWindow(this);
@@ -1098,13 +1100,6 @@ void Frame::cleanupScriptObjects()
         _NPN_DeallocateObject(d->m_windowScriptNPObject);
         d->m_windowScriptNPObject = 0;
     }
-}
-
-
-
-void Frame::setSettings(Settings *settings)
-{
-    d->m_settings = settings;
 }
 
 RenderObject *Frame::renderer() const
@@ -1664,12 +1659,12 @@ void Frame::pageDestroyed()
     if (d->m_page && d->m_page->focusController()->focusedFrame() == this)
         d->m_page->focusController()->setFocusedFrame(0);
 
-    d->m_page = 0;
-
     // This will stop any JS timers
     if (d->m_jscript && d->m_jscript->haveInterpreter())
         if (Window* w = Window::retrieveWindow(this))
             w->disconnectFrame();
+
+    d->m_page = 0;
 }
 
 void Frame::disconnectOwnerElement()
@@ -1816,7 +1811,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_treeNode(thisFrame, parent)
     , m_ownerElement(ownerElement)
     , m_jscript(0)
-    , m_settings(0)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
     , m_selectionController(thisFrame)
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)

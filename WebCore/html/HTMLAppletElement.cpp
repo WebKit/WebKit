@@ -110,9 +110,9 @@ bool HTMLAppletElement::rendererIsNeeded(RenderStyle *style)
 
 RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    Frame *frame = document()->frame();
+    Settings* settings = document()->settings();
 
-    if (frame && frame->settings()->isJavaEnabled()) {
+    if (settings && settings->isJavaEnabled()) {
         HashMap<String, String> args;
 
         args.set("code", getAttribute(codeAttr));
@@ -143,18 +143,17 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
 #if USE(JAVASCRIPTCORE_BINDINGS)
 KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
 {
-    Frame *frame = document()->frame();
-    if (!frame || !frame->settings()->isJavaEnabled())
+    Settings* settings = document()->settings();
+    if (!settings || !settings->isJavaEnabled())
         return 0;
 
     if (m_instance)
         return m_instance.get();
     
-    RenderApplet *r = static_cast<RenderApplet*>(renderer());
-    if (r) {
+    if (RenderApplet* r = static_cast<RenderApplet*>(renderer())) {
         r->createWidgetIfNecessary();
-        if (r->widget())
-            m_instance = frame->createScriptInstanceForWidget(r->widget());
+        if (r->widget() && document()->frame())
+            m_instance = document()->frame()->createScriptInstanceForWidget(r->widget());
     }
     return m_instance.get();
 }

@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -169,7 +170,8 @@ bool enabledAnyEditableSelection(Frame* frame)
 
 bool enabledPaste(Frame* frame)
 {
-    return frame->settings()->isDOMPasteAllowed() && frame->editor()->canPaste();
+    Settings* settings = frame ? frame->settings() : 0;
+    return settings && settings->isDOMPasteAllowed() && frame->editor()->canPaste();
 }
 
 bool enabledAnyRangeSelection(Frame* frame)

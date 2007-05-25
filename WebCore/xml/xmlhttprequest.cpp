@@ -404,7 +404,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
             ExceptionCode ec = 0;
-            if (m_doc->frame() && m_doc->frame()->settings()->usesDashboardBackwardCompatibilityMode())
+            Settings* settings = m_doc->settings();
+            if (settings && settings->usesDashboardBackwardCompatibilityMode())
                 setRequestHeader("Content-Type", "application/x-www-form-urlencoded", ec);
             else
                 setRequestHeader("Content-Type", "application/xml", ec);
@@ -490,7 +491,8 @@ void XMLHttpRequest::overrideMIMEType(const String& override)
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != Open) {
-        if (m_doc && m_doc->frame() && m_doc->frame()->settings()->usesDashboardBackwardCompatibilityMode())
+        Settings* settings = m_doc ? m_doc->settings() : 0;
+        if (settings && settings->usesDashboardBackwardCompatibilityMode())
             return;
 
         ec = INVALID_STATE_ERR;

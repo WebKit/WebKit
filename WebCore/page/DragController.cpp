@@ -506,6 +506,7 @@ DragOperation DragController::tryDHTMLDrag(DragData* dragData)
 bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos)
 {
     ASSERT(frame);
+    ASSERT(frame->settings());
 
     if (!frame->view() || !frame->renderer())
         return false;

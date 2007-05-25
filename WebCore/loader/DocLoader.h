@@ -27,7 +27,6 @@
 
 #include "CachedResource.h"
 #include "CachePolicy.h"
-#include "Settings.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

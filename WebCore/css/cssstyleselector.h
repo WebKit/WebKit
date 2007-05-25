@@ -216,16 +216,14 @@ class StyledElement;
 
         RenderStyle::PseudoId dynamicPseudo;
         
+        Document* m_document; // back pointer to owner document
         RenderStyle *style;
         RenderStyle *parentStyle;
         Element *element;
         StyledElement *styledElement;
         Node *parentNode;
         RenderStyle::PseudoId pseudoStyle;
-        FrameView *view;
-        Frame *frame;
         CSSValue* m_lineHeightValue;
-        const Settings *settings;
         bool fontDirty;
         bool isXMLDoc;
 

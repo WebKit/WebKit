@@ -1,3 +1,27 @@
+2007-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed a bug with Settings where a number of different objects held bare 
+        Settings* data members, even though the Page owns the Settings object and 
+        deletes it upon destruction.
+
+        Added NULL checks since the Page can be deleted before the frame/document.
+
+        * page/Settings.cpp: Removed reliance on setNeedsReapplyStylesForSettingsChange.
+
+        * css/cssstyleselector.cpp: CSSStyleSelector was the worst offender. It 
+        held a number of back pointers that were not guaranteed. I removed the 
+        Settings*, Frame*, and FrameView* back pointers, but others could probably 
+        go, too. I replaced them with a single Document* pointer, which is guaranteed
+        because the Document owns the CSSStyleSelector.
+
+        * page/Page.cpp: Removed setNeedsReapplyStylesForSettingsChange -- the 
+        Settings object is now a proper subcontroller of Page, so it doesn't need
+        to use a global table to find its page anymore. Also, this function
+        confusingly implied that the Frames in a page can have heterogeneous settings,
+        which is not true.
+
 2007-05-25  David Hyatt  <hyatt@apple.com>
 
         Make sure -webkit-border-fit accounts for padding as well as border.

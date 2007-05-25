@@ -34,7 +34,6 @@
 #import "GraphicsContext.h"
 #import "IntRect.h"
 #import "Logging.h"
-#import "Settings.h"
 #import "TextStyle.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"

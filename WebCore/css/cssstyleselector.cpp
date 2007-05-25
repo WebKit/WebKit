@@ -222,10 +222,10 @@ static PseudoState pseudoState;
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList *styleSheets, bool _strictParsing)
 {
     init();
+    
+    m_document = doc;
 
-    view = doc->view();
     strictParsing = _strictParsing;
-    settings = doc->frame() ? doc->frame()->settings() : 0;
     if (!defaultStyle)
         loadDefaultStyle();
 
@@ -237,6 +237,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
+    FrameView* view = m_document->view();
     if (view)
         m_medium = new MediaQueryEvaluator(view->mediaType());
     else
@@ -300,7 +301,6 @@ CSSStyleSelector::CSSStyleSelector(CSSStyleSheet *sheet)
 void CSSStyleSelector::init()
 {
     element = 0;
-    settings = 0;
     m_matchedDecls.clear();
     m_ruleList = 0;
     m_collectRulesOnly = false;
@@ -556,10 +556,7 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
         parentStyle = defaultParent;
     else
         parentStyle = parentNode ? parentNode->renderStyle() : 0;
-    view = element->document()->view();
     isXMLDoc = !element->document()->isHTMLDocument();
-    frame = element->document()->frame();
-    settings = frame ? frame->settings() : 0;
 
     style = 0;
     
@@ -773,7 +770,7 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
         matchRules(defaultQuirksStyle, firstUARule, lastUARule);
         
     // If we're in view source mode, then we match rules from the view source style sheet.
-    if (view && view->frame() && view->frame()->inViewSourceMode())
+    if (m_document->frame() && m_document->frame()->inViewSourceMode())
         matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
 }
 
@@ -2775,7 +2772,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         if (!primitiveValue->getIdent()) return;
 
-        EResize r;
+        EResize r = RESIZE_NONE;
         switch(primitiveValue->getIdent()) {
         case CSS_VAL_BOTH:
             r = RESIZE_BOTH;
@@ -2787,7 +2784,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             r = RESIZE_VERTICAL;
             break;
         case CSS_VAL_AUTO:
-            r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+            if (Settings* settings = m_document->settings())
+                r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
             break;
         case CSS_VAL_NONE:
         default:
@@ -3145,8 +3143,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             double multiplier = 1.0;
             // Scale for the font zoom factor only for types other than "em" and "ex", since those are
             // already based on the font size.
-            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && view && view->frame()) {
-                multiplier = view->frame()->zoomFactor() / 100.0;
+            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && m_document->frame()) {
+                multiplier = m_document->frame()->zoomFactor() / 100.0;
             }
             lineHeight = Length(primitiveValue->computeLengthIntForLength(style, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -3323,9 +3321,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
-            if(val->primitiveType() == CSSPrimitiveValue::CSS_STRING)
+            Settings* settings = m_document->settings();
+            if (val->primitiveType() == CSSPrimitiveValue::CSS_STRING)
                 face = static_cast<FontFamilyValue*>(val)->fontName();
-            else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
+            else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT && settings) {
                 switch (val->getIdent()) {
                     case CSS_VAL__WEBKIT_BODY:
                         face = settings->standardFontFamily();
@@ -4679,7 +4678,10 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderSty
         size = fontSizeForKeyword(CSS_VAL_XX_SMALL + childFont.keywordSize() - 1, style->htmlHacks(),
                                   childFont.genericFamily() == FontDescription::MonospaceFamily);
     } else {
-        float fixedScaleFactor = ((float)settings->defaultFixedFontSize()) / settings->defaultFontSize();
+        Settings* settings = m_document->settings();
+        float fixedScaleFactor = settings
+            ? static_cast<float>(settings->defaultFixedFontSize()) / settings->defaultFontSize()
+            : 1;
         size = (parentFont.genericFamily() == FontDescription::MonospaceFamily) ? 
                 childFont.specifiedSize()/fixedScaleFactor :
                 childFont.specifiedSize()*fixedScaleFactor;
@@ -4707,10 +4709,15 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     // With the smart minimum, we never want to get smaller than the minimum font size to keep fonts readable.
     // However we always allow the page to set an explicit pixel size that is smaller,
     // since sites will mis-render otherwise (e.g., http://www.gamespot.com with a 9px minimum).
+    
+    Settings* settings = m_document->settings();
+    if (!settings)
+        return 1.0f;
+
     int minSize = settings->minimumFontSize();
     int minLogicalSize = settings->minimumLogicalFontSize();
 
-    float zoomPercent = view ? view->frame()->zoomFactor()/100.0f : 1.0f;
+    float zoomPercent = m_document->frame() ? m_document->frame()->zoomFactor() / 100.0f : 1.0f;
     float zoomedSize = specifiedSize * zoomPercent;
 
     // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.
@@ -4771,6 +4778,10 @@ static const float fontSizeFactors[totalKeywords] = { 0.60, 0.75, 0.89, 1.0, 1.2
 
 float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode, bool fixed) const
 {
+    Settings* settings = m_document->settings();
+    if (!settings)
+        return 1.0f;
+
     int mediumSize = fixed ? settings->defaultFixedFontSize() : settings->defaultFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.

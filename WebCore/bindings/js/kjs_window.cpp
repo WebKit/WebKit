@@ -413,7 +413,7 @@ Window *Window::retrieveWindow(Frame *f)
 {
     JSObject *o = retrieve(f)->getObject();
 
-    ASSERT(o || !f->settings()->isJavaScriptEnabled());
+    ASSERT(o || !f->settings() || !f->settings()->isJavaScriptEnabled());
     return static_cast<Window *>(o);
 }
 
@@ -530,9 +530,12 @@ UString Window::toString(ExecState *) const
 
 static bool allowPopUp(ExecState *exec, Window *window)
 {
-    return window->frame()
-        && (window->frame()->settings()->JavaScriptCanOpenWindowsAutomatically()
-            || static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture());
+    if (!window->frame())
+        return false;
+    if (static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture())
+        return true;
+    Settings* settings = window->frame()->settings();
+    return settings && settings->JavaScriptCanOpenWindowsAutomatically();
 }
 
 static HashMap<String, String> parseModalDialogFeatures(ExecState *exec, JSValue *featuresArg)

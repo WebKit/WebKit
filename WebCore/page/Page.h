@@ -52,6 +52,9 @@ namespace WebCore {
 
     class Page : Noncopyable {
     public:
+        static void setNeedsReapplyStyles();
+        static const HashSet<Page*>* frameNamespace(const String&);
+
         Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*);
         ~Page();
         
@@ -74,14 +77,10 @@ namespace WebCore {
         String groupName() const { return m_groupName; }
 
         const HashSet<Page*>* frameNamespace() const;
-        static const HashSet<Page*>* frameNamespace(const String&);
 
         void incrementFrameCount() { ++m_frameCount; }
         void decrementFrameCount() { --m_frameCount; }
         int frameCount() const { return m_frameCount; }
-
-        static void setNeedsReapplyStyles();
-        static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
         Chrome* chrome() const { return m_chrome.get(); }
         SelectionController* dragCaretController() const { return m_dragCaretController.get(); }
@@ -111,13 +110,15 @@ namespace WebCore {
         OwnPtr<DragController> m_dragController;
         OwnPtr<FocusController> m_focusController;
         OwnPtr<ContextMenuController> m_contextMenuController;
-        RefPtr<BackForwardList> m_backForwardList;
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;
         
-        EditorClient* m_editorClient;
+        RefPtr<BackForwardList> m_backForwardList;
         RefPtr<Frame> m_mainFrame;
         RefPtr<Node> m_focusedNode;
+
+        EditorClient* m_editorClient;
+
         int m_frameCount;
         String m_groupName;
 

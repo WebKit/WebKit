@@ -36,6 +36,7 @@
 #include "Image.h"
 #include "ImageDocument.h"
 #include "MediaList.h"
+#include "Page.h"
 #include "PluginDocument.h"
 #include "PlugInInfoStore.h"
 #include "RegularExpression.h"
@@ -370,8 +371,11 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new PluginDocument(this, frame);
 
 #if ENABLE(SVG)
-    if (type == "image/svg+xml" && (!frame || !frame->settings()->usesDashboardBackwardCompatibilityMode()))
-        return new SVGDocument(this, frame);
+    if (type == "image/svg+xml") {
+        Settings* settings = frame ? frame->settings() : 0;
+        if (!settings || !settings->usesDashboardBackwardCompatibilityMode())
+            return new SVGDocument(this, frame);
+    }
 #endif
     if (isXMLMIMEType(type))
         return new Document(this, frame);

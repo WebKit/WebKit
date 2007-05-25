@@ -200,10 +200,9 @@ String HTMLFrameElementBase::location() const
 
 void HTMLFrameElementBase::setLocation(const String& str)
 {
-    if (m_URL == str)
-        if (Frame* frame = document()->frame())
-            if (frame->settings()->needsAcrobatFrameReloadingQuirk())
-                return;
+    Settings* settings = document()->settings();
+    if (settings && settings->needsAcrobatFrameReloadingQuirk() && m_URL == str)
+        return;
 
     m_URL = AtomicString(str);
 

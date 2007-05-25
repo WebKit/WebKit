@@ -39,7 +39,6 @@
 #include "SVGImage.h"
 #include "SVGLength.h"
 #include "SVGSVGElement.h"
-#include "Settings.h"
 
 #include "SVGImageEmptyClients.h"
 
@@ -130,7 +129,6 @@ bool SVGImage::dataChanged(bool allDataReceived)
         static EditorClient* dummyEditorClient = new SVGEmptyEditorClient;
         static ContextMenuClient* dummyContextMenuClient = new SVGEmptyContextMenuClient;
         static DragClient* dummyDragClient = new SVGEmptyDragClient;
-        static Settings* dummySettings = new Settings;
 
         // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
         // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
@@ -140,7 +138,6 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_frameView = new FrameView(m_frame.get());
         m_frameView->deref(); // FIXME: FrameView starts with a refcount of 1
         m_frame->setView(m_frameView.get());
-        m_frame->setSettings(dummySettings);
         ResourceRequest fakeRequest(KURL(""));
         m_frame->loader()->load(fakeRequest); // Make sure the DocumentLoader is created
         m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks

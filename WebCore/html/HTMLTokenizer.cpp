@@ -41,7 +41,7 @@
 #include "HTMLParser.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
-#include "Page.h"
+#include "Settings.h"
 #include "SystemTime.h"
 #include "csshelper.h"
 #include "kjs_proxy.h"
@@ -1190,13 +1190,16 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 Attribute* a = 0;
                 scriptSrc = String();
                 scriptSrcCharset = String();
-                if (currToken.attrs && !m_fragment && m_doc->frame() && m_doc->frame()->settings()->isJavaScriptEnabled()) {
-                    if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                        scriptSrc = m_doc->completeURL(parseURL(a->value()));
-                    if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
-                        scriptSrcCharset = a->value().domString().stripWhiteSpace();
-                    if (scriptSrcCharset.isEmpty())
-                        scriptSrcCharset = m_doc->frame()->loader()->encoding();
+                if (currToken.attrs && !m_fragment) {
+                    Settings* settings = m_doc->settings();
+                    if (settings && settings->isJavaScriptEnabled()) {
+                        if ((a = currToken.attrs->getAttributeItem(srcAttr)))
+                            scriptSrc = m_doc->completeURL(parseURL(a->value()));
+                        if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
+                            scriptSrcCharset = a->value().domString().stripWhiteSpace();
+                        if (scriptSrcCharset.isEmpty())
+                            scriptSrcCharset = m_doc->frame()->loader()->encoding();
+                    }
                 }
             }
 

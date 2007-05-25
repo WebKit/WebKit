@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
+#include "Page.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -125,7 +126,8 @@ bool JSEditor::queryCommandState(const String& command)
 
 bool JSEditor::queryCommandSupported(const String& command)
 {
-    if ((!m_document->frame() || !m_document->frame()->settings()->isDOMPasteAllowed()) && command.lower() == "paste")
+    Settings* settings = m_document->settings();
+    if ((!settings || !settings->isDOMPasteAllowed()) && command.lower() == "paste")
         return false;
     return commandImp(command) != 0;
 }
@@ -519,7 +521,8 @@ bool enabledCopy(Frame* frame)
 
 bool enabledPaste(Frame* frame)
 {
-    return frame->settings()->isDOMPasteAllowed() && frame->editor()->canPaste();
+    Settings* settings = frame ? frame->settings() : 0;
+    return settings && settings->isDOMPasteAllowed() && frame->editor()->canPaste();
 }
 
 bool enabledAnyRangeSelection(Frame* frame)

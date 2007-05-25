@@ -142,8 +142,8 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
         // If the link is editable, then we need to check the settings to see whether or not to follow the link
         if (isContentEditable()) {
             EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-            if (document()->frame() && document()->frame()->settings())
-                editableLinkBehavior = document()->frame()->settings()->editableLinkBehavior();
+            if (Settings* settings = document()->settings())
+                editableLinkBehavior = settings->editableLinkBehavior();
                 
             switch (editableLinkBehavior) {
                 // Always follow the link (Safari 2.0 behavior)
@@ -241,8 +241,8 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
 {
     if (isContentEditable()) {
         EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-        if (document()->frame() && document()->frame()->settings())
-            editableLinkBehavior = document()->frame()->settings()->editableLinkBehavior();
+        if (Settings* settings = document()->settings())
+            editableLinkBehavior = settings->editableLinkBehavior();
             
         switch(editableLinkBehavior) {
             default:
@@ -466,8 +466,8 @@ bool HTMLAnchorElement::isLiveLink() const
         return true;
     
     EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-    if (document() && document()->frame() && document()->frame()->settings())
-        editableLinkBehavior = document()->frame()->settings()->editableLinkBehavior();
+    if (Settings* settings = document()->settings())
+        editableLinkBehavior = settings->editableLinkBehavior();
         
     switch(editableLinkBehavior) {
         default:

@@ -868,11 +868,11 @@ void FrameLoader::begin(const KURL& url)
 
     updatePolicyBaseURL();
 
-    document->docLoader()->setAutoLoadImages(m_frame->settings()->loadsImagesAutomatically());
-
-    const KURL& userStyleSheet = m_frame->settings()->userStyleSheetLocation();
+    Settings* settings = document->settings();
+    document->docLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());
+    KURL userStyleSheet = settings ? settings->userStyleSheetLocation() : KURL();
     if (!userStyleSheet.isEmpty())
-        m_frame->setUserStyleSheetLocation(KURL(userStyleSheet));
+        m_frame->setUserStyleSheetLocation(userStyleSheet);
 
     restoreDocumentState();
 
@@ -910,7 +910,8 @@ void FrameLoader::write(const char* str, int len, bool flush)
     }
     
     if (!m_decoder) {
-        m_decoder = new TextResourceDecoder(m_responseMIMEType, m_frame->settings()->defaultTextEncodingName());
+        Settings* settings = m_frame->settings();
+        m_decoder = new TextResourceDecoder(m_responseMIMEType, settings ? settings->defaultTextEncodingName() : String());
         if (!m_encoding.isNull())
             m_decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
@@ -1377,7 +1378,8 @@ String FrameLoader::encoding() const
         return m_encoding;
     if (m_decoder && m_decoder->encoding().isValid())
         return m_decoder->encoding().name();
-    return m_frame->settings()->defaultTextEncodingName();
+    Settings* settings = m_frame->settings();
+    return settings ? settings->defaultTextEncodingName() : String();
 }
 
 bool FrameLoader::gotoAnchor(const String& name)
@@ -1439,7 +1441,8 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
-        if (!m_frame->settings()->arePluginsEnabled())
+        Settings* settings = m_frame->settings();
+        if (!settings || !settings->arePluginsEnabled())
             return false;
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
     }
@@ -2540,7 +2543,8 @@ void FrameLoader::open(CachedPage& cachedPage)
     m_wasLoadEventEmitted = true;
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->settings()->isJavaScriptEnabled()) {
+    Settings* settings = m_frame->settings();
+    if (settings && settings->isJavaScriptEnabled()) {
         m_frame->setJSStatusBarText(String());
         m_frame->setJSDefaultStatusBarText(String());
     }
@@ -4349,7 +4353,8 @@ String FrameLoader::referrer() const
 
 void FrameLoader::partClearedInBegin()
 {
-    if (m_frame->settings()->isJavaScriptEnabled())
+    Settings* settings = m_frame->settings();
+    if (settings && settings->isJavaScriptEnabled())
         m_client->windowObjectCleared();
 }
 

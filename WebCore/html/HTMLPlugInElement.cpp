@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "Widget.h"
@@ -174,13 +175,22 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
 NPObject* HTMLPlugInElement::createNPObject()
 {
-    // This shouldn't ever happen, but might as well check anyway
-    if (!document()->frame())
+    Frame* frame = document()->frame();
+    if (!frame) {
+        // This shouldn't ever happen, but might as well check anyway.
+        ASSERT_NOT_REACHED();
         return _NPN_CreateNoScriptObject();
+    }
+
+    Settings* settings = frame->settings();
+    if (!settings) {
+        // This shouldn't ever happen, but might as well check anyway.
+        ASSERT_NOT_REACHED();
+        return _NPN_CreateNoScriptObject();
+    }
 
     // Can't create NPObjects when JavaScript is disabled
-    Frame* frame = document()->frame();
-    if (!frame->settings()->isJavaScriptEnabled())
+    if (!settings->isJavaScriptEnabled())
         return _NPN_CreateNoScriptObject();
     
     // Create a JSObject bound to this element

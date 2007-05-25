@@ -438,8 +438,13 @@ print <<END
 ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
 #if ENABLE(SVG)
-    if (!doc || (doc->page() && doc->page()->settings()->usesDashboardBackwardCompatibilityMode()))
-        return 0; // Do not allow elements to ever be made without having a doc or if we're in dashboard compatibility mode.
+    // Don't make elements without a document
+    if (!doc)
+        return 0;
+    
+    Settings* settings = doc->settings();
+    if (settings && settings->usesDashboardBackwardCompatibilityMode())
+        return 0;
 
     createFunctionMapIfNecessary();
     ConstructorFunc func = gFunctionMap->get(qName.localName().impl());

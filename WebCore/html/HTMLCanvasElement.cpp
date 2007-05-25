@@ -86,8 +86,9 @@ HTMLCanvasElement::~HTMLCanvasElement()
 }
 
 HTMLTagStatus HTMLCanvasElement::endTagRequirement() const 
-{ 
-    if (document()->frame() && document()->frame()->settings()->usesDashboardBackwardCompatibilityMode())
+{
+    Settings* settings = document()->settings();
+    if (settings && settings->usesDashboardBackwardCompatibilityMode())
         return TagStatusForbidden; 
 
     return HTMLElement::endTagRequirement();
@@ -95,7 +96,8 @@ HTMLTagStatus HTMLCanvasElement::endTagRequirement() const
 
 int HTMLCanvasElement::tagPriority() const 
 { 
-    if (document()->frame() && document()->frame()->settings()->usesDashboardBackwardCompatibilityMode())
+    Settings* settings = document()->settings();
+    if (settings && settings->usesDashboardBackwardCompatibilityMode())
         return 0; 
 
     return HTMLElement::tagPriority();
@@ -111,7 +113,8 @@ void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    if (document()->frame() && document()->frame()->settings()->isJavaScriptEnabled()) {
+    Settings* settings = document()->settings();
+    if (settings && settings->isJavaScriptEnabled()) {
         m_rendererIsCanvas = true;
         return new (arena) RenderHTMLCanvas(this);
     }
