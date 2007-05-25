@@ -1,5 +1,12 @@
 2007-05-25  Anders Carlsson  <andersca@apple.com>
 
+        Fix no-svg build.
+        
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::callAsFunction):
+
+2007-05-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         <rdar://problem/5226788> After resizing the window larger than the image, hovering over the image still shows magnify glass

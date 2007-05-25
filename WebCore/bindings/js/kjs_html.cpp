@@ -347,9 +347,10 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
     if (!thisObj->inherits(&JSHTMLElement::info))
         return throwError(exec, TypeError);
     DOMExceptionTranslator exception(exec);
-    HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
 
 #if ENABLE(SVG)
+    HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
+
     if (element.hasLocalName(objectTag)) {
         HTMLObjectElement& object = static_cast<HTMLObjectElement&>(element);
         if (id == JSHTMLElement::ObjectGetSVGDocument)
