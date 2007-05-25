@@ -1,3 +1,19 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed global initializer (like you fix a dog).
+        
+        I'm not sure how our script missed this. I tested, and it generally doesn't 
+        seem to work very well.
+
+        * WebView/WebHTMLView.mm: Allocate lazily to avoid the performance hit of
+        a global initializer.
+        (promisedDataClient):
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView setPromisedDragTIFFDataSource:WebCore::]):
+
 2007-05-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

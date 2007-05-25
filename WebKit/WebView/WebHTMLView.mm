@@ -223,7 +223,11 @@ static BOOL forceWebHTMLViewHitTest;
 static WebHTMLView *lastHitView;
 
 // We need this to be able to safely reference the CachedImage for the promised drag data
-static CachedResourceClient promisedDataClient;
+static CachedResourceClient* promisedDataClient()
+{
+    static CachedResourceClient* staticCachedResourceClient = new CachedResourceClient;
+    return staticCachedResourceClient;
+}
 
 @interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
 @end
@@ -314,7 +318,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
-        promisedDragTIFFDataSource->deref(&promisedDataClient);
+        promisedDragTIFFDataSource->deref(promisedDataClient());
     [super dealloc];
 }
 
@@ -329,7 +333,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
-        promisedDragTIFFDataSource->deref(&promisedDataClient);
+        promisedDragTIFFDataSource->deref(promisedDataClient());
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
@@ -5205,10 +5209,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source
 {
     if (source)
-        source->ref(&promisedDataClient);
+        source->ref(promisedDataClient());
     
     if (_private->promisedDragTIFFDataSource)
-        _private->promisedDragTIFFDataSource->deref(&promisedDataClient);
+        _private->promisedDragTIFFDataSource->deref(promisedDataClient());
     _private->promisedDragTIFFDataSource = source;
 }
 
