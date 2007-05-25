@@ -1,3 +1,15 @@
+2007-05-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13872
+          REGRESSION: An empty search field can have a cancel button
+
+        * fast/forms/search-cancel-button-style-sharing-expected.checksum: Added.
+        * fast/forms/search-cancel-button-style-sharing-expected.png: Added.
+        * fast/forms/search-cancel-button-style-sharing-expected.txt: Added.
+        * fast/forms/search-cancel-button-style-sharing.html: Added.
+
 2007-05-25  Darin Adler  <darin@apple.com>
 
         * fast/table/rowindex-comment-nodes-expected.txt: Update to reflect success.

@@ -205,8 +205,12 @@ RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle
 
 RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
 {
-    RenderStyle* cancelBlockStyle = getPseudoStyle(RenderStyle::SEARCH_CANCEL_BUTTON);
-    if (!cancelBlockStyle)
+    RenderStyle* cancelBlockStyle;
+    
+    if (RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SEARCH_CANCEL_BUTTON))
+        // We may be sharing style with another search field, but we must not share the cancel button style.
+        cancelBlockStyle = new (renderArena()) RenderStyle(*pseudoStyle);
+    else
         cancelBlockStyle = new (renderArena()) RenderStyle();
 
     if (startStyle)
