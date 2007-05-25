@@ -647,8 +647,12 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     }
     
     if (!rangeIsEmpty) {
+        // FIXME: Callers should perform this operation on a Range that includes the br
+        // if they want style applied to the empty line.
+        if (start == end && start.node()->hasTagName(brTag))
+            end = positionAfterNode(start.node());
         // Add the style to selected inline runs.
-        Node* pastEnd = Range(document(), start, end).pastEndNode();
+        Node* pastEnd = Range(document(), rangeCompliantEquivalent(start), rangeCompliantEquivalent(end)).pastEndNode();
         for (Node* next; node && node != pastEnd; node = next) {
             
             next = node->traverseNextNode();
@@ -683,7 +687,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
             Node* runStart = node;
             // Find the end of the run.
             Node* sibling = node->nextSibling();
-            while (node != end.node() && sibling && (!sibling->isElementNode() || sibling->hasTagName(brTag)) && !isBlock(sibling)) {
+            while (sibling && sibling != pastEnd && (!sibling->isElementNode() || sibling->hasTagName(brTag)) && !isBlock(sibling)) {
                 node = sibling;
                 sibling = node->nextSibling();
             }

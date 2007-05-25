@@ -1,3 +1,15 @@
+2007-05-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5228141>
+        REGRESSION: Can't apply style to selection that ends after an image
+
+        * editing/style/5228141-expected.checksum: Added.
+        * editing/style/5228141-expected.png: Added.
+        * editing/style/5228141-expected.txt: Added.
+        * editing/style/5228141.html: Added.
+
 2007-05-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.

@@ -1,3 +1,26 @@
+2007-05-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5228141> 
+        REGRESSION: Can't apply style to selection that ends after an image
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        Use range compliant equivalents when creating the Range
+        used to compute pastEndNode(), otherwise Range's constructor
+        ASSERTs and pastEndNode() returns null. Added a testcase.
+        If the incoming Range is collapsed at [br, 0], callers want
+        the style to be applied to the br, so expand the Range to include
+        it.  We got away without expanding before because pastEndNode
+        of a Range from [br, 0] to [br, 0] is the node after the br.
+        Using range compliant equivalents changed that. There's already
+        test coverage for this change.
+        Changed while loop termination for finding the end of a run 
+        so that we don't process pastEnd.  end.node() may now be 
+        non-atomic and we'd blow past it. There's already test
+        coverage for this change.
+
 2007-05-25  Beth Dakin  <bdakin@apple.com>
 
         Rubber stamped by Hyatt
@@ -57,7 +80,7 @@
         (-[WebCoreAXObject accessibilityDescription]):
         Only allow asking the attachmentView for description if attachmentView supports this description attribute
 
-2007-05-25  dethbakin  <bdakin@apple.com>
+2007-05-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver and Hyatt.
 
