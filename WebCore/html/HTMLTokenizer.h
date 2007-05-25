@@ -103,7 +103,9 @@ public:
     virtual int lineNumber() const { return lineno; }
     virtual int columnNumber() const { return 1; }
 
-    int* lineNumberPtr() { return m_executingScript ? 0 : &lineno; }
+    int* lineNumberPtr() { return &lineno; }
+
+    bool processingContentWrittenByScript() const { return src.excludeLineNumbers(); }
 
 private:
     class State;
@@ -126,7 +128,7 @@ private:
     State scriptHandler(State);
     State scriptExecution(const DeprecatedString& script, State, DeprecatedString scriptURL, int baseLine = 0);
     void setSrc(const SegmentedString&);
-
+ 
     // check if we have enough space in the buffer.
     // if not enlarge it
     inline void checkBuffer(int len = 10)

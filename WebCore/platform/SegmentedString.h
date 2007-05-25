@@ -33,15 +33,18 @@ class SegmentedSubstring {
 private:
     friend class SegmentedString;
     
-    SegmentedSubstring() : m_length(0), m_current(0) {}
-    SegmentedSubstring(const String& str) : m_string(str), m_length(str.length()) {
+    SegmentedSubstring() : m_length(0), m_current(0), m_excludeLineNumbers(false) {}
+    SegmentedSubstring(const String& str) : m_string(str), m_length(str.length()), m_excludeLineNumbers(false) {
         m_current = m_length == 0 ? 0 : m_string.characters();
     }
 
-    SegmentedSubstring(const UChar* str, int length) : m_length(length), m_current(length == 0 ? 0 : str) {}
+    SegmentedSubstring(const UChar* str, int length) : m_length(length), m_current(length == 0 ? 0 : str), m_excludeLineNumbers(false) {}
 
-    void clear() { m_length = 0; m_current = 0; }
+    void clear() { m_length = 0; m_current = 0; m_excludeLineNumbers = false; }
     
+    bool excludeLineNumbers() const { return m_excludeLineNumbers; }
+    void setExcludeLineNumbers() { m_excludeLineNumbers = true; }
+
     void appendTo(String& str) const {
         if (m_string.characters() == m_current) {
             if (str.isEmpty())
@@ -56,6 +59,7 @@ private:
     String m_string;
     int m_length;
     const UChar* m_current;
+    bool m_excludeLineNumbers;
 };
 
 class SegmentedString {
@@ -76,6 +80,9 @@ public:
     void append(const SegmentedString &);
     void prepend(const SegmentedString &);
     
+    bool excludeLineNumbers() const { return m_currentString.excludeLineNumbers(); }
+    void setExcludeLineNumbers();
+
     void push(UChar c) {
         if (!m_pushedChar1) {
             m_pushedChar1 = c;
@@ -94,7 +101,7 @@ public:
             m_pushedChar1 = m_pushedChar2;
             m_pushedChar2 = 0;
         } else if (m_currentString.m_current) {
-            if (*m_currentString.m_current++ == '\n' && lineNumber)
+            if (*m_currentString.m_current++ == '\n' && lineNumber && !m_currentString.excludeLineNumbers())
                 *lineNumber = *lineNumber + 1;
             if (--m_currentString.m_length == 0)
                 advanceSubstring();

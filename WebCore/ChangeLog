@@ -1,3 +1,30 @@
+2007-05-25  David Hyatt  <hyatt@apple.com>
+
+        Rework line numbering (again).  This time I finally think I have
+        it right for all the document.write insanity that can occur.
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserDocumentWriteMessage):
+        * html/HTMLParserErrorCodes.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::lineNumberPtr):
+        (WebCore::HTMLTokenizer::processingContentWrittenByScript):
+        * platform/SegementedSring.cpp
+        (WebCore::SegmentedString::setExcludeLineNumbers):
+        * platform/SegmentedString.h:
+        (WebCore::SegmentedSubstring::SegmentedSubstring):
+        (WebCore::SegmentedSubstring::clear):
+        (WebCore::SegmentedSubstring::excludeLineNumbers):
+        (WebCore::SegmentedSubstring::setExcludeLineNumbers):
+        (WebCore::SegmentedString::excludeLineNumbers):
+        (WebCore::SegmentedString::advance):
+
 2007-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.

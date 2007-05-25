@@ -51,6 +51,8 @@ enum HTMLParserErrorCode {
 };
 
 const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode);
+const char* htmlParserDocumentWriteMessage();
+
 bool isWarning(HTMLParserErrorCode);
 
 }
