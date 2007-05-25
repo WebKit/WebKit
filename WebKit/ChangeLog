@@ -1,3 +1,20 @@
+2007-05-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5228371> - REGRESSION - Certain mail message bodies display as empty
+
+        This is due to http://trac.webkit.org/projects/webkit/changeset/21480 which unintentionally
+        made applewebdata urls result in check.call(false) instead of check.call(true)
+
+        Best place for a fix is to have the FrameLoaderClient::canHandleRequest() call return true, which
+        really is rooted in WebView
+
+        <rdar://problem/5229587> tracks adding a layout test
+
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:]): Return true for applewebdata URLs
+
 2007-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Tim Hatcher.

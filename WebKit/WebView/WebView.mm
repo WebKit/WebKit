@@ -1089,12 +1089,16 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     // FIXME: If <rdar://problem/5217309> gets fixed, this check can be removed
     if (!request)
         return NO;
-    
-    if ([NSURLConnection canHandleRequest:request]) {
-        return YES;
-    }
 
-    return [self _representationExistsForURLScheme:[[request URL] scheme]];
+    if ([NSURLConnection canHandleRequest:request])
+        return YES;
+
+    NSString *scheme = [[request URL] scheme];
+
+    if ([self _representationExistsForURLScheme:scheme])
+        return YES;
+        
+    return ([scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"]);
 }
 
 + (NSString *)_decodeData:(NSData *)data
