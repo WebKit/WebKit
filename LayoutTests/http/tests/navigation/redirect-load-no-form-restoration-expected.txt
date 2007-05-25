@@ -3,5 +3,5 @@ This tests that the old url's document state (including the form state) is not r
 Test Passed
 
 ============== Back Forward List ==============
-curr->  file:///Volumes/Data/adelep/Source/TOT/Labyrinth/OpenSource/LayoutTests/fast/history/resources/redirect-load.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/redirect-load.html  **nav target**
 ===============================================

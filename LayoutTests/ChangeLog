@@ -1,3 +1,16 @@
+2007-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - fix layout test that is failing due to hardcoded file paths in the results by moving it to the http tests
+
+        * fast/history/redirect-load-no-form-restoration-expected.txt: Removed.
+        * fast/history/redirect-load-no-form-restoration.html: Removed.
+        * fast/history/resources/redirect-load.html: Removed.
+        * http/tests/navigation/redirect-load-no-form-restoration-expected.txt: Added.
+        * http/tests/redirect-load-no-form-restoration.html: Removed.
+        * http/tests/resources/redirect-load.html: Removed.
+
 2007-05-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
