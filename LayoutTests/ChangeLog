@@ -1,5 +1,10 @@
 2007-05-25  Darin Adler  <darin@apple.com>
 
+        * fast/table/rowindex-comment-nodes-expected.txt: Update to reflect success.
+        A recent check-in fixed this test, but nobody checked in updated results.
+
+2007-05-25  Darin Adler  <darin@apple.com>
+
         - updated some test results that were affected by Hyatt's fix for
           <rdar://problem/5208440> REGRESSION: Raw text needs to be pulled
           outside of tables (13753)
