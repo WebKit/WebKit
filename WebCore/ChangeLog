@@ -1,3 +1,16 @@
+2007-05-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders and Tim
+
+        - WebCore change for: 
+          <rdar://problem/5226000> REGRESSION: In Gmail and Mail, a hang occurs when attempting to grammar/spellcheck a word in a reply 
+
+        * editing/Editor.cpp:
+        (WebCore::findFirstBadGrammarInRange):
+        Use the more obvious way to check whether a range is empty. In this case the more obvious way
+        would also have caused no problem to occur. Also added an assertion. Though this change is
+        enough to fix the symptom of the bug, the real fix is in WebKit.
+
 2007-05-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin (Sorta).

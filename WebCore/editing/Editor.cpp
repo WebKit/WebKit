@@ -1864,10 +1864,12 @@ static String findFirstBadGrammarInRange(EditorClient* client, Range* searchRang
         int badGrammarPhraseLength = 0;
         client->checkGrammarOfString(paragraphString.characters() + startOffset, paragraphString.length() - startOffset, grammarDetails, &badGrammarPhraseLocation, &badGrammarPhraseLength);
         
-        if (badGrammarPhraseLocation == -1) {
-            ASSERT(badGrammarPhraseLength == 0);
+        if (badGrammarPhraseLength == 0) {
+            ASSERT(badGrammarPhraseLocation == -1);
             return String();
         }
+
+        ASSERT(badGrammarPhraseLocation >= 0);
         badGrammarPhraseLocation += startOffset;
 
         
