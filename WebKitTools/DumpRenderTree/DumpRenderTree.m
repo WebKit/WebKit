@@ -58,7 +58,6 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebCore/WebScriptObjectPendingPublic.h>
 #import <WebKit/WebViewPrivate.h>
 #import <JavaScriptCore/Assertions.h>
 #import <getopt.h>

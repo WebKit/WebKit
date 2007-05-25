@@ -43,7 +43,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebCore/WebScriptObjectPendingPublic.h>
 
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
