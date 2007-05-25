@@ -138,6 +138,7 @@ namespace WebCore {
         bool isLoadingMainResource() const;
         bool isLoadingSubresources() const;
         bool isLoadingPlugIns() const;
+        bool isLoadingMultipartContent() const;
 
         void stopLoadingPlugIns();
         void stopLoadingSubresources();

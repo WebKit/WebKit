@@ -666,6 +666,12 @@ bool DocumentLoader::isLoadingPlugIns() const
     return !m_plugInStreamLoaders.isEmpty();
 }
 
+bool DocumentLoader::isLoadingMultipartContent() const
+{
+    ASSERT(m_mainResourceLoader);
+    return m_mainResourceLoader->isLoadingMultipartContent();
+}
+
 bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
 {
     ASSERT(!m_mainResourceLoader);

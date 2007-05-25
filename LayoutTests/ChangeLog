@@ -1,3 +1,16 @@
+2007-05-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13767
+          REGRESSION: Multipart image documents are garbled
+
+        * http/tests/multipart/invalid-image-data-standalone-expected.checksum: Added.
+        * http/tests/multipart/invalid-image-data-standalone-expected.png: Added.
+        * http/tests/multipart/invalid-image-data-standalone-expected.txt: Added.
+        * http/tests/multipart/invalid-image-data-standalone.html: Added.
+        * http/tests/multipart/resources/green-100x100.png: Added.
+
 2007-05-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Hyatt.

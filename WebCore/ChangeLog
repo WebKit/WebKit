@@ -1,3 +1,22 @@
+2007-05-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13767
+          REGRESSION: Multipart image documents are garbled
+
+        Test: http/tests/multipart/invalid-image-data-standalone.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingMultipartContent): Added.
+        * loader/DocumentLoader.h:
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish): If the image is multipart, make a copy
+        of the current part instead of using the resource data, which is going to be
+        overwritten by the next part.
+        * loader/MainResourceLoader.h:
+        (WebCore::MainResourceLoader::isLoadingMultipartContent): Added.
+
 2007-05-25  Anders Carlsson  <andersca@apple.com>
 
         Fix no-svg build.

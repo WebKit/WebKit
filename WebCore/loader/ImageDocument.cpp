@@ -96,7 +96,14 @@ void ImageTokenizer::finish()
 {
     if (!m_parserStopped && m_doc->imageElement()) {
         CachedImage* cachedImage = m_doc->cachedImage();
-        cachedImage->data(m_doc->frame()->loader()->documentLoader()->mainResourceData(), true);
+        RefPtr<SharedBuffer> data = m_doc->frame()->loader()->documentLoader()->mainResourceData();
+
+        // If this is a multipart image, make a copy of the current part, since the resource data
+        // will be overwritten by the next part.
+        if (m_doc->frame()->loader()->documentLoader()->isLoadingMultipartContent())
+            data = new SharedBuffer(data->data(), data->size());
+
+        cachedImage->data(data.release(), true);
         cachedImage->finish();
 
         cachedImage->setResponse(m_doc->frame()->loader()->documentLoader()->response());
