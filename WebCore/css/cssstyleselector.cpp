@@ -1586,6 +1586,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
             case CSSSelector::PseudoFirstLetter:
                 if (subject) {
                     dynamicPseudo = RenderStyle::FIRST_LETTER;
+                    if (Document* doc = e->document())
+                        doc->setUsesFirstLetterRules(true);
                     return true;
                 }
                 break;

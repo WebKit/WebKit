@@ -306,6 +306,7 @@ Document::Document(DOMImplementation* impl, Frame* frame)
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
     m_usesFirstLineRules = false;
+    m_usesFirstLetterRules = false;
 
     m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
     m_didCalculateStyleSelector = false;

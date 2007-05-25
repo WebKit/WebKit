@@ -288,6 +288,8 @@ public:
     void setUsesSiblingRules(bool b) { m_usesSiblingRules = b; }
     bool usesFirstLineRules() const { return m_usesFirstLineRules; }
     void setUsesFirstLineRules(bool b) { m_usesFirstLineRules = b; }
+    bool usesFirstLetterRules() const { return m_usesFirstLetterRules; }
+    void setUsesFirstLetterRules(bool b) { m_usesFirstLetterRules = b; }
 
     // Machinery for saving and restoring state when you leave and then go back to a page.
     void registerFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.add(e); }
@@ -724,6 +726,7 @@ protected:
     bool m_usesDescendantRules;
     bool m_usesSiblingRules;
     bool m_usesFirstLineRules;
+    bool m_usesFirstLetterRules;
 
     String m_title;
     bool m_titleSetExplicitly;

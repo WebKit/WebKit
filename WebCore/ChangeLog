@@ -1,3 +1,26 @@
+2007-05-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=4104
+        first-letter not updating style with hover
+        http://bugs.webkit.org/show_bug.cgi?id=13169
+        css-formatted first letter won't hide dynamically
+
+        Update first letter when RenderBlock::setStyle is called. 
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createElement):
+        * dom/Document.h:
+        (WebCore::Document::usesFirstLetterRules):
+        (WebCore::Document::setUsesFirstLetterRules):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setStyle):
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2007-05-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
