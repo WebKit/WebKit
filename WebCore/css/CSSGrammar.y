@@ -3,7 +3,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  *  This library is free software; you can redistribute it and/or
