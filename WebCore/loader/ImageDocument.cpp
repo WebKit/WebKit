@@ -253,10 +253,22 @@ bool ImageDocument::imageFitsInWindow() const
 
 void ImageDocument::windowSizeChanged()
 {
-    if (!m_imageSizeIsKnown || !m_shouldShrinkImage)
+    if (!m_imageSizeIsKnown)
         return;
 
     bool fitsInWindow = imageFitsInWindow();
+    
+    // If the image has been explicitly zoomed in, restore the cursor if the image fits
+    // and set it to a zoom out cursor if the image doesn't fit
+    if (!m_shouldShrinkImage) {
+        ExceptionCode ec;
+        
+        if (fitsInWindow)
+            m_imageElement->style()->removeProperty("cursor", ec);
+        else
+            m_imageElement->style()->setProperty("cursor", "-webkit-zoom-out", ec);
+        return;
+    }
     
     if (m_didShrinkImage) {
         // If the window has been resized so that the image fits, restore the image size

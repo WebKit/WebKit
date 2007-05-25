@@ -1,3 +1,15 @@
+2007-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5226788> After resizing the window larger than the image, hovering over the image still shows magnify glass
+        
+        One part of the bug was already fixed by my previous commit. This fixes the case where the window is sized so the image fit
+        after it has been zoomed in.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::windowSizeChanged):
+
 2007-05-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders and Tim
