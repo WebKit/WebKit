@@ -2578,7 +2578,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
-    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
+    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return YES;
         
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
