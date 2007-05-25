@@ -1,3 +1,16 @@
+2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13623 (Decompilation of function
+          doesn't compile with "++(x,y)")
+        - Contains tests for grouping expression that is inside typeof or prefix/postfix
+          expression
+
+        * fast/js/resources/toString-prefix-postfix-preserve-parens.js: Added.
+        * fast/js/toString-prefix-postfix-preserve-parens-expected.txt: Added.
+        * fast/js/toString-prefix-postfix-preserve-parens.html: Added.
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

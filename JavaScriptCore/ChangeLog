@@ -1,3 +1,18 @@
+2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13623 (Decompilation of function
+          doesn't compile with "++(x,y)")
+        - Create the error node based on the actual node, not the node inside
+          parenthesis
+        - Fix applies to postfix, prefix and typeof operators
+        - Produces run-time ReferenceError like other non-lvalue assignments etc.
+
+        * kjs/grammar.y: Create {Prefix,Postfix}ErrorNode based on the actual node,
+        not the based on the node returned by "nodeInsideAllParens()". Same for
+        TypeOfValueNode.
+
 2007-05-25  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.
