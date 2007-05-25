@@ -31,6 +31,10 @@ namespace Bindings {
 // Variant value must be released with NPReleaseVariantValue()
 QVariant convertValueToQVariant(ExecState* exec, JSValue* value)
 {
+    // check magic pointer values before dereferencing value
+    if (value == jsNull() || value == jsNaN() || value == jsUndefined())
+        return QVariant();
+
     JSType type = value->type();
 
     if (type == StringType) {

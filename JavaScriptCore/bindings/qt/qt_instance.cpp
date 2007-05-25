@@ -105,14 +105,23 @@ JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList,
 
     QVariant vargs[11];
     void *qargs[11];
-    
-    vargs[0] = QVariant(QMetaType::type(metaMethod.typeName()));
+
+    int returnType = QMetaType::type(metaMethod.typeName());
+    if (!returnType && qstrlen(metaMethod.typeName())) {
+        qCritical("QtInstance::invokeMethod: Return type %s of method %s is not registered with QMetaType!", metaMethod.typeName(), metaMethod.signature());
+        return jsUndefined();
+    }
+    vargs[0] = QVariant(returnType);
     qargs[0] = vargs[0].data();
 
     for (int i = 0; i < args.size(); ++i) {
         vargs[i+1] = convertValueToQVariant(exec, args[i]);
         QVariant::Type type = (QVariant::Type) QMetaType::type(argTypes.at(i));
-        if (!vargs[i+1].convert(type)) 
+        if (!type) {
+            qCritical("QtInstance::invokeMethod: Method %s has argument %s which is not registered with QMetaType!", metaMethod.signature(), argTypes.at(i).constData());
+            return jsUndefined();
+        }
+        if (!vargs[i+1].convert(type))
             return jsUndefined();
 
         qargs[i+1] = vargs[i+1].data();

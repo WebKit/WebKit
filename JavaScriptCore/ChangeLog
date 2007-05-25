@@ -1,3 +1,14 @@
+2007-05-25  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix crash in Qt JavaScript bindings when the arguments used on the Qt side are not
+        registered with QMetaType.
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::invokeMethod):
+        * bindings/qt/qt_runtime.cpp:
+
 2007-05-24  Luciano Montanaro  <mikelima@cirulla.net>
 
         Reviewed by Darin
