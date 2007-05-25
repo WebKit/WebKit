@@ -49,6 +49,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSEventExtras.h"
@@ -2624,10 +2625,18 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             [[NSColor clearColor] set];
             NSRectFill (rect);
         }
-        
-        [[self _bridge] drawRect:rect];        
-        WebView *webView = [self _webView];
-        [[webView _UIDelegateForwarder] webView:webView didDrawRect:[webView convertRect:rect fromView:self]];
+
+        [[self _bridge] drawRect:rect];
+
+        // This hack is needed for <rdar://problem/5023545>. We can hit a race condition where drawRect will be
+        // called after the WebView has closed. If the client did not properly close the WebView and set the 
+        // UIDelegate to nil, then the UIDelegate will be stale and this code will crash. 
+        static BOOL version3OrLaterClient = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_QUICKBOOKS_QUIRK);
+        if (version3OrLaterClient) {
+            WebView *webView = [self _webView];
+            [[webView _UIDelegateForwarder] webView:webView didDrawRect:[webView convertRect:rect fromView:self]];
+        }
+
         [(WebClipView *)[self superview] resetAdditionalClip];
 
         [NSGraphicsContext restoreGraphicsState];

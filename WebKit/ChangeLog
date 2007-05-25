@@ -1,3 +1,26 @@
+2007-05-24  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5023545> QuickBooks Pro 2007:hang/crash 
+        after closing QuickBooks Tutorial Center with Leopard9A377
+
+        We can hit a race condition where drawRect will be called after the 
+        WebView has closed. Quickbooks does not properly close the WebView 
+        and set the UIDelegate to nil, so the UIDelegate is stale and we 
+        crash. This is a regression because the code that uses the 
+        UIDelegate in the drawRect code path was only added recently. The 
+        method that the UIDelegate calls into is new -- it does not exist 
+        on Tiger -- so there is no harm in not running this code for 
+        applications linked against older WebKits. Other applications may 
+        run into this same bug so I am not doing a bundle 
+        check...particularly because, as I mentioned, the new UIDelegate 
+        call would not be implemented by older clients anyway.  
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawSingleRect:]):
+
 2007-05-24  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
