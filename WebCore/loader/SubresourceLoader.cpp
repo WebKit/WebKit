@@ -161,6 +161,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
+        m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
         didFinishLoadingOnePart();
     }
 }

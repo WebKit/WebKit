@@ -161,7 +161,11 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
     
     m_totalPageAndResourceBytesToLoad += estimatedLength;
 
-    m_progressItems.set(identifier, new ProgressItem(estimatedLength));
+    if (ProgressItem* item = m_progressItems.get(identifier)) {
+        item->bytesReceived = 0;
+        item->estimatedLength = estimatedLength;
+    } else
+        m_progressItems.set(identifier, new ProgressItem(estimatedLength));
 }
 
 void ProgressTracker::incrementProgress(unsigned long identifier, const char*, int length)

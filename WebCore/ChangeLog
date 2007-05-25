@@ -1,3 +1,30 @@
+2007-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5209536>
+        http://bugs.webkit.org/show_bug.cgi?id=13757
+        REGRESSION: Leaks seen on buildbot after r21497.
+        
+        Fix multipart data loading so it works like Tiger Safari. When one part of a multipart connection has been loaded,
+        move the subresource loader from the subresource loaders set and into a special multipart subresource loader set. This set 
+        is not considered when asking a document loader if it's currently loading. 
+                
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        Always stop the multipart subresource loaders here.
+        
+        (WebCore::DocumentLoader::subresourceLoaderFinishedLoadingOnePart):
+        New function that moves the loader from m_subresourceLoaders to m_multipartSubresourceLoaders and updates the document loader's state.
+        
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        If a progress item already exists, reuse it. This can happen in some rare circumstances when dealing with multipart data.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        Call subresourceLoaderFinishedLoadingOnePart if the response is multipart.
+
 2007-05-25  Patti Hoa  <patti@apple.com>
 
         Reviewed by Tim Hatcher.

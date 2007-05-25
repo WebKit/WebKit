@@ -263,7 +263,10 @@ void DocumentLoader::stopLoading()
         if (loading || (doc && doc->parsing()))
             m_frame->loader()->stopLoading(false);
     }
-    
+
+    // Always cancel multipart loaders
+    cancelAll(m_multipartSubresourceLoaders);
+
     if (!loading)
         return;
     
@@ -696,6 +699,15 @@ bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& error)
 {
     m_mainResourceLoader->cancel(error);
+}
+
+void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)
+{
+    m_multipartSubresourceLoaders.add(loader);
+    m_subresourceLoaders.remove(loader);
+    updateLoading();
+    if (Frame* frame = m_frame)
+        frame->loader()->checkLoadComplete();    
 }
 
 }
