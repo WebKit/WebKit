@@ -124,7 +124,7 @@ void EventSender::leapForward(int ms)
     qDebug() << "EventSender::leapForward" << ms;
 }
 
-void EventSender::keyDown(const QString &string, const QList<QString> &modifiers)
+void EventSender::keyDown(const QString &string, const QStringList &modifiers)
 {
     qDebug() << "EventSender::keyDown" << string << modifiers;
 }

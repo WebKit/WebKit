@@ -42,8 +42,12 @@
 
 #include <signal.h>
 
-void messageHandler(QtMsgType, const char *)
+void messageHandler(QtMsgType type, const char *message)
 {
+    if (type == QtCriticalMsg) {
+        fprintf(stderr, "%s\n", message);
+        return;
+    }
     // do nothing
 }
 

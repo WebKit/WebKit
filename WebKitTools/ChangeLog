@@ -1,3 +1,14 @@
+2007-05-25  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        For the keyDown binding use QStringList instead of QList<QString>. The former is a default
+        registered metatype. Also print out critical messages in dumprendertree's qt message handler.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+
 2007-05-20  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam Roben.
