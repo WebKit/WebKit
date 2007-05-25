@@ -46,6 +46,7 @@ enum HTMLParserErrorCode {
     StrayParagraphCloseError,
     StrayCloseTagError,
     ResidualStyleError,
+    FormInsideTablePartError,
     IncorrectXMLCloseScriptWarning
 };
 

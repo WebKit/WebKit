@@ -45,10 +45,11 @@ const char* htmlParserErrorMessageTemplate(HTMLParserErrorCode errorCode)
         "%tag1 misplaced in <table>. Creating %tag2 and putting %tag1 inside it.",
         "</br> encountered.  Converting </br> into <br>.",
         "XML self-closing tag syntax used on %tag1. The tag will not be closed.",
-        "Stray </p> encountered.  Converting </p> into <p></p>.",
-        "Stray %tag1 encountered.  Ignoring close tag.",
+        "Unmatched </p> encountered.  Converting </p> into <p></p>.",
+        "Unmatched %tag1 encountered.  Ignoring tag.",
         "%tag1 misnested or not properly closed.  Cloning %tag1 in order to preserve the styles applied by it.",
-        "XML self-closing tag syntax used on <script>.  The tag will be closed by WebKit, but not all engines do this.  Change to <script></script> instead for best cross-browser compatibility."
+        "<form> cannot act as a container inside %tag1 without disrupting the table.  The children of the <form> will be placed inside the %tag1 instead.",
+        "XML self-closing tag syntax used on <script>.  The tag will be closed by WebKit, but not all browsers do this.  Change to <script></script> instead for best cross-browser compatibility."
     };
      
     if (errorCode >= MisplacedTablePartError && errorCode <= IncorrectXMLCloseScriptWarning)

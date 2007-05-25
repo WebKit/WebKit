@@ -310,14 +310,16 @@ bool HTMLParser::insertNode(Node* n, bool flat)
     // don't push elements without end tags (e.g., <img>) on the stack
     bool parentAttached = current->attached();
     if (tagPriority > 0 && !flat) {
-        pushBlock(localName, tagPriority);
-        if (newNode == current)
-            popBlock(localName);
-        else {
+        if (newNode == current) {
+            // This case should only be hit when a demoted <form> is placed inside a table.
+            ASSERT(localName == formTag);
+            reportError(FormInsideTablePartError, &current->localName());
+        } else {
             // The pushBlock function transfers ownership of current to the block stack
             // so we're guaranteed that didRefCurrent is false. The code below is an
             // optimized version of setCurrent that takes advantage of that fact and also
             // assumes that newNode is neither 0 nor a pointer to the document.
+            pushBlock(localName, tagPriority);
             ASSERT(!didRefCurrent);
             newNode->ref(); 
             current = newNode;
@@ -829,13 +831,15 @@ void HTMLParser::processCloseTag(Token* t)
     if (t->tagName == htmlTag || t->tagName == bodyTag || t->tagName == commentAtom)
         return;
     
-    if (t->tagName == formTag)
+    bool checkForCloseTagErrors = true;
+    if (t->tagName == formTag && m_currentFormElement) {
         m_currentFormElement = 0;
-    else if (t->tagName == mapTag)
+        checkForCloseTagErrors = false;
+    } else if (t->tagName == mapTag)
         m_currentMapElement = 0;
         
     HTMLStackElem* oldElem = blockStack;
-    popBlock(t->tagName, true);
+    popBlock(t->tagName, checkForCloseTagErrors);
     if (oldElem == blockStack && t->tagName == pTag) {
         // We encountered a stray </p>.  Amazingly Gecko, WinIE, and MacIE all treat
         // this as a valid break, i.e., <p></p>.  So go ahead and make the empty
@@ -1214,7 +1218,7 @@ void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
 
     if (!elem) {
         if (reportErrors)
-            reportError(StrayCloseTagError, &tagName);
+            reportError(StrayCloseTagError, &tagName, 0, true);
         return;
     }
 
