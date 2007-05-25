@@ -222,9 +222,12 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
 
     job->d->setURL(qurl);
 
-    QString cookies = WebCore::cookies(handle->url());
-    if (!cookies.isEmpty())
-        job->d->request.setValue(QLatin1String("Cookie"), cookies);
+    const QString scheme = qurl.scheme().toLower();
+    if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
+        QString cookies = WebCore::cookies(handle->url());
+        if (!cookies.isEmpty())
+            job->d->request.setValue(QLatin1String("Cookie"), cookies);
+    }
 
     const HTTPHeaderMap& loaderHeaders = handle->requestHeaders();
     HTTPHeaderMap::const_iterator end = loaderHeaders.end();
