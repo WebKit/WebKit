@@ -5111,8 +5111,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     const char *functionName = "DCMDictionaryServiceWindowShow";
 #else
     typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
-    const char *frameworkPath = "/System/Library/Frameworks/DictionaryServices.framework/DictionaryServices";
-    const char *functionName = "DCSShowDictionaryServiceWindow";
+    const char *frameworkPath = "/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/HIToolbox";
+    const char *functionName = "HIDictionaryWindowShow";
 #endif
 
     static bool lookedForFunction = false;
@@ -5146,7 +5146,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
 #else
-    // The DictionaryServices API requires the origin, in CG screen coordinates, of the first character of text in the selection.
+    // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
     NSRect rect = core([self _frame])->selectionRect();
