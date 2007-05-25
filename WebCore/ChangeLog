@@ -1,3 +1,19 @@
+2007-05-25  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Oliver and Hyatt.
+
+        Fix for <rdar://problem/5228363> REGRESSION: In Mail, attempting to 
+        create a To Do results in a crash
+
+        This regressed with r21635. Now that -boundingBox updates layout if 
+        it is needed, we infinitely recurse when Mail draws a custom 
+        highlight. The fix is to put a guard around laying out the render 
+        tree.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+
 2007-05-25  Patti Hoa <patti@apple.com>
 
         Reviewed by John Sullivan.
