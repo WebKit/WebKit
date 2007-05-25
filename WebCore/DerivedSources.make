@@ -576,21 +576,29 @@ tokenizer.cpp : css/tokenizer.flex css/maketokenizer
 	flex -t $< | perl $(WebCore)/css/maketokenizer > $@
 
 # CSS grammar
+# NOTE: older versions of bison do not inject an inclusion guard, so we do it
 
 CSSGrammar.cpp : css/CSSGrammar.y
 	bison -d -p cssyy $< -o $@
 	touch CSSGrammar.cpp.h
 	touch CSSGrammar.hpp
-	cat CSSGrammar.cpp.h CSSGrammar.hpp > CSSGrammar.h
+	echo '#ifndef CSSGRAMMER_H' > CSSGrammar.h
+	echo '#define CSSGRAMMER_H' >> CSSGrammar.h
+	cat CSSGrammar.cpp.h CSSGrammar.hpp >> CSSGrammar.h
+	echo '#endif' >> CSSGrammar.h
 	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
 
 # XPath grammar
+# NOTE: older versions of bison do not inject an inclusion guard, so we do it
 
 XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
 	bison -d -p xpathyy $< -o $@
 	touch XPathGrammar.cpp.h
 	touch XPathGrammar.hpp
-	cat XPathGrammar.cpp.h XPathGrammar.hpp > XPathGrammar.h
+	echo '#ifndef XPATHGRAMMER_H' > XPathGrammar.h
+	echo '#define XPATHGRAMMER_H' >> XPathGrammar.h
+	cat XPathGrammar.cpp.h XPathGrammar.hpp >> XPathGrammar.h
+	echo '#endif' >> XPathGrammar.h
 	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
 
 # user agent style sheets

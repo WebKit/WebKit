@@ -43,12 +43,11 @@ print <<END;
 
 END
 
-# Not sure what the earliest version with the defines is
-# Using the OS for now
-$os=`uname`;
-if ($os =~ /Linux/) {
-    print<<END
+{
+print<<END
+
 #include "CSSGrammar.h"
+
 #define INITIAL 0
 #define mediaquery 1
 
