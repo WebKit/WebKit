@@ -1,3 +1,20 @@
+2007-05-25  Darin Adler  <darin@apple.com>
+
+        - updated some test results that were affected by Hyatt's fix for
+          <rdar://problem/5208440> REGRESSION: Raw text needs to be pulled
+          outside of tables (13753)
+
+        The whitespace in the DOM has changed the child indices of various elements,
+        which shows up in the caret and selection logging.
+
+        * editing/deleting/5026848-2-expected.txt: Updated.
+        * editing/deleting/5026848-3-expected.txt: Updated.
+        * editing/deleting/5126166-expected.txt: Updated.
+        * editing/deleting/delete-block-table-expected.txt: Updated.
+        * fast/forms/input-double-click-selection-gap-bug-expected.txt: Updated.
+        * fast/replaced/selection-rect-in-table-cell-expected.txt: Updated.
+        * fast/text/textIteratorNilRenderer-expected.txt: Updated.
+
 2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Darin.
