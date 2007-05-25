@@ -1,3 +1,12 @@
+2007-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Added a debug-only CachedPage counter. This helped me track down an SVG 
+        timer bug in my recent page cache work.
+                
+        * history/CachedPage.cpp:
+
 2007-05-24  David Hyatt  <hyatt@apple.com>
 
         Improve <form> error reporting to catch <form>s inside table parts.
