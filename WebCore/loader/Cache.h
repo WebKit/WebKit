@@ -3,7 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,12 +29,13 @@
 
 #include "CachePolicy.h"
 #include "CachedResource.h"
-#include "loader.h"
 #include "PlatformString.h"
 #include "StringHash.h"
-#include <wtf/Vector.h>
-#include <wtf/HashSet.h>
+#include "loader.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore  {
 
@@ -47,19 +48,39 @@ class DocLoader;
 class Image;
 class KURL;
 
-struct LRUList {
-    CachedResource* m_head;
-    CachedResource* m_tail;
-    LRUList() : m_head(0), m_tail(0) { }
-};
-
-typedef HashMap<String, CachedResource*> CachedResourceMap;
-
-// This cache hold subresources used by Web pages.  These resources consist of images, scripts and stylesheets.
-class Cache {
+// This cache holds subresources used by Web pages: images, scripts, stylesheets, etc.
+class Cache : Noncopyable {
 public:
-    Cache();
-       
+    friend Cache* cache();
+
+    typedef HashMap<String, CachedResource*> CachedResourceMap;
+
+    struct LRUList {
+        CachedResource* m_head;
+        CachedResource* m_tail;
+        LRUList() : m_head(0), m_tail(0) { }
+    };
+
+    struct TypeStatistic {
+        int count;
+        int size;
+        int liveSize;
+        int decodedSize;
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0) { }
+    };
+    
+    struct Statistics {
+        TypeStatistic images;
+        TypeStatistic cssStyleSheets;
+        TypeStatistic scripts;
+#if ENABLE(XSLT)
+        TypeStatistic xslStyleSheets;
+#endif
+#if ENABLE(XBL)
+        TypeStatistic xblDocs;
+#endif
+    };
+
     // The loader that fetches resources.
     Loader* loader() { return &m_loader; }
 
@@ -105,36 +126,18 @@ public:
     void addToLiveResourcesSize(CachedResource*);
     void removeFromLiveResourcesSize(CachedResource*);
 
-    // Functions to collect cache statistics for the caches window in the Safari Debug menu.
-    struct TypeStatistic {
-        int count;
-        int size;
-        int liveSize;
-        int decodedSize;
-        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0) { }
-    };
-    
-    struct Statistics {
-        TypeStatistic images;
-        TypeStatistic cssStyleSheets;
-        TypeStatistic scripts;
-#if ENABLE(XSLT)
-        TypeStatistic xslStyleSheets;
-#endif
-#if ENABLE(XBL)
-        TypeStatistic xblDocs;
-#endif
-    };
-
+    // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
 
 private:
+    Cache();
+    ~Cache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
+       
     LRUList* lruListFor(CachedResource*);
     LRUList* liveLRUListFor(CachedResource*);
     
     void resourceAccessed(CachedResource*);
 
-private:
     // Member variables.
     HashSet<DocLoader*> m_docLoaders;
     Loader m_loader;

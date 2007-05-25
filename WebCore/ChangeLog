@@ -1,3 +1,20 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Some cleanup to Cache while Fixing <rdar://problem/5055182> The page cache 
+        has no global cap.
+        
+        * loader/Cache.cpp: Removed destructor to help identify this class as a
+        singleton.
+
+        * loader/Cache.h: Made constructor and destructor private to match the
+        singleton model of PageCache.
+        
+        Put structs related to Cache inside its declaration to fix some namespace
+        conflicts I had while writing my patch. (They don't exist anymore, but
+        I figured this might help future development.)
+
 2007-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

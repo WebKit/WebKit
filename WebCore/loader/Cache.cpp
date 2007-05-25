@@ -42,8 +42,8 @@ const int cDefaultCacheSize = 8192 * 1024;
 
 Cache* cache()
 {
-    static Cache cache;
-    return &cache;
+    static Cache* staticCache = new Cache;
+    return staticCache;
 }
 
 Cache::Cache()
@@ -301,7 +301,7 @@ static inline unsigned fastLog2(unsigned i)
     return log2;
 }
 
-LRUList* Cache::lruListFor(CachedResource* resource)
+Cache::LRUList* Cache::lruListFor(CachedResource* resource)
 {
     unsigned accessCount = max(resource->accessCount(), 1U);
     unsigned queueIndex = fastLog2(resource->encodedSize() / accessCount);
@@ -403,7 +403,7 @@ void Cache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
-LRUList* Cache::liveLRUListFor(CachedResource* resource)
+Cache::LRUList* Cache::liveLRUListFor(CachedResource* resource)
 {
     unsigned accessCount = max(resource->liveAccessCount(), 1U);
     unsigned queueIndex = fastLog2(resource->decodedSize() / accessCount);

@@ -45,7 +45,7 @@ namespace WebCore {
         typedef HashSet<RefPtr<CachedPage> > CachedPageSet;
 
         PageCache();
-        ~PageCache(); // not implemented because we're a singleton
+        ~PageCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
         void autoreleaseNowOrReschedule(Timer<PageCache>*);
 
