@@ -670,26 +670,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 @end
 
-@implementation WebFrame (WebPendingPublic)
-
-- (WebScriptObject *)windowObject
-{
-    Frame* coreFrame = core(self);
-    if (!coreFrame)
-        return 0;
-    return coreFrame->windowScriptObject();
-}
-
-- (JSGlobalContextRef)globalContext
-{
-    Frame* coreFrame = core(self);
-    if (!coreFrame)
-        return 0;
-    return reinterpret_cast<JSGlobalContextRef>(coreFrame->scriptProxy()->interpreter()->globalExec());
-}
-
-@end
-
 @implementation WebFrame
 
 - (id)init
@@ -893,6 +873,22 @@ static NSURL *createUniqueWebDataURL()
     for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         [children addObject:kit(child)];
     return children;
+}
+
+- (WebScriptObject *)windowObject
+{
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return 0;
+    return coreFrame->windowScriptObject();
+}
+
+- (JSGlobalContextRef)globalContext
+{
+    Frame* coreFrame = core(self);
+    if (!coreFrame)
+        return 0;
+    return reinterpret_cast<JSGlobalContextRef>(coreFrame->scriptProxy()->interpreter()->globalExec());
 }
 
 @end

@@ -465,21 +465,6 @@ Could be worth adding to the API.
 // Addresses 4192534.  SPI for now.
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 
-/*!
-    @method webView:didClearWindowObject:forFrame:
-    @abstract Notifies the delegate that the JavaScript window object in a frame has 
-    been cleared in preparation for a new load. This is the preferred place to set custom 
-    properties on the window object using the WebScriptObject and JavaScriptCore APIs.
-    @param webView The webView sending the message.
-    @param windowObject The WebScriptObject representing the frame's JavaScript window object.
-    @param frame The WebFrame to which windowObject belongs.
-    @discussion If a delegate implements both webView:didClearWindowObject:forFrame:
-    and webView:windowScriptObjectAvailable:, only webView:didClearWindowObject:forFrame: 
-    will be invoked. This enables a delegate to implement both methods for backwards 
-    compatibility with older versions of WebKit.
-*/
-- (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame;
-
 @end
 
 @interface NSObject (WebResourceLoadDelegatePrivate)

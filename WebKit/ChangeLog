@@ -1,3 +1,23 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Moved JavaScriptCore-related pending public API to public API.
+
+        * MigrateHeaders.make: Hack to prevent <JavaScriptCore/JSBase.h> from 
+        automatically converting to <WebKit/JSBase.h>
+        
+        Moved -windowObject and -globalContext
+
+        * WebView/WebFramePrivate.h: from here
+        * WebView/WebFrame.h: to here
+        * WebView/WebFrame.mm: and out of its temporary category
+
+        Moved -didClearWindowObject:forFrame:
+
+        * WebView/WebViewPrivate.h: from here
+        * WebView/WebFrameLoadDelegate.h: to here
+
 2007-05-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders and Tim

@@ -1,10 +1,11 @@
 /*
-    Copyright (C) 2004, 2006 Apple Computer, Inc. All rights reserved.
+    Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
 
     Public header file.
  */
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSBase.h>
 
 // NSObject (WebScripting) -----------------------------------------------------
 
@@ -167,6 +168,7 @@
 // WebScriptObject --------------------------------------------------
 
 @class WebScriptObjectPrivate;
+@class WebFrame;
 
 /*!
     @class WebScriptObject
@@ -203,6 +205,14 @@
     @result Either NO if an exception could not be raised, YES otherwise.
 */
 + (BOOL)throwException:(NSString *)exceptionMessage;
+
+/*!
+    @method JSObject
+    @result The equivalent JSObjectRef for this WebScriptObject.
+    @discussion Use this method to bridge between the WebScriptObject and 
+    JavaScriptCore APIs.
+*/
+- (JSObjectRef)JSObject;
 
 /*!
     @method callWebScriptMethod:withArguments:

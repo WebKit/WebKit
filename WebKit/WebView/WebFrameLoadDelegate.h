@@ -168,11 +168,28 @@
 - (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame;
 
 /*!
+    @method webView:didClearWindowObject:forFrame:
+    @abstract Notifies the delegate that the JavaScript window object in a frame has 
+    been cleared in preparation for a new load. This is the preferred place to set custom 
+    properties on the window object using the WebScriptObject and JavaScriptCore APIs.
+    @param webView The webView sending the message.
+    @param windowObject The WebScriptObject representing the frame's JavaScript window object.
+    @param frame The WebFrame to which windowObject belongs.
+    @discussion If a delegate implements both webView:didClearWindowObject:forFrame:
+    and webView:windowScriptObjectAvailable:, only webView:didClearWindowObject:forFrame: 
+    will be invoked. This enables a delegate to implement both methods for backwards 
+    compatibility with older versions of WebKit.
+*/
+- (void)webView:(WebView *)webView didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame;
+
+/*!
     @method webView:windowScriptObjectAvailable:
     @abstract Notifies the delegate that the scripting object for a page is available.  This is called
     before the page is loaded.  It may be useful to allow delegates to bind native objects to the window.
     @param webView The webView sending the message.
     @param windowScriptObject The WebScriptObject for the window in the scripting environment.
+    @discussion This method is deprecated. Consider using webView:didClearWindowObject:forFrame:
+    instead.
 */
 - (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
 

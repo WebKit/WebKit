@@ -1,3 +1,15 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Moved JavaScriptCore-related pending public API to public API.
+
+        Moved -JSObject
+
+        * bindings/objc/WebScriptObjectPendingPublic.h: from here
+        * bindings/objc/WebScriptObject.h: to here
+        * bindings/objc/WebScriptObject.mm: and out of its temporary category
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

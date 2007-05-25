@@ -25,7 +25,6 @@
 
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
-#import "WebScriptObjectPendingPublic.h"
 
 #import "DOMInternal.h"
 #import "Frame.h"
@@ -505,6 +504,17 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         throwError([self _rootObject]->interpreter()->globalExec(), GeneralError, description);
 }
 
+- (JSObjectRef)JSObject
+{
+    if (![self _rootObject])
+        return nil;
+
+    if (![self _isSafeScript])
+        return nil;
+
+    return toRef([self _imp]);
+}
+
 + (id)_convertValueToObjcValue:(JSValue*)value originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
     if (value->isObject()) {
@@ -578,17 +588,6 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 - (id)objectAtIndex:(unsigned)index
 {
     return [self webScriptValueAtIndex:index];
-}
-
-- (JSObjectRef)JSObject
-{
-    if (![self _rootObject])
-        return nil;
-
-    if (![self _isSafeScript])
-        return nil;
-
-    return toRef([self _imp]);
 }
 
 @end

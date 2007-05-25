@@ -202,7 +202,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/npruntime.h \
 #
 
-REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/\<JavaScriptCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
+REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/\<JavaScriptCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/ -e 's/\<WebKit\/JSBase.h/\<JavaScriptCore\/JSBase.h/'
 HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< $(PROCESS_HEADER_FOR_MACOSX_TARGET_CMD) > $@
 
 ifeq ($(MACOSX_DEPLOYMENT_TARGET),10.4)

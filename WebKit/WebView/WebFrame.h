@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSBase.h>
 
 @class DOMDocument;
 @class DOMHTMLElement;
@@ -35,6 +36,7 @@
 @class WebDataSource;
 @class WebFramePrivate;
 @class WebFrameView;
+@class WebScriptObject;
 @class WebView;
 
 /*!
@@ -191,5 +193,18 @@
     @result Returns an array of WebFrame.
 */
 - (NSArray *)childFrames;
+
+/*!
+    @method windowObject
+    @result The WebScriptObject representing the frame's JavaScript window object.
+*/
+- (WebScriptObject *)windowObject;
+
+/*!
+    @method globalContext
+    @result The frame's global JavaScript execution context. Use this method to
+    bridge between the WebKit and JavaScriptCore APIs.
+*/
+- (JSGlobalContextRef)globalContext;
 
 @end

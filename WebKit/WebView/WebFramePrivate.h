@@ -69,19 +69,3 @@ typedef enum {
 - (BOOL)_isDisplayingStandaloneImage;
 
 @end
-
-@interface WebFrame (WebPendingPublic)
-
-/*!
-    @method windowObject
-    @result The WebScriptObject representing the frame's JavaScript window object.
-*/
-- (WebScriptObject *)windowObject;
-
-/*!
-    @method globalContext
-    @result The frame's global JavaScript execution context.
-*/
-- (JSGlobalContextRef)globalContext;
-
-@end
