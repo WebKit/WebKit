@@ -1,3 +1,18 @@
+2007-05-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - rdar://problem/5183523
+        - Change load to check the URL as well as the referrer since it is possilbe to have a referrer which limits a load even thought the URL would allow it. There is a bug about how we need to re-evaluate the whole load architecture: <rdar://problem/5227992> Rethink canLoad() to have a consistent and comprehensive architecture. 
+        - These tests do not dumpAsText since DRT doesn't seem to be able to handle text in frames.  If it is in the future then these tests already have sufficient text to change to that output and give correct results.
+
+        * fast/dom/frame-loading-via-document-write-expected.txt: Added.
+        * fast/dom/frame-loading-via-document-write.html: Added.
+        * fast/dom/resources/abe.png: Added.
+        * http/tests/security/frame-loading-via-document-write-expected.txt: Added.
+        * http/tests/security/frame-loading-via-document-write.html: Added.
+        * http/tests/security/resources/abe.png: Added.
+
 2007-05-25  Darin Adler  <darin@apple.com>
 
         - updated tests results that were affected by Hyatt's change to

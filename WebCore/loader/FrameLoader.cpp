@@ -430,12 +430,12 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
         marginHeight = o->getMarginHeight();
     }
 
-    bool hideReferrer;
-    if (!canLoad(url, referrer, hideReferrer)) {
+    if (!canLoad(url, referrer)) {
         FrameLoader::reportLocalLoadFailed(frame()->page(), url.url());
         return 0;
     }
 
+    bool hideReferrer = shouldHideReferrer(url, referrer);
     Frame* frame = m_client->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer,
                                          allowsScrolling, marginWidth, marginHeight);
 
@@ -1784,6 +1784,8 @@ void FrameLoader::load(const KURL& URL, Event* event)
 void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event* event,
     HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
 {
+    KURL url = request.resourceRequest().url();
+ 
     String referrer;
     String argsReferrer = request.resourceRequest().httpReferrer();
     if (!argsReferrer.isEmpty())
@@ -1791,13 +1793,14 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
     else
         referrer = m_outgoingReferrer;
  
-    bool hideReferrer;
-    if (!canLoad(request.resourceRequest().url(), referrer, hideReferrer)) {
-        FrameLoader::reportLocalLoadFailed(frame()->page(), request.resourceRequest().url().url());
+    ASSERT(frame()->document());
+    if (!canLoad(url, frame()->document()) &&
+        !canLoad(url, referrer)) {
+        FrameLoader::reportLocalLoadFailed(frame()->page(), url.url());
         return;
     }
 
-    if (hideReferrer)
+    if (shouldHideReferrer(url, referrer))
         referrer = String();
     
     Frame* targetFrame = m_frame->tree()->find(request.frameName());
@@ -1984,10 +1987,8 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
 }
 
 // FIXME: It would be nice if we could collapse these into one or two functions.
-bool FrameLoader::canLoad(const KURL& url, const String& referrer, bool& hideReferrer)
+bool FrameLoader::canLoad(const KURL& url, const String& referrer)
 {
-    hideReferrer = shouldHideReferrer(url, referrer);
-
     if (!shouldTreatURLAsLocal(url.url()))
         return true;
 
