@@ -1,3 +1,11 @@
+2007-05-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        - updating previous comment.
+
+        * ChangeLog:
+
 2007-05-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
@@ -14,7 +22,7 @@
 
         Reviewed by Geoff.
 
-        - rdar://problem/5183523
+        - <rdar://problem/5183523> REGRESSION: Excel: Worksheet tabs in spreadsheet saved as web page don't work. 
         - Change load to check the URL as well as the referrer since it is possilbe to have a referrer which limits a load even thought the URL would allow it. There is a bug about how we need to re-evaluate the whole load architecture: <rdar://problem/5227992> Rethink canLoad() to have a consistent and comprehensive architecture. 
         - These tests do not dumpAsText since DRT doesn't seem to be able to handle text in frames.  If it is in the future then these tests already have sufficient text to change to that output and give correct results.
 
