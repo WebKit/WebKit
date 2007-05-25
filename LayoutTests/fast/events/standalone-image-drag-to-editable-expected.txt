@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderFrame {FRAME} at (0,106) size 800x100
         layer at (0,0) size 800x100
           RenderView at (0,0) size 800x100
-        layer at (0,0) size 800x29
-          RenderBlock {HTML} at (0,0) size 800x29
-            RenderBody {BODY} at (0,0) size 800x29
+        layer at (0,0) size 800x100
+          RenderBlock {HTML} at (0,0) size 800x100
+            RenderBody {BODY} at (0,0) size 800x100
               RenderImage {IMG} at (0,0) size 25x25

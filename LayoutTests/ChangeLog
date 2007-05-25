@@ -1,3 +1,13 @@
+2007-05-25  Darin Adler  <darin@apple.com>
+
+        - updated some test results that were affected by Anders's change
+          to make image documents use quirks mode
+
+        * dom/xhtml/level2/html/frame-expected.txt: Updated.
+        * dom/xhtml/level2/html/iframe-expected.txt: Updated.
+        * editing/pasteboard/copy-standalone-image-expected.txt: Updated.
+        * fast/events/standalone-image-drag-to-editable-expected.txt: Updated.
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
