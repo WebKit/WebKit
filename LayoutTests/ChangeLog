@@ -1,5 +1,17 @@
 2007-05-25  Darin Adler  <darin@apple.com>
 
+        - updated tests results that were affected by Hyatt's change to
+          turn the odious <script/> quirk back on
+
+        * fast/parser/script-tag-with-trailing-slash-expected.txt: Updated
+        test result to reflect now-expected failure. It would be good some
+        day to change the test to be more clear that this is working as
+        designed.
+
+        * fast/tokenizer/script_extra_close-expected.txt: Updated.
+
+2007-05-25  Darin Adler  <darin@apple.com>
+
         - Hixie (who originally wrote this test) and Hyatt say that this
           test is invalid, and should be removed -- and it's failing too
           so gotta remove it

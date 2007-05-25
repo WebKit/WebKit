@@ -1,1 +1,2 @@
-You should not see the text "inside" the following script tag:
+CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+You should not see the text "inside" the following script tag: This is the text inside the script tag.
