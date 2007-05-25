@@ -1,3 +1,18 @@
+2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=13456
+        REGRESSION: setTimeout "arguments" object gets shadowed by a local variable
+
+        - Add a explicit check for arguments. Previously check was done with getDirect,
+        but since the arguments is created on-demand in ActivationImp, it doesn't
+        show up in the test. 'arguments' should always be in the VarDeclNode's
+        evaluation scope.
+
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate): Additional check if the var decl identifier is 'arguments'
+
 2007-05-25  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

@@ -1,3 +1,14 @@
+2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Darin.
+
+        - Test cases for http://bugs.webkit.org/show_bug.cgi?id=13456
+          REGRESSION: setTimeout"arguments" object gets shadowed by a local variable
+
+        * fast/js/resources/vardecl-preserve-arguments.js: Added.
+        * fast/js/vardecl-preserve-arguments-expected.txt: Added.
+        * fast/js/vardecl-preserve-arguments.html: Added.
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

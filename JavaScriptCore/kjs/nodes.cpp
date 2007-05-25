@@ -1598,7 +1598,13 @@ JSValue *VarDeclNode::evaluate(ExecState *exec)
   } else {
       // already declared? - check with getDirect so you can override
       // built-in properties of the global object with var declarations.
-      if (variable->getDirect(ident)) 
+      // Also check for 'arguments' property. The 'arguments' cannot be found with
+      // getDirect, because it's created lazily by
+      // ActivationImp::getOwnPropertySlot.
+      // Since variable declarations are always in function scope, 'variable'
+      // will always contain instance of ActivationImp and ActivationImp will
+      // always have 'arguments' property
+      if (variable->getDirect(ident) || ident == exec->propertyNames().arguments)
           return 0;
       val = jsUndefined();
   }
