@@ -123,7 +123,6 @@
         Fixed up incorrect string comparison for AXSelectedTextMarkerRange ax attribute so 
         this attribute can actually announce its settability. 
 
->>>>>>> .r21788
 2007-05-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.
