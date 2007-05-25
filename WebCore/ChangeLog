@@ -1,5 +1,19 @@
 2007-05-25  Darin Adler  <darin@apple.com>
 
+        Reviewed by Alice.
+
+        - fix <rdar://problem/5228048> REGRESSION: In a new Mail message, the caret isn't
+          immediately inserted when tabbing into or clicking in the message body
+
+        This latent problem was uncovered by <http://trac.webkit.org/projects/webkit/changeset/21476>,
+        which removed some code that did extra work whenever setCaretVisible made the caret visible.
+
+        * page/Frame.cpp: (WebCore::Frame::selectionLayoutChanged): Call invalidateCaretRect
+        when turning the caret on. All other call sites that touched m_caretPaint were doing
+        this, but this was not.
+
+2007-05-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Harrison.
 
         * DerivedSources.make: Tweaked spelling.

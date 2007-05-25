@@ -531,13 +531,12 @@ void Frame::setCaretVisible(bool flag)
     selectionLayoutChanged();
 }
 
-
 void Frame::clearCaretRectIfNeeded()
 {
     if (d->m_caretPaint) {
         d->m_caretPaint = false;
         selectionController()->invalidateCaretRect();
-    }        
+    }
 }
 
 // Helper function that tells whether a particular node is an element that has an entire
@@ -596,7 +595,10 @@ void Frame::selectionLayoutChanged()
     // already blinking in the right location.
     if (shouldBlink && !d->m_caretBlinkTimer.isActive()) {
         d->m_caretBlinkTimer.startRepeating(caretBlinkFrequency);
-        d->m_caretPaint = true;
+        if (!d->m_caretPaint) {
+            d->m_caretPaint = true;
+            selectionController()->invalidateCaretRect();
+        }
     }
 
     if (d->m_doc)
