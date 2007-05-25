@@ -4309,14 +4309,14 @@ void RenderBlock::borderFitAdjust(int& x, int& w) const
     int oldWidth = w;
     adjustForBorderFit(0, left, right);
     if (left != INT_MAX) {
-        left -= borderLeft();
+        left -= (borderLeft() + paddingLeft());
         if (left > 0) {
             x += left;
             w -= left;
         }
     }
     if (right != INT_MIN) {
-        right += borderRight();
+        right += (borderRight() + paddingRight());
         if (right < oldWidth)
             w -= (oldWidth - right);
     }

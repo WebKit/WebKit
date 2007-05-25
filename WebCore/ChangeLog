@@ -1,5 +1,14 @@
 2007-05-25  David Hyatt  <hyatt@apple.com>
 
+        Make sure -webkit-border-fit accounts for padding as well as border.
+
+        Reviewed by aroben
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::borderFitAdjust):
+
+2007-05-25  David Hyatt  <hyatt@apple.com>
+
         Rework line numbering (again).  This time I finally think I have
         it right for all the document.write insanity that can occur.
 
