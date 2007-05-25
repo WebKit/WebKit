@@ -1,3 +1,14 @@
+2007-05-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders and Tim
+        
+        - fixed <rdar://problem/5226000> REGRESSION: In Gmail and Mail, a hang occurs when attempting 
+          to grammar/spellcheck a word in a reply
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkGrammarOfString):
+        Fixed recently-introduced false assumption that NSNotFound == -1
+
 2007-05-24  dethbakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

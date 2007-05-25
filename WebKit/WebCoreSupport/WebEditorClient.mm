@@ -557,7 +557,8 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
     NSRange range = [[NSSpellChecker sharedSpellChecker] checkGrammarOfString:textString startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:spellCheckerDocumentTag() details:&grammarDetails];
     [textString release];
     if (badGrammarLocation)
-        *badGrammarLocation = range.location;
+        // WebCore expects -1 to represent "not found"
+        *badGrammarLocation = (range.location == NSNotFound) ? -1 : range.location;
     if (badGrammarLength)
         *badGrammarLength = range.length;
     for (NSDictionary *detail in grammarDetails) {
