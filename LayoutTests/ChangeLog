@@ -1,5 +1,16 @@
 2007-05-25  Darin Adler  <darin@apple.com>
 
+        - Hixie (who originally wrote this test) and Hyatt say that this
+          test is invalid, and should be removed -- and it's failing too
+          so gotta remove it
+
+        * fast/block/basic/017-expected.checksum: Removed.
+        * fast/block/basic/017-expected.png: Removed.
+        * fast/block/basic/017-expected.txt: Removed.
+        * fast/block/basic/017.html: Removed.
+
+2007-05-25  Darin Adler  <darin@apple.com>
+
         - updated some test results that were affected by Anders's change
           to make image documents use quirks mode
 
