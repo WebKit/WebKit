@@ -1,3 +1,9 @@
+2007-05-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        * DerivedSources.make: Tweaked spelling.
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

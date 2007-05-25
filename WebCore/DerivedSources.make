@@ -582,8 +582,8 @@ CSSGrammar.cpp : css/CSSGrammar.y
 	bison -d -p cssyy $< -o $@
 	touch CSSGrammar.cpp.h
 	touch CSSGrammar.hpp
-	echo '#ifndef CSSGRAMMER_H' > CSSGrammar.h
-	echo '#define CSSGRAMMER_H' >> CSSGrammar.h
+	echo '#ifndef CSSGrammar_h' > CSSGrammar.h
+	echo '#define CSSGrammar_h' >> CSSGrammar.h
 	cat CSSGrammar.cpp.h CSSGrammar.hpp >> CSSGrammar.h
 	echo '#endif' >> CSSGrammar.h
 	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
@@ -595,8 +595,8 @@ XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
 	bison -d -p xpathyy $< -o $@
 	touch XPathGrammar.cpp.h
 	touch XPathGrammar.hpp
-	echo '#ifndef XPATHGRAMMER_H' > XPathGrammar.h
-	echo '#define XPATHGRAMMER_H' >> XPathGrammar.h
+	echo '#ifndef XPathGrammar_h' > XPathGrammar.h
+	echo '#define XPathGrammar_h' >> XPathGrammar.h
 	cat XPathGrammar.cpp.h XPathGrammar.hpp >> XPathGrammar.h
 	echo '#endif' >> XPathGrammar.h
 	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
