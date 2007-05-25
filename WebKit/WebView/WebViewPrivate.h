@@ -31,8 +31,10 @@
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define WebNSInteger int
+#define WebNSUInteger unsigned int
 #else
 #define WebNSInteger NSInteger
+#define WebNSUInteger NSUInteger
 #endif
 
 @class NSError;
@@ -225,7 +227,7 @@ typedef enum {
 // These methods might end up moving into a protocol, so different document types can specify
 // whether or not they implement the protocol. For now we'll just deal with HTML.
 // These methods are still in flux; don't rely on them yet.
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(unsigned)limit;
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 
@@ -473,3 +475,4 @@ Could be worth adding to the API.
 @end
 
 #undef WebNSInteger
+#undef WebNSUInteger

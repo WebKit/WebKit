@@ -456,7 +456,7 @@ typedef enum {
     indicating which drag destination actions can occur, WebDragDestinationActionAny to allow any kind of action or
     WebDragDestinationActionNone to not accept the drag.
 */
-- (unsigned)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (WebNSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 
 /*!
     @method webView:willPerformDragDestinationAction:forDraggingInfo:
@@ -477,7 +477,7 @@ typedef enum {
     @discussion This method is called after the user has begun a drag from a WebView. The UI delegate can return a mask indicating
     which drag source actions can occur, WebDragSourceActionAny to allow any kind of action or WebDragSourceActionNone to not begin a drag.
 */
-- (unsigned)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
+- (WebNSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
 
 /*!
     @method webView:willPerformDragSourceAction:fromPoint:withPasteboard:

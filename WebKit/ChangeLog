@@ -1,5 +1,16 @@
 2007-05-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler, Tim Hatcher.
+        
+        "unsigned" => "WebNSUInteger" in public API.
+
+        * History/WebBackForwardList.h:
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebViewPrivate.h:
+
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Moved JavaScriptCore-related pending public API to public API.

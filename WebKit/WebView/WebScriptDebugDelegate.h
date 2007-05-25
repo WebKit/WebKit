@@ -28,6 +28,12 @@
 
 #import <Foundation/Foundation.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSUInteger unsigned int
+#else
+#define WebNSUInteger NSUInteger
+#endif
+
 @class WebView;
 @class WebFrame;
 @class WebScriptCallFrame;
@@ -54,14 +60,14 @@ enum {
 
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(WebNSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame;
 
 // some source failed to parse
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(WebNSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame;
@@ -126,3 +132,5 @@ enum {
 - (id)evaluateWebScript:(NSString *)script;
 
 @end
+
+#undef WebNSUInteger
