@@ -1,3 +1,17 @@
+2007-05-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13869
+          Many leaks seen on buildbot after r21735
+
+        Added a test that ::-webkit-slider-thumb style is actually applied.
+
+        * fast/forms/slider-thumb-stylability-expected.checksum: Added.
+        * fast/forms/slider-thumb-stylability-expected.png: Added.
+        * fast/forms/slider-thumb-stylability-expected.txt: Added.
+        * fast/forms/slider-thumb-stylability.html: Added.
+
 2007-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
@@ -10,14 +24,6 @@
         * http/tests/navigation/redirect-load-no-form-restoration-expected.txt: Added.
         * http/tests/redirect-load-no-form-restoration.html: Removed.
         * http/tests/resources/redirect-load.html: Removed.
-
-2007-05-25  Kevin McCullough  <kmccullough@apple.com>
-
-        Reviewed by .
-
-        - updating previous comment.
-
-        * ChangeLog:
 
 2007-05-25  Justin Garcia  <justin.garcia@apple.com>
 

@@ -1,10 +1,18 @@
-2007-05-25  Kevin McCullough  <kmccullough@apple.com>
+2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
-        Reviewed by.
+        Reviewed by Darin.
 
-        - Updating previous comment.
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13869
+          Many leaks seen on buildbot after r21735
 
-        * ChangeLog:
+        - fix another regression from r21739: ::-webkit-slider-thumb style not
+          applied.
+
+        Test: fast/forms/slider-thumb-stylability.html
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setStyle):
+        (WebCore::RenderSlider::createThumbStyle):
 
 2007-05-25  Justin Garcia  <justin.garcia@apple.com>
 
@@ -115,6 +123,7 @@
         Fixed up incorrect string comparison for AXSelectedTextMarkerRange ax attribute so 
         this attribute can actually announce its settability. 
 
+>>>>>>> .r21788
 2007-05-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Alice.

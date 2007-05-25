@@ -166,10 +166,10 @@ void RenderSlider::setStyle(RenderStyle* newStyle)
 {
     RenderBlock::setStyle(newStyle);
     
-    RenderStyle* thumbStyle = createThumbStyle(newStyle);
-
-    if (m_thumb)
+    if (m_thumb) {
+        RenderStyle* thumbStyle = createThumbStyle(newStyle);
         m_thumb->renderer()->setStyle(thumbStyle);
+    }
         
     setReplaced(isInline());
 }
@@ -181,7 +181,7 @@ RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle)
     RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SLIDER_THUMB);
     if (pseudoStyle)
         // We may be sharing style with another slider, but we must not share the thumb style.
-        style = new (renderArena()) RenderStyle(pseudoStyle);
+        style = new (renderArena()) RenderStyle(*pseudoStyle);
     else
         style = new (renderArena()) RenderStyle();
 
