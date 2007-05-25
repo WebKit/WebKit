@@ -1,3 +1,13 @@
+2007-05-25  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4918397> Exception raise inspecting note contents in the background
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityDescription]):
+        Only allow asking the attachmentView for description if attachmentView supports this description attribute
+
 2007-05-25  dethbakin  <bdakin@apple.com>
 
         Reviewed by Oliver and Hyatt.
