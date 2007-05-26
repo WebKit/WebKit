@@ -1,3 +1,15 @@
+2007-05-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13854
+        Port of commit 667785 from kjs
+
+        - special case calling String.localeCompare() with no parameters to return 0.
+
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction):
+
 2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Darin.

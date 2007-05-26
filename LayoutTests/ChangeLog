@@ -1,3 +1,15 @@
+2007-05-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Update tests http://bugs.webkit.org/show_bug.cgi?id=13854
+        Port of commit 667785 from kjs
+
+        - update tests and results to match kde.
+
+        * fast/js/kde/StringObject-expected.txt:
+        * fast/js/kde/resources/StringObject.js:
+
 2007-05-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

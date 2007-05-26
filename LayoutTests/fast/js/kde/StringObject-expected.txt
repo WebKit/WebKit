@@ -68,8 +68,19 @@ PASS 'abcdef'.slice(2, 5) is 'cde'
 PASS 'abcdefghijklmnopqrstuvwxyz1234567890'.slice(-32, -6) is 'efghijklmnopqrstuvwxyz1234'
 PASS 'abC1'.toUpperCase() is 'ABC1'
 PASS 'AbC2'.toLowerCase() is 'abc2'
+PASS 'a'.localeCompare('a') is 0
+PASS 'a'.localeCompare('aa') < 0 is true
+PASS 'a'.localeCompare('x') < 0 is true
+PASS 'x'.localeCompare('a') > 0 is true
+PASS ''.localeCompare('') is 0
+PASS ''.localeCompare() is 0
+PASS ''.localeCompare(undefined) is -1
+PASS ''.localeCompare(null) is -1
+PASS 'a'.localeCompare('') is 1
+PASS 'a'.localeCompare() is 0
 PASS 'abc'[0] is 'a'
 PASS 'abc'[-1] is undefined.
+PASS 'abc'[-4] is undefined.
 PASS 'abc'[10] is undefined.
 PASS 'abc'[10] is 'x'
 PASS bar is html

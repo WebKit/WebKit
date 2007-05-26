@@ -91,14 +91,28 @@ shouldBe("'axxb'.split(/x*/) + ''", "'a,b'");  // NS 4.7 is wrong here
 // String.prototype.slice()
 shouldBe("'abcdef'.slice(2, 5)", "'cde'");
 shouldBe("'abcdefghijklmnopqrstuvwxyz1234567890'.slice(-32, -6)",
-	 "'efghijklmnopqrstuvwxyz1234'");
+     "'efghijklmnopqrstuvwxyz1234'");
 
 shouldBe("'abC1'.toUpperCase()", "'ABC1'");
 shouldBe("'AbC2'.toLowerCase()", "'abc2'");
 
+// String.prototype.localeCompare()
+// ### not really testing the locale aspect
+shouldBe("'a'.localeCompare('a')", "0");
+shouldBe("'a'.localeCompare('aa') < 0", "true");
+shouldBe("'a'.localeCompare('x') < 0", "true");
+shouldBe("'x'.localeCompare('a') > 0", "true");
+shouldBe("''.localeCompare('')", "0");
+shouldBe("''.localeCompare()", "0");
+shouldBe("''.localeCompare(undefined)", "-1");
+shouldBe("''.localeCompare(null)", "-1");
+shouldBe("'a'.localeCompare('')", "1");
+shouldBe("'a'.localeCompare()", "0");
+
 // warning: prototype modification below
 shouldBe("'abc'[0]", "'a'");
 shouldBeUndefined("'abc'[-1]");
+shouldBeUndefined("'abc'[-4]");
 shouldBeUndefined("'abc'[10]");
 String.prototype[10] = "x";
 shouldBe("'abc'[10]", "'x'");
