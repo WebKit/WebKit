@@ -265,6 +265,7 @@ public:
     virtual bool isImage() const { return false; }
     virtual bool isTextArea() const { return false; }
     virtual bool isTextField() const { return false; }
+    virtual bool isFrame() const { return false; }
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
     virtual bool isMenuList() const { return false; }

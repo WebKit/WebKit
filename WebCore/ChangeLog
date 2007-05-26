@@ -2,6 +2,26 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13870
+          RenderFrameSet should only allow frame and frameset children
+
+        Covered by fast/frames/inline-object-inside-frameset.html
+
+        * rendering/RenderFrame.h:
+        (WebCore::RenderFrame::isFrame): Added.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint): Removed check for inline objects that is
+        no longer needed.
+        (WebCore::RenderFrameSet::isChildAllowed): Added. Allows the child only
+        if it is a frame or another frameset.
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFrame): Added.
+
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - http://bugs.webkit.org/show_bug.cgi?id=13871
           Box shadow should not apply to Aqua-themed controls
 

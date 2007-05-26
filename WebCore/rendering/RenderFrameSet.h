@@ -66,6 +66,7 @@ public:
     virtual void layout();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void paint(PaintInfo& paintInfo, int tx, int ty);
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     
     FrameEdgeInfo edgeInfo() const;
 

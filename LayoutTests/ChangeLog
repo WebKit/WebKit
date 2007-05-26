@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        - updated test results for http://bugs.webkit.org/show_bug.cgi?id=13870
+          RenderFrameSet should only allow frame and frameset children
+
+        * fast/frames/inline-object-inside-frameset-expected.txt:
+
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13871
           Box shadow should not apply to Aqua-themed controls
 
