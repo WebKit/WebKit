@@ -75,8 +75,20 @@ void ResourceResponse::doUpdateResourceResponse()
         NSEnumerator *e = [headers keyEnumerator];
         while (NSString *name = [e nextObject])
             m_httpHeaderFields.set(name, [headers objectForKey:name]);
-    } else
+    } else {
         m_httpStatusCode = 0;
+
+#ifndef BUILDING_ON_TIGER
+        // FIXME: This is a work around for <rdar://problem/5230154> (-[NSURLConnection initWithRequest:delegate:] 
+        // is returning incorrect MIME type for local .xhtml files) which is only required in Leopard.
+        if (m_url.isLocalFile() && m_mimeType == "text/html") {
+            const String& path = m_url.path();
+            static const String xhtmlExt(".xhtml");
+            if (path.endsWith(xhtmlExt, false))
+                m_mimeType = "application/xhtml+xml";
+        }
+#endif
+    }
 }
 
 }
