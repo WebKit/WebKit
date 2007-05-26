@@ -1,5 +1,21 @@
 2007-05-26  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        - finish fixing http://bugs.webkit.org/show_bug.cgi?id=13871
+          Box shadow should not apply to Aqua-themed controls
+
+        Covered by fast/forms/box-shadow-override.html
+
+        I forgot to include adjustSliderThumbStyle in the previous patch and the
+        test didn't detect it because of a bug introduced in r21739.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13876

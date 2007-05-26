@@ -96,7 +96,9 @@ protected:
 
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

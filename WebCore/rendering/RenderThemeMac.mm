@@ -1021,6 +1021,11 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
+void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    style->setBoxShadow(0);
+}
+
 const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
