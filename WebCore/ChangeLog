@@ -1,3 +1,11 @@
+2007-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+        Fixed code where a temporary String is used after destroyed.
+
 2007-05-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
