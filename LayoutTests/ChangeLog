@@ -1,3 +1,13 @@
+2007-05-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13605
+        REGRESSION: Browser crashes when switching Kotoeri input modes
+
+        * editing/input/replace-invalid-range-expected.txt: Added.
+        * editing/input/replace-invalid-range.html: Added.
+
 2007-05-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -903,7 +903,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    m_frame->selectionController()->setSelection(Selection([self convertToDOMRange:range].get(), SEL_DEFAULT_AFFINITY));
+    RefPtr<Range> domRange = [self convertToDOMRange:range];
+    if (domRange)
+        m_frame->selectionController()->setSelection(Selection(domRange.get(), SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange

@@ -1,3 +1,20 @@
+2007-05-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13605
+        REGRESSION: Browser crashes when switching Kotoeri input modes
+
+        The problem could no longer be reproduced with Kotoeri thanks to
+        a fix in <http://trac.webkit.org/projects/webkit/changeset/21728>,
+        but we still need to protect from invalid ranges passed from
+        input methods.
+
+        Test: editing/input/replace-invalid-range.html
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge selectNSRange:]): Added a null check.
+
 2007-05-26  Darin Adler  <darin@apple.com>
 
         * platform/network/mac/ResourceResponseMac.mm:
