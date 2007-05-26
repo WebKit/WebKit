@@ -156,78 +156,6 @@ void Color::setNamedColor(const String& name)
     m_valid = foundColor;
 }
 
-const float undefinedHue = -1;
-
-// Explanations of these algorithms can be found at http://www.acm.org/jgt/papers/SmithLyons96/hsv_rgb.html
-static void convertRGBToHSV(float r, float g, float b, float& h, float& s, float& v)
-{
-    float x = min(r, min(g, b));
-    v = max(r, max(g, b));
-
-    if (v == x) {
-        h = undefinedHue;
-        s = 0;
-    } else {
-        float f = (r == x) ? g - b : ((g == x) ? b - r : r - g); 
-        int i = (r == x) ? 3 : ((g == x) ? 5 : 1); 
-        h = i - f / (v - x);
-        if (v != 0)
-            s = (v - x) / v;
-        else
-            s = 0;
-    }
-}
-
-static void convertHSVToRGB(float h, float s, float v, float& r, float& g, float& b)
-{
-    if (h == undefinedHue) {
-        r = v;
-        g = v;
-        b = v;
-        return;
-    }
-
-    int i = static_cast<int>(h); // sector 0 to 5
-    float f = h - i; // fractional part of h
-    if (!(i & 1))
-        f = 1 - f;
-    float m = v * (1 - s);
-    float n = v * (1 - s * f);
-
-    switch (i) {
-        default: // 0 and 6
-            r = v;
-            g = n;
-            b = m;
-            break;
-        case 1:
-            r = n;
-            g = v;
-            b = m;
-            break;
-        case 2:
-            r = m;
-            g = v;
-            b = n;
-            break;
-        case 3:
-            r = m;
-            g = n;
-            b = v;
-            break;
-        case 4:
-            r = n;
-            g = m;
-            b = v;
-            break;
-        case 5:
-            r = v;
-            g = m;
-            b = n;
-            break;
-    }
-}
-
 Color Color::light() const
 {
     // Hardcode this common case for speed.
@@ -236,15 +164,21 @@ Color Color::light() const
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
-    float r, g, b, a, h, s, v;
+    float r, g, b, a;
     getRGBA(r, g, b, a);
-    convertRGBToHSV(r, g, b, h, s, v);
-    v = max(0.0f, min(v + 0.33f, 1.0f));
-    convertHSVToRGB(h, s, v, r, g, b);
-    return Color(static_cast<int>(r * scaleFactor),
-                 static_cast<int>(g * scaleFactor),
-                 static_cast<int>(b * scaleFactor),
-                 static_cast<int>(a * scaleFactor));
+
+    float v = max(r, max(g, b));
+
+    if (v == 0.0f)
+        // Lightened black with alpha.
+        return Color(0x54, 0x54, 0x54, alpha());
+
+    float multiplier = min(1.0f, v + 0.33f) / v;
+
+    return Color(static_cast<int>(multiplier * r * scaleFactor),
+                 static_cast<int>(multiplier * g * scaleFactor),
+                 static_cast<int>(multiplier * b * scaleFactor),
+                 alpha());
 }
 
 Color Color::dark() const
@@ -255,15 +189,16 @@ Color Color::dark() const
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
-    float r, g, b, a, h, s, v;
+    float r, g, b, a;
     getRGBA(r, g, b, a);
-    convertRGBToHSV(r, g, b, h, s, v);
-    v = max(0.0f, min(v - 0.33f, 1.0f));
-    convertHSVToRGB(h, s, v, r, g, b);
-    return Color(static_cast<int>(r * scaleFactor),
-                 static_cast<int>(g * scaleFactor),
-                 static_cast<int>(b * scaleFactor),
-                 static_cast<int>(a * scaleFactor));
+
+    float v = max(r, max(g, b));
+    float multiplier = max(0.0f, (v - 0.33f) / v);
+
+    return Color(static_cast<int>(multiplier * r * scaleFactor),
+                 static_cast<int>(multiplier * g * scaleFactor),
+                 static_cast<int>(multiplier * b * scaleFactor),
+                 alpha());
 }
 
 static int blend(int c, int a)

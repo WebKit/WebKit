@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=13842
+          Simplify Color::light() and Color::dark()
+
+        Not testable.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13870
           RenderFrameSet should only allow frame and frameset children
 
