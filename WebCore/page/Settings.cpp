@@ -235,6 +235,20 @@ void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
     m_isDOMPasteAllowed = DOMPasteAllowed;
 }
 
+void Settings::setUsesPageCache(bool usesPageCache)
+{
+    if (m_usesPageCache == usesPageCache)
+        return;
+        
+    m_usesPageCache = usesPageCache;
+    if (!m_usesPageCache) {
+        HistoryItemVector& historyItems = m_page->backForwardList()->entries();
+        for (unsigned i = 0; i < historyItems.size(); i++)
+            pageCache()->remove(historyItems[i].get());
+        pageCache()->releaseAutoreleasedPagesNow();
+    }
+}
+
 void Settings::setShrinksStandaloneImagesToFit(bool shrinksStandaloneImagesToFit)
 {
     m_shrinksStandaloneImagesToFit = shrinksStandaloneImagesToFit;

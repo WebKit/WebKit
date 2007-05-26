@@ -146,14 +146,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     m_frame->init();
     
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
-
-    // FIXME: This is one-time initialization, but it gets the value of the setting from the
-    // current WebView. That's a mismatch and not good!
-    static bool initializedObjectCacheSize;
-    if (!initializedObjectCacheSize) {
-        initializedObjectCacheSize = true;
-        cache()->setMaximumSize([self getObjectCacheSize]);
-    }
 }
 
 - (id)initMainFrameWithPage:(Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView
@@ -607,33 +599,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ASSERT(view);
 
     return view;
-}
-
-#ifndef NDEBUG
-static BOOL loggedObjectCacheSize = NO;
-#endif
-
--(int)getObjectCacheSize
-{
-    vm_size_t memSize = WebSystemMainMemory();
-    int cacheSize = [[self _preferences] _objectCacheSize];
-    int multiplier = 1;
-    
-    // 2GB and greater will be 128mb.  1gb and greater will be 64mb.
-    // Otherwise just use 32mb.
-    if (memSize >= (unsigned)(2048 * 1024 * 1024)) 
-        multiplier = 4;
-    else if (memSize >= 1024 * 1024 * 1024)
-        multiplier = 2;
-
-#ifndef NDEBUG
-    if (!loggedObjectCacheSize){
-        LOG(CacheSizes, "Object cache size set to %d bytes.", cacheSize * multiplier);
-        loggedObjectCacheSize = YES;
-    }
-#endif
-
-    return cacheSize * multiplier;
 }
 
 - (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL

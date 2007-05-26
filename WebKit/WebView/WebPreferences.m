@@ -27,14 +27,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebPreferenceKeysPrivate.h>
+#import "WebPreferencesPrivate.h"
+#import "WebPreferenceKeysPrivate.h"
 
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSDictionaryExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKitSystemInterface.h>
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitSystemBits.h"
+#import "WebNSDictionaryExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebKitSystemInterface.h"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -198,6 +199,37 @@ NS_ENDHANDLER
 // if we ever have more than one WebPreferences object, this would move to init
 + (void)initialize
 {
+    // As a fudge factor, use 1000 instead of 1024, in case the reported memory doesn't align exactly to a megabyte boundary.
+    vm_size_t memSize = WebSystemMainMemory() / 1024 / 1000;
+
+    // Page cache size (in pages)
+    int pageCacheSize;
+    if (memSize >= 1024)
+        pageCacheSize = 10;
+    else if (memSize >= 512)
+        pageCacheSize = 5;
+    else if (memSize >= 384)
+        pageCacheSize = 4;
+    else if (memSize >= 256)
+        pageCacheSize = 3;
+    else if (memSize >= 128)
+        pageCacheSize = 2;
+    else if (memSize >= 64)
+        pageCacheSize = 1;
+    else
+        pageCacheSize = 0;
+    NSString *pageCacheSizeString = [NSString stringWithFormat:@"%d", pageCacheSize];
+
+    // Object cache size (in bytes)
+    int objectCacheSize;
+    if (memSize >= 2048)
+        objectCacheSize = 128 * 1024 * 1024;
+    else if (memSize >= 1024)
+        objectCacheSize = 64 * 1024 * 1024;
+    else
+        objectCacheSize = 32 * 1024 * 1024;
+    NSString *objectCacheSizeString = [NSString stringWithFormat:@"%d", objectCacheSize];
+
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"Times",                       WebKitStandardFontPreferenceKey,
         @"Courier",                     WebKitFixedFontPreferenceKey,
@@ -210,8 +242,8 @@ NS_ENDHANDLER
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
-        @"3",                           WebKitPageCacheSizePreferenceKey,
-        @"33554432",                    WebKitObjectCacheSizePreferenceKey,
+        pageCacheSizeString,            WebKitPageCacheSizePreferenceKey,
+        objectCacheSizeString,          WebKitObjectCacheSizePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
@@ -235,6 +267,7 @@ NS_ENDHANDLER
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -585,6 +618,16 @@ NS_ENDHANDLER
 - (BOOL)privateBrowsingEnabled
 {
     return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+}
+
+- (void)setUsesPageCache:(BOOL)usesPageCache
+{
+    [self _setBoolValue:usesPageCache forKey:WebKitUsesPageCachePreferenceKey];
+}
+
+- (BOOL)usesPageCache
+{
+    return [self _boolValueForKey:WebKitUsesPageCachePreferenceKey];
 }
 
 @end

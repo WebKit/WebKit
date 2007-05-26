@@ -1,3 +1,31 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/5055182> The page cache has no global cap.
+        
+        The main WebKit changes are:
+            1. Changed -[WebBackForwardList setPageCacheSize] and -[WebBackForwardList 
+            pageCacheSize] to accomodate the new global page cache model, updating
+            their documentation. 
+            
+            2. Added -[WebPreferences setShouldUsePageCache] and -[WebPreferences 
+            shouldUsePageCache] as pending public API.
+            
+            3. Centralized calculation of object cache and page cache sizes inside
+            WebPreferences. 
+            
+            Cchanged our old behavior of reading a preference and applying a fudge 
+            factor with a new behavior of just using the preference directly. The 
+            old behavior was confusing and often inappropriate. (For example, if 
+            you set a page cache size of 100, a 256MB machine would somewhat 
+            arbitrarily reduce that number to 98. ???)
+
+        * WebView/WebView.mm: Added support for two flags to determine whether
+        to use the page cache. If either -[WebBackForwardList setPageCacheSize:0]
+        or -[WebPreferences setShouldUsePageCache:NO] is called, we don't use
+        the page cache.
+
 2007-05-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin Decker.

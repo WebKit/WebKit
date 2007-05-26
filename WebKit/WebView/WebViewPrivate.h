@@ -400,6 +400,9 @@ Could be worth adding to the API.
 - (BOOL)defersCallbacks; // called by QuickTime plug-in
 - (void)setDefersCallbacks:(BOOL)defer; // called by QuickTime plug-in
 
+- (BOOL)usesPageCache;
+- (void)setUsesPageCache:(BOOL)usesPageCache;
+
 // <rdar://problem/5217124> Clients other than dashboard, don't use this.
 // Do not remove until Dashboard has moved off it
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;

@@ -28,8 +28,11 @@
 
 #include "CachedPage.h"
 #include "FrameLoader.h"
+#include "HistoryItem.h"
 #include "Logging.h"
 #include "SystemTime.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -37,35 +40,78 @@ static const double autoreleaseInterval = 3;
 
 PageCache* pageCache()
 {
-    static PageCache* staticPageCache;
-    if (!staticPageCache)
-        staticPageCache = new PageCache;
+    static PageCache* staticPageCache = new PageCache;
     return staticPageCache;
 }
 
 PageCache::PageCache()
-    : m_autoreleaseTimer(this, &PageCache::autoreleaseNowOrReschedule)
+    : m_capacity(0)
+    , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowOrReschedule)
 {
 }
 
-void PageCache::autoreleaseNowOrReschedule(Timer<PageCache>* timer)
+void PageCache::setCapacity(int capacity)
+{
+    ASSERT(capacity >= 0);
+    m_capacity = max(capacity, 0);
+
+    prune();
+}
+
+void PageCache::add(PassRefPtr<HistoryItem> historyItem, PassRefPtr<CachedPage> cachedPage)
+{
+    historyItem->setInPageCache(true);
+    m_LRUList.add(historyItem.get());
+    m_cachedPages.set(historyItem, cachedPage);
+
+    prune();
+}
+
+void PageCache::remove(HistoryItem* historyItem)
+{
+    if (!historyItem->isInPageCache()) {
+        ASSERT(!m_cachedPages.contains(historyItem));
+        return;
+    }
+
+    historyItem->setInPageCache(false);
+    m_LRUList.remove(historyItem);
+    CachedPageMap::iterator it = m_cachedPages.find(historyItem);
+    ASSERT(it != m_cachedPages.end());
+    if (it != m_cachedPages.end()) {
+        autorelease(it->second.release());
+        m_cachedPages.remove(it);
+    }
+}
+
+CachedPage* PageCache::get(HistoryItem* historyItem)
+{
+    return m_cachedPages.get(historyItem).get();
+}
+
+void PageCache::prune()
+{
+    while (m_cachedPages.size() > m_capacity)
+        remove(*m_LRUList.begin());
+}
+
+void PageCache::releaseAutoreleasedPagesNowOrReschedule(Timer<PageCache>* timer)
 {
     double loadDelta = currentTime() - FrameLoader::timeOfLastCompletedLoad();
     float userDelta = userIdleTime();
     
-    // FIXME: This size of 42 pending caches to release seems awfully arbitrary
-    // Wonder if anyone knows the rationalization
+    // FIXME: <rdar://problem/5211190> This limit of 42 risks growing the page cache far beyond its nominal capacity.
     if ((userDelta < 0.5 || loadDelta < 1.25) && m_autoreleaseSet.size() < 42) {
-        LOG(PageCache, "WebCorePageCache: Postponing autoreleaseNowOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, m_autoreleaseSet.size());
+        LOG(PageCache, "WebCorePageCache: Postponing releaseAutoreleasedPagesNowOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, m_autoreleaseSet.size());
         timer->startOneShot(autoreleaseInterval);
         return;
     }
 
     LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, m_autoreleaseSet.size());
-    autoreleaseNow();
+    releaseAutoreleasedPagesNow();
 }
 
-void PageCache::autoreleaseNow()
+void PageCache::releaseAutoreleasedPagesNow()
 {
     m_autoreleaseTimer.stop();
 

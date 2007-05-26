@@ -239,15 +239,6 @@ void WebFrameLoaderClient::detachedFromParent4()
     m_webFrame->_private->bridge = nil;
 }
 
-void WebFrameLoaderClient::loadedFromCachedPage()
-{
-    // Release the resources kept in the page cache.
-    // They will be reset when we leave this page.
-    // The WebCore side of the page cache will have already been invalidated by
-    // the bridge to prevent premature release.
-    core(m_webFrame.get())->loader()->currentHistoryItem()->setCachedPage(0);
-}
-
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
     id proxy = handle->releaseProxy();

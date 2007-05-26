@@ -489,7 +489,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 + (void)_releaseAllPendingPageCaches
 {
-    pageCache()->autoreleaseNow();
+    pageCache()->releaseAutoreleasedPagesNow();
 }
 
 - (id)_transientPropertyForKey:(NSString *)key
@@ -510,6 +510,6 @@ static WebWindowWatcher *_windowWatcher = nil;
 @implementation WebWindowWatcher
 -(void)windowWillClose:(NSNotification *)notification
 {
-    pageCache()->autoreleaseNow();
+    pageCache()->releaseAutoreleasedPagesNow();
 }
 @end

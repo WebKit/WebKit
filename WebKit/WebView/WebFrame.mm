@@ -258,8 +258,7 @@ Page* core(WebView *webView)
 
 WebView *kit(Page* page)
 {
-    WebChromeClient* chromeClient = static_cast<WebChromeClient*>(page->chrome()->client());
-    return chromeClient->webView();
+    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
 }
 
 WebView *getWebView(WebFrame *webFrame)

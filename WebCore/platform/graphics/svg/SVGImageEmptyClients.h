@@ -149,8 +149,6 @@ public:
     virtual void detachedFromParent3() { }
     virtual void detachedFromParent4() { }
     
-    virtual void loadedFromCachedPage() { }
-    
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
     
     virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) { }

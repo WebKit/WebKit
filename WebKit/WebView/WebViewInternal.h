@@ -71,6 +71,7 @@ id WebViewGetFrameLoadDelegate(WebView *webView);
 WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView);
 
 @interface WebView (WebViewMiscInternal)
++ (void)_initializeCacheSizesIfNecessary;
 - (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;

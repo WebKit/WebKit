@@ -336,5 +336,28 @@ extern NSString *WebPreferencesChangedNotification;
 */
 - (BOOL)tabsToLinks;
 
+/*!
+    @method setUsesPageCache:
+    @abstract Sets whether the receiver's associated WebViews use the shared 
+    page cache.
+    @param UsesPageCache Whether the receiver's associated WebViews use the 
+    shared page cache.
+    @discussion Pages are cached as they are added to a WebBackForwardList, and
+    removed from the cache as they are removed from a WebBackForwardList. Because 
+    the page cache is global, caching a page in one WebBackForwardList may cause
+    a page in another WebBackForwardList to be evicted from the cache.
+*/
+- (void)setUsesPageCache:(BOOL)usesPageCache;
+
+/*!
+    @method usesPageCache
+    @abstract Returns whether the receiver should use the shared page cache.
+    @result Whether the receiver should use the shared page cache.
+    @discussion Pages are cached as they are added to a WebBackForwardList, and
+    removed from the cache as they are removed from a WebBackForwardList. Because 
+    the page cache is global, caching a page in one WebBackForwardList may cause
+    a page in another WebBackForwardList to be evicted from the cache.
+*/
+- (BOOL)usesPageCache;
 
 @end

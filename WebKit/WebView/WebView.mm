@@ -90,6 +90,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Cache.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -103,6 +104,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageCache.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/SelectionController.h>
@@ -305,6 +307,7 @@ static int pluginDatabaseClientCount = 0;
     BOOL becomingFirstResponder;
     BOOL becomingFirstResponderFromOutside;
     BOOL hoverFeedbackSuspended;
+    BOOL usesPageCache;
 
     NSColor *backgroundColor;
 
@@ -424,6 +427,8 @@ static BOOL grammarCheckingEnabled;
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 #endif
     userAgent = new String;
+    
+    usesPageCache = YES;
     
     identifierMap = new HashMap<unsigned long, RetainPtr<id> >();
     pluginDatabaseClientCount++;
@@ -862,6 +867,7 @@ static bool debugWidget = true;
     settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
+    settings->setUsesPageCache([self usesPageCache]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
@@ -1503,6 +1509,20 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     return _private->page->setDefersLoading(defer);
 }
 
+// For backwards compatibility with the WebBackForwardList API, we honor both
+// a per-WebView and a per-preferences setting for whether to use the page cache.
+
+- (BOOL)usesPageCache
+{
+    return _private->usesPageCache && [[self preferences] usesPageCache];
+}
+
+- (void)setUsesPageCache:(BOOL)usesPageCache
+{
+    _private->usesPageCache = usesPageCache;
+    [self _updateWebCoreSettingsFromPreferences:[self preferences]];
+}
+
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
 {
     NSWindow *window = [self hostWindow] ? [self hostWindow] : [self window]; 
@@ -1722,8 +1742,8 @@ NSMutableDictionary *countInvocations;
 
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
-    [WebBackForwardList setDefaultPageCacheSizeIfNecessary];
     [WebHistoryItem initWindowWatcherIfNecessary];
+    [WebView _initializeCacheSizesIfNecessary];
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
@@ -3678,6 +3698,23 @@ static WebFrameView *containingFrameView(NSView *view)
 @end
 
 @implementation WebView (WebViewInternal)
+
++ (void)_initializeCacheSizesIfNecessary
+{
+    static bool didInitialize;
+    if (didInitialize)
+        return;
+
+    WebPreferences *standardPreferences = [WebPreferences standardPreferences];
+    pageCache()->setCapacity([standardPreferences _pageCacheSize]);
+    cache()->setMaximumSize([standardPreferences _objectCacheSize]);
+    didInitialize = true;
+
+#ifndef NDEBUG
+    LOG(CacheSizes, "Object cache size set to %d bytes.", cache()->maximumSize());
+    LOG(CacheSizes, "Page cache size set to %d pages.", pageCache()->capacity());
+#endif
+}
 
 - (BOOL)_becomingFirstResponderFromOutside
 {

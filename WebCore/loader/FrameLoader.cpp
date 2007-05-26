@@ -63,6 +63,7 @@
 #include "Logging.h"
 #include "MainResourceLoader.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "RenderWidget.h"
@@ -1554,10 +1555,8 @@ void FrameLoader::provisionalLoadStarted()
     cancelRedirection(true);
     m_client->provisionalLoadStarted();
 
-    if (canCachePage() && m_client->canCachePage() && !m_currentHistoryItem->cachedPage()) {
-        cachePageToHistoryItem(m_currentHistoryItem.get());
-        purgePageCache();
-    }
+    if (canCachePage() && m_client->canCachePage() && !m_currentHistoryItem->isInPageCache())
+        cachePageForHistoryItem(m_currentHistoryItem.get());
 }
 
 bool FrameLoader::userGestureHint()
@@ -1619,8 +1618,10 @@ bool FrameLoader::canCachePage()
         && m_frame->document()
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
-        && m_frame->page() 
-        && m_frame->page()->backForwardList()->pageCacheSize() != 0
+        && m_frame->page()
+        && m_frame->page()->backForwardList()->enabled()
+        && m_frame->page()->backForwardList()->capacity() > 0
+        && m_frame->page()->settings()->usesPageCache()
         && m_currentHistoryItem
         && !isQuickRedirectComing()
         && loadType != FrameLoadTypeReload 
@@ -3272,7 +3273,7 @@ void FrameLoader::opened()
             sendRemainingDelegateMessages(identifier, response, response.expectedContentLength(), error);
         }
         
-        m_client->loadedFromCachedPage();
+        pageCache()->remove(m_currentHistoryItem.get());
 
         m_documentLoader->setPrimaryLoadComplete(true);
 
@@ -3557,28 +3558,21 @@ void FrameLoader::addHistoryItemForFragmentScroll()
 
 bool FrameLoader::loadProvisionalItemFromCachedPage()
 {
-    if (!m_provisionalHistoryItem || !m_provisionalHistoryItem->cachedPage())
+    RefPtr<CachedPage> cachedPage = pageCache()->get(m_provisionalHistoryItem.get());
+    if (!cachedPage || !cachedPage->document())
         return false;
-
-    if (!m_provisionalHistoryItem->cachedPage()->document())
-        return false;
-    
-    provisionalDocumentLoader()->loadFromCachedPage(m_provisionalHistoryItem->cachedPage());
+    provisionalDocumentLoader()->loadFromCachedPage(cachedPage.release());
     return true;
 }
 
-void FrameLoader::cachePageToHistoryItem(HistoryItem* item)
+void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
 {
     RefPtr<CachedPage> cachedPage = CachedPage::create(m_frame->page());
     cachedPage->setTimeStampToNow();
     cachedPage->setDocumentLoader(documentLoader());
     m_client->saveDocumentViewToCachedPage(cachedPage.get());
 
-    item->setCachedPage(cachedPage);
-
-    LOG(PageCache, "WebCorePageCache: CachedPage %p created for HistoryItem %p (%s)", 
-        m_currentHistoryItem->cachedPage(), m_currentHistoryItem.get(), 
-        m_currentHistoryItem->urlString().ascii().data());
+    pageCache()->add(item, cachedPage.get());
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& URL) const
@@ -3713,40 +3707,10 @@ void FrameLoader::restoreScrollPositionAndViewState()
         }
 }
 
-void FrameLoader::purgePageCache()
-{
-    if (!m_frame->page())
-        return;
-        
-    BackForwardList* bfList = m_frame->page()->backForwardList();
-    unsigned sizeLimit = bfList->pageCacheSize();
-    unsigned pagesCached = 0;
-
-    HistoryItemVector items;
-    bfList->backListWithLimit(INT_MAX, items);
-    RefPtr<HistoryItem> oldestItem;
-    
-    unsigned int i = 0;
-    
-    for (; i < items.size(); ++i) {
-        if (items[i]->cachedPage()) {
-            if (!oldestItem)
-                oldestItem = items[i];
-            pagesCached++;
-        }
-    }
-    
-    // Snapback items are never directly purged here.
-    if (pagesCached >= sizeLimit && oldestItem) {
-        LOG(PageCache, "Purging back/forward cache, %s\n", oldestItem->url().url().ascii());
-        oldestItem->setCachedPage(0);
-    }
-}
-
 void FrameLoader::invalidateCurrentItemCachedPage()
 {
     // When we are pre-commit, the currentItem is where the pageCache data resides    
-    CachedPage* cachedPage = m_currentHistoryItem ? m_currentHistoryItem->cachedPage() : 0;
+    CachedPage* cachedPage = pageCache()->get(m_currentHistoryItem.get());
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
     // Somehow the PageState object is not properly updated, and is holding onto a stale document.
@@ -3756,8 +3720,8 @@ void FrameLoader::invalidateCurrentItemCachedPage()
     if (cachedPage && cachedPage->document() == m_frame->document())
         cachedPage->clear();
     
-    if (m_currentHistoryItem)
-        m_currentHistoryItem->setCachedPage(0);
+    if (cachedPage)
+        pageCache()->remove(m_currentHistoryItem.get());
 }
 
 void FrameLoader::saveDocumentState()
@@ -3844,8 +3808,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         // Check if we'll be using the page cache.  We only use the page cache
         // if one exists and it is less than _backForwardCacheExpirationInterval
         // seconds old.  If the cache is expired it gets flushed here.
-        if (item->cachedPage()) {
-            RefPtr<CachedPage> cachedPage = item->cachedPage();
+        if (RefPtr<CachedPage> cachedPage = pageCache()->get(item)) {
             double interval = currentTime() - cachedPage->timeStamp();
             
             // FIXME: 1800 should not be hardcoded, it should come from
@@ -3856,7 +3819,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 inPageCache = true;
             } else {
                 LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", m_provisionalHistoryItem->url().url().ascii());
-                item->setCachedPage(0);
+                pageCache()->remove(item);
             }
         }
         
@@ -4090,7 +4053,7 @@ void FrameLoader::updateHistoryForReload()
 #endif
 
     if (m_previousHistoryItem) {
-        m_previousHistoryItem->setCachedPage(0);
+        pageCache()->remove(m_previousHistoryItem.get());
     
         if (loadType() == FrameLoadTypeReload)
             saveScrollPositionAndViewStateToItem(m_previousHistoryItem.get());

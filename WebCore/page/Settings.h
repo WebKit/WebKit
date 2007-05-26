@@ -119,6 +119,9 @@ namespace WebCore {
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
+        void setUsesPageCache(bool);
+        bool usesPageCache() const { return m_usesPageCache; }
+
         void setShrinksStandaloneImagesToFit(bool);
         bool shrinksStandaloneImagesToFit() const { return m_shrinksStandaloneImagesToFit; }
         
@@ -150,6 +153,7 @@ namespace WebCore {
         bool m_needsAcrobatFrameReloadingQuirk : 1;
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
+        bool m_usesPageCache: 1;
     };
 
 } // namespace WebCore

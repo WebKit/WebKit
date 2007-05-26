@@ -1,3 +1,38 @@
+2007-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/5055182> The page cache has no global cap.
+        
+        Beefed up the PageCache class to track which HistoryItems are 
+        cached, and decide how to evict old HistoryItems as new ones are
+        added.
+
+        * history/BackForwardList.cpp: Removed support for managing the page cache
+        through the BackForwardList since this is deprecated in Mac's 
+        WebBackForwardList, and doesn't exist on other platforms.
+        
+        Added a Page* back pointer so that Mac WebBackForwardList can still support 
+        its deprecated API, using the new hotness. This isn't a big burden, since 
+        Page is responsible for calling BackForwardList::close upon destruction, 
+        anyway.
+
+        * history/HistoryItem.cpp: Replaced CachedPage* with boolean that tells
+        you whether you're in the page cache. This prevents us from having more
+        than one persistent repository for cached pages.
+
+        * history/PageCache.cpp: If you're playing along at home, this code is 
+        the reason for the patch.
+
+        * loader/FrameLoader.cpp: If you're playing along at home, the minuses in
+        this file are the reason for the patch.
+        
+        Replaced call to FrameLoaderClient::loadedFromCachedPage with its one-line
+        implementation because WebCore calling itself through WebKit is uncivilized.
+
+        * page/Settings.cpp: Added support for removing a Page's HistoryItems from
+        the page cache.
+
 2007-05-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

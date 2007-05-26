@@ -279,8 +279,6 @@ typedef enum ObjectElementType {
                             DOMElement:(DOMElement *)element;
 - (void)redirectDataToPlugin:(NSView *)pluginView;
 
-- (int)getObjectCacheSize;
-
 - (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
 
 - (void)print;
