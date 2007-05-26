@@ -2,7 +2,7 @@
 
         Reviewed by Tim Hatcher.
 
-        * MigrateHeaders.make: Added dependency on this header file itself, which is
+        * MigrateHeaders.make: Added dependency on this makefile itself, which is
         useful when you change the sed command or other aspect of this file. My build
         failed until I made this fix.
 
