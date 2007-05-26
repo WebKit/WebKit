@@ -1,5 +1,12 @@
 2007-05-26  Darin Adler  <darin@apple.com>
 
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+        Alexey pointed out that I was wrong about object lifetime, so
+        rolling this change out.
+
+2007-05-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         * platform/network/mac/ResourceResponseMac.mm:

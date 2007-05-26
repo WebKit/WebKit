@@ -82,7 +82,7 @@ void ResourceResponse::doUpdateResourceResponse()
         // FIXME: This is a work around for <rdar://problem/5230154> (-[NSURLConnection initWithRequest:delegate:] 
         // is returning incorrect MIME type for local .xhtml files) which is only required in Leopard.
         if (m_url.isLocalFile() && m_mimeType == "text/html") {
-            String path = m_url.path();
+            const String& path = m_url.path();
             static const String xhtmlExt(".xhtml");
             if (path.endsWith(xhtmlExt, false))
                 m_mimeType = "application/xhtml+xml";
