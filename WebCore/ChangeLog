@@ -1,3 +1,26 @@
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13871
+          Box shadow should not apply to Aqua-themed controls
+
+        Test: fast/forms/box-shadow-override.html
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustCheckboxStyle):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustButtonStyle):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+
 2007-05-26  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Anders.

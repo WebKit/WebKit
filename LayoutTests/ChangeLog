@@ -1,3 +1,15 @@
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13871
+          Box shadow should not apply to Aqua-themed controls
+
+        * fast/forms/box-shadow-override-expected.checksum: Added.
+        * fast/forms/box-shadow-override-expected.png: Added.
+        * fast/forms/box-shadow-override-expected.txt: Added.
+        * fast/forms/box-shadow-override.html: Added.
+
 2007-05-25  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Darin.

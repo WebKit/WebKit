@@ -395,6 +395,8 @@ void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* s
     // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
     // for now, we will not honor it.
     style->resetBorder();
+
+    style->setBoxShadow(0);
 }
 
 void RenderTheme::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
@@ -410,6 +412,8 @@ void RenderTheme::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* styl
     // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
     // for now, we will not honor it.
     style->resetBorder();
+
+    style->setBoxShadow(0);
 }
 
 void RenderTheme::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const

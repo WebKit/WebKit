@@ -95,6 +95,7 @@ protected:
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);

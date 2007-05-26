@@ -570,6 +570,8 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
         style->resetBorderTop();
         style->resetBorderBottom();
     }
+
+    style->setBoxShadow(0);
 }
 
 const IntSize* RenderThemeMac::buttonSizes() const
@@ -927,6 +929,8 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
     // system font for the control size instead.
     setFontFromControlSize(selector, style, controlSize);
+
+    style->setBoxShadow(0);
 }
 
 void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
@@ -974,6 +978,11 @@ int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
 
 const int trackWidth = 5;
 const int trackRadius = 2;
+
+void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    style->setBoxShadow(0);
+}
 
 bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
@@ -1143,6 +1152,8 @@ void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
     
     NSControlSize controlSize = controlSizeForFont(style);
     setFontFromControlSize(selector, style, controlSize);
+
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1172,6 +1183,7 @@ void RenderThemeMac::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* select
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
     style->setHeight(Length(size.height(), Fixed));
+    style->setBoxShadow(0);
 }
 
 const IntSize* RenderThemeMac::resultsButtonSizes() const
@@ -1186,6 +1198,7 @@ void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
     style->setHeight(Length(size.height(), Fixed));
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeMac::paintSearchFieldDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1198,6 +1211,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
     style->setHeight(Length(size.height(), Fixed));
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1223,6 +1237,7 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selec
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() + resultsArrowWidth, Fixed));
     style->setHeight(Length(size.height(), Fixed));
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
