@@ -1,3 +1,11 @@
+2007-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * MigrateHeaders.make: Added dependency on this header file itself, which is
+        useful when you change the sed command or other aspect of this file. My build
+        failed until I made this fix.
+
 2007-05-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
