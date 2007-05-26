@@ -96,7 +96,7 @@ FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderC
     m_exitAfterLoading = false;
     m_dumpRenderTreeAfterLoading = false;
 
-    Settings* settings = new Settings;
+    Settings* settings = page->settings();
     settings->setLoadsImagesAutomatically(true);
     settings->setMinimumFontSize(5);
     settings->setMinimumLogicalFontSize(5);
@@ -110,7 +110,6 @@ FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderC
     settings->setFixedFontFamily("Courier");
     settings->setStandardFontFamily("Arial");
 
-    setSettings(settings);
     frameLoader->setFrame(this);
 }
 
