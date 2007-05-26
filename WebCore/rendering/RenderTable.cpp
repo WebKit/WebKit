@@ -411,6 +411,15 @@ void RenderTable::layout()
     // FIXME: Only pass true if width or height changed.
     layoutPositionedObjects(true);
 
+    if (!hasOverflowClip()) {
+        if (ShadowData* boxShadow = style()->boxShadow()) {
+            m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur);
+            m_overflowWidth = max(m_overflowWidth, m_width + boxShadow->x + boxShadow->blur);
+            m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
+            m_overflowHeight = max(m_overflowHeight, m_height + boxShadow->y + boxShadow->blur);
+        }
+    }
+
     view()->popLayoutState();
 
     bool didFullRepaint = true;

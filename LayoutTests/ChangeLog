@@ -1,3 +1,19 @@
+2007-05-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - updated tests for http://bugs.webkit.org/show_bug.cgi?id=13876
+          Box-Shadow disappears if shadow doesn't fit in the window size
+
+        * fast/repaint/box-shadow-h-expected.checksum:
+        * fast/repaint/box-shadow-h-expected.png:
+        * fast/repaint/box-shadow-h-expected.txt:
+        * fast/repaint/box-shadow-h.html:
+        * fast/repaint/box-shadow-v-expected.checksum:
+        * fast/repaint/box-shadow-v-expected.png:
+        * fast/repaint/box-shadow-v-expected.txt:
+        * fast/repaint/box-shadow-v.html:
+
 2007-05-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
