@@ -1,0 +1,67 @@
+layer at (0,0) size 785x638
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x638
+  RenderBlock {HTML} at (0,0) size 785x638
+    RenderBody {BODY} at (0,40) size 785x578
+      RenderBlock {DIV} at (50,256) size 735x322
+        RenderBlock {H3} at (0,0) size 735x22
+          RenderText {#text} at (0,0) size 78x22
+            text run at (0,0) width 78: "Test case:"
+        RenderBlock {UL} at (0,27) size 735x147
+          RenderListItem {LI} at (0,0) size 735x18
+            RenderListMarker at (-1,0) size 7x18: bullet
+            RenderText {#text} at (14,0) size 415x18
+              text run at (14,0) width 4: " "
+              text run at (18,0) width 411: "Blue div has 400px width, dynamic height, and position: relative."
+          RenderListItem {LI} at (0,25) size 735x36
+            RenderListMarker at (-1,0) size 7x18: bullet
+            RenderText {#text} at (14,0) size 545x18
+              text run at (14,0) width 4: " "
+              text run at (18,0) width 541: "Inside blue div there are 3 other div with height: 40px (and has some bottom margin..)"
+            RenderBR {BR} at (559,0) size 0x18
+            RenderText {#text} at (0,18) size 386x18
+              text run at (0,18) width 386: "the height of the blue div expands with the green divs inside.."
+          RenderListItem {LI} at (0,68) size 735x54
+            RenderListMarker at (-1,0) size 7x18: bullet
+            RenderText {#text} at (14,0) size 542x18
+              text run at (14,0) width 4: " "
+              text run at (18,0) width 538: "Yellow div has position absolute (and positioned in the top left corner of the blue div)"
+            RenderBR {BR} at (556,0) size 0x18
+            RenderText {#text} at (0,18) size 138x18
+              text run at (0,18) width 138: "it's height set to 100%"
+            RenderBR {BR} at (138,18) size 0x18
+            RenderText {#text} at (0,36) size 442x18
+              text run at (0,36) width 442: "the height of the yellow div now equals with the height of the blue div"
+          RenderListItem {LI} at (0,129) size 735x18
+            RenderListMarker at (-1,0) size 7x18: bullet
+            RenderText {#text} at (14,0) size 416x18
+              text run at (14,0) width 4: " "
+              text run at (18,0) width 412: "Red div is inserted into the yellow div, and it's height set to 100%"
+        RenderBlock {H3} at (0,194) size 735x22
+          RenderText {#text} at (0,0) size 76x22
+            text run at (0,0) width 76: "Problem:"
+        RenderBlock {P} at (0,221) size 735x36
+          RenderText {#text} at (0,0) size 160x18
+            text run at (0,0) width 160: "The height of the red div "
+          RenderInline {STRONG} at (0,0) size 92x18
+            RenderText {#text} at (160,0) size 92x18
+              text run at (160,0) width 92: "should equals"
+          RenderText {#text} at (252,0) size 265x18
+            text run at (252,0) width 265: " to the height of the blue (and yellow) div."
+          RenderBR {BR} at (517,0) size 0x18
+          RenderText {#text} at (0,18) size 498x18
+            text run at (0,18) width 498: "It works right with Opera 9.2, Firefox 2, Camino 1.0.4 and Internet Explorer 7."
+        RenderBlock {H3} at (0,277) size 735x22
+          RenderText {#text} at (0,0) size 115x22
+            text run at (0,0) width 115: "Workaround:"
+        RenderBlock {P} at (0,304) size 735x18
+          RenderText {#text} at (0,0) size 561x18
+            text run at (0,0) width 561: "If you set position absolute to the red div, it's height will expands along with the blue div."
+layer at (40,40) size 406x156
+  RenderBlock (relative positioned) {DIV} at (40,0) size 406x156 [border: (3px solid #0000FF)]
+    RenderBlock {DIV} at (3,3) size 400x40 [bgcolor=#008000]
+    RenderBlock {DIV} at (3,53) size 400x40 [bgcolor=#008000]
+    RenderBlock {DIV} at (3,103) size 400x40 [bgcolor=#008000]
+layer at (43,43) size 206x159
+  RenderBlock (positioned) {DIV} at (3,3) size 206x156 [border: (3px solid #FFFF00)]
+    RenderBlock {DIV} at (3,3) size 200x156 [border: (3px dashed #FF0000)]
