@@ -1,3 +1,15 @@
+2007-05-26  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13887, percentage height block not sized correctly inside
+        positioned percentage height containing block.
+
+        Reviewed by mitz
+
+        fast/block/positioning/complex-percentage-height.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcPercentageHeight):
+
 2007-05-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Oliver Hunt.
