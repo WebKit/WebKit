@@ -255,8 +255,12 @@ void RenderSVGContainer::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        double x = svg->x().value();
-        double y = svg->y().value();
+        double x = 0.;
+        double y = 0.;
+        if (parent()->isSVGContainer()) {
+            x = svg->x().value();
+            y = svg->y().value();
+        }
         double w = svg->width().value();
         double h = svg->height().value();
         m_viewport = FloatRect(x, y, w, h);

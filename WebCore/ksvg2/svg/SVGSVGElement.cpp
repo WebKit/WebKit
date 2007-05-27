@@ -109,8 +109,13 @@ void SVGSVGElement::setContentStyleType(const AtomicString& type)
 
 FloatRect SVGSVGElement::viewport() const
 {
-    double _x = x().value();
-    double _y = y().value();
+    double _x = 0.0;
+    double _y = 0.0;
+    if (renderer() && renderer()->parent() &&
+       !renderer()->parent()->isSVGContainer()) {
+        _x = x().value();
+        _y = y().value();
+    }
     double w = width().value();
     double h = height().value();
     AffineTransform viewBox = viewBoxToViewTransform(w, h);
@@ -324,7 +329,9 @@ SVGTransform SVGSVGElement::createSVGTransformFromMatrix(const AffineTransform& 
 AffineTransform SVGSVGElement::getCTM() const
 {
     AffineTransform mat;
-    mat.translate(x().value(), y().value());
+    if (renderer() && renderer()->parent() &&
+       !renderer()->parent()->isSVGContainer())
+        mat.translate(x().value(), y().value());
 
     if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
         AffineTransform viewBox = viewBoxToViewTransform(width().value(), height().value());
@@ -339,8 +346,8 @@ AffineTransform SVGSVGElement::getScreenCTM() const
     // FIXME: This assumes that any <svg> element not immediately descending from another SVGElement 
     // has *no* svg ancestors
     document()->updateLayoutIgnorePendingStylesheets();
-    float rootX = x().value();
-    float rootY = y().value();
+    float rootX = 0.0;
+    float rootY = 0.0;
     
     if (RenderObject* renderer = this->renderer()) {
         renderer = renderer->parent();
@@ -350,6 +357,9 @@ AffineTransform SVGSVGElement::getScreenCTM() const
             renderer->absolutePosition(tx, ty, true);
             rootX += tx;
             rootY += ty;
+        } else {
+            rootX += x().value();
+            rootY += y().value();
         }
     }
     

@@ -1,3 +1,19 @@
+2007-05-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13828
+        x/y values on rootmost <svg> elements should be ignored
+
+        Make sure that root-most <svg> elements do not take into account x/y.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::calcViewport):
+
 2007-05-26  David Hyatt  <hyatt@apple.com>
 
         Fix for radar bug 5219562, PNG isn't displayed on SVG test suite.
