@@ -47,7 +47,7 @@ public:
     HTMLObjectElement(Document*);
     ~HTMLObjectElement();
 
-    virtual int tagPriority() const { return 7; }
+    virtual int tagPriority() const { return 5; }
 
     virtual void parseMappedAttribute(MappedAttribute*);
 

@@ -32,7 +32,6 @@ enum HTMLParserErrorCode {
     MisplacedTablePartError,
     MisplacedHeadError,
     RedundantHTMLBodyError,
-    BadObjectContentError,
     MisplacedAreaError,
     IgnoredContentError,
     MisplacedFramesetContentError,

@@ -1,5 +1,23 @@
 2007-05-26  David Hyatt  <hyatt@apple.com>
 
+        Fix for radar bug 5219562, PNG isn't displayed on SVG test suite.
+        Improve <object> error handling so that it recovers properly when
+        <td> is used inside it.
+
+        Reviewed by olliej
+
+        Added fast/invalid/td-inside-object.html
+
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::tagPriority):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+
+2007-05-26  David Hyatt  <hyatt@apple.com>
+
         Don't compare the "isset" variables in background layers, since they
         lead us to turn off the Aqua look incorrectly, even when the background
         matches the default.

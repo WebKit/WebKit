@@ -559,9 +559,9 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 }
             }
         } else if (h->hasLocalName(objectTag)) {
-            reportError(BadObjectContentError, &localName);
-            setSkipMode(objectTag);
-            return false;
+            reportError(MisplacedContentRetryError, &localName, &currentTagName);
+            popBlock(objectTag);
+            handled = true;
         } else if (h->hasLocalName(pTag) || isHeaderTag(currentTagName)) {
             if (!isInline(n)) {
                 popBlock(currentTagName);
