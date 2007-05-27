@@ -115,7 +115,7 @@ static CollectorBlock* allocateBlock()
 #if PLATFORM(DARWIN)    
     vm_address_t address = 0;
     vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN_OS)
      // windows virtual address granularity is naturally 64k
     LPVOID address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #elif HAVE(POSIX_MEMALIGN)
@@ -153,7 +153,7 @@ static void freeBlock(CollectorBlock* block)
 {
 #if PLATFORM(DARWIN)    
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN_OS)
     VirtualFree(block, BLOCK_SIZE, MEM_RELEASE);
 #elif HAVE(POSIX_MEMALIGN)
     free(block);
