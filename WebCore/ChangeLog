@@ -1,5 +1,16 @@
 2007-05-26  David Hyatt  <hyatt@apple.com>
 
+        Don't compare the "isset" variables in background layers, since they
+        lead us to turn off the Aqua look incorrectly, even when the background
+        matches the default.
+
+        Reviewed by olliej
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::BackgroundLayer::operator==):
+
+2007-05-26  David Hyatt  <hyatt@apple.com>
+
         Improve the </p> -> <p></p> error message to not spew two errors.
         Fix a bug where errors reported inside document.write didn't get
         reported as such because of a mistake in the notation of SegmentedString.

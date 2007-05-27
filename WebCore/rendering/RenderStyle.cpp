@@ -186,13 +186,12 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o)
 
 bool BackgroundLayer::operator==(const BackgroundLayer& o) const
 {
+    // We do not check the "isSet" booleans for each property, since those are only used during initial construction
+    // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
     return m_image == o.m_image && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_bgAttachment == o.m_bgAttachment && m_bgClip == o.m_bgClip && 
            m_bgComposite == o.m_bgComposite && m_bgOrigin == o.m_bgOrigin && m_bgRepeat == o.m_bgRepeat &&
            m_backgroundSize.width == o.m_backgroundSize.width && m_backgroundSize.height == o.m_backgroundSize.height && 
-           m_imageSet == o.m_imageSet && m_attachmentSet == o.m_attachmentSet && m_compositeSet == o.m_compositeSet && 
-           m_repeatSet == o.m_repeatSet && m_xPosSet == o.m_xPosSet && m_yPosSet == o.m_yPosSet && 
-           m_backgroundSizeSet == o.m_backgroundSizeSet && 
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
