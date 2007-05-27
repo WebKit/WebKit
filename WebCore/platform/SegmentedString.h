@@ -40,7 +40,7 @@ private:
 
     SegmentedSubstring(const UChar* str, int length) : m_length(length), m_current(length == 0 ? 0 : str), m_excludeLineNumbers(false) {}
 
-    void clear() { m_length = 0; m_current = 0; m_excludeLineNumbers = false; }
+    void clear() { m_length = 0; m_current = 0; }
     
     bool excludeLineNumbers() const { return m_excludeLineNumbers; }
     void setExcludeLineNumbers() { m_excludeLineNumbers = true; }

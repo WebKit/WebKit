@@ -840,6 +840,8 @@ void HTMLParser::processCloseTag(Token* t)
         checkForCloseTagErrors = false;
     } else if (t->tagName == mapTag)
         m_currentMapElement = 0;
+    else if (t->tagName == pTag)
+        checkForCloseTagErrors = false;
         
     HTMLStackElem* oldElem = blockStack;
     popBlock(t->tagName, checkForCloseTagErrors);

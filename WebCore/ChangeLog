@@ -1,5 +1,18 @@
 2007-05-26  David Hyatt  <hyatt@apple.com>
 
+        Improve the </p> -> <p></p> error message to not spew two errors.
+        Fix a bug where errors reported inside document.write didn't get
+        reported as such because of a mistake in the notation of SegmentedString.
+
+        Reviewed by aroben
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::processCloseTag):
+        * platform/SegmentedString.h:
+        (WebCore::SegmentedSubstring::clear):
+
+2007-05-26  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 13887, percentage height block not sized correctly inside
         positioned percentage height containing block.
 
