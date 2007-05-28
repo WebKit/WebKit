@@ -768,7 +768,8 @@ qt-port:SOURCES += \
     ../WebKitQt/Api/qwebnetworkinterface.cpp \
     ../WebKitQt/Api/qcookiejar.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
-    ../WebKitQt/Api/qwebpagehistory.cpp
+    ../WebKitQt/Api/qwebpagehistory.cpp \
+    ../WebKitQt/Api/qwebsettings.cpp
 
 gdk-port:SOURCES += \
         platform/TextCodecICU.cpp \

@@ -29,6 +29,7 @@
  */
 #include <qwebpage.h>
 #include <qwebframe.h>
+#include <qwebsettings.h>
 
 #include <QtGui>
 #include <QDebug>
@@ -342,6 +343,10 @@ int main(int argc, char **argv)
 {
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
     QApplication app(argc, argv);
+
+    QWebSettings settings = QWebSettings::global();
+    settings.setAttribute(QWebSettings::PluginsEnabled);
+    QWebSettings::setGlobal(settings);
 
     const QStringList args = app.arguments();
     if (args.count() > 1)

@@ -28,6 +28,7 @@
 #include "qwebframe_p.h"
 #include "qwebpagehistory.h"
 #include "qwebpagehistory_p.h"
+#include "qwebsettings.h"
 
 #include "Frame.h"
 #include "ChromeClientQt.h"
@@ -61,20 +62,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page = new Page(chromeClient, contextMenuClient, editorClient,
                     new DragClientQt(q));
 
-    Settings *settings = page->settings();
-    settings->setLoadsImagesAutomatically(true);
-    settings->setMinimumFontSize(5);
-    settings->setMinimumLogicalFontSize(5);
-    settings->setShouldPrintBackgrounds(true);
-    settings->setJavaScriptEnabled(true);
-
-    settings->setDefaultFixedFontSize(14);
-    settings->setDefaultFontSize(14);
-    settings->setSerifFontFamily("Times New Roman");
-    settings->setSansSerifFontFamily("Arial");
-    settings->setFixedFontFamily("Courier");
-    settings->setStandardFontFamily("Arial");
-
     undoStack = 0;
     mainFrame = 0;
     networkInterface = 0;
@@ -104,6 +91,7 @@ QWebPage::QWebPage(QWidget *parent)
     : QWidget(parent)
     , d(new QWebPagePrivate(this))
 {
+    setSettings(QWebSettings::global());
     d->layout = new QVBoxLayout(this);
     d->layout->setMargin(0);
     d->layout->setSpacing(0);
@@ -289,5 +277,86 @@ QWebNetworkInterface *QWebPage::networkInterface() const
 {
     return d->networkInterface;
 }
+
+void QWebPage::setSettings(const QWebSettings &settings)
+{
+    WebCore::Settings *wSettings = d->page->settings();
+
+    wSettings->setStandardFontFamily(
+        settings.fontFamily(QWebSettings::StandardFont));
+    wSettings->setFixedFontFamily(
+        settings.fontFamily(QWebSettings::FixedFont));
+    wSettings->setSerifFontFamily(
+        settings.fontFamily(QWebSettings::SerifFont));
+    wSettings->setSansSerifFontFamily(
+        settings.fontFamily(QWebSettings::SansSerifFont));
+    wSettings->setCursiveFontFamily(
+        settings.fontFamily(QWebSettings::CursiveFont));
+    wSettings->setFantasyFontFamily(
+        settings.fontFamily(QWebSettings::FantasyFont));
+
+    wSettings->setMinimumFontSize(settings.minimumFontSize());
+    wSettings->setMinimumLogicalFontSize(settings.minimumLogicalFontSize());
+    wSettings->setDefaultFontSize(settings.defaultFontSize());
+    wSettings->setDefaultFixedFontSize(settings.defaultFixedFontSize());
+
+    wSettings->setLoadsImagesAutomatically(
+        settings.testAttribute(QWebSettings::AutoLoadImages));
+    wSettings->setJavaScriptEnabled(
+        settings.testAttribute(QWebSettings::JavascriptEnabled));
+    wSettings->setJavaScriptCanOpenWindowsAutomatically(
+        settings.testAttribute(QWebSettings::JavascriptCanOpenWindows));
+    wSettings->setJavaEnabled(
+        settings.testAttribute(QWebSettings::JavaEnabled));
+    wSettings->setPluginsEnabled(
+        settings.testAttribute(QWebSettings::PluginsEnabled));
+    wSettings->setPrivateBrowsingEnabled(
+        settings.testAttribute(QWebSettings::PrivateBrowsingEnabled));
+
+    wSettings->setUserStyleSheetLocation(KURL(settings.userStyleSheetLocation()));
+}
+
+QWebSettings QWebPage::settings() const
+{
+    QWebSettings settings;
+    WebCore::Settings *wSettings = d->page->settings();
+
+    settings.setFontFamily(QWebSettings::StandardFont,
+                           wSettings->standardFontFamily());
+    settings.setFontFamily(QWebSettings::FixedFont,
+                           wSettings->fixedFontFamily());
+    settings.setFontFamily(QWebSettings::SerifFont,
+                           wSettings->serifFontFamily());
+    settings.setFontFamily(QWebSettings::SansSerifFont,
+                           wSettings->sansSerifFontFamily());
+    settings.setFontFamily(QWebSettings::CursiveFont,
+                           wSettings->cursiveFontFamily());
+    settings.setFontFamily(QWebSettings::FantasyFont,
+                           wSettings->fantasyFontFamily());
+
+    settings.setMinimumFontSize(wSettings->minimumFontSize());
+    settings.setMinimumLogicalFontSize(wSettings->minimumLogicalFontSize());
+    settings.setDefaultFontSize(wSettings->defaultFontSize());
+    settings.setDefaultFixedFontSize(wSettings->defaultFixedFontSize());
+
+    settings.setAttribute(QWebSettings::AutoLoadImages,
+                          wSettings->loadsImagesAutomatically());
+    settings.setAttribute(QWebSettings::JavascriptEnabled,
+                          wSettings->isJavaScriptEnabled());
+    settings.setAttribute(QWebSettings::JavascriptCanOpenWindows,
+                          wSettings->JavaScriptCanOpenWindowsAutomatically());
+    settings.setAttribute(QWebSettings::JavaEnabled,
+                          wSettings->isJavaEnabled());
+    settings.setAttribute(QWebSettings::PluginsEnabled,
+                          wSettings->arePluginsEnabled());
+    settings.setAttribute(QWebSettings::PrivateBrowsingEnabled,
+                          wSettings->privateBrowsingEnabled());
+
+    settings.setUserStyleSheetLocation(
+        wSettings->userStyleSheetLocation().url());
+
+    return settings;
+}
+
 
 #include "qwebpage.moc"

@@ -1,3 +1,40 @@
+2007-05-28  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by andersca and simon
+
+        Adding public settings Api to the Qt port.
+        QWebSetting's is a value based settings
+        object settable on the QWebPage.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::QWebPage):
+        (QWebPage::setSettings):
+        (QWebPage::settings):
+        * Api/qwebpage.h:
+        * Api/qwebsettings.cpp: Added.
+        (QWebSettingsPrivate::QWebSettingsPrivate):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::~QWebSettings):
+        (QWebSettings::setMinimumFontSize):
+        (QWebSettings::minimumFontSize):
+        (QWebSettings::setMinimumLogicalFontSize):
+        (QWebSettings::minimumLogicalFontSize):
+        (QWebSettings::setDefaultFontSize):
+        (QWebSettings::defaultFontSize):
+        (QWebSettings::setDefaultFixedFontSize):
+        (QWebSettings::defaultFixedFontSize):
+        (QWebSettings::setUserStyleSheetLocation):
+        (QWebSettings::userStyleSheetLocation):
+        (QWebSettings::setGlobal):
+        (QWebSettings::global):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::fontFamily):
+        (QWebSettings::setAttribute):
+        (QWebSettings::testAttribute):
+        * Api/qwebsettings.h: Added.
+        * QtLauncher/main.cpp:
+        (main):
 2007-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Sam Weinig.

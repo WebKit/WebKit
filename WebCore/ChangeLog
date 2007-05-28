@@ -1,3 +1,14 @@
+2007-05-28  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by andersca
+
+        Adding Qt related constructor/casting operators
+        to the AtomicString and updating the project
+        file for new Qt settings api using those.
+
+        * WebCore.pro:
+        * platform/AtomicString.h:
+
 2007-05-27  Sam Weinig  <sam@webkit.org>
 
         Qt and Gdk build fix.
