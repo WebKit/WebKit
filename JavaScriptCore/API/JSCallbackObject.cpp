@@ -156,7 +156,7 @@ void JSCallbackObject::put(ExecState* exec, const Identifier& propertyName, JSVa
                     if (setProperty(ctx, thisRef, propertyNameRef, valueRef, toRef(exec->exceptionSlot())))
                         return;
                 } else
-                    throwError(exec, ReferenceError, "Writable static value property defined with NULL setProperty callback.");
+                    throwError(exec, ReferenceError, "Attempt to set a property that is not settable.");
             }
         }
         
