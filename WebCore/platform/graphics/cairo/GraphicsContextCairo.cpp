@@ -29,15 +29,17 @@
 
 #if PLATFORM(CAIRO)
 
+#include "CairoPath.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "FontData.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
+#include "Path.h"
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
-#include "NotImplemented.h"
 
 #if PLATFORM(WIN)
 #include <cairo-win32.h>
@@ -683,9 +685,15 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     cairo_set_operator(m_data->context, toCairoOperator(op));
 }
 
-void GraphicsContext::clip(const Path&)
+void GraphicsContext::clip(const Path& path)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+    cairo_t* cr = m_data->context;
+    cairo_path_t *p = cairo_copy_path(path.platformPath()->m_cr);
+    cairo_append_path(cr, p);
+    cairo_path_destroy(p);
+    cairo_clip(cr);
 }
 
 void GraphicsContext::clipOut(const Path&)

@@ -32,6 +32,8 @@ typedef struct CGPath PlatformPath;
 #elif PLATFORM(QT)
 class QPainterPath;
 typedef QPainterPath PlatformPath;
+#elif PLATFORM(CAIRO)
+typedef struct CairoPath PlatformPath;
 #else
 typedef void PlatformPath;
 #endif

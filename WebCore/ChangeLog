@@ -1,3 +1,38 @@
+2007-05-27  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Sam and Oliver.
+
+        Implement PathCairo. This patch is based on changes in Mike Emmel's
+        WebKit fork with some additional clean-ups and updates.
+
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/CairoPath.h: Added.
+        (CairoPath::CairoPath):
+        (CairoPath::~CairoPath):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clip):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::clear):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::translate):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::contains):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        (WebCore::Path::debugString):
+
 2007-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Sam Weinig.
