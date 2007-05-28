@@ -28,6 +28,12 @@
 
 #import "WebScriptDebugServer.h"
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSUInteger unsigned int
+#else
+#define WebNSUInteger NSUInteger
+#endif
+
 @interface WebScriptDebugServer : NSObject <WebScriptDebugServer> {
 @private
     NSConnection *serverConnection;
@@ -46,13 +52,13 @@
 - (void)webView:(WebView *)webView didLoadMainResourceForDataSource:(WebDataSource *)dataSource;
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(WebNSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame;
 
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(WebNSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame;
@@ -72,3 +78,5 @@
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame;
 @end
+
+#undef WebNSUInteger

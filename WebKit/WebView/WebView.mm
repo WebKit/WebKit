@@ -2913,7 +2913,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(unsigned)limit
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit
 {
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;

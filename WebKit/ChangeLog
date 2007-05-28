@@ -1,3 +1,20 @@
+2007-05-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Geoff.
+
+        64-bit build fix.  Ensure that use of WebNSUInteger in headers is matched by WebNSUInteger in implementations.
+
+        * DefaultDelegates/WebScriptDebugServer.h:
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptDebugServer webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h:
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList pageCacheSize]):
+        * WebView/WebView.mm:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]):
+
 2007-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
