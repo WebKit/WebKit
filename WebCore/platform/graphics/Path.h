@@ -33,7 +33,10 @@ typedef struct CGPath PlatformPath;
 class QPainterPath;
 typedef QPainterPath PlatformPath;
 #elif PLATFORM(CAIRO)
-typedef struct CairoPath PlatformPath;
+namespace WebCore {
+    struct CairoPath;
+}
+typedef WebCore::CairoPath PlatformPath;
 #else
 typedef void PlatformPath;
 #endif
