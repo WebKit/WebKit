@@ -56,14 +56,15 @@ use warnings;
 
 use File::Basename;
 use File::Spec;
-use File::Temp;
 use FindBin;
 use Getopt::Long;
 
-sub diffCommand(\%);
-sub statusCommand(\@);
+sub diffCommand(@);
+sub statusCommand(@);
 sub createPatchCommand($);
 sub diffHeaderFormat();
+sub findOriginalFileFromSvn($);
+sub generateFileList(\@\@\%);
 sub isModifiedOrAddedStatus($);
 sub isConflictStatus($);
 sub statusDescription($$);
@@ -112,70 +113,9 @@ my $GIT = "git";
 
 my $changedLayoutTests = 0;
 
-my $DIFFOUT = new File::Temp(TEMPLATE => basename($0) . "-XXXXXXXX",
-                             DIR => ($ENV{'TMPDIR'} || "/tmp"),
-                             SUFFIX => ".diff");
-my $diffTempFile = $DIFFOUT->filename();
-my @diffFiles;
+generateFileList(@changed_files, @conflict_files, %function_lists);
 
-print STDERR "  Running diff to find changed, added, or removed files.\n";
-open DIFF, "-|", diffCommand(%paths) or die "The diff failed: $!.\n";
-
-while (<DIFF>) {
-    print $DIFFOUT $_;
-    push @diffFiles, $1 if $_ =~ diffHeaderFormat();
-}
-close DIFF;
-close $DIFFOUT;
-
-if (@diffFiles) {
-    print STDERR "  Running status on changed, added, or removed files.\n";
-    open STAT, "-|", statusCommand(@diffFiles) or die "The status failed: $!.\n";
-    my $inGitCommitSection = 0;
-    while (<STAT>) {
-        my $status;
-        my $original;
-        my $file;
-
-        if (isSVN()) {
-            if (/^([A-Z]).+\s+(.+)$/) {
-                  $status = $1;
-                  $file = $2;
-            } else {
-                print;  # error output from svn stat
-            }
-        } elsif (isGit()) {
-            if (/^# Changes to be committed:$/ || /^# Changed but not updated:$/) {
-                $inGitCommitSection = 1;
-                next;
-            }
-            last if $inGitCommitSection && /^# \S/;
-
-            if ($inGitCommitSection && /^#\s+([^:]+):\s+((.+) -> )?(.+)$/) {
-                $status = $1;
-                $original = $3;
-                $file = $4;
-            }
-        }
-
-        next unless $status;
-
-        $file = makeFilePathRelative($file);
-
-        if (isModifiedOrAddedStatus($status)) {
-            my @components = File::Spec->splitdir($file);
-            $changedLayoutTests = 1 if $components[0] eq "LayoutTests";
-            push @changed_files, $file if $components[$#components] ne "ChangeLog";
-        } elsif (isConflictStatus($status)) {
-            push @conflict_files, $file;
-        }
-        my $description = statusDescription($status, $original);
-        $function_lists{$file} = $description if defined $description;
-    }
-    close STAT;
-}
-
-if (!@diffFiles || !%function_lists) {
+if (!@changed_files && !@conflict_files || !%function_lists) {
     print STDERR "  No changes found.\n";
     exit 1;
 }
@@ -193,7 +133,7 @@ if (@changed_files) {
     # Use line numbers from the "after" side of each diff.
     print STDERR "  Reviewing diff to determine which lines changed.\n";
     my $file;
-    open DIFF, "< $diffTempFile" or die "Opening $diffTempFile failed: $!.\n";
+    open DIFF, "-|", diffCommand(@changed_files) or die "The diff failed: $!.\n";
     while (<DIFF>) {
         $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
         if (defined $file) {
@@ -333,8 +273,9 @@ foreach my $prefix (sort keys %files) {
 # Write out another diff.
 if ($spewDiff && @changed_files) {
     print STDERR "  Running diff to help you write the ChangeLog entries.\n";
+    local $/ = undef; # local slurp mode
     open DIFF, "-|", createPatchCommand($changed_files_string) or die "The diff failed: $!.\n";
-    while (<DIFF>) { print; }
+    print <DIFF>;
     close DIFF;
 }
 
@@ -922,9 +863,9 @@ sub processPaths(\@)
     return %result;
 }
 
-sub diffCommand(\%)
+sub diffCommand(@)
 {
-    my ($paths) = @_;
+    my @paths = @_;
 
     my $prefix;
     if (isSVN()) {
@@ -933,14 +874,14 @@ sub diffCommand(\%)
         $prefix = "$GIT diff HEAD --";
     }
 
-    return "$prefix '" . join("' '", keys %{$paths}) . "'";
+    return "$prefix '" . join("' '", @paths) . "'";
 }
 
-sub statusCommand(\@)
+sub statusCommand(@)
 {
-    my ($files) = @_;
+    my @files = @_;
 
-    my $filesString = "'" . join ("' '", @{$files}) . "'";
+    my $filesString = "'" . join ("' '", @files) . "'";
     my $command;
     if (isSVN()) {
         $command = "$SVN stat $filesString";
@@ -965,6 +906,80 @@ sub diffHeaderFormat()
 {
     return qr/^Index: (\S+)$/ if isSVN();
     return qr/^diff --git a\/.+ b\/(.+)$/ if isGit();
+}
+
+sub findOriginalFileFromSvn($)
+{
+    my ($file) = @_;
+    my $baseUrl;
+    open INFO, "$SVN info . |" or die;
+    while (<INFO>) {
+        if (/^URL: (.+)/) {
+            $baseUrl = $1;
+            last;
+        }
+    }
+    close INFO;
+    my $sourceFile;
+    open INFO, "$SVN info '$file' |" or die;
+    while (<INFO>) {
+        if (/^Copied From URL: (.+)/) {
+            $sourceFile = File::Spec->abs2rel($1, $baseUrl);
+            last;
+        }
+    }
+    close INFO;
+    return $sourceFile;
+}
+
+sub generateFileList(\@\@\%)
+{
+    my ($changedFiles, $conflictFiles, $functionLists) = @_;
+    print STDERR "  Running status to find changed, added, or removed files.\n";
+    open STAT, "-|", statusCommand(keys %paths) or die "The status failed: $!.\n";
+    my $inGitCommitSection = 0;
+    while (<STAT>) {
+        my $status;
+        my $original;
+        my $file;
+
+        if (isSVN()) {
+            if (/^([ACDMR]).{5} (.+)$/) {
+                $status = $1;
+                $file = $2;
+                $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
+            } else {
+                print;  # error output from svn stat
+            }
+        } elsif (isGit()) {
+            if (/^# Changes to be committed:$/ || /^# Changed but not updated:$/) {
+                $inGitCommitSection = 1;
+                next;
+            }
+            last if $inGitCommitSection && /^# \S/;
+
+            if ($inGitCommitSection && /^#\s+([^:]+):\s+((.+) -> )?(.+)$/) {
+                $status = $1;
+                $original = $3;
+                $file = $4;
+            }
+        }
+
+        next unless $status;
+
+        $file = makeFilePathRelative($file);
+
+        if (isModifiedOrAddedStatus($status)) {
+            my @components = File::Spec->splitdir($file);
+            $changedLayoutTests = 1 if $components[0] eq "LayoutTests";
+            push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
+        } elsif (isConflictStatus($status)) {
+            push @{$conflictFiles}, $file;
+        }
+        my $description = statusDescription($status, $original);
+        $functionLists->{$file} = $description if defined $description;
+    }
+    close STAT;
 }
 
 sub isModifiedOrAddedStatus($)
@@ -1009,10 +1024,10 @@ sub statusDescription($$)
     my ($status, $original) = @_;
 
     my %svn = (
-        "A" => " Added.",
+        "A" => defined $original ? " Copied from \%s." : " Added.",
         "D" => " Removed.",
         "M" => "",
-        "R" => " Replaced.",
+        "R" => defined $original ? " Replaced with \%s." : " Replaced.",
     );
     my %git = (
         "copied" => " Copied from \%s.",
@@ -1022,8 +1037,9 @@ sub statusDescription($$)
         "renamed" => " Renamed from \%s.",
     );
 
-    return $svn{$status} if isSVN() && exists $svn{$status};
+    return sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
     return sprintf($git{$status}, $original) if isGit() && exists $git{$status};
+    return undef;
 }
 
 sub extractLineRange($)

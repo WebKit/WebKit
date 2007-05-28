@@ -1,3 +1,30 @@
+2007-05-28  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10342
+          prepare-ChangeLog only shows removed files but not added files when files are moved
+        - fix prepare-ChangeLog part of http://bugs.webkit.org/show_bug.cgi?id=13408
+          prepare-ChangeLog and svn-create-patch don't show replaced files
+
+        Switched method used to find list of changed files from "diff" to "status".  This
+        makes added and replaced files with history appear in the changed file list for svn.
+        Added check for "+" in output from the svn status command to detect file history, and
+        handle it in the generateFileList(\@\@\%) and in statusDescription($$) subroutines.
+
+        * Scripts/prepare-ChangeLog:
+        (diffCommand(@)): Switched argument from hash ref to array to match statusCommand(@).
+        (statusCommand(@)): Switched argument from array ref to array.  Necessary to use
+        the output of "keys $paths" without creating a temporary array variable.
+        (findOriginalFileFromSvn($)): Added.  Based on findSourceFileAndRevision($)
+        subroutine in svn-create-patch.
+        (generateFileList(\@\@\%)): Added.  Extracted from main body of script.  Runs status
+        command using command-line arguments instead of list of changed files from the diff
+        command.  Changed svn regex to only accept file statuses that we know how to handle.
+        Identify original file when an added/replaced status with history is present.
+        (statusDescription($$)): Handled added/replaced statuses with history.  Added
+        fall-through return statement.
+
 2007-05-28  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
