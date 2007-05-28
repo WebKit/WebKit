@@ -43,12 +43,14 @@ my $svgSupport = 1;
 my $svgExperimentalSupport = 0;
 my $xpathSupport = 1;
 my $xsltSupport = 1;
+my $coverageSupport = 0;
 my $colorSupport = 1; # Default: colorize make output
 
 GetOptions('svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
            'xpath!' => \$xpathSupport,
            'xslt!' => \$xsltSupport,
+           'coverage!' => \$coverageSupport,    
            'color!' => \$colorSupport);
 
 checkRequiredSystemConfig();
@@ -64,6 +66,15 @@ push @overrideFeatureDefinesOption, "ENABLE_SVG_EXPERIMENTAL_FEATURES" if $svgEx
 push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
 my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
+
+my @coverageSupportOption = ();
+if ($coverageSupport) {
+    push @coverageSupportOption, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
+    push @coverageSupportOption, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
+    push @coverageSupportOption, "EXTRA_LINK= -ftest-coverage -fprofile-arcs";
+    push @coverageSupportOption, "OTHER_CFLAGS= -MD";
+    push @coverageSupportOption, "OTHER_LDFLAGS= -ftest-coverage -fprofile-arcs -framework AppKit";
+}
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
@@ -114,7 +125,7 @@ for my $dir (@projects) {
         }
         $result = buildQMakeProject($dir, $colorSupport);
     } elsif (isOSX()) {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @ARGV;
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
     } elsif (isCygwin()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);

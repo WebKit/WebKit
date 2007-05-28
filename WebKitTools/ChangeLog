@@ -1,3 +1,24 @@
+2007-05-28  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        Add scripts and data to generate a coverage data for WebKit.
+
+        * CodeCoverage/README: Added.
+        * CodeCoverage/amber.png: Added.
+        * CodeCoverage/cov.py: Added.
+        * CodeCoverage/emerald.png: Added.
+        * CodeCoverage/gcov.css: Added.
+        * CodeCoverage/glass.png: Added.
+        * CodeCoverage/regenerate-coverage-display: Added.
+        * CodeCoverage/ruby.png: Added.
+        * CodeCoverage/run-generate-coverage-data: Added.
+        * CodeCoverage/snow.png: Added.
+        * Scripts/build-webkit: Add --coverage by Niko
+        * Scripts/check-for-global-initializers: Skip the check on coverage builds
+        * Scripts/generate-coverage-data: Added.
+        * Scripts/run-javascriptcore-tests: Add --coverage by Niko
+
 2007-05-29  Mark Rowe  <mrowe@apple.com>
 
         Build fix after r21745.
