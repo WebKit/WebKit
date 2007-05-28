@@ -19,7 +19,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLabelElement : HTMLElement {
+    interface [GenerateConstructor] HTMLLabelElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString htmlFor;

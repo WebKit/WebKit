@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLQuoteElement : HTMLElement {
+    interface [GenerateConstructor] HTMLQuoteElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString cite;
     };
 }

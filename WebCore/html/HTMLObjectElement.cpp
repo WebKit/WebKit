@@ -510,4 +510,9 @@ SVGDocument* HTMLObjectElement::getSVGDocument(ExceptionCode& ec) const
 }
 #endif
 
+HTMLFormElement* HTMLObjectElement::formForEventHandlerScope() const
+{
+    return form();
+}
+
 }

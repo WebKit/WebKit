@@ -29,6 +29,7 @@ namespace WebCore {
 
 class DocumentFragment;
 class HTMLCollection;
+class HTMLFormElement;
 class String;
 
 enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
@@ -98,6 +99,8 @@ public:
     void setHTMLEventListener(const AtomicString& eventType, Attribute*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    virtual HTMLFormElement* formForEventHandlerScope() const;
 
 protected:
 

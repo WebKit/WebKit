@@ -78,42 +78,45 @@ module window {
         attribute EntityConstructor Entity;
         attribute EntityReferenceConstructor EntityReference;
         attribute ProcessingInstructionConstructor ProcessingInstruction;
-        
+
+        attribute HTMLDocumentConstructor HTMLDocument;
+
         attribute HTMLElementConstructor HTMLElement;
         attribute HTMLAnchorElementConstructor HTMLAnchorElement;
         attribute HTMLAppletElementConstructor HTMLAppletElement;
         attribute HTMLAreaElementConstructor HTMLAreaElement;
+        attribute HTMLBRElementConstructor HTMLBRElement;
         attribute HTMLBaseElementConstructor HTMLBaseElement;
         attribute HTMLBaseFontElementConstructor HTMLBaseFontElement;
+        attribute HTMLBlockquoteElementConstructor HTMLBlockquoteElement;
         attribute HTMLBodyElementConstructor HTMLBodyElement;
-        attribute HTMLBRElementConstructor HTMLBRElement;
         attribute HTMLButtonElementConstructor HTMLButtonElement;
+        attribute HTMLDListElementConstructor HTMLDListElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;
-        attribute HTMLDListElementConstructor HTMLDListElement;
         attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
         attribute HTMLFontElementConstructor HTMLFontElement;
         attribute HTMLFormElementConstructor HTMLFormElement;
         attribute HTMLFrameElementConstructor HTMLFrameElement;
         attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
+        attribute HTMLHRElementConstructor HTMLHRElement;
         attribute HTMLHeadElementConstructor HTMLHeadElement;
         attribute HTMLHeadingElementConstructor HTMLHeadingElement;
-        attribute HTMLHRElementConstructor HTMLHRElement;
         attribute HTMLHtmlElementConstructor HTMLHtmlElement;
         attribute HTMLIFrameElementConstructor HTMLIFrameElement;
         attribute HTMLImageElementConstructor HTMLImageElement;
         attribute HTMLInputElementConstructor HTMLInputElement;
         attribute HTMLIsIndexElementConstructor HTMLIsIndexElement;
+        attribute HTMLLIElementConstructor HTMLLIElement;
         attribute HTMLLabelElementConstructor HTMLLabelElement;
         attribute HTMLLegendElementConstructor HTMLLegendElement;
-        attribute HTMLLIElementConstructor HTMLLIElement;
         attribute HTMLLinkElementConstructor HTMLLinkElement;
         attribute HTMLMapElementConstructor HTMLMapElement;
         attribute HTMLMenuElementConstructor HTMLMenuElement;
         attribute HTMLMetaElementConstructor HTMLMetaElement;
         attribute HTMLModElementConstructor HTMLModElement;
-        attribute HTMLObjectElementConstructor HTMLObjectElement;
         attribute HTMLOListElementConstructor HTMLOListElement;
+        attribute HTMLObjectElementConstructor HTMLObjectElement;
         attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
         attribute HTMLOptionElementConstructor HTMLOptionElement;
         attribute HTMLParagraphElementConstructor HTMLParagraphElement;
@@ -133,10 +136,8 @@ module window {
         attribute HTMLTitleElementConstructor HTMLTitleElement;
         attribute HTMLUListElementConstructor HTMLUListElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
-        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
         attribute HTMLEmbedElementConstructor HTMLEmbedElement;
-
-        attribute HTMLDocumentConstructor HTMLDocument;
+        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
 
         attribute MutationEventConstructor MutationEvent;
         attribute NodeFilterConstructor NodeFilter;

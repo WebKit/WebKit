@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLOptGroupElement : HTMLElement {
+    interface [GenerateConstructor] HTMLOptGroupElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            label;
     };

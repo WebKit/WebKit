@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLIFrameElement : HTMLElement {
+    interface [GenerateConstructor] HTMLIFrameElement : HTMLElement {
 
                  attribute [ConvertNullToNullString] DOMString       align;
                  attribute [ConvertNullToNullString] DOMString       frameBorder;

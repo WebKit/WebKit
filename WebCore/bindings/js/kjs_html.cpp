@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,17 +27,9 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "HTMLAnchorElement.h"
-#include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
-#include "HTMLEmbedElement.h"
-#include "HTMLFormElement.h"
-#include "HTMLFrameElement.h"
-#include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
-#include "HTMLLabelElement.h"
 #include "HTMLNames.h"
-#include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "JSHTMLOptionsCollection.h"
@@ -63,82 +55,6 @@ using namespace EventNames;
 namespace KJS {
 
 /*
-@begin JSHTMLElementPrototypeTable 0
-@end
-*/
-
-const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, 0, 0 };
-
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSHTMLElementPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("HTMLElement", JSHTMLElementPrototype, JSHTMLElementPrototypeFunction)
-
-JSValue* JSHTMLElementPrototypeFunction::callAsFunction(ExecState*, JSObject*, const List&)
-{
-    return 0;
-}
-
-JSHTMLElement::JSHTMLElement(ExecState* exec, HTMLElement* e)
-    : WebCore::JSHTMLElement(exec, e)
-{
-    setPrototype(JSHTMLElementPrototype::self(exec));
-}
-
-UString JSHTMLElement::toString(ExecState* exec) const
-{
-    if (impl()->hasTagName(aTag))
-        return UString(static_cast<const HTMLAnchorElement*>(impl())->href());
-    return JSElement::toString(exec);
-}
-
-static HTMLFormElement* getForm(HTMLElement* element)
-{
-    if (element->isGenericFormElement())
-        return static_cast<HTMLGenericFormElement*>(element)->form();
-    if (element->hasTagName(labelTag))
-        return static_cast<HTMLLabelElement*>(element)->form();
-    if (element->hasTagName(objectTag))
-        return static_cast<HTMLObjectElement*>(element)->form();
-
-    return 0;
-}
-
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
-{
-    HTMLElement* element = static_cast<HTMLElement*>(impl());
-
-    // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
-
-    // The form is next, searched before the document, but after the element itself.
-
-    // First try to obtain the form from the element itself.  We do this to deal with
-    // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
-    // <table> or <tbody>.
-    HTMLFormElement* form = getForm(element);
-    if (form)
-        scope.push(static_cast<JSObject*>(toJS(exec, form)));
-    else {
-        WebCore::Node* form = element->parentNode();
-        while (form && !form->hasTagName(formTag))
-            form = form->parentNode();
-
-        if (form)
-            scope.push(static_cast<JSObject*>(toJS(exec, form)));
-    }
-
-    // The element is on top, searched first.
-    scope.push(static_cast<JSObject*>(toJS(exec, element)));
-}
-
-HTMLElement* toHTMLElement(JSValue *val)
-{
-    if (!val || !val->isObject(&JSHTMLElement::info))
-        return 0;
-    return static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(val)->impl());
-}
-
-// -------------------------------------------------------------------------
-/* Source for JSHTMLCollectionPrototypeTable. Use "make hashtables" to regenerate.
 @begin JSHTMLCollectionPrototypeTable 3
   item          JSHTMLCollection::Item            DontDelete|Function 1
   namedItem     JSHTMLCollection::NamedItem       DontDelete|Function 1
@@ -341,6 +257,11 @@ JSValue* toJS(ExecState* exec, HTMLOptionsCollection* c)
     return cacheDOMObject<HTMLOptionsCollection, JSHTMLOptionsCollection>(exec, c);
 }
 
+// -------------------------------------------------------------------------
+
+// Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+
+
 JSValue* runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
@@ -359,7 +280,7 @@ JSValue* runtimeObjectPropertyGetter(ExecState* exec, JSObject* originalObject, 
     return jsUndefined();
 }
 
-bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* originalObj, HTMLElement* thisImp)
+bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, WebCore::JSHTMLElement* originalObj, HTMLElement* thisImp)
 {
     JSValue* runtimeObject = getRuntimeObject(exec, thisImp);
     if (runtimeObject) {
@@ -406,4 +327,4 @@ JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const L
     return jsUndefined();
 }
 
-} // namespace
+} // namespace KJS

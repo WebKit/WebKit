@@ -19,7 +19,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLegendElement : HTMLElement {
+    interface [GenerateConstructor] HTMLLegendElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString align;

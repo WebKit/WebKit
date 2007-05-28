@@ -75,13 +75,13 @@ JSValue* JSHTMLInputElementBaseFunction::callAsFunction(ExecState* exec, JSObjec
     return jsUndefined();
 }
 
-const ClassInfo JSHTMLInputElementBase::info = { "JSHTMLInputElementBase", &KJS::JSHTMLElement::info, &JSHTMLInputElementBaseTable, 0 };
+const ClassInfo JSHTMLInputElementBase::info = { "JSHTMLInputElementBase", &JSHTMLElement::info, &JSHTMLInputElementBaseTable, 0 };
 
 JSHTMLInputElementBase::JSHTMLInputElementBase(ExecState* exec, PassRefPtr<HTMLInputElement> e)
-    : KJS::JSHTMLElement(exec, e.get())
+    : JSHTMLElement(exec, e.get())
 {
     // We don't really need a prototype, just use our parent class's prototype
-    setPrototype(KJS::JSHTMLElementPrototype::self(exec));
+    setPrototype(JSHTMLElementPrototype::self(exec));
 }
 
 bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -90,7 +90,7 @@ bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifie
     
     // if this element doesn't support selection, we have nothing to do, try our parent
     if (!input.canHaveSelection())
-        return KJS::JSHTMLElement::getOwnPropertySlot(exec, propertyName, slot);
+        return JSHTMLElement::getOwnPropertySlot(exec, propertyName, slot);
     
     // otherwise, do our own function lookup on our function table
     const HashEntry* entry = Lookup::findEntry(&JSHTMLInputElementBaseFunctionTable, propertyName);
@@ -101,7 +101,7 @@ bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifie
     ASSERT(!entry);
     
     // finally try value lookup or walk the parent chain
-    return getStaticValueSlot<JSHTMLInputElementBase, KJS::JSHTMLElement>(exec, &JSHTMLInputElementBaseTable, this, propertyName, slot);
+    return getStaticValueSlot<JSHTMLInputElementBase, JSHTMLElement>(exec, &JSHTMLInputElementBaseTable, this, propertyName, slot);
 }
 
 JSValue* JSHTMLInputElementBase::getValueProperty(ExecState* exec, int token) const
@@ -120,7 +120,7 @@ JSValue* JSHTMLInputElementBase::getValueProperty(ExecState* exec, int token) co
 
 void JSHTMLInputElementBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
-    lookupPut<JSHTMLInputElementBase, KJS::JSHTMLElement>(exec, propertyName, value, attr, &JSHTMLInputElementBaseTable, this);
+    lookupPut<JSHTMLInputElementBase, JSHTMLElement>(exec, propertyName, value, attr, &JSHTMLInputElementBaseTable, this);
 }
 
 void JSHTMLInputElementBase::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
@@ -138,4 +138,4 @@ void JSHTMLInputElementBase::putValueProperty(ExecState* exec, int token, JSValu
     ASSERT_NOT_REACHED();
 }
 
-}
+} // namespace WebCore

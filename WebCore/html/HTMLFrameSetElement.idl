@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor, HasOverridingNameGetter] HTMLFrameSetElement : HTMLElement {
+    interface [GenerateConstructor, HasOverridingNameGetter] HTMLFrameSetElement : HTMLElement {
 
         attribute [ConvertNullToNullString] DOMString cols;
         attribute [ConvertNullToNullString] DOMString rows;

@@ -16,7 +16,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object HTMLDocumentPrototype]
 
------ [object HTMLDivElement] (8 prototypes) -----
+----- [object HTMLDivElement] (7 prototypes) -----
 
 [object Object]
 
@@ -27,14 +27,12 @@ NOTE: This test will start failing if you change the layout of a related prototy
 [object DOMEventTargetNodePrototype]
 
 [object ElementPrototype]
-
-[object HTMLElementPrototype]
 
 [object HTMLElementPrototype]
 
 [object HTMLDivElementPrototype]
 
------ [object HTMLFormElement] (8 prototypes) -----
+----- [object HTMLFormElement] (7 prototypes) -----
 
 [object Object]
 
@@ -45,8 +43,6 @@ NOTE: This test will start failing if you change the layout of a related prototy
 [object DOMEventTargetNodePrototype]
 
 [object ElementPrototype]
-
-[object HTMLElementPrototype]
 
 [object HTMLElementPrototype]
 

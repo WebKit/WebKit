@@ -56,7 +56,7 @@ public:
      */
     HTMLElement *formElement();
 
-    HTMLFormElement *form();
+    HTMLFormElement *form() const;
 
     String accessKey() const;
     void setAccessKey(const String &);
@@ -65,6 +65,8 @@ public:
     void setHtmlFor(const String &);
 
     void focus(bool restorePreviousSelection = true);
+
+    virtual HTMLFormElement* formForEventHandlerScope() const;
 
  private:
     String m_formElementID;

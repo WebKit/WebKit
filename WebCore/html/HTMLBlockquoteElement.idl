@@ -19,7 +19,8 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLBlockquoteElement : HTMLElement {
+    interface [GenerateConstructor] HTMLBlockquoteElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString cite;
     };
+
 }

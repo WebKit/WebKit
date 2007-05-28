@@ -143,7 +143,7 @@ void HTMLLabelElement::accessKeyAction(bool sendToAnyElement)
         element->accessKeyAction(sendToAnyElement);
 }
 
-HTMLFormElement *HTMLLabelElement::form()
+HTMLFormElement* HTMLLabelElement::form() const
 {
     for (Node *p = parentNode(); p != 0; p = p->parentNode()) {
         if (p->hasTagName(formTag))
@@ -171,6 +171,11 @@ String HTMLLabelElement::htmlFor() const
 void HTMLLabelElement::setHtmlFor(const String &value)
 {
     setAttribute(forAttr, value);
+}
+
+HTMLFormElement* HTMLLabelElement::formForEventHandlerScope() const
+{
+    return form();
 }
 
 } // namespace

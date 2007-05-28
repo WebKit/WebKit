@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLFieldSetElement : HTMLElement {
+    interface [GenerateConstructor] HTMLFieldSetElement : HTMLElement {
         readonly attribute HTMLFormElement form;
     };
 }

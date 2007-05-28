@@ -118,7 +118,9 @@ public:
     bool isDocNamedItem() const { return m_docNamedItem; }
 
     bool containsJavaApplet() const;
-    
+
+    virtual HTMLFormElement* formForEventHandlerScope() const;
+
 #if ENABLE(SVG)
     SVGDocument* getSVGDocument(ExceptionCode&) const;
 #endif

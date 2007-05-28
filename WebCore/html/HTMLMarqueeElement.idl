@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLMarqueeElement : HTMLElement {
+    interface [GenerateConstructor] HTMLMarqueeElement : HTMLElement {
         void start();
         void stop();
 

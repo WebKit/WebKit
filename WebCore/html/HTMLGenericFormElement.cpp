@@ -241,4 +241,9 @@ bool HTMLGenericFormElement::supportsFocus() const
     return isFocusable() || (!disabled() && !document()->haveStylesheetsLoaded());
 }
 
-} // namespace
+HTMLFormElement* HTMLGenericFormElement::formForEventHandlerScope() const
+{
+    return form();
+}
+
+} // namespace Webcore

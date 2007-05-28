@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLModElement : HTMLElement {
+    interface [GenerateConstructor] HTMLModElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString cite;
         attribute [ConvertNullToNullString] DOMString dateTime;
     };

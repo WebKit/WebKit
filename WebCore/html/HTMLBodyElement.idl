@@ -19,7 +19,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBodyElement : HTMLElement {
+    interface [GenerateConstructor] HTMLBodyElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString aLink;
         attribute [ConvertNullToNullString] DOMString background;
         attribute [ConvertNullToNullString] DOMString bgColor;

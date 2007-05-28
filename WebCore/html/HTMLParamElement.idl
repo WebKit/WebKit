@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLParamElement : HTMLElement {
+    interface [GenerateConstructor] HTMLParamElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString name;
         attribute [ConvertNullToNullString] DOMString type;
         attribute [ConvertNullToNullString] DOMString value;

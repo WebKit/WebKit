@@ -98,6 +98,8 @@ public:
 
     void formDestroyed() { m_form = 0; }
 
+    virtual HTMLFormElement* formForEventHandlerScope() const;
+
 protected:
     HTMLFormElement* getForm() const;
 

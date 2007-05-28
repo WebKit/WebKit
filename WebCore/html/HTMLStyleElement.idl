@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLStyleElement : HTMLElement {
+    interface [GenerateConstructor] HTMLStyleElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            media;
         attribute  [ConvertNullToNullString] DOMString            type;

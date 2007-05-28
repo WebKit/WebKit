@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLFrameElement : HTMLElement {
+    interface [GenerateConstructor] HTMLFrameElement : HTMLElement {
 
                  attribute [ConvertNullToNullString] DOMString       frameBorder;
                  attribute [ConvertNullToNullString] DOMString       longDesc;

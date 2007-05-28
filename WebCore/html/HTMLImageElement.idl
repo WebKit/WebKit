@@ -19,7 +19,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLImageElement : HTMLElement {
+    interface [GenerateConstructor] HTMLImageElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [ConvertNullToNullString] DOMString align;
                  attribute [ConvertNullToNullString] DOMString alt;

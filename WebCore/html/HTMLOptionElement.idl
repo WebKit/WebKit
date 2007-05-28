@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateNativeConverter] HTMLOptionElement : HTMLElement {
+    interface [GenerateNativeConverter] HTMLOptionElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
                  attribute  boolean              defaultSelected;
 #if defined(LANGUAGE_JAVASCRIPT)

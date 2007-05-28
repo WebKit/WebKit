@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLOListElement : HTMLElement {
+    interface [GenerateConstructor] HTMLOListElement : HTMLElement {
         attribute boolean compact;
         attribute long start;
         attribute [ConvertNullToNullString] DOMString type;

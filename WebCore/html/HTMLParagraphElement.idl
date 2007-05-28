@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLParagraphElement : HTMLElement {
+    interface [GenerateConstructor] HTMLParagraphElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString align;
     };
 

@@ -26,6 +26,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "JSHTMLOptionElement.h"
+#include "kjs_html.h"
 
 namespace WebCore {
 

@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLScriptElement : HTMLElement {
+    interface [GenerateConstructor] HTMLScriptElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString text;
         attribute [ConvertNullToNullString] DOMString htmlFor;
         attribute [ConvertNullToNullString] DOMString event;

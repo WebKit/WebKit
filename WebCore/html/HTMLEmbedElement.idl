@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLEmbedElement : HTMLElement {
+    interface [GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLEmbedElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT)
                  attribute [ConvertNullToNullString] DOMString height;

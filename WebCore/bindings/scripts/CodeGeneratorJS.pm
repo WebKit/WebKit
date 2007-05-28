@@ -352,6 +352,16 @@ sub GenerateHeader
         push(@headerContent, "    virtual void mark();\n\n");
     }
 
+    # Custom toString function
+    if ($dataNode->extendedAttributes->{"CustomToString"}) {
+        push(@headerContent, "    virtual KJS::UString toString(KJS::ExecState*) const;\n\n");
+    }
+
+    # Custom pushEventHandlerScope function
+    if ($dataNode->extendedAttributes->{"CustomPushEventHandlerScope"}) {
+        push(@headerContent, "    virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;\n\n");
+    }
+
     # Custom call functions
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List& args);\n");

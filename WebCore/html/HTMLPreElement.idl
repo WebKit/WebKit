@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLPreElement : HTMLElement {
+    interface [GenerateConstructor] HTMLPreElement : HTMLElement {
         // FIXME: DOM spec says that width should be of type DOMString
         // see http://bugs.webkit.org/show_bug.cgi?id=8992
         attribute long width;

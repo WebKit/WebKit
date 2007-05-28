@@ -25,7 +25,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLCanvasElement : HTMLElement {
+    interface [GenerateConstructor] HTMLCanvasElement : HTMLElement {
 
         attribute long width;
         attribute long height;

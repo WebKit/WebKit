@@ -24,22 +24,44 @@
  */
 
 #include "config.h"
-#include "JSHTMLAnchorElement.h"
+#include "JSHTMLElement.h"
 
-#include "HTMLAnchorElement.h"
+#include "Document.h"
+#include "HTMLElement.h"
+#include "HTMLFormElement.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 
-// Implicit toString
-KJS::UString JSHTMLAnchorElement::toString(KJS::ExecState* exec) const
-{
-    return KJS::UString(static_cast<const HTMLAnchorElement*>(impl())->href());
-}
+using namespace KJS;
+using namespace HTMLNames;
 
-// Explicit toString
-KJS::JSValue* JSHTMLAnchorElement::toString(KJS::ExecState* exec, const KJS::List&)
+void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
 {
-    return KJS::jsString(toString(exec));
+    HTMLElement* element = static_cast<HTMLElement*>(impl());
+
+    // The document is put on first, fall back to searching it only after the element and form.
+    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
+
+    // The form is next, searched before the document, but after the element itself.
+
+    // First try to obtain the form from the element itself.  We do this to deal with
+    // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
+    // <table> or <tbody>.
+    HTMLFormElement* form = element->formForEventHandlerScope();
+    if (form)
+        scope.push(static_cast<JSObject*>(toJS(exec, form)));
+    else {
+        Node* form = element->parentNode();
+        while (form && !form->hasTagName(formTag))
+            form = form->parentNode();
+
+        if (form)
+            scope.push(static_cast<JSObject*>(toJS(exec, form)));
+    }
+
+    // The element is on top, searched first.
+    scope.push(static_cast<JSObject*>(toJS(exec, element)));
 }
 
 } // namespace WebCore

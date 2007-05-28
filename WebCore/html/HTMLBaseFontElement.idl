@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBaseFontElement : HTMLElement {
+    interface [GenerateConstructor] HTMLBaseFontElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString color;
         attribute [ConvertNullToNullString] DOMString face;
 #if defined(LANGUAGE_OBJECTIVE_C)

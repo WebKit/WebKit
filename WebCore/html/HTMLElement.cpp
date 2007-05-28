@@ -864,4 +864,9 @@ RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style
     return RenderObject::createObject(this, style);
 }
 
+HTMLFormElement* HTMLElement::formForEventHandlerScope() const
+{
+    return 0;
 }
+
+} // namespace WebCore

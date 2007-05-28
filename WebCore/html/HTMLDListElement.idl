@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLDListElement : HTMLElement {
+    interface [GenerateConstructor] HTMLDListElement : HTMLElement {
         attribute boolean compact;
     };
 

@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLTableCellElement : HTMLElement {
+    interface [GenerateConstructor] HTMLTableCellElement : HTMLElement {
 
         readonly attribute long            cellIndex;
                  attribute [ConvertNullToNullString] DOMString       abbr;

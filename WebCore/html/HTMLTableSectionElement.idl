@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement, GenerateNativeConverter, GenerateConstructor] HTMLTableSectionElement : HTMLElement {
+    interface [GenerateNativeConverter, GenerateConstructor] HTMLTableSectionElement : HTMLElement {
 
                  attribute [ConvertNullToNullString] DOMString       align;
                  attribute [ConvertNullToNullString] DOMString       ch;
