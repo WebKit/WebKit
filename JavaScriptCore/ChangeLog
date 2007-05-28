@@ -1,3 +1,9 @@
+2007-05-27  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        * wtf/Platform.h: Move Gdk up to allow building WebKit/Gdk on Darwin
+
 2007-05-27  Darin Adler  <darin@apple.com>
 
         - fix a couple ifdefs that said WIN instead of WIN_OS
