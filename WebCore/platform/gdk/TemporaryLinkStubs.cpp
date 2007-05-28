@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * All rights reserved.
  *
@@ -28,13 +28,14 @@
 #include "config.h"
 
 #include "AXObjectCache.h"
+#include "CString.h"
+#include "CachedPage.h"
 #include "CachedResource.h"
 #include "ChromeClientGdk.h"
-#include "CookieJar.h"
+#include "Clipboard.h"
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
-#include "Clipboard.h"
-#include "CString.h"
+#include "CookieJar.h"
 #include "Cursor.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -43,9 +44,9 @@
 #include "FileChooser.h"
 #include "Font.h"
 #include "FrameGdk.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
-#include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
@@ -56,12 +57,10 @@
 #include "IntPoint.h"
 #include "KURL.h"
 #include "Language.h"
-#include "loader.h"
 #include "LocalizedStrings.h"
 #include "MainResourceLoader.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include "CachedPage.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h"
@@ -75,24 +74,25 @@
 #include "TextBoundaries.h"
 #include "TextBreakIteratorInternalICU.h"
 #include "Widget.h"
+#include "loader.h"
 #include <gtk/gtk.h>
 #include <stdio.h>
 
 using namespace WebCore;
 
 namespace WebCore {
-class Page;
+    class Page;
 }
 
 void FrameView::updateBorder() { notImplemented(); }
 
-void Widget::setEnabled(bool) { notImplementedGdk(); }
-bool Widget::isEnabled() const { notImplementedGdk(); return false; }
-void Widget::removeFromParent() { notImplementedGdk(); }
-void Widget::paint(GraphicsContext*, IntRect const&) { notImplementedGdk(); }
-void Widget::setIsSelected(bool) { notImplementedGdk(); }
-void Widget::invalidate() { notImplementedGdk(); }
-void Widget::invalidateRect(const IntRect&) { notImplementedGdk(); }
+void Widget::setEnabled(bool) { notImplemented(); }
+bool Widget::isEnabled() const { notImplemented(); return false; }
+void Widget::removeFromParent() { notImplemented(); }
+void Widget::paint(GraphicsContext*, IntRect const&) { notImplemented(); }
+void Widget::setIsSelected(bool) { notImplemented(); }
+void Widget::invalidate() { notImplemented(); }
+void Widget::invalidateRect(const IntRect&) { notImplemented(); }
 
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 void WebCore::findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }

@@ -36,9 +36,9 @@
 #include "Frame.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
-#include "NotImplemented.h"
 
 #include <stdio.h>
 
@@ -297,48 +297,48 @@ void EditorClientGdk::textDidChangeInTextArea(Element*)
 
 void EditorClientGdk::ignoreWordInSpellDocument(const String&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::learnWord(const String&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::checkSpellingOfString(const UChar*, int, int*, int*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::updateSpellingUIWithMisspelledWord(const String&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void EditorClientGdk::showSpellingUI(bool)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 bool EditorClientGdk::spellingUIIsShowing()
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 void EditorClientGdk::getGuessesForWord(const String&, Vector<String>&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 }

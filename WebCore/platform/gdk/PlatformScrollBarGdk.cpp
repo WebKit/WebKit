@@ -27,8 +27,8 @@
 
 #include "config.h"
 #include "PlatformScrollBar.h"
-#include "NotImplementedGdk.h"
 
+#include "NotImplemented.h"
 #include <gtk/gtk.h>
 #include <stdio.h>
 
@@ -68,17 +68,17 @@ void PlatformScrollbar::setEnabled(bool enabled)
 
 void PlatformScrollbar::paint(GraphicsContext*, const IntRect&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void PlatformScrollbar::updateThumbPosition()
 { 
-    notImplementedGdk();
+    notImplemented();
 }
 
 void PlatformScrollbar::updateThumbProportion()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void PlatformScrollbar::setRect(const IntRect& rect)

@@ -1,3 +1,34 @@
+2007-05-27  Sam Weinig  <sam@webkit.org>
+
+        Gdk build fix.  Forgot to update a few instances of notImplementedGdk() to notImplemented().
+
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::ignoreWordInSpellDocument):
+        (WebCore::EditorClientGdk::learnWord):
+        (WebCore::EditorClientGdk::checkSpellingOfString):
+        (WebCore::EditorClientGdk::checkGrammarOfString):
+        (WebCore::EditorClientGdk::updateSpellingUIWithGrammarString):
+        (WebCore::EditorClientGdk::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientGdk::showSpellingUI):
+        (WebCore::EditorClientGdk::spellingUIIsShowing):
+        (WebCore::EditorClientGdk::getGuessesForWord):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::Frame::dashboardRegionsChanged):
+        * platform/gdk/PlatformScrollBarGdk.cpp:
+        (PlatformScrollbar::paint):
+        (PlatformScrollbar::updateThumbPosition):
+        (PlatformScrollbar::updateThumbProportion):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Widget::setEnabled):
+        (Widget::isEnabled):
+        (Widget::removeFromParent):
+        (Widget::paint):
+        (Widget::setIsSelected):
+        (Widget::invalidate):
+        (Widget::invalidateRect):
+
 2007-05-27  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Sam and Oliver.
