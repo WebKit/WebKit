@@ -1,3 +1,22 @@
+2007-05-28  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (newly passing tests).
+
+        http://bugs.webkit.org/show_bug.cgi?id=13793
+        RULES=groups overridden by border, colgroup=span not honored by border collapsing
+
+        Moved three now-passing tests from tables/mozilla_expected_failures to tables/mozilla.
+
+        * qt/tables/mozilla/marvin/colgroup_width_pct-expected.txt:
+          Copied from qt/tables/mozilla_expected_failures/marvin/colgroup_width_pct-expected.txt.
+        * qt/tables/mozilla/marvin/colgroup_width_px-expected.txt:
+          Copied from qt/tables/mozilla_expected_failures/marvin/colgroup_width_px-expected.txt.
+        * qt/tables/mozilla/marvin/x_colgroup_width_pct-expected.txt:
+          Copied from qt/tables/mozilla_expected_failures/marvin/x_colgroup_width_pct-expected.txt.
+        * qt/tables/mozilla_expected_failures/marvin/colgroup_width_pct-expected.txt: Removed.
+        * qt/tables/mozilla_expected_failures/marvin/colgroup_width_px-expected.txt: Removed.
+        * qt/tables/mozilla_expected_failures/marvin/x_colgroup_width_pct-expected.txt: Removed.
+
 2007-05-21  Lars Knoll <lars@trolltech.com>
 
         Updating and adding test cases.
