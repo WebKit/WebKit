@@ -81,7 +81,7 @@ for my $file (sort @files) {
         my $shortName = $file;
         $shortName =~ s/.*\///;
 
-	next if $shortName eq "array_object.o";
+        next if $shortName eq "array_object.o";
 
         # Special cases for files that have initializers in debug builds.
         if ($configuration eq "Debug") {
@@ -90,6 +90,7 @@ for my $file (sort @files) {
                 next if $shortName eq "AllInOneFile.o";
             }
             if ($target eq "WebCore") {
+                next if $shortName eq "CachedPage.o";
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "Node.o";
                 next if $shortName eq "Range.o";

@@ -1,3 +1,9 @@
+2007-05-29  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r21745.
+
+        * Scripts/check-for-global-initializers: Skip CachedPage.o as it now has a global initializer in debug builds.
+
 2007-05-25  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
