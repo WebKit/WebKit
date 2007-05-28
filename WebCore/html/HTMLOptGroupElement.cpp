@@ -127,9 +127,11 @@ bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 
 void HTMLOptGroupElement::attach()
 {
-    RenderStyle* style = styleForRenderer(0);
-    setRenderStyle(style);
-    style->deref(document()->renderArena());
+    if (parentNode()->renderStyle()) {
+        RenderStyle* style = styleForRenderer(0);
+        setRenderStyle(style);
+        style->deref(document()->renderArena());
+    }
     HTMLGenericFormElement::attach();
 }
 

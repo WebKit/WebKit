@@ -1,3 +1,15 @@
+2007-05-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13896
+          REGRESSION (NativePopup): Reproductible crasher on Google Coop control panel
+
+        * fast/forms/select-display-none-style-resolve-expected.checksum: Added.
+        * fast/forms/select-display-none-style-resolve-expected.png: Added.
+        * fast/forms/select-display-none-style-resolve-expected.txt: Added.
+        * fast/forms/select-display-none-style-resolve.html: Added.
+
 2007-05-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

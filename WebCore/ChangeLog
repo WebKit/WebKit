@@ -1,3 +1,18 @@
+2007-05-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13896
+          REGRESSION (NativePopup): Reproductible crasher on Google Coop control panel
+
+        Test: fast/forms/select-display-none-style-resolve.html
+
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach): Do not compute style if the parent
+        does not have style.
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach): Ditto.
+
 2007-05-28  Sam Weinig  <sam@webkit.org>
 
         Fix Gdk and Qt builds.
