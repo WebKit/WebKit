@@ -216,6 +216,7 @@ IDL_BINDINGS += \
     html/HTMLDListElement.idl \
     html/HTMLDocument.idl \
     html/HTMLElement.idl \
+    html/HTMLEmbedElement.idl \
     html/HTMLFieldSetElement.idl \
     html/HTMLFontElement.idl \
     html/HTMLFormElement.idl \
@@ -238,6 +239,7 @@ IDL_BINDINGS += \
     html/HTMLMenuElement.idl \
     html/HTMLMetaElement.idl \
     html/HTMLModElement.idl \
+    html/HTMLObjectElement.idl \
     html/HTMLOListElement.idl \
     html/HTMLOptGroupElement.idl \
     html/HTMLOptionElement.idl \
@@ -268,11 +270,14 @@ SOURCES += \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLAnchorElementCustom.cpp \
+    bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
+    bindings/js/JSHTMLEmbedElementCustom.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
     bindings/js/JSHTMLFrameSetElementCustom.cpp \
     bindings/js/JSHTMLInputElementBase.cpp \
+    bindings/js/JSHTMLObjectElementCustom.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
