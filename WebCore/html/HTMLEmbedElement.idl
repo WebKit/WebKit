@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,13 +20,26 @@
 
 module html {
 
-    interface HTMLEmbedElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLEmbedElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString align;
+#if defined(LANGUAGE_JAVASCRIPT)
+                 attribute [ConvertNullToNullString] DOMString height;
+#else
                  attribute [ConvertFromString] long height;
+#endif
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [ConvertNullToNullString] DOMString src;
                  attribute [ConvertNullToNullString] DOMString type;
+#if defined(LANGUAGE_JAVASCRIPT)
+                 attribute [ConvertNullToNullString] DOMString width;
+#else
                  attribute [ConvertFromString] long width;
+#endif
+
+#if ENABLE_SVG
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+            raises(DOMException);
+#endif
     };
 
 }

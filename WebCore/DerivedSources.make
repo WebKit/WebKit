@@ -337,6 +337,7 @@ all : \
     JSHTMLDivElement.h \
     JSHTMLDocument.h \
     JSHTMLElement.h \
+    JSHTMLEmbedElement.h \
     JSHTMLFieldSetElement.h \
     JSHTMLFontElement.h \
     JSHTMLFormElement.h \
@@ -362,6 +363,7 @@ all : \
     JSHTMLModElement.h \
     JSHTMLOListElement.h \
     JSHTMLOptGroupElement.h \
+    JSHTMLObjectElement.h \
     JSHTMLOptionElement.h \
     JSHTMLOptionsCollection.h \
     JSHTMLParagraphElement.h \

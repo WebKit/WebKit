@@ -79,7 +79,6 @@ module window {
         attribute EntityReferenceConstructor EntityReference;
         attribute ProcessingInstructionConstructor ProcessingInstruction;
         
-        // FIXME: Implement the commented-out global constructors for elements listed in DOM Level 2 HTML specification.
         attribute HTMLElementConstructor HTMLElement;
         attribute HTMLAnchorElementConstructor HTMLAnchorElement;
         attribute HTMLAppletElementConstructor HTMLAppletElement;
@@ -113,7 +112,7 @@ module window {
         attribute HTMLMenuElementConstructor HTMLMenuElement;
         attribute HTMLMetaElementConstructor HTMLMetaElement;
         attribute HTMLModElementConstructor HTMLModElement;
-//        attribute HTMLObjectElementConstructor HTMLObjectElement;
+        attribute HTMLObjectElementConstructor HTMLObjectElement;
         attribute HTMLOListElementConstructor HTMLOListElement;
         attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
         attribute HTMLOptionElementConstructor HTMLOptionElement;
@@ -135,8 +134,10 @@ module window {
         attribute HTMLUListElementConstructor HTMLUListElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
         attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
+        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
 
         attribute HTMLDocumentConstructor HTMLDocument;
+
         attribute MutationEventConstructor MutationEvent;
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;

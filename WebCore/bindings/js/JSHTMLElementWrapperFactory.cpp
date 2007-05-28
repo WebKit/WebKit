@@ -32,6 +32,7 @@
 #include "HTMLDListElement.h"
 #include "HTMLDirectoryElement.h"
 #include "HTMLDivElement.h"
+#include "HTMLEmbedElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
@@ -55,6 +56,7 @@
 #include "HTMLMetaElement.h"
 #include "HTMLModElement.h"
 #include "HTMLOListElement.h"
+#include "HTMLObjectElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParagraphElement.h"
@@ -89,6 +91,7 @@
 #include "JSHTMLDListElement.h"
 #include "JSHTMLDirectoryElement.h"
 #include "JSHTMLDivElement.h"
+#include "JSHTMLEmbedElement.h"
 #include "JSHTMLFieldSetElement.h"
 #include "JSHTMLFontElement.h"
 #include "JSHTMLFormElement.h"
@@ -112,6 +115,7 @@
 #include "JSHTMLMetaElement.h"
 #include "JSHTMLModElement.h"
 #include "JSHTMLOListElement.h"
+#include "JSHTMLObjectElement.h"
 #include "JSHTMLOptGroupElement.h"
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLParagraphElement.h"
@@ -160,6 +164,7 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(dir, Directory) \
     macro(div, Div) \
     macro(dl, DList) \
+    macro(embed, Embed) \
     macro(fieldset, FieldSet) \
     macro(font, Font) \
     macro(form, Form) \
@@ -178,9 +183,10 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(li, LI) \
     macro(link, Link) \
     macro(map, Map) \
+    macro(marquee, Marquee) \
     macro(menu, Menu) \
     macro(meta, Meta) \
-    macro(marquee, Marquee) \
+    macro(object, Object) \
     macro(ol, OList) \
     macro(optgroup, OptGroup) \
     macro(option, Option) \
@@ -236,4 +242,4 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
     return new KJS::JSHTMLElement(exec, element.get());
 }
 
-}
+} // namespace WebCore

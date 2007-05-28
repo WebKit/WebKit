@@ -322,6 +322,9 @@ sub GenerateHeader
     if ($numAttributes > 0) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
         push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
+        if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
+            push(@headerContent, "    bool customGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
+        }
     }
 
     # Check if we have any writable properties
@@ -335,15 +338,24 @@ sub GenerateHeader
     if ($hasReadWriteProperties) {
         push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);\n");
         push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);\n");
+        if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
+            push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr);\n");
+        }
     }
 
     # Class info
     push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
-    push(@headerContent, "    static const KJS::ClassInfo info;\n");
+    push(@headerContent, "    static const KJS::ClassInfo info;\n\n");
 
     # Custom mark function
     if ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-        push(@headerContent, "\n    virtual void mark();\n\n");
+        push(@headerContent, "    virtual void mark();\n\n");
+    }
+
+    # Custom call functions
+    if ($dataNode->extendedAttributes->{"CustomCall"}) {
+        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List& args);\n");
+        push(@headerContent, "    virtual bool implementsCall() const;\n\n");
     }
 
     # Constructor object getter
@@ -803,6 +815,12 @@ sub GenerateImplementation
             &$hasNameGetterGeneration();
         }
 
+        if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
+                push(@implContent, "    bool didGet = customGetOwnPropertySlot(exec, propertyName, slot);\n");
+                push(@implContent, "    if (didGet)\n");
+                push(@implContent, "        return true;\n");
+        }
+
         if ($requiresManualLookup) {
             push(@implContent, "    return ${parentClassName}::getOwnPropertySlot(exec, propertyName, slot);\n");
         } else {
@@ -907,6 +925,12 @@ sub GenerateImplementation
                 push(@implContent, "        return;\n");
                 push(@implContent, "    }\n");
             }
+            if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
+                push(@implContent, "    bool didPut = customPut(exec, propertyName, value, attr);\n");
+                push(@implContent, "    if (didPut)\n");
+                push(@implContent, "        return;\n");
+            }
+
             push(@implContent, "    lookupPut<$className, $parentClassName>(exec, propertyName, value, attr, &${className}Table, this);\n");
             push(@implContent, "}\n\n");
 
@@ -1018,6 +1042,11 @@ sub GenerateImplementation
 
             if (@{$function->raisesExceptions}) {
                 push(@implContent, "        ExceptionCode ec = 0;\n");
+            }
+
+            if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
+                push(@implContent, "        if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                push(@implContent, "            return jsUndefined();\n");
             }
 
             my $paramIndex = 0;

@@ -46,41 +46,12 @@ namespace KJS {
   class JSHTMLElement : public WebCore::JSHTMLElement {
   public:
     JSHTMLElement(ExecState*, WebCore::HTMLElement*);
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    void putValueProperty(ExecState*, int token, JSValue*, int);
-    virtual UString toString(ExecState*) const;
-    virtual void pushEventHandlerScope(ExecState*, ScopeChain &scope) const;
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
-    virtual bool implementsCall() const;
-    virtual const ClassInfo* classInfo() const;
+
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
-    static const ClassInfo object_info, embed_info;
-
-    // FIXME: Might make sense to combine this with ClassInfo some day.
-    typedef JSValue* (JSHTMLElement::*GetterFunction)(ExecState*, int token) const;
-    typedef void (JSHTMLElement::*SetterFunction)(ExecState*, int token, JSValue*);
-    struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
-    const Accessors* accessors() const;
-    static const Accessors object_accessors, embed_accessors;
-
-    JSValue* objectGetter(ExecState* exec, int token) const;
-    void  objectSetter(ExecState*, int token, JSValue*);
-    JSValue* embedGetter(ExecState*, int token) const;
-    void  embedSetter(ExecState*, int token, JSValue*);
-
-    enum {
-           ObjectHspace, ObjectHeight, ObjectAlign,
-           ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
-           ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
-           ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument, ObjectGetSVGDocument,
-           EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth, EmbedGetSVGDocument
-    };
-  private:
-    static JSValue* runtimeObjectGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* runtimeObjectPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    virtual UString toString(ExecState*) const;
+    virtual void pushEventHandlerScope(ExecState*, ScopeChain& scope) const;
   };
 
   WebCore::HTMLElement* toHTMLElement(JSValue*); // returns 0 if passed-in value is not a JSHTMLElement object
@@ -131,6 +102,13 @@ namespace KJS {
   JSValue* getHTMLCollection(ExecState*, WebCore::HTMLCollection*);
   JSValue* getAllHTMLCollection(ExecState*, WebCore::HTMLCollection*);
 
-} // namespace
+  JSValue* runtimeObjectGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+  JSValue* runtimeObjectPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+  bool runtimeObjectCustomGetOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, JSHTMLElement*, WebCore::HTMLElement*);
+  bool runtimeObjectCustomPut(ExecState*, const Identifier&, JSValue*, int attr, WebCore::HTMLElement*);
+  bool runtimeObjectImplementsCall(WebCore::HTMLElement*);
+  JSValue* runtimeObjectCallAsFunction(ExecState*, JSObject*, const List&, WebCore::HTMLElement*);
 
-#endif
+} // namespace KJS
+
+#endif // kjs_html_h

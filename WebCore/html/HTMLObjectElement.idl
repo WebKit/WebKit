@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,8 +20,7 @@
 
 module html {
 
-    interface HTMLObjectElement : HTMLElement {
-
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLObjectElement : HTMLElement {
         readonly attribute HTMLFormElement form;
                  attribute [ConvertNullToNullString] DOMString       code;
                  attribute [ConvertNullToNullString] DOMString       align;
@@ -40,8 +39,14 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       useMap;
                  attribute long            vspace;
                  attribute [ConvertNullToNullString] DOMString       width;
+
         // Introduced in DOM Level 2:
-        readonly attribute Document        contentDocument;
+        readonly attribute [CheckFrameSecurity] Document        contentDocument;
+
+#if ENABLE_SVG
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+            raises(DOMException);
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:

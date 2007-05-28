@@ -1,5 +1,57 @@
 2007-05-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Hyatt.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13893
+        Autogenerate the JS bindings for the HTMLObjectElement, 
+        HTMLEmbedElement and HTMLAppletElement
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLAppletElementCustom.cpp: Added.
+        (WebCore::JSHTMLAppletElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLAppletElement::customPut):
+        (WebCore::JSHTMLAppletElement::implementsCall):
+        (WebCore::JSHTMLAppletElement::callAsFunction):
+        (WebCore::JSHTMLAppletElement::canGetItemsForName):
+        (WebCore::JSHTMLAppletElement::nameGetter):
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.cpp: Added.
+        (WebCore::JSHTMLEmbedElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLEmbedElement::customPut):
+        (WebCore::JSHTMLEmbedElement::implementsCall):
+        (WebCore::JSHTMLEmbedElement::callAsFunction):
+        (WebCore::JSHTMLEmbedElement::canGetItemsForName):
+        (WebCore::JSHTMLEmbedElement::nameGetter):
+        * bindings/js/JSHTMLObjectElementCustom.cpp: Added.
+        (WebCore::JSHTMLObjectElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLObjectElement::customPut):
+        (WebCore::JSHTMLObjectElement::implementsCall):
+        (WebCore::JSHTMLObjectElement::callAsFunction):
+        (WebCore::JSHTMLObjectElement::canGetItemsForName):
+        (WebCore::JSHTMLObjectElement::nameGetter):
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::toString):
+        (KJS::JSHTMLElement::pushEventHandlerScope):
+        (KJS::runtimeObjectGetter):
+        (KJS::runtimeObjectPropertyGetter):
+        (KJS::runtimeObjectCustomGetOwnPropertySlot):
+        (KJS::runtimeObjectCustomPut):
+        (KJS::runtimeObjectImplementsCall):
+        (KJS::runtimeObjectCallAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::classInfo):
+        * bindings/scripts/CodeGeneratorJS.pm: Add support for 
+        CustomGetOwnPropertySlot, CustomPutFunction, CustomCall,
+        and SVGCheckSecurityDocument properties.
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/DOMWindow.idl: Uncomment constructors.
+
+2007-05-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver.
 
         Gdk build fix.

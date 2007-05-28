@@ -62,86 +62,12 @@ using namespace EventNames;
 
 namespace KJS {
 
-class HTMLElementFunction : public InternalFunctionImp {
-public:
-  HTMLElementFunction(ExecState* exec, int i, int len, const Identifier& name);
-  virtual JSValue *callAsFunction(ExecState* exec, JSObject* thisObj, const List&args);
-private:
-  int id;
-};
-
-const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
-
-const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
-const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
-
-const ClassInfo* JSHTMLElement::classInfo() const
-{
-    static HashMap<AtomicStringImpl*, const ClassInfo*> classInfoMap;
-    if (classInfoMap.isEmpty()) {
-        classInfoMap.set(embedTag.localName().impl(), &embed_info);
-        classInfoMap.set(objectTag.localName().impl(), &object_info);
-    }
-    
-    HTMLElement* element = static_cast<HTMLElement*>(impl());
-    const ClassInfo* result = classInfoMap.get(element->localName().impl());
-    if (result)
-        return result;
-    return &info;
-}
-
-const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
-const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
-
-const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
-{
-    static HashMap<AtomicStringImpl*, const Accessors*> accessorMap;
-    if (accessorMap.isEmpty()) {
-        accessorMap.add(embedTag.localName().impl(), &embed_accessors);
-        accessorMap.add(objectTag.localName().impl(), &object_accessors);
-    }
-    
-    HTMLElement* element = static_cast<HTMLElement*>(impl());
-    return accessorMap.get(element->localName().impl());
-}
-
 /*
 @begin JSHTMLElementPrototypeTable 0
 @end
-@begin HTMLElementTable 0
-@end
-@begin HTMLObjectElementTable 20
-  form            KJS::JSHTMLElement::ObjectForm            DontDelete|ReadOnly
-  code            KJS::JSHTMLElement::ObjectCode            DontDelete
-  align           KJS::JSHTMLElement::ObjectAlign           DontDelete
-  archive         KJS::JSHTMLElement::ObjectArchive         DontDelete
-  border          KJS::JSHTMLElement::ObjectBorder          DontDelete
-  codeBase        KJS::JSHTMLElement::ObjectCodeBase        DontDelete
-  codeType        KJS::JSHTMLElement::ObjectCodeType        DontDelete
-  contentDocument KJS::JSHTMLElement::ObjectContentDocument DontDelete|ReadOnly
-  data            KJS::JSHTMLElement::ObjectData            DontDelete
-  declare         KJS::JSHTMLElement::ObjectDeclare         DontDelete
-  height          KJS::JSHTMLElement::ObjectHeight          DontDelete
-  hspace          KJS::JSHTMLElement::ObjectHspace          DontDelete
-  getSVGDocument  KJS::JSHTMLElement::ObjectGetSVGDocument  DontDelete|Function 0
-  name            KJS::JSHTMLElement::ObjectName            DontDelete
-  standby         KJS::JSHTMLElement::ObjectStandby         DontDelete
-  tabIndex        KJS::JSHTMLElement::ObjectTabIndex        DontDelete
-  type            KJS::JSHTMLElement::ObjectType            DontDelete
-  useMap          KJS::JSHTMLElement::ObjectUseMap          DontDelete
-  vspace          KJS::JSHTMLElement::ObjectVspace          DontDelete
-  width           KJS::JSHTMLElement::ObjectWidth           DontDelete
-@end
-@begin HTMLEmbedElementTable 6
-  align         KJS::JSHTMLElement::EmbedAlign           DontDelete
-  height        KJS::JSHTMLElement::EmbedHeight          DontDelete
-  getSVGDocument KJS::JSHTMLElement::EmbedGetSVGDocument DontDelete|Function 0
-  name          KJS::JSHTMLElement::EmbedName            DontDelete
-  src           KJS::JSHTMLElement::EmbedSrc             DontDelete
-  type          KJS::JSHTMLElement::EmbedType            DontDelete
-  width         KJS::JSHTMLElement::EmbedWidth           DontDelete
-@end
 */
+
+const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, 0, 0 };
 
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSHTMLElementPrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("HTMLElement", JSHTMLElementPrototype, JSHTMLElementPrototypeFunction)
@@ -157,142 +83,11 @@ JSHTMLElement::JSHTMLElement(ExecState* exec, HTMLElement* e)
     setPrototype(JSHTMLElementPrototype::self(exec));
 }
 
-JSValue *JSHTMLElement::runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-
-    return getRuntimeObject(exec, element);
-}
-
-JSValue *JSHTMLElement::runtimeObjectPropertyGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-
-    if (JSValue *runtimeObject = getRuntimeObject(exec, element))
-        return static_cast<JSObject*>(runtimeObject)->get(exec, propertyName);
-    return jsUndefined();
-}
-
-bool JSHTMLElement::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    HTMLElement &element = *static_cast<HTMLElement*>(impl());
-
-    // First look at dynamic properties
-    if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
-        if (propertyName == "__apple_runtime_object") {
-            slot.setCustom(this, runtimeObjectGetter);
-            return true;
-        }
-        JSValue *runtimeObject = getRuntimeObject(exec,&element);
-        if (runtimeObject) {
-            JSObject* imp = static_cast<JSObject*>(runtimeObject);
-            if (imp->hasProperty(exec, propertyName)) {
-                slot.setCustom(this, runtimeObjectPropertyGetter);
-                return true;
-            }
-        }
-    }
-
-    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-    if (table) {
-        const HashEntry* entry = Lookup::findEntry(table, propertyName);
-        if (entry) {
-            if (entry->attr & Function)
-                slot.setStaticEntry(this, entry, staticFunctionGetter<HTMLElementFunction>); 
-            else
-                slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLElement>);
-            return true;
-        }
-    }
-
-    // Base JSHTMLElement stuff or parent class forward, as usual
-    return getStaticPropertySlot<HTMLElementFunction, JSHTMLElement, WebCore::JSHTMLElement>(exec, &HTMLElementTable, this, propertyName, slot);
-}
-
-bool JSHTMLElement::implementsCall() const
-{
-    HTMLElement* element = static_cast<HTMLElement*>(impl());
-    if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
-        Frame* frame = element->document()->frame();
-        if (!frame)
-            return false;
-        KJSProxy *proxy = frame->scriptProxy();
-        ExecState* exec = proxy->interpreter()->globalExec();
-        if (JSValue *runtimeObject = getRuntimeObject(exec, element))
-            return static_cast<JSObject*>(runtimeObject)->implementsCall();
-    }
-    return false;
-}
-
-JSValue *JSHTMLElement::callAsFunction(ExecState* exec, JSObject* thisObj, const List&args)
-{
-    HTMLElement* element = static_cast<HTMLElement*>(impl());
-    if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
-        if (JSValue *runtimeObject = getRuntimeObject(exec, element))
-            return static_cast<JSObject*>(runtimeObject)->call(exec, thisObj, args);
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::objectGetter(ExecState* exec, int token) const
-{
-    HTMLObjectElement& object = *static_cast<HTMLObjectElement*>(impl());
-    switch (token) {
-        case ObjectForm:            return toJS(exec,object.form()); // type HTMLFormElement
-        case ObjectCode:            return jsString(object.code());
-        case ObjectAlign:           return jsString(object.align());
-        case ObjectArchive:         return jsString(object.archive());
-        case ObjectBorder:          return jsString(object.border());
-        case ObjectCodeBase:        return jsString(object.codeBase());
-        case ObjectCodeType:        return jsString(object.codeType());
-        case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
-                                           toJS(exec, object.contentDocument()) : jsUndefined();
-        case ObjectData:            return jsString(object.data());
-        case ObjectDeclare:         return jsBoolean(object.declare());
-        case ObjectHeight:          return jsString(object.height());
-        case ObjectHspace:          return jsNumber(object.hspace());
-        case ObjectName:            return jsString(object.name());
-        case ObjectStandby:         return jsString(object.standby());
-        case ObjectTabIndex:        return jsNumber(object.tabIndex());
-        case ObjectType:            return jsString(object.type());
-        case ObjectUseMap:          return jsString(object.useMap());
-        case ObjectVspace:          return jsNumber(object.vspace());
-        case ObjectWidth:           return jsString(object.width());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
-{
-    HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
-    switch (token) {
-        case EmbedAlign:           return jsString(embed.align());
-        case EmbedHeight:          return jsString(embed.height());
-        case EmbedName:            return jsString(embed.name());
-        case EmbedSrc:             return jsString(embed.src());
-        case EmbedType:            return jsString(embed.type());
-        case EmbedWidth:           return jsString(embed.width());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::getValueProperty(ExecState* exec, int token) const
-{
-    // Check the properties specific to our element type.
-    const Accessors* access = accessors();
-    if (access && access->m_getter)
-        return (this->*(access->m_getter))(exec, token);
-    return jsUndefined();
-}
-
 UString JSHTMLElement::toString(ExecState* exec) const
 {
     if (impl()->hasTagName(aTag))
         return UString(static_cast<const HTMLAnchorElement*>(impl())->href());
-    else
-        return JSElement::toString(exec);
+    return JSElement::toString(exec);
 }
 
 static HTMLFormElement* getForm(HTMLElement* element)
@@ -307,138 +102,32 @@ static HTMLFormElement* getForm(HTMLElement* element)
     return 0;
 }
 
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain &scope) const
+void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
 {
-  HTMLElement* element = static_cast<HTMLElement*>(impl());
+    HTMLElement* element = static_cast<HTMLElement*>(impl());
 
-  // The document is put on first, fall back to searching it only after the element and form.
-  scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
+    // The document is put on first, fall back to searching it only after the element and form.
+    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
 
-  // The form is next, searched before the document, but after the element itself.
-  
-  // First try to obtain the form from the element itself.  We do this to deal with
-  // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
-  // <table> or <tbody>.
-  HTMLFormElement* form = getForm(element);
-  if (form)
-    scope.push(static_cast<JSObject*>(toJS(exec, form)));
-  else {
-    WebCore::Node* form = element->parentNode();
-    while (form && !form->hasTagName(formTag))
-      form = form->parentNode();
-    
+    // The form is next, searched before the document, but after the element itself.
+
+    // First try to obtain the form from the element itself.  We do this to deal with
+    // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
+    // <table> or <tbody>.
+    HTMLFormElement* form = getForm(element);
     if (form)
-      scope.push(static_cast<JSObject*>(toJS(exec, form)));
-  }
-  
-  // The element is on top, searched first.
-  scope.push(static_cast<JSObject*>(toJS(exec, element)));
-}
+        scope.push(static_cast<JSObject*>(toJS(exec, form)));
+    else {
+        WebCore::Node* form = element->parentNode();
+        while (form && !form->hasTagName(formTag))
+            form = form->parentNode();
 
-HTMLElementFunction::HTMLElementFunction(ExecState* exec, int i, int len, const Identifier& name)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
-  , id(i)
-{
-  put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
-}
-
-JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
-{
-    if (!thisObj->inherits(&JSHTMLElement::info))
-        return throwError(exec, TypeError);
-    DOMExceptionTranslator exception(exec);
-
-#if ENABLE(SVG)
-    HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
-
-    if (element.hasLocalName(objectTag)) {
-        HTMLObjectElement& object = static_cast<HTMLObjectElement&>(element);
-        if (id == JSHTMLElement::ObjectGetSVGDocument)
-            return checkNodeSecurity(exec, object.getSVGDocument(exception)) ? toJS(exec, object.getSVGDocument(exception)) : jsUndefined();
-    } else if (element.hasLocalName(embedTag)) {
-        HTMLEmbedElement& embed = static_cast<HTMLEmbedElement&>(element);
-        if (id == JSHTMLElement::EmbedGetSVGDocument)
-            return checkNodeSecurity(exec, embed.getSVGDocument(exception)) ? toJS(exec, embed.getSVGDocument(exception)) : jsUndefined();
-    }
-#endif
-
-    return jsUndefined();
-}
-
-void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-    HTMLElement &element = *static_cast<HTMLElement*>(impl());
-    // First look at dynamic properties
-    if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
-        if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
-            JSObject* imp = static_cast<JSObject*>(runtimeObject);
-            if (imp->canPut(exec, propertyName))
-                return imp->put(exec, propertyName, value);
-        }
+        if (form)
+            scope.push(static_cast<JSObject*>(toJS(exec, form)));
     }
 
-    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-    if (table) {
-        const HashEntry* entry = Lookup::findEntry(table, propertyName);
-        if (entry) {
-            if (entry->attr & Function) { // function: put as override property
-                JSObject::put(exec, propertyName, value, attr);
-                return;
-            } else if (!(entry->attr & ReadOnly)) { // let lookupPut print the warning if read-only
-                putValueProperty(exec, entry->value, value, attr);
-                return;
-            }
-        }
-    }
-
-    lookupPut<JSHTMLElement, WebCore::JSHTMLElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
-}
-
-void JSHTMLElement::objectSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLObjectElement& object = *static_cast<HTMLObjectElement*>(impl());
-    switch (token) {
-        // read-only: form
-        case ObjectCode:            { object.setCode(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectAlign:           { object.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectArchive:         { object.setArchive(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectBorder:          { object.setBorder(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectCodeBase:        { object.setCodeBase(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectCodeType:        { object.setCodeType(valueToStringWithNullCheck(exec, value)); return; }
-        // read-only: ObjectContentDocument
-        case ObjectData:            { object.setData(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectDeclare:         { object.setDeclare(value->toBoolean(exec)); return; }
-        case ObjectHeight:          { object.setHeight(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectHspace:          { object.setHspace(value->toInt32(exec)); return; }
-        case ObjectName:            { object.setName(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectStandby:         { object.setStandby(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectTabIndex:        { object.setTabIndex(value->toInt32(exec)); return; }
-        case ObjectType:            { object.setType(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectUseMap:          { object.setUseMap(valueToStringWithNullCheck(exec, value)); return; }
-        case ObjectVspace:          { object.setVspace(value->toInt32(exec)); return; }
-        case ObjectWidth:           { object.setWidth(valueToStringWithNullCheck(exec, value)); return; }
-    }
-}
-
-void JSHTMLElement::embedSetter(ExecState* exec, int token, JSValue* value)
-{
-    HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
-    switch (token) {
-        case EmbedAlign:           { embed.setAlign(valueToStringWithNullCheck(exec, value)); return; }
-        case EmbedHeight:          { embed.setHeight(value->toString(exec)); return; }
-        case EmbedName:            { embed.setName(valueToStringWithNullCheck(exec, value)); return; }
-        case EmbedSrc:             { embed.setSrc(valueToStringWithNullCheck(exec, value)); return; }
-        case EmbedType:            { embed.setType(valueToStringWithNullCheck(exec, value)); return; }
-        case EmbedWidth:           { embed.setWidth(value->toString(exec)); return; }
-    }
-}
-
-void JSHTMLElement::putValueProperty(ExecState* exec, int token, JSValue *value, int)
-{
-    // Check for properties that apply to a specific element type.
-    const Accessors* access = accessors();
-    if (access && access->m_setter)
-        return (this->*(access->m_setter))(exec, token, value);
+    // The element is on top, searched first.
+    scope.push(static_cast<JSObject*>(toJS(exec, element)));
 }
 
 HTMLElement* toHTMLElement(JSValue *val)
@@ -650,6 +339,71 @@ JSValue* getHTMLCollection(ExecState* exec, HTMLCollection* c)
 JSValue* toJS(ExecState* exec, HTMLOptionsCollection* c)
 {
     return cacheDOMObject<HTMLOptionsCollection, JSHTMLOptionsCollection>(exec, c);
+}
+
+JSValue* runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+{
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
+
+    return getRuntimeObject(exec, element);
+}
+
+JSValue* runtimeObjectPropertyGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+{
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
+
+    if (JSValue* runtimeObject = getRuntimeObject(exec, element))
+        return static_cast<JSObject*>(runtimeObject)->get(exec, propertyName);
+    return jsUndefined();
+}
+
+bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* originalObj, HTMLElement* thisImp)
+{
+    JSValue* runtimeObject = getRuntimeObject(exec, thisImp);
+    if (runtimeObject) {
+        JSObject* imp = static_cast<JSObject*>(runtimeObject);
+        if (imp->hasProperty(exec, propertyName)) {
+            slot.setCustom(originalObj, runtimeObjectPropertyGetter);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int /*attr*/, HTMLElement* thisImp)
+{
+    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp)) {
+        JSObject* imp = static_cast<JSObject*>(runtimeObject);
+        if (imp->canPut(exec, propertyName)) {
+            imp->put(exec, propertyName, value);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool runtimeObjectImplementsCall(HTMLElement* thisImp)
+{
+    Frame* frame = thisImp->document()->frame();
+    if (!frame)
+        return false;
+    KJSProxy* proxy = frame->scriptProxy();
+    ExecState* exec = proxy->interpreter()->globalExec();
+    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp))
+        return static_cast<JSObject*>(runtimeObject)->implementsCall();
+
+    return false;
+}
+
+JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const List& args, HTMLElement* thisImp)
+{
+    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp))
+        return static_cast<JSObject*>(runtimeObject)->call(exec, thisObj, args);
+    return jsUndefined();
 }
 
 } // namespace
