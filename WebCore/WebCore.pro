@@ -272,6 +272,7 @@ SOURCES += \
     bindings/js/JSHTMLAnchorElementCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
+    bindings/js/JSHTMLElementCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLEmbedElementCustom.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
