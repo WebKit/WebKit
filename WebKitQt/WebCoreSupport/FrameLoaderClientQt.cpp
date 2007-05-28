@@ -39,6 +39,7 @@
 #include "ResourceRequest.h"
 #include "HistoryItem.h"
 #include "HTMLFormElement.h"
+#include "NotImplemented.h"
 
 #include "qwebpage.h"
 #include "qwebframe.h"
@@ -48,7 +49,6 @@
 
 #include "qdebug.h"
 
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 #define methodDebug() qDebug("FrameLoaderClientQt: %s loader=%p", __FUNCTION__, (m_frame ? m_frame->loader() : 0))
 
 namespace WebCore

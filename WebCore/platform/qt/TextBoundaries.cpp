@@ -28,14 +28,13 @@
 #include "config.h"
 
 #include "TextBoundaries.h"
+#include "NotImplemented.h"
 
 #include <QString>
 #include <QChar>
 
 #include <QDebug>
 #include <stdio.h>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 
 // This is very primitive. When I'll have time I'll do the "proper" implementation based on

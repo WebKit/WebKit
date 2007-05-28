@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "Font.h"
 #include "Pen.h"
+#include "NotImplemented.h"
 
 #include <QStack>
 #include <QPainter>
@@ -48,8 +49,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

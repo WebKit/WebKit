@@ -30,14 +30,14 @@
 #include "DocumentLoader.h"
 
 #include "KURL.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include <stdio.h>
  
 namespace WebCore {
 
 bool DocumentLoader::getResponseModifiedHeader(String& modified) const
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 

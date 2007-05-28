@@ -29,7 +29,7 @@
 #include "Screen.h"
 #include "Widget.h"
 
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include <wtf/Assertions.h>
 #include <gdk/gdk.h>
 #include <stdio.h>
@@ -47,25 +47,25 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget*)
 {
-    notImplementedGdk();
+    notImplemented();
     return 8;
 }
 
 bool screenIsMonochrome(Widget*) 
 { 
-    notImplementedGdk(); 
+    notImplemented(); 
     return false; 
 }
 
 FloatRect screenRect(Widget*) 
 { 
-    notImplementedGdk();
+    notImplemented();
     return FloatRect(); 
 }
 
 FloatRect screenAvailableRect(Widget*) 
 { 
-    notImplementedGdk(); 
+    notImplemented(); 
     return FloatRect(); 
 }
 

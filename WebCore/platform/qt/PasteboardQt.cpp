@@ -29,9 +29,9 @@
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "markup.h"
-#include <qdebug.h>
+#include "NotImplemented.h"
 
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
+#include <qdebug.h>
 
 namespace WebCore {
 

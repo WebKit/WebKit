@@ -19,11 +19,10 @@
 
 #include "PlatformScrollBar.h"
 #include "ScrollBar.h"
+#include "NotImplemented.h"
 
 #include <QScrollBar>
 #include <QDebug>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {    
 

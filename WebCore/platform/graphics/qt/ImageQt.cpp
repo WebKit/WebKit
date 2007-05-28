@@ -35,6 +35,7 @@
 #include "PlatformString.h"
 #include "GraphicsContext.h"
 #include "AffineTransform.h"
+#include "NotImplemented.h"
 
 #include <QPixmap>
 #include <QPainter>
@@ -47,8 +48,6 @@
 #include <QDebug>
 
 #include <math.h>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 // This function loads resources from WebKit
 Vector<char> loadResourceIntoArray(const char*);

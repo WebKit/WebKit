@@ -29,7 +29,7 @@
 #include "Cursor.h"
 
 #include "DeprecatedString.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include <wtf/Assertions.h>
 
 #include <gdk/gdk.h>
@@ -46,7 +46,7 @@ Cursor::Cursor(const Cursor& other)
 
 Cursor::Cursor(Image*, const IntPoint&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 Cursor::~Cursor()

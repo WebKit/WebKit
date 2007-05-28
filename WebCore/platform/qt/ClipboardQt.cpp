@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ClipboardQt.h"
 
+#include "NotImplemented.h"
 #include "DeprecatedString.h"
 #include "Document.h"
 #include "Frame.h"
@@ -39,7 +40,6 @@
 #include <QStringList>
 #include <QUrl>
 
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
     

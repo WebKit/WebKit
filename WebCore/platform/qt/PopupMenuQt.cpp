@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
+#include "NotImplemented.h"
 #include "QWebPopup.h"
 
 #include <QAction>
@@ -38,8 +39,6 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QWidgetAction>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

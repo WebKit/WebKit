@@ -37,12 +37,11 @@
 #include "RenderObject.h"
 #include "GraphicsContext.h"
 #include "WidgetClient.h"
+#include "NotImplemented.h"
 
 #include <QAbstractScrollArea>
 #include <QScrollBar>
 #include <QWidget>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

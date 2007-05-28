@@ -35,14 +35,12 @@
 #include "FloatRect.h"
 #include "IntPoint.h"
 #include "PlatformMouseEvent.h"
-
+#include "NotImplemented.h"
 #include "Frame.h"
 
 #include <QAbstractScrollArea>
 #include <QDebug>
 #include <QScrollBar>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

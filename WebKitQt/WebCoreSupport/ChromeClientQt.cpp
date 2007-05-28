@@ -31,11 +31,10 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameLoadRequest.h"
+#include "NotImplemented.h"
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore
 {

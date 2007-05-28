@@ -29,8 +29,7 @@
 
 #include "GraphicsContext.h"
 #include <cairo.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#include "NotImplemented.h"
 
 using namespace std;
 

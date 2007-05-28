@@ -80,11 +80,9 @@
 #include "PageCache.h"
 #include "BitmapImage.h"
 #include "DragController.h"
+#include "NotImplemented.h"
 
 using namespace WebCore;
-
-//static void notImplemented() { puts("Not yet implemented"); }
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", __FILE__, __LINE__, __FUNCTION__); } while(0)
 
 Vector<char> loadResourceIntoArray(const char* resourceName)
 {

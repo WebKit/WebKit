@@ -27,8 +27,7 @@
 
 #include "config.h"
 #include "MimeTypeRegistry.h"
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
+#include "NotImplemented.h"
 
 namespace WebCore 
 {

@@ -41,12 +41,11 @@
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "NotImplemented.h"
 
 #include <stdio.h>
 
 #include <QUndoStack>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 #include "Image.h"
 
 #include "BitmapImage.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include <cairo.h>
  
 // This function loads resources from WebKit

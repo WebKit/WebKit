@@ -46,12 +46,11 @@
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
 using namespace EventNames;
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {

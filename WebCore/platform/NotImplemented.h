@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
- *
- * All rights reserved.
+ * Copyright (C) 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,21 +22,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
 
-#ifndef NotImplementedGdk_h
-#define NotImplementedGdk_h
-
-#ifndef NDEBUG
-#define notImplementedGdk() do { \
-    static bool printed = false; \
-    if (!printed && !getenv("DISABLE_NI_WARNING")) { \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-        printed = true; \
-    } \
- } while (0)
+#ifndef NotImplemented_h
+#define NotImplemented_h
+ 
+#ifdef NDEBUG
+ 
+#define notImplemented() ((void)0)
+ 
 #else
-#define notImplementedGdk() do { } while (0)
-#endif
+ 
+#if PLATFORM(GDK)
+     
+    #define notImplemented() do { \
+       static bool printed = false; \
+       if (!printed && !getenv("DISABLE_NI_WARNING")) { \
+           fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
+           printed = true; \
+       } \
+    } while (0)
+     
+#elif PLATFORM(QT)
 
-#endif
+    #include <QApplication>
+    #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
 
+#else
+    
+    #if COMPILER(GCC)
+    #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); } while(0)
+    #endif
+
+    #if COMPILER(MSVC)
+    #define notImplemented() do { \
+        char buf[256] = {0}; \
+        _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
+        OutputDebugStringA(buf); \
+    } while (0)
+    #endif
+
+#endif // PLATFORM(GDK)
+
+#endif // NDEBUG
+
+#endif // NotImplemented_h

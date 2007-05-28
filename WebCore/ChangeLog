@@ -1,3 +1,315 @@
+2007-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Sam Weinig.
+
+        Consolidate all notImplemented() macro definitions into
+        one header file for all platforms.
+
+        * loader/gdk/DocumentLoaderGdk.cpp:
+        (WebCore::DocumentLoader::getResponseModifiedHeader):
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientGdk::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientGdk::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientGdk::createPlugin):
+        (WebCore::FrameLoaderClientGdk::createFrame):
+        (WebCore::FrameLoaderClientGdk::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientGdk::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientGdk::objectContentType):
+        (WebCore::FrameLoaderClientGdk::overrideMediaType):
+        (WebCore::FrameLoaderClientGdk::windowObjectCleared):
+        (WebCore::FrameLoaderClientGdk::hasWebView):
+        (WebCore::FrameLoaderClientGdk::hasFrameView):
+        (WebCore::FrameLoaderClientGdk::frameLoadCompleted):
+        (WebCore::FrameLoaderClientGdk::saveViewStateToItem):
+        (WebCore::FrameLoaderClientGdk::restoreViewState):
+        (WebCore::FrameLoaderClientGdk::privateBrowsingEnabled):
+        (WebCore::FrameLoaderClientGdk::makeDocumentView):
+        (WebCore::FrameLoaderClientGdk::makeRepresentation):
+        (WebCore::FrameLoaderClientGdk::forceLayout):
+        (WebCore::FrameLoaderClientGdk::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientGdk::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent1):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent2):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent3):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent4):
+        (WebCore::FrameLoaderClientGdk::loadedFromCachedPage):
+        (WebCore::FrameLoaderClientGdk::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientGdk::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientGdk::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientGdk::dispatchWillClose):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientGdk::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientGdk::dispatchShow):
+        (WebCore::FrameLoaderClientGdk::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientGdk::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientGdk::revertToProvisionalState):
+        (WebCore::FrameLoaderClientGdk::clearUnarchivingState):
+        (WebCore::FrameLoaderClientGdk::willChangeTitle):
+        (WebCore::FrameLoaderClientGdk::finishedLoading):
+        (WebCore::FrameLoaderClientGdk::finalSetupForReplace):
+        (WebCore::FrameLoaderClientGdk::setDefersLoading):
+        (WebCore::FrameLoaderClientGdk::isArchiveLoadPending):
+        (WebCore::FrameLoaderClientGdk::cancelPendingArchiveLoad):
+        (WebCore::FrameLoaderClientGdk::clearArchivedResources):
+        (WebCore::FrameLoaderClientGdk::canHandleRequest):
+        (WebCore::FrameLoaderClientGdk::canShowMIMEType):
+        (WebCore::FrameLoaderClientGdk::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientGdk::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientGdk::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientGdk::didFinishLoad):
+        (WebCore::FrameLoaderClientGdk::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientGdk::setTitle):
+        (WebCore::FrameLoaderClientGdk::setDocumentViewFromCachedPage):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientGdk::download):
+        (WebCore::FrameLoaderClientGdk::cancelledError):
+        (WebCore::FrameLoaderClientGdk::blockedError):
+        (WebCore::FrameLoaderClientGdk::cannotShowURLError):
+        (WebCore::FrameLoaderClientGdk::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientGdk::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientGdk::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientGdk::shouldFallBack):
+        (WebCore::FrameLoaderClientGdk::willUseArchive):
+        (WebCore::FrameLoaderClientGdk::saveDocumentViewToCachedPage):
+        (WebCore::FrameLoaderClientGdk::canCachePage):
+        (WebCore::FrameLoaderClientGdk::dispatchCreatePage):
+        (WebCore::FrameLoaderClientGdk::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientGdk::setMainDocumentError):
+        (WebCore::FrameLoaderClientGdk::startDownload):
+        (WebCore::FrameLoaderClientGdk::updateGlobalHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientGdk::updateGlobalHistoryForReload):
+        * loader/qt/DocumentLoaderQt.cpp:
+        * page/gdk/ContextMenuClientGdk.cpp:
+        (WebCore::ContextMenuClientGdk::contextMenuDestroyed):
+        (WebCore::ContextMenuClientGdk::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientGdk::contextMenuItemSelected):
+        (WebCore::ContextMenuClientGdk::downloadURL):
+        (WebCore::ContextMenuClientGdk::copyImageToClipboard):
+        (WebCore::ContextMenuClientGdk::searchWithGoogle):
+        (WebCore::ContextMenuClientGdk::lookUpInDictionary):
+        (WebCore::ContextMenuClientGdk::speak):
+        (WebCore::ContextMenuClientGdk::stopSpeaking):
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/qt/EventHandlerQt.cpp:
+        * page/qt/FrameQt.cpp:
+        * platform/NotImplemented.h: Added.
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::Cursor::Cursor):
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::shouldDeleteRange):
+        (WebCore::EditorClientGdk::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientGdk::isGrammarCheckingEnabled):
+        (WebCore::EditorClientGdk::spellCheckerDocumentTag):
+        (WebCore::EditorClientGdk::shouldBeginEditing):
+        (WebCore::EditorClientGdk::shouldEndEditing):
+        (WebCore::EditorClientGdk::shouldInsertText):
+        (WebCore::EditorClientGdk::shouldChangeSelectedRange):
+        (WebCore::EditorClientGdk::shouldApplyStyle):
+        (WebCore::EditorClientGdk::didBeginEditing):
+        (WebCore::EditorClientGdk::respondToChangedContents):
+        (WebCore::EditorClientGdk::respondToChangedSelection):
+        (WebCore::EditorClientGdk::didEndEditing):
+        (WebCore::EditorClientGdk::didWriteSelectionToPasteboard):
+        (WebCore::EditorClientGdk::didSetSelectionTypesForPasteboard):
+        (WebCore::EditorClientGdk::selectWordBeforeMenuEvent):
+        (WebCore::EditorClientGdk::isEditable):
+        (WebCore::EditorClientGdk::registerCommandForUndo):
+        (WebCore::EditorClientGdk::registerCommandForRedo):
+        (WebCore::EditorClientGdk::clearUndoRedoOperations):
+        (WebCore::EditorClientGdk::canUndo):
+        (WebCore::EditorClientGdk::canRedo):
+        (WebCore::EditorClientGdk::undo):
+        (WebCore::EditorClientGdk::redo):
+        (WebCore::EditorClientGdk::shouldInsertNode):
+        (WebCore::EditorClientGdk::pageDestroyed):
+        (WebCore::EditorClientGdk::smartInsertDeleteEnabled):
+        (WebCore::EditorClientGdk::toggleContinuousSpellChecking):
+        (WebCore::EditorClientGdk::handleInputMethodKeypress):
+        (WebCore::EditorClientGdk::textFieldDidBeginEditing):
+        (WebCore::EditorClientGdk::textFieldDidEndEditing):
+        (WebCore::EditorClientGdk::textDidChangeInTextField):
+        (WebCore::EditorClientGdk::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientGdk::textWillBeDeletedInTextField):
+        (WebCore::EditorClientGdk::textDidChangeInTextArea):
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::Frame::print):
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/gdk/NotImplementedGdk.h: Removed.
+        * platform/gdk/PopupMenuGdk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::setCheckboxSize):
+        (WebCore::RenderThemeGdk::setRadioSize):
+        (WebCore::RenderThemeGdk::adjustTextFieldStyle):
+        * platform/gdk/ScreenGdk.cpp:
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::updateScrollInfo):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FrameView::updateBorder):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::currentTextBreakLocaleID):
+        (ChromeClientGdk::chromeDestroyed):
+        (ChromeClientGdk::windowRect):
+        (ChromeClientGdk::setWindowRect):
+        (ChromeClientGdk::pageRect):
+        (ChromeClientGdk::scaleFactor):
+        (ChromeClientGdk::focus):
+        (ChromeClientGdk::unfocus):
+        (ChromeClientGdk::createWindow):
+        (ChromeClientGdk::createModalDialog):
+        (ChromeClientGdk::show):
+        (ChromeClientGdk::canRunModal):
+        (ChromeClientGdk::runModal):
+        (ChromeClientGdk::setToolbarsVisible):
+        (ChromeClientGdk::toolbarsVisible):
+        (ChromeClientGdk::setStatusbarVisible):
+        (ChromeClientGdk::statusbarVisible):
+        (ChromeClientGdk::setScrollbarsVisible):
+        (ChromeClientGdk::scrollbarsVisible):
+        (ChromeClientGdk::setMenubarVisible):
+        (ChromeClientGdk::menubarVisible):
+        (ChromeClientGdk::setResizable):
+        (ChromeClientGdk::closeWindowSoon):
+        (ChromeClientGdk::canTakeFocus):
+        (ChromeClientGdk::takeFocus):
+        (ChromeClientGdk::canRunBeforeUnloadConfirmPanel):
+        (ChromeClientGdk::addMessageToConsole):
+        (ChromeClientGdk::runBeforeUnloadConfirmPanel):
+        (ChromeClientGdk::runJavaScriptAlert):
+        (ChromeClientGdk::runJavaScriptConfirm):
+        (ChromeClientGdk::runJavaScriptPrompt):
+        (ChromeClientGdk::setStatusbarText):
+        (ChromeClientGdk::shouldInterruptJavaScript):
+        (ChromeClientGdk::tabsToLinks):
+        (ChromeClientGdk::windowResizerRect):
+        (ChromeClientGdk::addToDirtyRegion):
+        (ChromeClientGdk::scrollBackingStore):
+        (ChromeClientGdk::updateBackingStore):
+        (PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (PlugInInfoStore::pluginCount):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        (WebCore::refreshPlugins):
+        (SearchPopupMenu::saveRecentSearches):
+        (SearchPopupMenu::loadRecentSearches):
+        (SearchPopupMenu::SearchPopupMenu):
+        (SearchPopupMenu::enabled):
+        (FileChooser::FileChooser):
+        (FileChooser::~FileChooser):
+        (FileChooser::openFileChooser):
+        (FileChooser::basenameForWidth):
+        (ResourceHandle::willLoadFromCache):
+        (ResourceHandle::loadsBlocked):
+        (ResourceHandle::loadResourceSynchronously):
+        (Icon::Icon):
+        (Icon::~Icon):
+        (Icon::newIconForFile):
+        (Icon::paint):
+        (Font::selectionRectForComplexText):
+        (Font::drawComplexText):
+        (Font::floatWidthForComplexText):
+        (Font::offsetForPositionForComplexText):
+        (CachedPage::close):
+        (Editor::newGeneralClipboard):
+        (Pasteboard::generalPasteboard):
+        (Pasteboard::writeSelection):
+        (Pasteboard::writeURL):
+        (Pasteboard::writeImage):
+        (Pasteboard::clear):
+        (Pasteboard::canSmartReplace):
+        (Pasteboard::documentFragment):
+        (Pasteboard::plainText):
+        (Pasteboard::Pasteboard):
+        (Pasteboard::~Pasteboard):
+        (ContextMenu::ContextMenu):
+        (ContextMenu::~ContextMenu):
+        (ContextMenu::appendItem):
+        (ContextMenuItem::ContextMenuItem):
+        (ContextMenuItem::~ContextMenuItem):
+        (ContextMenuItem::releasePlatformDescription):
+        (ContextMenuItem::type):
+        (ContextMenuItem::setType):
+        (ContextMenuItem::action):
+        (ContextMenuItem::setAction):
+        (ContextMenuItem::title):
+        (ContextMenuItem::setTitle):
+        (ContextMenuItem::platformSubMenu):
+        (ContextMenuItem::setSubMenu):
+        (ContextMenuItem::setChecked):
+        (ContextMenuItem::setEnabled):
+        (WebCore::supportedKeySizes):
+        (WebCore::systemBeep):
+        (WebCore::userIdleTime):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cairo/PathCairo.cpp:
+        * platform/graphics/gdk/ImageGdk.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/IconQt.cpp:
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/network/gdk/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPUT):
+        (WebCore::ResourceHandleManager::setupPOST):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/qt/ClipboardQt.cpp:
+        * platform/qt/CursorQt.cpp:
+        * platform/qt/DragDataQt.cpp:
+        * platform/qt/FileChooserQt.cpp:
+        * platform/qt/MimeTypeRegistryQt.cpp:
+        * platform/qt/PasteboardQt.cpp:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/qt/TextBoundaries.cpp:
+        * platform/qt/WidgetQt.cpp:
+        * platform/win/FontWin.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * platform/wx/ClipboardWx.cpp:
+        * platform/wx/FontWx.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        * platform/wx/SharedTimerWx.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+
 2007-05-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

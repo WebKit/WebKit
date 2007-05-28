@@ -28,7 +28,7 @@
 
 #include "HitTestResult.h"
 #include "KURL.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 
 #include <stdio.h>
 
@@ -36,48 +36,48 @@ namespace WebCore {
     
 void ContextMenuClientGdk::contextMenuDestroyed()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 PlatformMenuDescription ContextMenuClientGdk::getCustomMenuFromDefaultItems(ContextMenu*)
 {
-    notImplementedGdk();
+    notImplemented();
     return PlatformMenuDescription();
 }
 
 void ContextMenuClientGdk::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::downloadURL(const KURL& url)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::copyImageToClipboard(const HitTestResult&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::searchWithGoogle(const Frame*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::lookUpInDictionary(Frame*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::speak(const String&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ContextMenuClientGdk::stopSpeaking()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 }

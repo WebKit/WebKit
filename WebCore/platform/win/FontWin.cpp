@@ -32,14 +32,9 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
-
-#define notImplemented() do { \
-    char buf[256] = {0}; \
-    _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
-    OutputDebugStringA(buf); \
-} while (0)
 
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const

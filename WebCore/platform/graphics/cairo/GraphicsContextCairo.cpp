@@ -37,21 +37,12 @@
 #include <math.h>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
+#include "NotImplemented.h"
+
 #if PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif
 
-#if COMPILER(GCC)
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
-#endif
-
-#if COMPILER(MSVC)
-#define notImplemented() do { \
-    char buf[256] = {0}; \
-    _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
-    OutputDebugStringA(buf); \
-} while (0)
-#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

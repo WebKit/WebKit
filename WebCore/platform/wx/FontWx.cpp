@@ -36,9 +36,9 @@
 #include <wx/defs.h>
 #include <wx/dcclient.h>
 
-namespace WebCore {
+#include "NotImplemented.h"
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", __FILE__, __LINE__, __FUNCTION__); } while(0)
+namespace WebCore {
 
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const

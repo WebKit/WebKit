@@ -29,7 +29,7 @@
 #include "ResourceHandleManager.h"
 
 #include "CString.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
@@ -166,12 +166,12 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
 
 void ResourceHandleManager::setupPUT(ResourceHandle*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ResourceHandleManager::setupPOST(ResourceHandle*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)

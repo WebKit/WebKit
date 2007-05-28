@@ -66,8 +66,7 @@
 #include "kjs_window.h"
 #include "runtime_root.h"
 #include <QScrollArea>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
+#include "NotImplemented.h"
 
 namespace WebCore {
 

@@ -33,7 +33,7 @@
 #include "DocumentLoader.h"
 #include "FrameGdk.h"
 #include "FrameLoader.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
 #include <stdio.h>
@@ -83,22 +83,22 @@ void FrameLoaderClientGdk::committedLoad(DocumentLoader* loader, const char* dat
 
 void FrameLoaderClientGdk::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void FrameLoaderClientGdk::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void FrameLoaderClientGdk::dispatchWillSendRequest(DocumentLoader*, unsigned long , ResourceRequest&, const ResourceResponse&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void FrameLoaderClientGdk::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&)
 {
-    notImplementedGdk();   
+    notImplemented();   
 }
 
 void FrameLoaderClientGdk::postProgressStartedNotification()
@@ -157,45 +157,45 @@ void FrameLoaderClientGdk::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 
 Widget* FrameLoaderClientGdk::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
 {
-    notImplementedGdk();
+    notImplemented();
     return 0;
 }
 
 Frame* FrameLoaderClientGdk::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
-    notImplementedGdk();
+    notImplemented();
     return 0;
 }
 
 void FrameLoaderClientGdk::redirectDataToPlugin(Widget* pluginWidget)
 {
-    notImplementedGdk();
+    notImplemented();
     return;
 }
 
 Widget* FrameLoaderClientGdk::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,
                                                     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    notImplementedGdk();
+    notImplemented();
     return 0;
 }
 
 ObjectContentType FrameLoaderClientGdk::objectContentType(const KURL& url, const String& mimeType)
 {
-    notImplementedGdk();
+    notImplemented();
     return ObjectContentType();
 }
 
 String FrameLoaderClientGdk::overrideMediaType() const
 {
-    notImplementedGdk();
+    notImplemented();
     return String();
 }
 
 void FrameLoaderClientGdk::windowObjectCleared() const
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void FrameLoaderClientGdk::setMainFrameDocumentReady(bool) 
@@ -205,13 +205,13 @@ void FrameLoaderClientGdk::setMainFrameDocumentReady(bool)
 
 bool FrameLoaderClientGdk::hasWebView() const
 {
-    notImplementedGdk();
+    notImplemented();
     return true;
 }
 
 bool FrameLoaderClientGdk::hasFrameView() const
 {
-    notImplementedGdk();
+    notImplemented();
     return true;
 }
 
@@ -223,17 +223,17 @@ void FrameLoaderClientGdk::dispatchDidFinishLoad()
 
 void FrameLoaderClientGdk::frameLoadCompleted() 
 {
-    notImplementedGdk(); 
+    notImplemented(); 
 }
 
 void FrameLoaderClientGdk::saveViewStateToItem(HistoryItem*)
 {
-    notImplementedGdk(); 
+    notImplemented(); 
 }
 
 void FrameLoaderClientGdk::restoreViewState()
 {
-    notImplementedGdk(); 
+    notImplemented(); 
 }
 
 bool FrameLoaderClientGdk::shouldGoToHistoryItem(HistoryItem* item) const 
@@ -244,73 +244,73 @@ bool FrameLoaderClientGdk::shouldGoToHistoryItem(HistoryItem* item) const
     return item != 0;
 }
 
-bool FrameLoaderClientGdk::privateBrowsingEnabled() const { notImplementedGdk(); return false; }
-void FrameLoaderClientGdk::makeDocumentView() { notImplementedGdk(); }
-void FrameLoaderClientGdk::makeRepresentation(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::forceLayout() { notImplementedGdk(); }
-void FrameLoaderClientGdk::forceLayoutForNonHTML() { notImplementedGdk(); }
-void FrameLoaderClientGdk::setCopiesOnScroll() { notImplementedGdk(); }
-void FrameLoaderClientGdk::detachedFromParent1() { notImplementedGdk(); }
-void FrameLoaderClientGdk::detachedFromParent2() { notImplementedGdk(); }
-void FrameLoaderClientGdk::detachedFromParent3() { notImplementedGdk(); }
-void FrameLoaderClientGdk::detachedFromParent4() { notImplementedGdk(); }
-void FrameLoaderClientGdk::loadedFromCachedPage() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidHandleOnloadEvents() {notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidCancelClientRedirect() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchWillPerformClientRedirect(const KURL&, double, double) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidChangeLocationWithinPage() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchWillClose() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidReceiveIcon() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidStartProvisionalLoad() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidReceiveTitle(const String&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidCommitLoad() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidFinishDocumentLoad() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidFirstLayout() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchShow() { notImplementedGdk(); }
-void FrameLoaderClientGdk::cancelPolicyCheck() { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidLoadMainResource(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::revertToProvisionalState(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::clearUnarchivingState(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::willChangeTitle(DocumentLoader*) { notImplementedGdk(); }
+bool FrameLoaderClientGdk::privateBrowsingEnabled() const { notImplemented(); return false; }
+void FrameLoaderClientGdk::makeDocumentView() { notImplemented(); }
+void FrameLoaderClientGdk::makeRepresentation(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::forceLayout() { notImplemented(); }
+void FrameLoaderClientGdk::forceLayoutForNonHTML() { notImplemented(); }
+void FrameLoaderClientGdk::setCopiesOnScroll() { notImplemented(); }
+void FrameLoaderClientGdk::detachedFromParent1() { notImplemented(); }
+void FrameLoaderClientGdk::detachedFromParent2() { notImplemented(); }
+void FrameLoaderClientGdk::detachedFromParent3() { notImplemented(); }
+void FrameLoaderClientGdk::detachedFromParent4() { notImplemented(); }
+void FrameLoaderClientGdk::loadedFromCachedPage() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidHandleOnloadEvents() {notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidCancelClientRedirect() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchWillPerformClientRedirect(const KURL&, double, double) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidChangeLocationWithinPage() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchWillClose() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidReceiveIcon() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidStartProvisionalLoad() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidReceiveTitle(const String&) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidCommitLoad() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidFinishDocumentLoad() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidFirstLayout() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchShow() { notImplemented(); }
+void FrameLoaderClientGdk::cancelPolicyCheck() { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidLoadMainResource(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::revertToProvisionalState(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::clearUnarchivingState(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::willChangeTitle(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClientGdk::didChangeTitle(DocumentLoader *l) { setTitle(l->title(), l->URL()); }
-void FrameLoaderClientGdk::finishedLoading(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::finalSetupForReplace(DocumentLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::setDefersLoading(bool) { notImplementedGdk(); }
-bool FrameLoaderClientGdk::isArchiveLoadPending(ResourceLoader*) const { notImplementedGdk(); return false; }
-void FrameLoaderClientGdk::cancelPendingArchiveLoad(ResourceLoader*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::clearArchivedResources() { notImplementedGdk(); }
-bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notImplementedGdk(); return true; }
-bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplementedGdk(); return false; }
-bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplementedGdk(); return false; }
-String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplementedGdk(); return String(); }
-void FrameLoaderClientGdk::provisionalLoadStarted() { notImplementedGdk(); }
-void FrameLoaderClientGdk::didFinishLoad() { notImplementedGdk(); }
-void FrameLoaderClientGdk::prepareForDataSourceReplacement() { notImplementedGdk(); }
-void FrameLoaderClientGdk::setTitle(const String&, const KURL&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::setDocumentViewFromCachedPage(WebCore::CachedPage*) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplementedGdk(); }
-bool FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { notImplementedGdk(); return false; }
-void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { notImplementedGdk(); }
-ResourceError FrameLoaderClientGdk::cancelledError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
-ResourceError FrameLoaderClientGdk::blockedError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
-ResourceError FrameLoaderClientGdk::cannotShowURLError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
-ResourceError FrameLoaderClientGdk::interruptForPolicyChangeError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
-ResourceError FrameLoaderClientGdk::cannotShowMIMETypeError(const ResourceResponse&) { notImplementedGdk(); return ResourceError(); }
-ResourceError FrameLoaderClientGdk::fileDoesNotExistError(const ResourceResponse&) { notImplementedGdk(); return ResourceError(); }
-bool FrameLoaderClientGdk::shouldFallBack(const ResourceError&) { notImplementedGdk(); return false; }
-bool FrameLoaderClientGdk::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplementedGdk(); return false; }
-void FrameLoaderClientGdk::saveDocumentViewToCachedPage(CachedPage*) { notImplementedGdk(); }
-bool FrameLoaderClientGdk::canCachePage() const { notImplementedGdk(); return false; }
-Frame* FrameLoaderClientGdk::dispatchCreatePage() { notImplementedGdk(); return 0; }
-void FrameLoaderClientGdk::dispatchUnableToImplementPolicy(const ResourceError&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::setMainDocumentError(DocumentLoader*, const ResourceError&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::startDownload(const ResourceRequest&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::updateGlobalHistoryForStandardLoad(const KURL&) { notImplementedGdk(); }
-void FrameLoaderClientGdk::updateGlobalHistoryForReload(const KURL&) { notImplementedGdk(); }
+void FrameLoaderClientGdk::finishedLoading(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::finalSetupForReplace(DocumentLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::setDefersLoading(bool) { notImplemented(); }
+bool FrameLoaderClientGdk::isArchiveLoadPending(ResourceLoader*) const { notImplemented(); return false; }
+void FrameLoaderClientGdk::cancelPendingArchiveLoad(ResourceLoader*) { notImplemented(); }
+void FrameLoaderClientGdk::clearArchivedResources() { notImplemented(); }
+bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notImplemented(); return true; }
+bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplemented(); return false; }
+bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
+String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
+void FrameLoaderClientGdk::provisionalLoadStarted() { notImplemented(); }
+void FrameLoaderClientGdk::didFinishLoad() { notImplemented(); }
+void FrameLoaderClientGdk::prepareForDataSourceReplacement() { notImplemented(); }
+void FrameLoaderClientGdk::setTitle(const String&, const KURL&) { notImplemented(); }
+void FrameLoaderClientGdk::setDocumentViewFromCachedPage(WebCore::CachedPage*) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplemented(); }
+bool FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { notImplemented(); return false; }
+void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&) { notImplemented(); }
+void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&) { notImplemented(); }
+void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { notImplemented(); }
+ResourceError FrameLoaderClientGdk::cancelledError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::blockedError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::cannotShowURLError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::interruptForPolicyChangeError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::cannotShowMIMETypeError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::fileDoesNotExistError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
+bool FrameLoaderClientGdk::shouldFallBack(const ResourceError&) { notImplemented(); return false; }
+bool FrameLoaderClientGdk::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplemented(); return false; }
+void FrameLoaderClientGdk::saveDocumentViewToCachedPage(CachedPage*) { notImplemented(); }
+bool FrameLoaderClientGdk::canCachePage() const { notImplemented(); return false; }
+Frame* FrameLoaderClientGdk::dispatchCreatePage() { notImplemented(); return 0; }
+void FrameLoaderClientGdk::dispatchUnableToImplementPolicy(const ResourceError&) { notImplemented(); }
+void FrameLoaderClientGdk::setMainDocumentError(DocumentLoader*, const ResourceError&) { notImplemented(); }
+void FrameLoaderClientGdk::startDownload(const ResourceRequest&) { notImplemented(); }
+void FrameLoaderClientGdk::updateGlobalHistoryForStandardLoad(const KURL&) { notImplemented(); }
+void FrameLoaderClientGdk::updateGlobalHistoryForReload(const KURL&) { notImplemented(); }
 
 }

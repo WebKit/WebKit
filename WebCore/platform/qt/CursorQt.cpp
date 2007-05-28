@@ -31,11 +31,10 @@
 #include "Cursor.h"
 
 #include "DeprecatedString.h"
+#include "NotImplemented.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

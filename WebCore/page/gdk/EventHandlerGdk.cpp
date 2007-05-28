@@ -33,7 +33,7 @@
 #include "FrameView.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
@@ -81,31 +81,31 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 Clipboard* EventHandler::createDraggingClipboard() const 
 {
-    notImplementedGdk();
+    notImplemented();
     return 0;
 }
 

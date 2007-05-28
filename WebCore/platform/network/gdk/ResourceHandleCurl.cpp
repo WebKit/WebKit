@@ -29,7 +29,7 @@
 #include "ResourceHandle.h"
 
 #include "DocLoader.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"
 
@@ -74,7 +74,7 @@ bool ResourceHandle::supportsBufferedData()
 void ResourceHandle::setDefersLoading(bool defers)
 {
     d->m_defersLoading = defers;
-    notImplementedGdk();
+    notImplemented();
 }
 
 } // namespace WebCore

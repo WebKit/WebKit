@@ -33,7 +33,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 #include "RenderLayer.h"
 
 #include <gdk/gdk.h>
@@ -95,7 +95,7 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
 
 void ScrollView::update()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 int ScrollView::visibleWidth() const
@@ -272,57 +272,57 @@ void ScrollView::setGtkWidget(GtkWidget* widget)
 
 void ScrollView::addChild(Widget*)
 { 
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ScrollView::removeChild(Widget*)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ScrollView::scrollRectIntoViewRecursively(const IntRect&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 bool ScrollView::inWindow() const
 {
-    notImplementedGdk();
+    notImplemented();
     return true;
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void ScrollView::updateScrollbars()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
 { 
-    notImplementedGdk();
+    notImplemented();
     return 0;
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& point) const
 { 
-    notImplementedGdk();
+    notImplemented();
     return point;
 }
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
 {
-    notImplementedGdk();
+    notImplemented();
     return point;
 }
 
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 { 
     return 0;
-    notImplementedGdk();
+    notImplemented();
 }
 
 }
