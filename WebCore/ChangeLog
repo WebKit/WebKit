@@ -1,3 +1,18 @@
+2007-05-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13907, <noscript> should be allowed inside <head> when
+        scripting is enabled.
+
+        Reviewed by aroben
+
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::checkDTD):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        * html/HTMLParserErrorCodes.cpp:
+        (WebCore::htmlParserErrorMessageTemplate):
+        * html/HTMLParserErrorCodes.h:
+
 2007-05-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

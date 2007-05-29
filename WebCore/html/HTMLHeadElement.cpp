@@ -25,7 +25,9 @@
 #include "config.h"
 #include "HTMLHeadElement.h"
 
+#include "Document.h"
 #include "HTMLNames.h"
+#include "Settings.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -62,6 +64,12 @@ bool HTMLHeadElement::childAllowed(Node* newChild)
 
 bool HTMLHeadElement::checkDTD(const Node* newChild)
 {
+    if (newChild->hasTagName(noscriptTag)) {
+        // Allow <noscript> inside the <head> when script is enabled, since the
+        // contents are just raw text that won't be displayed.
+        Settings* settings = document()->settings();
+        return settings && settings->isJavaScriptEnabled();
+    }
     return newChild->hasTagName(titleTag) || newChild->hasTagName(isindexTag) ||
            newChild->hasTagName(baseTag) || newChild->hasTagName(scriptTag) ||
            newChild->hasTagName(styleTag) || newChild->hasTagName(metaTag) ||

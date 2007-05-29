@@ -359,9 +359,14 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return false;
             }
         } else if (h->hasLocalName(metaTag) || h->hasLocalName(linkTag) || h->hasLocalName(baseTag)) {
-            if (!head)
+            bool createdHead = false;
+            if (!head) {
                 createHead();
+                createdHead = true;
+            }
             if (head) {
+                if (!createdHead)
+                    reportError(MisplacedHeadContentError, &localName, &current->localName());
                 if (head->addChild(n)) {
                     if (!n->attached() && !m_isParsingFragment)
                         n->attach();
@@ -387,14 +392,21 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return false;
             }
         } else if (h->hasLocalName(titleTag) || h->hasLocalName(styleTag)) {
-            if (!head)
+            bool createdHead = false;
+            if (!head) {
                 createHead();
+                createdHead = true;
+            }
             if (head) {
                 Node* newNode = head->addChild(n);
                 if (!newNode) {
                     setSkipMode(h->tagQName());
                     return false;
                 }
+                
+                if (!createdHead)
+                    reportError(MisplacedHeadContentError, &localName, &current->localName());
+                
                 pushBlock(localName, tagPriority);
                 setCurrent(newNode);
                 if (!n->attached() && !m_isParsingFragment)
