@@ -1,3 +1,13 @@
+2007-05-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13792
+          REGRESSION: WebKit doesn't show this javascript screenshot page (and crashes after click on its "hidden link")
+
+        * fast/frames/removal-before-attach-crash-expected.txt: Added.
+        * fast/frames/removal-before-attach-crash.html: Added.
+
 2007-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

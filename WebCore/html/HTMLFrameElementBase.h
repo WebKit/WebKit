@@ -36,6 +36,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     virtual void willRemove();
 
     virtual void attach();
@@ -100,6 +101,8 @@ protected:
 
     bool m_noResize;
     bool m_viewSource;
+
+    bool m_shouldOpenURLAfterAttach;
 };
 
 } // namespace WebCore

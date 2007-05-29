@@ -52,6 +52,7 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_marginHeight(-1)
     , m_noResize(false)
     , m_viewSource(false)
+    , m_shouldOpenURLAfterAttach(false)
 {
 }
 
@@ -114,7 +115,7 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         setLocation(parseURL(attr->value()));
     else if (attr->name() == idAttr) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLFrameOwnerElement::parseMappedAttribute(attr);
         m_name = attr->value();
     } else if (attr->name() == nameAttr) {
         m_name = attr->value();
@@ -149,7 +150,7 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(unloadEvent, attr);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
 
 void HTMLFrameElementBase::openURLCallback(Node* n)
@@ -159,7 +160,7 @@ void HTMLFrameElementBase::openURLCallback(Node* n)
 
 void HTMLFrameElementBase::insertedIntoDocument()
 {
-    HTMLElement::insertedIntoDocument();
+    HTMLFrameOwnerElement::insertedIntoDocument();
     
     m_name = getAttribute(nameAttr);
     if (m_name.isNull())
@@ -171,12 +172,24 @@ void HTMLFrameElementBase::insertedIntoDocument()
     // We delay frame loading until after the render tree is fully constructed.
     // Othewise, a synchronous load that executed JavaScript would see incorrect 
     // (0) values for the frame's renderer-dependent properties, like width.
-    queuePostAttachCallback(&HTMLFrameElementBase::openURLCallback, this);
+    m_shouldOpenURLAfterAttach = true;
+}
+
+void HTMLFrameElementBase::removedFromDocument()
+{
+    m_shouldOpenURLAfterAttach = false;
+
+    HTMLFrameOwnerElement::removedFromDocument();
 }
 
 void HTMLFrameElementBase::attach()
 {
-    HTMLElement::attach();
+    if (m_shouldOpenURLAfterAttach) {
+        m_shouldOpenURLAfterAttach = false;
+        queuePostAttachCallback(&HTMLFrameElementBase::openURLCallback, this);
+    }
+
+    HTMLFrameOwnerElement::attach();
     
     if (RenderPart* renderPart = static_cast<RenderPart*>(renderer()))
         if (Frame* frame = contentFrame())
@@ -190,7 +203,7 @@ void HTMLFrameElementBase::willRemove()
         frame->loader()->frameDetached();
     }
 
-    HTMLElement::willRemove();
+    HTMLFrameOwnerElement::willRemove();
 }
 
 String HTMLFrameElementBase::location() const
@@ -217,7 +230,7 @@ bool HTMLFrameElementBase::isFocusable() const
 
 void HTMLFrameElementBase::setFocus(bool received)
 {
-    HTMLElement::setFocus(received);
+    HTMLFrameOwnerElement::setFocus(received);
     if (Page* page = document()->page())
         page->focusController()->setFocusedFrame(received ? contentFrame() : 0);
 }

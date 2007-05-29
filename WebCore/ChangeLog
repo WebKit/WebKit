@@ -1,3 +1,38 @@
+2007-05-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix crash in http://bugs.webkit.org/show_bug.cgi?id=13792
+          REGRESSION: WebKit doesn't show this javascript screenshot page (and crashes after click on its "hidden link")
+
+        Test: fast/frames/removal-before-attach-crash.html
+
+        Delayed the queueing of the post-attach callback until attach().
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Replaced call to the
+        HTMLElement implementation with a call to the HTMLFrameOwnerElement
+        implementation, as the latter is the parent class.
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument): Instead of queueing
+        the post-attach callback here, just set a flag telling us to do so
+        at the beginning of attach().
+        (WebCore::HTMLFrameElementBase::removedFromDocument): Reset the above flag.
+        (WebCore::HTMLFrameElementBase::attach): If this is the first attach() after
+        being inserted into the document, queue a post-attach callback to load the
+        frame.
+        (WebCore::HTMLFrameElementBase::willRemove): Changed to call up to the correct
+        parent class.
+        (WebCore::HTMLFrameElementBase::setFocus): Ditto.
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::mapToEntry): Replaced call to the HTMLElement
+        implementation with a call to the HTMLFrameOwnerElement implementation,
+        as the latter is the parent class.
+        (WebCore::HTMLPlugInElement::parseMappedAttribute): Ditto.
+        (WebCore::HTMLPlugInElement::checkDTD): Ditto.
+        (WebCore::HTMLPlugInElement::detach): Ditto.
+
 2007-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
