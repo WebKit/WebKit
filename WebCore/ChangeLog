@@ -1,3 +1,12 @@
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Consolidate platform dependent notImplemented() macros
+        into one platform independent macro that uses WTFLog.
+
+        * platform/NotImplemented.h:
+
 2007-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

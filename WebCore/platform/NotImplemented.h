@@ -20,52 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
 
 #ifndef NotImplemented_h
 #define NotImplemented_h
 
+#include "Logging.h"
 #include <wtf/Assertions.h>
 
-     
+#if PLATFORM(GDK)
+    #define supressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
+#else
+    #define supressNotImplementedWarning() false
+#endif
+
 #if PLATFORM(QT)
 
     #include <qglobal.h>
     #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
 
 #elif defined(NDEBUG)
- 
+
 #define notImplemented() ((void)0)
- 
-#else
- 
-#if PLATFORM(GDK)
-     
-    #define notImplemented() do { \
-       static bool printed = false; \
-       if (!printed && !getenv("DISABLE_NI_WARNING")) { \
-           fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-           printed = true; \
-       } \
-    } while (0)
 
 #else
-    
-    #if COMPILER(GCC)
-    #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); } while(0)
-    #endif
 
-    #if COMPILER(MSVC)
-    #define notImplemented() do { \
-        char buf[256] = {0}; \
-        _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
-        OutputDebugStringA(buf); \
+#define notImplemented() do { \
+        static bool havePrinted = false; \
+        if (!havePrinted && !supressNotImplementedWarning()) { \
+            WTFLog(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LogNotYetImplemented, "%s is not implemented", __FUNCTION__); \
+            havePrinted = true; \
+        } \
     } while (0)
-    #endif
 
-#endif // PLATFORM(GDK)
+#endif
 
 #endif // NDEBUG
 
