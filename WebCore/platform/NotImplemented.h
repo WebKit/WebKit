@@ -54,8 +54,6 @@
         } \
     } while (0)
 
-#endif
-
 #endif // NDEBUG
 
 #endif // NotImplemented_h
