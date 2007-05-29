@@ -26,8 +26,16 @@
 
 #ifndef NotImplemented_h
 #define NotImplemented_h
- 
-#ifdef NDEBUG
+
+#include <wtf/Assertions.h>
+
+     
+#if PLATFORM(QT)
+
+    #include <qglobal.h>
+    #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
+
+#elif defined(NDEBUG)
  
 #define notImplemented() ((void)0)
  
@@ -42,11 +50,6 @@
            printed = true; \
        } \
     } while (0)
-     
-#elif PLATFORM(QT)
-
-    #include <QApplication>
-    #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
 
 #else
     

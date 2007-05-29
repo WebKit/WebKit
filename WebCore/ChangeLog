@@ -1,3 +1,12 @@
+2007-05-29  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by George and Niko
+
+        Making the convenience method notImplemented convenient
+        for the Qt port.
+
+        * platform/NotImplemented.h:
+
 2007-05-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
