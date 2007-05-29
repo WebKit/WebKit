@@ -292,8 +292,30 @@ sub revertDirectories()
 sub svnStatus($)
 {
     my ($fullPath) = @_;
+    my $svnStatus;
     open SVN, "svn status --non-interactive --non-recursive '$fullPath' |" or die;
-    my $svnStatus = <SVN>;
+    if (-d $fullPath) {
+        # When running "svn stat" on a directory, we can't assume that only one
+        # status will be returned (since any files with a status below the
+        # directory will be returned), and we can't assume that the directory will
+        # be first (since any files with unknown status will be listed first).
+        my $normalizedFullPath = File::Spec->catdir(File::Spec->splitdir($fullPath));
+        while (<SVN>) {
+            chomp;
+            my $normalizedStatPath = File::Spec->catdir(File::Spec->splitdir(substr($_, 7)));
+            if ($normalizedFullPath eq $normalizedStatPath) {
+                $svnStatus = $_;
+                last;
+            }
+        }
+        # Read the rest of the svn command output to avoid a broken pipe warning.
+        local $/ = undef;
+        <SVN>;
+    }
+    else {
+        # Files will have only one status returned.
+        $svnStatus = <SVN>;
+    }
     close SVN;
     return $svnStatus;
 }

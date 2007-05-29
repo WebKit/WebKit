@@ -1,3 +1,22 @@
+2007-05-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13900
+          svnStatus($) subroutine in svn-[un]apply does not work properly with directories
+
+        This patch also fixes an instance of the "broken pipe" warning that happened when
+        a directory contained modified files that were not part of an applied or unapplied
+        patch.
+
+        * Scripts/svn-apply:
+        (svnStatus($)): If we're trying to get status on a directory (instead of a file),
+        make sure we actually get the directory's status (if it has one), not the first
+        file's status reported within the directory.  Fix "broken pipe" warnings by
+        reading all of the output from the SVN filehandle before closing it.
+        * Scripts/svn-unapply:
+        (svnStatus($)): Ditto.
+
 2007-05-28  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
