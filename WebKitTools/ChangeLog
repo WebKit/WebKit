@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13901
+          run-pageloadtest does not obey testName on command-line
+
+        * Scripts/run-pageloadtest: Grab $testName from the command-line if it is present,
+        otherwise default to "svg".  Added dummy check to make sure $testName.pltsuite
+        exists.
+
+2007-05-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13900
           svnStatus($) subroutine in svn-[un]apply does not work properly with directories
 

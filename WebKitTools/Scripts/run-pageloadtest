@@ -34,6 +34,7 @@ use strict;
 use warnings;
 
 use File::Basename;
+use File::Spec;
 use FindBin;
 use Getopt::Long;
 
@@ -55,20 +56,28 @@ if (!$getOptionsResult || $showHelp) {
     exit 1;
 }
 
+$testName = shift @ARGV if (@ARGV);
+
+my $safariExecutablePath = safariPath();
+my $safariResourcePath = File::Spec->catdir(dirname(dirname($safariExecutablePath)), "Resources");
+
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
 chdirWebKit();
 
-my $suiteFile = "PageLoadTests/$testName/$testName.pltsuite";
-my $webkitPath = sourceDir();
+if ($testName eq 'svg') {
+    my $suiteFile = "PageLoadTests/$testName/$testName.pltsuite";
+    my $webkitPath = sourceDir();
+    `cat "$suiteFile" | perl -pe 's|WEBKIT_PATH|$webkitPath|' > $safariResourcePath/$testName.pltsuite`
+}
 
-`cat "$suiteFile" | perl -pe 's|WEBKIT_PATH|$webkitPath|' > /Applications/Safari.app/Contents/Resources/$testName.pltsuite`;
+die "Please copy ${testName}.pltsuite to ${safariResourcePath}/${testName}.pltsuite"
+    if (! -f "${safariResourcePath}/${testName}.pltsuite");
 
 setConfiguration();
 
 my $productDir = productDir();
-my $safariPath = safariPath();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
@@ -80,5 +89,4 @@ my @testCommands = ('activate');
 @testCommands = (@testCommands, ("run $testName", 'emptyCache', 'wait 30'));
 @testCommands = (@testCommands, (("run $testName", 'wait 10') x 3));
 my $testCommandsString = join('; ', @testCommands);
-exec $safariPath, '--test-commands', $testCommandsString or die;
-
+exec $safariExecutablePath, '--test-commands', $testCommandsString or die;
