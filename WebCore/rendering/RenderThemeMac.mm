@@ -1226,7 +1226,6 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
 
     NSSearchFieldCell* search = this->search();
 
-    [search setMaximumRecents:0];
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
@@ -1252,7 +1251,8 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
 
     NSSearchFieldCell* search = this->search();
 
-    [search setMaximumRecents:1];
+    if (![search searchMenuTemplate])
+        [search setSearchMenuTemplate:searchMenuTemplate()];
 
     NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
     [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
@@ -1315,12 +1315,17 @@ NSSearchFieldCell* RenderThemeMac::search() const
         [m_search.get() setBezeled:YES];
         [m_search.get() setEditable:YES];
         [m_search.get() setFocusRingType:NSFocusRingTypeExterior];
-        NSMenu* searchMenuTemplate = [[NSMenu alloc] initWithTitle:@""];
-        [m_search.get() setSearchMenuTemplate:searchMenuTemplate];
-        [searchMenuTemplate release];
     }
 
     return m_search.get();
+}
+
+NSMenu* RenderThemeMac::searchMenuTemplate() const
+{
+    if (!m_searchMenuTemplate)
+        m_searchMenuTemplate.adoptNS([[NSMenu alloc] initWithTitle:@""]);
+
+    return m_searchMenuTemplate.get();
 }
 
 NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const

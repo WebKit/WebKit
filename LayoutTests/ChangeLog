@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=13904
+
+        * fast/forms/box-shadow-override-expected.checksum:
+        * fast/forms/box-shadow-override-expected.png:
+
+2007-05-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=13792
           REGRESSION: WebKit doesn't show this javascript screenshot page (and crashes after click on its "hidden link")
 

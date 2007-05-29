@@ -1,3 +1,26 @@
+2007-05-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13904
+          REGRESSION: Search fields with a results popup do not always draw the popup arrow
+
+        Covered by fast/forms/box-shadow-override.html
+
+        The search button draws a popup arrow depending on whether the
+        search menu template is set, rather than on the maximum number of recent
+        search strings.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration): Removed the
+        call to -setMaxmiumRecents:.
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton): Replaced calling
+        -setMaximumRecents: with setting the search menu template.
+        (WebCore::RenderThemeMac::search): Removed initialization of the menu.
+        (WebCore::RenderThemeMac::searchMenuTemplate): Added. Returns an empty
+        NSMenu to be used as the search menu template.
+
 2007-05-29  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13907, <noscript> should be allowed inside <head> when

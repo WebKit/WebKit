@@ -165,6 +165,7 @@ private:
     NSButtonCell* button() const;
     NSPopUpButtonCell* popupButton() const;
     NSSearchFieldCell* search() const;
+    NSMenu* searchMenuTemplate() const;
     NSSliderCell* sliderThumbHorizontal() const;
     NSSliderCell* sliderThumbVertical() const;
     Image* resizeCornerImage() const;
@@ -175,6 +176,7 @@ private:
     mutable RetainPtr<NSButtonCell> m_button;
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
+    mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
     mutable Image* m_resizeCornerImage;
