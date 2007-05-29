@@ -1,3 +1,13 @@
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Cleanup function and fix to match comparison API.
+
+        * kjs/string_object.cpp:
+        (KJS::substituteBackreferences):
+        (KJS::localeCompare):
+
 2007-05-28  Geoffrey Garen  <ggaren@apple.com>
 
         Slight clarification to an exception message.
