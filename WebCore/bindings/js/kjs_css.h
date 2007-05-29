@@ -45,34 +45,6 @@ namespace WebCore {
 
 namespace KJS {
 
-  KJS_DEFINE_PROTOTYPE(DOMCSSStyleDeclarationPrototype)
-
-  class DOMCSSStyleDeclaration : public DOMObject {
-  public:
-    virtual ~DOMCSSStyleDeclaration();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    JSValue* getValueProperty(ExecState*, int token);
-
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { CssText, Length, ParentRule };
-    enum { GetPropertyValue, GetPropertyCSSValue, RemoveProperty, 
-           GetPropertyPriority, GetPropertyShorthand, IsPropertyImplicit, SetProperty, Item };
-    WebCore::CSSStyleDeclaration* impl() const { return m_impl.get(); }
-  private:
-    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue *cssPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-
-    // Don't use this class directly -- use JSCSSStyleDeclaration instead
-    friend class WebCore::JSCSSStyleDeclaration;
-    DOMCSSStyleDeclaration(ExecState*, WebCore::CSSStyleDeclaration *s);
-
-    RefPtr<WebCore::CSSStyleDeclaration> m_impl;
-  };
-
-  JSValue* toJS(ExecState*, WebCore::CSSStyleDeclaration*);
-
   class DOMStyleSheet : public DOMObject {
   public:
     DOMStyleSheet(ExecState*, WebCore::StyleSheet*);

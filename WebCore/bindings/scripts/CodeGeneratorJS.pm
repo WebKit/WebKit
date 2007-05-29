@@ -797,6 +797,7 @@ sub GenerateImplementation
             push(@implContent, "        slot.setCustom(this, nameGetter);\n");
             push(@implContent, "        return true;\n");
             push(@implContent, "    }\n");
+            $implIncludes{"AtomicString.h"} = 1;
         };
 
         if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
@@ -1128,7 +1129,11 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue* ${className}::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
-        push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
+        if ($interfaceName eq "CSSStyleDeclaration") {
+            push(@implContent, "    return jsStringOrNull(thisObj->impl()->item(slot.index()));\n");
+        } else {
+            push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
+        }
         push(@implContent, "}\n");
     }
 
@@ -1471,8 +1476,7 @@ sub NativeToJSValue
         $implIncludes{"CSSStyleSheet.h"} = 1;
         $implIncludes{"MediaList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
-    } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
-        $implIncludes{"CSSStyleDeclaration.h"} = 1;
+    } elsif ($type eq "Rect") {
         $implIncludes{"RectImpl.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
     } elsif ($type eq "HTMLCanvasElement") {

@@ -29,6 +29,7 @@
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "JSCSSRuleList.h"
+#import "JSCSSStyleDeclaration.h"
 #import "JSCounter.h"
 #import "JSDOMImplementation.h"
 #import "JSEvent.h"
@@ -65,6 +66,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
             return [DOM##className _wrap##className:static_cast<WebCore::JS##className*>(object)->impl()];
 
     WRAP(CSSRuleList)
+    WRAP(CSSStyleDeclaration)
     WRAP(Counter)
     WRAP(HTMLOptionsCollection)
     WRAP(Range)
@@ -78,7 +80,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
             return [objc_getClass("DOM" #className) _wrap##className:static_cast<DOM##className*>(object)->impl()];
 
     WRAP(CSSRule)
-    WRAP(CSSStyleDeclaration)
     WRAP(CSSValue)
     WRAP(Event)
     WRAP(MediaList)

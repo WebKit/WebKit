@@ -31,6 +31,7 @@
 #endif
 
 namespace WebCore {
+    class AtomicString;
     class Document;
     class Event;
     class Frame;

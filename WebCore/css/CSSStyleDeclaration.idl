@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,29 +21,27 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMCSSStyleDeclaration, GenerateConstructor] CSSStyleDeclaration {
-#if !defined(LANGUAGE_JAVASCRIPT)
-                 attribute [ConvertNullToNullString] DOMString        cssText
+    interface [GenerateConstructor, CustomPutFunction, HasOverridingNameGetter, HasIndexGetter] CSSStyleDeclaration {
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
                      setter raises(DOMException);
 
-        DOMString          getPropertyValue(in DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          getPropertyValue(in DOMString propertyName);
         CSSValue           getPropertyCSSValue(in DOMString propertyName);
-        DOMString          removeProperty(in DOMString propertyName)
+        [ConvertNullStringTo=Null] DOMString          removeProperty(in DOMString propertyName)
             raises(DOMException);
-        DOMString          getPropertyPriority(in DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in DOMString propertyName);
         [OldStyleObjC] void setProperty(in DOMString propertyName, 
-                                        in DOMString value, 
+                                        in [ConvertNullToNullString] DOMString value, 
                                         in DOMString priority)
             raises(DOMException);
 
         readonly attribute unsigned long    length;
-        DOMString          item(in unsigned long index);
+        [ConvertNullStringTo=Null] DOMString          item(in unsigned long index);
         readonly attribute CSSRule          parentRule;
-        
-        // extensions
-        DOMString          getPropertyShorthand(in DOMString propertyName);
+
+        // Extensions
+        [ConvertNullStringTo=Null] DOMString          getPropertyShorthand(in DOMString propertyName);
         boolean            isPropertyImplicit(in DOMString propertyName);
-#endif
     };
 
 }

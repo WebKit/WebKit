@@ -1,3 +1,26 @@
+2007-05-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=13902
+          Autogenerate the JS bindings for the CSSStyleDeclaration
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp: Added.
+        (WebCore::cssPropertyName):
+        (WebCore::isCSSPropertyName):
+        (WebCore::JSCSSStyleDeclaration::canGetItemsForName):
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        (WebCore::JSCSSStyleDeclaration::customPut):
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSStyleDeclaration.idl:
+
 2007-05-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
