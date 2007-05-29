@@ -30,12 +30,10 @@ namespace WebCore {
 class DocumentFragment;
 class HTMLCollection;
 class HTMLFormElement;
-class String;
 
 enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
                        
-class HTMLElement : public StyledElement
-{
+class HTMLElement : public StyledElement {
 public:
     HTMLElement(const QualifiedName& tagName, Document*);
     virtual ~HTMLElement();
@@ -100,12 +98,14 @@ public:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual HTMLFormElement* formForEventHandlerScope() const;
+    HTMLFormElement* form() const { return virtualForm(); }
+    HTMLFormElement* findFormAncestor() const;
 
 protected:
-
-    // for IMG, OBJECT and APPLET
     void addHTMLAlignment(MappedAttribute*);
+
+private:
+    virtual HTMLFormElement* virtualForm() const;
 };
 
 } //namespace

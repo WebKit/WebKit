@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -625,7 +625,7 @@ static HTMLLabelElement* labelForElement(Element* element)
     unsigned len = list->length();
     for (unsigned i = 0; i < len; i++) {
         HTMLLabelElement* label = static_cast<HTMLLabelElement*>(list->item(i));
-        if (label->formElement() == element)
+        if (label->correspondingControl() == element)
             return label;
     }
     

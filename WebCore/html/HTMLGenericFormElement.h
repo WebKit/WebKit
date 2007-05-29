@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +31,7 @@ namespace WebCore {
 class FormDataList;
 class HTMLFormElement;
 
+// FIXME: Rename this class to HTMLFormControlElement.
 class HTMLGenericFormElement : public HTMLElement {
 public:
     HTMLGenericFormElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);
@@ -59,7 +58,6 @@ public:
     bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
     void setValueMatchesRenderer(bool b = true) const { m_valueMatchesRenderer = b; }
 
-    void onSelect();
     void onChange();
 
     bool disabled() const;
@@ -98,17 +96,13 @@ public:
 
     void formDestroyed() { m_form = 0; }
 
-    virtual HTMLFormElement* formForEventHandlerScope() const;
-
-protected:
-    HTMLFormElement* getForm() const;
-
 private:
+    virtual HTMLFormElement* virtualForm() const;
+
     HTMLFormElement* m_form;
     bool m_disabled;
     bool m_readOnly;
     mutable bool m_valueMatchesRenderer;
-
 };
 
 } //namespace

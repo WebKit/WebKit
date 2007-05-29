@@ -34,6 +34,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include "RenderWordBreak.h"
@@ -864,9 +865,17 @@ RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style
     return RenderObject::createObject(this, style);
 }
 
-HTMLFormElement* HTMLElement::formForEventHandlerScope() const
+HTMLFormElement* HTMLElement::findFormAncestor() const
 {
+    for (Node* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode())
+        if (ancestor->hasTagName(formTag))
+            return static_cast<HTMLFormElement*>(ancestor);
     return 0;
+}
+
+HTMLFormElement* HTMLElement::virtualForm() const
+{
+    return findFormAncestor();
 }
 
 } // namespace WebCore

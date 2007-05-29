@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLObjectElement.h"
 
@@ -52,7 +51,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLObjectElement::HTMLObjectElement(Document *doc) 
+HTMLObjectElement::HTMLObjectElement(Document* doc) 
     : HTMLPlugInElement(objectTag, doc)
     , m_needWidgetUpdate(false)
     , m_useFallbackContent(false)
@@ -91,16 +90,6 @@ KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
     return m_instance.get();
 }
 #endif
-
-HTMLFormElement* HTMLObjectElement::form() const
-{
-    for (Node* p = parentNode(); p != 0; p = p->parentNode()) {
-        if (p->hasTagName(formTag))
-            return static_cast<HTMLFormElement*>(p);
-    }
-    
-    return 0;
-}
 
 void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -509,10 +498,5 @@ SVGDocument* HTMLObjectElement::getSVGDocument(ExceptionCode& ec) const
     return 0;
 }
 #endif
-
-HTMLFormElement* HTMLObjectElement::formForEventHandlerScope() const
-{
-    return form();
-}
 
 }

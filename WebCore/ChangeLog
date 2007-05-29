@@ -1,3 +1,54 @@
+2007-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - a clean-up pass on form-related aspects of the recent JSHTMLElement patch
+
+        * bindings/js/JSHTMLElementCustom.cpp: (WebCore::JSHTMLElement::pushEventHandlerScope):
+        Replace the call to formForEventHandlerScope() with a call to the new form() function.
+        And removed the now-uneeded code to search for a form ancestor.
+
+        * html/HTMLElement.h: Added a general-purpose form() function. The intent is to return
+        the form ancestor if any, but return the associated form for a form control, which isn't
+        always an ancestor of the control. To keep form() efficient for form controls, it's an
+        inline that calls a virtual, allowing a derived class to override it with an inline.
+        This replaces formForEventHandlerScope(). Also added findFormAncestor() to use here and
+        to replace the multiple loops found elsewhere to search for the nearest form ancestor.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::findFormAncestor): Added.
+        (WebCore::HTMLElement::virtualForm): Added. Calls findFormAncestor().
+
+        * html/HTMLGenericFormElement.h: Suggested name change to HTMLFormControlElement.
+        Removed the confusing getForm() function, which is superceded by findFormAncestor.
+        Removed the unused onSelect() function. Removed the override of formForEventHandlerScope(),
+        replacing it with an override of virtualForm().
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::HTMLGenericFormElement): Use findFormAncestor
+        instead of getForm.
+        (WebCore::HTMLGenericFormElement::insertedIntoTree): Ditto.
+        (WebCore::HTMLGenericFormElement::virtualForm): Added.
+
+        * html/HTMLLabelElement.h: Removed now-unneeded form() and formForEventHandlerScope()
+        functions, since base class behavior is now good enough. Renamed formElement() to
+        correspondingControl(), since that's the terminology used elsewhere in the code,
+        and the old name was unnecessarily confusing.
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::correspondingControl): Renamed. Removed unnecessary
+        special case for empty ID, since getElementById already returns 0 for that case.
+        (WebCore::HTMLLabelElement::setActive): Updated for name change.
+        (WebCore::HTMLLabelElement::setHovered): Ditto.
+        (WebCore::HTMLLabelElement::defaultEventHandler): Ditto.
+        (WebCore::HTMLLabelElement::focus): Ditto.
+        (WebCore::HTMLLabelElement::accessKeyAction): Ditto.
+
+        * html/HTMLObjectElement.h: Removed now-unneeded form() and formForEventHandlerScope()
+        functions, since base class behavior is now good enough. Also removed forward
+        declaration of KJS::Bindings::Instance -- since the type is the return value of a
+        function from the base class, it's guaranteed to be declared in the base class header.
+        * html/HTMLObjectElement.cpp: Ditto.
+
+        * bridge/mac/WebCoreAXObject.mm: (labelForElement): Updated for name change.
+
 2007-05-29  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by George and Niko
