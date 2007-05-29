@@ -5,12 +5,14 @@
 function mycopy(event)
 {
     event.clipboardData.setData('text/plain', "SUCCESS");
+    event.preventDefault();
 }
 
 function mypaste(event)
 {
     var clip = event.clipboardData.getData('text/plain');
     document.getElementById('result').innerHTML = clip;
+    event.preventDefault();
 }
 
 function test()

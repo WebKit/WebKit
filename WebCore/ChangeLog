@@ -1,3 +1,61 @@
+2007-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13602
+          Amazon product pages keep repainting over and over again
+
+        - fix first-letter when the text of the affected text node is changed
+
+        Optimize setInnerHTML, setOuterHTML, and setInnerText so they don't change the DOM at all
+        if they don't need to.
+
+        Test: fast/dom/HTMLElement/set-inner-outer-optimization.html
+        Test: fast/css/first-letter-detach.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::equal): Added. Helper function that compares two Text nodes or two NamedAttrMap
+        attribute maps.
+        (WebCore::shallowEqual): Added. Helper function that compares two Element nodes or two
+        arbitrary nodes.
+        (WebCore::childrenAreEqual): Added. Helper functions that compare children of nodes.
+        (WebCore::hasOneChild): Added. Helper function.
+        (WebCore::hasOneTextChild): Added. Helper function.
+        (WebCore::replaceChildrenWithFragment): Added. Helper function used by setInnerHTML and
+        setInnerText. Optimizes the cases where all the nodes are the same, where both the current
+        and the new content are single text nodes, and where the current content is a single node
+        that can be replaced with replaceChild.
+        (WebCore::replaceChildrenWithText): Added. Helper function used by setInnerText. Optimizes
+        the case where the current content is a single text node or a single node that can be
+        replaced with replaceChild.
+        (WebCore::HTMLElement::setInnerHTML): Changed to call replaceChildrenWithFragment.
+        (WebCore::HTMLElement::setOuterHTML): Added special case to optimize when the new content
+        exactly matches the current node.
+        (WebCore::HTMLElement::setInnerText): Changed to call replaceChildrenWithText in a few
+        cases instead of doing removeChildren/appendChild. Changed code that was using
+        DeprecatedString to instead use String. Changed general case to use a document fragment
+        and replaceChildrenWithFragment.
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::dispatchModifiedEvent):
+        Fixed bug where we would not dispatch the DOMSubtreeModified event unless someone
+        was registered for the DOMCharacterDataModified event. Caused trouble in the test.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::updateFirstLetter): Set first-letter
+        after the setStyle call so calls to setTextInternal inside setStyle don't clear it.
+
+        * rendering/RenderText.h: Made setTextInternal virtual so that RenderTextFragment can do
+        appropriate work when the text changes.
+
+        * rendering/RenderTextFragment.h: Added an override of setTextInternal. Removed the
+        firstLetter parameter to the constructor and made it a separate setter. Also changed
+        m_generatedContentStr to m_contentString to match the getter function.
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::RenderTextFragment): Removed firstLetter parameter.
+        (WebCore::RenderTextFragment::setTextInternal): When the text changes, destroy the
+        first-letter node and reset the fragment values so that RenderBlock::updateFirstLetter,
+        which will run during layout, will create a new first-letter child. Otherwise we end up
+        with the first letter of the old text.
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

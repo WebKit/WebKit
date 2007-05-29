@@ -127,7 +127,7 @@ public:
     int allowTabs() const { return !style()->collapseWhiteSpace(); }
 
 protected:
-    void setTextInternal(PassRefPtr<StringImpl>);
+    virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void calcPrefWidths(int leadWidth);
 
 private:

@@ -1,3 +1,26 @@
+2007-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13602
+          Amazon product pages keep repainting over and over again
+
+        * fast/dom/HTMLElement/set-inner-outer-optimization-expected.txt: Added.
+        * fast/dom/HTMLElement/set-inner-outer-optimization.html: Added.
+
+        * editing/execCommand/copy-without-selection.html: Added missing preventDefault calls
+        to prevent this from being a double-paste test.
+
+        * fast/css/first-letter-detach-expected.checksum: Updated.
+        * fast/css/first-letter-detach-expected.png: Updated.
+        * fast/css/first-letter-detach-expected.txt: Updated.
+        * fast/css/first-letter-detach.html: Updated to test three different ways of setting the
+        text of the first-letter element; setInnerHTML and two other ways.
+
+        * fast/events/updateLayoutForHitTest-expected.txt: Updated result that changed slightly
+        due to setInnerHTML improvement.
+        * fast/forms/textarea-setinnerhtml-expected.txt: Ditto.
+
 2007-05-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

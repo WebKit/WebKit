@@ -229,15 +229,14 @@ void CharacterData::dispatchModifiedEvent(StringImpl *prevValue)
 {
     if (parentNode())
         parentNode()->childrenChanged();
-    if (!document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
-        return;
-
-    StringImpl *newValue = str->copy();
-    newValue->ref();
-    ExceptionCode ec = 0;
-    dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent,
-                  true,false,0,prevValue,newValue,String(),0),ec);
-    newValue->deref();
+    if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER)) {
+        StringImpl *newValue = str->copy();
+        newValue->ref();
+        ExceptionCode ec = 0;
+        dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent,
+                      true,false,0,prevValue,newValue,String(),0),ec);
+        newValue->deref();
+    }
     dispatchSubtreeModifiedEvent();
 }
 

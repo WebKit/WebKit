@@ -3,14 +3,18 @@
 <head>
 <title></title>
 <style type="text/css">
-#target:first-letter { color: blue;	}
+#targeta:first-letter { color: blue; }
+#targetb:first-letter { color: blue; }
+#targetc:first-letter { color: blue; }
 </style>
 
 <script type="text/javascript">
 function test()
 {
     document.body.offsetTop;
-    document.getElementById("target").innerHTML = "PASS";
+    document.getElementById("targeta").innerHTML = "PASS";
+    document.getElementById("targetb").firstChild.data = "PASS";
+    document.getElementById("targetc").replaceChild(document.createTextNode("PASS"), document.getElementById("targetc").firstChild);
 }
 </script>
 
@@ -21,9 +25,11 @@ Test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3560">http:/
 page with use of first-letter crashes reproducibly in RenderObject::renderArena()</i>.
 </p>
 <p>
-The next line should read &ldquo;<span style="color: blue;">P</span>ASS&rdquo;, with nothing before the P.
+The next three lines should all read &ldquo;<span style="color: blue;">P</span>ASS&rdquo;, with nothing before the P.
 </p>
 <hr>
-<p id="target">didn&rsquo;t run</p>
+<p id="targeta">didn&rsquo;t run</p>
+<p id="targetb">didn&rsquo;t run</p>
+<p id="targetc">didn&rsquo;t run</p>
 </body>
 </html>

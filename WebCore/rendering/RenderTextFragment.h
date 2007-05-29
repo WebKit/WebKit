@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +33,7 @@ namespace WebCore {
 // the original unaltered string from our corresponding DOM node.
 class RenderTextFragment : public RenderText {
 public:
-    RenderTextFragment(Node*, StringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
+    RenderTextFragment(Node*, StringImpl*, int startOffset, int length);
     RenderTextFragment(Node*, StringImpl*);
 
     virtual bool isTextFragment() const { return true; }
@@ -44,15 +42,19 @@ public:
 
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
-    RenderObject* firstLetter() const { return m_firstLetter; }
 
-    StringImpl* contentString() const { return m_generatedContentStr.get(); }
+    RenderObject* firstLetter() const { return m_firstLetter; }
+    void setFirstLetter(RenderObject* firstLetter) { m_firstLetter = firstLetter; }
+
+    StringImpl* contentString() const { return m_contentString.get(); }
     virtual PassRefPtr<StringImpl> originalText() const;
 
 private:
+    virtual void setTextInternal(PassRefPtr<StringImpl>);
+
     unsigned m_start;
     unsigned m_end;
-    RefPtr<StringImpl> m_generatedContentStr;
+    RefPtr<StringImpl> m_contentString;
     RenderObject* m_firstLetter;
 };
 
