@@ -81,16 +81,16 @@ function test()
 
     runTest('<a></a>', 'innerHTML', '', 'modified');
     runTest('<a></a>', 'innerHTML', 'text', 'modified');
-    runTest('<a></a>', 'innerHTML', '<a></a>', 'not modified');
+    runTest('<a></a>', 'innerHTML', '<a></a>', 'modified');
     runTest('<a></a>', 'innerHTML', '<a href=""></a>', 'modified');
     runTest('<a></a>', 'innerHTML', '<a>text</a>', 'modified');
     runTest('<a></a>', 'innerHTML', '<a></a><b></b>', 'modified');
 
-    runTest('<a>text</a>', 'innerHTML', '<a>text</a>', 'not modified');
+    runTest('<a>text</a>', 'innerHTML', '<a>text</a>', 'modified');
     runTest('<a>text</a>', 'innerHTML', '<a>different text</a>', 'modified');
 
     runTest('<a href="b"></a>', 'innerHTML', '<a name="c" href="b"></a>', 'modified');
-    runTest('<a href="b" name="c"></a>', 'innerHTML', '<a href="b" name="c"></a>', 'not modified');
+    runTest('<a href="b" name="c"></a>', 'innerHTML', '<a href="b" name="c"></a>', 'modified');
     runTest('<a href="b" name="c"></a>', 'innerHTML', '<a name="c" href="b"></a>', 'modified');
 
     runTest('', 'innerText', '', 'not modified');
@@ -109,7 +109,7 @@ function test()
     runTest('', 'outerHTML', 'text', 'replaced');
     runTest('', 'outerHTML', '<a></a>', 'replaced');
     runTest('', 'outerHTML', '<a></a><b></b>', 'replaced');
-    runTest('', 'outerHTML', '<div></div>', 'not modified');
+    runTest('', 'outerHTML', '<div></div>', 'replaced');
     runTest('', 'outerHTML', '<div>text</div>', 'replaced');
     runTest('', 'outerHTML', '<div><a></a></div>', 'replaced');
     runTest('', 'outerHTML', '<div><a></a><b></b></div>', 'replaced');
@@ -119,7 +119,7 @@ function test()
     runTest('text', 'outerHTML', '<a></a>', 'replaced');
     runTest('text', 'outerHTML', '<a></a><b></b>', 'replaced');
     runTest('text', 'outerHTML', '<div></div>', 'replaced');
-    runTest('text', 'outerHTML', '<div>text</div>', 'not modified');
+    runTest('text', 'outerHTML', '<div>text</div>', 'replaced');
     runTest('text', 'outerHTML', '<div>different text</div>', 'replaced');
     runTest('text', 'outerHTML', '<div><a></a></div>', 'replaced');
     runTest('text', 'outerHTML', '<div><a></a><b></b></div>', 'replaced');
@@ -133,14 +133,14 @@ function test()
     runTest('<a></a>', 'outerHTML', '<div></div>', 'replaced');
     runTest('<a></a>', 'outerHTML', '<div>text</div>', 'replaced');
     runTest('<a></a>', 'outerHTML', '<div>different text</div>', 'replaced');
-    runTest('<a></a>', 'outerHTML', '<div><a></a></div>', 'not modified');
+    runTest('<a></a>', 'outerHTML', '<div><a></a></div>', 'replaced');
     runTest('<a></a>', 'outerHTML', '<div><a></a><b></b></div>', 'replaced');
 
-    runTest('<a>text</a>', 'outerHTML', '<div><a>text</a></div>', 'not modified');
+    runTest('<a>text</a>', 'outerHTML', '<div><a>text</a></div>', 'replaced');
     runTest('<a>text</a>', 'outerHTML', '<div><a>different text</a></div>', 'replaced');
 
     runTest('<a href="b"></a>', 'outerHTML', '<div><a name="c" href="b"></a></div>', 'replaced');
-    runTest('<a href="b" name="c"></a>', 'outerHTML', '<div><a href="b" name="c"></a></div>', 'not modified');
+    runTest('<a href="b" name="c"></a>', 'outerHTML', '<div><a href="b" name="c"></a></div>', 'replaced');
     runTest('<a href="b" name="c"></a>', 'outerHTML', '<div><a name="c" href="b"></a></div>', 'replaced');
 
     parent.outerHTML = "";
@@ -148,7 +148,7 @@ function test()
     if (failureCount == 0)
         print("ALL TESTS PASSED");
     else
-        print(failureCount + "TESTS FAILED");
+        print(failureCount + " TESTS FAILED");
 }
 
 </script>

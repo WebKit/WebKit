@@ -1,3 +1,21 @@
+2007-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - removed the general case optimization for innerHTML because some sites
+          rely on setting innerHTML to trigger loading plug-ins for example; we
+          could consider bringing it back some day, perhaps with a list of element
+          types to exclude
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::setData):
+        Do nothing if the old data is identical to the new data.
+
+        * html/HTMLElement.cpp:
+        (WebCore::replaceChildrenWithFragment): Remove childrenAreEqual optimization.
+        (WebCore::replaceChildrenWithText): Remove optimization for cases where the
+        text data is identical to the new data, since CharacterData handles that now.
+        (WebCore::HTMLElement::setOuterHTML): Remove childrenAreEqual optimization.
+
 2007-05-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

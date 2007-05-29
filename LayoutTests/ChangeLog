@@ -1,3 +1,11 @@
+2007-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - updated results since I removed many cases of the innerHTML optimization
+
+        * fast/dom/HTMLElement/set-inner-outer-optimization.html: Updated.
+
 2007-05-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
