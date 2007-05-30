@@ -1,3 +1,15 @@
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dr. Harrison.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13868
+        REGRESSION: crash on accessing a new iframe's contentWindow property
+
+        * fast/dom/frame-contentWindow-crash-expected.txt: Added.
+        * fast/dom/frame-contentWindow-crash.html: Added.
+        * fast/dom/iframe-contentWindow-crash-expected.txt: Added.
+        * fast/dom/iframe-contentWindow-crash.html: Added.
+
 2007-05-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,17 @@
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dr. Harrison.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13868
+        REGRESSION: crash on accessing a new iframe's contentWindow property
+
+        Adds a null check in for the contentWindow property for HTMLIFrameElement
+        and HTMLFrameElement.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+
 2007-05-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

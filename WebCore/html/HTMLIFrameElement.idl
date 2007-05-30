@@ -39,7 +39,7 @@ module html {
         // Extensions
 #if defined(LANGUAGE_JAVASCRIPT)
         // FIXME: this need not be JS only. See http://bugs.webkit.org/show_bug.cgi?id=13798
-        readonly attribute Window contentWindow;
+        readonly attribute [NullCheck] Window contentWindow;
 #endif
 
     };

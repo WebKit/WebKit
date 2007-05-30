@@ -907,6 +907,8 @@ sub GenerateImplementation
                         push(@implContent, "        }\n\n");
                         push(@implContent, "        return toJS(exec, obj.get());\n");
                         push(@implContent, "    }\n");
+                    } elsif ($attribute->signature->extendedAttributes->{"NullCheck"}) {
+                        push(@implContent, "        return imp->$name() ? $jsType : jsUndefined();\n");
                     } else {
                         push(@implContent, "        return $jsType;\n");
                     }
@@ -917,6 +919,8 @@ sub GenerateImplementation
         
                 if ($podType) {
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "", "imp.$name(ec)") . ";\n");
+                } elsif ($attribute->signature->extendedAttributes->{"NullCheck"}) {
+                    push(@implContent, "        return imp->$name(ec) ? " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . " : jsUndefined();\n");
                 } else {
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . ";\n");
                 }
