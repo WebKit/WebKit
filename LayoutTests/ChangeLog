@@ -1,3 +1,14 @@
+2007-05-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13932
+          REGRESSION: fast/dynamic/containing-block-change is failing
+
+        * fast/dynamic/containing-block-change.html: Removed whitespace that
+        got turned into text nodes, thereby making lastNode be not what the script
+        expected it to be.
+
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
