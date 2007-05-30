@@ -21,7 +21,7 @@
 #ifndef DATE_OBJECT_H
 #define DATE_OBJECT_H
 
-#include "internal.h"
+#include "function.h"
 #include "JSWrapperObject.h"
 
 namespace KJS {
@@ -67,9 +67,9 @@ namespace KJS {
     class DateProtoFunc : public InternalFunctionImp {
     public:
         DateProtoFunc(ExecState *, int i, int len, const Identifier& date);
-        
+
         virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
-        
+
         enum { ToString, ToDateString, ToTimeString, ToLocaleString,
             ToLocaleDateString, ToLocaleTimeString, ValueOf, GetTime,
             GetFullYear, GetMonth, GetDate, GetDay, GetHours, GetMinutes,
@@ -82,7 +82,7 @@ namespace KJS {
         int id;
         bool utc;
     };
-    
+
     /**
      * @internal
      *

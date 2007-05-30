@@ -24,9 +24,7 @@
 #define _KJSLOOKUP_H_
 
 #include "interpreter.h"
-#include "internal.h"
 #include "identifier.h"
-#include "function_object.h"
 #include "object.h"
 #include <stdio.h>
 
@@ -180,7 +178,7 @@ namespace KJS {
 
     if (entry->attr & Function)
       slot.setStaticEntry(thisObj, entry, staticFunctionGetter<FuncImp>);
-    else 
+    else
       slot.setStaticEntry(thisObj, entry, staticValueGetter<ThisImp>);
 
     return true;
@@ -188,11 +186,11 @@ namespace KJS {
 
   /**
    * Simplified version of getStaticPropertySlot in case there are only functions.
-   * Using this instead of getStaticPropertySlot allows 'this' to avoid implementing 
+   * Using this instead of getStaticPropertySlot allows 'this' to avoid implementing
    * a dummy getValueProperty.
    */
   template <class FuncImp, class ParentImp>
-  inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, 
+  inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table,
                                     JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -211,7 +209,7 @@ namespace KJS {
    * Using this instead of getStaticPropertySlot removes the need for a FuncImp class.
    */
   template <class ThisImp, class ParentImp>
-  inline bool getStaticValueSlot(ExecState* exec, const HashTable* table, 
+  inline bool getStaticValueSlot(ExecState* exec, const HashTable* table,
                                  ThisImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);

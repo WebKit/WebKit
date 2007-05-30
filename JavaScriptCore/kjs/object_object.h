@@ -22,7 +22,7 @@
 #ifndef _OBJECT_OBJECT_H_
 #define _OBJECT_OBJECT_H_
 
-#include "internal.h"
+#include "function.h"
 
 namespace KJS {
 

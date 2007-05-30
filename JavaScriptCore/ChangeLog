@@ -1,3 +1,26 @@
+2007-05-30  Luciano Montanaro  <mikelima@cirulla.net>
+
+        Reviewed by Maciej.
+
+        - cross-port Harri Porten's commits 636099 and 636108 from KJS: 
+        "publish a class anyway public already" and "class is being used from
+        outside for quite some time" in preparation for further syncronizations
+
+        * kjs/context.h:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/function.h:
+        (KJS::):
+        (KJS::InternalFunctionImp::classInfo):
+        (KJS::InternalFunctionImp::functionName):
+        * kjs/function_object.h:
+        * kjs/internal.h:
+        * kjs/lookup.h:
+        (KJS::getStaticPropertySlot):
+        (KJS::getStaticFunctionSlot):
+        (KJS::getStaticValueSlot):
+        * kjs/object_object.h:
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

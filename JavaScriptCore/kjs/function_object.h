@@ -31,20 +31,6 @@ namespace KJS {
   /**
    * @internal
    *
-   * The initial value of Function.prototype (and thus all objects created
-   * with the Function constructor)
-   */
-  class FunctionPrototype : public InternalFunctionImp {
-  public:
-    FunctionPrototype(ExecState *exec);
-    virtual ~FunctionPrototype();
-
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
-  };
-
-  /**
-   * @internal
-   *
    * Class to implement all methods that are properties of the
    * Function.prototype object
    */

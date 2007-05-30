@@ -26,12 +26,13 @@
 #define KJS_Context_h
 
 #include "function.h"
+#include "internal.h"
 
 namespace KJS  {
 
   class ExecState;
   
-  /** 
+  /**
    * @short Execution context.
    *
    * Represents an execution context, as specified by section 10 of the ECMA
@@ -46,11 +47,11 @@ namespace KJS  {
    * Most inheritable functions in the KJS api take a ExecState pointer as
    * their first parameter. This can be used to obtain a handle to the current
    * execution context.
-   */    
+   */
   class Context {
   public:
-    Context(JSObject* global, Interpreter*, JSObject* thisV, 
-            FunctionBodyNode* currentBody, CodeType type = GlobalCode, 
+    Context(JSObject* global, Interpreter*, JSObject* thisV,
+            FunctionBodyNode* currentBody, CodeType type = GlobalCode,
             Context* callingContext = 0, FunctionImp* function = 0, const List* args = 0);
     ~Context();
 
@@ -98,7 +99,7 @@ namespace KJS  {
      * @return The calling execution context
      */
     Context* callingContext() { return m_callingContext; }
-    
+
     JSObject* activationObject() { return m_activation; }
     CodeType codeType() { return m_codeType; }
     FunctionBodyNode* currentBody() { return m_currentBody; }
@@ -112,11 +113,11 @@ namespace KJS  {
     void pushIteration() { m_iterationDepth++; }
     void popIteration() { m_iterationDepth--; }
     bool inIteration() const { return (m_iterationDepth > 0); }
-    
+
     void pushSwitch() { m_switchDepth++; }
     void popSwitch() { m_switchDepth--; }
     bool inSwitch() const { return (m_switchDepth > 0); }
-        
+
     void mark();
 
     void setExecState(ExecState* exec) { m_execState = exec; }
@@ -134,7 +135,7 @@ namespace KJS  {
     FunctionImp* m_function;
     const List* m_arguments;
     JSObject* m_activation;
-    
+
     ScopeChain scope;
     JSObject* m_variable;
     JSObject* m_thisVal;
