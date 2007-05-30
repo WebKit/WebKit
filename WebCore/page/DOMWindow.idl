@@ -46,6 +46,7 @@ module window {
         attribute CSSRuleConstructor CSSRule;
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute CSSValueConstructor CSSValue;
+        attribute MediaListConstructor MediaList;
         attribute StyleSheetConstructor StyleSheet;
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.

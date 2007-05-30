@@ -1,3 +1,20 @@
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13912
+        Autogenerate the JS bindings for the MediaList
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/MediaList.idl:
+        * page/DOMWindow.idl: Add constructor.
+
 2007-05-29  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Maciej.

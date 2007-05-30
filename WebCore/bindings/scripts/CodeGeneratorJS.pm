@@ -166,6 +166,14 @@ sub UsesManualToJSImplementation
     return 0;
 }
 
+sub IndexGetterReturnsStrings
+{
+    my $type = shift;
+
+    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList";
+    return 0;
+}
+
 sub CreateSVGContextInterfaceName
 {
     my $type = shift;
@@ -1129,7 +1137,7 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue* ${className}::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
-        if ($interfaceName eq "CSSStyleDeclaration") {
+        if (IndexGetterReturnsStrings($implClassName)) {
             push(@implContent, "    return jsStringOrNull(thisObj->impl()->item(slot.index()));\n");
         } else {
             push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
@@ -1472,9 +1480,8 @@ sub NativeToJSValue
     } elsif ($type eq "NamedNodeMap") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"NamedNodeMap.h"} = 1;
-    } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
+    } elsif ($type eq "CSSStyleSheet") {
         $implIncludes{"CSSStyleSheet.h"} = 1;
-        $implIncludes{"MediaList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
     } elsif ($type eq "Rect") {
         $implIncludes{"RectImpl.h"} = 1;

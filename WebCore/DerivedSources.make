@@ -383,6 +383,7 @@ all : \
     JSHTMLTitleElement.h \
     JSHTMLUListElement.h \
     JSKeyboardEvent.h \
+    JSMediaList.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
     JSNode.h \

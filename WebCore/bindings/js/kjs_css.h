@@ -69,26 +69,6 @@ namespace KJS {
   // The document is only used for get-stylesheet-by-name (make optional if necessary)
   JSValue* toJS(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
 
-  class DOMMediaList : public DOMObject {
-  public:
-    DOMMediaList(ExecState*, WebCore::MediaList*);
-    virtual ~DOMMediaList();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState*) const { return true; }
-    static const ClassInfo info;
-    enum { MediaText, Length,
-           Item, DeleteMedium, AppendMedium };
-    WebCore::MediaList* impl() const { return m_impl.get(); }
-  private:
-    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    RefPtr<WebCore::MediaList> m_impl;
-  };
-
-  JSValue* toJS(ExecState*, WebCore::MediaList*);
-
   class DOMCSSStyleSheet : public WebCore::JSStyleSheet {
   public:
     DOMCSSStyleSheet(ExecState*, WebCore::CSSStyleSheet*);

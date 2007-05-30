@@ -34,6 +34,7 @@
 #import "JSDOMImplementation.h"
 #import "JSEvent.h"
 #import "JSHTMLOptionsCollection.h"
+#import "JSMediaList.h"
 #import "JSNodeIterator.h"
 #import "JSRange.h"
 #import "JSStyleSheet.h"
@@ -70,6 +71,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(CSSStyleDeclaration)
     WRAP(Counter)
     WRAP(HTMLOptionsCollection)
+    WRAP(MediaList)
     WRAP(Range)
     WRAP(StyleSheet)
     WRAP(XPathExpression)
@@ -84,7 +86,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(CSSRule)
     WRAP(CSSValue)
     WRAP(Event)
-    WRAP(MediaList)
     WRAP(NamedNodeMap)
     WRAP(Node)
     WRAP(NodeList)

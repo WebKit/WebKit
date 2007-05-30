@@ -2,6 +2,15 @@
 
         Reviewed by Oliver.
 
+        Update results for http://bugs.webkit.org/show_bug.cgi?id=13912
+        Autogenerate the JS bindings for the MediaList
+
+        * fast/dom/Window/window-properties-expected.txt: new constructors added.
+
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
         Update results after http://bugs.webkit.org/show_bug.cgi?id=13908
         Autogenerate the JS bindings for the StyleSheet
 

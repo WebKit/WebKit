@@ -42,6 +42,7 @@
 #include "JSCSSRuleList.h"
 #include "JSCSSStyleDeclaration.h"
 #include "JSCSSValueList.h"
+#include "JSMediaList.h"
 #include "JSStyleSheet.h"
 #include "MediaList.h"
 #include "StyleSheetList.h"
@@ -172,108 +173,6 @@ JSValue* DOMStyleSheetListFunc::callAsFunction(ExecState* exec, JSObject* thisOb
   if (id == DOMStyleSheetList::Item)
     return toJS(exec, styleSheetList.item(args[0]->toInt32(exec)));
   return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMMediaList::info = { "MediaList", 0, &DOMMediaListTable, 0 };
-
-/*
-@begin DOMMediaListTable 2
-  mediaText     DOMMediaList::MediaText         DontDelete|ReadOnly
-  length        DOMMediaList::Length            DontDelete|ReadOnly
-@end
-@begin DOMMediaListPrototypeTable 3
-  item          DOMMediaList::Item              DontDelete|Function 1
-  deleteMedium  DOMMediaList::DeleteMedium      DontDelete|Function 1
-  appendMedium  DOMMediaList::AppendMedium      DontDelete|Function 1
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMMediaListPrototype)
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMMediaListPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("DOMMediaList", DOMMediaListPrototype, DOMMediaListPrototypeFunction)
-
-DOMMediaList::DOMMediaList(ExecState* exec, MediaList *ml)
-    : m_impl(ml)
-{
-  setPrototype(DOMMediaListPrototype::self(exec));
-}
-
-DOMMediaList::~DOMMediaList()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue* DOMMediaList::getValueProperty(ExecState* exec, int token)
-{
-  switch (token) {
-  case MediaText:
-    return jsStringOrNull(m_impl->mediaText());
-  case Length:
-    return jsNumber(m_impl->length());
-  default:
-    ASSERT(0);
-    return jsUndefined();
-  }
-}
-
-JSValue* DOMMediaList::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-  DOMMediaList *thisObj = static_cast<DOMMediaList*>(slot.slotBase());
-  return jsStringOrNull(thisObj->m_impl->item(slot.index()));
-}
-
-bool DOMMediaList::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  const HashEntry* entry = Lookup::findEntry(&DOMMediaListTable, propertyName);
-  if (entry) {
-    slot.setStaticEntry(this, entry, staticValueGetter<DOMMediaList>);
-    return true;
-  }
-
-  bool ok;
-  unsigned u = propertyName.toUInt32(&ok);
-  if (ok && u < m_impl->length()) {
-    slot.setCustomIndex(this, u, indexGetter);
-    return true;
-  }
-
-  return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-void DOMMediaList::put(ExecState* exec, const Identifier &propertyName, JSValue* value, int attr)
-{
-  DOMExceptionTranslator exception(exec);
-  MediaList &mediaList = *m_impl;
-  if (propertyName == "mediaText")
-    mediaList.setMediaText(valueToStringWithNullCheck(exec, value), exception);
-  else
-    DOMObject::put(exec, propertyName, value, attr);
-}
-
-JSValue* toJS(ExecState* exec, MediaList *ml)
-{
-  return cacheDOMObject<MediaList, DOMMediaList>(exec, ml);
-}
-
-JSValue* KJS::DOMMediaListPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMMediaList::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  MediaList& mediaList = *static_cast<DOMMediaList *>(thisObj)->impl();
-  switch (id) {
-    case DOMMediaList::Item:
-      return jsStringOrNull(mediaList.item(args[0]->toInt32(exec)));
-    case DOMMediaList::DeleteMedium:
-      mediaList.deleteMedium(args[0]->toString(exec), exception);
-      return jsUndefined();
-    case DOMMediaList::AppendMedium:
-      mediaList.appendMedium(args[0]->toString(exec), exception);
-      return jsUndefined();
-    default:
-      return jsUndefined();
-  }
 }
 
 // -------------------------------------------------------------------------
