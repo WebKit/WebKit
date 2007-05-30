@@ -1,3 +1,14 @@
+2007-05-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5200795> REGRESSION (r21057): lineBoxRects doesn't match actual text when wrapping occurs
+
+        Use box->end() instead of box->len().
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
