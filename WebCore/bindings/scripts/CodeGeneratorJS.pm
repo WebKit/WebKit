@@ -162,7 +162,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "SVGPathSeg";
+    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet";
     return 0;
 }
 

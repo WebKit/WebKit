@@ -516,6 +516,7 @@ all : \
     JSSVGMaskElement.h \
     JSSVGMarkerElement.h \
     JSSVGTransform.h \
+    JSStyleSheet.h \
     JSText.h \
     JSTextEvent.h \
     JSTreeWalker.h \

@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,9 @@
 #define kjs_css_h
 
 #include "Color.h"
-#include "kjs_binding.h"
 #include "RectImpl.h"
+#include "JSStyleSheet.h"
+#include "kjs_binding.h"
 
 namespace WebCore {
     class Counter;
@@ -44,27 +45,6 @@ namespace WebCore {
 }
 
 namespace KJS {
-
-  class DOMStyleSheet : public DOMObject {
-  public:
-    DOMStyleSheet(ExecState*, WebCore::StyleSheet*);
-    virtual ~DOMStyleSheet();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    virtual bool toBoolean(ExecState*) const { return true; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Type, Disabled, OwnerNode, ParentStyleSheet, Href, Title, Media };
-    WebCore::StyleSheet* impl() const { return m_impl.get(); }
-  protected:
-    // Constructor for derived classes; doesn't set up a prototype.
-    DOMStyleSheet(WebCore::StyleSheet*);
-  private:
-    RefPtr<WebCore::StyleSheet> m_impl;
-  };
-
-  JSValue* toJS(ExecState*, PassRefPtr<WebCore::StyleSheet>);
 
   class DOMStyleSheetList : public DOMObject {
   public:
@@ -109,7 +89,7 @@ namespace KJS {
 
   JSValue* toJS(ExecState*, WebCore::MediaList*);
 
-  class DOMCSSStyleSheet : public DOMStyleSheet {
+  class DOMCSSStyleSheet : public WebCore::JSStyleSheet {
   public:
     DOMCSSStyleSheet(ExecState*, WebCore::CSSStyleSheet*);
     virtual ~DOMCSSStyleSheet();

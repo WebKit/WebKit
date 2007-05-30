@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004-2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 James G. Speth (speth@end.com)
  *  Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
@@ -39,9 +39,10 @@
 #include "HTMLStyleElement.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSRule.h"
-#include "JSCSSStyleDeclaration.h"
 #include "JSCSSRuleList.h"
+#include "JSCSSStyleDeclaration.h"
 #include "JSCSSValueList.h"
+#include "JSStyleSheet.h"
 #include "MediaList.h"
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
@@ -61,91 +62,6 @@ using namespace WebCore;
 using namespace HTMLNames;
 
 namespace KJS {
-
-const ClassInfo DOMStyleSheet::info = { "StyleSheet", 0, &DOMStyleSheetTable, 0 };
-/*
-@begin DOMStyleSheetTable 7
-  type          DOMStyleSheet::Type             DontDelete|ReadOnly
-  disabled      DOMStyleSheet::Disabled         DontDelete
-  ownerNode     DOMStyleSheet::OwnerNode        DontDelete|ReadOnly
-  parentStyleSheet DOMStyleSheet::ParentStyleSheet      DontDelete|ReadOnly
-  href          DOMStyleSheet::Href             DontDelete|ReadOnly
-  title         DOMStyleSheet::Title            DontDelete|ReadOnly
-  media         DOMStyleSheet::Media            DontDelete|ReadOnly
-@end
-*/
-
-DOMStyleSheet::DOMStyleSheet(ExecState* exec, StyleSheet* ss) 
-  : m_impl(ss) 
-{
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-}
-
-DOMStyleSheet::DOMStyleSheet(StyleSheet *ss) 
-  : m_impl(ss) 
-{
-}
-
-DOMStyleSheet::~DOMStyleSheet()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-bool DOMStyleSheet::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMStyleSheet, DOMObject>(exec, &DOMStyleSheetTable, this, propertyName, slot);
-}
-
-JSValue* DOMStyleSheet::getValueProperty(ExecState* exec, int token) const
-{
-  StyleSheet& styleSheet = *m_impl;
-  switch (token) {
-  case Type:
-    return jsStringOrNull(styleSheet.type());
-  case Disabled:
-    return jsBoolean(styleSheet.disabled());
-  case OwnerNode:
-    return toJS(exec,styleSheet.ownerNode());
-  case ParentStyleSheet:
-    return toJS(exec,styleSheet.parentStyleSheet());
-  case Href:
-    return jsStringOrNull(styleSheet.href());
-  case Title:
-    return jsStringOrNull(styleSheet.title());
-  case Media:
-    return toJS(exec, styleSheet.media());
-  }
-  return NULL;
-}
-
-void DOMStyleSheet::put(ExecState* exec, const Identifier &propertyName, JSValue* value, int attr)
-{
-  if (propertyName == "disabled") {
-    m_impl->setDisabled(value->toBoolean(exec));
-  }
-  else
-    DOMObject::put(exec, propertyName, value, attr);
-}
-
-JSValue* toJS(ExecState* exec, PassRefPtr<StyleSheet> ss)
-{
-  DOMObject *ret;
-  if (!ss)
-    return jsNull();
-  ScriptInterpreter *interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-  if ((ret = interp->getDOMObject(ss.get())))
-    return ret;
-  else {
-    if (ss->isCSSStyleSheet())
-      ret = new DOMCSSStyleSheet(exec, static_cast<CSSStyleSheet*>(ss.get()));
-    else
-      ret = new DOMStyleSheet(exec, ss.get());
-    interp->putDOMObject(ss.get(), ret);
-    return ret;
-  }
-}
-
-// -------------------------------------------------------------------------
 
 const ClassInfo DOMStyleSheetList::info = { "StyleSheetList", 0, &DOMStyleSheetListTable, 0 };
 
@@ -362,7 +278,7 @@ JSValue* KJS::DOMMediaListPrototypeFunction::callAsFunction(ExecState* exec, JSO
 
 // -------------------------------------------------------------------------
 
-const ClassInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", &DOMStyleSheet::info, &DOMCSSStyleSheetTable, 0 };
+const ClassInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", &WebCore::JSStyleSheet::info, &DOMCSSStyleSheetTable, 0 };
 
 /*
 @begin DOMCSSStyleSheetTable 5
@@ -384,7 +300,7 @@ KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMCSSStyleSheetPrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("DOMCSSStyleSheet",DOMCSSStyleSheetPrototype,DOMCSSStyleSheetPrototypeFunction) // warning, use _WITH_PARENT if DOMStyleSheet gets a prototype
 
 DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState* exec, CSSStyleSheet *ss)
-  : DOMStyleSheet(ss) 
+  : JSStyleSheet(exec, ss) 
 {
   setPrototype(DOMCSSStyleSheetPrototype::self(exec));
 }
@@ -410,7 +326,7 @@ JSValue* DOMCSSStyleSheet::getValueProperty(ExecState* exec, int token) const
 
 bool DOMCSSStyleSheet::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<DOMCSSStyleSheet, DOMStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
+  return getStaticValueSlot<DOMCSSStyleSheet, JSStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
 }
 
 JSValue* DOMCSSStyleSheetPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)

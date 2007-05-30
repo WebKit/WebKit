@@ -46,9 +46,8 @@ module window {
         attribute CSSRuleConstructor CSSRule;
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute CSSValueConstructor CSSValue;
-        attribute DOMParserConstructor DOMParser;
-        attribute EventConstructor Event;
-        
+        attribute StyleSheetConstructor StyleSheet;
+
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
 //        attribute DOMExceptionConstructor DOMException;
 //        attribute DOMStringListConstructor DOMStringList;
@@ -91,9 +90,11 @@ module window {
         attribute HTMLBlockquoteElementConstructor HTMLBlockquoteElement;
         attribute HTMLBodyElementConstructor HTMLBodyElement;
         attribute HTMLButtonElementConstructor HTMLButtonElement;
+        attribute HTMLCanvasElementConstructor HTMLCanvasElement;
         attribute HTMLDListElementConstructor HTMLDListElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;
+        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
         attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
         attribute HTMLFontElementConstructor HTMLFontElement;
         attribute HTMLFormElementConstructor HTMLFormElement;
@@ -112,6 +113,7 @@ module window {
         attribute HTMLLegendElementConstructor HTMLLegendElement;
         attribute HTMLLinkElementConstructor HTMLLinkElement;
         attribute HTMLMapElementConstructor HTMLMapElement;
+        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
         attribute HTMLMenuElementConstructor HTMLMenuElement;
         attribute HTMLMetaElementConstructor HTMLMetaElement;
         attribute HTMLModElementConstructor HTMLModElement;
@@ -135,11 +137,10 @@ module window {
         attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
         attribute HTMLTitleElementConstructor HTMLTitleElement;
         attribute HTMLUListElementConstructor HTMLUListElement;
-        attribute HTMLCanvasElementConstructor HTMLCanvasElement;
-        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
-        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
 
+        attribute EventConstructor Event;
         attribute MutationEventConstructor MutationEvent;
+
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;
@@ -148,6 +149,7 @@ module window {
         // We just use Document for this.
         attribute DocumentConstructor XMLDocument;
 
+        attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
 #if ENABLE_XPATH

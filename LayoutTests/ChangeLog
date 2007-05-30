@@ -1,3 +1,12 @@
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Update results after http://bugs.webkit.org/show_bug.cgi?id=13908
+        Autogenerate the JS bindings for the StyleSheet
+
+        * fast/dom/Window/window-properties-expected.txt: Adds StyleSheet constructor
+
 2007-05-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

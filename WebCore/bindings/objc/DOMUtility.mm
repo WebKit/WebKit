@@ -36,6 +36,7 @@
 #import "JSHTMLOptionsCollection.h"
 #import "JSNodeIterator.h"
 #import "JSRange.h"
+#import "JSStyleSheet.h"
 #import "JSTreeWalker.h"
 #import "JSXPathExpression.h"
 #import "JSXPathResult.h"
@@ -70,6 +71,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(Counter)
     WRAP(HTMLOptionsCollection)
     WRAP(Range)
+    WRAP(StyleSheet)
     WRAP(XPathExpression)
     WRAP(XPathResult)
 
@@ -88,7 +90,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(NodeList)
     WRAP(RGBColor)
     WRAP(Rect)
-    WRAP(StyleSheet)
     WRAP(StyleSheetList)
 
     #undef WRAP
