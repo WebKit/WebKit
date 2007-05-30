@@ -1,3 +1,50 @@
+2007-05-29  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders.
+
+        Make ScrollView use a GtkLayout. This class matches QScrollView the most and promises
+        to ease the implementation of ScrollView::addChild. GtkLayout should be resource friendly
+        even with huge width and heights of frames.
+        Make Widget aware of GtkLayout to use the right GdkWindow as drawable. For GtkLayout one must
+        draw on the bin_window.
+        Remove the layer violation from FrameGdk.cpp and ScrollView. FrameGdk is no longer responsible to
+        implement scrolling on keyboard events. ScrollView is no longer required to know that it could be
+        a FrameView and handles scrolling of Frames magically.
+
+        * platform/ScrollView.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::keyPress):
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::updateGeometry):
+        (WebCore::ScrollView::setGtkWidget):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/gdk/TemporaryLinkStubs.cpp: Move Widget methods to WidgetGdk.cpp
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::setGtkWidget):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::removeFromParent):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+
 2007-05-29  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.

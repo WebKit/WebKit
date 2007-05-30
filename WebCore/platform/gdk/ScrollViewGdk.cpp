@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,33 +39,35 @@
 #include "RenderLayer.h"
 
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
 
 using namespace std;
 
 namespace WebCore {
 
-//hack to simulate scroll bars
-const int scrollbarSize = 10;
-
 class ScrollView::ScrollViewPrivate
 {
 public:
     ScrollViewPrivate()
-        : hasStaticBackground(false), suppressScrollbars(false)
-        , vScrollbarMode(ScrollbarAuto), hScrollbarMode(ScrollbarAuto)
+        : hasStaticBackground(false)
+        , suppressScrollbars(false)
+        , vScrollbarMode(ScrollbarAuto)
+        , hScrollbarMode(ScrollbarAuto)
+        , layout(0)
+        , horizontalAdjustment(0)
+        , verticalAdjustment(0)
     { }
 
-    IntSize scrollOffset;
-    IntSize contentsSize;
     bool hasStaticBackground;
     bool suppressScrollbars;
     ScrollbarMode vScrollbarMode;
     ScrollbarMode hScrollbarMode;
-    IntRect visibleContentArea;
-    IntRect viewportArea;
-    IntRect scrollViewArea;
+    GtkLayout *layout;
+    GtkAdjustment *horizontalAdjustment;
+    GtkAdjustment *verticalAdjustment;
+    IntSize contentsSize;
+    IntSize viewPortSize;
 };
-
 
 ScrollView::ScrollView()
     : m_data(new ScrollViewPrivate)
@@ -88,9 +92,7 @@ void ScrollView::updateView(const IntRect& updateRect, bool now)
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
-    IntRect adjustedDirtyRect(updateRect);
-    adjustedDirtyRect.move(-m_data->scrollOffset);
-    updateView(adjustedDirtyRect, now);
+    updateView(updateRect, now);
 }
 
 void ScrollView::update()
@@ -100,20 +102,18 @@ void ScrollView::update()
 
 int ScrollView::visibleWidth() const
 {
-    return m_data->viewportArea.width();
+    return m_data->viewPortSize.width();
 }
 
 int ScrollView::visibleHeight() const
 {
-    return m_data->viewportArea.height();
+    return m_data->viewPortSize.height();
 }
 
 // Region of the content currently visible in the viewport in the content view's coordinate system.
 FloatRect ScrollView::visibleContentRect() const
 {
-    FloatRect contentRect = FloatRect(m_data->viewportArea);
-    contentRect.move(m_data->scrollOffset);
-    return contentRect;
+    return FloatRect(contentsX(), contentsY(), visibleWidth(), visibleHeight());
 }
 
 FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
@@ -132,20 +132,27 @@ void ScrollView::setContentsPos(int newX, int newY)
 void ScrollView::resizeContents(int w, int h)
 {
     IntSize newSize(w, h);
-    if (m_data->contentsSize != newSize) {
-        m_data->contentsSize = newSize;
-        updateScrollbars();
+    if (m_data->contentsSize == newSize)
+        return;
+
+    m_data->contentsSize = newSize;
+    
+    if (m_data->layout) {
+        gtk_layout_set_size(m_data->layout, w, h);
+        updateScrollbars(); 
     }
 }
 
 int ScrollView::contentsX() const
 {
-    return scrollOffset().width();
+    g_return_val_if_fail(m_data->horizontalAdjustment, 0);
+    return static_cast<int>(gtk_adjustment_get_value(m_data->horizontalAdjustment));
 }
 
 int ScrollView::contentsY() const
 {
-    return scrollOffset().height();
+    g_return_val_if_fail(m_data->verticalAdjustment, 0);
+    return static_cast<int>(gtk_adjustment_get_value(m_data->verticalAdjustment));
 }
 
 int ScrollView::contentsWidth() const
@@ -160,40 +167,24 @@ int ScrollView::contentsHeight() const
 
 IntSize ScrollView::scrollOffset() const
 {
-    return m_data->scrollOffset;
+    g_return_val_if_fail(m_data, IntSize());
+    return IntSize(contentsX(), contentsY());
 }
 
-IntSize ScrollView::maximumScroll() const
-{
-    IntSize delta = m_data->contentsSize - m_data->scrollOffset;
-    delta.clampNegativeToZero();
-    return delta;
-
-}
 void ScrollView::scrollBy(int dx, int dy)
 {
-    IntSize scrollOffset = m_data->scrollOffset;
-    IntSize maxScroll = maximumScroll();
-    IntSize newScrollOffset = scrollOffset + IntSize(dx, dy);
-    newScrollOffset.clampNegativeToZero();
-    newScrollOffset = newScrollOffset.shrunkTo(maxScroll);
+    g_return_if_fail(m_data->horizontalAdjustment);
+    g_return_if_fail(m_data->verticalAdjustment);
 
-    if (newScrollOffset != scrollOffset) {
-        m_data->scrollOffset = newScrollOffset;
-        updateScrollbars();
-        // Scrollbar updates can fail, so we check the final delta before scrolling
-        IntSize scrollDelta = m_data->scrollOffset - scrollOffset;
-        if (scrollDelta == IntSize())
-            return;
-        if (isFrameView()) {
-            FrameView* f = static_cast<FrameView*>(this);
-            f->frame()->renderer()->layer()->scrollToOffset
-                (newScrollOffset.width(), newScrollOffset.height(), true, true);
-        } else {
-            printf("FIXME ScrollViewGdk Unsupported Scroll operation !!!\n");
-            updateView(m_data->viewportArea, true);
-        }
-    }
+    int current_x = contentsX();
+    int current_y = contentsY();
+
+    gtk_adjustment_set_value(m_data->horizontalAdjustment,
+                             CLAMP(current_x+dx, m_data->horizontalAdjustment->lower,
+                                   MAX(0.0, m_data->horizontalAdjustment->upper - m_data->horizontalAdjustment->page_size)));
+    gtk_adjustment_set_value(m_data->verticalAdjustment,
+                             CLAMP(current_y+dy, m_data->verticalAdjustment->lower,
+                                   MAX(0.0, m_data->verticalAdjustment->upper - m_data->verticalAdjustment->page_size)));
 }
 
 ScrollbarMode ScrollView::hScrollbarMode() const
@@ -240,35 +231,34 @@ void ScrollView::setStaticBackground(bool flag)
     m_data->hasStaticBackground = flag;
 }
 
+/*
+ * only update the adjustments, the GtkLayout is doing the work
+ * for us (assuming it is in a box...).
+ */
 void ScrollView::setFrameGeometry(const IntRect& r)
 {
     Widget::setFrameGeometry(r);
-    m_data->scrollViewArea = IntRect(0, 0, r.width(), r.height());
-    m_data->viewportArea = IntRect(0, 0, r.width() - scrollbarSize, r.height() - scrollbarSize);
+    updateGeometry(r.width(), r.height());
 }
 
-void ScrollView::updateGeometry()
+void ScrollView::updateGeometry(int width, int height)
 {
-    GdkDrawable* gdkdrawable = drawable();
-    if (gdkdrawable) {
-        GdkWindow* frame = GDK_WINDOW(gdkdrawable);
-        gint x, y, width, height, depth;
-        gdk_window_get_geometry(frame, &x, &y, &width, &height, &depth);
-        m_data->scrollViewArea = IntRect(0, 0, width, height);
-        m_data->viewportArea = IntRect(0, 0, width - scrollbarSize, height - scrollbarSize);
-    }
+    m_data->viewPortSize = IntSize(width,height);
 }
 
-void ScrollView::setGtkWidget(GtkWidget* widget)
+void ScrollView::setGtkWidget(GtkLayout* layout)
 {
-    Widget::setGtkWidget(widget);
+    g_return_if_fail(GTK_LAYOUT(layout));
+    m_data->layout = layout;
+    m_data->horizontalAdjustment = gtk_layout_get_hadjustment(layout);
+    m_data->verticalAdjustment = gtk_layout_get_vadjustment(layout);
+
+    Widget::setGtkWidget(GTK_WIDGET(layout));
     if (!GDK_IS_WINDOW(drawable())) {
         LOG_ERROR("image scrollview not supported");
         return;
     }
-    updateGeometry();
 }
-
 
 void ScrollView::addChild(Widget*)
 { 
@@ -298,31 +288,36 @@ void ScrollView::wheelEvent(PlatformWheelEvent&)
 
 void ScrollView::updateScrollbars()
 {
-    notImplemented();
-}
-
-int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
-{ 
-    notImplemented();
-    return 0;
+    g_return_if_fail(m_data->horizontalAdjustment);
+    g_return_if_fail(m_data->verticalAdjustment);
+    
+    m_data->horizontalAdjustment->page_size = visibleWidth();
+    m_data->horizontalAdjustment->step_increment = 13;
+    
+    m_data->verticalAdjustment->page_size = visibleHeight();
+    m_data->verticalAdjustment->step_increment = 13;
+    
+    gtk_adjustment_changed(m_data->horizontalAdjustment);
+    gtk_adjustment_value_changed(m_data->horizontalAdjustment);
+    
+    gtk_adjustment_changed(m_data->verticalAdjustment);
+    gtk_adjustment_value_changed(m_data->verticalAdjustment);
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& point) const
 { 
-    notImplemented();
     return point;
 }
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
 {
-    notImplemented();
     return point;
 }
 
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 { 
-    return 0;
     notImplemented();
+    return 0;
 }
 
 }

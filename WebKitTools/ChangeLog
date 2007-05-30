@@ -1,3 +1,16 @@
+2007-05-29  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders.
+
+        Create a GtkLayout and pass it to the FrameView/ScrollView. Embed the GtkLayout into a GtkScrolledWindow
+        to provide ScrollBars for the FrameView.
+
+        * GdkLauncher/main.cpp:
+        (registerRenderingAreaEvents):
+        (layout_realize_callback): Only after realization we can access the GtkLayout::bin_window
+        (frameResizeCallback): Inform the ScrollView about its new viewport size, and ask the FrameView to adjust
+        (main):
+
 2007-05-29  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

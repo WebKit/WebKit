@@ -34,6 +34,8 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RenderObject.h"
+#include "NotImplementedGdk.h"
+
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
@@ -73,7 +75,7 @@ GtkWidget* Widget::gtkWidget() const
 
 void Widget::setGtkWidget(GtkWidget* widget)
 {
-    data->drawable = widget->window;
+    data->drawable = GTK_IS_LAYOUT(widget) ? GTK_LAYOUT(widget)->bin_window : widget->window;
     data->widget = widget;
 }
 
@@ -140,11 +142,49 @@ void Widget::hide()
 void Widget::setFrameGeometry(const IntRect& r)
 {
     data->geometry = r;
-    GdkDrawable* drawable = data->drawable;
-    if (!drawable || !GDK_IS_WINDOW(drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_move_resize(window, r.x(), r.y(), r.width(), r.height());
+    g_return_if_fail(data->widget);
+
+    GtkAllocation allocation = { r.x(), r.y(), r.width(), r.height() };
+    gtk_widget_size_allocate(data->widget, &allocation);
+}
+
+void Widget::setEnabled(bool)
+{
+    notImplementedGdk();
+}
+
+bool Widget::isEnabled() const
+{
+    notImplementedGdk();
+    return false;
+}
+
+void Widget::removeFromParent()
+{
+    notImplementedGdk();
+}
+
+void Widget::paint(GraphicsContext*, IntRect const&)
+{
+    notImplementedGdk();
+}
+
+void Widget::setIsSelected(bool)
+{
+    notImplementedGdk();
+}
+
+void Widget::invalidate()
+{
+    if (data->widget)
+        gtk_widget_queue_draw(data->widget);
+}
+
+void Widget::invalidateRect(const IntRect& rect)
+{
+    if (data->widget)
+        gtk_widget_queue_draw_area(data->widget, rect.x(), rect.y(),
+                                   rect.width(), rect.height());
 }
 
 }

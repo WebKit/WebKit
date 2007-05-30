@@ -72,24 +72,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 
 namespace WebCore {
 
-static void doScroll(const RenderObject* r, float deltaX, float deltaY)
-{
-    // FIXME: The scrolling done here should be done in the default handlers
-    // of the elements rather than here in the part.
-    if (!r)
-        return;
-
-    //broken since it calls scroll on scrollbars
-    //and we have none now
-    //r->scroll(direction, ScrollByWheel, multiplier);
-    if (!r->layer())
-        return;
-
-    int x = r->layer()->scrollXOffset() + (int)deltaX;
-    int y = r->layer()->scrollYOffset() + (int)deltaY;
-    r->layer()->scrollToOffset(x, y, true, true);
-}
-
 FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClientGdk* frameLoader)
     : Frame(page, ownerElement, frameLoader)
 {
@@ -145,53 +127,7 @@ bool FrameGdk::keyPress(const PlatformKeyboardEvent& keyEvent)
     if (!eventHandler())
         return false;
 
-    bool handled = eventHandler()->keyEvent(keyEvent);
-    if (handled)
-        return handled;
-
-    switch (keyEvent.WindowsKeyCode()) {
-        case VK_LEFT:
-            if (!keyEvent.isKeyUp())
-                doScroll(renderer(), true, -120);
-            break;
-        case VK_RIGHT:
-            if (!keyEvent.isKeyUp())
-                doScroll(renderer(), true, 120);
-            break;
-        case VK_UP:
-            if (!keyEvent.isKeyUp())
-                doScroll(renderer(), false, -120);
-            break;
-        case VK_PRIOR:
-            // FIXME: implement me
-            break;
-        case VK_NEXT:
-            // FIXME: implement me
-            break;
-        case VK_DOWN:
-            if (!keyEvent.isKeyUp())
-                doScroll(renderer(), false, 120);
-            break;
-        case VK_HOME:
-            if (!keyEvent.isKeyUp()) {
-                renderer()->layer()->scrollToOffset(0, 0, true, true);
-                doScroll(renderer(), false, 120);
-            }
-            break;
-        case VK_END:
-            if (!keyEvent.isKeyUp())
-                renderer()->layer()->scrollToOffset(0, renderer()->height(), true, true);
-            break;
-        case VK_SPACE:
-            if (!keyEvent.isKeyUp()) {
-                if (keyEvent.shiftKey())
-                    doScroll(renderer(), false, -120);
-                else
-                    doScroll(renderer(), false, 120);
-            }
-            break;
-    }
-    return true;
+    return eventHandler()->keyEvent(keyEvent);
 }
 
 void FrameGdk::handleGdkEvent(GdkEvent* event)
@@ -209,14 +145,6 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
                     view()->layout();
                 IntRect rect(clip.x, clip.y, clip.width, clip.height);
                 paint(&ctx, rect);
-            } else {
-                IntRect rect(clip.x, clip.y, clip.width, clip.height);
-                ctx.fillRect(rect, Color(0xff, 0xff, 0xff));
-#if 0 // FIXME: crashes because font subsystem isn't ready yet
-                StringImpl txt("Welcome to Gdk Web Browser");
-                TextRun textRun(txt);
-                ctx.drawText(textRun, IntPoint(10,10));
-#endif
             }
             cairo_destroy(cr);
             gdk_window_end_paint(event->any.window);
@@ -224,7 +152,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
         }
 
         case GDK_CONFIGURE: {
-            view()->updateGeometry();
+            view()->updateGeometry(event->configure.width, event->configure.height);
             forceLayout();
             break;
         }
@@ -241,10 +169,13 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             Node* node = hitTestResult.innerNode();
             if (!node)
                 return;
-            //Default to scrolling the page
-            //not sure why its null
-            //broke anyway when its not null
-            doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
+            /*
+             * FIXME: Does this belong here?
+             * Default to scrolling the page
+             * not sure why its null
+             * broke anyway when its not null
+             * doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
+             */
             break;
         }
         case GDK_DRAG_ENTER:

@@ -69,16 +69,17 @@ static void urlBarEnterCallback(GtkWidget* widget, GtkWidget* entry)
 
 static void registerRenderingAreaEvents(GtkWidget* win)
 {
-    gtk_widget_set_events(win, GDK_EXPOSURE_MASK
-                         | GDK_BUTTON_PRESS_MASK
-                         | GDK_BUTTON_RELEASE_MASK
-                         | GDK_POINTER_MOTION_MASK
-                         | GDK_KEY_PRESS_MASK
-                         | GDK_KEY_RELEASE_MASK
-                         | GDK_BUTTON_MOTION_MASK
-                         | GDK_BUTTON1_MOTION_MASK
-                         | GDK_BUTTON2_MOTION_MASK
-                         | GDK_BUTTON3_MOTION_MASK);
+    gdk_window_set_events(GTK_IS_LAYOUT(win) ? GTK_LAYOUT(win)->bin_window : win->window,
+                          (GdkEventMask)(GDK_EXPOSURE_MASK
+                            | GDK_BUTTON_PRESS_MASK
+                            | GDK_BUTTON_RELEASE_MASK
+                            | GDK_POINTER_MOTION_MASK
+                            | GDK_KEY_PRESS_MASK
+                            | GDK_KEY_RELEASE_MASK
+                            | GDK_BUTTON_MOTION_MASK
+                            | GDK_BUTTON1_MOTION_MASK
+                            | GDK_BUTTON2_MOTION_MASK
+                            | GDK_BUTTON3_MOTION_MASK));
 
     g_signal_connect(GTK_OBJECT(win), "expose-event", G_CALLBACK(handleGdkEvent), NULL);
     g_signal_connect(GTK_OBJECT(win), "key-press-event", G_CALLBACK(handleGdkEvent), NULL);
@@ -89,13 +90,19 @@ static void registerRenderingAreaEvents(GtkWidget* win)
     g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(handleGdkEvent), NULL);
 }
 
+static void layout_realize_callback(GtkWidget *widget, gpointer)
+{
+    registerRenderingAreaEvents(widget);
+}
+
 static void frameResizeCallback(GtkWidget* widget, GtkAllocation* allocation, gpointer data)
 {
     if (!gFrame)
         return;
 
-    gFrame->view()->setFrameGeometry(IntRect(allocation->x,allocation->y,allocation->width,allocation->height));
+    gFrame->view()->updateGeometry(allocation->width, allocation->height);
     gFrame->forceLayout();
+    gFrame->view()->adjustViewSize();
     gFrame->sendResizeEvent();
 }
 
@@ -191,12 +198,21 @@ int main(int argc, char* argv[])
     g_signal_connect(G_OBJECT(urlBarSubmitButton), "clicked", G_CALLBACK(goButtonClickedCallback), (gpointer)gURLBarEntry);
     gtk_widget_show(vbox);
 
-    GtkWidget* frameWindow = gtk_drawing_area_new();
-    registerRenderingAreaEvents(frameWindow); 
-    gtk_box_pack_start(GTK_BOX(vbox), frameWindow, TRUE, TRUE, 0);
-    g_signal_connect(GTK_OBJECT(frameWindow), "size-allocate", G_CALLBACK(frameResizeCallback), NULL);
-    gtk_widget_show(frameWindow);
-    GTK_WIDGET_SET_FLAGS(frameWindow, GTK_CAN_FOCUS);
+    GtkWidget* scrolledWindow = gtk_scrolled_window_new(0,0);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledWindow),
+                                    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_box_pack_start(GTK_BOX(vbox), scrolledWindow, TRUE, TRUE, 0);
+    gtk_widget_show(scrolledWindow);
+
+    GtkWidget* layout = gtk_layout_new(gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(scrolledWindow)),
+                                       gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolledWindow)));
+    g_signal_connect_after(G_OBJECT(layout), "realize", G_CALLBACK(layout_realize_callback), NULL );
+    gtk_container_add(GTK_CONTAINER(scrolledWindow), layout);
+
+    g_signal_connect_after(GTK_OBJECT(layout), "size-allocate", G_CALLBACK(frameResizeCallback), NULL);
+    gtk_widget_show(layout);
+    GTK_WIDGET_SET_FLAGS(scrolledWindow, GTK_CAN_FOCUS);
+    GTK_WIDGET_SET_FLAGS(layout, GTK_CAN_FOCUS);
 
     gtk_widget_show_all(topLevelWindow);
 
@@ -211,7 +227,7 @@ int main(int argc, char* argv[])
 
     FrameView* frameView = new FrameView(gFrame);
     gFrame->setView(frameView);
-    frameView->setGtkWidget(frameWindow);
+    frameView->setGtkWidget(GTK_LAYOUT(layout));
 
     gFrame->init();
     gFrame->loader()->load(ResourceRequest(url));

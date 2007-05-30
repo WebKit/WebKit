@@ -34,6 +34,10 @@
 class QAbstractScrollArea;
 #endif
 
+#if PLATFORM(GDK)
+typedef struct _GtkLayout GtkLayout;
+#endif
+
 #if PLATFORM(WIN)
 typedef struct HRGN__* HRGN;
 #endif
@@ -141,14 +145,12 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
-        void updateView(const IntRect&, bool now = false);
-        virtual void setGtkWidget(GtkWidget* widget);
+        virtual void setGtkWidget(GtkLayout* layout);
         virtual void setFrameGeometry(const IntRect&);
-        void updateGeometry();
+        virtual void updateGeometry(int width, int height);
     private:
+        void updateView(const IntRect&, bool now = false);
         void updateScrollbars();
-        IntSize maximumScroll() const;
-        int updateScrollInfo(short type, int current, int max, int pageSize);
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
 #endif

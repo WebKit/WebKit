@@ -73,7 +73,6 @@
 #include "SearchPopupMenu.h"
 #include "TextBoundaries.h"
 #include "TextBreakIteratorInternalICU.h"
-#include "Widget.h"
 #include "loader.h"
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -85,14 +84,6 @@ namespace WebCore {
 }
 
 void FrameView::updateBorder() { notImplemented(); }
-
-void Widget::setEnabled(bool) { notImplemented(); }
-bool Widget::isEnabled() const { notImplemented(); return false; }
-void Widget::removeFromParent() { notImplemented(); }
-void Widget::paint(GraphicsContext*, IntRect const&) { notImplemented(); }
-void Widget::setIsSelected(bool) { notImplemented(); }
-void Widget::invalidate() { notImplemented(); }
-void Widget::invalidateRect(const IntRect&) { notImplemented(); }
 
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemented(); return 0; }
 void WebCore::findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }
