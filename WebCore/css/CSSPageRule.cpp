@@ -43,7 +43,7 @@ String CSSPageRule::selectorText() const
     return String();
 }
 
-void CSSPageRule::setSelectorText(const String& /*selectorText*/)
+void CSSPageRule::setSelectorText(const String& /*selectorText*/, ExceptionCode& /*ec*/)
 {
     // FIXME: Implement!
 }

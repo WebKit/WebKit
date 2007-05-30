@@ -300,9 +300,15 @@ all : \
     HTMLEntityNames.c \
     JSAttr.h \
     JSCDATASection.h \
+    JSCSSCharsetRule.h \
+    JSCSSFontFaceRule.h \
+    JSCSSImportRule.h \
+    JSCSSMediaRule.h \
+    JSCSSPageRule.h \
     JSCSSPrimitiveValue.h \
     JSCSSRule.h \
     JSCSSRuleList.h \
+    JSCSSStyleRule.h \
     JSCSSValue.h \
     JSCSSValueList.h \
     JSCanvasGradient.h \

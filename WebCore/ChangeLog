@@ -1,3 +1,43 @@
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13919
+        Autogenerate the JS bindings for the CSSRule and its subclasses
+
+        - subclasses generated are CSSCharsetRule, CSSFontFaceRule, CSSImportRule
+          CSSMediaRule, CSSPageRule and CSSStyleRule.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSCharsetRule.h:
+        (WebCore::CSSCharsetRule::setEncoding):
+        * css/CSSCharsetRule.idl:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::setSelectorText):
+        * css/CSSPageRule.h:
+        * css/CSSPageRule.idl:
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::setCssText):
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/CSSStyleRule.h:
+        * css/CSSStyleRule.idl:
+        * page/DOMWindow.idl: add new constructors.
+
 2007-05-30  Mark Rowe  <mrowe@apple.com>
 
         Build fixes after r21889.  Add missing #includes.

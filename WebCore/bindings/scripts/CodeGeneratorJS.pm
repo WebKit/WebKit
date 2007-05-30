@@ -162,7 +162,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet";
+    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule";
     return 0;
 }
 
@@ -523,7 +523,7 @@ sub GenerateHeader
         push(@headerContent, "    ${className}Prototype() { }\n");
     } else {
         push(@headerContent, "    ${className}Prototype(KJS::ExecState* exec)\n");
-        if ($hasParent && $parentClassName ne "KJS::DOMCSSRule" && $parentClassName ne "KJS::DOMNodeFilter") {
+        if ($hasParent && $parentClassName ne "KJS::DOMNodeFilter") {
             push(@headerContent, "        : KJS::JSObject(${parentClassName}Prototype::self(exec)) { }\n");
         } else {
             push(@headerContent, "        : KJS::JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { }\n");
@@ -1444,6 +1444,10 @@ sub NativeToJSValue
     if ($codeGenerator->IsSVGAnimatedType($type)) {
         $value =~ s/\(\)//;
         $value .= "Animated()";
+    }
+
+    if ($type eq "CSSStyleDeclaration") {
+        $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
     }
 
     if ($type eq "DOMImplementation") {

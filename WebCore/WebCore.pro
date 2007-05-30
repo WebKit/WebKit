@@ -161,10 +161,16 @@ LUT_TABLE_FILES += \
 
 IDL_BINDINGS += \
     css/Counter.idl \
+    css/CSSCharsetRule.idl \
+    css/CSSFontFaceRule.idl \
+    css/CSSImportRule.idl \
+    css/CSSMediaRule.idl \
+    css/CSSPageRule.idl \
     css/CSSPrimitiveValue.idl \
     css/CSSRule.idl \
     css/CSSRuleList.idl \
     css/CSSStyleDeclaration.idl \
+    css/CSSStyleRule.idl \
     css/CSSValue.idl \
     css/CSSValueList.idl \
     css/MediaList.idl \
@@ -268,6 +274,7 @@ IDL_BINDINGS += \
 
 SOURCES += \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+    bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \

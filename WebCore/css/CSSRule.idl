@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMCSSRule, GenerateConstructor, ObjCCustomInternalImpl] CSSRule {
+    interface [GenerateConstructor, ObjCCustomInternalImpl] CSSRule {
 
         // RuleType
         const unsigned short UNKNOWN_RULE = 0;
@@ -32,17 +32,14 @@ module css {
         const unsigned short FONT_FACE_RULE = 5;
         const unsigned short PAGE_RULE = 6;
 
-#if !defined(LANGUAGE_JAVASCRIPT)
         readonly attribute unsigned short   type;
 
-                 // FIXME: DOM spec says that this can raise an
-                 // exception on setting.
-                 attribute [ConvertNullToNullString] DOMString        cssText
-                     /*setter raises (DOMException)*/;
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
+                     setter raises (DOMException);
 
         readonly attribute CSSStyleSheet    parentStyleSheet;
         readonly attribute CSSRule          parentRule;
-#endif
 
     };
+
 }

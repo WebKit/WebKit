@@ -33,6 +33,8 @@ namespace WebCore {
 class CSSMutableStyleDeclaration;
 class CSSSelector;
 
+typedef int ExceptionCode;
+
 class CSSStyleRule : public CSSRule {
 public:
     CSSStyleRule(StyleBase* parent);
@@ -41,7 +43,7 @@ public:
     virtual bool isStyleRule() { return true; }
 
     String selectorText() const;
-    void setSelectorText(String);
+    void setSelectorText(const String&, ExceptionCode&);
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 

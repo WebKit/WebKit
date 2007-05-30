@@ -31,6 +31,8 @@ namespace WebCore {
 
 class CSSMutableStyleDeclaration;
 
+typedef int ExceptionCode;
+
 class CSSPageRule : public CSSRule {
 public:
     CSSPageRule(StyleBase* parent);
@@ -39,7 +41,7 @@ public:
     virtual bool isPageRule() { return true; }
 
     String selectorText() const;
-    void setSelectorText(const String&);
+    void setSelectorText(const String&, ExceptionCode&);
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 

@@ -1,3 +1,13 @@
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Update results for http://bugs.webkit.org/show_bug.cgi?id=13919
+          Autogenerate the JS bindings for the CSSRule and its subclasses
+
+        * fast/dom/Window/window-properties-expected.txt: adds new constructors
+        * fast/dom/wrapper-classes-expected.txt: CSSStyleRule now passes!!
+
 2007-05-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.

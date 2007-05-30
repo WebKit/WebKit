@@ -66,7 +66,7 @@ PASS jsWrapperClass(stylesheet) is 'CSSStyleSheet'
 PASS objCWrapperClass(stylesheet) is 'DOMCSSStyleSheet'
 PASS jsWrapperClass(stylesheet.cssRules) is 'CSSRuleList'
 PASS objCWrapperClass(stylesheet.cssRules) is 'DOMCSSRuleList'
-FAIL jsWrapperClass(stylesheet.cssRules.item(0)) should be CSSStyleRule. Was CSSRule.
+PASS jsWrapperClass(stylesheet.cssRules.item(0)) is 'CSSStyleRule'
 PASS objCWrapperClass(stylesheet.cssRules.item(0)) is 'DOMCSSStyleRule'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style) is 'CSSStyleDeclaration'
 PASS objCWrapperClass(stylesheet.cssRules.item(0).style) is 'DOMCSSStyleDeclaration'

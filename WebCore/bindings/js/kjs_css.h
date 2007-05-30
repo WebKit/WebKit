@@ -81,29 +81,6 @@ namespace KJS {
     enum { OwnerRule, CssRules, Rules, InsertRule, DeleteRule, AddRule, RemoveRule };
   };
 
-  class DOMCSSRule : public DOMObject {
-  public:
-    virtual ~DOMCSSRule();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    void putValueProperty(ExecState*, int token, JSValue*, int attr);
-    virtual const ClassInfo* classInfo() const;
-    static const ClassInfo info;
-    static const ClassInfo style_info, media_info, fontface_info, page_info, import_info, charset_info;
-    enum { ParentStyleSheet, Type, CssText, ParentRule, Style_SelectorText, Style_Style,
-           Media_Media, Media_InsertRule, Media_DeleteRule, Media_CssRules,
-           FontFace_Style, Page_SelectorText, Page_Style,
-           Import_Href, Import_Media, Import_StyleSheet, Charset_Encoding };
-    WebCore::CSSRule* impl() const { return m_impl.get(); }
-  private:
-    friend class WebCore::JSCSSRule;
-    DOMCSSRule(ExecState*, WebCore::CSSRule*);
-    RefPtr<WebCore::CSSRule> m_impl;
-  };
-
-  JSValue* toJS(ExecState*, WebCore::CSSRule*);
-
   class DOMCSSValue : public DOMObject {
   public:
     DOMCSSValue(ExecState*, WebCore::CSSValue*);

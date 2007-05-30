@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,15 +21,13 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSCharsetRule : CSSRule {
-
-        // FIXME: the DOM spec says that this attribute
-        // should not be readonly.  The correct declaration
-        // is commented out below.
-        readonly attribute DOMString        encoding;
-               /*attribute DOMString        encoding
-                    setter raises(DOMException);*/
-
+    interface [GenerateConstructor] CSSCharsetRule : CSSRule {
+#if defined(LANGUAGE_OBJECTIVE_C)
+        readonly attribute [ConvertNullStringTo=Null] DOMString encoding;
+#else
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString encoding
+                     setter raises(DOMException);
+#endif
     };
 
 }

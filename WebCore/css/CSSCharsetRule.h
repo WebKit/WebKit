@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+typedef int ExceptionCode;
+
 class CSSCharsetRule : public CSSRule {
 public:
     CSSCharsetRule(StyleBase* parent, const String& encoding);
@@ -37,14 +39,12 @@ public:
     virtual bool isCharsetRule() { return true; }
 
     String encoding() const { return m_encoding; }
+    void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }
 
     // Inherited from CSSRule
     virtual unsigned short type() const { return CHARSET_RULE; }
 
     virtual String cssText() const;
-
-    // Not part of the CSSOM
-    void setEncoding(const String& encoding) { m_encoding = encoding; }
 
 protected:
     String m_encoding;

@@ -44,6 +44,12 @@ module window {
         // Global constructors
         attribute CSSPrimitiveValueConstructor CSSPrimitiveValue;
         attribute CSSRuleConstructor CSSRule;
+        attribute CSSCharsetRuleConstructor CSSCharsetRule;
+        attribute CSSFontFaceRuleConstructor CSSFontFaceRule;
+        attribute CSSImportRuleConstructor CSSImportRule;
+        attribute CSSMediaRuleConstructor CSSMediaRule;
+        attribute CSSPageRuleConstructor CSSPageRule;
+        attribute CSSStyleRuleConstructor CSSStyleRule;
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute CSSValueConstructor CSSValue;
         attribute MediaListConstructor MediaList;

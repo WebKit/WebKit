@@ -2767,6 +2767,19 @@
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
 		BC3FCAA90AC3DB5800BA54AD /* PlatformScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */; settings = {ATTRIBUTES = (); }; };
+		BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */; };
+		BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */; };
+		BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */; };
+		BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */; };
+		BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */; };
+		BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */; };
+		BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F50C0DDC8F0020CFC3 /* JSCSSImportRule.h */; };
+		BC46C2000C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F60C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp */; };
+		BC46C2010C0DDC8F0020CFC3 /* JSCSSMediaRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F70C0DDC8F0020CFC3 /* JSCSSMediaRule.h */; };
+		BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F80C0DDC8F0020CFC3 /* JSCSSPageRule.cpp */; };
+		BC46C2030C0DDC8F0020CFC3 /* JSCSSPageRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F90C0DDC8F0020CFC3 /* JSCSSPageRule.h */; };
+		BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C2040C0DDCA10020CFC3 /* JSCSSStyleRule.cpp */; };
+		BC46C2070C0DDCA10020CFC3 /* JSCSSStyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C2050C0DDCA10020CFC3 /* JSCSSStyleRule.h */; };
 		BC4918C60BFEA050009D6316 /* JSHTMLFrameElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4918C00BFEA050009D6316 /* JSHTMLFrameElement.cpp */; };
 		BC4918C70BFEA050009D6316 /* JSHTMLFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */; };
 		BC4918C80BFEA050009D6316 /* JSHTMLIFrameElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */; };
@@ -6027,6 +6040,19 @@
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScrollBar.h; sourceTree = "<group>"; };
+		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; };
+		BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSCharsetRule.cpp; sourceTree = "<group>"; };
+		BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSCharsetRule.h; sourceTree = "<group>"; };
+		BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceRule.cpp; sourceTree = "<group>"; };
+		BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSFontFaceRule.h; sourceTree = "<group>"; };
+		BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSImportRule.cpp; sourceTree = "<group>"; };
+		BC46C1F50C0DDC8F0020CFC3 /* JSCSSImportRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSImportRule.h; sourceTree = "<group>"; };
+		BC46C1F60C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSMediaRule.cpp; sourceTree = "<group>"; };
+		BC46C1F70C0DDC8F0020CFC3 /* JSCSSMediaRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSMediaRule.h; sourceTree = "<group>"; };
+		BC46C1F80C0DDC8F0020CFC3 /* JSCSSPageRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSPageRule.cpp; sourceTree = "<group>"; };
+		BC46C1F90C0DDC8F0020CFC3 /* JSCSSPageRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSPageRule.h; sourceTree = "<group>"; };
+		BC46C2040C0DDCA10020CFC3 /* JSCSSStyleRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleRule.cpp; sourceTree = "<group>"; };
+		BC46C2050C0DDCA10020CFC3 /* JSCSSStyleRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleRule.h; sourceTree = "<group>"; };
 		BC4918C00BFEA050009D6316 /* JSHTMLFrameElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameElement.cpp; sourceTree = "<group>"; };
 		BC4918C10BFEA050009D6316 /* JSHTMLFrameElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameElement.h; sourceTree = "<group>"; };
 		BC4918C20BFEA050009D6316 /* JSHTMLIFrameElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLIFrameElement.cpp; sourceTree = "<group>"; };
@@ -6418,6 +6444,16 @@
 				93F9B6DF0BA0FB7200854064 /* JSComment.h */,
 				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
 				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
+				BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */,
+				BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */,
+				BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */,
+				BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */,
+				BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */,
+				BC46C1F50C0DDC8F0020CFC3 /* JSCSSImportRule.h */,
+				BC46C1F60C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp */,
+				BC46C1F70C0DDC8F0020CFC3 /* JSCSSMediaRule.h */,
+				BC46C1F80C0DDC8F0020CFC3 /* JSCSSPageRule.cpp */,
+				BC46C1F90C0DDC8F0020CFC3 /* JSCSSPageRule.h */,
 				930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */,
 				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
 				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
@@ -6426,6 +6462,8 @@
 				A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */,
 				142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */,
 				142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */,
+				BC46C2040C0DDCA10020CFC3 /* JSCSSStyleRule.cpp */,
+				BC46C2050C0DDCA10020CFC3 /* JSCSSStyleRule.h */,
 				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
@@ -9197,6 +9235,7 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
@@ -11444,6 +11483,12 @@
 				BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
+				BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */,
+				BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */,
+				BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */,
+				BC46C2010C0DDC8F0020CFC3 /* JSCSSMediaRule.h in Headers */,
+				BC46C2030C0DDC8F0020CFC3 /* JSCSSPageRule.h in Headers */,
+				BC46C2070C0DDCA10020CFC3 /* JSCSSStyleRule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12847,6 +12892,13 @@
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
+				BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */,
+				BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */,
+				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
+				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
+				BC46C2000C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp in Sources */,
+				BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */,
+				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
