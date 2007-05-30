@@ -1,3 +1,19 @@
+2007-05-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5198882> CrashTracer: [USER] 7 crashes in 
+        Safari at com.apple.WebCore: WebCore::RenderBlock::layoutBlock + 
+        2360
+
+        The problem is that we are re-entering layout when we should not. 
+        http://trac.webkit.org/projects/webkit/changeset/21778 actually 
+        fixed this crash, but we have been inspired to add the same guard 
+        in two other possibly-dangerous places.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Add the guard in two more places.
+
 2007-05-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.
