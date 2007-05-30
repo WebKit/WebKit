@@ -1,3 +1,9 @@
+2007-05-30  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.  Update #include.
+
+        * API/JSCallbackFunction.h:
+
 2007-05-30  Luciano Montanaro  <mikelima@cirulla.net>
 
         Reviewed by Maciej.
