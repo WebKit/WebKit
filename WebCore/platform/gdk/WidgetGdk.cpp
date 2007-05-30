@@ -34,7 +34,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RenderObject.h"
-#include "NotImplementedGdk.h"
+#include "NotImplemented.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -150,28 +150,28 @@ void Widget::setFrameGeometry(const IntRect& r)
 
 void Widget::setEnabled(bool)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 bool Widget::isEnabled() const
 {
-    notImplementedGdk();
+    notImplemented();
     return false;
 }
 
 void Widget::removeFromParent()
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void Widget::paint(GraphicsContext*, IntRect const&)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void Widget::setIsSelected(bool)
 {
-    notImplementedGdk();
+    notImplemented();
 }
 
 void Widget::invalidate()
