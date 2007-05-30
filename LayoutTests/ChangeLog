@@ -1,5 +1,17 @@
 2007-05-30  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13775
+          REGRESSION: Popup button text should use "natural" directionality to match the items in the popup menu
+
+        * fast/forms/select-writing-direction-natural-expected.checksum: Added.
+        * fast/forms/select-writing-direction-natural-expected.png: Added.
+        * fast/forms/select-writing-direction-natural-expected.txt: Added.
+        * fast/forms/select-writing-direction-natural.html: Added.
+
+2007-05-30  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Hyatt.
 
         - http://bugs.webkit.org/show_bug.cgi?id=13932

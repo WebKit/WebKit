@@ -69,6 +69,8 @@ public:
     
     PopupMenuClient* client() const { return m_popupClient; }
 
+    static bool itemWritingDirectionIsNatural();
+
 #if PLATFORM(WIN)
     PlatformScrollbar* scrollBar() const { return m_scrollBar.get(); }
 

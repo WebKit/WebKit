@@ -55,5 +55,10 @@ void PopupMenu::updateFromElement()
     notImplemented(); 
 }
 
+bool PopupMenu::itemWritingDirectionIsNatural()
+{
+    return false;
+}
+
 }
 

@@ -190,6 +190,7 @@ PopupMenu::~PopupMenu() { notImplemented(); }
 void PopupMenu::show(const IntRect&, FrameView*, int index) { notImplemented(); }
 void PopupMenu::hide() { notImplemented(); }
 void PopupMenu::updateFromElement() { notImplemented(); }
+bool PopupMenu::itemWritingDirectionIsNatural() { notImplemented(); return false; }
 
 Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }

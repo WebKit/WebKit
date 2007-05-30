@@ -1,3 +1,34 @@
+2007-05-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13775
+          REGRESSION: Popup button text should use "natural" directionality to match the items in the popup menu
+
+        Test: fast/forms/select-writing-direction-natural.html
+
+        * platform/PopupMenu.h: Added the static method itemWritingDirectionIsNatural
+        which says whether items in the popup ignore the CSS text-align and direction
+        properties and instead are left-aligned and use natural writing direction.
+        * platform/gdk/PopupMenuGdk.cpp:
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PopupMenu::itemWritingDirectionIsNatural):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::textDirectionForParagraph): Added this helper function that uses
+        the Unicode Bidi Algorithm rules P2 and P3 to determine the writing direction
+        of text.
+        (WebCore::RenderMenuList::adjustInnerStyle): Made the alignment and direction
+        adjustment conditional on the popup implementation.
+        (WebCore::RenderMenuList::setText): Added call to adjustInnerStyle() since
+        the style depends on the text when natural writing direction is used.
+
 2007-05-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

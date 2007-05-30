@@ -184,4 +184,9 @@ void PopupMenu::updateFromElement()
 {
 }
 
+bool PopupMenu::itemWritingDirectionIsNatural()
+{
+    return true;
+}
+
 }
