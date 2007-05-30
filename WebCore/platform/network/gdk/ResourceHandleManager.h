@@ -35,6 +35,24 @@
 
 namespace WebCore {
 
+class ResourceHandleList {
+public:
+    ResourceHandleList(ResourceHandle* job, ResourceHandleList* next)
+        : m_job(job)
+        , m_next(next)
+        , m_removed(false)
+    {}
+    ResourceHandleList* next() const { return m_next; }
+    ResourceHandle* job() const { return m_job; }
+    void setRemoved(bool removed) { m_removed = removed; }
+    bool removed() const { return m_removed; }
+
+private:
+    ResourceHandle* m_job;
+    ResourceHandleList* m_next;
+    bool m_removed;
+};
+
 class ResourceHandleManager {
 public:
     static ResourceHandleManager* sharedInstance();
@@ -49,13 +67,16 @@ private:
     ResourceHandleManager();
     void downloadTimerCallback(Timer<ResourceHandleManager>*);
     void removeFromCurl(ResourceHandle*);
+    bool removeScheduledJob(ResourceHandle*);
+    void startJob(ResourceHandle*);
+    bool startScheduledJobs();
 
     Timer<ResourceHandleManager> m_downloadTimer;
     CURLM* m_curlMultiHandle; // FIXME: never freed
     CURLSH* m_curlShareHandle; // FIXME: never freed
     char* m_cookieJarFileName; // FIXME: never freed
-
     char m_curlErrorBuffer[CURL_ERROR_SIZE];
+    ResourceHandleList* m_resourceHandleListHead;
 };
 
 }

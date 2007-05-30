@@ -91,7 +91,9 @@ namespace WebCore {
 #if USE(CURL)
             , m_handle(0)
             , m_url(0)
+            , m_fileName(0)
             , m_customHeaders(0)
+            , m_customPostHeader(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -140,7 +142,10 @@ namespace WebCore {
 #if USE(CURL)
         CURL* m_handle;
         char* m_url;
+        char* m_fileName;
         struct curl_slist* m_customHeaders;        
+        struct curl_slist* m_customPostHeader;
+        Vector<char> m_postBytes;
 #endif
 #if PLATFORM(QT)
         QWebNetworkJob *m_job;

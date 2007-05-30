@@ -32,6 +32,7 @@
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ const double pollTimeSeconds = 0.05;
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(0)
+    , m_resourceHandleListHead(0)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     m_curlMultiHandle = curl_multi_init();
@@ -63,11 +65,21 @@ ResourceHandleManager* ResourceHandleManager::sharedInstance()
 }
 
 // called with data after all headers have been processed via headerCallback
-static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* obj)
+static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
 {
-    ResourceHandle* job = static_cast<ResourceHandle*>(obj);
+    ResourceHandle* job = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = job->getInternal();
     int totalSize = size * nmemb;
+
+    // this shouldn't be necessary but apparently is. CURL writes the data
+    // of html page even if it is a redirect that was handled internally
+    // can be observed e.g. on gmail.com
+    CURL* h = d->m_handle;
+    long httpCode = 0;
+    CURLcode err = curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
+    if (CURLE_OK == err && httpCode >= 300 && httpCode < 400)
+        return totalSize;
+
     if (d->client())
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
     return totalSize;
@@ -83,14 +95,15 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
 void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* timer)
 {
-    fd_set fdread;
-    fd_set fdwrite;
-    fd_set fdexcep;
-    int maxfd = 0;
+    startScheduledJobs();
 
+    fd_set fdread;
     FD_ZERO(&fdread);
+    fd_set fdwrite;
     FD_ZERO(&fdwrite);
+    fd_set fdexcep;
     FD_ZERO(&fdexcep);
+    int maxfd = 0;
     curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
 
     struct timeval timeout;
@@ -126,13 +139,14 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
         // find the node which has same d->m_handle as completed transfer
         CURL* handle = msg->easy_handle;
         ASSERT(handle);
-        ResourceHandle* job;
-        curl_easy_getinfo(handle, CURLINFO_PRIVATE, &job);
+        ResourceHandle* job = 0;
+        CURLcode err = curl_easy_getinfo(handle, CURLINFO_PRIVATE, &job);
+        ASSERT(CURLE_OK == err);
         ASSERT(job);
         if (!job)
             continue;
-
         ResourceHandleInternal* d = job->getInternal();
+        ASSERT(d->m_handle == handle);
         if (CURLE_OK == msg->data.result) {
             if (d->client())
                 d->client()->didFinishLoading(job);
@@ -149,7 +163,9 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
         removeFromCurl(job);
     }
 
-    if (!m_downloadTimer.isActive() && (runningHandles > 0))
+    bool started = startScheduledJobs(); // new jobs might have been added in the meantime
+
+    if (!m_downloadTimer.isActive() && (started || (runningHandles > 0)))
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
@@ -169,26 +185,108 @@ void ResourceHandleManager::setupPUT(ResourceHandle*)
     notImplemented();
 }
 
-void ResourceHandleManager::setupPOST(ResourceHandle*)
+void ResourceHandleManager::setupPOST(ResourceHandle* job)
 {
-    notImplemented();
+    ResourceHandleInternal* d = job->getInternal();
+
+    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
+
+    job->postData()->flatten(d->m_postBytes);
+    if (d->m_postBytes.size() != 0) {
+        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
+        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
+    }
+
+    Vector<FormDataElement> elements = job->postData()->elements();
+    size_t size = elements.size();
+    struct curl_httppost* lastItem = 0;
+    struct curl_httppost* post = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (elements[i].m_type != FormDataElement::encodedFile)
+            continue;
+        CString cstring = elements[i].m_filename.utf8();
+        ASSERT(!d->m_fileName);
+        d->m_fileName = strdup(cstring.data());
+
+        // Fill in the file upload field
+        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "sendfile", CURLFORM_FILE, d->m_fileName, CURLFORM_END);
+
+        // Fill in the filename field
+        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "filename", CURLFORM_COPYCONTENTS, d->m_fileName, CURLFORM_END);
+
+        // FIXME: We should not add a "submit" field for each file uploaded. Review this code.
+        // Fill in the submit field too, even if this is rarely needed
+        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "submit", CURLFORM_COPYCONTENTS, "send", CURLFORM_END);
+
+        // FIXME: should we support more than one file?
+        break;
+    }
+
+    if (post)
+        curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)
 {
+    // we can be called from within curl, so to avoid re-entrancy issues
+    // schedule this job to be added the next time we enter curl download loop
+    m_resourceHandleListHead = new ResourceHandleList(job, m_resourceHandleListHead);
+    if (!m_downloadTimer.isActive())
+        m_downloadTimer.startOneShot(pollTimeSeconds);
+}
+
+bool ResourceHandleManager::removeScheduledJob(ResourceHandle* job)
+{
+    ResourceHandleList* node = m_resourceHandleListHead;
+    while (node) {
+        ResourceHandleList* next = node->next();
+        if (job == node->job()) {
+            node->setRemoved(true);
+            return true;
+        }
+        node = next;
+    }
+    return false;
+}
+
+bool ResourceHandleManager::startScheduledJobs()
+{
+    bool started = false;
+    ResourceHandleList* node = m_resourceHandleListHead;
+    while (node) {
+        ResourceHandleList* next = node->next();
+        if (!node->removed()) {
+            startJob(node->job());
+            started = true;
+        }
+        delete node;
+        node = next;
+    }
+    m_resourceHandleListHead = 0;
+    return started;
+}
+
+void ResourceHandleManager::startJob(ResourceHandle* job)
+{
     ResourceHandleInternal* d = job->getInternal();
     DeprecatedString url = job->url().url();
     d->m_handle = curl_easy_init();
+#ifndef NDEBUG
+    if (getenv("DEBUG_CURL"))
+        curl_easy_setopt(d->m_handle, CURLOPT_VERBOSE, 1);
+#endif
     curl_easy_setopt(d->m_handle, CURLOPT_PRIVATE, job);
     curl_easy_setopt(d->m_handle, CURLOPT_ERRORBUFFER, m_curlErrorBuffer);
     curl_easy_setopt(d->m_handle, CURLOPT_WRITEFUNCTION, writeCallback);
     curl_easy_setopt(d->m_handle, CURLOPT_WRITEDATA, job);
     curl_easy_setopt(d->m_handle, CURLOPT_HEADERFUNCTION, headerCallback);
     curl_easy_setopt(d->m_handle, CURLOPT_WRITEHEADER, job);
+    curl_easy_setopt(d->m_handle, CURLOPT_AUTOREFERER, 1);
     curl_easy_setopt(d->m_handle, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(d->m_handle, CURLOPT_MAXREDIRS, 10);
     curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
     curl_easy_setopt(d->m_handle, CURLOPT_SHARE, m_curlShareHandle);
+    curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
     // enable gzip and deflate through Accept-Encoding:
     curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
 
@@ -209,18 +307,19 @@ void ResourceHandleManager::add(ResourceHandle* job)
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
             String key = it->first;
             String value = it->second;
-            String headerString = key + ": " + value;
-            const char* header = headerString.latin1().data();
-            headers = curl_slist_append(headers, header);
+            String headerString(key);
+            headerString.append(": ");
+            headerString.append(value);
+            CString headerLatin1 = headerString.latin1();
+            headers = curl_slist_append(headers, headerLatin1.data());
         }
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
         d->m_customHeaders = headers;
     }
 
-    // default to GET
-    curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
-
-    if ("POST" == job->method())
+    if ("GET" == job->method())
+        curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
+    else if ("POST" == job->method())
         setupPOST(job);
     else if ("PUT" == job->method())
         setupPUT(job);
@@ -237,13 +336,12 @@ void ResourceHandleManager::add(ResourceHandle* job)
         job->cancel();
         return;
     }
-
-    if (!m_downloadTimer.isActive())
-        m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
 void ResourceHandleManager::cancel(ResourceHandle* job)
 {
+    if (removeScheduledJob(job))
+        return;
     removeFromCurl(job);
     // FIXME: report an error?
 }

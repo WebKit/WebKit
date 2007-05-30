@@ -1,3 +1,33 @@
+2007-05-29  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Curl (linux/gdk) networking improvements: 
+        a) POST support
+        b) don't use CURL in a re-entrant way.
+        c) turn on curl's internal debugging support in a debug build if the DEBUG_CURL environment variable is set.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/gdk/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::setupPOST):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::removeScheduledJob):
+        (WebCore::ResourceHandleManager::startScheduledJobs):
+        (WebCore::ResourceHandleManager::startJob):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/network/gdk/ResourceHandleManager.h:
+        (WebCore::ResourceHandleList::ResourceHandleList):
+        (WebCore::ResourceHandleList::next):
+        (WebCore::ResourceHandleList::job):
+        (WebCore::ResourceHandleList::setRemoved):
+        (WebCore::ResourceHandleList::removed):
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Fix the Qt and Gdk builds.
