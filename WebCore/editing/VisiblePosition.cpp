@@ -116,6 +116,17 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     return lastEditablePositionBeforePositionInRoot(prev.deepEquivalent(), highestRoot);
 }
 
+Position canonicalizeCandidate(const Position& candidate)
+{
+    if (candidate.isNull())
+        return Position();
+    ASSERT(candidate.isCandidate());
+    Position upstream = candidate.upstream();
+    if (upstream.isCandidate())
+        return upstream;
+    return candidate;
+}
+
 Position VisiblePosition::canonicalPosition(const Position& position)
 {
     // FIXME (9535):  Canonicalizing to the leftmost candidate means that if we're at a line wrap, we will 
@@ -138,8 +149,8 @@ Position VisiblePosition::canonicalPosition(const Position& position)
 
     // When neither upstream or downstream gets us to a candidate (upstream/downstream won't leave 
     // blocks or enter new ones), we search forward and backward until we find one.
-    Position next = nextCandidate(position);
-    Position prev = previousCandidate(position);
+    Position next = canonicalizeCandidate(nextCandidate(position));
+    Position prev = canonicalizeCandidate(previousCandidate(position));
     Node* nextNode = next.node();
     Node* prevNode = prev.node();
 

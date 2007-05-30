@@ -228,6 +228,8 @@ void IndentOutdentCommand::outdentParagraph()
         // The blockquote doesn't contain anything outside the paragraph, so it can be totally removed.
         removeNodePreservingChildren(enclosingNode);
         updateLayout();
+        visibleStartOfParagraph = VisiblePosition(visibleStartOfParagraph.deepEquivalent());
+        visibleEndOfParagraph = VisiblePosition(visibleEndOfParagraph.deepEquivalent());
         if (visibleStartOfParagraph.isNotNull() && !isStartOfParagraph(visibleStartOfParagraph))
             insertNodeAt(createBreakElement(document()).get(), visibleStartOfParagraph.deepEquivalent());
         if (visibleEndOfParagraph.isNotNull() && !isEndOfParagraph(visibleEndOfParagraph))
