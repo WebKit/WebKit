@@ -1094,8 +1094,10 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::Paint
     [search setSearchButtonCell:nil];
 
     [search drawWithFrame:NSRect(r) inView:o->view()->frameView()->getDocumentView()];
+#ifdef BUILDING_ON_TIGER
     if ([search showsFirstResponder])
         wkDrawTextFieldCellFocusRing(search, NSRect(r));
+#endif
 
     [search setControlView:nil];
     [search resetSearchButtonCell];
