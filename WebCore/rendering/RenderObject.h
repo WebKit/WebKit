@@ -854,12 +854,13 @@ public:
     
     void remove() { if (parent()) parent()->removeChild(this); }
 
+    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
+
 protected:
     virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
 
     virtual IntRect viewRect() const;
 
-    void invalidateVerticalPositions();
     short getVerticalPosition(bool firstLine) const;
 
     virtual void removeLeftoverAnonymousBoxes();

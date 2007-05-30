@@ -1,3 +1,19 @@
+2007-05-29  David Hyatt  <hyatt@apple.com>
+
+        Fold the invalidateVerticalPositions crawl into the bidi iteration.
+        This makes it more correct (since we won't drill into elements that
+        did not need to be reset) and cuts out an extra walk of all our children.
+        We're still O(n^2) as new content streams in, but this at least cuts
+        out one separate O(n^2) crawl.
+
+        Reviewed by olliej
+
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::invalidateVerticalPosition):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

@@ -2717,16 +2717,6 @@ short RenderObject::baselinePosition(bool firstLine, bool isRootLineBox) const
     return f.ascent() + (lineHeight(firstLine, isRootLineBox) - f.height()) / 2;
 }
 
-void RenderObject::invalidateVerticalPositions()
-{
-    m_verticalPosition = PositionUndefined;
-    RenderObject* child = firstChild();
-    while(child) {
-        child->invalidateVerticalPositions();
-        child = child->nextSibling();
-    }
-}
-
 void RenderObject::scheduleRelayout()
 {
     if (isRenderView()) {
