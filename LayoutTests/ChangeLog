@@ -1,3 +1,13 @@
+2007-05-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        Remove reference to SVG node from test -- otherwise this test incorrectly appears
+        to fail in non-SVG builds
+
+        * http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard-expected.txt:
+        * http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html:
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

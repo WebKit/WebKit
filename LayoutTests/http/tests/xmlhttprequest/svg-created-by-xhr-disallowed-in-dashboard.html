@@ -39,7 +39,6 @@
                 var svgDoc = rq.responseXML;
                 if (rq.status == 200) {
                     debug("Received doc of type: " + svgDoc);
-                    debug("Contained circle element is of type: " + svgDoc.getElementById('svgCircle'));
                     // Import SVG element into tree.
                     var importedNode = null;
                     try {
