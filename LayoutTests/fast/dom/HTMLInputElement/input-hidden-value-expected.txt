@@ -3,6 +3,6 @@ Markup: <input type="hidden" id="tf" value="New value">
 Value: New value
 Attribute: New value
 After reset
-Markup: <input type="hidden" id="tf" value="Original value">
-Value: Original value
-Attribute: Original value
+Markup: <input type="hidden" id="tf" value="New value">
+Value: New value
+Attribute: New value

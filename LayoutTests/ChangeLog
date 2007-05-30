@@ -1,3 +1,13 @@
+2007-05-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Updated tests for <rdar://problem/5213039> REGRESSION: Wells Fargo registration page returns blank
+
+        * fast/dom/HTMLInputElement/input-hidden-value-expected.txt:
+        * fast/dom/HTMLInputElement/input-text-reset-expected.txt:
+        * fast/dom/HTMLInputElement/input-text-reset.html:
+
 2007-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

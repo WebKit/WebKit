@@ -1,3 +1,17 @@
+2007-05-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/5213039> REGRESSION: Wells Fargo registration page returns blank
+
+        Roll out updated fix for 11866 that tried to make reset work for hidden inputs.  Since
+        all browsers update the value attribute when setting the value, it doesn't really make sense to reset.
+        Its true that IE does support resetting these controls, but in this case, it doesn't really make sense to have
+        another place to store an alternate version of the value.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::reset):
+        * html/HTMLInputElement.h:
+
 2007-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

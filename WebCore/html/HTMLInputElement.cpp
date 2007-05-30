@@ -464,12 +464,6 @@ void HTMLInputElement::restoreState(const String& state)
     }
 }
 
-void HTMLInputElement::closeRenderer()
-{
-    m_originalValue = value();
-    HTMLGenericFormElement::closeRenderer();
-}
-
 bool HTMLInputElement::canHaveSelection() const
 {
     return isTextField();
@@ -874,8 +868,7 @@ void HTMLInputElement::reset()
 {
     if (storesValueSeparateFromAttribute())
         setValue(String());
-    else if (inputType() == HIDDEN)
-        setValue(m_originalValue);
+
     setChecked(m_defaultChecked);
     m_useDefaultChecked = true;
 }

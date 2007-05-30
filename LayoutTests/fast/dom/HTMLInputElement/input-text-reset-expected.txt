@@ -13,6 +13,4 @@ textEmpty : SUCCESS : SUCCESS
 textValue : SUCCESS : SUCCESS 
 passwordEmpty : SUCCESS : SUCCESS 
 passwordValue : SUCCESS : SUCCESS 
-hiddenEmpty : SUCCESS : SUCCESS 
-hiddenValue : SUCCESS : SUCCESS 
 
