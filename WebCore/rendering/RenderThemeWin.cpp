@@ -308,17 +308,32 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintIn
     return false;
 }
 
+void RenderThemeWin::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    // Height is locked to auto.
+    style->setHeight(Length(Auto));
+
+    // White-space is locked to pre
+    style->setWhiteSpace(PRE);
+
+    // Add in the padding that we'd like to use.
+    const int buttonWidth = GetSystemMetrics(SM_CXVSCROLL);
+    style->setPaddingLeft(Length(2, Fixed));
+    style->setPaddingRight(Length(buttonWidth + 2, Fixed));
+    style->setPaddingTop(Length(1, Fixed));
+    style->setPaddingBottom(Length(1, Fixed));
+}
+
 bool RenderThemeWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     // FIXME: All these inflate() calls are bogus, causing painting problems,
     // as well as sizing wackiness in Classic mode
     IntRect editRect(r);
-    editRect.inflateY(2);
     paintTextField(o, i, editRect);
 
     const int buttonWidth = GetSystemMetrics(SM_CXVSCROLL);
     IntRect buttonRect(r.right() - buttonWidth - 1, r.y(), buttonWidth, r.height());
-    buttonRect.inflateY(1);
+    buttonRect.inflateY(-1);
     paintMenuListButton(o, i, buttonRect);
 
     return false;
