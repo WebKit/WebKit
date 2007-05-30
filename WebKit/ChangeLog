@@ -1,3 +1,9 @@
+2007-05-30  Mark Rowe  <mrowe@apple.com>
+
+        Build fixes after r21889.
+
+        * ForwardingHeaders/kjs/function.h: Added.
+
 2007-05-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff.

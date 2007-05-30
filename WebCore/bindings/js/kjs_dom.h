@@ -24,6 +24,8 @@
 #include "NodeList.h"
 #include "kjs_binding.h"
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
     class AtomicString;
     class Attr;

@@ -23,6 +23,7 @@
 #include "PlatformString.h"
 #include "kjs_binding.h"
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
     class AtomicString;

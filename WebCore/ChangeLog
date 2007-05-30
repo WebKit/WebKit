@@ -1,5 +1,14 @@
 2007-05-30  Mark Rowe  <mrowe@apple.com>
 
+        Build fixes after r21889.  Add missing #includes.
+
+        * ForwardingHeaders/kjs/function.h: Added.
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_window.h:
+
+2007-05-30  Mark Rowe  <mrowe@apple.com>
+
         Gdk build fix.  Update WidgetGdk to use NotImplemented.h.
 
         * platform/gdk/WidgetGdk.cpp:
