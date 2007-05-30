@@ -317,7 +317,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         float r = w / 2;
         float fa = startAngle;
         float falen =  fa + angleSpan;
-        cairo_arc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
+        cairo_arc_negative(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
         
         setColor(context, strokeColor());
         cairo_set_line_width(context, strokeThickness());
@@ -562,7 +562,6 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
         return;
 
     cairo_t* context = m_data->context;
-    cairo_save(context);
     cairo_push_group(context);
     m_data->layers.append(opacity);
 }
@@ -577,7 +576,6 @@ void GraphicsContext::endTransparencyLayer()
     cairo_pop_group_to_source(context);
     cairo_paint_with_alpha(context, m_data->layers.last());
     m_data->layers.removeLast();
-    cairo_restore(context);
 }
 
 void GraphicsContext::clearRect(const FloatRect&)

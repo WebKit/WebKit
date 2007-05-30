@@ -1,3 +1,16 @@
+2007-05-29  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13899
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::strokeArc): Use cairo_arc_negative() to fix
+        CSS rounded borders.
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer): save/restore is
+        redundant. push/pop group does this implicitly.
+
 2007-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
