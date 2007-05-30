@@ -168,6 +168,7 @@ IDL_BINDINGS += \
     css/CSSValue.idl \
     css/CSSValueList.idl \
     css/MediaList.idl \
+    css/StyleSheet.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \
     dom/CDATASection.idl \
@@ -284,6 +285,7 @@ SOURCES += \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
+    bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \

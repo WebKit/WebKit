@@ -1,3 +1,9 @@
+2007-05-29  Sam Weinig  <sam@webkit.org>
+
+        Fix the Qt and Gdk builds.
+
+        * WebCore.pro:
+
 2007-05-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
