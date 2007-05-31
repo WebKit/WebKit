@@ -1,3 +1,15 @@
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver the Hun.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13944
+        Generate and add missing JS constructors
+
+        * css/CSSRuleList.idl:
+        * css/CSSValueList.idl:
+        * css/Counter.idl:
+        * page/DOMWindow.idl:
+
 2007-05-30  Justin Garcia  <justin.garcia@apple.com>
  
         Reviewed by Darin.

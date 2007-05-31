@@ -1,5 +1,14 @@
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver the Hun.
+
+        Update results for http://bugs.webkit.org/show_bug.cgi?id=13944
+        Generate and add missing JS constructors
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dr. Harrison.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13868
