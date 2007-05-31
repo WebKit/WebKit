@@ -1,3 +1,11 @@
+2007-05-31  George Staikos  <staikos@kde.org>
+
+        Reviewed by Nikolas.
+
+        Compile again - Qt build.
+
+        * WebCore.pro: header guard added to CSSGrammar.h
+
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
