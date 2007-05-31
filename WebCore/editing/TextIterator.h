@@ -163,6 +163,9 @@ private:
     // End of the range.
     Node* m_startNode;
     int m_startOffset;
+    // Start of the range.
+    Node* m_endNode;
+    int m_endOffset;
     
     // The current text and its position, in the form to be returned from the iterator.
     Node* m_positionNode;

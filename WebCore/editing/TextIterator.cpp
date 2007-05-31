@@ -697,7 +697,9 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
 
     m_startNode = startNode;
     m_startOffset = startOffset;
-
+    m_endNode = endNode;
+    m_endOffset = endOffset;
+    
 #ifndef NDEBUG
     // Need this just because of the assert.
     m_positionNode = endNode;
@@ -743,6 +745,16 @@ void SimplifiedBackwardsTextIterator::advance()
 
         Node* next = m_handledChildren ? 0 : m_node->lastChild();
         if (!next) {
+            // Exit empty containers as we pass over them or containers
+            // where [container, 0] is where we started iterating.
+            if (canHaveChildrenForEditing(m_node) && m_node->parentNode() && (!m_node->lastChild() || m_node == m_endNode && m_endOffset == 0)) {
+                exitNode();
+                if (m_positionNode) {
+                    m_handledNode = true;
+                    m_handledChildren = true;
+                    return;
+                }            
+            }
             next = m_node->previousSibling();
             while (!next) {
                 if (!m_node->parentNode())
