@@ -1086,7 +1086,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
             if (!s.isNull()) {
                 s = anchor->document()->completeURL(s);
-                return s.getNSString();
+                return KURL(s).getNSURL();
             }
         }
     }

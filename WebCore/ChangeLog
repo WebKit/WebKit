@@ -1,3 +1,13 @@
+2007-05-31  Patti Hoa <patti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5221920> AXLink is returning a CFString instead of a CFURL for AXURL
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Convert the url string to an NSURL before returning as the AXURLAttribute
+
 2007-05-31  George Staikos  <staikos@kde.org>
 
         Reviewed by Nikolas.
