@@ -1,3 +1,13 @@
+2007-05-30  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Brady.
+
+        Enable logging in the Gdk port.
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+
+        * GdkLauncher/main.cpp:
+        (main):
+
 2007-05-29  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Anders.

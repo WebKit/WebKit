@@ -1,3 +1,15 @@
+2007-05-30  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Brady.
+
+        Enable logging in the Gdk port.
+        http://bugs.webkit.org/show_bug.cgi?id=13029
+
+        * WebCore.pro:
+        * platform/NotImplemented.h: Changed to use WTFLogVerbose.
+        * platform/gdk/LoggingGdk.cpp: Added.
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2007-05-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

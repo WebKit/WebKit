@@ -10,6 +10,7 @@
 #include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
 #include "KURL.h"
+#include "Logging.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "ResourceHandleManager.h"
@@ -131,6 +132,7 @@ static void menuMainQuitCallback(gpointer data)
 int main(int argc, char* argv[]) 
 {
     gtk_init(&argc, &argv);
+    WebCore::InitializeLoggingChannelsIfNecessary();
 
     String url("http://www.google.com");
     bool exitAfterLoading = false;

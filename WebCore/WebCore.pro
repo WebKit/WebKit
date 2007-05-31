@@ -802,6 +802,7 @@ gdk-port:SOURCES += \
         platform/gdk/FrameGdk.cpp \
         platform/gdk/GlyphPageTreeNodeGdk.cpp \
         platform/gdk/KeyEventGdk.cpp \
+        platform/gdk/LoggingGdk.cpp \
         platform/gdk/MimeTypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \
         platform/gdk/PlatformScrollBarGdk.cpp \
