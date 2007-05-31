@@ -309,6 +309,7 @@ all : \
     JSCSSRule.h \
     JSCSSRuleList.h \
     JSCSSStyleRule.h \
+    JSCSSStyleSheet.h \
     JSCSSValue.h \
     JSCSSValueList.h \
     JSCanvasGradient.h \

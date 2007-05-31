@@ -60,18 +60,6 @@ namespace KJS {
   // The document is only used for get-stylesheet-by-name (make optional if necessary)
   JSValue* toJS(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
 
-  class DOMCSSStyleSheet : public WebCore::JSStyleSheet {
-  public:
-    DOMCSSStyleSheet(ExecState*, WebCore::CSSStyleSheet*);
-    virtual ~DOMCSSStyleSheet();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { OwnerRule, CssRules, Rules, InsertRule, DeleteRule, AddRule, RemoveRule };
-  };
-
   class DOMRGBColor : public DOMObject {
   public:
     DOMRGBColor(ExecState*, unsigned color);

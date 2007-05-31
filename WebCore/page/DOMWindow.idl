@@ -42,7 +42,13 @@ module window {
         readonly attribute double devicePixelRatio;
 
         // Global constructors
+        attribute StyleSheetConstructor StyleSheet;
+        attribute CSSStyleSheetConstructor CSSStyleSheet;
+
+        attribute CSSValueConstructor CSSValue;
         attribute CSSPrimitiveValueConstructor CSSPrimitiveValue;
+        attribute CSSValueListConstructor CSSValueList;
+
         attribute CSSRuleConstructor CSSRule;
         attribute CSSCharsetRuleConstructor CSSCharsetRule;
         attribute CSSFontFaceRuleConstructor CSSFontFaceRule;
@@ -50,13 +56,11 @@ module window {
         attribute CSSMediaRuleConstructor CSSMediaRule;
         attribute CSSPageRuleConstructor CSSPageRule;
         attribute CSSStyleRuleConstructor CSSStyleRule;
+
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
-        attribute CSSValueConstructor CSSValue;
         attribute MediaListConstructor MediaList;
-        attribute StyleSheetConstructor StyleSheet;
         attribute CounterConstructor Counter;
         attribute CSSRuleListConstructor CSSRuleList;
-        attribute CSSValueListConstructor CSSValueList;
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
 //        attribute DOMExceptionConstructor DOMException;

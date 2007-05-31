@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,16 @@ module css {
                                                 in unsigned long index)
             raises(DOMException);
         void               deleteRule(in unsigned long index)
+            raises(DOMException);
+
+        // IE Extensions
+        readonly attribute CSSRuleList      rules;
+
+        long addRule(in DOMString selector,
+                     in DOMString style,
+                     in [Optional] unsigned long index)
+            raises(DOMException);
+        void removeRule(in [Optional] unsigned long index)
             raises(DOMException);
     };
 

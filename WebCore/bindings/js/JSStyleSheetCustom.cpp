@@ -27,7 +27,8 @@
 #include "JSStyleSheet.h"
 
 #include "CSSStyleSheet.h"
-#include "kjs_css.h"
+#include "JSCSSStyleSheet.h"
+#include "StyleSheet.h"
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, StyleSheet* styleSheet)
         return ret;
 
     if (styleSheet->isCSSStyleSheet())
-        ret = new KJS::DOMCSSStyleSheet(exec, static_cast<CSSStyleSheet*>(styleSheet));
+        ret = new JSCSSStyleSheet(exec, static_cast<CSSStyleSheet*>(styleSheet));
     else
         ret = new JSStyleSheet(exec, styleSheet);
 

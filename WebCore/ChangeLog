@@ -2,6 +2,30 @@
 
         Reviewed by Oliver.
 
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13943
+        Autogenerate the JS bindings for the CSSStyleSheet
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addRule):
+        (WebCore::CSSStyleSheet::cssRules):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::rules):
+        (WebCore::CSSStyleSheet::removeRule):
+        * css/CSSStyleSheet.idl:
+        * page/DOMWindow.idl:
+
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13937
         Autogenerate the JS bindings for the CSSValue
 

@@ -171,6 +171,7 @@ IDL_BINDINGS += \
     css/CSSRuleList.idl \
     css/CSSStyleDeclaration.idl \
     css/CSSStyleRule.idl \
+    css/CSSStyleSheet.idl \
     css/CSSValue.idl \
     css/CSSValueList.idl \
     css/MediaList.idl \

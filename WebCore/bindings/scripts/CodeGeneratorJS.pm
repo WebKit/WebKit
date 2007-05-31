@@ -1490,9 +1490,6 @@ sub NativeToJSValue
     } elsif ($type eq "NamedNodeMap") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"NamedNodeMap.h"} = 1;
-    } elsif ($type eq "CSSStyleSheet") {
-        $implIncludes{"CSSStyleSheet.h"} = 1;
-        $implIncludes{"kjs_css.h"} = 1;
     } elsif ($type eq "Rect") {
         $implIncludes{"RectImpl.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;

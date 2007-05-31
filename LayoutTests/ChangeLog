@@ -1,5 +1,14 @@
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Update results for http://bugs.webkit.org/show_bug.cgi?id=13943
+        Autogenerate the JS bindings for the CSSStyleSheet
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver the Hun.
 
         Update results for http://bugs.webkit.org/show_bug.cgi?id=13944
