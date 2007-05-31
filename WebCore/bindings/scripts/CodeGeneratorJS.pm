@@ -162,7 +162,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule";
+    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
     return 0;
 }
 
@@ -1142,6 +1142,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
         if (IndexGetterReturnsStrings($implClassName)) {
+            $implIncludes{"PlatformString.h"} = 1;
             push(@implContent, "    return jsStringOrNull(thisObj->impl()->item(slot.index()));\n");
         } else {
             push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
@@ -1394,6 +1395,7 @@ sub NativeToJSValue
     return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
 
     if ($codeGenerator->IsStringType($type)) {
+        $implIncludes{"PlatformString.h"} = 1;
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
             return "jsStringOrNull($value)" if $conv eq "Null";

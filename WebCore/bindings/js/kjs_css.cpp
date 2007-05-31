@@ -27,29 +27,17 @@
 
 #include "CSSRule.h"
 #include "CSSRuleList.h"
-#include "CSSValueList.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSRule.h"
 #include "JSCSSRuleList.h"
-#include "JSCSSStyleDeclaration.h"
-#include "JSCSSValueList.h"
 #include "JSStyleSheet.h"
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
 
-#include <kjs/string_object.h>
-
 #include "kjs_css.lut.h"
-
-#if ENABLE(SVG)
-#include "JSSVGColor.h"
-#include "JSSVGPaint.h"
-#include "SVGColor.h"
-#include "SVGPaint.h"
-#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -245,91 +233,6 @@ JSValue* DOMCSSStyleSheetPrototypeFunction::callAsFunction(ExecState* exec, JSOb
     }
   }
   return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMCSSValue::info = { "CSSValue", 0, &DOMCSSValueTable, 0 };
-
-/*
-@begin DOMCSSValuePrototypeTable 0
-@end
-@begin DOMCSSValueTable 2
-  cssText       DOMCSSValue::CssText            DontDelete|ReadOnly
-  cssValueType  DOMCSSValue::CssValueType       DontDelete|ReadOnly
-@end
-*/
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMCSSValuePrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("DOMCSSValue", DOMCSSValuePrototype, DOMCSSValuePrototypeFunction)
-
-DOMCSSValue::DOMCSSValue(ExecState* exec, CSSValue* v) 
-: m_impl(v) 
-{ 
-    setPrototype(DOMCSSValuePrototype::self(exec));
-}
-
-DOMCSSValue::~DOMCSSValue()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue* DOMCSSValue::getValueProperty(ExecState* exec, int token) const
-{
-  CSSValue &cssValue = *m_impl;
-  switch (token) {
-  case CssText:
-    return jsStringOrNull(cssValue.cssText());
-  case CssValueType:
-    return jsNumber(cssValue.cssValueType());
-  default:
-    ASSERT(0);
-    return jsUndefined();
-  }
-}
-
-bool DOMCSSValue::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMCSSValue, DOMObject>(exec, &DOMCSSValueTable, this, propertyName, slot);
-}
-
-void DOMCSSValue::put(ExecState* exec, const Identifier &propertyName, JSValue* value, int attr)
-{
-  CSSValue &cssValue = *m_impl;
-  if (propertyName == "cssText")
-    cssValue.setCssText(valueToStringWithNullCheck(exec, value));
-  else
-    DOMObject::put(exec, propertyName, value, attr);
-}
-
-JSValue* DOMCSSValuePrototypeFunction::callAsFunction(ExecState*, JSObject*, const List&)
-{
-    return 0;
-}
-
-JSValue* toJS(ExecState* exec, CSSValue *v)
-{
-  DOMObject *ret;
-  if (!v)
-    return jsNull();
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-  if ((ret = interp->getDOMObject(v)))
-    return ret;
-  else {
-    if (v->isValueList())
-      ret = new JSCSSValueList(exec, static_cast<CSSValueList*>(v));
-#if ENABLE(SVG)
-    else if (v->isSVGColor())
-      ret = new JSSVGColor(exec, static_cast<SVGColor*>(v));
-    else if (v->isSVGPaint())
-      ret = new JSSVGPaint(exec, static_cast<SVGPaint*>(v));
-#endif
-    else if (v->isPrimitiveValue())
-      ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue*>(v));
-    else
-      ret = new DOMCSSValue(exec, v);
-    interp->putDOMObject(v, ret);
-    return ret;
-  }
 }
 
 // -------------------------------------------------------------------------

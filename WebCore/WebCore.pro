@@ -276,6 +276,7 @@ SOURCES += \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
+    bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLAnchorElementCustom.cpp \

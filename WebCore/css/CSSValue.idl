@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 module css {
 
-    interface [LegacyParent=KJS::DOMCSSValue, GenerateConstructor, ObjCCustomInternalImpl] CSSValue {
+    interface [GenerateConstructor, ObjCCustomInternalImpl] CSSValue {
 
         // UnitTypes
         const unsigned short CSS_INHERIT         = 0;
@@ -28,14 +28,10 @@ module css {
         const unsigned short CSS_VALUE_LIST      = 2;
         const unsigned short CSS_CUSTOM          = 3;
 
-#if !defined(LANGUAGE_JAVASCRIPT)
-                 // FIXME: DOM spec says that this can raise an
-                 // exception on setting.
-                 attribute [ConvertNullToNullString] DOMString        cssText
-                     /*setter raises(DOMException)*/;
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString cssText
+                     setter raises(DOMException);
 
-        readonly attribute unsigned short   cssValueType;
-#endif
+        readonly attribute unsigned short cssValueType;
 
     };
 

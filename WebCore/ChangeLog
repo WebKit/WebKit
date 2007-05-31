@@ -1,5 +1,25 @@
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13937
+        Autogenerate the JS bindings for the CSSValue
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSValueCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::setCssText):
+        * css/CSSValue.idl:
+
+2007-05-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver the Hun.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13944

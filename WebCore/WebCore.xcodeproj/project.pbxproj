@@ -2761,6 +2761,7 @@
 		BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
 		BC305C790C076BB300CD20F0 /* JSHTMLObjectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC305C770C076BB300CD20F0 /* JSHTMLObjectElement.cpp */; };
 		BC305C7A0C076BB300CD20F0 /* JSHTMLObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC305C780C076BB300CD20F0 /* JSHTMLObjectElement.h */; };
 		BC305CA40C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC305CA30C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp */; };
@@ -6033,6 +6034,7 @@
 		BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTraversal.h; sourceTree = "<group>"; };
 		BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; };
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
+		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
 		BC305C770C076BB300CD20F0 /* JSHTMLObjectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLObjectElement.cpp; sourceTree = "<group>"; };
 		BC305C780C076BB300CD20F0 /* JSHTMLObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLObjectElement.h; sourceTree = "<group>"; };
 		BC305CA30C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLObjectElementCustom.cpp; sourceTree = "<group>"; };
@@ -9235,9 +9237,10 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
+				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
 				BCF411770BFCC76A00125622 /* JSHTMLAnchorElementCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
@@ -11526,7 +11529,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11541,7 +11543,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12901,6 +12902,7 @@
 				BC46C2000C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp in Sources */,
 				BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */,
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
+				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

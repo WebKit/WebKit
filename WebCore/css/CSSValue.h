@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +25,9 @@
 
 namespace WebCore {
 
-class CSSValue : public StyleBase
-{
+typedef int ExceptionCode;
+
+class CSSValue : public StyleBase {
 public:
     enum UnitTypes {
         CSS_INHERIT = 0,
@@ -41,14 +40,15 @@ public:
     CSSValue() : StyleBase(0) { }
 
     virtual unsigned short cssValueType() const { return CSS_CUSTOM; }
+
     virtual String cssText() const = 0;
-    void setCssText(const String&) { } // FIXME: Not implemented.
+    void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
     virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSValue_h

@@ -30,16 +30,7 @@
 
 namespace WebCore {
     class Counter;
-    class CSSPrimitiveValue;
-    class CSSRule;
-    class CSSRuleList;
-    class CSSStyleDeclaration;
     class CSSStyleSheet;
-    class CSSValue;
-    class CSSValueList;
-    class JSCSSRule;
-    class JSCSSStyleDeclaration;
-    class MediaList;
     class StyleSheet;
     class StyleSheetList;
 }
@@ -80,28 +71,6 @@ namespace KJS {
     static const ClassInfo info;
     enum { OwnerRule, CssRules, Rules, InsertRule, DeleteRule, AddRule, RemoveRule };
   };
-
-  class DOMCSSValue : public DOMObject {
-  public:
-    DOMCSSValue(ExecState*, WebCore::CSSValue*);
-    virtual ~DOMCSSValue();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { CssText, CssValueType };
-    WebCore::CSSValue* impl() const { return m_impl.get(); }
-  protected:
-    // Constructor for derived classes; doesn't set up a prototype.
-    DOMCSSValue(WebCore::CSSValue *v) : m_impl(v) { }
-  private:
-    RefPtr<WebCore::CSSValue> m_impl;
-  };
-
-  KJS_DEFINE_PROTOTYPE(DOMCSSValuePrototype)
-
-  JSValue* toJS(ExecState*, WebCore::CSSValue*);
 
   class DOMRGBColor : public DOMObject {
   public:

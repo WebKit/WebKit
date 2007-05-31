@@ -31,6 +31,7 @@
 #import "JSCSSRule.h"
 #import "JSCSSRuleList.h"
 #import "JSCSSStyleDeclaration.h"
+#import "JSCSSValue.h"
 #import "JSCounter.h"
 #import "JSDOMImplementation.h"
 #import "JSEvent.h"
@@ -71,6 +72,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(CSSRule)
     WRAP(CSSRuleList)
     WRAP(CSSStyleDeclaration)
+    WRAP(CSSValue)
     WRAP(Counter)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)
@@ -85,7 +87,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
         if (object->inherits(&DOM##className::info)) \
             return [objc_getClass("DOM" #className) _wrap##className:static_cast<DOM##className*>(object)->impl()];
 
-    WRAP(CSSValue)
     WRAP(Event)
     WRAP(NamedNodeMap)
     WRAP(Node)
