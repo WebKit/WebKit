@@ -3,7 +3,7 @@
         Reviewed by Brady.
 
         Enable logging in the Gdk port.
-        http://bugs.webkit.org/show_bug.cgi?id=13029
+        http://bugs.webkit.org/show_bug.cgi?id=13936
 
         * wtf/Assertions.cpp:
         * wtf/Assertions.h: Add WTFLogVerbose which also logs
