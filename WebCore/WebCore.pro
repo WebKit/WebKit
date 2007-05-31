@@ -818,8 +818,8 @@ gdk-port:SOURCES += \
         platform/gdk/WheelEventGdk.cpp \
         platform/gdk/WidgetGdk.cpp \
         platform/graphics/gdk/ImageGdk.cpp \
-        platform/network/gdk/ResourceHandleCurl.cpp \
-        platform/network/gdk/ResourceHandleManager.cpp \
+        platform/network/curl/ResourceHandleCurl.cpp \
+        platform/network/curl/ResourceHandleManager.cpp \
         platform/graphics/cairo/AffineTransformCairo.cpp \
         platform/graphics/cairo/GraphicsContextCairo.cpp \
         platform/graphics/cairo/ImageBufferCairo.cpp \

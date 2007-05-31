@@ -22,7 +22,7 @@ qt-port:INCLUDEPATH += \
     $$PWD/WebKitQt/Api
 gdk-port:INCLUDEPATH += \
     $$BASE_DIR/WebCore/platform/gdk \
-    $$BASE_DIR/WebCore/platform/network/gdk \
+    $$BASE_DIR/WebCore/platform/network/curl \
     $$BASE_DIR/WebCore/platform/graphics/cairo \
     $$BASE_DIR/WebCore/loader/gdk \
     $$BASE_DIR/WebCore/page/gdk

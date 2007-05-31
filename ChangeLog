@@ -1,3 +1,12 @@
+2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13941
+        Rename WebCore/platform/network/gdk to WebCore/platform/network/curl
+
+        * WebKit.pri:
+
 2007-05-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

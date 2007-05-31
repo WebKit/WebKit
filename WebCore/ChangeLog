@@ -1,5 +1,14 @@
 2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
 
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13941
+        Rename WebCore/platform/network/gdk to WebCore/platform/network/curl
+
+        * WebCore.pro:
+
+2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
+
         Reviewed by Niko.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13945
