@@ -541,6 +541,16 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     notImplemented();
 }
 
+void GraphicsContext::concatCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->context;
+    const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
+    cairo_transform(cr, matrix);
+}
+
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) 
 { 
     notImplemented(); 
@@ -681,6 +691,26 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     if (paintingDisabled())
         return;
     cairo_set_operator(m_data->context, toCairoOperator(op));
+}
+
+void GraphicsContext::beginPath()
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->context;
+    cairo_new_path(cr);
+}
+
+void GraphicsContext::addPath(const Path& path)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->context;
+    cairo_path_t *p = cairo_copy_path(path.platformPath()->m_cr);
+    cairo_append_path(cr, p);
+    cairo_path_destroy(p);
 }
 
 void GraphicsContext::clip(const Path& path)

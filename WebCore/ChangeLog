@@ -1,3 +1,15 @@
+2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Niko.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13945
+        GraphicsContextCairo enhancements necessary for SVG support
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+
 2007-05-31  Patti Hoa <patti@apple.com>
 
         Reviewed by Darin.
