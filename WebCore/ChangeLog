@@ -1,3 +1,16 @@
+2007-06-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13958
+          REGRESSION: Form select menu in iframe destroys form select menu on page
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking): Instead of calling
+        the event handler methods directly, post the fake event on the application event
+        queue. This ensures that the fake event is handled only after handling of the
+        initiating event has ended, and is seen by ancestor frames' event handlers.
+
 2007-06-01  George Staikos  <staikos@kde.org>
 
         Reviewed by bdash.

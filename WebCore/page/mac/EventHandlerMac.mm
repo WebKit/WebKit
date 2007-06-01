@@ -554,7 +554,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                     clickCount:[initiatingEvent clickCount]
                                     pressure:[initiatingEvent pressure]];
         
-            mouseUp(fakeEvent);
+            [NSApp postEvent:fakeEvent atStart:YES];
         } else { // eventType == NSKeyDown
             fakeEvent = [NSEvent keyEventWithType:NSKeyUp
                                     location:[initiatingEvent locationInWindow]
@@ -566,7 +566,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                  charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
                                    isARepeat:[initiatingEvent isARepeat] 
                                      keyCode:[initiatingEvent keyCode]];
-            keyEvent(fakeEvent);
+            [NSApp postEvent:fakeEvent atStart:YES];
         }
         // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
@@ -580,7 +580,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                     eventNumber:0
                                      clickCount:0
                                        pressure:0];
-        mouseMoved(fakeEvent);
+        [NSApp postEvent:fakeEvent atStart:YES];
     }
     
     END_BLOCK_OBJC_EXCEPTIONS;
