@@ -1,3 +1,14 @@
+2007-05-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Niko.
+
+        Test for fix: http://bugs.webkit.org/show_bug.cgi?id=12570
+
+        * svg/custom/prevent-default-expected.checksum: Added.
+        * svg/custom/prevent-default-expected.png: Added.
+        * svg/custom/prevent-default-expected.txt: Added.
+        * svg/custom/prevent-default.svg: Added.
+
 2007-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

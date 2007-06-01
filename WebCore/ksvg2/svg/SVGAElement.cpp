@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
@@ -41,6 +42,8 @@
 #include "csshelper.h"
 
 namespace WebCore {
+
+using namespace EventNames;
 
 SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
     : SVGStyledTransformableElement(tagName, doc)
@@ -95,14 +98,30 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 void SVGAElement::defaultEventHandler(Event* evt)
 {
     // TODO : should use CLICK instead
-    if ((evt->type() == EventNames::mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() != RightButton && m_isLink)) {
-        MouseEvent* e = static_cast<MouseEvent*>(evt);
-
+    if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
+        MouseEvent* e = 0;
+        if (evt->type() == clickEvent && evt->isMouseEvent())
+            e = static_cast<MouseEvent*>(evt);
+        
+        KeyboardEvent* k = 0;
+        if (evt->type() == keydownEvent && evt->isKeyboardEvent())
+            k = static_cast<KeyboardEvent*>(evt);
+        
         if (e && e->button() == RightButton) {
             SVGStyledTransformableElement::defaultEventHandler(evt);
             return;
         }
-
+        
+        if (k) {
+            if (k->keyIdentifier() != "Enter") {
+                SVGStyledTransformableElement::defaultEventHandler(evt);
+                return;
+            }
+            evt->setDefaultHandled();
+            dispatchSimulatedClick(evt);
+            return;
+        }
+        
         String target = getAttribute(SVGNames::targetAttr);
         String xlinktarget = getAttribute(XLinkNames::showAttr);
         if (e && e->button() == MiddleButton)

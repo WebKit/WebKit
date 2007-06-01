@@ -134,7 +134,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
         if (evt->type() == keydownEvent && evt->isKeyboardEvent())
             k = static_cast<KeyboardEvent*>(evt);
 
-        if (e && e->button() == 2) {
+        if (e && e->button() == RightButton) {
             HTMLElement::defaultEventHandler(evt);
             return;
         }
@@ -188,7 +188,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
         String url = parseURL(getAttribute(hrefAttr));
 
         String target = getAttribute(targetAttr);
-        if (e && e->button() == 1)
+        if (e && e->button() == MiddleButton)
             target = "_blank";
 
         ASSERT(evt->target());
@@ -197,7 +197,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target()->toNode());
             if (img && img->isServerMap()) {
                 RenderImage* r = static_cast<RenderImage*>(img->renderer());
-                if(r && e) {
+                if (r && e) {
                     int absx, absy;
                     r->absolutePosition(absx, absy);
                     int x = e->pageX() - absx;

@@ -1,3 +1,17 @@
+2007-05-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Niko.
+
+        Links are activated based on mouse down events instead of click events
+        http://bugs.webkit.org/show_bug.cgi?id=12570
+        
+        Test: svg/custom/prevent-default.svg
+
+        * html/HTMLAnchorElement.cpp: use MiddleButton and RightButton instead of 1 and 2
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): make it function more like the HTML side
+
 2007-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.
