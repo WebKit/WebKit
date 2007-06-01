@@ -1,5 +1,14 @@
 2007-05-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam.
+
+        Fix build bot.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+
+2007-05-31  Sam Weinig  <sam@webkit.org>
+
         Fix Qt and Gdk builds.
 
         * WebCore.pro: remove bindings/js/JSHTMLAnchorElementCustom.cpp

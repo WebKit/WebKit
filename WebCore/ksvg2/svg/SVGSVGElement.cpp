@@ -166,7 +166,7 @@ float SVGSVGElement::currentScale() const
 void SVGSVGElement::setCurrentScale(float scale)
 {
     if (document() && document()->frame())
-        document()->frame()->setZoomFactor(scale / 100.0f);
+        document()->frame()->setZoomFactor(static_cast<int>(scale / 100.0f));
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const
