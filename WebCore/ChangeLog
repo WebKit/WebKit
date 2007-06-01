@@ -1,3 +1,20 @@
+2007-05-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/5238177> Continuing after hitting breakpoint doesn't 
+        execute the next step.
+        
+        No test because the only code affected is the debugger, and none of the
+        relevant API is exported.
+        
+        Reverted an accidental change in 21324 that caused originRootObject for
+        the window object always to be 0. We could probably just remove the debugger's
+        dependency on originRootObject, but I wanted to be safe.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject):
+
 2007-05-31  David Hyatt  <hyatt@apple.com>
 
         Fix for 11768, Flash plugin does not respect clips set via CSS.
