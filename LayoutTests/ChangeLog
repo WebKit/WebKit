@@ -1,3 +1,13 @@
+<<<<<<< .mine
+2007-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - fix layout test editing/style/table-selection.html
+
+        * editing/style/table-selection-expected.txt: Updated selection delegate output.
+
+=======
 2007-05-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
@@ -62,6 +72,7 @@
         * fast/dom/Window/window-properties-expected.txt: adds new constructors
         * fast/dom/wrapper-classes-expected.txt: CSSStyleRule now passes!!
 
+>>>>>>> .r21912
 2007-05-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.

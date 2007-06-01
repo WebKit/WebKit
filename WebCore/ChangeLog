@@ -1,3 +1,17 @@
+2007-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix layout test editing/style/table-selection.html
+        
+        This was broken by the change to keep whitespace text nodes in tables. They safely didn't render,
+        but the font delta style change command would wrap them in spans, creating extra anonymous table
+        cells.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Don't wrap in a span if the text node
+        is not rendered.
+
 2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Eric Seidel.
