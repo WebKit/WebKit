@@ -280,7 +280,6 @@ SOURCES += \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
-    bindings/js/JSHTMLAnchorElementCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementCustom.cpp \
