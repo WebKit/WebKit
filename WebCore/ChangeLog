@@ -1,3 +1,22 @@
+2007-05-31  David Hyatt  <hyatt@apple.com>
+
+        Fix for 11768, Flash plugin does not respect clips set via CSS.
+
+        Reviewed by olliej
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _windowClipRect]):
+        * bindings/objc/DOMPrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::windowClipRectForLayer):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::windowToContents):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::windowToContents):
+
 2007-05-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.

@@ -85,6 +85,7 @@
 - (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
 - (void *)_NPObject; // For subclasses to implement; we only allow NPObjects to be created for certain element types
+- (NSRect)_windowClipRect; // Clip rect in NSWindow coords (used by plugins)
 - (BOOL)isFocused;
 @end
 

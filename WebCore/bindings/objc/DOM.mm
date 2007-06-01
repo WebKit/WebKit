@@ -45,6 +45,7 @@
 #import "FontData.h"
 #import "FoundationExtras.h"
 #import "Frame.h"
+#import "FrameView.h"
 #import "HTMLDocument.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInElement.h"
@@ -58,6 +59,7 @@
 #import "QualifiedName.h"
 #import "Range.h"
 #import "RenderImage.h"
+#import "RenderView.h"
 #import "Text.h"
 #import "TreeWalker.h"
 #import "WebScriptObjectPrivate.h"
@@ -529,6 +531,18 @@ static NSArray *kit(const Vector<IntRect>& rects)
             return (NSData*)(img->cachedImage()->image()->getTIFFRepresentation());
     }
     return nil;
+}
+
+- (NSRect)_windowClipRect
+{
+    WebCore::RenderObject* renderer = [self _element]->renderer();
+    if (renderer) {
+        WebCore::FrameView* frameView = renderer->view()->frameView();
+        if (!frameView)
+            return WebCore::IntRect();
+        return frameView->windowClipRectForLayer(renderer->enclosingLayer(), true);
+    }
+    return WebCore::IntRect();
 }
 
 // FIXME: this should be implemented in the implementation

@@ -422,6 +422,45 @@ IntPoint ScrollView::windowToContents(const IntPoint& point) const
     return IntPoint();
 }
 
+IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSView* docView;
+    NSView* view = getView();    
+     
+    docView = getDocumentView();
+    if (docView)
+        view = docView;
+    
+    NSRect nr = [view convertRect:contentsRect toView: nil];
+    return IntRect(nr);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return IntRect();
+}
+
+IntRect ScrollView::windowToContents(const IntRect& rect) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSView* docView;
+    NSView* view = getView();    
+
+    docView = getDocumentView();
+    if (docView)
+        view = docView;
+    
+    NSRect nr = [view convertRect:rect fromView: nil];
+
+    return IntRect(nr);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return IntRect();
+}
+
 void ScrollView::setStaticBackground(bool b)
 {
     NSScrollView *view = (NSScrollView *)getView();

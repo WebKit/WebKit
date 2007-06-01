@@ -856,7 +856,8 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
         clipRect = enclosingIntRect(visibleContentRect());
     else
         clipRect = IntRect(contentsX(), contentsY(), width(), height());
-    clipRect.setLocation(contentsToWindow(clipRect.location()));
+    clipRect = contentsToWindow(clipRect);
+
     if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
         return clipRect;
 
@@ -879,8 +880,7 @@ IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToL
         clipRect = layer->childrenClipRect();
     else
         clipRect = layer->selfClipRect();
-    clipRect.setLocation(contentsToWindow(clipRect.location()));
- 
+    clipRect = contentsToWindow(clipRect); 
     return intersection(clipRect, windowClipRect());
 }
 

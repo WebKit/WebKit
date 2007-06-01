@@ -326,6 +326,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     
+    // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
+    // that clip now.
+    NSRect windowClipRect = [element _windowClipRect];
+    visibleRectInWindow = NSIntersectionRect(visibleRectInWindow, windowClipRect);
+
     // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
     float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
