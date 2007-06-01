@@ -25,7 +25,7 @@ shouldBe('typeof window.btoa', '"function"');
 shouldThrow('window.btoa()');
 shouldBe('window.btoa("")', '""');
 shouldBe('window.btoa(null)', '""');
-shouldBe('window.btoa(window)', '"W29iamVjdCBXaW5kb3dd"'); // "[object Window]"
+shouldBe('window.btoa(window)', '"W29iamVjdCBET01XaW5kb3dd"'); // "[object DOMWindow]"
 shouldBe('window.btoa("éé")', '"6ek="');
 shouldBe('window.btoa("\\u0080\\u0081")', '"gIE="');
 shouldThrow('window.btoa("тест")');

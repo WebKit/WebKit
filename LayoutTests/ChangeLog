@@ -1,5 +1,14 @@
 2007-05-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam.
+
+        Update test to reflect new correct result.
+
+        * fast/dom/Window/atob-btoa-expected.txt:
+        * fast/dom/Window/atob-btoa.html:
+
+2007-05-31  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Tests for http://bugs.webkit.org/show_bug.cgi?id=10782
