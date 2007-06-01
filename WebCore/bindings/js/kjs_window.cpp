@@ -169,7 +169,6 @@ public:
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Back, Forward, Go, Length };
-    virtual UString toString(ExecState *exec) const;
     void disconnectFrame() { m_frame = 0; }
   private:
     Frame* m_frame;
@@ -185,7 +184,6 @@ public:
     }
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token);
-    virtual UString toString(ExecState *exec) const;
     enum { Length, Location };
     void disconnectFrame() { m_frame = 0; }
   private:
@@ -521,11 +519,6 @@ void Window::mark()
     d->m_statusbar->mark();
   if (d->m_toolbar && !d->m_toolbar->marked())
     d->m_toolbar->mark();
-}
-
-UString Window::toString(ExecState *) const
-{
-  return "[object Window]";
 }
 
 static bool allowPopUp(ExecState *exec, Window *window)
@@ -2152,11 +2145,6 @@ bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-UString FrameArray::toString(ExecState *) const
-{
-  return "[object FrameArray]";
-}
-
 ////////////////////// Location Object ////////////////////////
 
 const ClassInfo Location::info = { "Location", 0, &LocationTable, 0 };
@@ -2302,21 +2290,6 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
   }
 }
 
-JSValue *Location::toPrimitive(ExecState *exec, JSType) const
-{
-  return jsString(toString(exec));
-}
-
-UString Location::toString(ExecState* exec) const
-{
-  if (!m_frame || !Window::retrieveWindow(m_frame)->isSafeScript(exec))
-    return UString();
-
-  if (!m_frame->loader()->url().hasPath())
-    return m_frame->loader()->url().prettyURL()+"/";
-  return m_frame->loader()->url().prettyURL();
-}
-
 JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&Location::info))
@@ -2367,7 +2340,12 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
         break;
     }
     case Location::ToString:
-      return jsString(location->toString(exec));
+        if (!frame || !Window::retrieveWindow(frame)->isSafeScript(exec))
+            return jsString();
+
+        if (!frame->loader()->url().hasPath())
+            return jsString(frame->loader()->url().prettyURL() + "/");
+        return jsString(frame->loader()->url().prettyURL());
     }
   }
   return jsUndefined();
@@ -2451,16 +2429,6 @@ bool Selection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
   return getStaticPropertySlot<SelectionFunc, Selection, JSObject>(exec, &SelectionTable, this, propertyName, slot);
 }
 
-JSValue *Selection::toPrimitive(ExecState *exec, JSType) const
-{
-  return jsString(toString(exec));
-}
-
-UString Selection::toString(ExecState *) const
-{
-    return UString(m_frame->selectionController()->toString());
-}
-
 JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&Selection::info))
@@ -2504,7 +2472,7 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
                 s->addRange(toRange(args[0]));
                 break;
             case Selection::ToString:
-                return jsString(s->toString());
+                return jsString(frame->selectionController()->toString());
         }
         setDOMException(exec, ec);
     }
@@ -2578,11 +2546,6 @@ JSValue *History::getValueProperty(ExecState *, int token) const
 {
     ASSERT(token == Length);
     return m_frame ? jsNumber(m_frame->loader()->getHistoryLength()) : jsNumber(0);
-}
-
-UString History::toString(ExecState *exec) const
-{
-  return "[object History]";
 }
 
 JSValue *HistoryFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)

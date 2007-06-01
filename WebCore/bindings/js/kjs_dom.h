@@ -88,8 +88,6 @@ namespace KJS {
     enum { Length, Item };
     WebCore::NodeList *impl() const { return m_impl.get(); }
 
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UndefinedType) const;
-
   private:
     static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
     static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);

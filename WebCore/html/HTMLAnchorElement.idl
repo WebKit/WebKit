@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [GenerateConstructor, CustomToString] HTMLAnchorElement : HTMLElement {
+    interface [GenerateConstructor] HTMLAnchorElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString charset;
         attribute [ConvertNullToNullString] DOMString coords;
@@ -48,7 +48,7 @@ module html {
         readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT)
-        [Custom] DOMString toString();
+        DOMString toString();
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)

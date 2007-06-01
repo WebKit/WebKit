@@ -58,8 +58,6 @@ namespace KJS {
 #ifndef NDEBUG
         virtual ~DOMObject();
 #endif
-    public:
-        virtual UString toString(ExecState*) const;
     };
 
     class DOMNode;

@@ -44,10 +44,7 @@ public:
     WebCore::Node *impl() const { return m_impl.get(); }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    
-    virtual JSValue *toPrimitive(ExecState*, JSType preferred = UndefinedType) const;
-    virtual UString toString(ExecState*) const;
-    
+
     enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
         ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling, BaseURI,
         Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,

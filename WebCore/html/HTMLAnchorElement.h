@@ -1,9 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLAnchorElement_h
 #define HTMLAnchorElement_h
 
@@ -30,8 +30,7 @@ namespace WebCore {
 
 class String;
 
-class HTMLAnchorElement : public HTMLElement
-{
+class HTMLAnchorElement : public HTMLElement {
 public:
     HTMLAnchorElement(Document*);
     HTMLAnchorElement(const QualifiedName&, Document*);
@@ -94,13 +93,15 @@ public:
     String search() const;
     String text() const;
     
+    String toString() const;
+
     bool isLiveLink() const;
-    
+
 private:
-    Element *m_rootEditableElementForSelectionOnMouseDown;
+    Element* m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTMLAnchorElement_h

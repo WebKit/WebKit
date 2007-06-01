@@ -153,7 +153,6 @@ namespace KJS {
     JSUnprotectedEventListener *findOrCreateJSUnprotectedEventListener(JSValue*, bool html = false);
 
     void clear();
-    virtual UString toString(ExecState *) const;
 
     // Set the current "event" object
     void setCurrentEvent(WebCore::Event*);
@@ -230,8 +229,6 @@ namespace KJS {
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred) const;
-    virtual UString toString(ExecState*) const;
     enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, 
            Replace, Reload, ToString, Assign };
     WebCore::Frame* frame() const { return m_frame; }
@@ -247,8 +244,6 @@ namespace KJS {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred) const;
-    virtual UString toString(ExecState*) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
            IsCollapsed, _Type, RangeCount, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
            SetBaseAndExtent, SetPosition, Modify, GetRangeAt, RemoveAllRanges, AddRange };

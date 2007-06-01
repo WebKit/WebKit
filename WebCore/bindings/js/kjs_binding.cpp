@@ -58,11 +58,6 @@ typedef HashMap<void*, DOMObject*> DOMObjectMap;
 typedef HashMap<Node*, DOMNode*> NodeMap;
 typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
-UString DOMObject::toString(ExecState*) const
-{
-    return "[object " + className() + "]";
-}
-
 // For debugging, keep a set of wrappers currently registered, and check that
 // all are unregistered before they are destroyed. This has helped us fix at
 // least one bug.

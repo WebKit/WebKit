@@ -1,3 +1,19 @@
+2007-05-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=10782
+        Classes should not override JSObject::toString(ExecState *)
+
+        - Adds a new test to test overriding toString and valueOf for
+          multiple objects.
+        - Update tests to reflect the correction of the toString architecture.
+
+        * editing/selection/getRangeAt-expected.txt:
+        * fast/dom/Window/atob-btoa-expected.txt:
+        * fast/js/toString-and-valueOf-override-expected.txt: Added.
+        * fast/js/toString-and-valueOf-override.html: Added.
+
 2007-05-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Niko.

@@ -268,21 +268,6 @@ void DOMNode::putValueProperty(ExecState* exec, int token, JSValue* value, int /
   }
 }
 
-JSValue* DOMNode::toPrimitive(ExecState* exec, JSType) const
-{
-  if (!m_impl)
-    return jsNull();
-
-  return jsString(toString(exec));
-}
-
-UString DOMNode::toString(ExecState*) const
-{
-    if (!m_impl)
-        return "null";
-    return "[object " + className() + "]";
-}
-
 JSValue* DOMNodePrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&DOMNode::info))
@@ -704,14 +689,6 @@ DOMNodeList::DOMNodeList(ExecState* exec, NodeList *l)
 DOMNodeList::~DOMNodeList()
 {
   ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue* DOMNodeList::toPrimitive(ExecState* exec, JSType) const
-{
-  if (!m_impl)
-    return jsNull();
-
-  return jsString(toString(exec));
 }
 
 JSValue* DOMNodeList::getValueProperty(ExecState* exec, int token) const

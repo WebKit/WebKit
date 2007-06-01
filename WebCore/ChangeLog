@@ -1,3 +1,36 @@
+2007-05-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10782
+        Classes should not override JSObject::toString(ExecState *)
+
+        Remove all overrides of JSObject::toString and JSObject::toPrimitive
+        which is a bad practice.  Instead, if an object, like the 
+        HTMLAnchorElement, needs to override to toString, it should add
+        a function to the JS object which will be called when needed.  This
+        also allows developers to override toString and valueOf from within JS.
+
+        Test: fast/js/toString-and-valueOf-override.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLAnchorElementCustom.cpp: Removed.
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_domnode.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::History::):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::SelectionFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::toString):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+
 2007-05-31  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
