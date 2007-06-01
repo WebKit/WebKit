@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -77,6 +77,7 @@ namespace WebCore
         void setCurrentScale(float scale);
 
         FloatPoint currentTranslate() const;
+        void setCurrentTranslate(const FloatPoint&);
         
         TimeScheduler* timeScheduler() { return m_timeScheduler; }
         
@@ -119,9 +120,6 @@ namespace WebCore
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
 
-        // 'virtual SVGZoomAndPan functions
-        virtual void setZoomAndPan(unsigned short zoomAndPan);
-
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     protected:
@@ -144,6 +142,7 @@ namespace WebCore
 
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;
+        FloatPoint m_translation;
     };
 
 } // namespace WebCore

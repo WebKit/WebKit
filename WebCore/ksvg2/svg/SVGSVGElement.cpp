@@ -158,19 +158,25 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 
 float SVGSVGElement::currentScale() const
 {
-    // FIXME: Return the current zoom/scale value (see bug 11272)
-    return 1.;
+    if (document() && document()->frame())
+        return document()->frame()->zoomFactor() / 100.0f;
+    return 1.0f;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    // FIXME: Set the current zoom/scale value (see bug 11272)
+    if (document() && document()->frame())
+        document()->frame()->setZoomFactor(scale / 100.0f);
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const
 {
-    // FIXME: Return the current pan/translate value (see bug 11272)
-    return FloatPoint();
+    return m_translation;
+}
+
+void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
+{
+    m_translation = translation;
 }
 
 void SVGSVGElement::addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr)
@@ -396,12 +402,6 @@ void SVGSVGElement::removedFromDocument()
 {
     document()->accessSVGExtensions()->removeTimeContainer(this);
     SVGStyledLocatableElement::removedFromDocument();
-}
-
-void SVGSVGElement::setZoomAndPan(unsigned short zoomAndPan)
-{
-    SVGZoomAndPan::setZoomAndPan(zoomAndPan);
-    //canvasView()->enableZoomAndPan(zoomAndPan == SVG_ZOOMANDPAN_MAGNIFY);
 }
 
 void SVGSVGElement::pauseAnimations()

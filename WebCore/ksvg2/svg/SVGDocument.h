@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,12 +25,13 @@
 #if ENABLE(SVG)
 
 #include "Document.h"
+#include "FloatPoint.h"
 
 namespace WebCore {
 
+    class DOMImplementation;
     class SVGElement;
     class SVGSVGElement;
-    class DOMImplementation;
 
     class SVGDocument : public Document {
     public:
@@ -45,6 +46,14 @@ namespace WebCore {
         
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
+
+        virtual bool zoomAndPanEnabled() const;
+
+        void startPan(const FloatPoint& start);
+        void updatePan(const FloatPoint& pos) const;
+
+    private:
+        FloatPoint m_translate;
     };
 
 } // namespace WebCore

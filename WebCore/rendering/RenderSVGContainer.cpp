@@ -117,6 +117,11 @@ void RenderSVGContainer::layout()
     calcHeight();
 
     m_absoluteBounds = absoluteClippedOverflowRect();
+    if (!parent()->isSVGContainer()) {
+        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+        m_width = float(m_width) * svg->currentScale();
+        m_height = float(m_height) * svg->currentScale();
+    }
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
@@ -168,6 +173,8 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
             paintInfo.rect.move(-origin.x(), -origin.y());
         }
         parentX = parentY = 0;
+        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+        paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
     } else {
         // Only the root <svg> element should need any translations using the HTML/CSS system
         // parentX, parentY are also non-zero for first-level kids of these
@@ -183,9 +190,12 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
         paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
-
     if (!localTransform().isIdentity())
         paintInfo.context->concatCTM(localTransform());
+    if (!parent()->isSVGContainer()) {
+        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+        paintInfo.context->concatCTM(AffineTransform().translate(svg->currentTranslate().x(), svg->currentTranslate().y()));
+    }
 
     FloatRect strokeBBox = relativeBBox(true);
 
@@ -341,6 +351,11 @@ void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int)
 AffineTransform RenderSVGContainer::absoluteTransform() const
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();
+    if (!parent()->isSVGContainer()) {
+        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+        ctm.scale(svg->currentScale());
+        ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
+    }
     ctm.translate(viewport().x(), viewport().y());
     return viewportTransform() * ctm;
 }

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,10 +26,13 @@
 
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FrameView.h"
+#include "RenderView.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGZoomEvent.h"
+#include "SVGZoomAndPan.h"
 
 namespace WebCore {
 
@@ -72,6 +75,29 @@ void SVGDocument::dispatchScrollEvent()
     RefPtr<Event> event = createEvent("SVGEvents", ec);
     event->initEvent(EventNames::scrollEvent, true, false);
     rootElement()->dispatchEvent(event.release(), ec);
+}
+
+bool SVGDocument::zoomAndPanEnabled() const
+{
+    if (rootElement())
+        return rootElement()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+
+    return false;
+}
+
+void SVGDocument::startPan(const FloatPoint& start)
+{
+    if (rootElement())
+        m_translate = FloatPoint(start.x() - rootElement()->currentTranslate().x(), rootElement()->currentTranslate().y() + start.y());
+}
+
+void SVGDocument::updatePan(const FloatPoint& pos) const
+{
+    if (rootElement()) {
+        rootElement()->setCurrentTranslate(FloatPoint(pos.x() - m_translate.x(), m_translate.y() - pos.y()));
+        if (renderer())
+            renderer()->repaint();
+    }
 }
 
 }

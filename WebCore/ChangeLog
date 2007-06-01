@@ -1,3 +1,37 @@
+2007-05-31  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11272
+        Implement currentScale(), setCurrentScale() and currentTranslate() in SVGSVGElement
+
+        Allow zooming and panning, thereby implementing the above methods.
+
+        * ksvg2/svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::zoomEnabled):
+        (WebCore::SVGDocument::startPan):
+        (WebCore::SVGDocument::updatePan):
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        (WebCore::SVGSVGElement::currentTranslate):
+        (WebCore::SVGSVGElement::setCurrentTranslate):
+        * ksvg2/svg/SVGSVGElement.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setZoomFactor):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::absoluteTransform):
+        * rendering/RenderSVGContainer.h:
+
 2007-05-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Niko.

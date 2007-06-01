@@ -641,9 +641,16 @@ void Frame::setZoomFactor(int percent)
       return;
 
   d->m_zoomFactor = percent;
-
-  if (d->m_doc)
+  if (d->m_doc) {
+#if ENABLE(SVG)
+    if (d->m_doc->isSVGDocument()) {
+         if (d->m_doc->renderer())
+             d->m_doc->renderer()->repaint();
+         return;
+    }
+#endif
       d->m_doc->recalcStyle(Node::Force);
+  }
 
   for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       child->setZoomFactor(d->m_zoomFactor);
