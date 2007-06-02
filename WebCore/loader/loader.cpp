@@ -157,7 +157,15 @@ void Loader::didFail(SubresourceLoader* loader, bool cancelled)
 void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
     Request* req = m_requestsLoading.get(loader);
-    ASSERT(req);
+    
+    // FIXME: This is a workaround for <rdar://problem/5236843>
+    // If a load starts while the frame is still in the provisional state 
+    // (this can be the case when loading the user style sheet), committing the load then causes all
+    // requests to be removed from the m_requestsLoading map. This means that req might be null here.
+    // In that case we just return early. 
+    // ASSERT(req);
+    if (!req)
+        return;
     req->cachedResource()->setResponse(response);
     
     String encoding = response.textEncodingName();
