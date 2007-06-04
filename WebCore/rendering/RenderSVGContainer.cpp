@@ -119,8 +119,8 @@ void RenderSVGContainer::layout()
     m_absoluteBounds = absoluteClippedOverflowRect();
     if (!parent()->isSVGContainer()) {
         SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-        m_width = float(m_width) * svg->currentScale();
-        m_height = float(m_height) * svg->currentScale();
+        m_width = static_cast<int>(static_cast<float>(m_width) * svg->currentScale());
+        m_height = static_cast<int>(static_cast<float>(m_height) * svg->currentScale());
     }
 
     if (selfNeedsLayout() && checkForRepaint)

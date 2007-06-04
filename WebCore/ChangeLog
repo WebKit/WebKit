@@ -1,3 +1,12 @@
+2007-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix the buildbot.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+
 2007-06-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Kimon Tsinteris.
