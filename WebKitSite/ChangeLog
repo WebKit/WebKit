@@ -1,3 +1,19 @@
+2007-05-04  Mark Rowe  <mrowe@apple.com>
+
+        Add graphics used by existing blog posts into SVN.
+
+        * blog/wp-content/rotate.png: Added.
+        * blog/wp-content/drosera.png: Added.
+        * blog/wp-content/hitlist.png: Added.
+        * blog/wp-content/svgtextmini.png: Added.
+        * blog/wp-content/svgtextmini_01.png: Added.
+        * blog/wp-content/textfield_screenshot.jpg: Added.
+        * blog/wp-content/Picture9.png: Added.
+        * blog/wp-content/svgtext.png: Added.
+        * blog/wp-content/webInspector.png: Added.
+        * blog/wp-content/rotate.svg: Added.
+        * blog/wp-content/chucknorris.png: Added.
+
 2007-04-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
