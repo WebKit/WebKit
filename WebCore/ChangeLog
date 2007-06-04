@@ -1,5 +1,11 @@
 2007-06-04  Rob Buis  <buis@kde.org>
 
+        Fix the svg experimental build.
+
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+
+2007-06-04  Rob Buis  <buis@kde.org>
+
         Reviewed by Hyatt.
 
         http://bugs.webkit.org/show_bug.cgi?id=6170

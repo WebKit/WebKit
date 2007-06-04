@@ -26,6 +26,7 @@
 #include "SVGFEFloodElement.h"
 
 #include "Attr.h"
+#include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGResourceFilter.h"
