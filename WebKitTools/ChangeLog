@@ -1,3 +1,9 @@
+2007-06-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders.
+
+        * WebKitLauncher/Info.plist: Update CFBundleGetInfoString, and add CFBundleShortVersionString.
+
 2007-05-30  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Brady.
