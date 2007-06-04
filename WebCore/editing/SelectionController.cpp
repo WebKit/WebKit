@@ -715,6 +715,59 @@ String SelectionController::type() const
         return "Range";
 }
 
+// These methods are accessible via JS (and are not used internally), so they must return valid DOM positions.
+Node* SelectionController::baseNode() const
+{
+    Position base = rangeCompliantEquivalent(m_sel.base());
+    return base.node();
+}
+
+int SelectionController::baseOffset() const
+{
+    Position base = rangeCompliantEquivalent(m_sel.base());
+    return base.offset();
+}
+
+Node* SelectionController::extentNode() const
+{
+    Position extent = rangeCompliantEquivalent(m_sel.extent());
+    return extent.node();
+}
+
+int SelectionController::extentOffset() const
+{
+    Position extent = rangeCompliantEquivalent(m_sel.extent());
+    return extent.offset();
+}
+
+Node* SelectionController::anchorNode() const
+{
+    Position anchor = m_sel.isBaseFirst() ? m_sel.start() : m_sel.end();
+    anchor = rangeCompliantEquivalent(anchor);
+    return anchor.node();
+}
+
+int SelectionController::anchorOffset() const
+{
+    Position anchor = m_sel.isBaseFirst() ? m_sel.start() : m_sel.end();
+    anchor = rangeCompliantEquivalent(anchor);
+    return anchor.offset();
+}
+
+Node* SelectionController::focusNode() const
+{
+    Position focus = m_sel.isBaseFirst() ? m_sel.end() : m_sel.start();
+    focus = rangeCompliantEquivalent(focus);
+    return focus.node();
+}
+
+int SelectionController::focusOffset() const
+{
+    Position focus = m_sel.isBaseFirst() ? m_sel.end() : m_sel.start();
+    focus = rangeCompliantEquivalent(focus);
+    return focus.offset();
+}
+
 String SelectionController::toString() const
 {
     return String(plainText(m_sel.toRange().get()));

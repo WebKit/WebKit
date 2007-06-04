@@ -1,3 +1,24 @@
+2007-06-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Kimon Tsinteris.
+
+        <rdar://problem/5241148> REGRESSION: ActivEdit can't perform operations on certain selections
+        
+        Return valid equivalents from these methods (no [img, 1] for 
+        example). ActivEdit was using positions returned from these
+        methods to create new DOM Ranges.
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::baseNode):
+        (WebCore::SelectionController::baseOffset):
+        (WebCore::SelectionController::extentNode):
+        (WebCore::SelectionController::extentOffset):
+        (WebCore::SelectionController::anchorNode):
+        (WebCore::SelectionController::anchorOffset):
+        (WebCore::SelectionController::focusNode):
+        (WebCore::SelectionController::focusOffset):
+        * editing/SelectionController.h:
+
 2007-06-04  Rob Buis  <buis@kde.org>
 
         Fix the svg experimental build.

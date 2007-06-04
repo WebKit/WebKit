@@ -104,10 +104,11 @@ public:
     void nodeWillBeRemoved(Node*);
 
     // Safari Selection Object API
-    Node* baseNode() const { return m_sel.base().node(); }
-    Node* extentNode() const { return m_sel.extent().node(); }
-    int baseOffset() const { return m_sel.base().offset(); }
-    int extentOffset() const { return m_sel.extent().offset(); }
+    // These methods return the valid equivalents of internal editing positions.
+    Node* baseNode() const;
+    Node* extentNode() const;
+    int baseOffset() const;
+    int extentOffset() const;
     String type() const;
     void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode&);
     void setPosition(Node*, int offset, ExceptionCode&);
@@ -118,10 +119,11 @@ public:
     // but reflect the direction in which the selection was made by the user.  That does
     // not mean that they are base/extent, since the base/extent don't reflect
     // expansion.
-    Node* anchorNode() const { return m_sel.isBaseFirst() ? m_sel.start().node() : m_sel.end().node(); }
-    int anchorOffset() const { return m_sel.isBaseFirst() ? m_sel.start().offset() : m_sel.end().offset(); }
-    Node* focusNode() const { return m_sel.isBaseFirst() ? m_sel.end().node() : m_sel.start().node(); }
-    int focusOffset() const { return m_sel.isBaseFirst() ? m_sel.end().offset() : m_sel.start().offset(); }
+    // These methods return the valid equivalents of internal editing positions.
+    Node* anchorNode() const;
+    int anchorOffset() const;
+    Node* focusNode() const;
+    int focusOffset() const;
     bool isCollapsed() const { return !isRange(); }
     String toString() const;
     void collapse(Node*, int offset, ExceptionCode&);

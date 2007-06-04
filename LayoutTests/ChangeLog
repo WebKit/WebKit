@@ -1,3 +1,16 @@
+2007-06-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Kimon Tsinteris.
+        
+        <rdar://problem/5241148> REGRESSION: ActivEdit can't perform operations on certain selections
+
+        Demonstrates bug:
+        * editing/selection/5241148-expected.txt: Added.
+        * editing/selection/5241148.html: Added.
+        Updated to reflect new equivalents for positions before/after tables:
+        * editing/selection/click-before-and-after-table-expected.txt:
+        * editing/selection/click-before-and-after-table.html:
+
 2007-06-04  Rob Buis  <buis@kde.org>
 
         Reviewed by Hyatt.

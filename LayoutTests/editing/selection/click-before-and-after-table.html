@@ -8,10 +8,7 @@ td {
 }
 </style>
 
-<body style="border: 1px solid red;" contenteditable="true">
-<table id="table" style="margin: 25px; border:10px solid #ccc; padding: 10px;">
-<tr><td>cell one</td><td>cell two</td></tr>
-</table>
+<body style="border: 1px solid red;" contenteditable="true"><table id="table" style="margin: 25px; border:10px solid #ccc; padding: 10px;"><tr><td>cell one</td><td>cell two</td></tr></table>
 <ul id="console"></ul>
 <script>
 function log(message) {
@@ -40,7 +37,7 @@ else {
     eventSender.mouseDown();
     eventSender.mouseUp();
     s = window.getSelection();
-    if (s.anchorNode != table || s.anchorOffset != table.childNodes.length)
+    if (!(s.anchorNode == document.body && s.anchorOffset == 1))
         log("Failure: Clicking after the table didn't put the caret after it.");
     
     x = right - 5;
@@ -50,7 +47,7 @@ else {
     eventSender.mouseDown();
     eventSender.mouseUp();
     s = window.getSelection();
-    if (s.anchorNode == table)
+    if (s.anchorNode == document.body)
         log("Failure: Clicking inside the table put the caret before or after it.");
         
     x = left - 5;
@@ -61,6 +58,7 @@ else {
     eventSender.mouseUp();
     s = window.getSelection();
     if (s.anchorNode != table || s.anchorOffset != 0)
+    if (!(s.anchorNode == document.body && s.anchorOffset == 0))
         log("Failure: Clicking before the table should be the caret before it.");
         
     x = left + 5;
@@ -70,7 +68,7 @@ else {
     eventSender.mouseDown();
     eventSender.mouseUp();
     s = window.getSelection();
-    if (s.anchorNode == table)
+    if (s.anchorNode == document.body)
         log("Failure: Clicking inside the table put the caret before or after it.");
 }
 </script>
