@@ -1,61 +1,48 @@
 <?php
 $submitbutton_text = __('Edit Comment &raquo;');
-$toprow_title = sprintf(__('Editing Comment # %s'), $commentdata['comment_ID']);
+$toprow_title = sprintf(__('Editing Comment # %s'), $comment->comment_ID);
 $form_action = 'editedcomment';
-$form_extra = "' />\n<input type='hidden' name='comment_ID' value='$comment' />\n<input type='hidden' name='comment_post_ID' value='".$commentdata["comment_post_ID"];
+$form_extra = "' />\n<input type='hidden' name='comment_ID' value='" . $comment->comment_ID . "' />\n<input type='hidden' name='comment_post_ID' value='".$comment->comment_post_ID;
 ?>
 
-<form name="post" action="post.php" method="post" id="post">
+<form name="post" action="comment.php" method="post" id="post">
+<?php wp_nonce_field('update-comment_' . $comment->comment_ID) ?>
 <div class="wrap">
 <input type="hidden" name="user_ID" value="<?php echo $user_ID ?>" />
 <input type="hidden" name="action" value='<?php echo $form_action . $form_extra ?>' />
 
 <script type="text/javascript">
-function focusit() {
-	// focus on first input field
+function focusit() { // focus on first input field
 	document.post.name.focus();
 }
-window.onload = focusit;
+addLoadEvent(focusit);
 </script>
 <fieldset id="namediv">
-    <legend><?php _e('Name:') ?></legend>
+    <legend><label for="name"><?php _e('Name:') ?></label></legend>
 	<div>
-	  <input type="text" name="newcomment_author" size="22" value="<?php echo format_to_edit($commentdata['comment_author']) ?>" tabindex="1" id="name" />
+	  <input type="text" name="newcomment_author" size="25" value="<?php echo $comment->comment_author ?>" tabindex="1" id="name" />
     </div>
 </fieldset>
 <fieldset id="emaildiv">
-        <legend><?php _e('E-mail:') ?></legend>
+        <legend><label for="email"><?php _e('E-mail:') ?></label></legend>
 		<div>
-		  <input type="text" name="newcomment_author_email" size="30" value="<?php echo format_to_edit($commentdata['comment_author_email']) ?>" tabindex="2" id="email" />
+		  <input type="text" name="newcomment_author_email" size="20" value="<?php echo $comment->comment_author_email ?>" tabindex="2" id="email" />
     </div>
 </fieldset>
 <fieldset id="uridiv">
-        <legend><?php _e('URI:') ?></legend>
+        <legend><label for="newcomment_author_url"><?php _e('URL:') ?></label></legend>
 		<div>
-		  <input type="text" name="newcomment_author_url" size="35" value="<?php echo format_to_edit($commentdata['comment_author_url']) ?>" tabindex="3" id="URL" />
+		  <input type="text" id="newcomment_author_url" name="newcomment_author_url" size="35" value="<?php echo $comment->comment_author_url ?>" tabindex="3" />
     </div>
 </fieldset>
 
 <fieldset style="clear: both;">
         <legend><?php _e('Comment') ?></legend>
-<?php the_quicktags(); ?>
-<?php
- $rows = get_settings('default_post_edit_rows');
- if (($rows < 3) || ($rows > 100)) {
-     $rows = 10;
- }
-?>
-<div><textarea rows="<?php echo $rows; ?>" cols="40" name="content" tabindex="4" id="content" style="width: 99%"><?php echo $content ?></textarea></div>
+	<?php the_editor($comment->comment_content, 'content', 'newcomment_author_url'); ?>
 </fieldset>
 
-<script type="text/javascript">
-<!--
-edCanvas = document.getElementById('content');
-//-->
-</script>
-
 <p class="submit"><input type="submit" name="editcomment" id="editcomment" value="<?php echo $submitbutton_text ?>" style="font-weight: bold;" tabindex="6" />
-  <input name="referredby" type="hidden" id="referredby" value="<?php echo $_SERVER['HTTP_REFERER']; ?>" />
+  <input name="referredby" type="hidden" id="referredby" value="<?php echo wp_get_referer(); ?>" />
 </p>
 
 </div>
@@ -66,21 +53,25 @@ edCanvas = document.getElementById('content');
 <table width="100%" cellspacing="2" cellpadding="5" class="editform">
 	<tr>
 		<th scope="row" valign="top"><?php _e('Comment Status') ?>:</th>
-		<td><label for="comment_status_approved" class="selectit"><input id="comment_status_approved" name="comment_status" type="radio" value="1" <?php checked($comment_status, '1'); ?> /> <?php _e('Approved') ?></label><br />
-	  <label for="comment_status_moderated" class="selectit"><input id="comment_status_moderated" name="comment_status" type="radio" value="0" <?php checked($comment_status, '0'); ?> /> <?php _e('Moderated') ?></label><br />
-	  <label for="comment_status_spam" class="selectit"><input id="comment_status_spam" name="comment_status" type="radio" value="spam" <?php checked($comment_status, 'spam'); ?> /> <?php _e('Spam') ?></label></td>
+		<td><label for="comment_status_approved" class="selectit"><input id="comment_status_approved" name="comment_status" type="radio" value="1" <?php checked($comment->comment_approved, '1'); ?> /> <?php _e('Approved') ?></label><br />
+		<label for="comment_status_moderated" class="selectit"><input id="comment_status_moderated" name="comment_status" type="radio" value="0" <?php checked($comment->comment_approved, '0'); ?> /> <?php _e('Moderated') ?></label><br />
+		<label for="comment_status_spam" class="selectit"><input id="comment_status_spam" name="comment_status" type="radio" value="spam" <?php checked($comment->comment_approved, 'spam'); ?> /> <?php _e('Spam') ?></label></td>
 	</tr>
 
-<?php if ($user_level > 4) : ?>
+<?php if ( current_user_can('edit_posts') ) : ?>
 	<tr>
-		<th scope="row"><?php _e('Edit time'); ?>:</th>
-		<td><?php touch_time(('editcomment' == $action), 0); ?></td>
+		<th scope="row" valign="top"><?php _e('Edit time'); ?>:</th>
+		<td><?php touch_time(('editcomment' == $action), 0); ?> </td>
 	</tr>
 <?php endif; ?>
 
 	<tr>
-		<th scope="row"><?php _e('Delete'); ?>:</th>
-		<td><p><a class="delete" href="post.php?action=confirmdeletecomment&amp;noredir=true&amp;comment=<?php echo $commentdata['comment_ID']; ?>&amp;p=<?php echo $commentdata['comment_post_ID']; ?>"><?php _e('Delete comment') ?></a></p></td>
+		<th scope="row" valign="top"><?php _e('Delete'); $delete_nonce = wp_create_nonce( 'delete-comment_' . $comment->comment_ID ); ?>:</th>
+		<td><input name="deletecomment" class="button delete" type="submit" id="deletecomment" tabindex="10" value="<?php _e('Delete this comment') ?>" <?php echo "onclick=\"if ( confirm('" . js_escape(__("You are about to delete this comment. \n  'Cancel' to stop, 'OK' to delete.")) . "') ) { document.forms.post._wpnonce.value = '$delete_nonce'; return true; } return false;\""; ?> /> 
+		<input type="hidden" name="c" value="<?php echo $comment->comment_ID ?>" />
+		<input type="hidden" name="p" value="<?php echo $comment->comment_post_ID ?>" />
+		<input type="hidden" name="noredir" value="1" />
+	</td>
 	</tr>
 </table>
 

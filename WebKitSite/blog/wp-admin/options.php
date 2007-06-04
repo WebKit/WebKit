@@ -5,111 +5,160 @@ $title = __('Options');
 $this_file = 'options.php';
 $parent_file = 'options-general.php';
 
-$wpvarstoreset = array('action');
-for ($i=0; $i<count($wpvarstoreset); $i += 1) {
-	$wpvar = $wpvarstoreset[$i];
-	if (!isset($$wpvar)) {
-		if (empty($_POST["$wpvar"])) {
-			if (empty($_GET["$wpvar"])) {
-				$$wpvar = '';
-			} else {
-				$$wpvar = $_GET["$wpvar"];
-			}
-		} else {
-			$$wpvar = $_POST["$wpvar"];
-		}
-	}
-}
+wp_reset_vars(array('action'));
 
-if ($user_level < 6)
-	die ( __('Cheatin&#8217; uh?') );
+if ( !current_user_can('manage_options') )
+	wp_die(__('Cheatin&#8217; uh?'));
+
+function sanitize_option($option, $value) { // Remember to call stripslashes!
+
+	switch ($option) {
+		case 'admin_email':
+			$value = stripslashes($value);
+			$value = sanitize_email($value);
+			break;
+
+		case 'default_post_edit_rows':
+		case 'mailserver_port':
+		case 'comment_max_links':
+			$value = stripslashes($value);
+			$value = abs((int) $value);
+			break;
+
+		case 'posts_per_page':
+		case 'posts_per_rss':
+			$value = stripslashes($value);
+			$value = (int) $value;
+			if ( empty($value) ) $value = 1;
+			if ( $value < -1 ) $value = abs($value);
+			break;
+
+		case 'default_ping_status':
+		case 'default_comment_status':
+			$value = stripslashes($value);
+			// Options that if not there have 0 value but need to be something like "closed"
+			if ( $value == '0' || $value == '')
+				$value = 'closed';
+			break;
+
+		case 'blogdescription':
+		case 'blogname':
+			if (current_user_can('unfiltered_html') == false)
+				$value = wp_filter_post_kses( $value ); // calls stripslashes then addslashes
+			$value = stripslashes($value);
+			break;
+
+		case 'blog_charset':
+			$value = preg_replace('/[^a-zA-Z0-9_-]/', '', $value); // strips slashes
+			break;
+
+		case 'date_format':
+		case 'time_format':
+		case 'mailserver_url':
+		case 'mailserver_login':
+		case 'mailserver_pass':
+		case 'ping_sites':
+		case 'upload_path':
+			$value = strip_tags($value);
+			$value = wp_filter_kses($value); // calls stripslashes then addslashes
+			$value = stripslashes($value);
+			break;
+
+		case 'gmt_offset':
+			$value = preg_replace('/[^0-9:.-]/', '', $value); // strips slashes
+			break;
+
+		case 'siteurl':
+		case 'home':
+			$value = stripslashes($value);
+			$value = clean_url($value);
+			break;
+		default :
+			$value = stripslashes($value);
+			break;
+	}
+
+	return $value;
+}
 
 switch($action) {
 
 case 'update':
 	$any_changed = 0;
-    
-	if (!$_POST['page_options']) {
-		foreach ($_POST as $key => $value) {
-			$option_names[] = "'$key'";
+
+	check_admin_referer('update-options');
+
+	if ( !$_POST['page_options'] ) {
+		foreach ( (array) $_POST as $key => $value) {
+			if ( !in_array($key, array('_wpnonce', '_wp_http_referer')) )
+				$options[] = $key;
 		}
-		$option_names = implode(',', $option_names);
 	} else {
-		$option_names = stripslashes($_POST['page_options']);
+		$options = explode(',', stripslashes($_POST['page_options']));
 	}
 
-    $options = $wpdb->get_results("SELECT $wpdb->options.option_id, option_name, option_type, option_value, option_admin_level FROM $wpdb->options WHERE option_name IN ($option_names)");
-
-	// Save for later.
-	$old_siteurl = get_settings('siteurl');
-	$old_home = get_settings('home');
-
-// HACK
-// Options that if not there have 0 value but need to be something like "closed"
-    $nonbools = array('default_ping_status', 'default_comment_status');
-    if ($options) {
-        foreach ($options as $option) {
-            // should we even bother checking?
-            if ($user_level >= $option->option_admin_level) {
-                $old_val = $option->option_value;
-                $new_val = trim($_POST[$option->option_name]);
-                if( in_array($option->option_name, $nonbools) && ( $new_val == '0' || $new_val == '') )
-					$new_val = 'closed';
-                if ($new_val !== $old_val) {
-                    $result = $wpdb->query("UPDATE $wpdb->options SET option_value = '$new_val' WHERE option_name = '$option->option_name'");
-					$any_changed++;
-				}
-            }
-        }
-        unset($cache_settings); // so they will be re-read
-        get_settings('siteurl'); // make it happen now
-    } // end if options
+	if ($options) {
+		foreach ($options as $option) {
+			$option = trim($option);
+			$value = trim($_POST[$option]);
+			$value = sanitize_option($option, $value); // This does stripslashes on those that need it
+			update_option($option, $value);
+		}
+	}
     
-    if ($any_changed) {
-			// If siteurl or home changed, reset cookies.
-			if ( get_settings('siteurl') != $old_siteurl || get_settings('home') != $old_home ) {
-				// If home changed, write rewrite rules to new location.
-				save_mod_rewrite_rules();
-				// Get currently logged in user and password.
-				get_currentuserinfo();
-				// Clear cookies for old paths.
-				wp_clearcookie();
-				// Set cookies for new paths.
-				wp_setcookie($user_login, $user_pass_md5, true, get_settings('home'), get_settings('siteurl'));
-			}
-
-			//$message = sprintf(__('%d setting(s) saved... '), $any_changed);
-    }
-    
-		$referred = remove_query_arg('updated' , $_SERVER['HTTP_REFERER']);
-		$goback = add_query_arg('updated', 'true', $_SERVER['HTTP_REFERER']);
-		$goback = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $goback);
-		wp_redirect($goback);
+	$referred = remove_query_arg('updated' , wp_get_referer());
+	$goback = add_query_arg('updated', 'true', wp_get_referer());
+	$goback = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $goback);
+	wp_redirect($goback);
     break;
 
 default:
 	include('admin-header.php'); ?>
 
 <div class="wrap">
-  <h2><?php _e('All options'); ?></h2>
-  <form name="form" action="options.php" method="post">
+  <h2><?php _e('All Options'); ?></h2>
+  <form name="form" action="options.php" method="post" id="all-options">
+  <?php wp_nonce_field('update-options') ?>
   <input type="hidden" name="action" value="update" />
+	<p class="submit"><input type="submit" name="Update" value="<?php _e('Update Options &raquo;') ?>" /></p>
   <table width="98%">
 <?php
 $options = $wpdb->get_results("SELECT * FROM $wpdb->options ORDER BY option_name");
 
-foreach ($options as $option) :
-	$value = wp_specialchars($option->option_value);
+foreach ( (array) $options as $option) :
+	$disabled = '';
+	if ( is_serialized($option->option_value) ) {
+		if ( is_serialized_string($option->option_value) ) {
+			// this is a serialized string, so we should display it
+			$value = wp_specialchars(maybe_unserialize($option->option_value), 'single');
+			$options_to_update[] = $option->option_name;
+			$class = 'all-options';
+		} else {
+			$value = 'SERIALIZED DATA';
+			$disabled = ' disabled="disabled"';
+			$class = 'all-options disabled';
+		}
+	} else {
+		$value = wp_specialchars($option->option_value, 'single');
+		$options_to_update[] = $option->option_name;
+		$class = 'all-options';
+	}
 	echo "
 <tr>
 	<th scope='row'><label for='$option->option_name'>$option->option_name</label></th>
-	<td><input type='text' name='$option->option_name' id='$option->option_name' size='30' value='" . $value . "' /></td>
+<td>";
+
+	if (strpos($value, "\n") !== false) echo "<textarea class='$class' name='$option->option_name' id='$option->option_name' cols='30' rows='5'>$value</textarea>";
+	else echo "<input class='$class' type='text' name='$option->option_name' id='$option->option_name' size='30' value='" . $value . "'$disabled />";
+
+	echo "</td>
 	<td>$option->option_description</td>
 </tr>";
 endforeach;
 ?>
   </table>
-<p class="submit"><input type="submit" name="Update" value="<?php _e('Update Settings &raquo;') ?>" /></p>
+<?php $options_to_update = implode(',', $options_to_update); ?>
+<p class="submit"><input type="hidden" name="page_options" value="<?php echo attribute_escape($options_to_update); ?>" /><input type="submit" name="Update" value="<?php _e('Update Options &raquo;') ?>" /></p>
   </form>
 </div>
 

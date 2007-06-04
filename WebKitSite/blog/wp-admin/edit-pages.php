@@ -2,50 +2,61 @@
 require_once('admin.php');
 $title = __('Pages');
 $parent_file = 'edit.php';
+wp_enqueue_script( 'listman' );
 require_once('admin-header.php');
-
-get_currentuserinfo();
 ?>
 
 <div class="wrap">
 <h2><?php _e('Page Management'); ?></h2>
+<p><?php _e('Pages are like posts except they live outside of the normal blog chronology and can be hierarchical. You can use pages to organize and manage any amount of content.'); ?> <a href="page-new.php"><?php _e('Create a new page &raquo;'); ?></a></p>
+
+<form name="searchform" action="" method="get">
+	<fieldset>
+	<legend><?php _e('Search Pages&hellip;') ?></legend>
+	<input type="text" name="s" value="<?php if (isset($_GET['s'])) echo attribute_escape($_GET['s']); ?>" size="17" />
+	<input type="submit" name="submit" value="<?php _e('Search') ?>"  />
+	</fieldset>
+</form>
 
 <?php
-if (isset($user_ID) && ('' != intval($user_ID))) {
-	$posts = $wpdb->get_results("
-	SELECT $wpdb->posts.*, $wpdb->users.user_level FROM $wpdb->posts
-	INNER JOIN $wpdb->users ON ($wpdb->posts.post_author = $wpdb->users.ID)
-	WHERE $wpdb->posts.post_status = 'static'
-	AND ($wpdb->users.user_level < $user_level OR $wpdb->posts.post_author = $user_ID)
-	");
-} else {
-    $posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_status = 'static'");
-}
+wp('post_type=page&orderby=menu_order&what_to_show=posts&posts_per_page=-1&posts_per_archive_page=-1&order=asc');
+
+if ( $_GET['s'] )
+	$all = false;
+else
+	$all = true;
 
 if ($posts) {
 ?>
-<table width="100%" cellpadding="3" cellspacing="3"> 
-  <tr> 
-    <th scope="col"><?php _e('ID') ?></th> 
-    <th scope="col"><?php _e('Title') ?></th> 
+<table class="widefat"> 
+  <thead>
+  <tr>
+    <th scope="col" style="text-align: center"><?php _e('ID') ?></th>
+    <th scope="col"><?php _e('Title') ?></th>
     <th scope="col"><?php _e('Owner') ?></th>
 	<th scope="col"><?php _e('Updated') ?></th>
-	<th scope="col"></th> 
-    <th scope="col"></th> 
-    <th scope="col"></th> 
-  </tr> 
-<?php page_rows(); ?>
-</table> 
+	<th scope="col" colspan="3" style="text-align: center"><?php _e('Action'); ?></th>
+  </tr>
+  </thead>
+  <tbody id="the-list">
+<?php
+page_rows(0, 0, $posts, $all);
+?>
+  </tbody>
+</table>
+
+<div id="ajax-response"></div>
+
 <?php
 } else {
 ?>
 <p><?php _e('No pages yet.') ?></p>
 <?php
 } // end if ($posts)
-?> 
-<p><?php _e('Pages are like posts except they live outside of the normal blog chronology. You can use pages to organize and manage any amount of content.'); ?></p>
-<h3><a href="page-new.php"><?php _e('Create New Page'); ?> &raquo;</a></h3>
-</div> 
+?>
 
+<h3><a href="page-new.php"><?php _e('Create New Page &raquo;'); ?></a></h3>
 
-<?php include('admin-footer.php'); ?> 
+</div>
+
+<?php include('admin-footer.php'); ?>

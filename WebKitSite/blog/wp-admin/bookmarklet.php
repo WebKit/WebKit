@@ -2,11 +2,10 @@
 $mode = 'bookmarklet';
 require_once('admin.php');
 
-if ($user_level == 0)
-	die ("Cheatin' uh?");
+if ( ! current_user_can('edit_posts') )
+	wp_die(__('Cheatin&#8217; uh?'));
 
-if ('b' == $a) {
-
+if ('b' == $a):
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -19,40 +18,39 @@ window.close()
 <body></body>
 </html>
 <?php
-} else {
-	$popuptitle = wp_specialchars(stripslashes($popuptitle));
-	$text       = wp_specialchars(stripslashes(urldecode($text)));
-	
-	$popuptitle = funky_javascript_fix($popuptitle);
-	$text       = funky_javascript_fix($text);
-	
-	$post_title = wp_specialchars($_REQUEST['post_title']);
-	if (!empty($post_title)) {
-		$post_title =  stripslashes($post_title);
-	} else {
-		$post_title = $popuptitle;
-	}
-	
-	$edited_post_title = wp_specialchars($post_title);
+exit;
+endif;
 
-// $post_pingback needs to be set in any file that includes edit-form.php
-    $post_pingback = get_settings('default_pingback_flag');
-    
-    $content  = wp_specialchars($_REQUEST['content']);
-	$popupurl = wp_specialchars($_REQUEST['popupurl']);
-    if ( !empty($content) ) {
-        $content = wp_specialchars( stripslashes($_REQUEST['content']) );
-    } else {
-        $content = '<a href="'.$popupurl.'">'.$popuptitle.'</a>'."\n$text";
-    }
-    
-    /* /big funky fixes */
+$post = get_default_post_to_edit();
+
+$popuptitle = wp_specialchars(stripslashes($popuptitle));
+$text       = wp_specialchars(stripslashes(urldecode($text)));
+
+$popuptitle = funky_javascript_fix($popuptitle);
+$text       = funky_javascript_fix($text);
+
+$post_title = wp_specialchars($_REQUEST['post_title']);
+if (!empty($post_title))
+	$post->post_title =  stripslashes($post_title);
+else
+	$post->post_title = $popuptitle;
+
+
+$content  = wp_specialchars($_REQUEST['content']);
+$popupurl = clean_url($_REQUEST['popupurl']);
+if ( !empty($content) ) {
+	$post->post_content = wp_specialchars( stripslashes($_REQUEST['content']) );
+} else {
+	$post->post_content = '<a href="'.$popupurl.'">'.$popuptitle.'</a>'."\n$text";
+}
+
+/* /big funky fixes */
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><?php bloginfo('name') ?> &rsaquo; Bookmarklet &#8212; WordPress</title>
-<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_settings('blog_charset'); ?>" />
+<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 <link rel="stylesheet" href="wp-admin.css" type="text/css" />
 
 <style type="text/css">
@@ -79,15 +77,15 @@ window.close()
 }
 
 #wpbookmarklet .wrap {
-    border: 0px;
+	border: 0px;
 }
 
 #wpbookmarklet #postdiv {
-    margin-bottom: 0.5em;
+	margin-bottom: 0.5em;
 }
 
 #wpbookmarklet #titlediv {
-    margin-bottom: 1em;
+	margin-bottom: 1em;
 }
 
 -->
@@ -103,6 +101,4 @@ window.close()
 <?php do_action('admin_footer', ''); ?>
 
 </body>
-</html><?php
-}
-?>
+</html>

@@ -2,76 +2,22 @@
 require_once('admin.php');
 
 $title = __('Edit User');
-$parent_file = 'profile.php';	
+if ( current_user_can('edit_users') )
+	$parent_file = 'users.php';
+else
+	$parent_file = 'profile.php';
 $submenu_file = 'users.php';
 
-$wpvarstoreset = array('action', 'redirect', 'profile', 'user_id');
-for ($i=0; $i<count($wpvarstoreset); $i += 1) {
-	$wpvar = $wpvarstoreset[$i];
-	if (!isset($$wpvar)) {
-		if (empty($_POST["$wpvar"])) {
-			if (empty($_GET["$wpvar"])) {
-				$$wpvar = '';
-			} else {
-				$$wpvar = $_GET["$wpvar"];
-			}
-		} else {
-			$$wpvar = $_POST["$wpvar"];
-		}
-	}
-}
+wp_reset_vars(array('action', 'redirect', 'profile', 'user_id', 'wp_http_referer'));
+
+$wp_http_referer = remove_query_arg(array('update', 'delete_count'), stripslashes($wp_http_referer));
+
+$user_id = (int) $user_id;
+
+if ( !$user_id )
+	wp_die(__('Invalid user ID.'));
 
 switch ($action) {
-case 'update':
-
-get_currentuserinfo();
-$edituser = get_userdata($user_id);
-if ($edituser->user_level >= $user_level) die( __('You do not have permission to edit this user.') );
-
-/* checking the nickname has been typed */
-if (empty($_POST["new_nickname"])) {
-	die (__("<strong>ERROR</strong>: please enter your nickname (can be the same as your username)"));
-	return false;
-}
-
-$new_user_login  = wp_specialchars($_POST['new_user_login']);
-$pass1 = $_POST['pass1'];
-$pass2 = $_POST['pass2'];
-do_action('check_passwords', array($new_user_login, &$pass1, &$pass2));
-
-if ( '' == $pass1 ) {
-	if ( '' != $pass2 )
-		die (__("<strong>ERROR</strong>: you typed your new password only once. Go back to type it twice."));
-	$updatepassword = '';
-} else {
-	if ( '' == $pass2)
-		die (__("<strong>ERROR</strong>: you typed your new password only once. Go back to type it twice."));
-	if ( $pass1 != $pass2 )
-		die (__("<strong>ERROR</strong>: you typed two different passwords. Go back to correct that."));
-	$new_pass = $pass1;
-	$updatepassword = "user_pass=MD5('$new_pass'), ";
-}
-
-$new_firstname   = wp_specialchars($_POST['new_firstname']);
-$new_lastname    = wp_specialchars($_POST['new_lastname']);
-$new_nickname    = $_POST['new_nickname'];
-$new_nicename    = sanitize_title($new_nickname, $user_id);
-$new_icq         = wp_specialchars($_POST['new_icq']);
-$new_aim         = wp_specialchars($_POST['new_aim']);
-$new_msn         = wp_specialchars($_POST['new_msn']);
-$new_yim         = wp_specialchars($_POST['new_yim']);
-$new_email       = wp_specialchars($_POST['new_email']);
-$new_url         = wp_specialchars($_POST['new_url']);
-$new_url         = preg_match('/^(https?|ftps?|mailto|news|gopher):/is', $new_url) ? $new_url : 'http://' . $new_url; 
-$new_idmode      = wp_specialchars($_POST['new_idmode']);
-$new_description = $_POST['new_description'];
-
-$result = $wpdb->query("UPDATE $wpdb->users SET user_login = '$new_user_login', user_firstname = '$new_firstname', $updatepassword user_lastname='$new_lastname', user_nickname='$new_nickname', user_icq='$new_icq', user_email='$new_email', user_url='$new_url', user_aim='$new_aim', user_msn='$new_msn', user_yim='$new_yim', user_idmode='$new_idmode', user_description = '$new_description', user_nicename = '$new_nicename' WHERE ID = $user_id");
-
-header("Location: user-edit.php?user_id=$user_id&updated=true");
-
-break;
-
 case 'switchposts':
 
 check_admin_referer();
@@ -80,130 +26,198 @@ check_admin_referer();
 
 break;
 
+case 'update':
+
+check_admin_referer('update-user_' . $user_id);
+
+if ( !current_user_can('edit_user', $user_id) )
+	wp_die(__('You do not have permission to edit this user.'));
+
+$errors = edit_user($user_id);
+
+if( !is_wp_error( $errors ) ) {
+	$redirect = "user-edit.php?user_id=$user_id&updated=true";
+	$redirect = add_query_arg('wp_http_referer', urlencode($wp_http_referer), $redirect);
+	wp_redirect($redirect);
+	exit;
+}
+
 default:
+$profileuser = get_user_to_edit($user_id);
+
+if ( !current_user_can('edit_user', $user_id) )
+		wp_die(__('You do not have permission to edit this user.'));
+
 include ('admin-header.php');
-
-$edituser = get_userdata($user_id);
-
-if ($edituser->user_level >= $user_level) die( __('You do not have permission to edit this user.') );
 ?>
 
 <?php if ( isset($_GET['updated']) ) : ?>
-<div class="updated">
+<div id="message" class="updated fade">
 	<p><strong><?php _e('User updated.') ?></strong></p>
+	<?php if ( $wp_http_referer ) : ?>
+	<p><a href="users.php"><?php _e('&laquo; Back to Authors and Users'); ?></a></p>
+	<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php if ( is_wp_error( $errors ) ) : ?>
+<div class="error">
+	<ul>
+	<?php
+	foreach( $errors->get_error_messages() as $message )
+		echo "<li>$message</li>";
+	?>
+	</ul>
 </div>
 <?php endif; ?>
 
 <div class="wrap">
 <h2><?php _e('Edit User'); ?></h2>
-<form name="edituser" id="edituser" action="user-edit.php" method="post">
-<table width="99%"  border="0" cellspacing="2" cellpadding="3">
-	<tr>
-		<th width="33%" scope="row"><?php _e('Username:') ?></th>
-		<td width="73%"><input type="text" name="new_user_login" id="new_user_login" value="<?php echo $edituser->user_login; ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Level:') ?></th>
-		<td><?php echo $edituser->user_level; ?></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Posts:') ?></th>
-		<td><?php echo get_usernumposts($edituser->ID); ?></td>
-	</tr>
-<?php if ( '0000-00-00 00:00:00' != $edituser->user_registered ) { ?>
-	<tr>
-		<th scope="row"><?php _e('Registered on:') ?></th>
-		<td><?php echo substr($edituser->user_registered, 0, 11); ?></td>
-	</tr>
-<?php } ?>
-	<tr>
-		<th scope="row"><?php _e('First name:') ?></th>
-		<td><input type="text" name="new_firstname" id="new_firstname" value="<?php echo $edituser->user_firstname ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Last name:') ?></th>
-		<td><input type="text" name="new_lastname" id="new_lastname2" value="<?php echo $edituser->user_lastname ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Profile:') ?></th>
-		<td><textarea name="new_description" rows="5" id="new_description" style="width: 99%; "><?php echo $edituser->user_description ?></textarea></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Nickname:') ?></th>
-		<td><input type="text" name="new_nickname" id="new_nickname" value="<?php echo $edituser->user_nickname ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('E-mail:') ?></th>
-		<td><input type="text" name="new_email" id="new_email" value="<?php echo $edituser->user_email ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Website:') ?></th>
-		<td><input type="text" name="new_url" id="new_url" value="<?php echo $edituser->user_url ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('ICQ:') ?></th>
-		<td><input type="text" name="new_icq" id="new_icq" value="<?php if ($edituser->user_icq > 0) { echo $edituser->user_icq; } ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('AIM:') ?></th>
-		<td><input type="text" name="new_aim" id="new_aim" value="<?php echo $edituser->user_aim ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('MSN IM:') ?>
-		</th>
-		<td><input type="text" name="new_msn" id="new_msn" value="<?php echo $edituser->user_msn ?>" /></td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Yahoo IM:') ?>
-		</th>
-		<td><input type="text" name="new_yim" id="new_yim" value="<?php echo $edituser->user_yim ?>" />
-		</td>
-	</tr>
-	<tr>
-		<th scope="row"><?php _e('Identity on blog:') ?>
-		</th>
-		<td><select name="new_idmode">
-				<option value="nickname"<?php
-	if ($edituser->user_idmode == 'nickname')
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_nickname ?></option>
-				<option value="login"<?php
-	if ($edituser->user_idmode=="login")
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_login ?></option>
-				<option value="firstname"<?php
-	if ($edituser->user_idmode=="firstname")
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_firstname ?></option>
-				<option value="lastname"<?php
-	if ($edituser->user_idmode=="lastname")
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_lastname ?></option>
-				<option value="namefl"<?php
-	if ($edituser->user_idmode=="namefl")
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_firstname." ".$edituser->user_lastname ?></option>
-				<option value="namelf"<?php
-	if ($edituser->user_idmode=="namelf")
-	echo ' selected="selected"'; ?>><?php echo $edituser->user_lastname." ".$edituser->user_firstname ?></option>
-			</select>
-		</td>
-	</tr>
+
+<form name="profile" id="your-profile" action="user-edit.php" method="post">
+<?php wp_nonce_field('update-user_' . $user_id) ?>
+<?php if ( $wp_http_referer ) : ?>
+	<input type="hidden" name="wp_http_referer" value="<?php echo wp_specialchars($wp_http_referer); ?>" />
+<?php endif; ?>
+<p>
+<input type="hidden" name="from" value="profile" />
+<input type="hidden" name="checkuser_id" value="<?php echo $user_ID ?>" />
+</p>
+
+<p><label for="rich_editing"><input name="rich_editing" type="checkbox" id="rich_editing" value="true" <?php checked('true', $profileuser->rich_editing); ?> /> <?php _e('Use the visual editor when writing'); ?></label></p>
+
+<p class="submit"><input type="submit" value="<?php _e('Update User &raquo;'); ?>" name="submit" /></p>
+
+<fieldset>
+<legend><?php _e('Name'); ?></legend>
+<p><label><?php _e('Username: (no editing)'); ?><br />
+<input type="text" name="user_login" value="<?php echo $profileuser->user_login; ?>" disabled="disabled" />
+</label></p>
+
+<p><label><?php _e('Role:') ?><br />
+<?php
+// print_r($profileuser);
+echo '<select name="role">';
+$role_list = '';
+$user_has_role = false;
+foreach($wp_roles->role_names as $role => $name) {
+	if ( $profileuser->has_cap($role) ) {
+		$selected = ' selected="selected"';
+		$user_has_role = true;
+	} else {
+		$selected = '';
+	}
+	$role_list .= "<option value=\"{$role}\"{$selected}>{$name}</option>";
+}
+if ( $user_has_role )
+	$role_list .= '<option value="">' . __('&mdash; No role for this blog &mdash;') . '</option>';
+else
+	$role_list .= '<option value="" selected="selected">' . __('&mdash; No role for this blog &mdash;') . '</option>';
+echo $role_list . '</select>';
+?></label></p>
+
+<p><label><?php _e('First name:') ?><br />
+<input type="text" name="first_name" value="<?php echo $profileuser->first_name ?>" /></label></p>
+
+<p><label><?php _e('Last name:') ?><br />
+<input type="text" name="last_name"  value="<?php echo $profileuser->last_name ?>" /></label></p>
+
+<p><label><?php _e('Nickname:') ?><br />
+<input type="text" name="nickname" value="<?php echo $profileuser->nickname ?>" /></label></p>
+
+<p><label><?php _e('Display name publicly as:') ?> <br />
+<select name="display_name">
+<option value="<?php echo $profileuser->display_name; ?>"><?php echo $profileuser->display_name; ?></option>
+<option value="<?php echo $profileuser->nickname ?>"><?php echo $profileuser->nickname ?></option>
+<option value="<?php echo $profileuser->user_login ?>"><?php echo $profileuser->user_login ?></option>
+<?php if ( !empty( $profileuser->first_name ) ) : ?>
+<option value="<?php echo $profileuser->first_name ?>"><?php echo $profileuser->first_name ?></option>
+<?php endif; ?>
+<?php if ( !empty( $profileuser->last_name ) ) : ?>
+<option value="<?php echo $profileuser->last_name ?>"><?php echo $profileuser->last_name ?></option>
+<?php endif; ?>
+<?php if ( !empty( $profileuser->first_name ) && !empty( $profileuser->last_name ) ) : ?>
+<option value="<?php echo $profileuser->first_name." ".$profileuser->last_name ?>"><?php echo $profileuser->first_name." ".$profileuser->last_name ?></option>
+<option value="<?php echo $profileuser->last_name." ".$profileuser->first_name ?>"><?php echo $profileuser->last_name." ".$profileuser->first_name ?></option>
+<?php endif; ?>
+</select></label></p>
+</fieldset>
+
+<fieldset>
+<legend><?php _e('Contact Info'); ?></legend>
+
+<p><label><?php _e('E-mail: (required)') ?><br />
+<input type="text" name="email" value="<?php echo $profileuser->user_email ?>" /></label></p>
+
+<p><label><?php _e('Website:') ?><br />
+<input type="text" name="url" value="<?php echo $profileuser->user_url ?>" />
+</label></p>
+
+<p><label><?php _e('AIM:') ?><br />
+<input type="text" name="aim" value="<?php echo $profileuser->aim ?>" />
+</label></p>
+
+<p><label><?php _e('Yahoo IM:') ?><br />
+<input type="text" name="yim" value="<?php echo $profileuser->yim ?>" />
+</label></p>
+
+<p><label><?php _e('Jabber / Google Talk:') ?><br />
+<input type="text" name="jabber" value="<?php echo $profileuser->jabber ?>" /></label>
+</p>
+</fieldset>
+<br clear="all" />
+<fieldset>
+<legend><?php _e('About the user'); ?></legend>
+<p class="desc"><?php _e('Share a little biographical information to fill out your profile. This may be shown publicly.'); ?></p>
+<p><textarea name="description" rows="5" cols="30"><?php echo $profileuser->description ?></textarea></p>
+</fieldset>
+
 <?php
 $show_password_fields = apply_filters('show_password_fields', true);
 if ( $show_password_fields ) :
 ?>
-	<tr>
-		<th scope="row"><?php _e('New <strong>Password</strong> (Leave blank to stay the same.)') ?></th>
-		<td><input type="password" name="pass1" size="16" value="" />
-			<br />
-			<input type="password" name="pass2" size="16" value="" /></td>
-	</tr>
+<fieldset>
+<legend><?php _e("Update User's Password"); ?></legend>
+<p class="desc"><?php _e("If you would like to change the user's password type a new one twice below. Otherwise leave this blank."); ?></p>
+<p><label><?php _e('New Password:'); ?><br />
+<input type="password" name="pass1" size="16" value="" />
+</label></p>
+<p><label><?php _e('Type it one more time:'); ?><br />
+<input type="password" name="pass2" size="16" value="" />
+</label></p>
+</fieldset>
 <?php endif; ?>
-</table>
-  <p class="submit">
+
+<?php do_action('edit_user_profile'); ?>
+
+<br clear="all" />
+	<table width="99%"  border="0" cellspacing="2" cellpadding="3" class="editform">
+		<?php
+		if(count($profileuser->caps) > count($profileuser->roles)):
+		?>
+		<tr>
+			<th scope="row"><?php _e('Additional Capabilities:') ?></th>
+			<td><?php
+			$output = '';
+			foreach($profileuser->caps as $cap => $value) {
+				if(!$wp_roles->is_role($cap)) {
+					if($output != '') $output .= ', ';
+					$output .= $value ? $cap : "Denied: {$cap}";
+				}
+			}
+			echo $output;
+			?></td>
+		</tr>
+		<?php
+		endif;
+		?>
+	</table>
+<p class="submit">
 	<input type="hidden" name="action" value="update" />
 	<input type="hidden" name="user_id" id="user_id" value="<?php echo $user_id; ?>" />
-    <input type="submit" value="<?php _e('Update User &raquo;') ?>" name="submit" />
-  </p>
+	<input type="submit" value="<?php _e('Update User &raquo;') ?>" name="submit" />
+ </p>
 </form>
 </div>
-
 <?php
 break;
 }

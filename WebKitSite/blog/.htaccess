@@ -3,55 +3,9 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /blog/
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^.*$ - [S=45]
-RewriteRule ^(webkit-coding-style-guidelines)/trackback/?$ /blog/index.php?pagename=$1&tb=1 [QSA,L]
-RewriteRule ^(webkit-coding-style-guidelines)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?pagename=$1&feed=$2 [QSA,L]
-RewriteRule ^(webkit-coding-style-guidelines)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?pagename=$1&feed=$2 [QSA,L]
-RewriteRule ^(webkit-coding-style-guidelines)/page/?([0-9]{1,})/?$ /blog/index.php?pagename=$1&paged=$2 [QSA,L]
-RewriteRule ^(webkit-coding-style-guidelines)(/[0-9]+)?/?$ /blog/index.php?pagename=$1&page=$2 [QSA,L]
-RewriteRule ^feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?&feed=$1 [QSA,L]
-RewriteRule ^(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?&feed=$1 [QSA,L]
-RewriteRule ^page/?([0-9]{1,})/?$ /blog/index.php?&paged=$1 [QSA,L]
-RewriteRule ^comments/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?&feed=$1&withcomments=1 [QSA,L]
-RewriteRule ^comments/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?&feed=$1&withcomments=1 [QSA,L]
-RewriteRule ^comments/page/?([0-9]{1,})/?$ /blog/index.php?&paged=$1 [QSA,L]
-RewriteRule ^search/(.+)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?s=$1&feed=$2 [QSA,L]
-RewriteRule ^search/(.+)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?s=$1&feed=$2 [QSA,L]
-RewriteRule ^search/(.+)/page/?([0-9]{1,})/?$ /blog/index.php?s=$1&paged=$2 [QSA,L]
-RewriteRule ^search/(.+)/?$ /blog/index.php?s=$1 [QSA,L]
-RewriteRule ^category/(.+)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?category_name=$1&feed=$2 [QSA,L]
-RewriteRule ^category/(.+)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?category_name=$1&feed=$2 [QSA,L]
-RewriteRule ^category/(.+)/page/?([0-9]{1,})/?$ /blog/index.php?category_name=$1&paged=$2 [QSA,L]
-RewriteRule ^category/(.+)/?$ /blog/index.php?category_name=$1 [QSA,L]
-RewriteRule ^author/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?author_name=$1&feed=$2 [QSA,L]
-RewriteRule ^author/([^/]+)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?author_name=$1&feed=$2 [QSA,L]
-RewriteRule ^author/([^/]+)/page/?([0-9]{1,})/?$ /blog/index.php?author_name=$1&paged=$2 [QSA,L]
-RewriteRule ^author/([^/]+)/?$ /blog/index.php?author_name=$1 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&monthnum=$2&day=$3&feed=$4 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&monthnum=$2&day=$3&feed=$4 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/page/?([0-9]{1,})/?$ /blog/index.php?year=$1&monthnum=$2&day=$3&paged=$4 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/?$ /blog/index.php?year=$1&monthnum=$2&day=$3 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&monthnum=$2&feed=$3 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&monthnum=$2&feed=$3 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/page/?([0-9]{1,})/?$ /blog/index.php?year=$1&monthnum=$2&paged=$3 [QSA,L]
-RewriteRule ^date/([0-9]{4})/([0-9]{1,2})/?$ /blog/index.php?year=$1&monthnum=$2 [QSA,L]
-RewriteRule ^date/([0-9]{4})/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&feed=$2 [QSA,L]
-RewriteRule ^date/([0-9]{4})/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?year=$1&feed=$2 [QSA,L]
-RewriteRule ^date/([0-9]{4})/page/?([0-9]{1,})/?$ /blog/index.php?year=$1&paged=$2 [QSA,L]
-RewriteRule ^date/([0-9]{4})/?$ /blog/index.php?year=$1 [QSA,L]
-RewriteRule ^([0-9]+)/([^/]+)/trackback/?$ /blog/index.php?p=$1&name=$2&tb=1 [QSA,L]
-RewriteRule ^([0-9]+)/([^/]+)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?p=$1&name=$2&feed=$3 [QSA,L]
-RewriteRule ^([0-9]+)/([^/]+)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?p=$1&name=$2&feed=$3 [QSA,L]
-RewriteRule ^([0-9]+)/([^/]+)/page/?([0-9]{1,})/?$ /blog/index.php?p=$1&name=$2&paged=$3 [QSA,L]
-RewriteRule ^([0-9]+)/([^/]+)(/[0-9]+)?/?$ /blog/index.php?p=$1&name=$2&page=$3 [QSA,L]
-RewriteRule ^([0-9]+)/trackback/?$ /blog/index.php?p=$1&tb=1 [QSA,L]
-RewriteRule ^([0-9]+)/feed/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?p=$1&feed=$2 [QSA,L]
-RewriteRule ^([0-9]+)/(feed|rdf|rss|rss2|atom)/?$ /blog/index.php?p=$1&feed=$2 [QSA,L]
-RewriteRule ^([0-9]+)/page/?([0-9]{1,})/?$ /blog/index.php?p=$1&paged=$2 [QSA,L]
-RewriteRule ^([0-9]+)(/[0-9]+)?/?$ /blog/index.php?p=$1&page=$2 [QSA,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /blog/index.php [L]
 </IfModule>
 
 # END WordPress
-

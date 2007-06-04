@@ -4,176 +4,120 @@ require_once('admin.php');
 $title = __('Categories');
 $parent_file = 'edit.php';
 
-$wpvarstoreset = array('action','cat');
-for ($i=0; $i<count($wpvarstoreset); $i += 1) {
-    $wpvar = $wpvarstoreset[$i];
-    if (!isset($$wpvar)) {
-        if (empty($_POST["$wpvar"])) {
-            if (empty($_GET["$wpvar"])) {
-                $$wpvar = '';
-            } else {
-                $$wpvar = $_GET["$wpvar"];
-            }
-        } else {
-            $$wpvar = $_POST["$wpvar"];
-        }
-    }
-}
+wp_reset_vars(array('action', 'cat'));
 
 switch($action) {
 
 case 'addcat':
-	if ($user_level < 3)
-		die (__('Cheatin&#8217; uh?'));
-	
-	$cat_name= wp_specialchars($_POST['cat_name']);
-	$id_result = $wpdb->get_row("SHOW TABLE STATUS LIKE '$wpdb->categories'");
-	$cat_ID = $id_result->Auto_increment;
-	$category_nicename = sanitize_title($cat_name, $cat_ID);
-	$category_description = $_POST['category_description'];
-	$cat = intval($_POST['cat']);
-	
-	$wpdb->query("INSERT INTO $wpdb->categories (cat_ID, cat_name, category_nicename, category_description, category_parent) VALUES ('0', '$cat_name', '$category_nicename', '$category_description', '$cat')");
-	
-	header('Location: categories.php?message=1#addcat');
+
+	check_admin_referer('add-category');
+
+	if ( !current_user_can('manage_categories') )
+		wp_die(__('Cheatin&#8217; uh?'));
+
+	if( wp_insert_category($_POST ) ) {
+		wp_redirect('categories.php?message=1#addcat');
+	} else {
+		wp_redirect('categories.php?message=4#addcat');
+	}
+	exit;
 break;
 
 case 'delete':
-
-	check_admin_referer();
-
 	$cat_ID = (int) $_GET['cat_ID'];
+	check_admin_referer('delete-category_' .  $cat_ID);
+
+	if ( !current_user_can('manage_categories') )
+		wp_die(__('Cheatin&#8217; uh?'));
+
 	$cat_name = get_catname($cat_ID);
-	$category = $wpdb->get_row("SELECT * FROM $wpdb->categories WHERE cat_ID = '$cat_ID'");
-	$cat_parent = $category->category_parent;
 
-	if ( 1 == $cat_ID )
-		die(sprintf(__("Can't delete the <strong>%s</strong> category: this is the default one"), $cat_name));
+	// Don't delete the default cats.
+    if ( $cat_ID == get_option('default_category') )
+		wp_die(sprintf(__("Can&#8217;t delete the <strong>%s</strong> category: this is the default one"), $cat_name));
 
-	if ( $user_level < 3 )
-		die (__('Cheatin&#8217; uh?'));
+    if ( $cat_ID == get_option('default_link_category') )
+		wp_die(sprintf(__("Can&#8217;t delete the <strong>%s</strong> category: this is the default one for links"), $cat_name));
 
-	$wpdb->query("DELETE FROM $wpdb->categories WHERE cat_ID = '$cat_ID'");
-	$wpdb->query("UPDATE $wpdb->categories SET category_parent = '$cat_parent' WHERE category_parent = '$cat_ID'");
-	// TODO: Only set categories to general if they're not in another category already
-	$wpdb->query("UPDATE $wpdb->post2cat SET category_id='1' WHERE category_id='$cat_ID'");
+	wp_delete_category($cat_ID);
 
-	header('Location: categories.php?message=2');
+	wp_redirect('categories.php?message=2');
+	exit;
 
 break;
 
 case 'edit':
 
-    require_once ('admin-header.php');
-    $cat_ID = (int) $_GET['cat_ID'];
-    $category = $wpdb->get_row("SELECT * FROM $wpdb->categories WHERE cat_ID = '$cat_ID'");
-    $cat_name = $category->cat_name;
-    ?>
-
-<div class="wrap">
- <h2><?php _e('Edit Category') ?></h2>
- <form name="editcat" action="categories.php" method="post">
-	  <table class="editform" width="100%" cellspacing="2" cellpadding="5">
-		<tr>
-		  <th width="33%" scope="row"><?php _e('Category name:') ?></th>
-		  <td width="67%"><input name="cat_name" type="text" value="<?php echo wp_specialchars($cat_name); ?>" size="40" /> <input type="hidden" name="action" value="editedcat" />
-<input type="hidden" name="cat_ID" value="<?php echo $cat_ID ?>" /></td>
-		</tr>
-		<tr>
-			<th scope="row"><?php _e('Category slug:') ?></th>
-			<td><input name="category_nicename" type="text" value="<?php echo wp_specialchars($category->category_nicename); ?>" size="40" /></td>
-		</tr>
-		<tr>
-			<th scope="row"><?php _e('Category parent:') ?></th>
-			<td>        
-			<select name='cat'>
-	  <option value='0' <?php if (!$category->category_parent) echo " selected='selected'"; ?>><?php _e('None') ?></option>
-	  <?php wp_dropdown_cats($category->cat_ID, $category->category_parent); ?>
-	  </select></td>
-		</tr>
-		<tr>
-			<th scope="row"><?php _e('Description:') ?></th>
-			<td><textarea name="category_description" rows="5" cols="50" style="width: 97%;"><?php echo wp_specialchars($category->category_description, 1); ?></textarea></td>
-		</tr>
-		</table>
-	  <p class="submit"><input type="submit" name="submit" value="<?php _e('Edit category') ?> &raquo;" /></p>
- </form>
- <p><a href="categories.php"><?php _e('&laquo; Return to category list'); ?></a></p>
-</div>
-    <?php
+	require_once ('admin-header.php');
+	$cat_ID = (int) $_GET['cat_ID'];
+	$category = get_category_to_edit($cat_ID);
+	include('edit-category-form.php');
 
 break;
 
 case 'editedcat':
-	if ($user_level < 3)
-		die (__('Cheatin&#8217; uh?'));
-	
-	$cat_name = wp_specialchars($_POST['cat_name']);
 	$cat_ID = (int) $_POST['cat_ID'];
-	$category_nicename = sanitize_title($_POST['category_nicename'], $cat_ID);
-	$category_description = $_POST['category_description'];
-	
-	$wpdb->query("UPDATE $wpdb->categories SET cat_name = '$cat_name', category_nicename = '$category_nicename', category_description = '$category_description', category_parent = '$cat' WHERE cat_ID = '$cat_ID'");
+	check_admin_referer('update-category_' . $cat_ID);
 
-	header('Location: categories.php?message=3');
+	if ( !current_user_can('manage_categories') )
+		wp_die(__('Cheatin&#8217; uh?'));
+
+	if ( wp_update_category($_POST) )
+		wp_redirect('categories.php?message=3'); 
+	else
+		wp_redirect('categories.php?message=5'); 
+
+	exit;
 break;
 
 default:
 
+wp_enqueue_script( 'admin-categories' );
 require_once ('admin-header.php');
 
 $messages[1] = __('Category added.');
 $messages[2] = __('Category deleted.');
 $messages[3] = __('Category updated.');
+$messages[4] = __('Category not added.');
+$messages[5] = __('Category not updated.');
 ?>
 
 <?php if (isset($_GET['message'])) : ?>
-<div class="updated"><p><?php echo $messages[$_GET['message']]; ?></p></div>
+<div id="message" class="updated fade"><p><?php echo $messages[$_GET['message']]; ?></p></div>
 <?php endif; ?>
 
 <div class="wrap">
-<?php if ( $user_level > 3 ) : ?>
+<?php if ( current_user_can('manage_categories') ) : ?>
 	<h2><?php printf(__('Categories (<a href="%s">add new</a>)'), '#addcat') ?> </h2>
 <?php else : ?>
 	<h2><?php _e('Categories') ?> </h2>
 <?php endif; ?>
-<table width="100%" cellpadding="3" cellspacing="3">
+<table class="widefat">
+	<thead>
 	<tr>
-		<th scope="col"><?php _e('ID') ?></th>
+		<th scope="col" style="text-align: center"><?php _e('ID') ?></th>
         <th scope="col"><?php _e('Name') ?></th>
         <th scope="col"><?php _e('Description') ?></th>
-        <th scope="col"><?php _e('# Posts') ?></th>
-        <th colspan="2"><?php _e('Action') ?></th>
+        <th scope="col" width="90" style="text-align: center"><?php _e('Posts') ?></th>
+        <th scope="col" width="90" style="text-align: center"><?php _e('Links') ?></th>
+        <th colspan="2" style="text-align: center"><?php _e('Action') ?></th>
 	</tr>
+	</thead>
+	<tbody id="the-list">
 <?php
 cat_rows();
 ?>
+	</tbody>
 </table>
 
 </div>
 
-<?php if ( $user_level > 3 ) : ?>
+<?php if ( current_user_can('manage_categories') ) : ?>
 <div class="wrap">
-    <p><?php printf(__('<strong>Note:</strong><br />Deleting a category does not delete posts from that category, it will just set them back to the default category <strong>%s</strong>.'), get_catname(1)) ?>
-  </p>
+<p><?php printf(__('<strong>Note:</strong><br />Deleting a category does not delete the posts and links in that category. Instead, posts that were only assigned to the deleted category are set to the category <strong>%s</strong> and links that were only assigned to the deleted category are set to <strong>%s</strong>.'), apply_filters('the_category', get_catname(get_option('default_category'))), apply_filters('the_category', get_catname(get_option('default_link_category')))) ?></p>
 </div>
 
-<div class="wrap">
-    <h2><?php _e('Add New Category') ?></h2>
-    <form name="addcat" id="addcat" action="categories.php" method="post">
-        
-        <p><?php _e('Name:') ?><br />
-        <input type="text" name="cat_name" value="" /></p>
-        <p><?php _e('Category parent:') ?><br />
-        <select name='cat' class='postform'>
-        <option value='0'><?php _e('None') ?></option>
-        <?php wp_dropdown_cats(0); ?>
-        </select></p>
-        <p><?php _e('Description: (optional)') ?> <br />
-        <textarea name="category_description" rows="5" cols="50" style="width: 97%;"></textarea></p>
-        <p class="submit"><input type="hidden" name="action" value="addcat" /><input type="submit" name="submit" value="<?php _e('Add Category &raquo;') ?>" /></p>
-    </form>
-</div>
+<?php include('edit-category-form.php'); ?>
 <?php endif; ?>
 
 <?php
@@ -181,4 +125,5 @@ break;
 }
 
 include('admin-footer.php');
+
 ?>

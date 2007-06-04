@@ -1,230 +1,138 @@
 <?php
 require_once('admin.php');
 
-$title = 'Upload Image or File';
+@header('Content-type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
 
-require_once('admin-header.php');
+if (!current_user_can('upload_files'))
+	wp_die(__('You do not have permission to upload files.'));
 
-if ($user_level == 0) //Checks to see if user has logged in
-	die (__("Cheatin' uh ?"));
+wp_reset_vars(array('action', 'tab', 'from_tab', 'style', 'post_id', 'ID', 'paged', 'post_title', 'post_content', 'delete'));
 
-if (!get_settings('use_fileupload')) //Checks if file upload is enabled in the config
-	die (__("The admin disabled this function"));
+// IDs should be integers
+$ID = (int) $ID;
+$post_id = (int) $post_id;
 
-if ( !get_settings('fileupload_minlevel') )
-	die (__("You are not allowed to upload files"));
+// Require an ID for the edit screen
+if ( $action == 'edit' && !$ID )
+	wp_die(__("You are not allowed to be here"));
 
-$allowed_types = explode(' ', trim(strtolower(get_settings('fileupload_allowedtypes'))));
+require_once('upload-functions.php');
+if ( !$tab )
+	$tab = 'browse-all';
 
-if ($_POST['submit']) {
-	$action = 'upload';
-} else {
-	$action = '';
+do_action( "upload_files_$tab" );
+
+$pid = 0;
+if ( $post_id < 0 )
+	$pid = $post_id;
+elseif ( get_post( $post_id ) )
+	$pid = $post_id;
+$wp_upload_tabs = array();
+$all_atts = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'attachment'");
+$post_atts = 0;
+
+if ( $pid ) {
+	// 0 => tab display name, 1 => required cap, 2 => function that produces tab content, 3 => total number objects OR array(total, objects per page), 4 => add_query_args
+	$wp_upload_tabs['upload'] = array(__('Upload'), 'upload_files', 'wp_upload_tab_upload', 0);
+	if ( $all_atts && $post_atts = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'attachment' AND post_parent = '$post_id'") )
+		$wp_upload_tabs['browse'] = array(__('Browse'), 'upload_files', "wp_upload_tab_browse", $action ? 0 : $post_atts);
+	if ( $post_atts < $all_atts )
+		$wp_upload_tabs['browse-all'] = array(__('Browse All'), 'upload_files', 'wp_upload_tab_browse', $action ? 0 : $all_atts);
+} else
+	$wp_upload_tabs['browse-all'] = array(__('Browse All'), 'upload_files', 'wp_upload_tab_browse', $action ? 0 : $all_atts);
+
+	$wp_upload_tabs = array_merge($wp_upload_tabs, apply_filters( 'wp_upload_tabs', array() ));
+
+if ( !is_callable($wp_upload_tabs[$tab][2]) ) {
+	$to_tab = isset($wp_upload_tabs['upload']) ? 'upload' : 'browse-all';
+	wp_redirect( add_query_arg( 'tab', $to_tab ) );
+	exit;
 }
 
-if (!is_writable(get_settings('fileupload_realpath')))
-	$action = 'not-writable';
-?>
-
-<div class="wrap">
-
-<?php
-switch ($action) {
-case 'not-writable':
-?>
-<p><?php printf(__("It doesn't look like you can use the file upload feature at this time because the directory you have specified (<code>%s</code>) doesn't appear to be writable by WordPress. Check the permissions on the directory and for typos."), get_settings('fileupload_realpath')) ?></p>
-
-<?php
-break;
-case '':
-	foreach ($allowed_types as $type) {
-		$type_tags[] = "<code>$type</code>";
+foreach ( $wp_upload_tabs as $t => $tab_array ) {
+	if ( !current_user_can( $tab_array[1] ) ) {
+		unset($wp_upload_tabs[$t]);
+		if ( $tab == $t )
+			wp_die(__("You are not allowed to be here"));
 	}
-	$i = implode(', ', $type_tags);
-?>
-<p><?php printf(__('You can upload files with the extension %1$s as long as they are no larger than %2$s <abbr title="Kilobytes">KB</abbr>. If you&#8217;re an admin you can configure these values under <a href="%3$s">options</a>.'), $i, get_settings('fileupload_maxk'), 'options-misc.php') ?></p>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-    <p>
-      <label for="img1"><?php _e('File:') ?></label>
-      <br />
-	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_settings('fileupload_maxk') * 1024 ?>" />
-    <input type="file" name="img1" id="img1" size="35" class="uploadform" /></p>
-    <p>
-    <label for="imgdesc"><?php _e('Description:') ?></label><br />
-    <input type="text" name="imgdesc" id="imgdesc" size="30" class="uploadform" />
-    </p>
-	
-    <p><?php _e('Create a thumbnail?') ?></p>
-    <p>
-    <label for="thumbsize_no">
-    <input type="radio" name="thumbsize" value="none" checked="checked" id="thumbsize_no" />
-    <?php _e('No thanks') ?></label>
-    <br />
-        <label for="thumbsize_small">
-<input type="radio" name="thumbsize" value="small" id="thumbsize_small" />
-<?php _e('Small (200px largest side)') ?></label>
-        <br />
-        <label for="thumbsize_large">
-<input type="radio" name="thumbsize" value="large" id="thumbsize_large" />
-<?php _e('Large (400px largest side)') ?></label>
-        <br />
-        <label for="thumbsize_custom">
-        <input type="radio" name="thumbsize" value="custom" id="thumbsize_custom" />
-<?php _e('Custom size') ?></label>
-      : 
-      <input type="text" name="imgthumbsizecustom" size="4" />
-    <?php _e('px (largest side)') ?>    </p>
-	<p><input type="submit" name="submit" value="<?php _e('Upload File') ?>" /></p>
-    </form>
-</div><?php 
-break;
-case 'upload':
-
-	$imgalt = basename( (isset($_POST['imgalt'])) ? $_POST['imgalt'] : '' );
-
-	$img1_name = (strlen($imgalt)) ? $imgalt : basename( $_FILES['img1']['name'] );
-	$img1_name = preg_replace('/[^a-z0-9_.]/i', '', $img1_name); 
-	$img1_size = $_POST['img1_size'] ? intval($_POST['img1_size']) : intval($_FILES['img1']['size']);
-
-	$img1_type = (strlen($imgalt)) ? $_POST['img1_type'] : $_FILES['img1']['type'];
-	$imgdesc = htmlentities2($_POST['imgdesc']);
-
-	$pi = pathinfo($img1_name);
-	$imgtype = strtolower($pi['extension']);
-
-	if (in_array($imgtype, $allowed_types) == false)
-		die(sprintf(__('File %1$s of type %2$s is not allowed.') , $img1_name, $imgtype));
-
-    if (strlen($imgalt)) {
-        $pathtofile = get_settings('fileupload_realpath')."/".$imgalt;
-        $img1 = $_POST['img1'];
-    } else {
-        $pathtofile = get_settings('fileupload_realpath')."/".$img1_name;
-        $img1 = $_FILES['img1']['tmp_name'];
-    }
-
-    // makes sure not to upload duplicates, rename duplicates
-    $i = 1;
-    $pathtofile2 = $pathtofile;
-    $tmppathtofile = $pathtofile2;
-    $img2_name = $img1_name;
-
-    while ( file_exists($pathtofile2) ) {
-        $pos = strpos( strtolower($tmppathtofile), '.' . trim($imgtype) );
-        $pathtofile_start = substr($tmppathtofile, 0, $pos);
-        $pathtofile2 = $pathtofile_start.'_'.zeroise($i++, 2).'.'.trim($imgtype);
-        $img2_name = explode('/', $pathtofile2);
-        $img2_name = $img2_name[count($img2_name)-1];
-    }
-
-    if (file_exists($pathtofile) && !strlen($imgalt)) {
-        $i = explode(' ', get_settings('fileupload_allowedtypes'));
-        $i = implode(', ',array_slice($i, 1, count($i)-2));
-        $moved = move_uploaded_file($img1, $pathtofile2);
-        // if move_uploaded_file() fails, try copy()
-        if (!$moved) {
-            $moved = copy($img1, $pathtofile2);
-        }
-        if (!$moved) {
-            die(sprintf(__("Couldn't upload your file to %s."), $pathtofile2));
-        } else {
-			chmod($pathtofile2, 0666);
-            @unlink($img1);
-        }
-
-	// 
-    
-    // duplicate-renaming function contributed by Gary Lawrence Murphy
-    ?>
-    <p><strong><?php __('Duplicate File?') ?></strong></p>
-    <p><b><em><?php printf(__("The filename '%s' already exists!"), $img1_name); ?></em></b></p>
-    <p> <?php printf(__("Filename '%1\$s' moved to '%2\$s'"), $img1, "$pathtofile2 - $img2_name") ?></p>
-    <p><?php _e('Confirm or rename:') ?></p>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo  get_settings('fileupload_maxk') *1024 ?>" />
-    <input type="hidden" name="img1_type" value="<?php echo $img1_type;?>" />
-    <input type="hidden" name="img1_name" value="<?php echo $img2_name;?>" />
-    <input type="hidden" name="img1_size" value="<?php echo $img1_size;?>" />
-    <input type="hidden" name="img1" value="<?php echo $pathtofile2;?>" />
-    <input type="hidden" name="thumbsize" value="<?php echo $_REQUEST['thumbsize'];?>" />
-    <input type="hidden" name="imgthumbsizecustom" value="<?php echo $_REQUEST['imgthumbsizecustom'];?>" />
-    <?php _e('Alternate name:') ?><br /><input type="text" name="imgalt" size="30" class="uploadform" value="<?php echo $img2_name;?>" /><br />
-    <br />
-    <?php _e('Description:') ?><br /><input type="text" name="imgdesc" size="30" class="uploadform" value="<?php echo $imgdesc;?>" />
-    <br />
-    <input type="submit" name="submit" value="<?php _e('Rename') ?>" class="search" />
-    </form>
-</div>
-<?php 
-
-require('admin-footer.php');
-die();
-
-    }
-
-    if (!strlen($imgalt)) {
-        @$moved = move_uploaded_file($img1, $pathtofile); //Path to your images directory, chmod the dir to 777
-        // move_uploaded_file() can fail if open_basedir in PHP.INI doesn't
-        // include your tmp directory. Try copy instead?
-        if(!$moved) {
-            $moved = copy($img1, $pathtofile);
-        }
-        // Still couldn't get it. Give up.
-        if (!$moved) {
-            die(sprintf(__("Couldn't upload your file to %s."), $pathtofile));
-        } else {
-			chmod($pathtofile, 0666);
-            @unlink($img1);
-        }
-        
-    } else {
-        rename($img1, $pathtofile)
-        or die(sprintf(__("Couldn't upload your file to %s."), $pathtofile));
-    }
-    
-    if($_POST['thumbsize'] != 'none' ) {
-        if($_POST['thumbsize'] == 'small') {
-            $max_side = 200;
-        }
-        elseif($_POST['thumbsize'] == 'large') {
-            $max_side = 400;
-        }
-        elseif($_POST['thumbsize'] == 'custom') {
-            $max_side = intval($_POST['imgthumbsizecustom']);
-        }
-        
-        $result = wp_create_thumbnail($pathtofile, $max_side, NULL);
-        if($result != 1) {
-            print $result;
-        }
-    }
-
-if ( ereg('image/',$img1_type) )
-	$piece_of_code = "<img src='" . get_settings('fileupload_url') ."/$img1_name' alt='$imgdesc' />";
-else
-	$piece_of_code = "<a href='". get_settings('fileupload_url') . "/$img1_name' title='$imgdesc'>$imgdesc</a>";
-
-$piece_of_code = htmlspecialchars( $piece_of_code );
-?>
-
-<h3><?php _e('File uploaded!') ?></h3>
-<p><?php printf(__("Your file <code>%s</code> was uploaded successfully!"), $img1_name); ?></p>
-<p><?php _e('Here&#8217;s the code to display it:') ?></p>
-<p><code><?php echo $piece_of_code; ?></code>
-</p>
-<p><strong><?php _e('Image Details') ?></strong>: <br />
-Name:
-<?php echo $img1_name; ?>
-<br />
-<?php _e('Size:') ?>
-<?php echo round($img1_size / 1024, 2); ?> <?php _e('<abbr title="Kilobyte">KB</abbr>') ?><br />
-<?php _e('Type:') ?>
-<?php echo $img1_type; ?>
-</p>
-</div>
-<p><a href="upload.php"><?php _e('Upload another') ?></a></p>
-<?php
-break;
 }
-include('admin-footer.php');
+
+if ( 'inline' == $style ) : ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
+<head>
+<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
+<title><?php bloginfo('name') ?> &rsaquo; <?php _e('Uploads'); ?> &#8212; WordPress</title>
+<link rel="stylesheet" href="<?php echo get_option('siteurl') ?>/wp-admin/wp-admin.css?version=<?php bloginfo('version'); ?>" type="text/css" />
+<?php if ( ('rtl' == $wp_locale->text_direction) ) : ?>
+<link rel="stylesheet" href="<?php echo get_option('siteurl') ?>/wp-admin/rtl.css?version=<?php bloginfo('version'); ?>" type="text/css" />
+<?php endif; ?> 
+<script type="text/javascript">
+//<![CDATA[
+function addLoadEvent(func) {if ( typeof wpOnload!='function'){wpOnload=func;}else{ var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}}
+//]]>
+</script>
+<?php do_action('admin_print_scripts'); wp_upload_admin_head(); ?>
+</head>
+<body>
+<?php
+else :
+	add_action( 'admin_head', 'wp_upload_admin_head' );
+	include_once('admin-header.php');
 ?>
+	<div class='wrap'>
+	<h2><?php _e('Uploads'); ?></h2>
+<?php
+endif;
+
+echo "<ul id='upload-menu'>\n";
+foreach ( $wp_upload_tabs as $t => $tab_array ) { // We've already done the current_user_can check
+	$href = add_query_arg( array('tab' => $t, 'ID' => '', 'action' => '', 'paged' => '') );
+	if ( isset($tab_array[4]) && is_array($tab_array[4]) )
+		$href = add_query_arg( $tab_array[4], $href );
+	$_href = clean_url( $href);
+	$page_links = '';
+	$class = 'upload-tab alignleft';
+	if ( $tab == $t ) {
+		$class .= ' current';
+		if ( $tab_array[3] ) {
+			if ( is_array($tab_array[3]) ) {
+				$total = $tab_array[3][0];
+				$per = $tab_array[3][1];
+			} else {
+				$total = $tab_array[3];
+				$per = 10;
+			}
+			$page_links = paginate_links( array(
+				'base' => add_query_arg( 'paged', '%#%' ),
+				'format' => '',
+				'total' => ceil($total / $per),
+				'current' => $paged ? $paged : 1,
+				'prev_text' => '&laquo;',
+				'next_text' => '&raquo;'
+			));
+			if ( $page_links )
+				$page_links = "<span id='current-tab-nav'>: $page_links</span>";
+		}
+	}
+
+	echo "\t<li class='$class'><a href='$_href' class='upload-tab-link' title='{$tab_array[0]}'>{$tab_array[0]}</a>$page_links</li>\n";
+}
+unset($t, $tab_array, $href, $_href, $page_links, $total, $per, $class);
+echo "</ul>\n\n";
+
+echo "<div id='upload-content' class='$tab'>\n";
+
+call_user_func( $wp_upload_tabs[$tab][2] );
+
+echo "</div>\n";
+
+if ( 'inline' != $style ) :
+	echo "<div class='clear'></div></div>";
+	include_once('admin-footer.php');
+else : ?>
+<script type="text/javascript">if(typeof wpOnload=='function')wpOnload();</script>
+
+</body>
+</html>
+<?php endif; ?>
