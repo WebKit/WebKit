@@ -1,3 +1,26 @@
+2007-06-04  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13986
+        Cairo graphics fixes and cleanups
+
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::surface): Provide surface() accessor.
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        (WebCore::AffineTransform::rotate): Convert from degrees to radians to
+        fix rotation.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect): Add save/restore.
+        (WebCore::GraphicsContext::rotate): Rename parameter to "radians" to
+        avoid further confusion.
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::boundingRect): The cairo_fill_extents() parameters do
+        not describe a point/size but rather the two control points of the
+        rectangular region.
+        (WebCore::Path::contains): Remove needless casts.
+
 2007-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

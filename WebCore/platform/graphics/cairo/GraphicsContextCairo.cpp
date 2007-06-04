@@ -132,6 +132,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
         return;
     
     cairo_t* context = m_data->context;
+    cairo_save(context);
+
     if (fillColor().alpha())
         fillRectSourceOver(context, rect, fillColor());
 
@@ -143,6 +145,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
         cairo_set_line_width(context, 1.0);
         cairo_stroke(context);
     }
+
+    cairo_restore(context);
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
@@ -729,11 +733,11 @@ void GraphicsContext::clipOut(const Path&)
     notImplemented();
 }
 
-void GraphicsContext::rotate(float angle)
+void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())
         return;
-    cairo_rotate(m_data->context, angle);
+    cairo_rotate(m_data->context, radians);
 }
 
 void GraphicsContext::scale(const FloatSize& size)

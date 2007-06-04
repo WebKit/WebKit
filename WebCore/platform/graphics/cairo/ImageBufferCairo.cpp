@@ -67,4 +67,10 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
+cairo_surface_t* ImageBuffer::surface() const
+{
+    return m_surface;
+}
+
+
 }

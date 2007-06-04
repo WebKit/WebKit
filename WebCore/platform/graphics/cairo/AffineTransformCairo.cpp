@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+static const double deg2rad = 0.017453292519943295769; // pi/180
+
 AffineTransform::AffineTransform()
 {
     cairo_matrix_init_identity(&m_transform);
@@ -206,7 +208,7 @@ AffineTransform &AffineTransform::scale(double sx, double sy)
 
 AffineTransform &AffineTransform::rotate(double d)
 {
-    cairo_matrix_rotate(&m_transform, d);
+    cairo_matrix_rotate(&m_transform, d * deg2rad);
     return *this;
 }
 

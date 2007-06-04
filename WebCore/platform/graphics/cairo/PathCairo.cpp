@@ -173,9 +173,9 @@ void Path::closeSubpath()
 FloatRect Path::boundingRect() const
 {
     cairo_t* cr = platformPath()->m_cr;
-    double x, y, w, h;
-    cairo_fill_extents(cr, &x, &y, &w, &h);
-    return FloatRect(x, y, w, h);
+    double x0, x1, y0, y1;
+    cairo_fill_extents(cr, &x0, &y0, &x1, &y1);
+    return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
@@ -183,7 +183,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     cairo_t* cr = platformPath()->m_cr;
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, rule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    bool contains = cairo_in_fill(cr, static_cast<double>(point.x()), static_cast<double>(point.y()));
+    bool contains = cairo_in_fill(cr, point.x(), point.y());
     cairo_set_fill_rule(cr, cur);
     return contains;
 }
