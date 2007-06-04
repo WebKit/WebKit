@@ -1,3 +1,15 @@
+2007-06-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6170
+        CSS1: Properties for :first-letter aren't recalculated on color change
+
+        Mark styles with first-letter as unique.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2007-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by David Harrison.

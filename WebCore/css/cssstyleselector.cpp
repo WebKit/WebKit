@@ -918,6 +918,10 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     if (e->isLink())
         style->setPseudoState(pseudoState);
 
+    // If we have first-letter pseudo style, do not share this style
+    if (style->hasPseudoStyle(RenderStyle::FIRST_LETTER))
+        style->setUnique();
+
     // Now return the style.
     return style;
 }

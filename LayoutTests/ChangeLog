@@ -1,3 +1,16 @@
+2007-06-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt.
+
+        Test for:
+        http://bugs.webkit.org/show_bug.cgi?id=6170
+        CSS1: Properties for :first-letter aren't recalculated on color change
+
+        * fast/css/first-letter-recalculation-expected.checksum: Added.
+        * fast/css/first-letter-recalculation-expected.png: Added.
+        * fast/css/first-letter-recalculation-expected.txt: Added.
+        * fast/css/first-letter-recalculation.html: Added.
+
 2007-05-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.
