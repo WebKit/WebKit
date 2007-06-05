@@ -1,3 +1,14 @@
+2007-06-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5245555> REGRESSION: HTTP header injection in XMLHttpRequest.setRequestHeader
+        <rdar://problem/5246208> HTTP injection in XMLHttpRequest.open method parameter
+        <rdar://problem/5246242> HTTP header injection in HXMLHttpRequest.setRequestHeader header parameter
+        
+        * fast/dom/xmlhttprequest-invalid-values-expected.txt: Added.
+        * fast/dom/xmlhttprequest-invalid-values.html: Added.
+
 2007-06-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Kimon Tsinteris.

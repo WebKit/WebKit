@@ -165,6 +165,35 @@ static bool canSetRequestHeader(const String& name)
     return !forbiddenHeaders.contains(name);
 }
 
+// Determines if a string is a valid token, as defined by
+// "token" in section 2.2 of RFC 2616.
+static bool isValidToken(const String& name)
+{
+    unsigned length = name.length();
+    for (unsigned i = 0; i < length; i++) {
+        UniChar c = name[i];
+        
+        if (c >= 127 || c <= 32)
+            return false;
+        
+        if (c == '(' || c == ')' || c == '<' || c == '>' || c == '@' ||
+            c == ',' || c == ';' || c == ':' || c == '\\' || c == '\"' ||
+            c == '/' || c == '[' || c == ']' || c == '?' || c == '=' ||
+            c == '{' || c == '}')
+            return false;
+    }
+    
+    return true;
+}
+    
+static bool isValidHeaderValue(const String& name)
+{
+    // FIXME: This should really match name against 
+    // field-value in section 4.2 of RFC 2616.
+        
+    return !name.contains("\r\n");
+}
+    
 XMLHttpRequestState XMLHttpRequest::getReadyState() const
 {
     return m_state;
@@ -358,6 +387,11 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
         return;
     }
 
+    if (!isValidToken(method)) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+    
     m_url = url;
 
     if (!user.isNull())
@@ -487,7 +521,7 @@ void XMLHttpRequest::overrideMIMEType(const String& override)
 {
     m_mimeTypeOverride = override;
 }
-
+    
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != Open) {
@@ -499,6 +533,11 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
         return;
     }
 
+    if (!isValidToken(name) || !isValidHeaderValue(value)) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+        
     if (!canSetRequestHeader(name)) {
         if (m_doc && m_doc->frame() && m_doc->frame()->page())
             m_doc->frame()->page()->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Refused to set unsafe header " + name, 1, String());

@@ -1,0 +1,71 @@
+<html>
+<script>
+function testInvalidMethod() {
+    var result = 'FAILURE';
+    
+    var req = new XMLHttpRequest();
+
+    try {
+        req.open('test\r\nfoobar', 'http://localhost', true)
+    } catch (e) {
+        if (e.code == DOMException.SYNTAX_ERR)
+            result = 'SUCCESS';
+    }
+    
+    debug('testInvalidMethod: ' + result);
+}
+
+function testInvalidHeaderName() {
+    var result = 'FAILURE';
+
+    var req = new XMLHttpRequest();
+    req.open('GET', 'http://localhost', true)
+    
+    try {
+        req.setRequestHeader("host:", "example.com");
+    } catch (e) {
+        if (e.code == DOMException.SYNTAX_ERR)
+            result = 'SUCCESS';
+    }
+    
+    debug('testInvalidHeaderName: ' + result);    
+}
+
+function testInvalidHeaderValue() {
+    var result = 'FAILURE';
+
+    var req = new XMLHttpRequest();
+    req.open('GET', 'http://localhost', true)
+    
+    try {
+        req.setRequestHeader("X-Hack", "Test\r\nHost: www.example.com\r\n\r\nGET / HTTP/1.1");
+    } catch (e) {
+        if (e.code == DOMException.SYNTAX_ERR)
+            result = 'SUCCESS';
+    }
+    
+    debug('testInvalidHeaderName: ' + result);    
+}
+
+function debug(str) {
+    var console = document.getElementById('console');
+    var li = document.createElement('li');
+    li.appendChild(document.createTextNode(str));
+    console.appendChild(li);
+}
+
+function runTest() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    testInvalidMethod();
+    testInvalidHeaderName();
+    testInvalidHeaderValue();
+}
+</script>
+<body onload="runTest()">
+    This tests that setting invalid header names, values and using an invalid method causes XMLHttpRequest to throw the appropriate exceptions.
+</body>
+<ul id="console">
+</ul>
+</html>
