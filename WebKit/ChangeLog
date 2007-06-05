@@ -1,3 +1,27 @@
+2007-06-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff and Justin.
+
+        Fix for <rdar://problem/5246941> Clicking URL field on 
+        Safari causes halt for a minute when using input methods.
+        and <rdar://problem/5245964> Safari hangs for several 
+        seconds when trying to select text using mouse
+        
+        This is a by product of the textStorage hack used to fix 
+        rdar://problem/5000470 -- TSM calls textStorage repeatedly
+        when changing focus, on certain mouse events, etc.  If there
+        is no selection/editable region we repeatedly create an     
+        NSAttributedString from the full document.  If the document is
+        sufficiently long this starts consuming an inordinate amount of 
+        time.
+        
+        This check should really have been present in the original 
+        patch.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView textStorage]):
+
 2007-05-31  David Hyatt  <hyatt@apple.com>
 
         Fix for 11768, Flash plugin does not respect clips set by CSS.

@@ -5907,6 +5907,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSAttributedString *)textStorage
 {
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame || coreFrame->selectionController()->isNone() 
+        || !coreFrame->selectionController()->isContentEditable())
+        return nil;
     NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
     // We have to return an empty string rather than null to prevent TSM from calling -string
     return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
