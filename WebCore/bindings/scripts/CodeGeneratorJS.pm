@@ -477,7 +477,7 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         push(@headerContent, "private:\n");
         push(@headerContent, "    static KJS::JSValue* nameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
-        push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const AtomicString&);\n")
+        push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const KJS::Identifier&);\n")
     }
 
     push(@headerContent, "};\n\n");

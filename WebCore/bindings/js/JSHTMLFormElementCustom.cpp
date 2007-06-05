@@ -33,7 +33,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* form, const AtomicString& propertyName)
+bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* form, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     form->getNamedElements(propertyName, namedItems);

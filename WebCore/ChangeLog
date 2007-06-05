@@ -1,3 +1,31 @@
+2007-06-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Optimize JSCSSStyleDeclaration after performance regression in r21854.
+
+        - Check static table before name getter in JSCSSStyleDeclaration::getOwnPropertySlot()
+        - Get rid of a string allocation by keeping string as KJS::Identifier for canGetItemsForName()
+          functions.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::canGetItemsForName):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::canGetItemsForName):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::canGetItemsForName):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::canGetItemsForName):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::canGetItemsForName):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::canGetItemsForName):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSStyleDeclaration.idl:
+
 2007-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed, tweaked and landed by Anders.

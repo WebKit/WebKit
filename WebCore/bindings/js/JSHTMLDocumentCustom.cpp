@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace KJS;
 using namespace HTMLNames;
 
-bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* doc, const AtomicString& propertyName)
+bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* doc, const Identifier& propertyName)
 {
     return doc->hasNamedItem(propertyName) || doc->hasDocExtraNamedItem(propertyName);
 }

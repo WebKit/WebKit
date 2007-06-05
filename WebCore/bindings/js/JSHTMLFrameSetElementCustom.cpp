@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace KJS;
 using namespace HTMLNames;
 
-bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* frameSet, const AtomicString& propertyName)
+bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* frameSet, const Identifier& propertyName)
 {
     Node* frame = frameSet->children()->namedItem(propertyName);
     return frame && frame->hasTagName(frameTag);

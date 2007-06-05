@@ -54,7 +54,7 @@ JSValue* JSHTMLEmbedElement::callAsFunction(ExecState* exec, JSObject* thisObj, 
     return runtimeObjectCallAsFunction(exec, thisObj, args, static_cast<HTMLElement*>(impl()));
 }
 
-bool JSHTMLEmbedElement::canGetItemsForName(ExecState*, HTMLEmbedElement*, const AtomicString& propertyName)
+bool JSHTMLEmbedElement::canGetItemsForName(ExecState*, HTMLEmbedElement*, const Identifier& propertyName)
 {
     return propertyName == "__apple_runtime_object";
 }

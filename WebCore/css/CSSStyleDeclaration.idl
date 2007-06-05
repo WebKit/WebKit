@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor, CustomPutFunction, HasOverridingNameGetter, HasIndexGetter] CSSStyleDeclaration {
+    interface [GenerateConstructor, CustomPutFunction, HasNameGetter, HasIndexGetter] CSSStyleDeclaration {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
                      setter raises(DOMException);
 

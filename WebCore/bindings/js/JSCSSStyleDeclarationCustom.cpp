@@ -75,9 +75,9 @@ static bool isCSSPropertyName(const Identifier& propertyName)
     return CSSStyleDeclaration::isPropertyName(cssPropertyName(propertyName));
 }
 
-bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*, const AtomicString& propertyName)
+bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*, const Identifier& propertyName)
 {
-    return isCSSPropertyName(propertyName.domString());
+    return isCSSPropertyName(propertyName);
 }
 
 JSValue* JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
