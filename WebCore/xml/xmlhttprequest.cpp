@@ -171,7 +171,7 @@ static bool isValidToken(const String& name)
 {
     unsigned length = name.length();
     for (unsigned i = 0; i < length; i++) {
-        UniChar c = name[i];
+        UChar c = name[i];
         
         if (c >= 127 || c <= 32)
             return false;

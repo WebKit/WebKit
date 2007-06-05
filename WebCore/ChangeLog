@@ -1,5 +1,12 @@
 2007-06-05  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * xml/xmlhttprequest.cpp:
+        (WebCore::isValidToken):
+
+2007-06-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/5245555> REGRESSION: HTTP header injection in XMLHttpRequest.setRequestHeader
