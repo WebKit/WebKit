@@ -1,3 +1,15 @@
+2007-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed, tweaked and landed by Anders.
+
+        <rdar://problem/5247178> REGRESSION: With CSS Edit 2.5, a crash occurs at WebCore::DeprecatedString::DeprecatedString when page fails to be extracted
+        
+        Null check the provisional document loader. If an application stops the load 
+        inside of the didFailProvisionalLoad delegate method, the provisional document loader will be nulled out.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2007-06-04  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Anders.
