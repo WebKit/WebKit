@@ -536,7 +536,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 - (NSRect)_windowClipRect
 {
     WebCore::RenderObject* renderer = [self _element]->renderer();
-    if (renderer) {
+    if (renderer && renderer->view()) {
         WebCore::FrameView* frameView = renderer->view()->frameView();
         if (!frameView)
             return WebCore::IntRect();

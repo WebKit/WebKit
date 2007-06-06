@@ -1,3 +1,13 @@
+2007-06-06  David Hyatt  <hyatt@apple.com>
+
+        Bulletproof windowClipRect, since it can be called at crazy times.
+        Part of fix for 13972.
+
+        Reviewed by olliej
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _windowClipRect]):
+
 2007-06-05  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Dave Hyatt.
