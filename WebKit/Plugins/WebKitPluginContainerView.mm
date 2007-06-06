@@ -54,5 +54,10 @@
     return NSIntersectionRect([self convertRect:[_element _windowClipRect] fromView:nil], [super visibleRect]);
 }
 
+- (id)objectForWebScript
+{
+    return [[[self subviews] objectAtIndex: 0] objectForWebScript];
+}
+
 @end
 

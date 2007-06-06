@@ -1,5 +1,16 @@
 2007-06-06  David Hyatt  <hyatt@apple.com>
 
+        Make sure to hand back a script object for webkit plugins (the container
+        view forwards to its plugin child).
+
+        Reviewed by sullivan
+
+        * Plugins/WebKitPluginContainerView.h:
+        * Plugins/WebKitPluginContainerView.mm:
+        (-[WebKitPluginContainerView objectForWebScript]):
+
+2007-06-06  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 13972, quicktime doesn't respect CSS clip and overflow properties.
         Make sure that calls to [NSView visibleRect] will do the right thing for both
         Netscape plugins and WebKit plugins.

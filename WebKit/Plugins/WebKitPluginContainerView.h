@@ -38,4 +38,6 @@
 - (id)initWithFrame:(NSRect)r
          DOMElement:(DOMElement *)anElement;
 
+- (id)objectForWebScript;
+
 @end
