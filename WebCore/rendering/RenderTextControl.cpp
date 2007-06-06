@@ -35,6 +35,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PlatformScrollbar.h"
 #include "RenderTheme.h"
 #include "SearchPopupMenu.h"
 #include "SelectionController.h"
@@ -598,11 +599,11 @@ void RenderTextControl::calcHeight()
     }
     toAdd += innerToAdd;
 
-    // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
+    // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
     int scrollbarSize = 0;
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
     if (m_innerText->renderer()->style()->overflowX() == OSCROLL ||  (m_innerText->renderer()->style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
-        scrollbarSize = 15;
+        scrollbarSize = PlatformScrollbar::horizontalScrollbarHeight();
 
     m_height = line * rows + toAdd + scrollbarSize;
 
@@ -720,9 +721,9 @@ void RenderTextControl::calcPrefWidths()
         int scrollbarSize = 0;
         if (m_multiLine) {
             factor = static_cast<HTMLTextAreaElement*>(node())->cols();
-            // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
+            // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
             if (m_innerText->renderer()->style()->overflowY() != OHIDDEN)
-                scrollbarSize = 15;
+                scrollbarSize = PlatformScrollbar::verticalScrollbarWidth();
         } else {
             factor = static_cast<HTMLInputElement*>(node())->size();
             if (factor <= 0)

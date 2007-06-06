@@ -1,9 +1,19 @@
+2007-06-05  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=14008
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::calcPrefWidths):
+
 2007-06-05  Kevin McCullough  <kmccullough@apple.com>
-        Reviewed by.
 
         - Respelling Oliver's name right.
 
 2007-06-05  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Mark and Oliver.
 
         - http://bugs.webkit.org/show_bug.cgi?id=13352  REGRESSION: Gmail hangs on send message.
