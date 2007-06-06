@@ -1,3 +1,19 @@
+2007-06-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13988
+        Bug 13988: Colon in file path crashes WebKit Nightly
+
+        The WebKit launcher makes use of two `dyld' variables to coerce Safari into running with
+        the bundled WebKit framework.  Both of these variables are interpreted as containing a
+        colon-delimited list of paths.  There is no escaping mechanism defined, so if we detect
+        a path with a colon in it we need to bail out to prevent `dyld' from throwing an error
+        when we execute Safari.
+
+        * WebKitLauncher/main.m:
+        (main):
+
 2007-06-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders.

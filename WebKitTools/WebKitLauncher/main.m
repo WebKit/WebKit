@@ -139,6 +139,11 @@ int main(int argc, char *argv[])
     NSString *executablePath = [safariBundle executablePath];
     NSString *frameworkPath = [[NSBundle mainBundle] resourcePath];
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
+
+    if ([frameworkPath rangeOfString:@":"].location != NSNotFound ||
+        [pathToEnablerLib rangeOfString:@":"].location != NSNotFound)
+        displayErrorAndQuit(@"Unable to launch Safari",
+                            @"WebKit is located at a path containing an unsupported character.  Please move WebKit to a different location and try again.");
     
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:executablePath, @"-WebKitDeveloperExtras", @"YES", @"-WebKitScriptDebuggerEnabled", @"YES", nil];
     NSMutableDictionary *environment = [NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH", @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH",
