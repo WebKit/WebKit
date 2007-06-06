@@ -59,6 +59,7 @@ macx {
     INCLUDEPATH += /usr/include/libxml2
     LIBS += -lxml2 -lxslt
 }
+
 qt-port {
 INCLUDEPATH += \
                 $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/ \
@@ -133,17 +134,6 @@ SVGCSSPROPERTIES = $$PWD/ksvg2/css/CSSPropertyNames.in
 SVGCSSVALUES = $$PWD/ksvg2/css/CSSValueKeywords.in
 
 STYLESHEETS_EMBED = $$PWD/css/html4.css
-
-MANUALMOC =
-qt-port:MANUALMOC += \
-    $$PWD/platform/qt/QWebPopup.h \
-    $$PWD/platform/qt/SharedTimerQt.h \
-    $$PWD/../WebKitQt/Api/qwebframe.h \
-    $$PWD/../WebKitQt/Api/qwebpage.h \
-    $$PWD/../WebKitQt/Api/qwebnetworkinterface.h \
-    $$PWD/../WebKitQt/Api/qwebnetworkinterface_p.h \
-    $$PWD/../WebKitQt/Api/qcookiejar.h \
-    $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
 LUT_FILES += \
     bindings/js/JSXMLHttpRequest.cpp \
@@ -714,6 +704,18 @@ SOURCES += \
     xml/XSLStyleSheet.cpp \
     xml/XSLTProcessor.cpp
 
+qt-port:HEADERS += \
+    $$PWD/platform/qt/QWebPopup.h \
+    $$PWD/platform/qt/SharedTimerQt.h \
+    $$PWD/../WebKitQt/Api/qwebframe.h \
+    $$PWD/../WebKitQt/Api/qwebpage.h \
+    $$PWD/../WebKitQt/Api/qwebnetworkinterface.h \
+    $$PWD/../WebKitQt/Api/qwebnetworkinterface_p.h \
+    $$PWD/../WebKitQt/Api/qwebobjectplugin.h \
+    $$PWD/../WebKitQt/Api/qwebobjectplugin_p.h \
+    $$PWD/../WebKitQt/Api/qcookiejar.h \
+    $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
+
 qt-port:SOURCES += \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
@@ -781,7 +783,8 @@ qt-port:SOURCES += \
     ../WebKitQt/Api/qcookiejar.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebpagehistory.cpp \
-    ../WebKitQt/Api/qwebsettings.cpp
+    ../WebKitQt/Api/qwebsettings.cpp \
+    ../WebKitQt/Api/qwebobjectplugin.cpp 
 
 gdk-port:SOURCES += \
         platform/TextCodecICU.cpp \
@@ -1387,13 +1390,6 @@ stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
 stylesheets.clean = ${QMAKE_FILE_OUT} tmp/UserAgentStyleSheets.h
 QMAKE_EXTRA_COMPILERS += stylesheets
-
-# GENERATOR M
-manual_moc.output = tmp/${QMAKE_FILE_BASE}.moc
-manual_moc.commands = $$QMAKE_MOC ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
-manual_moc.input = MANUALMOC
-manual_moc.CONFIG += target_predeps no_link
-QMAKE_EXTRA_COMPILERS += manual_moc
 
 # GENERATOR 10: XPATH grammar
 xpathbison.output = tmp/${QMAKE_FILE_BASE}.cpp

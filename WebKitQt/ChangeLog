@@ -1,3 +1,37 @@
+2007-06-06  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Add an API to create and load plugins.
+        Don't include moc files by hand anymore, rather let
+        qmake handle them.
+
+        * Api/qcookiejar.cpp:
+        (QCookieJar::cookieJar):
+        * Api/qwebframe.cpp:
+        (QWebFrame::scrollContentsBy):
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebobjectplugin.cpp: Added.
+        (QWebFactoryLoader::QWebFactoryLoader):
+        (QWebFactoryLoader::self):
+        (QWebFactoryLoader::mimeTypeForExtension):
+        (QWebFactoryLoader::create):
+        (QWebObjectPlugin::QWebObjectPlugin):
+        (QWebObjectPlugin::~QWebObjectPlugin):
+        (QWebObjectPlugin::extensionsForMimetype):
+        * Api/qwebobjectplugin.h: Added.
+        * Api/qwebobjectplugin_p.h: Added.
+        (QWebFactoryLoader::mimeTypes):
+        (QWebFactoryLoader::extensions):
+        (QWebFactoryLoader::supportsMimeType):
+        * Api/qwebpage.cpp:
+        (QWebPage::settings):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2007-05-28  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by andersca and simon

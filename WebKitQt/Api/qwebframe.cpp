@@ -322,5 +322,3 @@ void QWebFrame::scrollContentsBy(int dx, int dy)
 {
     viewport()->scroll(dx, dy);
 }
-
-#include "qwebframe.moc"

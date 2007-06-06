@@ -29,7 +29,9 @@
 #include "MimeTypeRegistry.h"
 #include "NotImplemented.h"
 
-namespace WebCore 
+#include "qwebobjectplugin_p.h"
+
+namespace WebCore
 {
 
 struct ExtensionMap {
@@ -40,7 +42,7 @@ static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
     { "gif", "image/gif" },
     { "html", "text/html" },
-    { "ico", "image/x-icon" },   
+    { "ico", "image/x-icon" },
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },
     { "js", "application/x-javascript" },
@@ -63,18 +65,22 @@ static const ExtensionMap extensionMap [] = {
     { "xhtml", "application/xhtml+xml" },
     { 0, 0 }
 };
-    
+
 String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     String s = ext.lower();
+
     const ExtensionMap *e = extensionMap;
     while (e->extension) {
         if (s == e->extension)
             return e->mimeType;
         ++e;
     }
-    // unknown, let's just assume plain text
-    return "text/plain";
+    QString type = QWebFactoryLoader::self()->mimeTypeForExtension(ext);
+    if (!type.isEmpty())
+        return type;
+
+    return "application/octet-stream";
 }
 
 }

@@ -103,6 +103,3 @@ QCookieJar *QCookieJar::cookieJar()
     }
     return gJar;
 }
-
-
-#include "qcookiejar.moc"

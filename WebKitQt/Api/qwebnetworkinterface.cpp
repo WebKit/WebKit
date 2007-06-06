@@ -793,6 +793,3 @@ HostInfo::HostInfo(const QUrl& url)
     }
 }
 
-#include "qwebnetworkinterface_p.moc"
-#include "qwebnetworkinterface.moc"
-

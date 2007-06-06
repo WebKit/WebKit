@@ -23,8 +23,6 @@
 #include <QCoreApplication>
 #include <QMouseEvent>
 
-#include "QWebPopup.moc"
-
 namespace WebCore {
 
 QWebPopup::QWebPopup(PopupMenuClient* client)
