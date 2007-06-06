@@ -1,6 +1,10 @@
 2007-06-05  Kevin McCullough  <kmccullough@apple.com>
+        Reviewed by.
 
-        Reviewed by Mark and Olliver.
+        - Respelling Oliver's name right.
+
+2007-06-05  Kevin McCullough  <kmccullough@apple.com>
+        Reviewed by Mark and Oliver.
 
         - http://bugs.webkit.org/show_bug.cgi?id=13352  REGRESSION: Gmail hangs on send message.
         - Now we don't hang, but we do so by avoiding certain legitimate characters, the evangelism bug for this is: <rdar://problem/5252577> gmail does not accept legal characters in the form boundary
