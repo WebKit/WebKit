@@ -49,6 +49,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitPluginContainerView.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSAttributedStringExtras.h"
@@ -2438,15 +2439,14 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     [super addSubview:view];
 
-    if ([WebPluginController isPlugInView:view]) {
-        [[self _pluginController] addPlugin:view];
-    }
+    if ([view isKindOfClass:[WebKitPluginContainerView class]])
+        [[self _pluginController] addPlugin:[[view subviews] objectAtIndex:0]];
 }
 
 - (void)willRemoveSubview:(NSView *)subview
 {
-    if ([WebPluginController isPlugInView:subview])
-        [[self _pluginController] destroyPlugin:subview];
+    if ([subview isKindOfClass:[WebKitPluginContainerView class]])
+        [[self _pluginController] destroyPlugin:[[subview subviews] objectAtIndex:0]];
     [super willRemoveSubview:subview];
 }
 

@@ -275,8 +275,11 @@ static void cancelOutstandingCheck(const void *item, void *context)
             [aView pluginDestroy];
         }
         [pluginViews removeObject:aView];
+        
+        // Remove the containing view.
+        [[aView superview] removeFromSuperviewWithoutNeedingDisplay];
     }
-    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
+
     [_views release];
     _views = nil;
 

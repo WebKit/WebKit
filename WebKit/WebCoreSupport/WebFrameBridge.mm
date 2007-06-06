@@ -50,6 +50,7 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitPluginContainerView.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebKitSystemBits.h"
 #import "WebLocalizableStrings.h"
@@ -417,9 +418,16 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
-    
+    [view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
     [attributes release];
-    return view;
+    
+    WebKitPluginContainerView* containerView = [[[WebKitPluginContainerView alloc] initWithFrame:NSZeroRect DOMElement:element] autorelease];
+    [view setFrame:NSZeroRect];
+    [containerView setAutoresizesSubviews:YES];
+    [containerView addSubview:view];
+    
+    return containerView;
 }
 
 - (NSString *)valueForKey:(NSString *)key keys:(NSArray *)keys values:(NSArray *)values

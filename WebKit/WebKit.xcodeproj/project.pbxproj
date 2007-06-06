@@ -275,6 +275,8 @@
 		A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */; };
 		A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
+		BCDFA8F90C10B6F500D3A10C /* WebKitPluginContainerView.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */; };
+		BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
@@ -502,6 +504,8 @@
 		A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardHelper.h; sourceTree = "<group>"; };
 		A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardHelper.mm; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitPluginContainerView.h; sourceTree = "<group>"; };
+		BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitPluginContainerView.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSURLExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -863,9 +867,11 @@
 				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
 				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */,
 				F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */,
+				BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */,
 				2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */,
 				931A72D203265920008635CE /* WebBaseNetscapePluginViewPrivate.h */,
 				F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */,
+				BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */,
 				84D4BFF70348EF7600CA2ACA /* WebNetscapePluginEmbeddedView.h */,
 				84D4BFF80348EF7600CA2ACA /* WebNetscapePluginEmbeddedView.mm */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
@@ -1280,6 +1286,7 @@
 				A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */,
 				EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */,
 				5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */,
+				BCDFA8F90C10B6F500D3A10C /* WebKitPluginContainerView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1526,6 +1533,7 @@
 				A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */,
 				A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */,
 				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
+				BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
