@@ -79,6 +79,10 @@ typedef float CGFloat;
 #define WTF_USE_NPOBJECT 1
 #endif
 
+#if PLATFORM(QT)
+#define WTF_USE_NPOBJECT 1
+#endif
+
 #if PLATFORM(SYMBIAN)
 #define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
 #define WTF_USE_NPOBJECT 1

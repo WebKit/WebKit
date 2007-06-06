@@ -28,11 +28,11 @@
 #include "HTMLFrameOwnerElement.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-#include <JavaScriptCore/runtime.h>
+#include <bindings/runtime.h>
 #endif
 
 #if USE(NPOBJECT)
-#include <JavaScriptCore/npruntime.h>
+#include <bindings/npruntime.h>
 #endif
 
 namespace WebCore {

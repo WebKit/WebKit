@@ -37,9 +37,9 @@
 #include "kjs_proxy.h"
 
 #if USE(NPOBJECT)
-#include <JavaScriptCore/NP_jsobject.h>
-#include <JavaScriptCore/npruntime_impl.h>
-#include <JavaScriptCore/runtime_root.h>
+#include <bindings/NP_jsobject.h>
+#include <bindings/npruntime_impl.h>
+#include <bindings/runtime_root.h>
 #endif
 
 using KJS::ExecState;

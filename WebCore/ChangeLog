@@ -1,3 +1,17 @@
+2007-06-06  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Maciej.
+
+        Define WTF_USE_NPOBJECT for Qt. Fix includes
+        in HTMLPluginElement and add proper forwarding headers
+        from JavaScriptCore.
+
+        * ForwardingHeaders/bindings/npruntime.h: Added.
+        * ForwardingHeaders/bindings/runtime.h: Added.
+        * config.h:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPlugInElement.h:
+
 2007-06-06  David Hyatt  <hyatt@apple.com>
 
         Bulletproof windowClipRect, since it can be called at crazy times.
