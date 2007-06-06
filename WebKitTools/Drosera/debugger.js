@@ -668,9 +668,11 @@ function switchFile(fileIndex)
 {
     var filesSelect = document.getElementById("files");
     
-    if (fileIndex === undefined) fileIndex = filesSelect.selectedIndex;
-    loadFile(filesSelect.options[fileIndex].value, true);
+    if (fileIndex === undefined) 
+        fileIndex = filesSelect.selectedIndex;
+    
     fileClicked(filesSelect.options[fileIndex].value, false);
+    loadFile(filesSelect.options[fileIndex].value, true);    
 }
 
 function syntaxHighlight(code, file)
@@ -1196,8 +1198,10 @@ function fileBrowserMouseEvents(event)
 
 function fileClicked(fileId, shouldLoadFile)
 {
-    if (shouldLoadFile === undefined) shouldLoadFile = true;
-    if (currentFile != -1) document.getElementById(currentFile).className = "passive";
+    if (shouldLoadFile === undefined) 
+        shouldLoadFile = true;
+    if (currentFile != -1) 
+        document.getElementById(currentFile).className = "passive";
     document.getElementById(fileId).className = "active";
     if (shouldLoadFile) 
         loadFile(fileId, false);

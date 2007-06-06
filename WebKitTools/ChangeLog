@@ -1,3 +1,14 @@
+2007-06-06  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Mark Rowe.
+
+        Fixes Bug 13996: http://bugs.webkit.org/show_bug.cgi?id=13996
+        [Drosera] Items in the file list don't get un-highlighted when 
+        files are selected from the file drop-down
+
+        * Drosera/debugger.js: currentFile was getting modified before file in the file
+        browser got un-highlighted. Changed the order in which the functions execute. 
+
 2007-06-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
