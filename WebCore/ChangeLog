@@ -1,3 +1,9 @@
+2007-06-06  Mark Rowe  <mrowe@apple.com>
+
+        Qt build fix.
+
+        * rendering/RenderTextControl.cpp: Fix case of #include filename.
+
 2007-06-06  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Maciej.
