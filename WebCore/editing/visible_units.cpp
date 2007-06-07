@@ -432,7 +432,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         containingBlock->absolutePositionForContent(absx, absy);
         if (containingBlock->hasOverflowClip())
             containingBlock->layer()->subtractScrollOffset(absx, absy);
-        RenderObject *renderer = root->closestLeafChildForXPos(x - absx)->object();
+        RenderObject *renderer = root->closestLeafChildForXPos(x - absx, isEditablePosition(p))->object();
         Node* node = renderer->element();
         if (editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());
@@ -502,7 +502,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         containingBlock->absolutePositionForContent(absx, absy);
         if (containingBlock->hasOverflowClip())
             containingBlock->layer()->subtractScrollOffset(absx, absy);
-        RenderObject *renderer = root->closestLeafChildForXPos(x - absx)->object();
+        RenderObject *renderer = root->closestLeafChildForXPos(x - absx, isEditablePosition(p))->object();
         Node* node = renderer->element();
         if (editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());

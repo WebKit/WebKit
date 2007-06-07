@@ -120,7 +120,7 @@ public:
     int selectionBottom() { return m_overflow ? m_overflow->m_selectionBottom : m_y + m_height; }
     int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
 
-    InlineBox* closestLeafChildForXPos(int x);
+    InlineBox* closestLeafChildForXPos(int x, bool onlyEditableLeaves = false);
 
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content

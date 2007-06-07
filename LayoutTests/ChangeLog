@@ -1,3 +1,14 @@
+2007-06-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4889598> Problems with moveDown: and moveUp: in Notes with ToDos
+
+        * editing/selection/4889598-expected.checksum: Added.
+        * editing/selection/4889598-expected.png: Added.
+        * editing/selection/4889598-expected.txt: Added.
+        * editing/selection/4889598.html: Added.
+
 2007-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Hyatt.

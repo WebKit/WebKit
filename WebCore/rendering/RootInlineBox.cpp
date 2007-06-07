@@ -315,27 +315,34 @@ RenderBlock* RootInlineBox::block() const
     return static_cast<RenderBlock*>(m_object);
 }
 
-InlineBox* RootInlineBox::closestLeafChildForXPos(int x)
+bool isEditableLeaf(InlineBox* leaf)
+{
+    return leaf && leaf->object() && leaf->object()->element() && leaf->object()->element()->isContentEditable();
+}
+
+InlineBox* RootInlineBox::closestLeafChildForXPos(int x, bool onlyEditableLeaves)
 {
     InlineBox* firstLeaf = firstLeafChildAfterBox();
     InlineBox* lastLeaf = lastLeafChildBeforeBox();
-    if (firstLeaf == lastLeaf)
+    if (firstLeaf == lastLeaf && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
         return firstLeaf;
 
     // Avoid returning a list marker when possible.
-    if (x <= firstLeaf->m_x && !firstLeaf->object()->isListMarker())
+    if (x <= firstLeaf->m_x && !firstLeaf->object()->isListMarker() && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
         // The x coordinate is less or equal to left edge of the firstLeaf.
         // Return it.
         return firstLeaf;
 
-    if (x >= lastLeaf->m_x + lastLeaf->m_width && !lastLeaf->object()->isListMarker())
+    if (x >= lastLeaf->m_x + lastLeaf->m_width && !lastLeaf->object()->isListMarker() && (!onlyEditableLeaves || isEditableLeaf(lastLeaf)))
         // The x coordinate is greater or equal to right edge of the lastLeaf.
         // Return it.
         return lastLeaf;
 
+    InlineBox* closestLeaf = lastLeaf;
     for (InlineBox* leaf = firstLeaf; leaf && leaf != lastLeaf; leaf = leaf->nextLeafChild()) {
-        if (!leaf->object()->isListMarker()) {
+        if (!leaf->object()->isListMarker() && (!onlyEditableLeaves || isEditableLeaf(leaf))) {
             int leafX = leaf->m_x;
+            closestLeaf = leaf;
             if (x < leafX + leaf->m_width)
                 // The x coordinate is less than the right edge of the box.
                 // Return it.
@@ -343,7 +350,7 @@ InlineBox* RootInlineBox::closestLeafChildForXPos(int x)
         }
     }
 
-    return lastLeaf;
+    return closestLeaf;
 }
 
 void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiStatus* status, BidiContext* context)

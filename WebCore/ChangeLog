@@ -1,3 +1,27 @@
+2007-06-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/4889598> Problems with moveDown: and moveUp: in Notes with ToDos
+        
+        The caret would disappear when moving from content above or below
+        a ToDo if that ToDo doesn't have any content in it with the same
+        x position as the caret. That's because closestLeafChildForXPos
+        would return non-editable leaves, and which turn into non-editable
+        VisiblePositions, which are invisible.
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition): Ask closestLeafForXPos to only
+        return editable leaves.
+        (WebCore::nextLinePosition): Ditto.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::isEditableLeaf): Added.
+        (WebCore::RootInlineBox::closestLeafChildForXPos): If requested,
+        return the closest editable leaf. Removed an early return if the
+        position is before the first leaf, it's not really much of an
+        optimization.
+        * rendering/RootInlineBox.h:
+
 2007-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.
