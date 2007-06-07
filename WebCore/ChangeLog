@@ -1,5 +1,49 @@
 2007-06-07  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders.
+
+        Patch for  http://bugs.webkit.org/show_bug.cgi?id=14028
+        Finish autogenerating the JS bindings for Node
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper):
+        * bindings/js/JSHTMLElementWrapperFactory.h:
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        (WebCore::JSNode::mark):
+        (WebCore::toJS):
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        (WebCore::createJSSVGWrapper):
+        * bindings/js/JSSVGElementWrapperFactory.h:
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::getDOMNodeForDocument):
+        (KJS::ScriptInterpreter::putDOMNodeForDocument):
+        (KJS::ScriptInterpreter::markDOMNodesForDocument):
+        (KJS::ScriptInterpreter::updateDOMNodeDocument):
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::toAttr):
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_domnode.h: Removed.
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Node.h:
+        (WebCore::Node::parentElement):
+        * dom/Node.idl:
+
+2007-06-07  Sam Weinig  <sam@webkit.org>
+
         Another Gdk and Qt build fix.
 
         * WebCore.pro:

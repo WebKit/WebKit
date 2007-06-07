@@ -1,7 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -31,13 +31,14 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "JSNode.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RangeException.h"
-#include "xmlhttprequest.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
+#include "xmlhttprequest.h"
 #include <kjs/collector.h>
 #include <wtf/HashMap.h>
 
@@ -55,7 +56,7 @@ using namespace EventNames;
 namespace KJS {
 
 typedef HashMap<void*, DOMObject*> DOMObjectMap;
-typedef HashMap<Node*, DOMNode*> NodeMap;
+typedef HashMap<Node*, JSNode*> NodeMap;
 typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
 // For debugging, keep a set of wrappers currently registered, and check that
@@ -154,10 +155,10 @@ void ScriptInterpreter::forgetDOMObject(void* objectHandle)
     domObjects().remove(objectHandle);
 }
 
-DOMNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node)
+JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node)
 {
     if (!document)
-        return static_cast<DOMNode*>(domObjects().get(node));
+        return static_cast<JSNode*>(domObjects().get(node));
     NodeMap* documentDict = domNodesPerDocument().get(document);
     if (documentDict)
         return documentDict->get(node);
@@ -176,7 +177,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, Node* node)
         documentDict->remove(node);
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(Document* document, Node* node, DOMNode* wrapper)
+void ScriptInterpreter::putDOMNodeForDocument(Document* document, Node* node, JSNode* wrapper)
 {
     ADD_WRAPPER(wrapper);
     if (!document) {
@@ -209,7 +210,7 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
         NodeMap* nodeDict = dictIt->second;
         NodeMap::iterator nodeEnd = nodeDict->end();
         for (NodeMap::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
-            DOMNode* node = nodeIt->second;
+            JSNode* node = nodeIt->second;
             // don't mark wrappers for nodes that are no longer in the
             // document - they should not be saved if the node is not
             // otherwise reachable from JS.
@@ -230,7 +231,7 @@ ExecState* ScriptInterpreter::globalExec()
 void ScriptInterpreter::updateDOMNodeDocument(Node* node, Document* oldDoc, Document* newDoc)
 {
     ASSERT(oldDoc != newDoc);
-    DOMNode* wrapper = getDOMNodeForDocument(oldDoc, node);
+    JSNode* wrapper = getDOMNodeForDocument(oldDoc, node);
     if (wrapper) {
         REMOVE_WRAPPER(wrapper);
         putDOMNodeForDocument(newDoc, node, wrapper);

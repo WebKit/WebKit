@@ -23,22 +23,19 @@
 #include "JSNode.h"
 #include "Node.h"
 #include "kjs_binding.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
+
     class Attr;
     class EventTarget;
-}
 
-namespace KJS {
+    Attr* toAttr(KJS::JSValue*, bool& ok);
 
-  WebCore::Attr* toAttr(JSValue*, bool& ok);
+    bool checkNodeSecurity(KJS::ExecState*, Node*);
+    KJS::JSValue* getRuntimeObject(KJS::ExecState*, Node*);
+    KJS::JSValue* toJS(KJS::ExecState*, EventTarget*);
+    KJS::JSObject* getNodeConstructor(KJS::ExecState*);
 
-  bool checkNodeSecurity(ExecState*, WebCore::Node*);
-  JSValue* getRuntimeObject(ExecState*, WebCore::Node*);
-  JSValue* toJS(ExecState*, WebCore::EventTarget*);
-  JSObject* getNodeConstructor(ExecState*);
+} // namespace WebCore
 
-} // namespace
-
-#endif
+#endif // kjs_dom_h

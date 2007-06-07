@@ -24,7 +24,6 @@
 #include "HTMLOptionElement.h"
 #include "JSHTMLOptionElement.h"
 #include "Text.h"
-#include "kjs_dom.h"
 
 namespace WebCore {
 

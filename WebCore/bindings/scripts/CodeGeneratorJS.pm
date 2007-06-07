@@ -139,9 +139,7 @@ sub GetLegacyHeaderIncludes
 
     return "#include \"JSHTMLInputElementBase.h\"\n\n" if $legacyParent eq "JSHTMLInputElementBase";
     return "#include \"kjs_window.h\"\n\n" if $legacyParent eq "KJS::Window";
-    return "#include \"kjs_domnode.h\"\n\n" if $legacyParent eq "KJS::DOMNode";
     return "#include \"kjs_events.h\"\n\n" if $module eq "events";
-    return "#include \"kjs_dom.h\"\n\n" if $module eq "core";
     return "#include \"kjs_css.h\"\n\n" if $module eq "css";
     return "#include \"kjs_html.h\"\n\n" if $module eq "html";
 
@@ -771,19 +769,23 @@ sub GenerateImplementation
         push(@implContent, "${className}::~$className()\n");
 
         my $contextInterfaceName = CreateSVGContextInterfaceName($interfaceName);
+        push(@implContent, "{\n"); 
         if ($contextInterfaceName ne "") {
-            push(@implContent, "{\n    SVGDocumentExtensions::forgetGenericContext<$contextInterfaceName>(m_impl.get());\n");   
-            push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
+            push(@implContent, "    SVGDocumentExtensions::forgetGenericContext<$contextInterfaceName>(m_impl.get());\n");   
+            push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n");
+        } elsif ($interfaceName eq "Node") {
+            push(@implContent, "    ScriptInterpreter::forgetDOMNodeForDocument(m_impl->document(), m_impl.get());\n");
         } else {
-            push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
+            push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n");
         }
+        push(@implContent, "}\n\n"); 
     }
 
     # Document needs a special destructor because it's a special case for caching. It needs
     # its own special handling rather than relying on the caching that Node normally does.
     if ($interfaceName eq "Document") {
         push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(static_cast<${implClassName}*>(m_impl.get()));\n}\n\n");
+        push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
     # Attributes
@@ -1426,6 +1428,10 @@ sub NativeToJSValue
 
     if ($type eq "CSSStyleDeclaration") {
         $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
+    }
+
+    if ($type eq "NamedNodeMap") {
+        $implIncludes{"NamedAttrMap.h"} = 1;
     }
 
     if ($type eq "EventTarget") {

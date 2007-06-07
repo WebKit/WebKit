@@ -63,7 +63,6 @@
 		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
 		14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */; };
 		14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */; };
-		14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */; };
 		14D823520AF92A790004F057 /* Chrome.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D823500AF92A790004F057 /* Chrome.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D8238A0AF92DF60004F057 /* Chrome.cpp */; };
 		14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D824060AF93AEB0004F057 /* ChromeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -372,7 +371,6 @@
 		656581EE09D1508D000E61D7 /* JSXMLHttpRequest.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */; };
 		656581F009D1508D000E61D7 /* JSXSLTProcessor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */; };
 		656581F109D1508D000E61D7 /* kjs_css.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DA09D1508D000E61D7 /* kjs_css.lut.h */; };
-		656581F209D1508D000E61D7 /* kjs_dom.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DB09D1508D000E61D7 /* kjs_dom.lut.h */; };
 		656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DC09D1508D000E61D7 /* kjs_events.lut.h */; };
 		656581F409D1508D000E61D7 /* kjs_html.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DD09D1508D000E61D7 /* kjs_html.lut.h */; };
 		656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */; };
@@ -3240,7 +3238,6 @@
 		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRule.cpp; sourceTree = "<group>"; };
 		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
 		14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = KeyboardEvent.idl; sourceTree = "<group>"; };
-		14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_domnode.h; sourceTree = "<group>"; };
 		14D823500AF92A790004F057 /* Chrome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chrome.h; sourceTree = "<group>"; };
 		14D8238A0AF92DF60004F057 /* Chrome.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Chrome.cpp; sourceTree = "<group>"; };
 		14D824060AF93AEB0004F057 /* ChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChromeClient.h; sourceTree = "<group>"; };
@@ -3597,7 +3594,6 @@
 		656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.lut.h; sourceTree = "<group>"; };
 		656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.lut.h; sourceTree = "<group>"; };
 		656581DA09D1508D000E61D7 /* kjs_css.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_css.lut.h; sourceTree = "<group>"; };
-		656581DB09D1508D000E61D7 /* kjs_dom.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_dom.lut.h; sourceTree = "<group>"; };
 		656581DC09D1508D000E61D7 /* kjs_events.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.lut.h; sourceTree = "<group>"; };
 		656581DD09D1508D000E61D7 /* kjs_html.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_html.lut.h; sourceTree = "<group>"; };
 		656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.lut.h; sourceTree = "<group>"; };
@@ -7032,7 +7028,6 @@
 				BCD9C2C40C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h */,
 				BCD9C2C50C17B6EC005C90A2 /* JSEventTargetNode.lut.h */,
 				656581DA09D1508D000E61D7 /* kjs_css.lut.h */,
-				656581DB09D1508D000E61D7 /* kjs_dom.lut.h */,
 				656581DC09D1508D000E61D7 /* kjs_events.lut.h */,
 				656581DD09D1508D000E61D7 /* kjs_html.lut.h */,
 				656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */,
@@ -9224,7 +9219,6 @@
 				93B70D4A09EB0C7C009D8468 /* kjs_css.h */,
 				93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */,
 				93B70D4C09EB0C7C009D8468 /* kjs_dom.h */,
-				14D0C82409FF0EF5006B36D9 /* kjs_domnode.h */,
 				93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */,
 				93B70D4E09EB0C7C009D8468 /* kjs_events.h */,
 				93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */,
@@ -10396,7 +10390,6 @@
 				656581EE09D1508D000E61D7 /* JSXMLHttpRequest.lut.h in Headers */,
 				656581F009D1508D000E61D7 /* JSXSLTProcessor.lut.h in Headers */,
 				656581F109D1508D000E61D7 /* kjs_css.lut.h in Headers */,
-				656581F209D1508D000E61D7 /* kjs_dom.lut.h in Headers */,
 				656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */,
 				656581F409D1508D000E61D7 /* kjs_html.lut.h in Headers */,
 				656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */,
@@ -10464,7 +10457,6 @@
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
-				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
 				142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */,
 				BCC71A130A0FF94D0014EE6E /* GlyphBuffer.h in Headers */,
 				1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */,

@@ -78,8 +78,8 @@ JSValue *XSLTProcessorPrototypeFunction::callAsFunction(ExecState *exec, JSObjec
         case JSXSLTProcessor::ImportStylesheet:
         {
             JSValue *nodeVal = args[0];
-            if (nodeVal->isObject(&DOMNode::info)) {
-                DOMNode *node = static_cast<DOMNode *>(nodeVal);
+            if (nodeVal->isObject(&JSNode::info)) {
+                JSNode* node = static_cast<JSNode*>(nodeVal);
                 processor.importStylesheet(node->impl());
                 return jsUndefined();
             }
@@ -90,8 +90,8 @@ JSValue *XSLTProcessorPrototypeFunction::callAsFunction(ExecState *exec, JSObjec
         {
             JSValue *nodeVal = args[0];
             JSValue *docVal = args[1];
-            if (nodeVal->isObject(&DOMNode::info) && docVal->isObject(&JSDocument::info)) {
-                Node* node = static_cast<DOMNode *>(nodeVal)->impl();
+            if (nodeVal->isObject(&JSNode::info) && docVal->isObject(&JSDocument::info)) {
+                Node* node = static_cast<JSNode*>(nodeVal)->impl();
                 Document* doc = static_cast<Document*>(static_cast<JSDocument *>(docVal)->impl());
                 return toJS(exec, processor.transformToFragment(node, doc).get());
             }
@@ -101,8 +101,8 @@ JSValue *XSLTProcessorPrototypeFunction::callAsFunction(ExecState *exec, JSObjec
         case JSXSLTProcessor::TransformToDocument:
         {
             JSValue *nodeVal = args[0];
-            if (nodeVal->isObject(&DOMNode::info)) {
-                DOMNode *node = static_cast<DOMNode *>(nodeVal);
+            if (nodeVal->isObject(&JSNode::info)) {
+                JSNode* node = static_cast<JSNode*>(nodeVal);
                 RefPtr<Document> resultDocument = processor.transformToDocument(node->impl());
                 if (resultDocument)
                     return toJS(exec, resultDocument.get());

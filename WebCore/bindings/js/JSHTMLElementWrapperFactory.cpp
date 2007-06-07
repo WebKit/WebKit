@@ -145,7 +145,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTMLElement>);
+typedef JSNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTMLElement>);
 
 #define FOR_EACH_TAG(macro) \
     macro(a, Anchor) \
@@ -207,14 +207,14 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     // end of macro
 
 #define CREATE_WRAPPER_FUNCTION(tag, name) \
-static DOMNode* create##name##Wrapper(ExecState* exec, PassRefPtr<HTMLElement> element) \
+static JSNode* create##name##Wrapper(ExecState* exec, PassRefPtr<HTMLElement> element) \
 { \
     return new JSHTML##name##Element(exec, static_cast<HTML##name##Element*>(element.get())); \
 }
 FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
 #undef CREATE_WRAPPER_FUNCTION
 
-DOMNode* createJSHTMLWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+JSNode* createJSHTMLWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     static HashMap<AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {

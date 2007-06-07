@@ -38,6 +38,7 @@ namespace WebCore {
     class Frame;
     class Node;
     class String;
+    class JSNode;
 
     typedef int ExceptionCode;
 }
@@ -60,8 +61,6 @@ namespace KJS {
 #endif
     };
 
-    class DOMNode;
-
     /**
      * We inherit from Interpreter, to save a pointer to the HTML part
      * that the interpreter runs for.
@@ -75,8 +74,8 @@ namespace KJS {
         static void putDOMObject(void* objectHandle, DOMObject*);
         static void forgetDOMObject(void* objectHandle);
 
-        static DOMNode *getDOMNodeForDocument(WebCore::Document*, WebCore::Node*);
-        static void putDOMNodeForDocument(WebCore::Document*, WebCore::Node*, DOMNode *nodeWrapper);
+        static WebCore::JSNode* getDOMNodeForDocument(WebCore::Document*, WebCore::Node*);
+        static void putDOMNodeForDocument(WebCore::Document*, WebCore::Node*, WebCore::JSNode* nodeWrapper);
         static void forgetDOMNodeForDocument(WebCore::Document*, WebCore::Node*);
         static void forgetAllDOMNodesForDocument(WebCore::Document*);
         static void updateDOMNodeDocument(WebCore::Node*, WebCore::Document* oldDoc, WebCore::Document* newDoc);
@@ -151,7 +150,7 @@ namespace KJS {
     WebCore::String valueToStringWithUndefinedOrNullCheck(ExecState*, JSValue*); // null String if the value is null or undefined
 
     template <typename T> inline JSValue* toJS(ExecState* exec, PassRefPtr<T> ptr) { return toJS(exec, ptr.get()); }
-  
+
 } // namespace
 
 #endif

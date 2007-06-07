@@ -20,7 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode, GenerateConstructor, GenerateNativeConverter, GenerateToJS, ObjCCustomInternalImpl] Node {        
+    interface [CustomMarkFunction, GenerateConstructor, GenerateNativeConverter, GenerateToJS, ObjCCustomInternalImpl] Node {        
         // NodeType
         const unsigned short      ELEMENT_NODE                   = 1;
         const unsigned short      ATTRIBUTE_NODE                 = 2;
@@ -35,11 +35,10 @@ module core {
         const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
         const unsigned short      NOTATION_NODE                  = 12;
 
-#if !defined(LANGUAGE_JAVASCRIPT)
-        readonly attribute DOMString        nodeName;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        nodeName;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullToNullString] DOMString        nodeValue
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        nodeValue
                      setter raises(DOMException);
 
         readonly attribute unsigned short   nodeType;
@@ -52,16 +51,17 @@ module core {
         readonly attribute NamedNodeMap     attributes;
         readonly attribute Document         ownerDocument;
 
-        [OldStyleObjC] Node insertBefore(in [Return] Node newChild, 
-                                         in Node refChild)
+        [OldStyleObjC, Custom] Node insertBefore(in [Return] Node newChild, 
+                                                 in Node refChild)
             raises(DOMException);
-        [OldStyleObjC] Node replaceChild(in Node newChild, 
-                                         in [Return] Node oldChild)
+        [OldStyleObjC, Custom] Node replaceChild(in Node newChild, 
+                                                 in [Return] Node oldChild)
             raises(DOMException);
-        Node               removeChild(in [Return] Node oldChild)
+        [Custom] Node               removeChild(in [Return] Node oldChild)
             raises(DOMException);
-        Node               appendChild(in [Return] Node newChild)
+        [Custom] Node               appendChild(in [Return] Node newChild)
             raises(DOMException);
+
         boolean            hasChildNodes();
         Node               cloneNode(in boolean deep);
         void               normalize();
@@ -69,28 +69,30 @@ module core {
         // Introduced in DOM Level 2:
 
         [OldStyleObjC] boolean isSupported(in DOMString feature, 
-                                           in DOMString version);
-        readonly attribute DOMString        namespaceURI;
-                 attribute [ConvertNullToNullString] DOMString        prefix
+                                           in [ConvertNullToNullString] DOMString version);
+
+        readonly attribute [ConvertNullStringTo=Null] DOMString        namespaceURI;
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        prefix
                      setter raises(DOMException);
-        readonly attribute DOMString        localName;
+        readonly attribute [ConvertNullStringTo=Null] DOMString        localName;
+
         boolean            hasAttributes();
 
         // Introduced in DOM Level 3:
 
-        readonly attribute DOMString       baseURI;
+        readonly attribute [ConvertNullStringTo=Null] DOMString       baseURI;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullToNullString] DOMString       textContent
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString       textContent
                      setter raises(DOMException);
 
         boolean            isSameNode(in Node other);
         boolean            isEqualNode(in Node other);
-        DOMString          lookupPrefix(in DOMString namespaceURI);
-        boolean            isDefaultNamespace(in DOMString namespaceURI);
-        DOMString          lookupNamespaceURI(in DOMString prefix);
+        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [ConvertNullToNullString] DOMString namespaceURI);
+        boolean            isDefaultNamespace(in [ConvertNullToNullString] DOMString namespaceURI);
+        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [ConvertNullToNullString] DOMString prefix);
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
+#if 0
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
         const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;
@@ -108,12 +110,14 @@ module core {
                                        in DOMUserData data, 
                                        in UserDataHandler handler);
         DOMUserData        getUserData(in DOMString key);
-#endif /* !defined(LANGUAGE_OBJECTIVE_C) */
-#endif /* !defined(LANGUAGE_JAVASCRIPT) */
+#endif /* 0 */
+
+        // IE extentions
+        readonly attribute Node             parentElement;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions
-        readonly attribute boolean         isContentEditable;
+        readonly attribute boolean          isContentEditable;
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
     };
 

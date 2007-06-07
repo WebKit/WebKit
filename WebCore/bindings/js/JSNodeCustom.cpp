@@ -62,6 +62,97 @@
 
 namespace WebCore {
 
+typedef int ExpectionCode;
+
+KJS::JSValue* JSNode::insertBefore(KJS::ExecState* exec, const KJS::List& args)
+{
+    ExceptionCode ec = 0;
+    bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec);
+    KJS::setDOMException(exec, ec);
+    if (ok)
+        return args[0];
+    return KJS::jsNull();
+}
+
+KJS::JSValue* JSNode::replaceChild(KJS::ExecState* exec, const KJS::List& args)
+{
+    ExceptionCode ec = 0;
+    bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec);
+    KJS::setDOMException(exec, ec);
+    if (ok)
+        return args[1];
+    return KJS::jsNull();
+}
+
+KJS::JSValue* JSNode::removeChild(KJS::ExecState* exec, const KJS::List& args)
+{
+    ExceptionCode ec = 0;
+    bool ok = impl()->removeChild(toNode(args[0]), ec);
+    KJS::setDOMException(exec, ec);
+    if (ok)
+        return args[0];
+    return KJS::jsNull();
+}
+
+KJS::JSValue* JSNode::appendChild(KJS::ExecState* exec, const KJS::List& args)
+{
+    ExceptionCode ec = 0;
+    bool ok = impl()->appendChild(toNode(args[0]), ec);
+    KJS::setDOMException(exec, ec);
+    if (ok)
+        return args[0];
+    return KJS::jsNull();
+}
+
+void JSNode::mark()
+{
+    ASSERT(!marked());
+
+    Node* node = m_impl.get();
+
+    // Nodes in the document are kept alive by ScriptInterpreter::mark,
+    // so we have no special responsibilities and can just call the base class here.
+    if (node->inDocument()) {
+        DOMObject::mark();
+        return;
+    }
+
+    // This is a node outside the document, so find the root of the tree it is in,
+    // and start marking from there.
+    Node* root = node;
+    for (Node* current = m_impl.get(); current; current = current->parentNode())
+        root = current;
+
+    // If we're already marking this tree, then we can simply mark this wrapper
+    // by calling the base class; our caller is iterating the tree.
+    if (root->m_inSubtreeMark) {
+        DOMObject::mark();
+        return;
+    }
+
+    // Mark the whole tree; use the global set of roots to avoid reentering.
+    root->m_inSubtreeMark = true;
+    for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
+        JSNode* wrapper = KJS::ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
+        if (wrapper) {
+            if (!wrapper->marked())
+                wrapper->mark();
+        } else if (nodeToMark == node) {
+            // This is the case where the map from the document to wrappers has
+            // been cleared out, but a wrapper is being marked. For now, we'll
+            // let the rest of the tree of wrappers get collected, because we have
+            // no good way of finding them. Later we should test behavior of other
+            // browsers and see if we need to preserve other wrappers in this case.
+            if (!marked())
+                mark();
+        }
+    }
+    root->m_inSubtreeMark = false;
+
+    // Double check that we actually ended up marked. This assert caught problems in the past.
+    ASSERT(marked());
+}
+
 KJS::JSValue* toJS(KJS::ExecState* exec, PassRefPtr<Node> n)
 {
     Node* node = n.get(); 
@@ -70,7 +161,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, PassRefPtr<Node> n)
 
     KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
     Document* doc = node->document();
-    KJS::DOMNode* ret = interp->getDOMNodeForDocument(doc, node);
+    JSNode* ret = interp->getDOMNodeForDocument(doc, node);
     if (ret)
         return ret;
 

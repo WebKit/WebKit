@@ -549,7 +549,6 @@ all : \
     XMLNames.cpp \
     XPathGrammar.cpp \
     kjs_css.lut.h \
-    kjs_dom.lut.h \
     kjs_events.lut.h \
     kjs_html.lut.h \
     kjs_navigator.lut.h \

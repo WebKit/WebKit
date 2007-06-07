@@ -1,3 +1,12 @@
+2007-06-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Update test for http://bugs.webkit.org/show_bug.cgi?id=14028
+        Finish autogenerating the JS bindings for Node
+
+        * fast/dom/prototype-chain-expected.txt: DOMNodePrototype is no longer in the prototype chain.
+
 2007-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Hyatt.

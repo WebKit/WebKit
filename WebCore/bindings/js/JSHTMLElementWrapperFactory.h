@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Apple Computer, Inc.
+ *  Copyright (C) 2006, 2007 Apple Inc. All ri
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,15 @@
 #include <wtf/Forward.h>
 
 namespace KJS {
-    class DOMNode;
     class ExecState;
 }
 
 namespace WebCore {
 
+    class JSNode;
     class HTMLElement;
-    KJS::DOMNode* createJSHTMLWrapper(KJS::ExecState*, PassRefPtr<HTMLElement>);
+
+    JSNode* createJSHTMLWrapper(KJS::ExecState*, PassRefPtr<HTMLElement>);
 
 }
 

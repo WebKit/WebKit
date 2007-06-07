@@ -141,7 +141,6 @@ LUT_FILES += \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
-    bindings/js/kjs_dom.cpp \
     bindings/js/kjs_events.cpp \
     bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \

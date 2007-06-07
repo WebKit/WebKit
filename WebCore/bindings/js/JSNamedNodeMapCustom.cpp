@@ -27,8 +27,9 @@
 #include "JSNamedNodeMap.h"
 
 #include "NamedNodeMap.h"
-#include "kjs_dom.h"
+#include "PlatformString.h"
 #include "kjs_binding.h"
+#include "kjs_dom.h"
 
 namespace WebCore {
 
