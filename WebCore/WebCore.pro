@@ -136,6 +136,8 @@ SVGCSSVALUES = $$PWD/ksvg2/css/CSSValueKeywords.in
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
+    bindings/js/JSDOMExceptionConstructor.cpp \
+    bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
@@ -271,6 +273,9 @@ SOURCES += \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
+    bindings/js/JSDOMExceptionConstructor.cpp \
+    bindings/js/JSDOMWindowCustom.cpp \
+    bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementCustom.cpp \
@@ -283,9 +288,13 @@ SOURCES += \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
+    bindings/js/JSNamedNodeMapCustom.cpp \
+    bindings/js/JSNamedNodesCollection.cpp  \
+    bindings/js/JSNodeCustom.cpp \
     bindings/js/JSNodeFilterCondition.cpp \
     bindings/js/JSNodeFilterCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
+    bindings/js/JSNodeListCustom.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
