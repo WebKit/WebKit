@@ -65,7 +65,7 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
     _name = JavaString(env, fieldName);
 
-    _field = new JavaInstance(aField);
+    _field = new JObjectWrapper(aField);
 }
 
 JSValue* JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, const char* type, PassRefPtr<RootObject> rootObject)
@@ -79,7 +79,7 @@ JSValue* JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, con
 jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = _field->javaInstance();
+    jobject fieldJInstance = _field->_instance;
     JNIEnv *env = getJNIEnv();
     jvalue result;
 
@@ -163,7 +163,7 @@ JSValue *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
 void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = _field->javaInstance();
+    jobject fieldJInstance = _field->_instance;
     JNIEnv *env = getJNIEnv();
 
     jclass cls = env->GetObjectClass(fieldJInstance);

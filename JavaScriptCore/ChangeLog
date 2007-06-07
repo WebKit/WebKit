@@ -1,3 +1,19 @@
+2007-06-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Don't use a JavaInstance to store the field when all we want to do is to keep the field
+        from being garbage collected. Instead, use a JObjectWrapper.
+        
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaField::JavaField):
+        (KJS::Bindings::JavaField::operator=):
+
 2007-05-30  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Brady.
