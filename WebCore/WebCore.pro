@@ -143,7 +143,6 @@ LUT_FILES += \
     bindings/js/kjs_events.cpp \
     bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \
-    bindings/js/kjs_traversal.cpp \
     bindings/js/kjs_window.cpp
 
 LUT_TABLE_FILES += \
@@ -282,6 +281,8 @@ SOURCES += \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
+    bindings/js/JSNodeFilterCondition.cpp \
+    bindings/js/JSNodeFilterCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
@@ -294,7 +295,6 @@ SOURCES += \
     bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_proxy.cpp \
-    bindings/js/kjs_traversal.cpp \
     bindings/js/kjs_window.cpp \
     css/CSSBorderImageValue.cpp \
     css/CSSCharsetRule.cpp \

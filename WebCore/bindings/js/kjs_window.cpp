@@ -61,7 +61,6 @@
 #include "kjs_events.h"
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
-#include "kjs_traversal.h"
 #include <wtf/MathExtras.h>
 
 #if ENABLE(XSLT)

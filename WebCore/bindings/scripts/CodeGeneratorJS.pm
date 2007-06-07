@@ -144,7 +144,6 @@ sub GetLegacyHeaderIncludes
     return "#include \"kjs_dom.h\"\n\n" if $module eq "core";
     return "#include \"kjs_css.h\"\n\n" if $module eq "css";
     return "#include \"kjs_html.h\"\n\n" if $module eq "html";
-    return "#include \"kjs_traversal.h\"\n\n" if $module eq "traversal";
 
     die "Don't know what headers to include for module $module";
 }
@@ -1167,7 +1166,7 @@ sub GenerateImplementation
         push(@implContent, "}\n");
     }
 
-    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+    if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"CustomNativeConverter"}) {
         if ($podType) {
             push(@implContent, "$podType to${interfaceName}(KJS::JSValue* val)\n");
         } else {
@@ -1245,7 +1244,6 @@ sub GetNativeType
     return "bool" if $type eq "boolean";
     return "int" if $type eq "long";
     return "String" if $type eq "DOMString";
-    return "PassRefPtr<${type}>" if $type eq "NodeFilter";
     return "Range::CompareHow" if $type eq "CompareHow";
     return "EventTargetNode*" if $type eq "EventTarget";
     return "FloatRect" if $type eq "SVGRect";
@@ -1353,11 +1351,6 @@ sub JSValueToNative
     if ($type eq "Element") {
         $implIncludes{"kjs_dom.h"} = 1;
         return "toElement($value)";
-    }
-
-    if ($type eq "NodeFilter") {
-        $implIncludes{"kjs_traversal.h"} = 1;
-        return "toNodeFilter($value)";
     }
 
     if ($type eq "DOMWindow") {

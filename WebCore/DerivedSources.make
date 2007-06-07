@@ -549,7 +549,6 @@ all : \
     kjs_events.lut.h \
     kjs_html.lut.h \
     kjs_navigator.lut.h \
-    kjs_traversal.lut.h \
     kjs_window.lut.h \
     ksvgcssproperties.h \
     ksvgcssvalues.h \

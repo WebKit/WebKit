@@ -1539,8 +1539,6 @@
 		93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5209EB0C7C009D8468 /* kjs_navigator.h */; };
 		93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */; };
 		93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* kjs_proxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */; };
-		93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5609EB0C7C009D8468 /* kjs_traversal.h */; };
 		93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5909EB0C7C009D8468 /* kjs_window.cpp */; };
 		93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5A09EB0C7C009D8468 /* kjs_window.h */; };
 		93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2846,6 +2844,9 @@
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
+		BCB773610C17853D00132BA4 /* JSNodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */; };
+		BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */; };
+		BCB773630C17853D00132BA4 /* JSNodeFilterCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */; };
 		BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC088850A1BD78D006189A6 /* FontDataMac.mm */; };
 		BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC089190A1C4652006189A6 /* FontData.cpp */; };
 		BCC0892A0A1C4991006189A6 /* GlyphWidthMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC089290A1C4991006189A6 /* GlyphWidthMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4706,8 +4707,6 @@
 		93B70D5209EB0C7C009D8468 /* kjs_navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.h; sourceTree = "<group>"; };
 		93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_proxy.cpp; sourceTree = "<group>"; };
 		93B70D5409EB0C7C009D8468 /* kjs_proxy.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_proxy.h; sourceTree = "<group>"; };
-		93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_traversal.cpp; sourceTree = "<group>"; };
-		93B70D5609EB0C7C009D8468 /* kjs_traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_traversal.h; sourceTree = "<group>"; };
 		93B70D5909EB0C7C009D8468 /* kjs_window.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_window.cpp; sourceTree = "<group>"; };
 		93B70D5A09EB0C7C009D8468 /* kjs_window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_window.h; sourceTree = "<group>"; };
 		93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderTypes.h; sourceTree = "<group>"; };
@@ -6121,6 +6120,9 @@
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
+		BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCondition.cpp; sourceTree = "<group>"; };
+		BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilterCondition.h; sourceTree = "<group>"; };
+		BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
 		BCC088850A1BD78D006189A6 /* FontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontDataMac.mm; sourceTree = "<group>"; };
 		BCC089190A1C4652006189A6 /* FontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontData.cpp; sourceTree = "<group>"; };
 		BCC089290A1C4991006189A6 /* GlyphWidthMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphWidthMap.h; sourceTree = "<group>"; };
@@ -9188,8 +9190,6 @@
 				93B70D5209EB0C7C009D8468 /* kjs_navigator.h */,
 				93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */,
 				93B70D5409EB0C7C009D8468 /* kjs_proxy.h */,
-				93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */,
-				93B70D5609EB0C7C009D8468 /* kjs_traversal.h */,
 				93B70D5909EB0C7C009D8468 /* kjs_window.cpp */,
 				93B70D5A09EB0C7C009D8468 /* kjs_window.h */,
 			);
@@ -9256,6 +9256,9 @@
 				448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */,
 				BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */,
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
+				BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */,
+				BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */,
+				BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
 				B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */,
@@ -10403,7 +10406,6 @@
 				93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */,
 				93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */,
 				93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */,
-				93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */,
 				93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */,
@@ -11496,6 +11498,7 @@
 				BC46C2030C0DDC8F0020CFC3 /* JSCSSPageRule.h in Headers */,
 				BC46C2070C0DDCA10020CFC3 /* JSCSSStyleRule.h in Headers */,
 				BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */,
+				BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11533,7 +11536,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11548,7 +11550,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12026,7 +12027,6 @@
 				93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */,
 				93B70D6D09EB0C7C009D8468 /* kjs_navigator.cpp in Sources */,
 				93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */,
-				93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */,
 				93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
@@ -12909,6 +12909,8 @@
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
 				BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */,
+				BCB773610C17853D00132BA4 /* JSNodeFilterCondition.cpp in Sources */,
+				BCB773630C17853D00132BA4 /* JSNodeFilterCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

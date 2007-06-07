@@ -308,10 +308,10 @@ public:
     PassRefPtr<Range> createRange();
 
     PassRefPtr<NodeIterator> createNodeIterator(Node* root, unsigned whatToShow,
-        PassRefPtr<NodeFilter>, bool expandEntityReferences, ExceptionCode&);
+        NodeFilter*, bool expandEntityReferences, ExceptionCode&);
 
     PassRefPtr<TreeWalker> createTreeWalker(Node* root, unsigned whatToShow, 
-        PassRefPtr<NodeFilter>, bool expandEntityReferences, ExceptionCode&);
+        NodeFilter*, bool expandEntityReferences, ExceptionCode&);
 
     // Special support for editing
     PassRefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();

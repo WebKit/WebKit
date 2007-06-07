@@ -1,3 +1,38 @@
+2007-06-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Hyatt.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13947
+        Finish autogenerating the JS DOM traversal code
+
+        - Completely generate JSNodeFilter.
+        - Move JSNodeFilterCondition into its own file
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSNodeFilterCondition.cpp: Copied from WebCore/bindings/js/kjs_traversal.cpp.
+        (WebCore::JSNodeFilterCondition::JSNodeFilterCondition):
+        (WebCore::JSNodeFilterCondition::mark):
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSNodeFilterCondition.h: Copied from WebCore/bindings/js/kjs_traversal.h.
+        * bindings/js/JSNodeFilterCustom.cpp: Added.
+        (WebCore::JSNodeFilter::mark):
+        (WebCore::toNodeFilter):
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_traversal.cpp: Removed.
+        * bindings/js/kjs_traversal.h: Removed.
+        * bindings/js/kjs_window.cpp:
+        * bindings/objc/DOM.mm:
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::createNodeIterator):
+        (WebCore::Document::createTreeWalker):
+        * dom/Document.h:
+        * dom/NodeFilter.idl:
+
 2007-06-06  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Eric Seidel.

@@ -700,7 +700,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
 {
-    RefPtr<WebCore::NodeFilter> cppFilter;
+    WebCore::NodeFilter* cppFilter;
     if (filter)
         cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
     WebCore::ExceptionCode ec = 0;
@@ -711,7 +711,7 @@ short ObjCNodeFilterCondition::acceptNode(WebCore::Node* node) const
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
 {
-    RefPtr<WebCore::NodeFilter> cppFilter;
+    WebCore::NodeFilter* cppFilter;
     if (filter)
         cppFilter = new WebCore::NodeFilter(new ObjCNodeFilterCondition(filter));
     WebCore::ExceptionCode ec = 0;
