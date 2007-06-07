@@ -182,9 +182,11 @@ IDL_BINDINGS += \
     dom/KeyboardEvent.idl \
     dom/MouseEvent.idl \
     dom/MutationEvent.idl \
-    dom/NodeFilter.idl \
+    dom/NamedNodeMap.idl \
     dom/Node.idl \
+    dom/NodeFilter.idl \
     dom/NodeIterator.idl \
+    dom/NodeList.idl \
     dom/Notation.idl \
     dom/OverflowEvent.idl \
     dom/ProcessingInstruction.idl \

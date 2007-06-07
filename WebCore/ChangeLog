@@ -1,3 +1,9 @@
+2007-06-07  Sam Weinig  <sam@webkit.org>
+
+        Gdk and Qt build fix.
+
+        * WebCore.pro:
+
 2007-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Hyatt.
