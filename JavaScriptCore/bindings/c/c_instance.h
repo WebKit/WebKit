@@ -39,7 +39,7 @@ class CClass;
 
 class CInstance : public Instance {
 public:
-    CInstance (NPObject*);
+    CInstance (NPObject*, PassRefPtr<RootObject>);
     ~CInstance ();
     
     virtual Class *getClass() const;

@@ -137,7 +137,7 @@ public:
 #endif
     } BindingLanguage;
 
-    Instance();
+    Instance(PassRefPtr<RootObject>);
 
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
@@ -177,7 +177,6 @@ public:
     
     virtual JSValue* valueOf() const { return jsString(getClass()->name()); }
     
-    void setRootObject(PassRefPtr<RootObject>);
     RootObject* rootObject() const;
     
     virtual ~Instance();

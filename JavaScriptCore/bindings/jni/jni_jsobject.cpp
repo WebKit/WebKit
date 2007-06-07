@@ -455,8 +455,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     }
 
     JSLock lock;
-    JavaInstance* javaInstance = new JavaInstance(theObject);
-    javaInstance->setRootObject(rootObject());
+    JavaInstance* javaInstance = new JavaInstance(theObject, _rootObject);
     RuntimeObjectImp* newImp = new RuntimeObjectImp(javaInstance);
 
     return newImp;

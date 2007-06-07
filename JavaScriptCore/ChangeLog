@@ -1,5 +1,27 @@
 2007-06-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        Get rid of Instance::setRootObject and pass the root object to the instance constructor instead.
+        
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::CInstance):
+        * bindings/c/c_instance.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertJObjectToValue):
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        * bindings/runtime.h:
+
+2007-06-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Don't use a JavaInstance to store the field when all we want to do is to keep the field

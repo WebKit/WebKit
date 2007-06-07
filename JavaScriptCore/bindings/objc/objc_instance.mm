@@ -40,7 +40,8 @@
 using namespace KJS::Bindings;
 using namespace KJS;
 
-ObjcInstance::ObjcInstance(ObjectStructPtr instance) 
+ObjcInstance::ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject> rootObject) 
+    : Instance(rootObject)
 {
     _instance = instance;
     if (_instance)

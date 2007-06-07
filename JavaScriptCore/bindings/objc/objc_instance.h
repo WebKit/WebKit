@@ -37,7 +37,7 @@ class ObjcClass;
 
 class ObjcInstance : public Instance {
 public:
-    ObjcInstance(ObjectStructPtr instance);
+    ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject>);
         
     ~ObjcInstance();
     

@@ -95,8 +95,9 @@ MethodList &MethodList::operator=(const MethodList &other)
 }
 
 
-Instance::Instance()
-    : _refCount(0)
+Instance::Instance(PassRefPtr<RootObject> rootObject)
+    : _rootObject(rootObject)
+    , _refCount(0)
 {
 }
 
@@ -126,23 +127,23 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
     switch (language) {
 #if HAVE(JNI)
         case Instance::JavaLanguage: {
-            newInstance = new Bindings::JavaInstance((jobject)nativeInstance);
+            newInstance = new Bindings::JavaInstance((jobject)nativeInstance, rootObject);
             break;
         }
 #endif
 #if PLATFORM(MAC)
         case Instance::ObjectiveCLanguage: {
-            newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance);
+            newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance, rootObject);
             break;
         }
 #endif
         case Instance::CLanguage: {
-            newInstance = new Bindings::CInstance((NPObject *)nativeInstance);
+            newInstance = new Bindings::CInstance((NPObject *)nativeInstance, rootObject);
             break;
         }
 #if PLATFORM(QT)
         case Instance::QtLanguage: {
-            newInstance = new Bindings::QtInstance((QObject *)nativeInstance);
+            newInstance = new Bindings::QtInstance((QObject *)nativeInstance, rootObject);
             break;
         }
 #endif
@@ -150,9 +151,6 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
             break;
     }
 
-    if (newInstance)
-        newInstance->setRootObject(rootObject);
-        
     return newInstance;
 }
 
@@ -162,11 +160,6 @@ JSObject* Instance::createRuntimeObject(BindingLanguage language, void* nativeIn
     
     JSLock lock;
     return new RuntimeObjectImp(instance);
-}
-
-void Instance::setRootObject(PassRefPtr<RootObject> rootObject)
-{
-    _rootObject = rootObject;
 }
 
 RootObject* Instance::rootObject() const 

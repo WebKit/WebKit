@@ -43,7 +43,8 @@
 using namespace KJS::Bindings;
 using namespace KJS;
 
-JavaInstance::JavaInstance (jobject instance) 
+JavaInstance::JavaInstance (jobject instance, PassRefPtr<RootObject> rootObject)
+    : Instance(rootObject)
 {
     _instance = new JObjectWrapper (instance);
     _class = 0;

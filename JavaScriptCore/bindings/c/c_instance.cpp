@@ -39,11 +39,11 @@
 namespace KJS {
 namespace Bindings {
 
-CInstance::CInstance(NPObject* o) 
+CInstance::CInstance(NPObject* o, PassRefPtr<RootObject> rootObject)
+    : Instance(rootObject)
 {
     _object = _NPN_RetainObject(o);
     _class = 0;
-    setRootObject(0);
 }
 
 CInstance::~CInstance() 
