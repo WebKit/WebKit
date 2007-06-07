@@ -21,8 +21,8 @@
 #include "config.h"
 #include "kjs_events.h"
 
-#include "Chrome.h"
 #include "CString.h"
+#include "Chrome.h"
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
 #include "Document.h"
@@ -33,6 +33,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSEvent.h"
+#include "JSEventTargetNode.h"
 #include "JSKeyboardEvent.h"
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
@@ -334,7 +335,7 @@ void JSLazyEventListener::parseCode() const
 
             JSValue* thisObj = toJS(exec, originalNode);
             if (thisObj->isObject()) {
-                static_cast<DOMEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
+                static_cast<JSEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
                 listenerAsFunction->setScope(scope);
             }
         }

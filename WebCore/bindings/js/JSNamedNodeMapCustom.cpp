@@ -24,29 +24,23 @@
  */
 
 #include "config.h"
-#include "JSHTMLElement.h"
+#include "JSNamedNodeMap.h"
 
-#include "Document.h"
-#include "HTMLFormElement.h"
+#include "NamedNodeMap.h"
 #include "kjs_dom.h"
+#include "kjs_binding.h"
 
 namespace WebCore {
 
-using namespace KJS;
-
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
+bool JSNamedNodeMap::canGetItemsForName(KJS::ExecState*, NamedNodeMap* impl, const KJS::Identifier& propertyName)
 {
-    HTMLElement* element = impl();
+    return impl->getNamedItem(propertyName);
+}
 
-    // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
-
-    // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element->form())
-        scope.push(static_cast<JSObject*>(toJS(exec, form)));
-
-    // The element is on top, searched first.
-    scope.push(static_cast<JSObject*>(toJS(exec, element)));
+KJS::JSValue* JSNamedNodeMap::nameGetter(KJS::ExecState* exec, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
+{
+    JSNamedNodeMap* thisObj = static_cast<JSNamedNodeMap*>(slot.slotBase());
+    return KJS::toJS(exec, thisObj->impl()->getNamedItem(propertyName));
 }
 
 } // namespace WebCore

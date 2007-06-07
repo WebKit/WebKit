@@ -161,7 +161,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
     return 0;
 }
 
@@ -366,7 +366,7 @@ sub GenerateHeader
 
     # Custom call functions
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List& args);\n");
+        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);\n");
         push(@headerContent, "    virtual bool implementsCall() const;\n\n");
     }
 
@@ -475,15 +475,17 @@ sub GenerateHeader
     # Name getter
     if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         push(@headerContent, "private:\n");
+        push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const KJS::Identifier&);\n");
         push(@headerContent, "    static KJS::JSValue* nameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
-        push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const KJS::Identifier&);\n")
     }
 
     push(@headerContent, "};\n\n");
 
-    if (!$hasParent) {
+    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"}) {
         if ($podType) {
             push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, JSSVGPODTypeWrapper<$podType>*);\n");
+        } elsif ($interfaceName eq "Node") {
+            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, PassRefPtr<Node>);\n");
         } else {
             push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType);\n");
         }
@@ -788,10 +790,11 @@ sub GenerateImplementation
     if ($numAttributes ne 0) {
         push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
-        # FIXME: We need to provide scalable hooks/attributes for this kind of extension
-        if ($interfaceName eq "DOMWindow") {
-            push(@implContent, "    if (getOverridePropertySlot(exec, propertyName, slot))\n");
-            push(@implContent, "        return true;\n");
+
+        if ($interfaceName eq "NamedNodeMap") {
+            push(@implContent, "    JSValue* proto = prototype();\n");
+            push(@implContent, "    if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))\n");
+            push(@implContent, "        return false;\n");
         }
 
         my $hasNameGetterGeneration = sub {
@@ -829,8 +832,7 @@ sub GenerateImplementation
         }
 
         if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-                push(@implContent, "    bool didGet = customGetOwnPropertySlot(exec, propertyName, slot);\n");
-                push(@implContent, "    if (didGet)\n");
+                push(@implContent, "    if (customGetOwnPropertySlot(exec, propertyName, slot))\n");
                 push(@implContent, "        return true;\n");
         }
 
@@ -866,6 +868,7 @@ sub GenerateImplementation
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
                 push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
                 $implIncludes{"Document.h"} = 1;
+                $implIncludes{"kjs_dom.h"} = 1;
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                 $constructorType =~ s/Constructor$//;
@@ -1064,6 +1067,7 @@ sub GenerateImplementation
             if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
                 push(@implContent, "        if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                 push(@implContent, "            return jsUndefined();\n");
+                $implIncludes{"kjs_dom.h"} = 1;
             }
 
             my $paramIndex = 0;
@@ -1144,7 +1148,7 @@ sub GenerateImplementation
         push(@implContent, "}\n");
     }
 
-    if (!$hasParent and !UsesManualToJSImplementation($implClassName)) {
+    if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !UsesManualToJSImplementation($implClassName)) {
         if ($podType) {
             push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj)\n");
         } else {
@@ -1328,34 +1332,14 @@ sub JSValueToNative
         return "$value->toString(exec)";
     }
 
-    if ($type eq "Node") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        return "toNode($value)";
-    }
-
     if ($type eq "EventTarget") {
-        $implIncludes{"kjs_dom.h"} = 1;
+        $implIncludes{"JSEventTargetNode.h"} = 1;
         return "toEventTargetNode($value)";
     }
 
     if ($type eq "Attr") {
         $implIncludes{"kjs_dom.h"} = 1;
         return "toAttr($value${maybeOkParam})";
-    }
-
-    if ($type eq "DocumentType") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        return "toDocumentType($value)";
-    }
-
-    if ($type eq "Element") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        return "toElement($value)";
-    }
-
-    if ($type eq "DOMWindow") {
-        $implIncludes{"kjs_window.h"} = 1;
-        return "toDOMWindow($value)";
     }
 
     if ($type eq "SVGRect") {
@@ -1444,40 +1428,17 @@ sub NativeToJSValue
         $implIncludes{"CSSMutableStyleDeclaration.h"} = 1;
     }
 
-    if ($type eq "DOMImplementation") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        $implIncludes{"JSDOMImplementation.h"} = 1;
-    } elsif ($type eq "Attr" or
-             $type eq "CDATASection" or
-             $type eq "Comment" or
-             $type eq "Document" or
-             $type eq "DocumentFragment" or
-             $type eq "DocumentType" or
-             $type eq "Element" or
-             $type eq "EntityReference" or
-             $type eq "HTMLDocument" or
-             $type eq "Node" or
-             $type eq "ProcessingInstruction" or
-             $type eq "Text") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        $implIncludes{"Comment.h"} = 1;
-        $implIncludes{"CDATASection.h"} = 1;
-        $implIncludes{"Node.h"} = 1;
-        $implIncludes{"Element.h"} = 1;
-        $implIncludes{"DocumentType.h"} = 1;
-    } elsif ($type eq "EventTarget") {
-        $implIncludes{"kjs_dom.h"} = 1;
+    if ($type eq "EventTarget") {
         $implIncludes{"EventTargetNode.h"} = 1;
+        $implIncludes{"JSEventTargetNode.h"} = 1;
+        $implIncludes{"kjs_dom.h"} = 1;
     } elsif ($type eq "Event") {
         $implIncludes{"kjs_events.h"} = 1;
         $implIncludes{"Event.h"} = 1;
     } elsif ($type eq "NodeList") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        $implIncludes{"NodeList.h"} = 1;
+        $implIncludes{"JS$type.h"} = 1;
+        $implIncludes{"$type.h"} = 1;
         $implIncludes{"NameNodeList.h"} = 1;
-    } elsif ($type eq "NamedNodeMap") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        $implIncludes{"NamedNodeMap.h"} = 1;
     } elsif ($type eq "Rect") {
         $implIncludes{"RectImpl.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
@@ -1488,9 +1449,6 @@ sub NativeToJSValue
         $implIncludes{"kjs_window.h"} = 1;
     } elsif ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
-    } elsif ($type eq "HTMLFormElement") {
-        $implIncludes{"kjs_html.h"} = 1;
-        $implIncludes{"HTMLFormElement.h"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;
@@ -1768,7 +1726,7 @@ public:
     {
         put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum);
     }
-    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
 private:
     int id;
 };

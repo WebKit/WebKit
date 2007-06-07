@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMEventTargetNode, GenerateConstructor, CustomMarkFunction] Document : EventTargetNode {
+    interface [GenerateConstructor, GenerateToJS, CustomMarkFunction] Document : EventTargetNode {
 
         // DOM Level 1 Core
 

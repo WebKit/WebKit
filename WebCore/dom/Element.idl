@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMEventTargetNode, GenerateConstructor] Element : EventTargetNode {
+    interface [GenerateConstructor, GenerateNativeConverter] Element : EventTargetNode {
 
         // DOM Level 1 Core
 

@@ -21,141 +21,23 @@
 #define kjs_dom_h
 
 #include "JSNode.h"
-#include "NodeList.h"
+#include "Node.h"
 #include "kjs_binding.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class AtomicString;
     class Attr;
-    class CharacterData;
-    class DocumentType;
-    class DOMImplementation;
-    class Element;
-    class Entity;
     class EventTarget;
-    class EventTargetNode;
-    class NamedNodeMap;
-    class Notation;
-    class ProcessingInstruction;
-    class Text;
 }
 
 namespace KJS {
 
-  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMEventTargetNodePrototype, WebCore::JSNodePrototype)
-
-  class DOMEventTargetNode : public WebCore::JSNode {
-  public:
-      DOMEventTargetNode(ExecState *exec, WebCore::Node *n);
-
-      void setListener(ExecState* exec, const WebCore::AtomicString &eventType, JSValue* func) const;
-      JSValue* getListener(const WebCore::AtomicString &eventType) const;
-      virtual void pushEventHandlerScope(ExecState* exec, ScopeChain &scope) const;
-      
-      bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot);
-      JSValue* getValueProperty(ExecState* exec, int token) const;
-      virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr);
-      void putValueProperty(ExecState* exec, int token, JSValue* value, int);
-
-      enum {  
-          AddEventListener, RemoveEventListener, DispatchEvent,
-          OnAbort, OnBlur, OnChange, OnClick, OnContextMenu, OnDblClick, OnError,
-          OnDragEnter, OnDragOver, OnDragLeave, OnDrop, OnDragStart, OnDrag, OnDragEnd,
-          OnBeforeCut, OnCut, OnBeforeCopy, OnCopy, OnBeforePaste, OnPaste, OnSelectStart,
-          OnFocus, OnInput, OnKeyDown, OnKeyPress, OnKeyUp, OnLoad, OnMouseDown,
-          OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMouseWheel, OnReset,
-          OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload
-      };
-  };
-
-  WebCore::EventTargetNode* toEventTargetNode(JSValue*); // returns 0 if passed-in value is not a EventTargetNode object
-  WebCore::Node* toNode(JSValue*); // returns 0 if passed-in value is not a DOMNode object
-
-  class DOMNodeList : public DOMObject {
-  public:
-    DOMNodeList(ExecState *, WebCore::NodeList *l);
-    ~DOMNodeList();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
-    virtual bool implementsCall() const { return true; }
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState *) const { return true; }
-    static const ClassInfo info;
-    enum { Length, Item };
-    WebCore::NodeList *impl() const { return m_impl.get(); }
-
-  private:
-    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
-    static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
-
-    RefPtr<WebCore::NodeList> m_impl;
-  };
-
   WebCore::Attr* toAttr(JSValue*, bool& ok);
 
-  WebCore::Element *toElement(JSValue *); // returns 0 if passed-in value is not a DOMElement object
-
-  WebCore::DocumentType *toDocumentType(JSValue *); // returns 0 if passed-in value is not a DOMDocumentType object
-
-  class DOMNamedNodeMap : public DOMObject {
-  public:
-    DOMNamedNodeMap(ExecState *, WebCore::NamedNodeMap *m);
-    ~DOMNamedNodeMap();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState *) const { return true; }
-    static const ClassInfo info;
-    enum { GetNamedItem, SetNamedItem, RemoveNamedItem, Item,
-           GetNamedItemNS, SetNamedItemNS, RemoveNamedItemNS };
-    WebCore::NamedNodeMap *impl() const { return m_impl.get(); }
-  private:
-    static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
-    static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
-
-    RefPtr<WebCore::NamedNodeMap> m_impl;
-  };
-
-  // Constructor for DOMException - constructor stuff not implemented yet
-  class DOMExceptionConstructor : public DOMObject {
-  public:
-    DOMExceptionConstructor(ExecState*);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
-
-  JSValue* toJS(ExecState*, WebCore::Document*);
   bool checkNodeSecurity(ExecState*, WebCore::Node*);
   JSValue* getRuntimeObject(ExecState*, WebCore::Node*);
-  JSValue* toJS(ExecState*, PassRefPtr<WebCore::Node>);
-  JSValue* toJS(ExecState*, WebCore::NamedNodeMap*);
-  JSValue* toJS(ExecState*, WebCore::NodeList*);
   JSValue* toJS(ExecState*, WebCore::EventTarget*);
   JSObject* getNodeConstructor(ExecState*);
-  JSObject* getDOMExceptionConstructor(ExecState*);
-
-  // Internal class, used for the collection return by e.g. document.forms.myinput
-  // when multiple nodes have the same name.
-  class DOMNamedNodesCollection : public DOMObject {
-  public:
-    DOMNamedNodesCollection(ExecState *exec, const Vector<RefPtr<WebCore::Node> >& nodes);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-private:
-    static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
-    static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
-
-    Vector<RefPtr<WebCore::Node> > m_nodes;
-  };
 
 } // namespace
 

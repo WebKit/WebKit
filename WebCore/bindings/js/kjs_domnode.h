@@ -35,7 +35,7 @@ KJS_DEFINE_PROTOTYPE(DOMNodePrototype)
 class DOMNode : public DOMObject {
 public:
     virtual ~DOMNode();
-    virtual bool toBoolean(ExecState*) const;
+
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState*, int token) const;
     virtual void mark();

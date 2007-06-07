@@ -1,3 +1,97 @@
+2007-06-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Hyatt.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13973
+        Autogenerate most of the rest of kjs_dom.h/cpp
+
+        - Autogenerate JSNodeList and JSNamedNodeMap.
+        - Move JSEventTargetNode, JSNamedNodesCollection, and JSDOMExceptionConstructor 
+          into their own files.
+        - Rename KJS::DOMEventTargeNode to WebCore::JSEventTargetNode to adhere
+          to convention and allow easier code generation.
+        - Add JS constructors for JSNodeList and JSNamedNodeMap.
+        - Moved more toJS methods into the correct (corresponding) header files.
+        - Cleaned up code in order for changes to work.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionConstructor.cpp: Added.
+        (WebCore::):
+        (WebCore::JSDOMExceptionConstructor::JSDOMExceptionConstructor):
+        (WebCore::JSDOMExceptionConstructor::getOwnPropertySlot):
+        (WebCore::JSDOMExceptionConstructor::getValueProperty):
+        (WebCore::getDOMExceptionConstructor):
+        * bindings/js/JSDOMExceptionConstructor.h: Added.
+        (WebCore::JSDOMExceptionConstructor::classInfo):
+        * bindings/js/JSDOMWindowCustom.cpp: Added.
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::mark):
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetNode.cpp: Added.
+        (WebCore::JSEventTargetNode::JSEventTargetNode):
+        (WebCore::JSEventTargetNode::getOwnPropertySlot):
+        (WebCore::JSEventTargetNode::getValueProperty):
+        (WebCore::JSEventTargetNode::put):
+        (WebCore::JSEventTargetNode::putValueProperty):
+        (WebCore::JSEventTargetNode::setListener):
+        (WebCore::JSEventTargetNode::getListener):
+        (WebCore::JSEventTargetNode::pushEventHandlerScope):
+        (WebCore::JSEventTargetNodePrototypeFunction::callAsFunction):
+        (WebCore::toEventTargetNode):
+        * bindings/js/JSEventTargetNode.h: Added.
+        (WebCore::JSEventTargetNode::):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp: Added.
+        (WebCore::JSNamedNodeMap::canGetItemsForName):
+        (WebCore::JSNamedNodeMap::nameGetter):
+        * bindings/js/JSNamedNodesCollection.cpp: Added.
+        (WebCore::):
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection):
+        (WebCore::JSNamedNodesCollection::lengthGetter):
+        (WebCore::JSNamedNodesCollection::indexGetter):
+        (WebCore::JSNamedNodesCollection::getOwnPropertySlot):
+        * bindings/js/JSNamedNodesCollection.h: Added.
+        (WebCore::JSNamedNodesCollection::classInfo):
+        * bindings/js/JSNodeCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/JSNodeListCustom.cpp: Added.
+        (WebCore::JSNodeList::callAsFunction):
+        (WebCore::JSNodeList::implementsCall):
+        (WebCore::JSNodeList::canGetItemsForName):
+        (WebCore::JSNodeList::nameGetter):
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_domnode.h:
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLCollection::getNamedItems):
+        * bindings/js/kjs_html.h:
+        * bindings/js/kjs_window.cpp:
+        (WebCore::toJS):
+        * bindings/js/kjs_window.h:
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/mac/WebCoreAXObject.mm:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeList.idl:
+        * page/DOMWindow.idl:
+
 2007-06-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

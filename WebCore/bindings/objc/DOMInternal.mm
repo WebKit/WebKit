@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "Document.h"
 #import "Event.h"
 #import "Frame.h"
+#import "JSNode.h"
 #import "Node.h"
 #import "PlatformString.h"
 #import "Range.h"
@@ -36,7 +37,6 @@
 #import "SVGException.h"
 #import "WebScriptObjectPrivate.h"
 #import "XPathEvaluator.h"
-#import "kjs_dom.h"
 #import "kjs_proxy.h"
 
 //------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     KJS::ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(KJS::toJS(exec, nodeImpl));
+    KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(WebCore::toJS(exec, nodeImpl));
 
     KJS::Bindings::RootObject* rootObject = frame->bindingRootObject();
 

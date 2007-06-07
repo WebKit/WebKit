@@ -24,29 +24,42 @@
  */
 
 #include "config.h"
-#include "JSHTMLElement.h"
+#include "JSNodeList.h"
 
-#include "Document.h"
-#include "HTMLFormElement.h"
-#include "kjs_dom.h"
+#include "AtomicString.h"
+#include "JSNode.h"
+#include "Node.h"
+#include "NodeList.h"
 
 namespace WebCore {
 
-using namespace KJS;
-
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
+// Need to support both get and call, so that list[0] and list(0) work.
+KJS::JSValue* JSNodeList::callAsFunction(KJS::ExecState* exec, KJS::JSObject* thisObj, const KJS::List& args)
 {
-    HTMLElement* element = impl();
+    // Do not use thisObj here. See JSHTMLCollection.
+    KJS::UString s = args[0]->toString(exec);
+    bool ok;
+    unsigned u = s.toUInt32(&ok);
+    if (ok)
+        return toJS(exec, impl()->item(u));
 
-    // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
+    return KJS::jsUndefined();
+}
 
-    // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element->form())
-        scope.push(static_cast<JSObject*>(toJS(exec, form)));
+bool JSNodeList::implementsCall() const
+{
+    return true;
+}
 
-    // The element is on top, searched first.
-    scope.push(static_cast<JSObject*>(toJS(exec, element)));
+bool JSNodeList::canGetItemsForName(KJS::ExecState*, NodeList* impl, const KJS::Identifier& propertyName)
+{
+    return impl->itemWithName(propertyName);
+}
+
+KJS::JSValue* JSNodeList::nameGetter(KJS::ExecState* exec, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
+{
+    JSNodeList* thisObj = static_cast<JSNodeList*>(slot.slotBase());
+    return toJS(exec, thisObj->impl()->itemWithName(propertyName));
 }
 
 } // namespace WebCore

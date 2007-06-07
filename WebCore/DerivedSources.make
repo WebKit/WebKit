@@ -319,6 +319,7 @@ all : \
     JSComment.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
+    JSDOMExceptionConstructor.lut.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
     JSDOMWindow.h \
@@ -326,9 +327,10 @@ all : \
     JSDocumentFragment.h \
     JSDocumentType.h \
     JSElement.h \
-    JSEvent.h \
     JSEntity.h \
     JSEntityReference.h \
+    JSEvent.h \
+    JSEventTargetNode.lut.h \
     JSHTMLAppletElement.h \
     JSHTMLAnchorElement.h \
     JSHTMLAreaElement.h \
@@ -393,9 +395,11 @@ all : \
     JSMediaList.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
+    JSNamedNodeMap.h \
     JSNode.h \
     JSNodeFilter.h \
     JSNodeIterator.h \
+    JSNodeList.h \
     JSNotation.h \
     JSOverflowEvent.h \
     JSProcessingInstruction.h \

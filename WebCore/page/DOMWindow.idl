@@ -27,7 +27,7 @@ module window {
 
     // You can't cache the Window object in the global object because it *is* the global object.
     // For the same reason, there's no need to.
-    interface [LegacyParent=KJS::Window, DoNotCache] DOMWindow {
+    interface [LegacyParent=KJS::Window, DoNotCache, GenerateNativeConverter, CustomGetOwnPropertySlot] DOMWindow {
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 
@@ -72,8 +72,8 @@ module window {
         attribute DocumentFragmentConstructor DocumentFragment;
         attribute DocumentConstructor Document;
         attribute NodeConstructor Node;
-//        attribute NodeListConstructor NodeList;
-//        attribute NamedNodeMapConstructor NamedNodeMap;
+        attribute NodeListConstructor NodeList;
+        attribute NamedNodeMapConstructor NamedNodeMap;
         attribute CharacterDataConstructor CharacterData;
         attribute AttrConstructor Attr;
         attribute ElementConstructor Element;

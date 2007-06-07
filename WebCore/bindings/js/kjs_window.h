@@ -276,7 +276,6 @@ namespace KJS {
 
 namespace WebCore {
     KJS::JSValue* toJS(KJS::ExecState*, DOMWindow*);
-    DOMWindow* toDOMWindow(KJS::JSValue*);
 } // namespace WebCore
 
 #endif

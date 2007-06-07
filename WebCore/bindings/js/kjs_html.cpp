@@ -33,6 +33,8 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "JSHTMLOptionsCollection.h"
+#include "JSNamedNodesCollection.h"
+#include "JSNodeList.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
@@ -174,7 +176,7 @@ JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &prop
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
-    return new DOMNamedNodesCollection(exec, namedItems);
+    return new JSNamedNodesCollection(exec, namedItems);
 }
 
 JSValue* JSHTMLCollectionPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)

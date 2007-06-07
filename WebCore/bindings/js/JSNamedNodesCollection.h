@@ -23,30 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSHTMLElement.h"
+#ifndef JSNamedNodesCollection_h
+#define JSNamedNodesCollection_h
 
-#include "Document.h"
-#include "HTMLFormElement.h"
-#include "kjs_dom.h"
+#include "kjs_binding.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-using namespace KJS;
+    class Node;
 
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
-{
-    HTMLElement* element = impl();
+    // Internal class, used for the collection return by e.g. document.forms.myinput
+    // when multiple nodes have the same name.
+    class JSNamedNodesCollection : public KJS::DOMObject {
+    public:
+        JSNamedNodesCollection(KJS::ExecState*, const Vector<RefPtr<Node> >&);
 
-    // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
 
-    // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element->form())
-        scope.push(static_cast<JSObject*>(toJS(exec, form)));
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
 
-    // The element is on top, searched first.
-    scope.push(static_cast<JSObject*>(toJS(exec, element)));
-}
+    private:
+        static KJS::JSValue* lengthGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+
+        Vector<RefPtr<Node> > m_nodes;
+    };
 
 } // namespace WebCore
+
+#endif // JSNamedNodesCollection_h

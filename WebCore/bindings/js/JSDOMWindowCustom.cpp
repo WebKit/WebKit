@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2007 Apple, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,24 +17,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
-module core {
+#include "config.h"
+#include "JSDOMWindow.h"
 
-    interface [GenerateConstructor] Attr : EventTargetNode {
+#include "kjs_window.h"
 
-        // DOM Level 1
+namespace WebCore {
 
-        readonly attribute [ConvertNullStringTo=Null] DOMString name;
-        readonly attribute boolean specified;
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString value 
-                     setter raises(DOMException);
-
-        // DOM Level 2
-
-        readonly attribute Element ownerElement;
-        
-        // extensions
-
-        readonly attribute CSSStyleDeclaration style;
-    };
-
+bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)
+{
+    return getOverridePropertySlot(exec, propertyName, slot);
 }
+
+} // namespace WebCore

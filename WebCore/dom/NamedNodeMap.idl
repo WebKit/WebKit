@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,7 +20,7 @@
 
 module core {
 
-    interface NamedNodeMap {
+    interface [GenerateConstructor, HasIndexGetter, HasNameGetter] NamedNodeMap {
 
         Node getNamedItem(in DOMString name);
 
@@ -36,7 +37,7 @@ module core {
 
         // Introduced in DOM Level 2:
 
-        [OldStyleObjC] Node getNamedItemNS(in DOMString namespaceURI, 
+        [OldStyleObjC] Node getNamedItemNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                            in DOMString localName)
             // FIXME: the implementation does take an exceptioncode parameter.
             /*raises(DOMException)*/;
@@ -44,7 +45,7 @@ module core {
         Node setNamedItemNS(in Node node)
             raises(DOMException);
 
-        [OldStyleObjC] Node removeNamedItemNS(in DOMString namespaceURI, 
+        [OldStyleObjC] Node removeNamedItemNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                               in DOMString localName)
             raises(DOMException);
 

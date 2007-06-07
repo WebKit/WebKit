@@ -25,6 +25,7 @@
 #include "JSDocument.h"
 #include "JSElement.h"
 #include "JSHTMLElement.h"
+#include "kjs_dom.h"
 
 namespace WebCore {
     class HTMLCollection;

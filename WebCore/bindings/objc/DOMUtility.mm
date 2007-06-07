@@ -37,7 +37,9 @@
 #import "JSEvent.h"
 #import "JSHTMLOptionsCollection.h"
 #import "JSMediaList.h"
+#import "JSNamedNodeMap.h"
 #import "JSNodeIterator.h"
+#import "JSNodeList.h"
 #import "JSRange.h"
 #import "JSStyleSheet.h"
 #import "JSTreeWalker.h"
@@ -76,6 +78,8 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(Counter)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)
+    WRAP(NamedNodeMap)
+    WRAP(NodeList)
     WRAP(Range)
     WRAP(StyleSheet)
     WRAP(XPathExpression)
@@ -88,9 +92,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
             return [objc_getClass("DOM" #className) _wrap##className:static_cast<DOM##className*>(object)->impl()];
 
     WRAP(Event)
-    WRAP(NamedNodeMap)
     WRAP(Node)
-    WRAP(NodeList)
     WRAP(RGBColor)
     WRAP(Rect)
     WRAP(StyleSheetList)

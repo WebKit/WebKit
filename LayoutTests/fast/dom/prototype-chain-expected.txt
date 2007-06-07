@@ -10,7 +10,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object NodePrototype]
 
-[object DOMEventTargetNodePrototype]
+[object EventTargetNodePrototype]
 
 [object DocumentPrototype]
 
@@ -24,7 +24,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object NodePrototype]
 
-[object DOMEventTargetNodePrototype]
+[object EventTargetNodePrototype]
 
 [object ElementPrototype]
 
@@ -40,7 +40,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object NodePrototype]
 
-[object DOMEventTargetNodePrototype]
+[object EventTargetNodePrototype]
 
 [object ElementPrototype]
 

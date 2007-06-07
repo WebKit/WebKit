@@ -22,6 +22,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "NodeFilter.h"
 #include "kjs_proxy.h"
@@ -47,7 +48,7 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode) const
         KJS::JSLock lock;
         KJS::ExecState* exec = proxy->interpreter()->globalExec();
         KJS::List args;
-        args.append(KJS::toJS(exec, node));
+        args.append(toJS(exec, node));
         KJS::JSObject* obj = m_filter;
         KJS::JSValue* result = obj->call(exec, obj, args);
         return result->toInt32(exec);

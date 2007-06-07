@@ -23,30 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSHTMLElement.h"
+#ifndef JSDOMExceptionConstructor_h
+#define JSDOMExceptionConstructor_h
 
-#include "Document.h"
-#include "HTMLFormElement.h"
-#include "kjs_dom.h"
+#include "kjs_binding.h"
 
 namespace WebCore {
 
-using namespace KJS;
+    // Constructor for DOMException - constructor stuff not implemented yet
+    class JSDOMExceptionConstructor : public KJS::DOMObject {
+    public:
+        JSDOMExceptionConstructor(KJS::ExecState*);
 
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
-{
-    HTMLElement* element = impl();
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
+        // no put - all read-only
 
-    // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
+    };
 
-    // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element->form())
-        scope.push(static_cast<JSObject*>(toJS(exec, form)));
-
-    // The element is on top, searched first.
-    scope.push(static_cast<JSObject*>(toJS(exec, element)));
-}
+    KJS::JSObject* getDOMExceptionConstructor(KJS::ExecState*);
 
 } // namespace WebCore
+
+#endif // JSDOMExceptionConstructor_h

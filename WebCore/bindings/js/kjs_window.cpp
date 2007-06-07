@@ -40,6 +40,7 @@
 #include "HTMLDocument.h"
 #include "JSCSSRule.h"
 #include "JSCSSValue.h"
+#include "JSDOMExceptionConstructor.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSHTMLOptionElementConstructor.h"
@@ -2607,11 +2608,6 @@ JSValue* toJS(ExecState*, DOMWindow* domWindow)
     if (!frame)
         return jsNull();
     return Window::retrieve(frame);
-}
-
-DOMWindow* toDOMWindow(JSValue* val)
-{
-    return val->isObject(&JSDOMWindow::info) ? static_cast<JSDOMWindow*>(val)->impl() : 0;
 }
     
 } // namespace WebCore

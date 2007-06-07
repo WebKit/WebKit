@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #include "config.h"
 #include "JSHTMLFormElement.h"
 
-#include "HTMLFormElement.h"
 #include "HTMLCollection.h"
+#include "HTMLFormElement.h"
+#include "JSNamedNodesCollection.h"
+#include "kjs_dom.h"
 
 using namespace KJS;
 
@@ -50,7 +52,7 @@ JSValue* JSHTMLFormElement::nameGetter(ExecState* exec, JSObject*, const Identif
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
     if (namedItems.size() > 1) 
-        return new DOMNamedNodesCollection(exec, namedItems);
+        return new JSNamedNodesCollection(exec, namedItems);
     return jsUndefined();
 }
 

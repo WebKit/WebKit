@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +24,11 @@
 #include "HTMLOptionElement.h"
 #include "JSHTMLOptionElement.h"
 #include "Text.h"
-
-using namespace KJS;
+#include "kjs_dom.h"
 
 namespace WebCore {
+
+using namespace KJS;
 
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* d)
     : m_doc(d)
@@ -65,4 +66,4 @@ JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const List&
     return static_cast<JSObject*>(toJS(exec, opt));
 }
 
-}
+} // namespace WebCore
