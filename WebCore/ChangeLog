@@ -1,5 +1,20 @@
 2007-06-06  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Oliver.
+        
+        <rdar://problem/5245519> CrashTracer: [USER] 457 crashes in Mail at WebCore::CSSComputedStyleDeclaration::copyInheritableProperties()
+        
+        If the user pastes something into a region that ends up being
+        invisible, or if the pasted content contains style spans 
+        that are render-less, we'll crash when we try to remove
+        redundant styles from style spans.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyInheritableProperties):
+        Add null checks.
+
+2007-06-06  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Harrison.
 
         <rdar://problem/4889598> Problems with moveDown: and moveUp: in Notes with ToDos

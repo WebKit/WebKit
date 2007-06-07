@@ -1702,7 +1702,7 @@ void CSSComputedStyleDeclaration::removeComputedInheritablePropertiesFrom(CSSMut
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInheritableProperties() const
 {
     RefPtr<CSSMutableStyleDeclaration> style = copyPropertiesInSet(inheritableProperties, numInheritableProperties);
-    if (style) {
+    if (style && m_node && m_node->renderer()) {
         // If a node's text fill color is invalid, then its children use 
         // their font-color as their text fill color (they don't
         // inherit it).  Likewise for stroke color.

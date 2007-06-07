@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 776x36
+          text run at (0,0) width 776: "This tests for a crash when pasting content that contains Apple-style-spans that don't have renderers.' You should see 'Hello"
+          text run at (0,18) width 48: "World!'"
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 39x18
+          text run at (0,0) width 39: "Hello "
+        RenderText {#text} at (39,0) size 45x18
+          text run at (39,0) width 45: "World!"
+caret: position 6 of child 1 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

@@ -1,5 +1,14 @@
 2007-06-06  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Oliver.
+
+        * editing/pasteboard/5245519-expected.checksum: Added.
+        * editing/pasteboard/5245519-expected.png: Added.
+        * editing/pasteboard/5245519-expected.txt: Added.
+        * editing/pasteboard/5245519.html: Added.
+
+2007-06-06  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Harrison.
 
         <rdar://problem/4889598> Problems with moveDown: and moveUp: in Notes with ToDos
