@@ -1,3 +1,15 @@
+2007-06-08  dethbakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for http://trac.webkit.org/projects/webkit/changeset/21738
+
+        This test started failing after Adele's r21738. After investigating 
+        this, it turns out that it just needs updated results. This test 
+        happened to tickle the very bug that Adele fixed. 
+
+        * http/tests/navigation/relativeanchor-goback-expected.txt:
+
 2007-06-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.
