@@ -1,3 +1,8 @@
+2007-06-08  John Sullivan  <sullivan@apple.com>
+
+        * WebView/WebViewPrivate.h:
+        Added a FIXME
+
 2007-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tristan.
