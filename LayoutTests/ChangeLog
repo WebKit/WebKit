@@ -1,3 +1,15 @@
+2007-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5237074> REGRESSION: editing/unsupported-content/table-delete-003 is failing (13931)
+        
+        Corrected the description and added a FIXME:
+        * editing/unsupported-content/table-delete-003-expected.checksum:
+        * editing/unsupported-content/table-delete-003-expected.png:
+        * editing/unsupported-content/table-delete-003-expected.txt:
+        * editing/unsupported-content/table-delete-003.html:
+
 2007-06-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

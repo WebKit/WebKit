@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > B > BODY > HTML > #document to 3 of DIV > B > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -11,9 +11,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > B > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > DIV > B > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of DIV > DIV > B > BODY > HTML > #document to 1 of DIV > DIV > B > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x250 [border: (4px solid #0000FF)]
+      RenderBlock {DIV} at (0,0) size 784x272 [border: (4px solid #0000FF)]
         RenderBlock {DIV} at (20,20) size 744x72
           RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
             text run at (99,50) width 392: "Select and delete a list and some surrounding content."
         RenderBlock (anonymous) at (20,92) size 744x22
           RenderBR {BR} at (0,0) size 0x22
-        RenderBlock {DIV} at (20,114) size 744x116
+        RenderBlock {DIV} at (20,114) size 744x138
           RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
@@ -50,13 +50,27 @@ layer at (0,0) size 800x600
           RenderText {#text} at (99,72) size 744x44
             text run at (99,72) width 304: "Only selected content should get deleted. "
             text run at (403,72) width 341: "Surrounding content that is not selected should"
-            text run at (0,94) width 201: "(obviously) not be affected."
-      RenderBlock {DIV} at (0,260) size 784x32 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 45x28
-          text run at (2,2) width 45: "after"
-      RenderBlock {DIV} at (0,302) size 784x60
-        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+            text run at (0,94) width 206: "(obviously) not be affected. "
+          RenderBR {BR} at (206,111) size 0x0
+          RenderInline {B} at (0,0) size 718x22
+            RenderText {#text} at (0,116) size 718x22
+              text run at (0,116) width 718: "There is a bug: the caret ends up in the wrong position, it should be in the empty paragraph."
+        RenderBlock (anonymous) at (20,252) size 744x0
+          RenderInline {B} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,282) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,282) size 784x130
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #008000)]
           RenderBR {BR} at (2,2) size 0x28
-          RenderText {#text} at (2,30) size 45x28
-            text run at (2,30) width 45: "after"
-caret: position 0 of child 0 {BR} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (2,30) size 50x28
+            text run at (2,30) width 50: "after"
+        RenderBlock {DIV} at (0,70) size 784x60
+          RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+            RenderBR {BR} at (2,2) size 0x28
+            RenderText {#text} at (2,30) size 50x28
+              text run at (2,30) width 50: "after"
+      RenderBlock (anonymous) at (0,412) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+caret: position 0 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 2 {B} of child 1 {BODY} of child 0 {HTML} of document

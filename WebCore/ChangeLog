@@ -1,3 +1,20 @@
+2007-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5237074> REGRESSION: editing/unsupported-content/table-delete-003 is failing (13931)
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        We wouldn't expand the selection to include a special element 
+        at the start of the selection unless the end of the selection 
+        was at the end of a special element. Avoid a special 
+        element at the start as long as it's fully selected. Ditto for 
+        the end.
+        * editing/htmlediting.cpp:
+        (WebCore::positionBeforeContainingSpecialElement):
+        (WebCore::positionAfterContainingSpecialElement):
+
 2007-06-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

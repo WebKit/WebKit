@@ -98,17 +98,25 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
         startSpecialContainer = 0;
         endSpecialContainer = 0;
     
-        Position s = positionOutsideContainingSpecialElement(start, &startSpecialContainer);
-        Position e = positionOutsideContainingSpecialElement(end, &endSpecialContainer);
+        Position s = positionBeforeContainingSpecialElement(start, &startSpecialContainer);
+        Position e = positionAfterContainingSpecialElement(end, &endSpecialContainer);
         
-        if (!startSpecialContainer || !endSpecialContainer)
+        if (!startSpecialContainer && !endSpecialContainer)
             break;
         
-        if (startSpecialContainer->isDescendantOf(endSpecialContainer))
+        // If we're going to expand to include the startSpecialContainer, it must be fully selected.
+        if (startSpecialContainer && !endSpecialContainer && Range::compareBoundaryPoints(positionAfterNode(startSpecialContainer), end) > -1)
+            break;
+
+        // If we're going to expand to include the endSpecialContainer, it must be fully selected.         
+        if (endSpecialContainer && !startSpecialContainer && Range::compareBoundaryPoints(start, positionBeforeNode(endSpecialContainer)) > -1)
+            break;
+        
+        if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer))
             // Don't adjust the end yet, it is the end of a special element that contains the start
             // special element (which may or may not be fully selected).
             start = s;
-        else if (endSpecialContainer->isDescendantOf(startSpecialContainer))
+        else if (endSpecialContainer && endSpecialContainer->isDescendantOf(startSpecialContainer))
             // Don't adjust the start yet, it is the start of a special element that contains the end
             // special element (which may or may not be fully selected).
             end = e;
