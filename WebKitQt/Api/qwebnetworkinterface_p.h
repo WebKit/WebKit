@@ -38,6 +38,13 @@ namespace WebCore {
 class QWebNetworkJobPrivate
 {
 public:
+    QWebNetworkJobPrivate()
+        : ref(1)
+        , resourceHandle(0)
+        , redirected(false)
+        , interface(0)
+        , connector(0)
+        {}
     int ref;
     QUrl url;
     QHttpRequestHeader request;
@@ -49,8 +56,10 @@ public:
     bool redirected;
 
     QWebNetworkInterface *interface;
+    QWebObjectPluginConnector *connector;
 
     void setURL(const QUrl &u);
+    void setDefaults(const QString &method, const QUrl &url);
 };
 
 

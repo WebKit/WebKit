@@ -23,6 +23,7 @@
 #include <qglobal.h>
 #include "qwebnetworkinterface.h"
 #include "qwebnetworkinterface_p.h"
+#include "qwebobjectpluginconnector.h"
 #include <qdebug.h>
 #include <qfile.h>
 
@@ -63,6 +64,15 @@ void QWebNetworkJobPrivate::setURL(const QUrl &u)
         request.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
     else
         request.setValue(QLatin1String("Host"), url.host());
+}
+
+void QWebNetworkJobPrivate::setDefaults(const QString &method, const QUrl &url)
+{
+    request = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
+    request.setValue(QLatin1String("User-Agent"),
+                             QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
+    request.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
+    setURL(url);
 }
 
 /*!
@@ -211,16 +221,11 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
     handle->getInternal()->m_job = job;
     job->d->resourceHandle = handle;
     job->d->interface = interface;
+    job->d->connector = 0;
 
     KURL url = handle->url();
     QUrl qurl = QString(url.url());
-    //qDebug() << QString(url.path() + url.query());
-    job->d->request = QHttpRequestHeader(handle->method(), url.path() + url.query());
-    job->d->request.setValue(QLatin1String("User-Agent"),
-                             QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
-    job->d->request.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
-
-    job->d->setURL(qurl);
+    job->d->setDefaults(handle->method(), qurl);
 
     const QString scheme = qurl.scheme().toLower();
     if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
@@ -228,7 +233,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
         if (!cookies.isEmpty())
             job->d->request.setValue(QLatin1String("Cookie"), cookies);
     }
-
+    
     const HTTPHeaderMap& loaderHeaders = handle->requestHeaders();
     HTTPHeaderMap::const_iterator end = loaderHeaders.end();
     for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)
@@ -265,15 +270,17 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
 
 void QWebNetworkManager::started(QWebNetworkJob *job)
 {
-    if (!job->d->resourceHandle)
+    ResourceHandleClient* client = 0;
+    if (job->d->resourceHandle) {
+        client = job->d->resourceHandle->client();
+        if (!client)
+            return;
+    } else if (!job->d->connector) {
         return;
+    }
 
     DEBUG() << "ResourceHandleManager::receivedResponse:";
     DEBUG() << job->d->response.toString();
-
-    ResourceHandleClient* client = job->d->resourceHandle->client();
-    if (!client)
-        return;
 
     QStringList cookies = job->d->response.allValues("Set-Cookie");
     KURL url = job->d->resourceHandle->url();
@@ -323,7 +330,8 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         if (!location.isEmpty()) {
             ResourceRequest newRequest = job->d->resourceHandle->request();
             newRequest.setURL(KURL(newRequest.url(), DeprecatedString(location)));
-            client->willSendRequest(job->d->resourceHandle, newRequest, response);
+            if (client)
+                client->willSendRequest(job->d->resourceHandle, newRequest, response);
             job->d->request.setRequest(job->d->request.method(), newRequest.url().path() + newRequest.url().query());
             job->d->setURL(QString(newRequest.url().url()));
             job->d->redirected = true;
@@ -331,30 +339,43 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         }
     }
 
-    client->didReceiveResponse(job->d->resourceHandle, response);
+    if (client)
+        client->didReceiveResponse(job->d->resourceHandle, response);
+    if (job->d->connector)
+        emit job->d->connector->started(job);
     
 }
 
 void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
 {
-    if (!job->d->resourceHandle)
+    ResourceHandleClient* client = 0;
+    if (job->d->resourceHandle) {
+        client = job->d->resourceHandle->client();
+        if (!client)
+            return;
+    } else if (!job->d->connector) {
         return;
-
-    ResourceHandleClient* client = job->d->resourceHandle->client();
-    if (!client)
-        return;
+    }
 
     if (job->d->redirected)
         return; // don't emit the "Document has moved here" type of HTML
 
     DEBUG() << "receivedData" << job->d->url.path();
-    client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
+    if (client)
+        client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
+    if (job->d->connector)
+        emit job->d->connector->data(job, data);
     
 }
 
 void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 {
-    if (!job->d->resourceHandle) {
+    ResourceHandleClient* client = 0;
+    if (job->d->resourceHandle) {
+        client = job->d->resourceHandle->client();
+        if (!client)
+            return;
+    } else if (!job->d->connector) {
         job->deref();
         return;
     }
@@ -366,12 +387,11 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
         job->d->interface->addJob(job);
         return;
     }
-    job->d->resourceHandle->getInternal()->m_job = 0;
+    
+    if (job->d->resourceHandle)
+        job->d->resourceHandle->getInternal()->m_job = 0;
 
-    ResourceHandleClient* client = job->d->resourceHandle->client();
-    if (!client)
-        return;
-
+    if (client) {
     if (errorCode) {
         //FIXME: error setting error was removed from ResourceHandle
         client->didFail(job->d->resourceHandle,
@@ -380,6 +400,11 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
     } else {
         client->didFinishLoading(job->d->resourceHandle);
     }
+    }
+
+    if (job->d->connector)
+        emit job->d->connector->finished(job, errorCode);
+    
     DEBUG() << "receivedFinished done" << job->d->url;
 
     job->deref();

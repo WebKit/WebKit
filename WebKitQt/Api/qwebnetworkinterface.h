@@ -31,6 +31,7 @@
 
 class QWebNetworkJobPrivate;
 class QWebNetworkInterface;
+class QWebObjectPluginConnector;
 
 namespace WebCore {
     class WebCoreHttp;
@@ -39,6 +40,11 @@ namespace WebCore {
 class QWEBKIT_EXPORT QWebNetworkJob
 {
 public:
+    enum Method {
+        Get,
+        Post
+        //Head
+    };
     QUrl url() const;
     QByteArray postData() const;
     QHttpRequestHeader request() const;
@@ -58,6 +64,8 @@ private:
     ~QWebNetworkJob();
 
     friend class QWebNetworkManager;
+    friend class QWebObjectPluginConnector;
+
     QWebNetworkJobPrivate *d;
 };
 

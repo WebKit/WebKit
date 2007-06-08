@@ -5,6 +5,7 @@
 #include <qwebobjectplugin.h>
 
 #include <private/qfactoryloader_p.h>
+class QWebFrame;
 
 class QWebFactoryLoader : public QFactoryLoader
 {
@@ -23,7 +24,8 @@ public:
     QString mimeTypeForExtension(const QString &extension);
     bool supportsMimeType(const QString &mimeType) { return keys().contains(mimeType); }
     
-    QObject *create(QWidget *parent,
+    QObject *create(QWebFrame *frame,
+                    const QUrl &url, 
                     const QString &mimeType,
                     const QStringList &argumentNames,
                     const QStringList &argumentValues);

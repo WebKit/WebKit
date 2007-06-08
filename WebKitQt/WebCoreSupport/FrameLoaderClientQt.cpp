@@ -901,8 +901,10 @@ Widget* FrameLoaderClientQt::createPlugin(Element* element, const KURL& url, con
         params.append(paramNames[i]);
     for (int i = 0; i < paramValues.size(); ++i) 
         values.append(paramValues[i]);
+
+    QUrl qurl = QString(url.url());
     
-    QObject *object = QWebFactoryLoader::self()->create(m_webFrame->viewport(), mimeType, params, values);
+    QObject *object = QWebFactoryLoader::self()->create(m_webFrame, qurl, mimeType, params, values);
     if (object) {
         QWidget *widget = qobject_cast<QWidget *>(object);
         if (widget) {
