@@ -1,3 +1,15 @@
+2007-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        Switch to using Internet Explorer's conditional comments to target IE-specific styles rather
+        than doing server-side user agent checks.  This resolves an issue some people were seeing where
+        caching would lead to a page generated for an Internet Explorer user being served to a Safari
+        user.  The visible symptom of this was many of the graphics were missing.
+
+        * blog/wp-content/themes/webkit/header.php:
+        * header.inc:
+
 2007-05-04  Mark Rowe  <mrowe@apple.com>
 
         Upgrade to WordPress 2.2.  I didn't go to the effort of tracking down files

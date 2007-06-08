@@ -8,19 +8,15 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <link rel="stylesheet" type="text/css" href="/css/green.css" title="green">
 
-<?php
-    $msie = '/msie\s(5\.[5-9]|[6]\.[0-9]*).*(win)/i';
-    $agent = $_SERVER['HTTP_USER_AGENT'];
-    if( isset($agent) && preg_match($msie, $agent) && ! preg_match('/opera/i', $agent)) {
-?>
-    <link rel="stylesheet" type="text/css" href="/css/ie.css">
-<?php } else { ?>
     <link rel="alternate stylesheet" type="text/css" href="/css/blue.css" title="blue">
     <link rel="alternate stylesheet" type="text/css" href="/css/yellow.css" title="yellow">
     <link rel="alternate stylesheet" type="text/css" href="/css/pink.css" title="pink">
     <link rel="alternate stylesheet" type="text/css" href="/css/purple.css" title="purple">
     <link rel="alternate stylesheet" type="text/css" href="/css/gray.css" title="gray">
-<?php } ?>
+
+<!--[if gte IE 5]>
+    <link rel="stylesheet" type="text/css" href="/css/ie.css">
+<![endif]-->
 
     <script type="text/javascript">
         pic1 = new Image(8,9);
