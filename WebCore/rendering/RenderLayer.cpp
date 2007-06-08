@@ -848,10 +848,10 @@ void RenderLayer::autoscroll()
     
     if (currentFrame->eventHandler()->mouseDownMayStartSelect()) {
         // Convert the mouse position to local layer space.
-        int objectX, objectY;
-        renderer()->absolutePosition(objectX, objectY);
+        int x, y;
+        convertToLayerCoords(root(), x, y);
         HitTestRequest request(true, false, true);
-        HitTestResult result(currentPos - IntSize(objectX, objectY));
+        HitTestResult result(currentPos - IntSize(x, y));
         if (hitTest(request, result) && result.innerNode()->renderer() && result.innerNode()->renderer()->shouldSelect()) {
             VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
             currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);

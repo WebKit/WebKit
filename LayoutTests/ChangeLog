@@ -1,3 +1,14 @@
+2007-06-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5232159> REGRESSION: Cannot select text in RSS view
+
+        * editing/selection/5232159-expected.checksum: Added.
+        * editing/selection/5232159-expected.png: Added.
+        * editing/selection/5232159-expected.txt: Added.
+        * editing/selection/5232159.html: Added.
+
 2007-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

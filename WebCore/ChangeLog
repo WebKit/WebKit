@@ -1,3 +1,18 @@
+2007-06-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5232159> REGRESSION: Cannot select text in RSS view
+
+        The selection is updated both on mouse movement and
+        when the autoscroll timer fires.  The autoscroll
+        code wasn't converting mouse coordinates to layer
+        coordinates correctly, and was then using those
+        coordinates to create a bad selection.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll): Use convertToLayerCoordinates.
+
 2007-06-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
