@@ -97,6 +97,8 @@ namespace WebCore {
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
+        
+        void clearUndoRedoOperations();
 
 #if PLATFORM(WIN)
         // The global DLL or application instance used for all windows.

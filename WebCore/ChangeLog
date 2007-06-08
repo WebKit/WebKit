@@ -1,3 +1,14 @@
+2007-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+        
+        <rdar://problem/5250997> A crash occurs when selecting Undo Typing for a page that has been closed in tab
+
+        * WebCore.exp: Added clearUndoRedoOperations.
+        * page/Page.cpp:
+        (WebCore::Page::clearUndoRedoOperations): Added.
+        * page/Page.h:
+        
 2007-06-07  David Hyatt  <hyatt@apple.com>
 
         Fix crash.  Null check layer.  Bug 13984.

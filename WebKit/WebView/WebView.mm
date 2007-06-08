@@ -1529,6 +1529,11 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window]; 
 } 
 
+- (void)_clearUndoRedoOperations
+{
+    _private->page->clearUndoRedoOperations();
+}
+
 @end
 
 @implementation _WebSafeForwarder

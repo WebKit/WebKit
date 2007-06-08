@@ -407,6 +407,8 @@ Could be worth adding to the API.
 // Do not remove until Dashboard has moved off it
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
+- (void)_clearUndoRedoOperations;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

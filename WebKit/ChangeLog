@@ -1,3 +1,13 @@
+2007-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+        
+        <rdar://problem/5250997> A crash occurs when selecting Undo Typing for a page that has been closed in tab
+
+        * WebView/WebView.mm:
+        (-[WebView _clearUndoRedoOperations]): Added.
+        * WebView/WebViewPrivate.h:
+
 2007-06-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam "The Intern" Weinig.

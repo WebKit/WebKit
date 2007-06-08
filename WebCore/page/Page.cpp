@@ -196,4 +196,9 @@ void Page::setDefersLoading(bool defers)
         frame->loader()->setDefersLoading(defers);
 }
 
+void Page::clearUndoRedoOperations()
+{
+    m_editorClient->clearUndoRedoOperations();
+}
+
 } // namespace WebCore
