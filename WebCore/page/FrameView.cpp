@@ -873,6 +873,10 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
 
 IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
 {
+    // If we have no layer, just return our window clip rect.
+    if (!layer)
+        return windowClipRect();
+
     // Apply the clip from the layer.
     IntRect clipRect;
     if (clipToLayerContents)
