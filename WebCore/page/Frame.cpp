@@ -1061,8 +1061,13 @@ KJS::Bindings::RootObject* Frame::bindingRootObject()
 
 PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter> interpreter)
 {
+    RootObjectMap::iterator it = d->m_rootObjects.find(nativeHandle);
+    if (it != d->m_rootObjects.end())
+        return it->second;
+    
     RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, interpreter);
-    d->m_rootObjects.append(rootObject);
+    
+    d->m_rootObjects.set(nativeHandle, rootObject);
     return rootObject.release();
 }
 
@@ -1091,10 +1096,11 @@ void Frame::cleanupScriptObjects()
 {
     cleanupPlatformScriptObjects();
     JSLock lock;
-    
-    unsigned count = d->m_rootObjects.size();
-    for (unsigned i = 0; i < count; i++)
-        d->m_rootObjects[i]->invalidate();
+
+    RootObjectMap::const_iterator end = d->m_rootObjects.end();
+    for (RootObjectMap::const_iterator it = d->m_rootObjects.begin(); it != end; ++it)
+        it->second->invalidate();
+
     d->m_rootObjects.clear();
 
     if (d->m_bindingRootObject) {

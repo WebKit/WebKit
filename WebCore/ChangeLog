@@ -1,3 +1,15 @@
+2007-06-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Store the root object in a hash set, keyed by the plugin view. This is in preparation for 
+        letting plugins invalidate the root object upon destruction
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createRootObject):
+        (WebCore::Frame::cleanupScriptObjects):
+        * page/FramePrivate.h:
+
 2007-06-08  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.

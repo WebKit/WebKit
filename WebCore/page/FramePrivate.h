@@ -63,6 +63,8 @@ namespace WebCore {
 
     class UserStyleSheetLoader;
 
+    typedef HashMap<void*, RefPtr<KJS::Bindings::RootObject> > RootObjectMap;
+    
     class FramePrivate {
     public:
         FramePrivate(Page*, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement*, FrameLoaderClient*);
@@ -122,7 +124,7 @@ namespace WebCore {
 
         // The root object used for objects bound outside the context of a plugin.
         RefPtr<KJS::Bindings::RootObject> m_bindingRootObject; 
-        Vector<RefPtr<KJS::Bindings::RootObject> > m_rootObjects;
+        RootObjectMap m_rootObjects;
         NPObject* m_windowScriptNPObject;
 #if PLATFORM(MAC)
         WebScriptObject* m_windowScriptObject;
