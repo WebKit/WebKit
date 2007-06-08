@@ -5271,10 +5271,7 @@ BOOL isTextInput(Frame *coreFrame)
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
-{
-    if (!isTextInput(core([self _frame])))
-        return NSMakeRect(0,0,0,0);
-    
+{    
     WebFrameBridge *bridge = [self _bridge];
     
     // Just to match NSTextView's behavior. Regression tests cannot detect this;

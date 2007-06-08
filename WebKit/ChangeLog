@@ -1,5 +1,18 @@
 2007-06-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam "The Intern" Weinig.
+        
+        Don't be overzealous with the input checks, firstRectForCharacterRange
+        can be determined even when there is not an active editable region.
+        
+        This unbreaks editing/input/range-for-empty-document which was broken
+        by aforementioned overzealousness. 
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView firstRectForCharacterRange:]):
+
+2007-06-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Justin.
         
         Add checks to make sure we don't try to create, use
