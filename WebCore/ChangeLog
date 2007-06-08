@@ -1,3 +1,21 @@
+2007-06-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Justin.
+
+        Remove incorrect assertions.
+        
+        These assertions were made on the assumption that 
+        TSM would always call with a range that was contained 
+        by an editable region.
+        
+        TSM may call -[WebHTMLView characterIndexForPoint:] on a mouse
+        event that is otherwise unrelated to editing, which may
+        be outside the current editing region, triggering these 
+        assertions.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge convertToNSRange:]):
+
 2007-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

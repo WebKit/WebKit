@@ -1,3 +1,18 @@
+2007-06-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Justin.
+        
+        Add checks to make sure we don't try to create, use
+        or return invalid ranges to TSM when it calls us despite
+        not currently being in an editable region.
+
+        * WebView/WebHTMLView.mm:
+        (isTextInput):
+        (-[WebHTMLView textStorage]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView selectedRange]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+
 2007-06-06  David Hyatt  <hyatt@apple.com>
 
         Make sure to hand back a script object for webkit plugins (the container

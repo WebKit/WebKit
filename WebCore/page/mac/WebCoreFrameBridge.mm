@@ -857,10 +857,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Element* selectionRoot = m_frame->selectionController()->rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : m_frame->document()->documentElement();
     
-    // our critical assumption is that we are only called by input methods that
-    // concentrate on a given area containing the selection.  See comments in convertToDOMRange.
-    ASSERT(range->startContainer(exception) == scope || range->startContainer(exception)->isDescendantOf(scope));
-    ASSERT(range->endContainer(exception) == scope || range->endContainer(exception)->isDescendantOf(scope));
+    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
+    // that is not inside the current editable region.  These checks ensure we don't produce
+    // potentially invalid data when responding to such requests.
+    if (range->startContainer(exception) != scope && !range->startContainer(exception)->isDescendantOf(scope))
+        return NSMakeRange(NSNotFound, 0);
+    if(range->endContainer(exception) != scope && !range->endContainer(exception)->isDescendantOf(scope))
+        return NSMakeRange(NSNotFound, 0);
     
     RefPtr<Range> testRange = new Range(scope->document(), scope, 0, range->startContainer(exception), range->startOffset(exception));
     ASSERT(testRange->startContainer(exception) == scope);

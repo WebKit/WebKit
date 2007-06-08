@@ -5237,6 +5237,23 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return validAttributes;
 }
 
+
+// Utility function to make sure we don't return anything through the NSTextInput
+// API when an editable region is not currently focused.
+BOOL isTextInput(Frame *coreFrame)
+{
+    return coreFrame && !coreFrame->selectionController()->isNone() && coreFrame->selectionController()->isContentEditable();
+}
+
+- (NSAttributedString *)textStorage
+{
+    if (!isTextInput(core([self _frame])))
+        return nil;
+    NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
+    // We have to return an empty string rather than null to prevent TSM from calling -string
+    return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
+}
+
 - (WebNSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
     NSWindow *window = [self window];
@@ -5255,6 +5272,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
+    if (!isTextInput(core([self _frame])))
+        return NSMakeRect(0,0,0,0);
+    
     WebFrameBridge *bridge = [self _bridge];
     
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
@@ -5282,6 +5302,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRange)selectedRange
 {
+    if (!isTextInput(core([self _frame])))
+        return NSMakeRange(NSNotFound,0);
     return [[self _bridge] selectedNSRange];
 }
 
@@ -5294,6 +5316,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
+    if (!isTextInput(core([self _frame])))
+        return nil;
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *domRange = [bridge convertNSRangeToDOMRange:nsRange];
     if (!domRange)
@@ -5903,17 +5927,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (NSString *)string
 {
     return [[self _bridge] stringForRange:[self _documentRange]];
-}
-
-- (NSAttributedString *)textStorage
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame || coreFrame->selectionController()->isNone() 
-        || !coreFrame->selectionController()->isContentEditable())
-        return nil;
-    NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
-    // We have to return an empty string rather than null to prevent TSM from calling -string
-    return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
 }
 
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
