@@ -723,6 +723,7 @@ qt-port:HEADERS += \
     $$PWD/../WebKitQt/Api/qwebnetworkinterface_p.h \
     $$PWD/../WebKitQt/Api/qwebobjectplugin.h \
     $$PWD/../WebKitQt/Api/qwebobjectplugin_p.h \
+    $$PWD/../WebKitQt/Api/qwebobjectpluginconnector.h \
     $$PWD/../WebKitQt/Api/qcookiejar.h \
     $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
@@ -794,7 +795,8 @@ qt-port:SOURCES += \
     ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebpagehistory.cpp \
     ../WebKitQt/Api/qwebsettings.cpp \
-    ../WebKitQt/Api/qwebobjectplugin.cpp 
+    ../WebKitQt/Api/qwebobjectplugin.cpp \
+    ../WebKitQt/Api/qwebobjectpluginconnector.cpp 
 
 gdk-port:SOURCES += \
         platform/TextCodecICU.cpp \

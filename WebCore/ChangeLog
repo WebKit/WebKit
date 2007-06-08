@@ -1,3 +1,11 @@
+2007-06-08  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack.
+
+        Add qwebobjectpluginconnector to the build.
+
+        * WebCore.pro:
+
 2007-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tristan.
