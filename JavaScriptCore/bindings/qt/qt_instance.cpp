@@ -30,12 +30,11 @@
 namespace KJS {
 namespace Bindings {
 
-QtInstance::QtInstance(QObject* o)
-    : Instance(),
+QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
+    : Instance(rootObject),
       _class(0),
       _object(o)
 {
-    setRootObject(0);
 }
 
 QtInstance::~QtInstance() 
@@ -43,9 +42,8 @@ QtInstance::~QtInstance()
 }
 
 QtInstance::QtInstance(const QtInstance& other)
-    : Instance(), _class(0), _object(other._object)
+    : Instance(other.rootObject()), _class(0), _object(other._object)
 {
-    setRootObject(other.rootObject());
 }
 
 QtInstance& QtInstance::operator=(const QtInstance& other)

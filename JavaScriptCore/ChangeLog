@@ -1,3 +1,11 @@
+2007-06-08  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix the Qt build
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::QtInstance):
+        * bindings/qt/qt_instance.h:
+
 2007-06-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

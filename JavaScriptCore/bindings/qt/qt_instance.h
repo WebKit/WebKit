@@ -35,7 +35,7 @@ class QtClass;
 class QtInstance : public Instance
 {
 public:
-    QtInstance(QObject* instance);
+    QtInstance(QObject* instance, PassRefPtr<RootObject>);
         
     ~QtInstance ();
     
