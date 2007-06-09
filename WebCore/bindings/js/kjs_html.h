@@ -22,75 +22,37 @@
 #ifndef kjs_html_h
 #define kjs_html_h
 
-#include "JSDocument.h"
-#include "JSElement.h"
-#include "JSHTMLElement.h"
 #include "kjs_dom.h"
 
 namespace WebCore {
+
+    class Document;
     class HTMLCollection;
-    class HTMLDocument;
     class HTMLElement;
-    class HTMLOptionsCollection;
-}
+    class JSHTMLElement;
 
-namespace KJS {
+    class ImageConstructorImp : public KJS::DOMObject {
+    public:
+        ImageConstructorImp(KJS::ExecState*, Document*);
 
-  class JSAbstractEventListener;
+        virtual bool implementsConstruct() const { return true; }
+        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
 
-  KJS_DEFINE_PROTOTYPE(JSHTMLCollectionPrototype)
+    private:
+        RefPtr<Document> m_doc;
+    };
 
-  class JSHTMLCollection : public DOMObject {
-  public:
-    JSHTMLCollection(ExecState*, WebCore::HTMLCollection*);
-    ~JSHTMLCollection();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List&args);
-    virtual bool implementsCall() const { return true; }
-    virtual bool toBoolean(ExecState*) const { return true; }
-    enum { Item, NamedItem, Tags };
-    JSValue* getNamedItems(ExecState*, const Identifier& propertyName) const;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    WebCore::HTMLCollection* impl() const { return m_impl.get(); }
-  protected:
-    RefPtr<WebCore::HTMLCollection> m_impl;
-  private:
-    static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-  };
 
-  class HTMLAllCollection : public JSHTMLCollection {
-  public:
-    HTMLAllCollection(ExecState* exec, WebCore::HTMLCollection* c) :
-      JSHTMLCollection(exec, c) { }
-    virtual bool toBoolean(ExecState*) const { return false; }
-    virtual bool masqueradeAsUndefined() const { return true; }
-  };
-  
-  ////////////////////// Image Object ////////////////////////
+    // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+    // FIXME: Move these to a more appropriate place.
 
-  class ImageConstructorImp : public DOMObject {
-  public:
-    ImageConstructorImp(ExecState*, WebCore::Document*);
-    virtual bool implementsConstruct() const;
-    virtual JSObject* construct(ExecState*, const List& args);
-  private:
-    RefPtr<WebCore::Document> m_doc;
-  };
+    KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+    KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+    bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*, HTMLElement*);
+    bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr, HTMLElement*);
+    bool runtimeObjectImplementsCall(HTMLElement*);
+    KJS::JSValue* runtimeObjectCallAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&, HTMLElement*);
 
-  JSValue* toJS(ExecState*, WebCore::HTMLOptionsCollection*);
-  JSValue* getHTMLCollection(ExecState*, WebCore::HTMLCollection*);
-  JSValue* getAllHTMLCollection(ExecState*, WebCore::HTMLCollection*);
-
-  JSValue* runtimeObjectGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-  JSValue* runtimeObjectPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-  bool runtimeObjectCustomGetOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, WebCore::JSHTMLElement*, WebCore::HTMLElement*);
-  bool runtimeObjectCustomPut(ExecState*, const Identifier&, JSValue*, int attr, WebCore::HTMLElement*);
-  bool runtimeObjectImplementsCall(WebCore::HTMLElement*);
-  JSValue* runtimeObjectCallAsFunction(ExecState*, JSObject*, const List&, WebCore::HTMLElement*);
-
-} // namespace KJS
+} // namespace WebCore
 
 #endif // kjs_html_h

@@ -35,10 +35,10 @@ namespace WebCore {
 class AtomicString;
 class AtomicStringImpl;
 class Node;
+class NodeList;
 class String;
 
-class HTMLCollection : public Shared<HTMLCollection>
-{
+class HTMLCollection : public Shared<HTMLCollection> {
 public:
     enum Type {
         // from JSHTMLDocument
@@ -83,6 +83,9 @@ public:
     // In case of multiple items named the same way
     virtual Node *nextNamedItem(const String &name) const;
 
+    // Extension
+    PassRefPtr<NodeList> tags(const String&);
+
     void namedItems(const AtomicString &name, Vector<RefPtr<Node> >&) const;
 
     Node *base() { return m_base.get(); }
@@ -100,7 +103,9 @@ public:
         HashMap<AtomicStringImpl*, Vector<Node*>*> nameCache;
         bool haslength;
         bool hasNameCache;
-     };
+    };
+
+    Type collectionType() const { return type; }
 
 protected:
     virtual void updateNameCache() const;

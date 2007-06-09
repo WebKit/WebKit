@@ -341,6 +341,7 @@ all : \
     JSHTMLBRElement.h \
     JSHTMLButtonElement.h \
     JSHTMLCanvasElement.h \
+    JSHTMLCollection.h \
     JSHTMLDListElement.h \
     JSHTMLDirectoryElement.h \
     JSHTMLDivElement.h \
@@ -550,7 +551,6 @@ all : \
     XPathGrammar.cpp \
     kjs_css.lut.h \
     kjs_events.lut.h \
-    kjs_html.lut.h \
     kjs_navigator.lut.h \
     kjs_window.lut.h \
     ksvgcssproperties.h \

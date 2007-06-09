@@ -24,8 +24,8 @@
 #include "kjs_window.h"
 
 #include "Base64.h"
-#include "Chrome.h"
 #include "CString.h"
+#include "Chrome.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventListener.h"
@@ -43,6 +43,7 @@
 #include "JSDOMExceptionConstructor.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
+#include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
 #include "JSMutationEvent.h"
 #include "JSNode.h"
@@ -939,8 +940,7 @@ JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, cons
   RefPtr<WebCore::HTMLCollection> collection = doc->windowNamedItems(name);
   if (collection->length() == 1)
     return toJS(exec, collection->firstItem());
-  else 
-    return getHTMLCollection(exec, collection.get());
+  return toJS(exec, collection.get());
 }
 
 bool Window::getOverridePropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

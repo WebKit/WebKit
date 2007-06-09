@@ -22,247 +22,56 @@
 #include "config.h"
 #include "kjs_html.h"
 
-#include "DocLoader.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
+#include "JSHTMLElement.h"
 #include "HTMLDocument.h"
 #include "HTMLImageElement.h"
-#include "HTMLNames.h"
-#include "HTMLOptionElement.h"
-#include "HTMLOptionsCollection.h"
-#include "JSHTMLOptionsCollection.h"
-#include "JSNamedNodesCollection.h"
-#include "JSNodeList.h"
-#include "NameNodeList.h"
-#include "RenderLayer.h"
-#include "Text.h"
-#include "kjs_css.h"
-#include "kjs_events.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
-#include <math.h>
 
-#if ENABLE(SVG)
-#include "SVGDocument.h"
-#endif
+namespace WebCore {
 
-#include "kjs_html.lut.h"
+using namespace KJS;
 
-using namespace WebCore;
-using namespace HTMLNames;
-using namespace EventNames;
-
-namespace KJS {
-
-/*
-@begin JSHTMLCollectionPrototypeTable 3
-  item          JSHTMLCollection::Item            DontDelete|Function 1
-  namedItem     JSHTMLCollection::NamedItem       DontDelete|Function 1
-  tags          JSHTMLCollection::Tags            DontDelete|Function 1
-@end
-*/
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSHTMLCollectionPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",JSHTMLCollectionPrototype,JSHTMLCollectionPrototypeFunction)
-
-const ClassInfo JSHTMLCollection::info = { "HTMLCollection", 0, 0, 0 };
-
-JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection* c)
-  : m_impl(c) 
-{
-  setPrototype(JSHTMLCollectionPrototype::self(exec));
-}
-
-JSHTMLCollection::~JSHTMLCollection()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue *JSHTMLCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
-    return jsNumber(thisObj->m_impl->length());
-}
-
-JSValue *JSHTMLCollection::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
-    return toJS(exec, thisObj->m_impl->item(slot.index()));
-}
-
-JSValue *JSHTMLCollection::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
-    return thisObj->getNamedItems(exec, propertyName);
-}
-
-bool JSHTMLCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  if (propertyName == exec->propertyNames().length) {
-      slot.setCustom(this, lengthGetter);
-      return true;
-  } else {
-    // Look in the prototype (for functions) before assuming it's an item's name
-    JSValue *proto = prototype();
-    if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))
-      return false;
-
-    // name or index ?
-    bool ok;
-    unsigned int u = propertyName.toUInt32(&ok, false);
-    if (ok) {
-      slot.setCustomIndex(this, u, indexGetter);
-      return true;
-    }
-
-    if (!getNamedItems(exec, propertyName)->isUndefined()) {
-      slot.setCustom(this, nameGetter);
-      return true;
-    }
-  }
-
-  return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-// HTMLCollections are strange objects, they support both get and call,
-// so that document.forms.item(0) and document.forms(0) both work.
-JSValue *JSHTMLCollection::callAsFunction(ExecState* exec, JSObject* , const List &args)
-{
-  // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-  HTMLCollection &collection = *m_impl;
-
-  // Also, do we need the TypeError test here ?
-
-  if (args.size() == 1) {
-    // support for document.all(<index>) etc.
-    bool ok;
-    UString s = args[0]->toString(exec);
-    unsigned int u = s.toUInt32(&ok, false);
-    if (ok)
-      return toJS(exec, collection.item(u));
-    // support for document.images('<name>') etc.
-    return getNamedItems(exec, Identifier(s));
-  }
-  else if (args.size() >= 1) // the second arg, if set, is the index of the item we want
-  {
-    bool ok;
-    UString s = args[0]->toString(exec);
-    unsigned int u = args[1]->toString(exec).toUInt32(&ok, false);
-    if (ok)
-    {
-      WebCore::String pstr = s;
-      WebCore::Node *node = collection.namedItem(pstr);
-      while (node) {
-        if (!u)
-          return toJS(exec,node);
-        node = collection.nextNamedItem(pstr);
-        --u;
-      }
-    }
-  }
-  return jsUndefined();
-}
-
-JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &propertyName) const
-{
-    Vector<RefPtr<Node> > namedItems;
-    
-    m_impl->namedItems(propertyName, namedItems);
-
-    if (namedItems.isEmpty())
-        return jsUndefined();
-
-    if (namedItems.size() == 1)
-        return toJS(exec, namedItems[0].get());
-
-    return new JSNamedNodesCollection(exec, namedItems);
-}
-
-JSValue* JSHTMLCollectionPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
-{
-  if (!thisObj->inherits(&JSHTMLCollection::info))
-    return throwError(exec, TypeError);
-  HTMLCollection &coll = *static_cast<JSHTMLCollection*>(thisObj)->impl();
-
-  switch (id) {
-  case JSHTMLCollection::Tags:
-    return toJS(exec, coll.base()->getElementsByTagName(args[0]->toString(exec)).get());
-  case JSHTMLCollection::Item:
-    {
-        bool ok;
-        uint32_t index = args[0]->toString(exec).toUInt32(&ok, false);
-        if (ok)
-            return toJS(exec, coll.item(index));
-    }
-    // Fall through
-  case JSHTMLCollection::NamedItem:
-    return static_cast<JSHTMLCollection*>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
-  default:
-    return jsUndefined();
-  }
-}
-
-////////////////////// Image Object ////////////////////////
-
-ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* d)
-    : m_doc(d)
+ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* doc)
+    : m_doc(doc)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
 }
 
-bool ImageConstructorImp::implementsConstruct() const
+JSObject* ImageConstructorImp::construct(ExecState*  exec, const List& list)
 {
-  return true;
-}
+    bool widthSet = false;
+    bool heightSet = false;
+    int width = 0;
+    int height = 0;
 
-JSObject* ImageConstructorImp::construct(ExecState*  exec, const List & list)
-{
-    bool widthSet = false, heightSet = false;
-    int width = 0, height = 0;
     if (list.size() > 0) {
         widthSet = true;
-        JSValue *w = list.at(0);
+        JSValue* w = list.at(0);
         width = w->toInt32(exec);
     }
+
     if (list.size() > 1) {
         heightSet = true;
-        JSValue *h = list.at(1);
+        JSValue* h = list.at(1);
         height = h->toInt32(exec);
     }
-        
+
     HTMLImageElement* image = new HTMLImageElement(m_doc.get());
     JSObject* result = static_cast<JSObject*>(toJS(exec, image));
-    
+
     if (widthSet)
         image->setWidth(width);
     if (heightSet)
         image->setHeight(height);
-    
+
     return result;
-}
-
-////////////////////////////////////////////////////////////////
-                     
-JSValue* getAllHTMLCollection(ExecState* exec, HTMLCollection* c)
-{
-    return cacheDOMObject<HTMLCollection, HTMLAllCollection>(exec, c);
-}
-
-JSValue* getHTMLCollection(ExecState* exec, HTMLCollection* c)
-{
-    return cacheDOMObject<HTMLCollection, JSHTMLCollection>(exec, c);
-}
-
-JSValue* toJS(ExecState* exec, HTMLOptionsCollection* c)
-{
-    return cacheDOMObject<HTMLOptionsCollection, JSHTMLOptionsCollection>(exec, c);
 }
 
 // -------------------------------------------------------------------------
 
 // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
-
 
 JSValue* runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
@@ -329,4 +138,4 @@ JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const L
     return jsUndefined();
 }
 
-} // namespace KJS
+} // namespace WebCore

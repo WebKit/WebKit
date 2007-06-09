@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: TypeError: Null value
+CONSOLE MESSAGE: line 4: TypeError: Undefined value
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

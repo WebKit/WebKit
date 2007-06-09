@@ -142,7 +142,6 @@ LUT_FILES += \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
     bindings/js/kjs_events.cpp \
-    bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_window.cpp
 
@@ -211,6 +210,7 @@ IDL_BINDINGS += \
     html/HTMLBRElement.idl \
     html/HTMLButtonElement.idl \
     html/HTMLCanvasElement.idl \
+    html/HTMLCollection.idl \
     html/HTMLDirectoryElement.idl \
     html/HTMLDivElement.idl \
     html/HTMLDListElement.idl \
@@ -276,6 +276,7 @@ SOURCES += \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
+    bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \

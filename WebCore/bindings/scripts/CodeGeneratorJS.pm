@@ -21,7 +21,6 @@
 # aint with this library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
-#
 
 package CodeGeneratorJS;
 
@@ -159,7 +158,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
     return 0;
 }
 
@@ -793,10 +792,10 @@ sub GenerateImplementation
         push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
 
-        if ($interfaceName eq "NamedNodeMap") {
+        if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection") {
             push(@implContent, "    JSValue* proto = prototype();\n");
             push(@implContent, "    if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))\n");
-            push(@implContent, "        return false;\n");
+            push(@implContent, "        return false;\n\n");
         }
 
         my $hasNameGetterGeneration = sub {
@@ -822,9 +821,9 @@ sub GenerateImplementation
 
         if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
             push(@implContent, "    bool ok;\n");
-            push(@implContent, "    unsigned u = propertyName.toUInt32(&ok);\n");
-            push(@implContent, "    if (ok && u < static_cast<$implClassName*>(impl())->length()) {\n");
-            push(@implContent, "        slot.setCustomIndex(this, u, indexGetter);\n");
+            push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+            push(@implContent, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
+            push(@implContent, "        slot.setCustomIndex(this, index, indexGetter);\n");
             push(@implContent, "        return true;\n");
             push(@implContent, "    }\n");
         }
@@ -941,7 +940,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "    bool ok;\n");
-                push(@implContent, "    unsigned index = propertyName.toUInt32(&ok);\n");
+                push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
                 push(@implContent, "    if (ok) {\n");
                 push(@implContent, "        indexSetter(exec, index, value, attr);\n");
                 push(@implContent, "        return;\n");
@@ -1148,6 +1147,10 @@ sub GenerateImplementation
             push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
         }
         push(@implContent, "}\n");
+        if ($interfaceName eq "HTMLCollection") {
+            $implIncludes{"JSNode.h"} = 1;
+            $implIncludes{"Node.h"} = 1;
+        }
     }
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !UsesManualToJSImplementation($implClassName)) {
@@ -1402,12 +1405,6 @@ sub NativeToJSValue
         } else {
             return "toJS(exec, new JSSVGPODTypeWrapperCreator<$nativeType, $implClassName>(imp, &${implClassName}::$getter, &${implClassName}::$setter))";
         }
-    }
-
-    if ($type eq "HTMLCollection") {
-        $implIncludes{"kjs_html.h"} = 1;
-        $implIncludes{"HTMLCollection.h"} = 1;
-        return "getHTMLCollection(exec, WTF::getPtr($value))";
     }
 
     if ($type eq "StyleSheetList") {

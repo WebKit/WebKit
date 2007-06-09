@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@ module html {
 
     // FIXME: The W3C spec says that HTMLOptionsCollection should not have a parent class.
 
-    interface [LegacyParent=KJS::JSHTMLCollection, GenerateNativeConverter, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
+    interface [GenerateNativeConverter, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
                  attribute long selectedIndex;
                  attribute [Custom] unsigned long length
                         setter raises (DOMException);
@@ -35,4 +35,5 @@ module html {
         Node namedItem(in DOMString name);
 #endif
     };
+
 }

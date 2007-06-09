@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,10 +20,13 @@
 
 module html {
 
-    interface HTMLCollection {
+    interface [GenerateConstructor, HasIndexGetter, HasNameGetter, CustomCall, CustomToJS] HTMLCollection {
         readonly attribute unsigned long length;
-        Node item(in unsigned long index);
-        Node namedItem(in DOMString name);
+        [Custom] Node item(in unsigned long index);
+        [Custom] Node namedItem(in DOMString name);
+
+        // Extensions
+        NodeList tags(in DOMString name);
     };
 
 }

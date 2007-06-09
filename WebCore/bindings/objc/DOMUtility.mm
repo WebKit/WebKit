@@ -35,6 +35,7 @@
 #import "JSCounter.h"
 #import "JSDOMImplementation.h"
 #import "JSEvent.h"
+#import "JSHTMLCollection.h"
 #import "JSHTMLOptionsCollection.h"
 #import "JSMediaList.h"
 #import "JSNamedNodeMap.h"
@@ -86,6 +87,10 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(XPathExpression)
     WRAP(XPathResult)
 
+    // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
+    // binding, but not a subclass in the ObjC binding.
+    WRAP(HTMLCollection)
+
     #undef WRAP
 
     #define WRAP(className) \
@@ -107,11 +112,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
         return [DOMNodeIterator _wrapNodeIterator:static_cast<WebCore::JSNodeIterator*>(object)->impl() filter:nil];
     if (object->inherits(&WebCore::JSTreeWalker::info))
         return [DOMTreeWalker _wrapTreeWalker:static_cast<WebCore::JSTreeWalker*>(object)->impl() filter:nil];
-
-    // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
-    // binding, but not a subclass in the ObjC binding.
-    if (object->inherits(&JSHTMLCollection::info))
-        return [DOMHTMLCollection _wrapHTMLCollection:static_cast<JSHTMLCollection*>(object)->impl()];
 
     return nil;
 }

@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "JSHTMLCollection.h"
 #include "kjs_html.h"
 #include "kjs_window.h"
 
@@ -69,7 +70,7 @@ JSValue* JSHTMLDocument::nameGetter(ExecState* exec, JSObject* originalObject, c
         return toJS(exec, node);
     } 
 
-    return getHTMLCollection(exec, collection.get());
+    return toJS(exec, collection.get());
 }
 
 // Custom attributes
@@ -80,7 +81,7 @@ JSValue* JSHTMLDocument::all(ExecState* exec) const
     if (JSValue* v = getDirect("all"))
         return v;
 
-    return getAllHTMLCollection(exec, static_cast<HTMLDocument*>(impl())->all().get());
+    return toJS(exec, static_cast<HTMLDocument*>(impl())->all().get());
 }
 
 void JSHTMLDocument::setAll(ExecState*, JSValue* value)

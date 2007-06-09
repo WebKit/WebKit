@@ -1,6 +1,6 @@
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "JSDocument.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
 #include "xmlhttprequest.h"

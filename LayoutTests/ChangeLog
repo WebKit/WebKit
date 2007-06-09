@@ -1,3 +1,12 @@
+2007-06-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Update test for http://bugs.webkit.org/show_bug.cgi?id=14044
+        Autogenerate the JS bindings for HTMLCollection.
+
+        * tables/mozilla/bugs/bug53690-1-expected.txt: Now throws Undefined Error instead of Null Error
+
 2007-06-08  dethbakin  <bdakin@apple.com>
 
         Reviewed by Brady.
