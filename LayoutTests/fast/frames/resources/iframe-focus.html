@@ -4,9 +4,11 @@
             function test()
             {
                 window.focus();
-                if (parent.location.href.indexOf('?') == -1) {
-                    parent.location.href= parent.location.href + "?";
-                }
+                if (!layoutTestController.boo)
+                    return;
+
+                layoutTestController.boo = false;
+                layoutTestController.queueReload;
             }
         </script>
     </head>

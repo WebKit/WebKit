@@ -1,3 +1,15 @@
+2007-06-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13933 REGRESSION: 
+        fast/history/clicked-link-is-visited is failing
+
+        * fast/frames/resources/iframe-focus.html: Cause the page to reload 
+        with layoutTestController.queueReload instead of using JavaScript 
+        to reload. Using JS seems to get DRT's history all messed up (off 
+        by one?!).
+
 2007-06-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
@@ -7,7 +19,7 @@
 
         * tables/mozilla/bugs/bug53690-1-expected.txt: Now throws Undefined Error instead of Null Error
 
-2007-06-08  dethbakin  <bdakin@apple.com>
+2007-06-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Brady.
 
