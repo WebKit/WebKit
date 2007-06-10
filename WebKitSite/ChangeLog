@@ -1,3 +1,11 @@
+2007-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Cleaned up formatting on the check out page.
+
+        * building/checkout.html:
+
 2007-06-08  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Hyatt.
