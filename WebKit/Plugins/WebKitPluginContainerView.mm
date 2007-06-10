@@ -54,6 +54,13 @@
     return NSIntersectionRect([self convertRect:[_element _windowClipRect] fromView:nil], [super visibleRect]);
 }
 
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (selector == @selector(objectForWebScript))
+        return [[[self subviews] objectAtIndex: 0] respondsToSelector:selector];
+    return [super respondsToSelector:selector];  
+}
+
 - (id)objectForWebScript
 {
     return [[[self subviews] objectAtIndex: 0] objectForWebScript];

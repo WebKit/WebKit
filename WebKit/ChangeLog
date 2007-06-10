@@ -1,3 +1,13 @@
+2007-06-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 14037, make sure respondsToSelector does the write thing
+        when invoked on a WebKit plugin's container view.
+
+        Reviewed by Mark Rowe
+
+        * Plugins/WebKitPluginContainerView.mm:
+        (-[WebKitPluginContainerView respondsToSelector:]):
+
 2007-06-08  John Sullivan  <sullivan@apple.com>
 
         * WebView/WebViewPrivate.h:
