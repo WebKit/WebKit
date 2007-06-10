@@ -143,7 +143,7 @@ bool EditorClientGdk::selectWordBeforeMenuEvent()
 bool EditorClientGdk::isEditable()
 {
     notImplemented();
-    return true;
+    return false;
 }
 
 void EditorClientGdk::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
