@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Added a QWebNetworkRequest::init overload that takes a WebCore::ResourceRequest,
+        to be called from FrameLoaderClientQt in the near future.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        * Api/qwebnetworkinterface_p.h:
+
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved the postData setup into QWebNetworkRequest::init.
 
         * Api/qwebnetworkinterface.cpp:

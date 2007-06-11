@@ -42,6 +42,7 @@ struct QWebNetworkRequest
     QHttpRequestHeader request;
     QByteArray postData;
 
+    void init(const WebCore::ResourceRequest &resourceRequest);
     void init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest = 0);
     void setURL(const QUrl &u);
 };
