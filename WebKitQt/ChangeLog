@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Moved the postData setup into QWebNetworkRequest::init.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequest::init):
+        (QWebNetworkManager::add):
+
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved HTTP header field propagation to QWebNetworkRequest::init.
 
         * Api/qwebnetworkinterface.cpp:

@@ -72,10 +72,18 @@ void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebC
                 request.setValue(QLatin1String("Cookie"), cookies);
         }
 
+
         const HTTPHeaderMap& loaderHeaders = resourceRequest->httpHeaderFields();
         HTTPHeaderMap::const_iterator end = loaderHeaders.end();
         for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)
             request.setValue(it->first, it->second);
+
+        // handle and perform a 'POST' request
+        if (method == "POST") {
+            DeprecatedString pd = resourceRequest->httpBody()->flattenToString().deprecatedString();
+            postData = QByteArray(pd.ascii(), pd.length());
+            request.setValue(QLatin1String("content-length"), QString::number(postData.size()));
+        }
     }
 }
 
@@ -241,14 +249,8 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
     QUrl qurl = QString(url.url());
     job->d->init(handle->method(), qurl, &handle->request());
 
-    int id;
-    // handle and perform a 'POST' request
-    if (handle->method() == "POST") {
-        DeprecatedString pd = handle->postData()->flattenToString().deprecatedString();
-        job->d->postData = QByteArray(pd.ascii(), pd.length());
-        job->d->request.setValue(QLatin1String("content-length"), QString::number(job->d->postData.size()));
-    } else if (handle->method() != "GET") {
-        // or.. don't know what to do! (probably a request error!!)
+    if (handle->method() != "POST" && handle->method() != "GET") {
+        // don't know what to do! (probably a request error!!)
         // but treat it like a 'GET' request
         qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.toString()));
     }
