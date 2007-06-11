@@ -56,7 +56,25 @@ static bool operator==(const HostInfo &i1, const HostInfo &i2)
     return i1.port == i2.port && i1.host == i2.host;
 }
 
-void QWebNetworkJobPrivate::setURL(const QUrl &u)
+void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest)
+{
+    request = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
+    request.setValue(QLatin1String("User-Agent"),
+                             QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
+    request.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
+    setURL(url);
+
+    if (resourceRequest) {
+        const QString scheme = url.scheme().toLower();
+        if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
+            QString cookies = WebCore::cookies(resourceRequest->url());
+            if (!cookies.isEmpty())
+                request.setValue(QLatin1String("Cookie"), cookies);
+        }
+    }
+}
+
+void QWebNetworkRequest::setURL(const QUrl &u)
 {
     url = u;
     int port = url.port();
@@ -64,15 +82,6 @@ void QWebNetworkJobPrivate::setURL(const QUrl &u)
         request.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
     else
         request.setValue(QLatin1String("Host"), url.host());
-}
-
-void QWebNetworkJobPrivate::setDefaults(const QString &method, const QUrl &url)
-{
-    request = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
-    request.setValue(QLatin1String("User-Agent"),
-                             QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
-    request.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
-    setURL(url);
 }
 
 /*!
@@ -225,15 +234,8 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
 
     KURL url = handle->url();
     QUrl qurl = QString(url.url());
-    job->d->setDefaults(handle->method(), qurl);
+    job->d->init(handle->method(), qurl, &handle->request());
 
-    const QString scheme = qurl.scheme().toLower();
-    if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
-        QString cookies = WebCore::cookies(handle->url());
-        if (!cookies.isEmpty())
-            job->d->request.setValue(QLatin1String("Cookie"), cookies);
-    }
-    
     const HTTPHeaderMap& loaderHeaders = handle->requestHeaders();
     HTTPHeaderMap::const_iterator end = loaderHeaders.end();
     for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)

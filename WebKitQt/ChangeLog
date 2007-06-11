@@ -1,3 +1,17 @@
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Started moving the code to separate a WebCore::ResourceRequest into a QUrl, postData
+        and QHttpRequestHeader into a separate little QWebNetworkRequest struct.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequest::init):
+        (QWebNetworkManager::add):
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::requestUrl):
+
 2007-06-11  Zack Rusin <zrusin@trolltech.com>
 
         Reviewed by Lars
