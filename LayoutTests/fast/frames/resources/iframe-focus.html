@@ -4,11 +4,11 @@
             function test()
             {
                 window.focus();
-                if (!layoutTestController.boo)
+                if (layoutTestController.loadCount > 0)
                     return;
 
-                layoutTestController.boo = false;
-                layoutTestController.queueReload;
+                layoutTestController.loadCount = 1;
+                layoutTestController.queueReload();
             }
         </script>
     </head>
