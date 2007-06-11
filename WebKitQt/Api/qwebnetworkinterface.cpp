@@ -71,6 +71,11 @@ void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebC
             if (!cookies.isEmpty())
                 request.setValue(QLatin1String("Cookie"), cookies);
         }
+
+        const HTTPHeaderMap& loaderHeaders = resourceRequest->httpHeaderFields();
+        HTTPHeaderMap::const_iterator end = loaderHeaders.end();
+        for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)
+            request.setValue(it->first, it->second);
     }
 }
 
@@ -235,11 +240,6 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
     KURL url = handle->url();
     QUrl qurl = QString(url.url());
     job->d->init(handle->method(), qurl, &handle->request());
-
-    const HTTPHeaderMap& loaderHeaders = handle->requestHeaders();
-    HTTPHeaderMap::const_iterator end = loaderHeaders.end();
-    for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)
-        job->d->request.setValue(it->first, it->second);
 
     int id;
     // handle and perform a 'POST' request

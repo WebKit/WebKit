@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Moved HTTP header field propagation to QWebNetworkRequest::init.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequest::init):
+        (QWebNetworkManager::add):
+
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Started moving the code to separate a WebCore::ResourceRequest into a QUrl, postData
         and QHttpRequestHeader into a separate little QWebNetworkRequest struct.
 
