@@ -50,6 +50,7 @@
 #include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <QHttpRequestHeader>
 
 using namespace WebCore;
 
@@ -129,8 +130,27 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
 
 void QWebPage::open(const QUrl &url)
 {
+    open(url, QHttpRequestHeader(), QByteArray());
+}
+
+void QWebPage::open(const QUrl &url, const QHttpRequestHeader &httpHeader, const QByteArray &postData)
+{
     d->insideOpenCall = true;
-    mainFrame()->d->frame->loader()->load(KURL(url.toString()));
+    WebCore::ResourceRequest request(KURL(url.toString()));
+
+    if (httpHeader.isValid()) {
+        request.setHTTPMethod(httpHeader.method());
+        foreach (QString key, httpHeader.keys()) {
+            request.addHTTPHeaderField(key, httpHeader.value(key));
+        }
+
+        if (!postData.isEmpty()) {
+            WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
+            request.setHTTPBody(formData);
+        }
+    }
+
+    mainFrame()->d->frame->loader()->load(request);
     d->insideOpenCall = false;
 }
 

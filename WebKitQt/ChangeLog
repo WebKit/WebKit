@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Added a QWebPage::open overload to allow specifying the http header and post data.
+        (it's an overload instead of a merged openUrl to avoid including qhttp.h in qwebpage.h,
+        which would imply that one has to have QT += network in the .pro file for using WebKitQt)
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added the possibility to intercept url requests through QWebPage::navigationRequested.
 
         * Api/qwebpage.cpp:
