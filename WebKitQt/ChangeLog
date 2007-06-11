@@ -2,6 +2,19 @@
 
         Reviewed by Lars.
 
+        Added the possibility to intercept url requests through QWebPage::navigationRequested.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::createFrame):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
+2007-06-11  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added a QWebNetworkRequest::init overload that takes a WebCore::ResourceRequest,
         to be called from FrameLoaderClientQt in the near future.
 

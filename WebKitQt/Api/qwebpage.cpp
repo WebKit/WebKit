@@ -65,12 +65,21 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     undoStack = 0;
     mainFrame = 0;
     networkInterface = 0;
+    insideOpenCall = false;
 }
 
 QWebPagePrivate::~QWebPagePrivate()
 {
     delete undoStack;
     delete page;
+}
+
+QWebPage::NavigationRequestResponse QWebPagePrivate::navigationRequested(QWebFrame *frame, const QUrl &url, const QHttpRequestHeader &request, const QByteArray &postData)
+{
+    if (insideOpenCall
+        && frame == mainFrame)
+        return QWebPage::AcceptNavigationRequest;
+    return q->navigationRequested(frame, url, request, postData);
 }
 
 void QWebPagePrivate::createMainFrame()
@@ -120,7 +129,9 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
 
 void QWebPage::open(const QUrl &url)
 {
+    d->insideOpenCall = true;
     mainFrame()->d->frame->loader()->load(KURL(url.toString()));
+    d->insideOpenCall = false;
 }
 
 QUrl QWebPage::url() const
@@ -187,6 +198,15 @@ void QWebPage::runJavaScriptAlert(QWebFrame *frame, const QString& msg)
 QWebPage *QWebPage::createWindow()
 {
     return 0;
+}
+
+QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QUrl &url, const QHttpRequestHeader &request, const QByteArray &postData)
+{
+    Q_UNUSED(frame)
+    Q_UNUSED(url)
+    Q_UNUSED(request)
+    Q_UNUSED(postData)
+    return AcceptNavigationRequest;
 }
 
 void QWebPage::setWindowGeometry(const QRect& geom)

@@ -37,6 +37,8 @@ class QWebPagePrivate;
 class QWebFrameData;
 class QWebNetworkInterface;
 
+class QHttpRequestHeader;
+
 namespace WebCore {
     class ChromeClientQt;
     class FrameLoaderClientQt;
@@ -51,6 +53,11 @@ class QWEBKIT_EXPORT QWebPage : public QWidget
 
     Q_PROPERTY(bool modified READ isModified)
 public:
+    enum NavigationRequestResponse {
+        AcceptNavigationRequest,
+        IgnoreNavigationRequest
+    };
+
     QWebPage(QWidget *parent);
     ~QWebPage();
 
@@ -134,6 +141,8 @@ signals:
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
+
+    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QUrl &url, const QHttpRequestHeader &request, const QByteArray &postData);
 
 private:
     friend class QWebFrame;
