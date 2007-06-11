@@ -1,3 +1,11 @@
+2007-06-11  Zack Rusin <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Forgot to export the plugin connector.
+
+        * Api/qwebobjectpluginconnector.h
+
 2007-06-08  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack.
