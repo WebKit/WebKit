@@ -7,6 +7,7 @@
 
         <li class="subtitle">Working with the Code</li>
 
+        <li><a href="/building/tools.html">Installing Developer Tools</a></li>
         <li><a href="/building/checkout.html">Getting the Code</a></li>
         <li><a href="/building/build.html">Building WebKit</a></li>
         <li><a href="/building/run.html">Running WebKit</a></li>

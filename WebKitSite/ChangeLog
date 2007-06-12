@@ -1,3 +1,16 @@
+2007-06-12  Dave Hyatt  <hyatt@apple.com>
+  
+        Add Windows checkout/build instructions to the website.
+ 
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html:
+        * building/tools.html: Added.
+        * building/run.html:
+        * css/main.css:
+        * index.html:
+        * nav.inc:
+
 2007-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

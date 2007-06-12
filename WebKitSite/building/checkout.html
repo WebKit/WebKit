@@ -9,21 +9,55 @@ include("../header.inc");
 <p>To browse the source code online, visit <a href="http://trac.webkit.org/projects/webkit/browser">WebKit Trac</a>.
 
 <h2>Checking Out</h2>
-<p>To check out the WebKit source tree:</p>
+<p>To work with the WebKit source tree, you will need a Subversion client installed.
+See <a href="tools.html">Installing Developer Tools</a> for information on how
+to install Subversion.</p>
+<div class="mac-instructions">
+<h4>Mac OS X</h4>
 <ol>
 <li><p>Install a Subversion Client</p>
 <p>Subversion (svn) is the source code management tool used by the WebKit Open Source Project. A <a href="http://homepage.mac.com/hiirem/svkbuilds.html">Subversion 1.4 client for Mac OS X 10.4</a> is available.</p>
 <li><p>Open Terminal</p>
 <p>Terminal resides in /Applications/Utilities. The Finder Go menu provides a quick way to navigate there.</p>
+</ol>
+</div>
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<ol>
+<li><p>Open a Cygwin Shell</p>
+<p>Double-click the Cygwin icon on your Desktop to launch a new shell.
+</ol>
+</div>
+
+<ol>
 <li><p>Type this command to check out the WebKit source tree:</p>
 <p class="code">svn checkout http://svn.webkit.org/repository/webkit/trunk WebKit</p>
+<p>Alternatively you can download a snapshot of the WebKit source tree from 
+<a href="http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2">http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2</a>.  It is updated every six hours.</p>
 </li>
 </ol>
-<p>Once the checkout has finished, the next step is
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<li><p>Install the WebKit Support Libraries</p>
+<p>Download the <a href="http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html">WebKit Support Libraries</a> to the root of your source tree (<tt>C:\cygwin\home\&lt;username&gt;\WebKit</tt>).</p>
+<p>If the file is incorrectly named, rename it to <tt>WebKitSupportLibrary.zip</tt>. Do not extract its contents.</p>
+</div>
+
+<ol>
+<li><p>Type this command to update your source tree:</p>
+<p class="code">WebKit/WebKitTools/Scripts/update-webkit</p>
+<p>If you downloaded the tarball, this will bring it up to date.  Windows users
+must always execute this command after first obtaining the code, since it will
+download additional libraries that are needed to build.</p>
+</ol>
+
+<p>Once you have a current tree, the next step is
 <a href="build.html">building WebKit</a>.</p>
 
 <h2>Keeping up to Date</h2>
-<p>Type this command to update your source tree:</p>
+<p>At any time, you can retype the <tt>update-webkit</tt> command to update your source tree:</p>
 <p class="code">WebKit/WebKitTools/Scripts/update-webkit</p>
 
 <hr>

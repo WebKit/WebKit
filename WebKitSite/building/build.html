@@ -5,7 +5,8 @@
 
 <h2>Building WebKit</h2>
 
-<p>Building WebKit requires a <a href="checkout.html">WebKit source tree</a> and <a href="http://developer.apple.com/tools/xcode/">Xcode</a> version 2.3 or greater.<p>
+Building WebKit requires that you have the proper <a href="tools.html">developer tools
+installed</a> and that you have a copy of the <a href="checkout">WebKit source tree.</a>.
 
 <ol>
 <li><p>Type this command to build WebKit:</p>
@@ -15,8 +16,10 @@
 </li>
 </ol>
 
-<p>By default, <tt>build-webkit</tt> places build products in WebKit/WebKitBuild. If your Xcode preferences specify a custom build products location, <tt>build-webkit</tt> places build products there.</p>
-<p>More information about building WebKit is available on the <a href="http://trac.webkit.org/projects/webkit/wiki">WebKit Wiki</a>.</p>
+<p>By default, <tt>build-webkit</tt> places build products in <tt>WebKit/WebKitBuild</tt>.  You can specify a different build
+location on Mac in your Xcode preferences.  On Windows, the <tt>WEBKITOUTPUTDIR</tt> environment variable can be used to
+set a different build products location.  If you have set up a custom build location, then <tt>build-webkit</tt> will
+place the build products there.</p>
 
 <h2>Setting a Default Configuration</h2>
 <ol>
@@ -28,6 +31,8 @@
 
 <hr>
 <p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>build-webkit</tt> without specifying a full path.</p>
+
+<p>Once your build has finished, you can <A href="run.html">run it inside Safari.</a></p>
 
 <?php
     include("../footer.inc");

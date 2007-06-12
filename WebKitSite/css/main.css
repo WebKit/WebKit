@@ -187,3 +187,11 @@ dt {
     font-size: 90%;
     line-height: initial;
 }
+
+.mac-instructions, .windows-instructions {
+    border: 1px solid black;
+    background-color: white;
+    -webkit-border-radius: 5px;
+    padding: 0 1em;
+    margin: 1em 0;
+}

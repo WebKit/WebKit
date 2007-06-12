@@ -1,0 +1,53 @@
+<?php
+$title = "Installing Developer Tools";
+include("../header.inc");
+?>
+<h2>Installing the Developer Tools</h2>
+<div class="mac-instructions">
+<h4>Mac OS X</h4>
+<ol>
+<li><p>Install the Xcode Tools package</p>
+<p>Install the Xcode Tools package from <a target="installtools" href="http://connect.apple.com/">http://connect.apple.com</a>.  Xcode 2.3 or later is required to build.</p>
+<li><p>Install a Subversion Client</p>
+<p>Subversion (svn) is the source code management tool used by the WebKit Open Source Project. A <a target="installtools" href="http://homepage.mac.com/hiirem/svkbuilds.html">Subversion 1.4 client for Mac OS X 10.4</a> is available.</p>
+</ol>
+</div>
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<ol>
+<li><p>If you own Visual Studio 2005:</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=BB4A75AB-E2D4-4C96-B39D-37BAF6B5B1DC&displaylang=en">Microsoft Visual Studio 2005 Team Suite Service Pack 1</a>.</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Use the default options for these installations.</p>
+<li><p>If not, you can use Visual C++ Express 2005:</p>
+<p>Install <a target="installtools" href="http://msdn.microsoft.com/vstudio/express/visualc/">Visual C++ 2005 Express</a>.</p>
+<p>Install <a target="installtools" href="http://download.microsoft.com/download/7/7/3/7737290f-98e8-45bf-9075-85cc6ae34bf1/VS80sp1-KB926748-X86-INTL.exe">Microsoft Visual C++ Express 2005 Service Pack 1</a>.</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Install the <a target="installtools" href="http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/">Windows Platform SDK</a>. Only steps 2 and 3 are required.</p>
+<p>Use the default options for all installations.</p>
+<p>In addition to the paths specified in step 3 of the Platform SDK installation instructions, you must also add the following include path. Update the Visual C++ directories in the Projects and Solutions section in the Options dialog box:</p>
+<p style="font-size:10px">C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\mfc</p>
+
+<li><p>Install Cygwin</p>
+<p>Cygwin is a collection of utilities for Windows that includes not only a Subversion
+client, but also additional tools that are required to build the WebKit source.  We
+have made a downloader available that automatically collects all of the required
+packages.
+<p>Download <a 
+href="cygwin-downloader.zip">cygwin-downloader.zip</a>.</p>
+<p>Right-click <tt>cygwin-downloader.zip</tt> and choose <b>Extract All...</b>.
+Keep all the default options and click <b>Next</b> until the file is extracted and the cygwin-downloader folder opens.</p>
+<p>Double-click <tt>cygwin-downloader.exe</tt>. This will download all the Cygwin packages you need.</p>
+<p>When all the packages have finished downloading, the Cygwin installer will launch. Choose <b>Install from Local Directory</b>, then click <b>Next</b> until the install is complete. If you are running Vista, the installer won't be able to launch automatically, so you will have to manually launch Cygwin's Setup.exe.</p>
+<P>Vista may warn you that Cywgin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
+<p>If you are running Vista, click on the Start menu, enter the following command, and press Enter:</p>
+<p class="code">C:\cygwin\bin\ash -c /bin/rebaseall</p>
+</ol>
+</div>
+
+<p>Once you have installed your developer tools, the next step is
+<a href="checkout.html">getting the code</a>.</p>
+<?php>
+include("../footer.inc");
+?>

@@ -11,9 +11,17 @@
 <p class="code">WebKit/WebKitTools/Scripts/run-safari --debug</p>
 </li>
 </ol>
+
+<div class="mac-instructions">
+<h4>Mac OS X</h4>
 <p>The <tt>run-safari</tt> script sets the <tt>DYLD_FRAMEWORK_PATH</tt> environment variable to point to your build products, 
 and then launches /Applications/Safari.app. <tt>DYLD_FRAMEWORK_PATH</tt> tells the system loader to prefer your build products over the frameworks installed in /System/Library/Frameworks.</p>
+</div>
 
+<div class="windows-instructions">
+<h4>Windows</h4>
+<p>The <tt>run-safari</tt> script launches the Safari executable with the <tt>/frameworkPath</tt> command line switch set to point to your build products.  The <tt>/debug</tt> command line switch will be set if you pass --debug to run-safari.</p>
+</div>
 <hr>
 <p>It's handy to put <tt>WebKit/WebKitTools/Scripts</tt> in your shell path so you can type commands like <tt>run-safari</tt> without specifying a full path.</p>
 
