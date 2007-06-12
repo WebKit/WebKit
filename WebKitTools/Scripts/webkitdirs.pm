@@ -258,15 +258,27 @@ sub safariPath
     if (!$safariBundle) {
         determineConfigurationProductDir();
         # Use Safari.app in product directory if present (good for Safari development team).
-        if (-d "$configurationProductDir/Safari.app") {
+        if (isOSX() && -d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
+        } elsif (isCygwin() && -x "$configurationProductDir/bin/Safari.exe") {
+            $safariBundle = "$configurationProductDir/bin/Safari.exe";
         } else {
-            # Otherwise use Safari.app in Applications directory.
-            $safariBundle = "/Applications/Safari.app";
+            # Otherwise use the installed Safari
+            if (isOSX()) {
+                $safariBundle = "/Applications/Safari.app";
+            } elsif (isCygwin()) {
+                chomp(my $programFiles = `cygpath -u '$ENV{"PROGRAMFILES"}'`);
+                $safariBundle = "$programFiles/Safari/Safari.exe";
+            }
         }
     }
-    my $safariPath = "$safariBundle/Contents/MacOS/Safari";
-    die "Can't find executable at $safariPath.\n" unless -x $safariPath;
+    my $safariPath;
+    if (isOSX()) {
+        $safariPath = "$safariBundle/Contents/MacOS/Safari";
+    } elsif (isCygwin()) {
+        $safariPath = $safariBundle;
+    }
+    die "Can't find executable at $safariPath.\n" if isOSX() && !-x $safariPath;
     return $safariPath;
 }
 
@@ -294,6 +306,7 @@ sub builtDylibPathForName
 # Check to see that all the frameworks are built.
 sub checkFrameworks
 {
+    return if isCygwin();
     my @frameworks = ("JavaScriptCore", "WebCore");
     push(@frameworks, "WebKit") if isOSX();
     for my $framework (@frameworks) {
@@ -429,10 +442,13 @@ sub setupCygwinEnv()
         }
     }
 
+    chomp($ENV{'WEBKITLIBRARIESDIR'} = `cygpath -wa "$sourceDir/WebKitLibraries/win"`) unless $ENV{'WEBKITLIBRARIESDIR'};
+
     $windowsTmpPath = `cygpath -w /tmp`;
     chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
+    print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
 }
 
 sub buildVisualStudioProject($)
@@ -440,12 +456,12 @@ sub buildVisualStudioProject($)
     my ($project) = @_;
     setupCygwinEnv();
 
-    chdir "$project.vcproj" or die "Failed to cd into $project.vcproj\n";
     my $config = configuration();
 
-    print "$vcBuildPath $project.sln /build $config";
-    my $result = system $vcBuildPath, "$project.sln", "/build", $config;
-    chdir ".." or die;
+    chomp(my $winProjectPath = `cygpath -w "$project"`);
+
+    print "$vcBuildPath $winProjectPath /build $config";
+    my $result = system $vcBuildPath, $winProjectPath, "/build", $config;
     return $result;
 }
 

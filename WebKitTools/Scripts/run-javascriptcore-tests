@@ -76,7 +76,7 @@ my $result;
 if (isOSX()) {
     $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @coverageSupportOption, @xcodeArgs;
 }elsif (isCygwin()) {
-    $result = buildVisualStudioProject( "JavaScriptCore" );
+    $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
 }
 exit WEXITSTATUS($result) if WEXITSTATUS($result);
 

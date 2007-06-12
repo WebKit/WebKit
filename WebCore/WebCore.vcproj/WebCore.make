@@ -4,7 +4,7 @@ BUILDSTYLE=Release
 
 install:
     set BuildBot=1
-	set WebKitSDKDir=$(SRCROOT)\AppleInternal
+	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	devenv "WebCore.submit.sln" /rebuild $(BUILDSTYLE)
 	xcopy "$(OBJROOT)\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugin.subproj&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;snprintf=_snprintf"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugin.subproj&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;snprintf=_snprintf"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -203,7 +203,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugIn.subproj\PluginObject.c"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.c"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -223,7 +223,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugIn.subproj\PluginObject.h"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.h"
 			>
 		</File>
 		<File
@@ -239,7 +239,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugIn.subproj\TestObject.c"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.c"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -259,7 +259,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\..\OpenSource\WebKitTools\DumpRenderTree\TestNetscapePlugIn.subproj\TestObject.h"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.h"
 			>
 		</File>
 	</Files>

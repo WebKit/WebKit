@@ -43,6 +43,9 @@ $svnoptions = '-q' if $quiet;
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
 (system("svn $svnoptions up") == 0) or die;
+if (isCygwin()) {
+    (system("perl WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
+}
 
 if (-x "../Internal") {
     chdir("../Internal");

@@ -2,11 +2,11 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="release"
+	Name="debug_internal"
 	>
 	<UserMacro
 		Name="WebKitConfigSuffix"
-		Value=""
+		Value="_debug"
 	/>
 	<UserMacro
 		Name="LibraryConfigSuffix"

@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2005, 2006, 2007 Apple Computer, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Updates a development environment to the new WebKitSupportLibrary
+
+use strict;
+use warnings;
+
+use File::Find;
+use File::Temp;
+use File::Spec;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my $sourceDir = sourceDir();
+my $file = "WebKitSupportLibrary";
+my $zipFile = "$file.zip"; 
+my $pathToZip = "$sourceDir/$zipFile";
+my $webkitLibrariesDir = File::Spec->rel2abs($ENV{'WEBKITLIBRARIESDIR'} || "$sourceDir/WebKitLibraries/win");
+my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
+
+# Make sure the file zipfile exists before doing anything.
+die "$zipFile could not be found in your root source directory.  Please\n" .
+    "download it from http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html and place it in \n" .
+    "$sourceDir\n and then run update-webkit again.\n" unless (-f "$pathToZip");
+
+print "Checking mod-date of $zipFile...\n";
+open MOD, ">$tmpDir/$file.modified" or die "Couldn't open $tmpDir/$file.modified for writing";
+print MOD (stat $pathToZip)[9] . "\n";
+close MOD;
+
+if (open NEW, "$tmpDir/$file.modified") {
+    my $new = <NEW>;
+    close NEW;
+
+    if (open OLD, "$webkitLibrariesDir/$file.modified") {
+        my $old = <OLD>;
+        close OLD;
+        if ($old eq $new) {
+            print "Current $file is up to date\n";
+            exit 0;
+        }
+    }
+}
+
+my $result = system "unzip", "-q", "-d", $tmpDir, $pathToZip;
+die "Couldn't unzip $zipFile." if $result;
+
+print "\nInstalling $file...\n";
+
+sub wanted
+{
+    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpDir/$file/win");
+    my $destination = "$webkitLibrariesDir/$relativeName";
+
+    if (-d $_) {
+        mkdir $destination;
+        return;
+    }
+
+    system "cp", $_, $destination;
+}
+
+File::Find::find(\&wanted, "$tmpDir/$file");
+
+$result = system "mv", "$tmpDir/$file.modified", $webkitLibrariesDir;
+print STDERR "Couldn't move $file.modified to $webkitLibrariesDir" . ".\n" if $result;
+
+print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";

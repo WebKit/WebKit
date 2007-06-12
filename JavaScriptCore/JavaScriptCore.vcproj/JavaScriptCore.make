@@ -4,7 +4,7 @@ BUILDSTYLE=Release
 
 install:
     set BuildBot=1
-	set WebKitSDKDir="$(SRCROOT)\AppleInternal"
+	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
 	set WebKitOutputDir=$(OBJROOT)
 	devenv "JavaScriptCore.sln" /rebuild $(BUILDSTYLE)
 	xcopy "$(OBJROOT)\bin\*" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y

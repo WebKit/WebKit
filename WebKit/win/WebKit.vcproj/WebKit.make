@@ -3,7 +3,7 @@ BUILDSTYLE=Release
 !ENDIF
 
 install:
-	set WebKitSDKDir="$(SRCROOT)\AppleInternal"
+	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
 	set WebKitOutputDir=$(OBJROOT)
 	set BuildBot=1
 	devenv "WebKit.submit.sln" /rebuild $(BUILDSTYLE)

@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -67,10 +67,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib WTF$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib pthreadVC2$(ConfigSuffix).lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -112,7 +112,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icudt36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; xcopy /y /d &quot;$(WebKitSDKDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitSDKDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -151,14 +151,100 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(ConfigSuffix).lib WTF$(ConfigSuffix).lib icuuc$(ConfigSuffix).lib winmm.lib pthreadVC2$(ConfigSuffix).lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitSDKDir)\lib&quot;;..\..\..\icu\lib"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="..\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="if not &quot;$(BuildBot)&quot;==&quot;&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\bin\icudt36.dll&quot; xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\bin\icudt36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).dll&quot; xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;if exist &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
+				GenerateDebugInformation="true"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool

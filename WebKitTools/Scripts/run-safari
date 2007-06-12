@@ -29,6 +29,7 @@
 # Simplified "run" script for Web Kit Open Source Project.
 
 use strict;
+use File::Temp qw/tempfile/;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -42,6 +43,26 @@ checkFrameworks();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-$ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-exec $safariPath, @ARGV or die;
+
+my @args;
+if (isOSX()) {
+    $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+    @args = @ARGV;
+} elsif (isCygwin()) {
+    chomp(my $winSafariPath = `cygpath -wa "$safariPath"`);
+    chomp(my $winProductDir = `cygpath -wa "$productDir"`);
+    my $extraArgs = "";
+    $extraArgs .= "/debug" if configuration() eq "Debug";
+
+    my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
+    print $fh <<EOF;
+\@echo off
+"$winSafariPath" /frameworkPath:"$winProductDir" $extraArgs
+EOF
+    chomp($path = `cygpath -ws "$path"`);
+    $safariPath = "cmd";
+    @args = ("/c", "call $path");
+}
+exec $safariPath, @args or die;
+
