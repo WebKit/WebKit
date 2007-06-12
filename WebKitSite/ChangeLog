@@ -1,3 +1,11 @@
+2007-06-12  Adam Roben  <aroben@apple.com>
+
+        Update the location of cygwin-downloader.zip.
+
+        Rubberstamped by Hyatt.
+
+        * building/tools.html:
+
 2007-06-12  Dave Hyatt  <hyatt@apple.com>
   
         Add Windows checkout/build instructions to the website.

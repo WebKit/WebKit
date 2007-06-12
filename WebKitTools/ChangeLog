@@ -1,3 +1,14 @@
+2007-06-12  Adam Roben  <aroben@apple.com>
+
+        Land CygwinDownloader.
+
+        Rubberstamped by Hyatt.
+
+        * CygwinDownloader/cygwin-downloader.py: Added.
+        * CygwinDownloader/cygwin-downloader.zip: Added.
+        * CygwinDownloader/make-zip.sh: Added.
+        * CygwinDownloader/setup.py: Added.
+
 2007-06-06  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Mark Rowe.
