@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if PLATFORM(WIN)
 #include <CoreGraphics/CGContext.h>
+#endif
 
 namespace WebCore
 {
