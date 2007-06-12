@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-// FIXME: This is incomplete.  We should change this to mirror
+// FIXME: This is incomplete. We could change this to mirror
 // more like what Firefox does, and generate these switch statements
 // at build time.
 static String keyIdentifierForWindowsKeyCode(short keyCode)
@@ -134,23 +134,21 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
     }
 }
 
-static String singleCharacterString(UChar c) { return String(&c, 1); }
+static inline String singleCharacterString(UChar c) { return String(&c, 1); }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, UChar)
-    : m_text(singleCharacterString(wParam))
-    , m_unmodifiedText(singleCharacterString(wParam))
-    , m_keyIdentifier(keyIdentifierForWindowsKeyCode(wParam))
-    , m_isKeyUp((lParam & NEW_RELEASE_STATE_MASK))
-    , m_autoRepeat((lParam & REPEAT_COUNT_MASK) > 1)
-    , m_WindowsKeyCode(wParam)
-    , m_isKeypad(false) // FIXME
+PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM keyData, UChar characterCode)
+    : m_text(singleCharacterString(characterCode))
+    , m_unmodifiedText(singleCharacterString(characterCode))
+    , m_keyIdentifier(keyIdentifierForWindowsKeyCode(virtualKeyCode))
+    , m_isKeyUp((keyData & NEW_RELEASE_STATE_MASK))
+    , m_autoRepeat((keyData & REPEAT_COUNT_MASK) > 1)
+    , m_WindowsKeyCode(virtualKeyCode)
+    , m_isKeypad(false) // FIXME: Need to implement this.
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
-    , m_altKey(lParam & ALT_KEY_DOWN_MASK)
-    , m_metaKey(lParam & ALT_KEY_DOWN_MASK) // FIXME: Is this right?
+    , m_altKey(keyData & ALT_KEY_DOWN_MASK)
+    , m_metaKey(keyData & ALT_KEY_DOWN_MASK) // FIXME: This is not right!
 {
-    if (!m_shiftKey)
-        m_text = String(singleCharacterString(tolower(wParam)));
 }
 
 }

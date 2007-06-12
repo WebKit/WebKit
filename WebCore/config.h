@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,16 +24,6 @@
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1
-
-#ifndef CGFLOAT_DEFINED
-#ifdef __LP64__
-typedef double CGFloat;
-#else
-typedef float CGFloat;
-#endif
-#define CGFLOAT_DEFINED 1
-#endif
-
 #endif /* __APPLE__ */
 
 
@@ -50,8 +39,16 @@ typedef float CGFloat;
 
 // If we don't define these, they get defined in windef.h. 
 // We want to use std::min and std::max
+#ifndef max
 #define max max
+#endif
+#ifndef min
 #define min min
+#endif
+
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#endif
 
 #endif /* PLATFORM(WIN_OS) */
 
@@ -74,12 +71,18 @@ typedef float CGFloat;
 #define AVOID_STATIC_CONSTRUCTORS 1
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(WIN)
 #define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
 #define WTF_USE_NPOBJECT 1
+#define WTF_PLATFORM_CG 1
+#undef WTF_PLATFORM_CAIRO
+#define WTF_USE_CFNETWORK 1
+#undef WTF_USE_WININET
+#define WTF_PLATFORM_CF 1
 #endif
 
-#if PLATFORM(QT)
+#if PLATFORM(MAC)
+#define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
 #define WTF_USE_NPOBJECT 1
 #endif
 
@@ -101,3 +104,14 @@ typedef float CGFloat;
 #include <limits.h>
 #include <wtf/MathExtras.h>
 #endif
+
+#if PLATFORM(CG)
+#ifndef CGFLOAT_DEFINED
+#ifdef __LP64__
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+#define CGFLOAT_DEFINED 1
+#endif
+#endif /* PLATFORM(CG) */

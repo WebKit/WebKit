@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,53 @@
  */
 
 #include "config.h"
-#include <windows.h>
 #include "Widget.h"
 
 #include "Cursor.h"
+#include "Document.h"
+#include "Element.h"
 #include "GraphicsContext.h"
 #include "FrameWin.h"
 #include "IntRect.h"
-#include "Font.h"
+#include "FrameView.h"
+#include "WidgetClient.h"
+#include <winsock2.h>
+#include <windows.h>
 
 namespace WebCore {
 
 class WidgetPrivate
 {
 public:
-    HWND containingWindow;
-    Font font;
     WidgetClient* client;
-
-    WidgetPrivate()
-        : containingWindow(0),
-          client(0) {}
+    ScrollView* parent;
+    HWND containingWindow;
+    IntRect frameRect;
+    bool enabled;
+    Widget* capturingChild;
+    bool suppressInvalidation;
 };
 
 Widget::Widget()
-    : data(new WidgetPrivate) {}
+    : data(new WidgetPrivate)
+{
+    data->client = 0;
+    data->parent = 0;
+    data->containingWindow = 0;
+    data->enabled = true;
+    data->capturingChild = 0;
+    data->suppressInvalidation = false;
+}
 
 Widget::~Widget() 
 {
+    ASSERT(!parent());
     delete data;
 }
 
-void Widget::setContainingWindow(HWND hWnd)
+void Widget::setContainingWindow(HWND containingWindow)
 {
-    data->containingWindow = hWnd;
+    data->containingWindow = containingWindow;
 }
 
 HWND Widget::containingWindow() const
@@ -77,73 +90,156 @@ WidgetClient* Widget::client() const
 
 IntRect Widget::frameGeometry() const
 {
-    RECT frame;
-    if (GetWindowRect(data->containingWindow, &frame)) {
-        if (HWND containingWindow = GetParent(data->containingWindow))
-            MapWindowPoints(NULL, containingWindow, (LPPOINT)&frame, 2);
-        return frame;
-    }
-    
-    return IntRect();
-}
-
-bool Widget::hasFocus() const
-{
-    return (data->containingWindow == GetForegroundWindow());
-}
-
-void Widget::setFocus()
-{
-    SetFocus(data->containingWindow);
-}
-
-void Widget::clearFocus()
-{
-    SetFocus(NULL);
-}
-
-const Font& Widget::font() const
-{
-    return data->font;
-}
-
-void Widget::setFont(const Font& font)
-{
-    data->font = font;
-}
-
-void Widget::setCursor(const Cursor& cursor)
-{
-    // SetCursor only works until the next event is recieved.
-    // However, we call this method on every mouse-moved,
-    // so this should work well enough for our purposes.
-    if (HCURSOR c = cursor.impl())
-        SetCursor(c);
-}
-
-void Widget::show()
-{
-    ShowWindow(data->containingWindow, SW_SHOWNA);
-}
-
-void Widget::hide()
-{
-    ShowWindow(data->containingWindow, SW_HIDE);
+    return data->frameRect;
 }
 
 void Widget::setFrameGeometry(const IntRect &rect)
 {
-    MoveWindow(data->containingWindow, rect.x(), rect.y(), rect.width(), rect.height(), false);
+    data->frameRect = rect;
+}
+
+void Widget::setParent(ScrollView* v)
+{
+    data->parent = v;
+}
+
+ScrollView* Widget::parent() const
+{
+    return data->parent;
+}
+
+void Widget::removeFromParent()
+{
+    if (parent())
+        parent()->removeChild(this);
+}
+
+void Widget::show()
+{
+}
+
+void Widget::hide()
+{
+}
+
+HCURSOR lastSetCursor = 0;
+bool ignoreNextSetCursor = false;
+
+void Widget::setCursor(const Cursor& cursor)
+{
+    // This is set by PluginViewWin so it can ignore set setCursor call made by
+    // EventHandler.cpp.
+    if (ignoreNextSetCursor) {
+        ignoreNextSetCursor = false;
+        return;
+    }
+
+    if (HCURSOR c = cursor.impl()) {
+        lastSetCursor = c;
+        SetCursor(c);
+    }
 }
 
 IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
 {
-  return point;
+    IntPoint windowPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        windowPoint = parentWidget->convertChildToSelf(childWidget, windowPoint);
+    return windowPoint;
 }
 
 IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
-  return point;
+    IntPoint widgetPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        widgetPoint = parentWidget->convertSelfToChild(childWidget, widgetPoint);
+    return widgetPoint;
 }
 
+IntRect Widget::convertToContainingWindow(const IntRect& rect) const
+{
+    IntRect convertedRect = rect;
+    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
+    return convertedRect;
 }
+
+IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() + child->x(), point.y() + child->y());
+}
+
+IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() - child->x(), point.y() - child->y());
+}
+
+void Widget::paint(GraphicsContext*, const IntRect&)
+{
+}
+
+bool Widget::isEnabled() const
+{
+    return data->enabled;
+}
+
+void Widget::setEnabled(bool e)
+{
+    if (e != data->enabled) {
+        data->enabled = e;
+        invalidate();
+    }
+}
+
+bool Widget::suppressInvalidation() const
+{
+    return data->suppressInvalidation;
+}
+
+void Widget::setSuppressInvalidation(bool suppress)
+{
+    data->suppressInvalidation = suppress;
+}
+
+void Widget::invalidate()
+{
+    invalidateRect(IntRect(0, 0, width(), height()));
+}
+
+void Widget::invalidateRect(const IntRect& r)
+{
+    if (data->suppressInvalidation)
+        return;
+
+    if (!parent()) {
+        ::InvalidateRect(containingWindow(), &RECT(r), false);
+        if (isFrameView())
+            static_cast<FrameView*>(this)->addToDirtyRegion(r);
+        return;
+    }
+
+    // Get the root widget.
+    ScrollView* outermostView = parent();
+    while (outermostView && outermostView->parent())
+        outermostView = outermostView->parent();
+    if (!outermostView)
+        return;
+
+    IntRect windowRect = convertToContainingWindow(r);
+
+    // Get our clip rect and intersect with it to ensure we don't invalidate too much.
+    IntRect clipRect = windowClipRect();
+    windowRect.intersect(clipRect);
+
+    ::InvalidateRect(containingWindow(), &RECT(windowRect), false);
+    outermostView->addToDirtyRegion(windowRect);
+}
+
+void Widget::setFocus()
+{
+}
+
+} // namespace WebCore

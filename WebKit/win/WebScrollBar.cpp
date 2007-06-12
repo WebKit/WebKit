@@ -1,0 +1,266 @@
+/*
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "WebKitDLL.h"
+#include "WebKit.h"
+#include "WebScrollBar.h"
+
+#pragma warning(push, 0)
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/PlatformMouseEvent.h>
+#include <WebCore/PlatformScrollBar.h>
+#pragma warning(pop)
+
+using namespace WebCore;
+
+// WebScrollBar ---------------------------------------------------------------------
+
+WebScrollBar::WebScrollBar()
+    : m_refCount(0)
+{
+    gClassCount++;
+}
+
+WebScrollBar::~WebScrollBar()
+{
+    gClassCount--;
+}
+
+WebScrollBar* WebScrollBar::createInstance()
+{
+    WebScrollBar* instance = new WebScrollBar();
+    instance->AddRef();
+    return instance;
+}
+
+// IUnknown -------------------------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IUnknown*>(this);
+    else if (IsEqualGUID(riid, IID_IWebScrollBarPrivate))
+        *ppvObject = static_cast<IWebScrollBarPrivate*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebScrollBar::AddRef(void)
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE WebScrollBar::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
+
+    return newRef;
+}
+
+// IWebScrollBarPrivate ------------------------------------------------------------------
+HRESULT STDMETHODCALLTYPE WebScrollBar::init( 
+    /* [in] */ IWebScrollBarDelegatePrivate* delegate,
+    /* [in] */ OLE_HANDLE containingWindow,
+    /* [in] */ WebScrollBarOrientation orientation,
+    /* [in] */ WebScrollBarControlSize controlSize)
+{
+    if (!delegate || !containingWindow)
+        return E_FAIL;
+    ScrollbarOrientation webCoreOrientation = (ScrollbarOrientation) orientation;
+    ScrollbarControlSize webCoreControlSize = (ScrollbarControlSize) controlSize;
+    m_delegate = delegate;
+    m_scrollBar = new PlatformScrollbar(this, webCoreOrientation, webCoreControlSize);
+    if (!m_scrollBar)
+        return E_FAIL;
+    m_scrollBar->setContainingWindow((HWND)(ULONG64)containingWindow);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::setEnabled(
+    /* [in] */ BOOL enabled)
+{
+    m_scrollBar->setEnabled(!!enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::setSteps( 
+    /* [in] */ int lineStep,
+    /* [in] */ int pageStep)
+{
+    m_scrollBar->setSteps(lineStep, pageStep);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::setProportion( 
+    /* [in] */ int visibleSize,
+    /* [in] */ int totalSize)
+{
+    m_scrollBar->setProportion(visibleSize, totalSize);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::setRect( 
+    /* [in] */ RECT bounds)
+{
+    IntRect rect(bounds.left, bounds.top, bounds.right-bounds.left, bounds.bottom-bounds.top);
+    m_scrollBar->setRect(rect);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::setValue( 
+    /* [in] */ int value)
+{
+    m_scrollBar->setValue(value);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::value(
+    /* [retval][out] */ int* value)
+{
+    if (!value)
+        return E_POINTER;
+    *value = m_scrollBar->value();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::paint( 
+    /* [in] */ HDC dc,
+    /* [in] */ RECT damageRect)
+{
+    GraphicsContext context(dc);
+    IntRect rect(damageRect.left, damageRect.top, damageRect.right-damageRect.left, damageRect.bottom-damageRect.top);
+    m_scrollBar->paint(&context, rect);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::frameGeometry( 
+    /* [retval][out] */ RECT* bounds)
+{
+    if (!bounds)
+        return E_POINTER;
+    IntRect rect = m_scrollBar->frameGeometry();
+    bounds->left = rect.x();
+    bounds->right = rect.right();
+    bounds->top = rect.y();
+    bounds->bottom = rect.bottom();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::width( 
+    /* [retval][out] */ int* w)
+{
+    if (!w)
+        return E_POINTER;
+    *w = m_scrollBar->width();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::height( 
+    /* [retval][out] */ int* h)
+{
+    if (!h)
+        return E_POINTER;
+    *h = m_scrollBar->height();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::requestedWidth( 
+    /* [retval][out] */ int* w)
+{
+    if (!w)
+        return E_POINTER;
+
+    *w = m_scrollBar->orientation() == VerticalScrollbar ? PlatformScrollbar::verticalScrollbarWidth(m_scrollBar->controlSize()) : -1;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::requestedHeight( 
+    /* [retval][out] */ int* h)
+{
+    if (!h)
+        return E_POINTER;
+
+    *h = m_scrollBar->orientation() == HorizontalScrollbar ? PlatformScrollbar::horizontalScrollbarHeight(m_scrollBar->controlSize()) : -1;
+    return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::handleMouseEvent( 
+    OLE_HANDLE window,
+    UINT msg,
+    WPARAM wParam,
+    LPARAM lParam)
+{
+    PlatformMouseEvent mouseEvent((HWND)(ULONG64)window, msg, wParam, lParam);
+    switch (msg) {
+        case WM_LBUTTONDOWN:
+            m_scrollBar->handleMousePressEvent(mouseEvent);
+            break;
+        case WM_LBUTTONUP:
+            m_scrollBar->handleMouseReleaseEvent(mouseEvent);
+            break;
+        case WM_MOUSEMOVE:
+            m_scrollBar->handleMouseMoveEvent(mouseEvent);
+            break;
+    }
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScrollBar::scroll( 
+    WebScrollDirection direction,
+    WebScrollGranularity granularity,
+    float multiplier)
+{
+    ScrollDirection webCoreScrollDirection = (ScrollDirection) direction;
+    ScrollGranularity webCoreGranularity = (ScrollGranularity) granularity;
+    m_scrollBar->scroll(webCoreScrollDirection, webCoreGranularity, multiplier);
+    return S_OK;
+}
+
+// ScrollbarClient -------------------------------------------------------
+void WebScrollBar::valueChanged(Scrollbar* scrollBar)
+{
+    if (m_scrollBar != scrollBar) {
+        ASSERT(false);  // shouldn't happen
+        return;
+    }
+    m_delegate->valueChanged(this);
+}
+
+IntRect WebScrollBar::windowClipRect() const
+{
+    HWND sbContainingWindow = m_scrollBar->containingWindow();
+    RECT clientRect;
+    ::GetClientRect(sbContainingWindow, &clientRect);
+    return IntRect(clientRect.left, clientRect.top, clientRect.right-clientRect.left, clientRect.bottom-clientRect.top);
+}

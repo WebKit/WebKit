@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
     HDC workingDC = CreateCompatibleDC(dc);
     if (doAlpha) {
         hCursor = CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0);
-        assert(hCursor);
+        ASSERT(hCursor);
 
         img->getHBITMAP(hCursor); 
         HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC, hCursor);
@@ -90,7 +90,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         HDC andMaskDC = CreateCompatibleDC(dc);
         HDC xorMaskDC = CreateCompatibleDC(dc);
         hCursor = CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0);
-        assert(hCursor);
+        ASSERT(hCursor);
         img->getHBITMAP(hCursor); 
         BITMAP cursor;
         GetObject(hCursor, sizeof(BITMAP), &cursor);
@@ -257,22 +257,82 @@ const Cursor& northWestSouthEastResizeCursor()
 
 const Cursor& columnResizeCursor()
 {
-    // FIXME: Windows does not have a standard column resize cursor
+    // FIXME: Windows does not have a standard column resize cursor <rdar://problem/5018591>
     static Cursor c = LoadCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
-    // FIXME: Windows does not have a standard row resize cursor
+    // FIXME: Windows does not have a standard row resize cursor <rdar://problem/5018591>
     static Cursor c = LoadCursor(0, IDC_SIZENS);
     return c;
 }
 
+const Cursor& moveCursor() 
+{
+    static Cursor c = LoadCursor(0, IDC_SIZEALL);
+    return c;
+}
+
+const Cursor& verticalTextCursor()
+{
+    //FIXME: Windows doesn't have a standard vertical text cursor <rdar://problem/5018591>
+    return pointerCursor();
+}
+
+const Cursor& cellCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& contextMenuCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& aliasCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& progressCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_APPSTARTING);
+    return c;
+}
+
+const Cursor& noDropCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_NO);
+    return c;
+}
+
+const Cursor& copyCursor()
+{
+    return pointerCursor();
+}
+
 const Cursor& noneCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_ARROW);
+    return pointerCursor();
+}
+
+const Cursor& notAllowedCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_NO);
     return c;
+}
+
+// FIXME: <rdar://problem/5224996> Add zoom in and zoom out cursors
+const Cursor& zoomInCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& zoomOutCursor()
+{
+    return pointerCursor();
 }
 
 }

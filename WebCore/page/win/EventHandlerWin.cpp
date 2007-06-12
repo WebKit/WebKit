@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,52 +26,86 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "Frame.h"
+#include "ClipboardWin.h"
+#include "Cursor.h"
+#include "FloatPoint.h"
+#include "FocusController.h"
 #include "FrameView.h"
-#include "KeyboardEvent.h"
+#include "Frame.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "MouseEventWithHitTestResults.h"
-#include "PlatformScrollBar.h"
-#include "RenderWidget.h"
+#include "Page.h"
+#include "PlatformScrollbar.h"
+#include "PlatformWheelEvent.h"
+#include "SelectionController.h"
+#include "WCDataObject.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMousePressEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMouseMoveEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMouseReleaseEvent(mev.event());
+    return true;
 }
 
-bool EventHandler::passWheelEventToSubframe(PlatformWheelEvent&, Frame* subframe)
+bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& wheelEvent, Widget* widget)
 {
-    return passWheelEventToWidget(subframe->view());
-}
-
-bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar* scrollbar)
-{
-    return passWheelEventToWidget(scrollbar);
-}
-
-bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
-{
-    // Figure out which view to send the event to.
-    if (!event.targetNode() || !event.targetNode()->renderer() || !event.targetNode()->renderer()->isWidget())
+    if (!widget->isFrameView())
         return false;
-    
-    return passMouseDownEventToWidget(static_cast<RenderWidget*>(event.targetNode()->renderer())->widget());
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
-bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
+bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, PlatformScrollbar* scrollbar)
 {
-    return passMouseDownEventToWidget(renderWidget->widget());
+    if (!scrollbar || !scrollbar->isEnabled())
+        return false;
+    return scrollbar->handleMousePressEvent(mev.event());
+}
+
+bool EventHandler::tabsToAllControls(KeyboardEvent*) const
+{
+    return true;
+}
+
+bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
+{
+    return event.activatedWebView();
+}
+
+Clipboard* EventHandler::createDraggingClipboard() const
+{
+    COMPtr<WCDataObject> dataObject;
+    WCDataObject::createInstance(&dataObject);
+    return new ClipboardWin(true, dataObject.get(), ClipboardWritable);
+}
+
+void EventHandler::focusDocumentView()
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    page->focusController()->setFocusedFrame(m_frame);
+}
+
+bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&)
+{
+    notImplemented();
+    return false;
 }
 
 }

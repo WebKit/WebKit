@@ -17,9 +17,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(WebKitOutputDir)\DumpRenderTree.intermediate\$(ConfigurationName)\DumpRenderTree.intermediate"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\ForwardingHeaders&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitSDKDir)\Include&quot;;&quot;$(WebKitSDKDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitSDKDir)\Include\WebCore&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\lib\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\icu\lib\icuuc.lib&quot;"
-				AdditionalDependencies="wininet.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitSDKDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -91,13 +93,15 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;xcopy Resources\*.ttf &quot;$(OutDir)\$(ProjectName).resources&quot; /d /y&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(WebKitOutputDir)\DumpRenderTree.intermediate\$(ConfigurationName)\DumpRenderTree.intermediate"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -118,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\..\..\WebCore\ForwardingHeaders&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitSDKDir)\Include&quot;;&quot;$(WebKitSDKDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitSDKDir)\Include\WebCore&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -137,9 +141,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\lib\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\..\icu\lib\icuuc.lib&quot;"
-				AdditionalDependencies="wininet.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitSDKDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -169,6 +174,88 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;xcopy Resources\*.ttf &quot;$(OutDir)\$(ProjectName).resources&quot; /d /y&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitSDKDir)\Include&quot;;&quot;$(WebKitSDKDir)\include\pthreads&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="1"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitSDKDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;xcopy Resources\*.ttf &quot;$(OutDir)\$(ProjectName).resources&quot; /d /y&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -176,15 +263,81 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="Delegates"
 			>
 			<File
-				RelativePath=".\DumpRenderTree.cpp"
+				RelativePath=".\EditingDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EditingDelegate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WaitUntilDoneDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WaitUntilDoneDelegate.h"
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Controllers"
+			>
+			<File
+				RelativePath=".\EventSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EventSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GCController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GCController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LayoutTestController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LayoutTestController.h"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\DraggingInfo.h"
+			>
+		</File>
+		<File
+			RelativePath=".\DumpRenderTree.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\DumpRenderTree.h"
+			>
+		</File>
+		<File
+			RelativePath=".\WorkQueue.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\WorkQueue.h"
+			>
+		</File>
+		<File
+			RelativePath=".\WorkQueueItem.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\WorkQueueItem.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

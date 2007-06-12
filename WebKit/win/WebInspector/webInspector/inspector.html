@@ -1,0 +1,144 @@
+<!--
+Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Web Inspector</title>
+    <script type="text/javascript" src="utilities.js"></script>
+    <script type="text/javascript" src="scrollbar.js"></script>
+    <script type="text/javascript" src="scrollarea.js"></script>
+    <script type="text/javascript" src="treeoutline.js"></script>
+    <script type="text/javascript" src="inspector.js"></script>
+    <link rel="stylesheet" type="text/css" href="inspector.css" />
+</head>
+<body onload="loaded()">
+<div id="body">
+<div id="title"><button class="close" onclick="window.close()"></button>Web Inspector<button class="menu" onmousedown="Inspector.showOptionsMenu()"></button></div>
+<div id="top">
+    <div id="header">
+        <div id="traverse"><button class="left" id="traverseUp" onclick="traverseTreeBackward(event)"></button><button class="right" id="traverseDown" onclick="traverseTreeForward(event)"></button></div>
+        <select id="treePopup" onchange="selectNewRoot(this)"></select>
+        <div id="searchCount"></div>
+        <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" onsearch="performSearch(this.value)" />
+    </div>
+    <div id="tree" class="focusable focused">
+        <div id="treeOutlineScrollView"><ol id="treeOutline"></ol></div>
+        <div id="treeOutlineScrollbar"></div>
+    </div>
+</div>
+<div id="splitter"><hr size="2" /></div>
+<div id="bottom">
+    <div id="tabs">
+        <button class="left" id="nodeButton" onclick="switchPane('node')">Node</button>
+        <button class="middle" id="styleButton" onclick="switchPane('style')">Style</button>
+        <button class="middle" id="metricsButton" onclick="switchPane('metrics')">Metrics</button>
+        <button class="right" id="propertiesButton" onclick="switchPane('properties')">Properties</button>
+    </div>
+    <div id="noSelection">No Selection</div>
+    <div id="nodePane" class="pane" style="display: none">
+        <div class="infoRow">
+            <span class="label">Node Type:</span>
+            <span class="value" id="nodeType"></span>
+        </div>
+        <div class="infoRow">
+            <span class="label">Node Name:</span>
+            <span class="value" id="nodeName"></span>
+        </div>
+        <div class="infoRow" id="nodeNamespaceRow">
+            <span class="label">Namespace URI:</span>
+            <span class="value"><div id="nodeNamespace"></div></span>
+        </div>
+        <div id="elementAttributes">
+            <div class="infoRow header">
+                <span class="label" style="width: initial">Element Attributes</span>
+            </div>
+            <div class="scrollArea">
+                <div class="view"><div id="elementAttributesScrollview"><ul class="attributeList" id="elementAttributesList"></ul></div></div>
+                <div id="elementAttributesScrollbar" class="scrollbar"></div>
+            </div>
+        </div>
+        <div id="nodeContents">
+            <div class="infoRow header">
+                <span class="label" style="width: initial">Text Content</span>
+            </div>
+            <div class="scrollArea">
+                <div class="view"><div id="nodeContentsScrollview"></div></div>
+                <div id="nodeContentsScrollbar" class="scrollbar"></div>
+            </div>
+        </div>
+    </div>
+    <div id="stylePane" class="pane" style="display: none">
+        <div id="noStyle" style="display: none"></div>
+        <div id="styleRules" class="scrollArea focusable blured">
+            <div class="view"><div id="styleRulesScrollview"></div></div>
+            <div id="styleRulesScrollbar" class="scrollbar"></div>
+        </div>
+        <div id="styleProperties" class="scrollArea">
+            <div class="view"><div id="stylePropertiesScrollview"><ul class="treeList" id="stylePropertiesTree"></ul></div></div>
+            <div id="stylePropertiesScrollbar" class="scrollbar"></div>
+        </div>
+    </div>
+    <div id="metricsPane" class="pane" style="display: none">
+        <div id="noMetrics" style="display: none">No metrics</div>
+        <table class="boxModelTable" id="marginBoxTable">
+            <tr class="marginBox">
+                <td valign="top"><div style="position:relative"><div class="boxModelLabel">margin</div></div></td>
+                <td id="margin-top"></td><td></td></tr>
+            <tr><td class="marginBox horizontalCell" id="margin-left"></td><td>
+                <table class="boxModelTable" id="borderBoxTable">
+                    <tr><td valign="top"><div style="position:relative"><div class="boxModelLabel">border</div></div></td>
+                        <td id="border-top"></td><td></td></tr>
+                    <tr><td class="horizontalCell" id="border-left"></td><td>
+                        <table class="boxModelTable" id="paddingBoxTable">
+                            <tr class="paddingBox">
+                                <td valign="top"><div style="position:relative"><div class="boxModelLabel">padding</div></div></td>
+                                <td id="padding-top"></td><td></td></tr>
+                            <tr><td class="paddingBox horizontalCell" id="padding-left"></td><td>
+                                <div id="content"></div>
+                            </td><td class="paddingBox horizontalCell" id="padding-right"></td></tr>
+                            <tr class="paddingBox"><td></td><td id="padding-bottom"></td><td></td></tr>
+                        </table>
+                    </td><td class="horizontalCell" id="border-right"></td></tr>
+                    <tr><td></td><td id="border-bottom"></td><td></td></tr>
+                </table>
+            </td><td class="marginBox horizontalCell" id="margin-right"></td></tr>
+            <tr class="marginBox"><td></td><td id="margin-bottom"></td><td></td></tr>
+        </table>
+    </div>
+    <div id="propertiesPane" class="pane" style="display: none">
+        <div id="jsProperties" class="scrollArea">
+            <div class="view"><div id="jsPropertiesScrollview"><ul class="propertyList" id="jsPropertiesList"></ul></div></div>
+            <div id="jsPropertiesScrollbar" class="scrollbar"></div>
+        </div>
+    </div>
+</div>
+<div id="resize"></div>
+</div>
+</body>
+</html>

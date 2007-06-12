@@ -1,0 +1,762 @@
+/*
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "WebKitDLL.h"
+#include "WebEditorClient.h"
+
+#include "IWebEditingDelegate.h"
+#include "IWebUndoTarget.h"
+#include "IWebURLResponse.h"
+#include "WebLocalizableStrings.h"
+#include "WebView.h"
+#include "DOMCoreClasses.h"
+#pragma warning(push, 0)
+#include <WebCore/BString.h>
+#include <WebCore/Document.h>
+#include <WebCore/EditCommand.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/KeyboardEvent.h>
+#include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/NotImplemented.h>
+#include <WebCore/Range.h>
+#pragma warning(pop)
+
+using namespace WebCore;
+using namespace HTMLNames;
+
+// {09A11D2B-FAFB-4ca0-A6F7-791EE8932C88}
+static const GUID IID_IWebUndoCommand = 
+{ 0x9a11d2b, 0xfafb, 0x4ca0, { 0xa6, 0xf7, 0x79, 0x1e, 0xe8, 0x93, 0x2c, 0x88 } };
+
+class IWebUndoCommand : public IUnknown {
+public:
+    virtual void execute() = 0;
+};
+
+// WebEditorUndoTarget -------------------------------------------------------------
+
+class WebEditorUndoTarget : public IWebUndoTarget
+{
+public:
+    WebEditorUndoTarget();
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
+
+    // IWebUndoTarget
+    virtual HRESULT STDMETHODCALLTYPE invoke( 
+        /* [in] */ BSTR actionName,
+        /* [in] */ IUnknown *obj);
+
+private:
+    ULONG m_refCount;
+};
+
+WebEditorUndoTarget::WebEditorUndoTarget()
+: m_refCount(1)
+{
+}
+
+HRESULT STDMETHODCALLTYPE WebEditorUndoTarget::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebUndoTarget*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUndoTarget))
+        *ppvObject = static_cast<IWebUndoTarget*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebEditorUndoTarget::AddRef(void)
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE WebEditorUndoTarget::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
+
+    return newRef;
+}
+
+HRESULT STDMETHODCALLTYPE WebEditorUndoTarget::invoke( 
+    /* [in] */ BSTR /*actionName*/,
+    /* [in] */ IUnknown *obj)
+{
+    IWebUndoCommand* undoCommand = 0;
+    if (SUCCEEDED(obj->QueryInterface(IID_IWebUndoCommand, (void**)&undoCommand))) {
+        undoCommand->execute();
+        undoCommand->Release();
+    }
+    return S_OK;
+}
+
+// WebEditorClient ------------------------------------------------------------------
+
+WebEditorClient::WebEditorClient(WebView* webView)
+    : m_webView(webView)
+    , m_undoTarget(0)
+{
+    m_undoTarget = new WebEditorUndoTarget();
+}
+
+WebEditorClient::~WebEditorClient()
+{
+    if (m_undoTarget)
+        m_undoTarget->Release();
+}
+
+void WebEditorClient::pageDestroyed()
+{
+    delete this;
+}
+
+bool WebEditorClient::isContinuousSpellCheckingEnabled()
+{
+    BOOL enabled;
+    if (FAILED(m_webView->isContinuousSpellCheckingEnabled(&enabled)))
+        return false;
+    return !!enabled;
+}
+
+void WebEditorClient::toggleContinuousSpellChecking()
+{
+    m_webView->toggleContinuousSpellChecking(0);
+}
+
+bool WebEditorClient::isGrammarCheckingEnabled()
+{
+    BOOL enabled;
+    if (FAILED(m_webView->isGrammarCheckingEnabled(&enabled)))
+        return false;
+    return !!enabled;
+}
+
+void WebEditorClient::toggleGrammarChecking()
+{
+    m_webView->toggleGrammarChecking(0);
+}
+
+static void initViewSpecificSpelling(IWebViewEditing* viewEditing)
+{
+    // we just use this as a flag to indicate that we've spell checked the document
+    // and need to close the spell checker out when the view closes.
+    int tag;
+    viewEditing->spellCheckerDocumentTag(&tag);
+}
+
+int WebEditorClient::spellCheckerDocumentTag()
+{
+    // we don't use the concept of spelling tags
+    notImplemented();
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool WebEditorClient::shouldBeginEditing(Range*)
+{
+    notImplemented();
+    return true;
+}
+
+bool WebEditorClient::shouldEndEditing(Range*)
+{
+    notImplemented();
+    return true;
+}
+
+void WebEditorClient::didBeginEditing()
+{
+    notImplemented();
+}
+
+void WebEditorClient::respondToChangedContents()
+{
+    notImplemented();
+}
+
+void WebEditorClient::respondToChangedSelection()
+{
+    notImplemented();
+}
+
+void WebEditorClient::didEndEditing()
+{
+    notImplemented();
+}
+
+void WebEditorClient::didWriteSelectionToPasteboard()
+{
+    notImplemented();
+}
+
+void WebEditorClient::didSetSelectionTypesForPasteboard()
+{
+    notImplemented();
+}
+
+bool WebEditorClient::shouldDeleteRange(Range* /*range*/)
+{
+    notImplemented(); 
+    return true; 
+
+    // FIXME: calling m_webView->editingDelegate() will cause an assertion failure so we don't want to enable this code until that's implemented. 
+    //BOOL result = false;
+    //IWebViewEditingDelegate* editingDelegate;
+    //// FIXME: DOMRange needs to be implemented before anything meaningful can be done here
+    //IDOMRange* domRange(0);
+    //if (SUCCEEDED(m_webView->editingDelegate(&editingDelegate))) {
+    //    editingDelegate->shouldDeleteDOMRange(m_webView, domRange, &result);
+    //    editingDelegate->Release();
+    //}
+    //return !!result;
+}
+
+bool WebEditorClient::shouldInsertNode(Node* /*node*/, Range* /*replacingRange*/, EditorInsertAction /*givenAction*/)
+{ 
+    notImplemented(); 
+    return true; 
+}
+
+bool WebEditorClient::shouldInsertText(String /*str*/, Range* /* replacingRange */, EditorInsertAction /*givenAction*/)
+{     
+    notImplemented(); 
+    return true; 
+
+    // FIXME: calling m_webView->editingDelegate() will cause an assertion failure so we don't want to enable this code until that's implemented. 
+    //BOOL result = false;
+    //IWebViewEditingDelegate* editingDelegate;
+    //// FIXME: DOMRange needs to be implemented before anything meaningful can be done here
+    //IDOMRange* domRange(0); // make a DOMRange from replacingRange
+    //BString text(str);
+    //if (SUCCEEDED(m_webView->editingDelegate(&editingDelegate))) {
+    //    editingDelegate->shouldInsertText(m_webView, text, domRange, (WebViewInsertAction) givenAction, &result);
+    //    editingDelegate->Release();
+    //}
+    //return !!result;
+}
+
+//bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, SelectionAffinity selectionAffinity, bool stillSelecting)
+//{ notImplemented(); return false; }
+
+bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* /*style*/, Range* /*toElementsInDOMRange*/)
+{ notImplemented(); return true; }
+
+bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration* /*currentStyle*/, CSSStyleDeclaration* /*toProposedStyle*/)
+{ notImplemented(); return false; }
+
+void WebEditorClient::webViewDidChangeTypingStyle(WebNotification* /*notification*/)
+{  notImplemented(); }
+
+void WebEditorClient::webViewDidChangeSelection(WebNotification* /*notification*/)
+{  notImplemented(); }
+
+bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* /*element*/)
+{ notImplemented(); return false; }
+
+bool WebEditorClient::smartInsertDeleteEnabled(void)
+{ 
+    BOOL enabled = FALSE; 
+    m_webView->smartInsertDeleteEnabled(&enabled);
+    return !!enabled;
+}
+
+bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool)
+{ notImplemented(); return true; }
+
+void WebEditorClient::textFieldDidBeginEditing(Element* e)
+{
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+                formDelegate->textFieldDidBeginEditing(domInputElement, kit(e->document()->frame()));
+                domInputElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+}
+
+void WebEditorClient::textFieldDidEndEditing(Element* e)
+{
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+                formDelegate->textFieldDidEndEditing(domInputElement, kit(e->document()->frame()));
+                domInputElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+}
+
+void WebEditorClient::textDidChangeInTextField(Element* e)
+{
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+                formDelegate->textDidChangeInTextField(domInputElement, kit(e->document()->frame()));
+                domInputElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+}
+
+bool WebEditorClient::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
+{
+    BOOL result = FALSE;
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+                String command = m_webView->interpretKeyEvent(ke);
+                // We allow empty commands here because the app code actually depends on this being called for all key presses.
+                // We may want to revisit this later because it doesn't really make sense to send an empty command.
+                formDelegate->doPlatformCommand(domInputElement, BString(command), kit(e->document()->frame()), &result);
+                domInputElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+    return !!result;
+}
+
+void WebEditorClient::textWillBeDeletedInTextField(Element* e)
+{
+    // We're using the deleteBackward command for all deletion operations since the autofill code treats all deletions the same way.
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+                BOOL result;
+                formDelegate->doPlatformCommand(domInputElement, BString("BackwardDelete"), kit(e->document()->frame()), &result);
+                domInputElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+}
+
+void WebEditorClient::textDidChangeInTextArea(Element* e)
+{
+    IWebFormDelegate* formDelegate;
+    if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
+        IDOMElement* domElement = DOMElement::createInstance(e);
+        if (domElement) {
+            IDOMHTMLTextAreaElement* domTextAreaElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLTextAreaElement, (void**)&domTextAreaElement))) {
+                formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e->document()->frame()));
+                domTextAreaElement->Release();
+            }
+            domElement->Release();
+        }
+        formDelegate->Release();
+    }
+}
+
+class WebEditorUndoCommand : public IWebUndoCommand
+{
+public:
+    WebEditorUndoCommand(PassRefPtr<EditCommand> editCommand, bool isUndo);
+    void execute();
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
+
+private:
+    ULONG m_refCount;
+    RefPtr<EditCommand> m_editCommand;
+    bool m_isUndo;
+};
+
+WebEditorUndoCommand::WebEditorUndoCommand(PassRefPtr<EditCommand> editCommand, bool isUndo)
+    : m_editCommand(editCommand)
+    , m_isUndo(isUndo) 
+    , m_refCount(1)
+{ 
+}
+
+void WebEditorUndoCommand::execute()
+{
+    if (m_isUndo)
+        m_editCommand->unapply();
+    else
+        m_editCommand->reapply();
+}
+
+HRESULT STDMETHODCALLTYPE WebEditorUndoCommand::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebUndoCommand*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUndoCommand))
+        *ppvObject = static_cast<IWebUndoCommand*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebEditorUndoCommand::AddRef(void)
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE WebEditorUndoCommand::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
+
+    return newRef;
+}
+
+static LPCTSTR undoNameForEditAction(EditAction editAction)
+{
+    switch (editAction) {
+        case EditActionUnspecified: return 0;
+        case EditActionSetColor: return LPCTSTR_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
+        case EditActionSetBackgroundColor: return LPCTSTR_UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
+        case EditActionTurnOffKerning: return LPCTSTR_UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
+        case EditActionTightenKerning: return LPCTSTR_UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
+        case EditActionLoosenKerning: return LPCTSTR_UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
+        case EditActionUseStandardKerning: return LPCTSTR_UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
+        case EditActionTurnOffLigatures: return LPCTSTR_UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
+        case EditActionUseStandardLigatures: return LPCTSTR_UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
+        case EditActionUseAllLigatures: return LPCTSTR_UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
+        case EditActionRaiseBaseline: return LPCTSTR_UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
+        case EditActionLowerBaseline: return LPCTSTR_UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
+        case EditActionSetTraditionalCharacterShape: return LPCTSTR_UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
+        case EditActionSetFont: return LPCTSTR_UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
+        case EditActionChangeAttributes: return LPCTSTR_UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
+        case EditActionAlignLeft: return LPCTSTR_UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
+        case EditActionAlignRight: return LPCTSTR_UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
+        case EditActionCenter: return LPCTSTR_UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
+        case EditActionJustify: return LPCTSTR_UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
+        case EditActionSetWritingDirection: return LPCTSTR_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
+        case EditActionSubscript: return LPCTSTR_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
+        case EditActionSuperscript: return LPCTSTR_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
+        case EditActionUnderline: return LPCTSTR_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
+        case EditActionOutline: return LPCTSTR_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
+        case EditActionUnscript: return LPCTSTR_UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
+        case EditActionDrag: return LPCTSTR_UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
+        case EditActionCut: return LPCTSTR_UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
+        case EditActionPaste: return LPCTSTR_UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
+        case EditActionPasteFont: return LPCTSTR_UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
+        case EditActionPasteRuler: return LPCTSTR_UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
+        case EditActionTyping: return LPCTSTR_UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
+        case EditActionCreateLink: return LPCTSTR_UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
+        case EditActionUnlink: return LPCTSTR_UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
+        case EditActionInsertList: return LPCTSTR_UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
+        case EditActionFormatBlock: return LPCTSTR_UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
+        case EditActionIndent: return LPCTSTR_UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
+        case EditActionOutdent: return LPCTSTR_UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
+    }
+    return 0;
+}
+
+void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
+{
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        LPCTSTR actionName = undoNameForEditAction(command->editingAction());
+        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(command, true);
+        if (!undoCommand)
+            return;
+        uiDelegate->registerUndoWithTarget(m_undoTarget, 0, undoCommand);
+        undoCommand->Release(); // the undo manager owns the reference
+        BSTR actionNameBSTR = SysAllocString(actionName);
+        if (actionNameBSTR) {
+            uiDelegate->setActionTitle(actionNameBSTR);
+            SysFreeString(actionNameBSTR);
+        }
+        uiDelegate->Release();
+    }
+}
+
+void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand> command)
+{
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(command, false);
+        if (!undoCommand)
+            return;
+        uiDelegate->registerUndoWithTarget(m_undoTarget, 0, undoCommand);
+        undoCommand->Release(); // the undo manager owns the reference
+        uiDelegate->Release();
+    }
+}
+
+void WebEditorClient::clearUndoRedoOperations()
+{
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        uiDelegate->removeAllActionsWithTarget(m_undoTarget);
+        uiDelegate->Release();
+    }
+}
+
+bool WebEditorClient::canUndo() const
+{
+    BOOL result = FALSE;
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        uiDelegate->canUndo(&result);
+        uiDelegate->Release();
+    }
+    return !!result;
+}
+
+bool WebEditorClient::canRedo() const
+{
+    BOOL result = FALSE;
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        uiDelegate->canRedo(&result);
+        uiDelegate->Release();
+    }
+    return !!result;
+}
+
+void WebEditorClient::undo()
+{
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        uiDelegate->undo();
+        uiDelegate->Release();
+    }
+}
+
+void WebEditorClient::redo()
+{
+    IWebUIDelegate* uiDelegate = 0;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        uiDelegate->redo();
+        uiDelegate->Release();
+    }
+}
+
+void WebEditorClient::handleKeypress(KeyboardEvent* evt)
+{
+    if (m_webView->handleEditingKeyboardEvent(evt))
+        evt->setDefaultHandled();
+}
+
+void WebEditorClient::handleInputMethodKeypress(KeyboardEvent*)
+{
+}
+
+bool WebEditorClient::selectWordBeforeMenuEvent()
+{
+    return false;
+}
+
+bool WebEditorClient::isEditable()
+{
+    return false;
+}
+
+void WebEditorClient::ignoreWordInSpellDocument(const String& word)
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    initViewSpecificSpelling(m_webView);
+    ed->ignoreWordInSpellDocument(m_webView, BString(word));
+}
+
+void WebEditorClient::learnWord(const String& word)
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    ed->learnWord(BString(word));
+}
+
+void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
+{
+    *misspellingLocation = -1;
+    *misspellingLength = 0;
+
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    initViewSpecificSpelling(m_webView);
+    ed->checkSpellingOfString(m_webView, text, length, misspellingLocation, misspellingLength);
+}
+
+void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
+{
+    details.clear();
+    *badGrammarLocation = -1;
+    *badGrammarLength = 0;
+
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    initViewSpecificSpelling(m_webView);
+    COMPtr<IEnumWebGrammarDetails> enumDetailsObj;
+    if (FAILED(ed->checkGrammarOfString(m_webView, text, length, &enumDetailsObj, badGrammarLocation, badGrammarLength)))
+        return;
+
+    while (true) {
+        ULONG fetched;
+        COMPtr<IWebGrammarDetail> detailObj;
+        if (enumDetailsObj->Next(1, &detailObj, &fetched) != S_OK)
+            break;
+
+        GrammarDetail detail;
+        if (FAILED(detailObj->length(&detail.length)))
+            continue;
+        if (FAILED(detailObj->location(&detail.location)))
+            continue;
+        BSTR userDesc;
+        if (FAILED(detailObj->userDescription(&userDesc)))
+            continue;
+        detail.userDescription = String(userDesc, SysStringLen(userDesc));
+        SysFreeString(userDesc);
+
+        COMPtr<IEnumSpellingGuesses> enumGuessesObj;
+        if (FAILED(detailObj->guesses(&enumGuessesObj)))
+            continue;
+        while (true) {
+            BSTR guess;
+            if (enumGuessesObj->Next(1, &guess, &fetched) != S_OK)
+                break;
+            detail.guesses.append(String(guess, SysStringLen(guess)));
+            SysFreeString(guess);
+        }
+
+        details.append(detail);
+    }
+}
+
+void WebEditorClient::updateSpellingUIWithGrammarString(const String& string, const WebCore::GrammarDetail& detail)
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    Vector<BSTR> guessesBSTRs;
+    for (unsigned i = 0; i < detail.guesses.size(); i++) {
+        BString guess(detail.guesses[i]);
+        guessesBSTRs.append(guess.release());
+    }
+    BString userDescriptionBSTR(detail.userDescription);
+    ed->updateSpellingUIWithGrammarString(BString(string), detail.location, detail.length, userDescriptionBSTR, guessesBSTRs.data(), (int)guessesBSTRs.size());
+    for (unsigned i = 0; i < guessesBSTRs.size(); i++)
+        SysFreeString(guessesBSTRs[i]);
+}
+
+void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& word)
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    ed->updateSpellingUIWithMisspelledWord(BString(word));
+}
+
+void WebEditorClient::showSpellingUI(bool show)
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+    
+    ed->showSpellingUI(show);
+}
+
+bool WebEditorClient::spellingUIIsShowing()
+{
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return false;
+
+    BOOL showing;
+    if (FAILED(ed->spellingUIIsShowing(&showing)))
+        return false;
+
+    return !!showing;
+}
+
+void WebEditorClient::getGuessesForWord(const String& word, Vector<String>& guesses)
+{
+    guesses.clear();
+
+    COMPtr<IWebEditingDelegate> ed;
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
+        return;
+
+    COMPtr<IEnumSpellingGuesses> enumGuessesObj;
+    if (FAILED(ed->guessesForWord(BString(word), &enumGuessesObj)))
+        return;
+
+    while (true) {
+        ULONG fetched;
+        BSTR guess;
+        if (enumGuessesObj->Next(1, &guess, &fetched) != S_OK)
+            break;
+        guesses.append(String(guess, SysStringLen(guess)));
+        SysFreeString(guess);
+    }
+}
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="debug_internal"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="USE_DEBUG_SAFARI_THEME"
+	/>
+	<UserMacro
+		Name="WebKitConfigSuffix"
+		Value="_debug"
+		PerformEnvironmentSet="true"
+	/>
+</VisualStudioPropertySheet>

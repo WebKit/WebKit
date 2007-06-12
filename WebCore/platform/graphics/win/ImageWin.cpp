@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,20 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
+#include "Image.h"
 #include "BitmapImage.h"
-
-#if PLATFORM(CAIRO)
-#include <cairo.h>
-#else
+#include "GraphicsContext.h"
 #include <ApplicationServices/ApplicationServices.h>
-#endif
+
+#include <winsock2.h>
+#include <windows.h>
+#include "PlatformString.h"
+#include "MimeTypeRegistry.h"
+#include "SharedBuffer.h"
 
 // This function loads resources from WebKit
-Vector<char> loadResourceIntoArray(const char*);
+PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char*);
 
 namespace WebCore {
 
@@ -47,16 +50,34 @@ void BitmapImage::invalidatePlatformData()
 
 Image* Image::loadPlatformResource(const char *name)
 {
-    Vector<char> arr = loadResourceIntoArray(name);
+    RefPtr<SharedBuffer> buffer = loadResourceIntoBuffer(name);
     BitmapImage* img = new BitmapImage;
-#if PLATFORM(CAIRO)
-    img->setNativeData(&arr, true);
-#else
-    CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(arr.data()), arr.size(), kCFAllocatorNull);
-    img->setNativeData(data, true);
-    CFRelease(data);
-#endif
+    img->setData(buffer.release(), true);
     return img;
 }
 
+bool BitmapImage::getHBITMAP(HBITMAP bmp)
+{
+    ASSERT(bmp);
+
+    BITMAP bmpInfo;
+    GetObject(bmp, sizeof(BITMAP), &bmpInfo);
+
+    ASSERT(bmpInfo.bmBitsPixel == 32);
+    int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+    
+    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
+    CGContextRef cgContext = CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
+        8, bmpInfo.bmWidthBytes, deviceRGB, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+  
+    GraphicsContext gc(cgContext);
+    IntSize imageSize = BitmapImage::size();
+    draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), CompositeCopy);
+
+    // Do cleanup
+    CGContextRelease(cgContext);
+    CGColorSpaceRelease(deviceRGB);
+    return true;
 }
+
+} // namespace WebCore

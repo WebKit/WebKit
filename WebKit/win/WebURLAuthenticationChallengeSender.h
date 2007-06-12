@@ -1,0 +1,74 @@
+/*
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef WebURLAuthenticationChallengeSender_h
+#define WebURLAuthenticationChallengeSender_h
+
+#include "IWebURLAuthenticationChallenge.h"
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
+
+namespace WebCore {
+    class ResourceHandle;
+};
+
+// {5CACD637-F82F-491f-947A-5DCA38AA0FEA}
+DEFINE_GUID(IID_WebURLAuthenticationChallengeSender, 0x5cacd637, 0xf82f, 0x491f, 0x94, 0x7a, 0x5d, 0xca, 0x38, 0xaa, 0xf, 0xea);
+
+class WebURLAuthenticationChallengeSender : public IWebURLAuthenticationChallengeSender
+{
+public:
+    static WebURLAuthenticationChallengeSender* createInstance(PassRefPtr<WebCore::ResourceHandle>);
+private:
+    WebURLAuthenticationChallengeSender(PassRefPtr<WebCore::ResourceHandle>);
+    ~WebURLAuthenticationChallengeSender();
+public:
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
+
+    // IWebURLAuthenticationChallengeSender
+    virtual HRESULT STDMETHODCALLTYPE cancelAuthenticationChallenge(
+        /* [in] */ IWebURLAuthenticationChallenge* challenge);
+
+    virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(
+        /* [in] */ IWebURLAuthenticationChallenge* challenge);
+
+    virtual HRESULT STDMETHODCALLTYPE useCredential(
+        /* [in] */ IWebURLCredential* credential, 
+        /* [in] */ IWebURLAuthenticationChallenge* challenge);
+
+    WebCore::ResourceHandle* resourceHandle() const;
+protected:
+    ULONG m_refCount;
+
+    RefPtr<WebCore::ResourceHandle> m_handle;
+};
+
+
+#endif

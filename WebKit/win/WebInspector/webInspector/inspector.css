@@ -1,0 +1,855 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+html {
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+}
+
+* {
+    -webkit-user-select: none;
+}
+
+a:link {
+    color: inherit;
+}
+
+button, select, input {
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+.disabled {
+    color: rgba(255,255,255,0.5);
+}
+
+#body {
+    position: absolute;
+    background-color: rgba(20,20,20,0.9);
+    -webkit-border-radius: 8px;
+    top: 0;
+    height: 100%;
+    left: 0;
+    right: 0;
+    color: white;
+    font-family: 'Lucida Grande', sans-serif;
+    font-size: 12px;
+    text-shadow: black 0px 1px 2px;
+}
+
+#title {
+    position: absolute;
+    background-color: rgba(255,255,255,0.1);
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 11px;
+    line-height: 20px;
+}
+
+#header {
+    position: absolute;
+    height: 26px;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#search {
+    font-size: 11px;
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    width: 90px;
+    -webkit-user-select: text;
+    text-shadow: none;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+#searchCount {
+    font-size: 11px;
+    position: absolute;
+    top: 5px;
+    right: 170px;
+    width: 100px;
+    text-align: right;
+    display: none;
+    z-index: 100;
+}
+
+#treePopup {
+    position: absolute;
+    top: 4px;
+    left: 54px;
+    right: 106px;
+}
+
+#traverse {
+    position: absolute;
+    top: 4px;
+    left: 9px;
+    width: 50px;
+}
+
+#traverseUp {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 21px;
+    background-image: url( Images/upTriangle.png ), url( Images/buttonDivider.png );
+    background-repeat: no-repeat;
+    background-position: 2px 0px, -4px right;
+}
+
+#traverseDown {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 20px;
+    background-image: url( Images/downTriangle.png );
+    background-repeat: no-repeat;
+    background-position: 5px 1px;
+}
+
+#tabs {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    margin-left: -130px;
+}
+
+#nodeButton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+}
+
+#metricsButton {
+    position: absolute;
+    top: 0;
+    left: 115px;
+    width: 65px;
+}
+
+#styleButton {
+    position: absolute;
+    top: 0;
+    left: 60px;
+    width: 55px;
+}
+
+#propertiesButton {
+    position: absolute;
+    top: 0;
+    left: 180px;
+    width: 80px;
+}
+
+#title button.close {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    border: 0;
+    background-color: transparent;
+    background-image: url( Images/close.png );
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 13px;
+}
+
+#title button.close[disabled] {
+    opacity: 0.5;
+}
+
+#title button.close:active {
+    background-image: url( Images/closePressed.png );
+}
+
+#title button.menu {
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    border: 0;
+    background-color: transparent;
+    background-image: url( Images/menu.png );
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 13px;
+}
+
+#title button.menu[disabled] {
+    opacity: 0.5;
+}
+
+#title button.menu:active {
+    background-image: url( Images/menuPressed.png );
+}
+
+button {
+    -webkit-appearance: none;
+    border-width: 4px 6px 6px 6px;
+    border-color: transparent;
+    border-style: solid;
+    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    box-sizing: border-box;
+    line-height: 5px;
+    height: 20px;
+    background-color: transparent;
+    color: white;
+    padding: 0;
+    margin: 0;
+}
+
+button:active, button.selected {
+    -webkit-border-image: url( Images/buttonPressed.png ) 4 6 6 6;
+    text-shadow: black 1px -1px 3px;
+}
+
+button[disabled] {
+    -webkit-border-image: url( Images/button.png ) 4 6 6 6;
+    opacity: 0.5;
+}
+
+button.left {
+    border-width: 4px 0 6px 6px;
+    background-image: url( Images/buttonDivider.png );
+    background-position: -4px right;
+    background-repeat: no-repeat;
+}
+
+button.right {
+    border-width: 4px 6px 6px 0;
+}
+
+button.middle {
+    border-width: 4px 0 6px 0;
+    background-image: url( Images/buttonDivider.png );
+    background-position: -4px right;
+    background-repeat: no-repeat;
+}
+
+select {
+    -webkit-appearance: none;
+    border-width: 4px 16px 6px 6px;
+    border-color: transparent;
+    border-style: solid;
+    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
+    box-sizing: border-box;
+    line-height: 5px;
+    height: 20px;
+    background-color: transparent;
+    color: white;
+    padding: 0;
+    margin: 0;
+    outline: none;
+}
+
+select:active {
+    -webkit-border-image: url( Images/popupPressed.png ) 4 16 6 6;
+}
+
+select[disabled] {
+    -webkit-border-image: url( Images/popup.png ) 4 16 6 6;
+    opacity: 0.5;
+}
+
+#resize {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    z-index: 10;
+    -webkit-dashboard-region: dashboard-region(resize rectangle);
+    background-image: url( Images/resize.png );
+    background-repeat: no-repeat;
+}
+
+#top {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 170px;
+}
+
+#bottom {
+    position: absolute;
+    top: 200px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#bottom .pane {
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+}
+
+#splitter {
+    position: absolute;
+    top: 190px;
+    left: 5px;
+    right: 5px;
+    height: 10px;
+    cursor: row-resize;
+    z-index: 10;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+#splitter hr {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0.85;
+}
+
+#tree {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    position: absolute;
+    top: 26px;  
+    bottom: 4px;
+    left: 10px;
+    right: 10px;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+#treeOutlineScrollView {
+    position: absolute;
+    top: 0; 
+    left: 3px;
+    right: 23px;
+    bottom: 0;
+}
+
+#treeOutlineScrollbar {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    right: 2px;
+    width: 19px;
+    display: block;
+}
+
+button.toggle {
+    width: 8px;
+    height: 8px;
+    border: 0;
+    margin: 0 2px;
+    padding: 0;
+    background-color: transparent;
+}
+
+button.toggle.down {
+    background-image: url( Images/downTriangle.png );
+}
+
+button.toggle.right {
+    background-image: url( Images/rightTriangle.png );
+}
+
+#noSelection {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
+}
+
+#nodePane {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.infoRow {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    margin-top: 2px;
+}
+
+.infoRow.header {
+    margin-top: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    margin-bottom: 3px;
+}
+
+.infoRow .label {
+    display: block;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 3px;
+    width: 100px;
+}
+
+.infoRow .value {
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-user-select: text;
+    white-space: nowrap;
+}
+
+/* This is a workaround for text-overflow: ellipsis not working on boxes. */
+/* http://bugs.webkit.org/show_bug.cgi?id=5990 */
+.infoRow .value div {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-user-select: text;
+}
+
+#elementAttributes {
+    display: -webkit-box;
+    -webkit-box-flex: 3;
+    -webkit-box-orient: vertical;
+    min-height: 60px;
+    max-height: 160px;
+}
+
+#elementAttributesList {
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+.attributeList {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.attributeList ul {
+    list-style-type: none;
+    -webkit-padding-start: 10px;
+}
+
+.attributeList li {
+    line-height: 14px;
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attributeList li span {
+    -webkit-user-select: text;
+}
+
+.attributeList li .relation {
+    margin: 0.3em;
+}
+
+.attributeList li .value {
+    color: rgb(255,255,180);
+}
+
+.attributeList li .mapped {
+    margin-left: 0.5em;
+    color: rgba(255,255,255,0.6);
+}
+
+#nodeContents {
+    display: -webkit-box;
+    -webkit-box-flex: 12;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#nodeContentsScrollview {
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-user-select: text;
+    overflow: hidden;
+    font-size: 11px;
+    word-wrap: break-word;
+}
+
+.scrollArea {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
+    position: relative;
+}
+
+.scrollArea > .view {
+    position: relative;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+}
+
+.scrollArea > .view > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 21px;
+    overflow: hidden;
+}
+
+.scrollArea > .scrollbar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 19px;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+#stylePane {
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#noStyle {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
+}
+
+#styleRules {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    margin-bottom: 6px;
+    padding: 3px;
+}
+
+#styleRulesScrollview {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-box-flex: 1;
+}
+
+#styleRulesScrollview hr.divider {
+    margin: 3px auto;
+    opacity: 0.8;
+}
+
+#styleRulesScrollview > .row {
+    padding: 1px 6px;
+    -webkit-border-radius: 6px;
+    background-color: transparent;
+    border: 2px solid transparent;
+}
+
+#styleRulesScrollview > .row.selected {
+    text-shadow: black 1px 2px 3px;
+}
+
+#styleRules.blured #styleRulesScrollview > .row.selected {
+    background-color: transparent;
+    border-color: rgba(128,128,255,0.4);
+}
+
+#styleRules.focused #styleRulesScrollview > .row.selected {
+    background-color: rgba(128,128,255,0.4);
+    border-color: transparent;
+}
+
+#styleRulesScrollview > .row > .cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#styleRulesScrollview .cell.stylesheet {
+    color: rgba(255,255,255,0.6);
+    font-size: 10px;
+    padding-bottom: 2px;
+}
+
+#styleProperties {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    padding: 3px;
+}
+
+.treeList {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.treeList ul {
+    list-style-type: none;
+    -webkit-padding-start: 10px;
+}
+
+.treeList li {
+    line-height: 14px;
+    height: 16px;
+    padding-left: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.treeList li button {
+    position: relative;
+    top: 4px;
+    left: 1px;
+    float: left;
+    background-image: url( Images/rightTriangle.png );
+    width: 8px;
+    height: 8px;
+    border: 0;
+    margin: 0 2px;
+    padding: 0;
+    background-color: transparent;
+}
+
+.treeList li.hasChildren {
+    padding-left: 2px;
+}
+
+.treeList li.selected {
+    background-color: rgba(128,128,255,0.4);
+    -webkit-border-radius: 4px;
+    text-shadow: black 1px 2px 3px;
+}
+
+.treeList li.expanded button {
+    background-image: url( Images/downTriangle.png );
+}
+
+.treeList li span {
+    -webkit-user-select: text;
+}
+
+.treeList li .value {
+    color: rgb(255,255,180);
+}
+
+.treeList li.implicit .value {
+    color: rgb(180,255,180);
+}
+
+.treeList li.overloaded {
+    text-decoration: line-through;
+}
+
+.colorSwatch {
+    display: inline-block;
+    margin-left: 4px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgb(180,180,112);
+}
+
+#propertiesPane {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+#jsProperties {
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+}
+
+.propertyList {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    white-space: nowrap;
+}
+
+.propertyList ul {
+    list-style-type: none;
+    -webkit-padding-start: 10px;
+}
+
+.propertyList li {
+    line-height: 14px;
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.propertyList li span {
+    -webkit-user-select: text;
+}
+
+.propertyList li .value {
+    color: rgb(255,255,180);
+}
+
+.boxModelTable {
+    border-spacing: 0px;
+}
+
+.boxModelTable td {
+    text-align: center;
+    min-width: 10px;
+    padding: 0px;
+}
+
+.boxModelTable .horizontalCell {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#marginBoxTable {
+    border: 1px dashed;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+#borderBoxTable {
+    border: 1px solid
+}
+
+#paddingBoxTable {
+    border: 1px grey dashed
+}
+
+#content {
+    border: 1px grey solid;
+    padding: 10px
+}
+
+.boxModelLabel {
+    position: absolute;
+    color: grey;
+    text-shadow: none;
+    left: 2px;
+    font-size: 9px;
+}
+
+#noMetrics {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
+}
+
+#marginBoxTable[hide], #paddingBoxTable[hide] {
+    border: 0px
+}
+
+#marginBoxTable[hide] .marginBox, #paddingBoxTable[hide] .paddingBox {
+    display: none
+}
+
+ol#treeOutline {
+    padding: 2px 1px;
+}
+
+#treeOutline, #treeOutline ol {
+    list-style-type: none;
+    font-size: 11px;
+    font-family: Lucida Grande, sans-serif;
+    -webkit-padding-start: 11px;
+    margin: 0;
+}
+
+#treeOutline li {
+    -webkit-border-radius: 8px;
+    padding: 0px 5px 2px 18px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    color: white;
+    font-weight: bold;
+    text-shadow: black 2px 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    cursor: normal;
+    -webkit-user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#treeOutline li.selected {
+    background-color: transparent;
+    border-width: 2px;
+    border-style: solid;
+}
+
+#tree.blured li.selected {
+    background-color: transparent;
+    border-color: rgba(128,128,255,0.4);
+}
+
+#tree.focused li.selected {
+    background-color: rgba(128,128,255,0.4);
+    border-color: transparent;
+}
+
+#treeOutline li.parent {
+    padding-left: 0;
+}
+
+#treeOutline li.parent:before {
+    content: url( Images/rightTriangle.png );
+    width: 8px;
+    height: 8px;
+    padding-right: 2px;
+    padding-left: 8px;
+    position: relative;
+    top: 1px;
+}
+
+#treeOutline li.parent.expanded:before {
+    content: url( Images/downTriangle.png );
+}
+
+#treeOutline ol.children {
+    display: none;
+}
+
+#treeOutline ol.children.expanded {
+    display: block;
+}
+
+#treeOutline li .content {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#treeOutline li.expanded .content {
+    display: none;
+}

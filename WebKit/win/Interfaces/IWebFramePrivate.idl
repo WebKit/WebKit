@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "IWebFrame.idl";
+
+typedef enum {
+    WebFrameLoadTypeStandard,
+    WebFrameLoadTypeBack,
+    WebFrameLoadTypeForward,
+    WebFrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
+    WebFrameLoadTypeReload,
+    WebFrameLoadTypeReloadAllowingStaleData,
+    WebFrameLoadTypeSame,               // user loads same URL again (but not reload button)
+    WebFrameLoadTypeInternal,
+    WebFrameLoadTypeReplace
+} WebFrameLoadType;
+
+[
+    object,
+    oleautomation,
+    uuid(A1657D07-4881-4475-9D10-76548731D448),
+    pointer_default(unique)
+]
+
+interface IWebFramePrivate : IUnknown
+{
+    HRESULT renderTreeAsExternalRepresentation([out, retval] BSTR* result);
+    HRESULT scrollOffset([out, retval] SIZE* offset);
+
+    // FIXME: This shouldn't be needed once IWebDocumentView is implemented.
+    HRESULT layout();
+    HRESULT firstLayoutDone([out, retval] BOOL* result);
+    HRESULT loadType([out, retval] WebFrameLoadType* type);
+
+    HRESULT setInPrintingMode([in] BOOL value, [in] HDC printDC);
+    HRESULT getPrintedPageCount([in] HDC printDC, [out, retval] UINT* pageCount);
+    [local] HRESULT spoolPages([in] HDC printDC, [in] UINT startPage, [in] UINT endPage, [out, retval] void* ctx);
+
+    HRESULT isFrameSet([out, retval] BOOL* result);
+    HRESULT string([out, retval] BSTR* result);
+
+    HRESULT size([out, retval] SIZE* size);
+    HRESULT hasScrollBars([out, retval] BOOL* result);
+    HRESULT contentBounds([out, retval] RECT* result);
+    HRESULT frameBounds([out, retval] RECT* result);
+
+    HRESULT isDescendantOfFrame([in] IWebFrame* ancestor, [out, retval] BOOL* result);
+}

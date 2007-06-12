@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FormDataStreamCFNet_h
-#define FormDataStreamCFNet_h
+#ifndef FormDataStreamCFNet_h_
+#define FormDataStreamCFNet_h_
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/Forward.h>
@@ -40,4 +40,4 @@ namespace WebCore {
     FormData* httpBodyFromStream(CFReadStreamRef);
 }
 
-#endif FormDataStreamCFNet_h
+#endif FormDataStreamCFNet_h_

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
  */
 
 #include "config.h"
-#include "GlyphPageTreeNode.h"
-
 #include "FontData.h"
 #include <windows.h>
 
@@ -37,22 +35,25 @@ namespace WebCore
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
+    // bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
+    // GetGlyphIndices doesn't support this so ScriptGetCMap should be used instead. It seems that supporting this
+    // would require modifying the registry (see http://www.i18nguy.com/surrogates.html) so we won't support this for now.
+    if (bufferLength > GlyphPage::size)
+        return false;
+
     HDC dc = GetDC((HWND)0);
     SaveDC(dc);
     SelectObject(dc, fontData->m_font.hfont());
 
     TEXTMETRIC tm;
     GetTextMetrics(dc, &tm);
-    WORD localGlyphBuffer[GlyphPage::size * 2];
-    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
-    bool success = result != GDI_ERROR && (unsigned)result == bufferLength;
-    if (success) {
-        for (unsigned i = 0; i < GlyphPage::size; i++)
-            setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
-    }
+    WORD localGlyphBuffer[GlyphPage::size];
+    GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    for (unsigned i = 0; i < GlyphPage::size; i++)
+        setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
-    return success;
+    return true;
 }
 
 }

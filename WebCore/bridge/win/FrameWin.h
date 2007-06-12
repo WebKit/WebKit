@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,72 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameWin_h
-#define FrameWin_h
+#ifndef FrameWin_H
+#define FrameWin_H
 
 #include "Frame.h"
 
+// Forward declared so we don't need wingdi.h.
+typedef struct HBITMAP__* HBITMAP;
+
 namespace WebCore {
 
-    class FormData;
-    class FrameLoadRequest;
-    class ResourceRequest;
-    struct WindowFeatures;
+    HBITMAP imageFromSelection(Frame* frame, bool forceWhiteText);
+    Vector<IntRect> computePageRectsForFrame(Frame*, const IntRect& printRect, float userScaleFactor);
 
-    class FrameWinClient {
-    public:
-        virtual void createNewWindow(const ResourceRequest&, const WindowFeatures&, Frame*& newFrame) = 0;
-        virtual void openURL(const DeprecatedString&, bool lockHistory) = 0;
-        virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
-        virtual void setTitle(const String& title) = 0;
-        virtual void setStatusText(const String& statusText) = 0;
-    };
+}
 
-    class FrameWin : public Frame {
-    public:
-        FrameWin(Page*, HTMLFrameOwnerElement*, FrameWinClient*, FrameLoaderClient*);
-        virtual ~FrameWin();
-
-        virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
-        virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
-        virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
-        virtual KJS::Bindings::RootObject* bindingRootObject();
-
-        virtual void runJavaScriptAlert(const String& message);
-        virtual bool runJavaScriptConfirm(const String& message);
-        virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
-        virtual bool shouldInterruptJavaScript();
-        virtual void focusWindow();
-        virtual void unfocusWindow();
-        virtual void print();
-
-        virtual Range* markedTextRange() const;
-        virtual void issueCutCommand();
-        virtual void issueCopyCommand();
-        virtual void issuePasteCommand();
-        virtual void issuePasteAndMatchStyleCommand();
-        virtual void issueTransposeCommand();
-        virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
-        virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const;
-
-        virtual String mimeTypeForFileName(const String&) const;
-
-        virtual bool keyPress(const PlatformKeyboardEvent&);
-
-        FrameWinClient* client() const;
-
-    protected:
-        virtual bool isLoadTypeReload();
-
-    private:
-        virtual bool passMouseDownEventToWidget(Widget*);
-
-        FrameWinClient* m_client;
-    };
-
-    inline FrameWin* Win(Frame* frame) { return static_cast<FrameWin*>(frame); }
-    inline const FrameWin* Win(const Frame* frame) { return static_cast<const FrameWin*>(frame); }
-
-} // namespace WebCore
-
-#endif // FrameWin_h
+#endif

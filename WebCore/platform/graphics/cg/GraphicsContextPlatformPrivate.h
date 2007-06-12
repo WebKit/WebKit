@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <CoreGraphics/CGContext.h>
+
 namespace WebCore
 {
 
 class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(CGContextRef cgContext)
-    :m_cgContext(cgContext)
+    : m_cgContext(cgContext)
+#if PLATFORM(WIN)
+    , m_hdc(0)
+    , m_transparencyCount(0)
+#endif
     {
         CGContextRetain(m_cgContext);
     }
@@ -39,19 +45,35 @@ public:
         CGContextRelease(m_cgContext);
     }
 
+#if PLATFORM(MAC)
+    // These methods do nothing on Mac.
     void save() {}
     void restore() {}
-    
     void clip(const IntRect&) {}
     void clip(const Path&) {}
-
     void scale(const FloatSize&) {}
     void rotate(float) {}
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
+#else
+    // On Windows, we need to update the HDC for form controls to draw in the right place.
+    void save();
+    void restore();
+    void clip(const IntRect&);
+    void clip(const Path&);
+    void scale(const FloatSize&);
+    void rotate(float);
+    void translate(float, float);
+    void concatCTM(const AffineTransform&);
+    void beginTransparencyLayer() { m_transparencyCount++; }
+    void endTransparencyLayer() { m_transparencyCount--; }
 
+    HDC m_hdc;
+    unsigned m_transparencyCount;
+
+#endif
     CGContextRef m_cgContext;
     IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
 };

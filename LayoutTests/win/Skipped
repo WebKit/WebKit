@@ -1,0 +1,650 @@
+#
+# Copyright (C) 2007 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# AppleScript on Windows? That's crazy talk!
+fast/AppleScript
+
+# Obj-C QuickTime plugin on Windows? That's unpossible!
+plugins/pluginDocumentView-deallocated-dataSource.html
+
+# Obj-C Mac only test on Windows?  That's unpossible!
+http/tests/misc/willCacheResponse-delegate-callback.html
+fast/dom/wrapper-identity.html
+fast/dom/wrapper-round-tripping.html
+
+# No Dashboard compatibility mode on Windows
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+svg/custom/embedded-svg-disallowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
+svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/svg-disallowed-in-dashboard-object.html
+
+# Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
+css1/basic/contextual_selectors.html
+css1/font_properties/font.html
+css1/pseudo/multiple_pseudo_elements.html
+css2.1/t1508-c527-font-00-b.html
+css2.1/t1508-c527-font-04-b.html
+css2.1/t1508-c527-font-05-b.html
+css2.1/t1508-c527-font-07-b.html
+css2.1/t1508-c527-font-08-b.html
+css2.1/t1508-c527-font-10-c.html
+css2.1/t051201-c23-first-line-00-b.html
+editing/deleting/5144139-2.html
+editing/execCommand/5119244.html
+editing/style/5091898.html
+fast/block/positioning/047.html
+fast/css/beforeSelectorOnCodeElement.html
+fast/css/font_property_normal.html
+fast/css/rtl-ordering.html
+fast/css/text-security.html
+fast/encoding/denormalised-voiced-japanese-chars.html
+fast/encoding/invalid-UTF-8.html
+fast/events/standalone-image-drag-to-editable.html
+fast/forms/select-visual-hebrew.html
+fast/forms/visual-hebrew-text-field.html
+fast/lists/drag-into-marker.html
+fast/lists/w3-list-styles.html
+fast/table/absolute-table-at-bottom.html
+fast/text/font-initial.html
+fast/xsl/xslt-text.xml
+svg/W3C-SVG-1.1/animate-elem-03-t.svg
+svg/W3C-SVG-1.1/animate-elem-24-t.svg
+svg/W3C-SVG-1.1/animate-elem-36-t.svg
+svg/W3C-SVG-1.1/animate-elem-40-t.svg
+svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
+svg/W3C-SVG-1.1/fonts-desc-02-t.svg
+svg/W3C-SVG-1.1/fonts-elem-01-t.svg
+svg/W3C-SVG-1.1/fonts-elem-02-t.svg
+svg/W3C-SVG-1.1/fonts-elem-03-b.svg
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg
+svg/W3C-SVG-1.1/fonts-elem-05-t.svg
+svg/W3C-SVG-1.1/fonts-elem-06-t.svg
+svg/W3C-SVG-1.1/fonts-elem-07-b.svg
+svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+svg/W3C-SVG-1.1/fonts-glyph-03-t.svg
+svg/W3C-SVG-1.1/fonts-glyph-04-t.svg
+svg/W3C-SVG-1.1/fonts-kern-01-t.svg
+svg/W3C-SVG-1.1/interact-cursor-01-f.svg
+svg/W3C-SVG-1.1/masking-mask-01-b.svg
+svg/W3C-SVG-1.1/metadata-example-01-b.svg
+svg/W3C-SVG-1.1/pservers-grad-08-b.svg
+svg/W3C-SVG-1.1/render-elems-06-t.svg
+svg/W3C-SVG-1.1/render-elems-07-t.svg
+svg/W3C-SVG-1.1/render-elems-08-t.svg
+svg/W3C-SVG-1.1/render-groups-01-b.svg
+svg/W3C-SVG-1.1/render-groups-03-t.svg
+svg/W3C-SVG-1.1/text-altglyph-01-b.svg
+svg/W3C-SVG-1.1/text-fonts-01-t.svg
+svg/W3C-SVG-1.1/text-intro-05-t.svg
+svg/W3C-SVG-1.1/text-text-04-t.svg
+svg/W3C-SVG-1.1/text-text-05-t.svg
+svg/W3C-SVG-1.1/text-text-06-t.svg
+svg/W3C-SVG-1.1/text-tselect-02-f.svg
+svg/carto.net/button.svg
+svg/carto.net/colourpicker.svg
+svg/carto.net/combobox.svg
+svg/carto.net/selectionlist.svg
+svg/carto.net/slider.svg
+svg/carto.net/textbox.svg
+svg/carto.net/window.svg
+svg/custom/circular-marker-reference-1.svg
+svg/custom/circular-marker-reference-3.svg
+svg/custom/circular-marker-reference-4.svg
+svg/custom/coords-relative-units-transforms.svg
+svg/custom/marker-changes.svg
+svg/custom/marker-viewBox-changes.svg
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+svg/custom/use-referencing-nonexisting-symbol.svg
+tables/mozilla/core/bloomberg.html
+tables/mozilla/bugs/bug8381.html
+tables/mozilla/bugs/bug10633.html
+tables/mozilla/bugs/bug23151.html
+tables/mozilla/bugs/bug113424.html
+tables/mozilla_expected_failures/bugs/bug11331.html
+
+# No advanced text <rdar://problems/4516194>
+css1/text_properties/text-transCapitalize.html
+css2.1/t0805-c5518-brdr-t-01-e.html
+css2.1/t0805-c5519-brdr-r-00-a.html
+css2.1/t0805-c5519-brdr-r-01-e.html
+css2.1/t0805-c5520-brdr-b-01-e.html
+css2.1/t0805-c5521-brdr-l-00-a.html
+css2.1/t0805-c5521-brdr-l-01-e.html
+css2.1/t0805-c5521-ibrdr-l-00-a.html
+css2.1/t0905-c414-flt-02-c.html
+css2.1/t0905-c414-flt-03-c.html
+css2.1/t0905-c414-flt-04-c.html
+css2.1/t0905-c414-flt-fit-01-d-g.html
+css2.1/t0905-c5525-fltblck-01-d.html
+css2.1/t0905-c5525-fltcont-00-d-g.html
+css2.1/t0905-c5525-flthw-00-c-g.html
+css2.1/t0905-c5525-fltwidth-00-c-g.html
+css2.1/t0905-c5525-fltwidth-02-c-g.html
+css2.1/t0905-c5525-fltwidth-03-c-g.html
+css2.1/t0905-c5525-fltwrap-00-b.html
+css2.1/t0905-c5526-flthw-00-c-g.html
+css2.1/t1202-counter-03-b.html
+css2.1/t1202-counter-04-b.html
+css2.1/t1202-counters-03-b.html
+css2.1/t1202-counters-04-b.html
+css2.1/t1205-c566-list-stl-01-c-g.html
+css2.1/t090501-c414-flt-01-b.html
+css2.1/t090501-c414-flt-03-b-g.html
+css2.1/t090501-c414-flt-ln-01-d-g.html
+css2.1/t090501-c5525-flt-l-00-b-g.html
+css2.1/t090501-c5525-flt-r-00-b-g.html
+css2.1/t100304-c43-rpl-bbx-01-d-g.html
+fast/text/atsui-multiple-renderers.html
+fast/text/atsui-pointtooffset-calls-cg.html
+fast/text/atsui-spacing-features.html
+fast/text/cg-fallback-bolding.html
+fast/text/cg-vs-atsui.html
+fast/text/in-rendered-text-rtl.html
+fast/text/monospace-width-cache.html
+fast/text/international/001.html
+fast/text/international/002.html
+fast/text/international/003.html
+fast/text/international/bidi-AN-after-L.html
+fast/text/international/bidi-CS-after-AN.html
+fast/text/international/bidi-L2-run-reordering.html
+fast/text/international/bidi-LDB-2-CSS.html
+fast/text/international/bidi-LDB-2-HTML.html
+fast/text/international/bidi-LDB-2-formatting-characters.html
+fast/text/international/bidi-european-terminators.html
+fast/text/international/bidi-fallback-font-weight.html
+fast/text/international/bidi-ignored-for-first-child-inline.html
+fast/text/international/bidi-innertext.html
+fast/text/international/bidi-listbox-atsui.html
+fast/text/international/bidi-listbox.html
+fast/text/international/bidi-menulist.html
+fast/text/international/bidi-neutral-directionality-paragraph-start.html
+fast/text/international/bidi-override.html
+fast/text/international/rtl-caret.html
+fast/text/international/thai-line-breaks.html
+fast/text/international/wrap-CJK-001.html
+
+# DRT doesn't support undo/redo <rdar://problem/5131975>
+editing/deleting/delete-and-undo.html
+editing/deleting/delete-by-word-002.html
+editing/undo/undo-misspellings.html
+editing/undo/undo-typing-001.html
+fast/forms/input-paste-undo.html
+fast/forms/plaintext-mode-1.html
+editing/undo/undo-combined-delete-boundary.html
+editing/undo/undo-combined-delete.html
+editing/undo/undo-delete-boundary.html
+editing/undo/undo-delete.html
+editing/undo/undo-forward-delete-boundary.html
+editing/undo/undo-forward-delete.html
+
+# DRT doesn't implement textInputController <rdar://problem/
+editing/deleting/delete-to-end-of-paragraph.html
+editing/deleting/smart-delete-003.html
+editing/deleting/smart-delete-004.html
+editing/execCommand/nsresponder-indent.html
+editing/execCommand/nsresponder-outdent.html
+editing/input/firstrectforcharacterrange-plain.html
+editing/input/firstrectforcharacterrange-styled.html
+editing/input/range-for-empty-document.html
+editing/input/replace-invalid-range.html
+editing/input/text-input-controller.html
+editing/input/wrapped-line-char-rect.html
+editing/selection/4947387.html
+editing/selection/select-line.html
+editing/selection/selection-actions.html
+
+# ASSERT in ClipboardWin::setData <rdar://problem/5015941>
+editing/execCommand/copy-without-selection.html
+
+# Something is wrong with selection.modify or execCommand("Paste") <rdar://problem/5132016>
+editing/execCommand/paste-1.html
+editing/execCommand/paste-2.html
+
+# Missing two containing divs on the pasted content <rdar://problem/5132021>
+editing/inserting/insert-3907422-fix.html
+
+# EventSender.leapForward does not work in DumpRenderTree on boomer <rdar://problem/5080491>
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-without-selection.html
+editing/selection/selection-background.html
+fast/events/5056619.html
+fast/forms/textfield-drag-into-disabled.html
+editing/selection/4895428-1.html
+editing/selection/4895428-4.html
+
+
+# editing/pasteboard/drag-selected-image-to-contenteditable.html fails on boomer <rdar://problem/5143967>
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+
+editing/pasteboard/drag-drop-modifies-page.html
+
+# DumpRenderTree doesn't support multiple windows <rdar://problem/5208288>
+fast/dom/open-and-close-by-DOM.html
+fast/history/history_reload.html
+
+# DRT is not fully implemented in boomer <rdar://problem/5128261>
+fast/dom/Window/setting-properties-on-closed-window.html
+fast/events/objc-event-api.html
+http/tests/misc/window-dot-stop.html
+http/tests/security/local-user-CSS-from-remote.html
+http/tests/xmlhttprequest/abort-should-cancel-load.html
+svg/custom/use-events-crash.svg
+
+# editing/style/style-boundary-005.html fails on boomer <rdar://problem/5143715>
+editing/style/style-boundary-005.html
+
+# No textInputController <rdar://problem/5074430>
+fast/dom/character-index-for-point.html
+fast/forms/attributed-strings.html
+fast/text/attributed-substring-from-range-001.html
+fast/text/attributed-substring-from-range.html
+fast/text/justified-text-rect.html
+editing/selection/5195166-1.html
+editing/selection/5195166-2.html
+
+# Pixel depth and color depth different on boomer <rdar://problem/5137719>
+fast/dom/Window/window-screen-properties.html
+
+# Layout Tests fail in boomer because of not objCWrapperClass. <rdar://problem/5137769>
+fast/dom/wrapper-classes.html
+
+# fast/events/mouseout-dead-node.html fails on boomer <rdar://problem/5137284>
+fast/events/mouseout-dead-node.html
+
+# fast/forms/drag-into-textarea.html fails on boomer <rdar://problem/5134395>
+fast/forms/drag-into-textarea.html
+
+# This test uses Mac-specific key codes <rdar://problem/5076426>
+fast/events/arrow-navigation.html
+
+# test 12 in fast/forms/listbox-selection.html fails on boomer <rdar://problem/5134134>
+fast/forms/listbox-selection.html
+
+# fast/forms/select-accesskey.html fails on boomer <rdar://problem/5134108>
+fast/forms/select-accesskey.html
+
+# fast/forms/select-type-ahead-non-latin.html fails on boomer <rdar://problem/5134075>
+fast/forms/select-type-ahead-non-latin.html
+
+# Selection seems to fail for some LayoutTests <rdar://problem/5130762>
+editing/selection/4402375.html
+editing/selection/extend-by-sentence-001.html
+editing/selection/image-before-linebreak.html
+editing/selection/move-begin-end.html
+editing/selection/replaced-boundaries-1.html
+editing/selection/replaced-boundaries-2.html
+editing/selection/replaced-boundaries-3.html
+fast/forms/focus-selection-input.html
+fast/forms/listbox-onchange.html
+fast/forms/tabbing-input-iframe.html
+fast/inline/dirtyLinesForInline.html
+fast/text/textIteratorNilRenderer.html
+svg/custom/pointer-events-image.svg
+svg/custom/pointer-events-path.svg
+svg/custom/pointer-events-text.svg
+svg/custom/text-hit-test.svg
+
+# window.layoutTestController.setWindowIsKey is not implemented in DRT in boomer <rdar://problem/5141186>
+editing/selection/caret-and-focus-ring.html
+
+# editing/selection/editable-links.html fails on boomer <rdar://problem/5137972>
+editing/selection/drag-to-contenteditable-iframe.html
+editing/selection/editable-links.html
+
+# Some LayoutTests use the QuickTime plugin which is not installed on the boomer build bots <rdar://problem/5138561>
+fast/dom/object-embed-plugin-scripting.html
+
+# fast/events/drag-in-frames.html fails on boomer <rdar://problem/5137413>
+fast/events/drag-in-frames.html
+
+# Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
+fast/events/keydown-1.html
+
+# fireKeyboardEventsToElement is not implemented in DRT <rdar://problem/5137198>
+fast/events/objc-keyboard-event-creation.html
+
+# The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
+fast/events/frame-tab-focus.html
+fast/events/option-tab.html
+fast/forms/focus2.html
+
+# window.eventSender doesn't appear to be working. <rdar://problem/5137154>
+fast/events/ondragenter.html
+fast/forms/focus-control-to-page.html
+
+# fast/frames/001.html is failing on boomer <rdar://problem/5133885>
+fast/frames/001.html
+
+# fast/frames/iframe-window-focus.html out is lowercase <rdar://problem/5133828>
+fast/frames/iframe-window-focus.html
+
+# fast/frames/frame-src-attribute.html fails on boomer <rdar://problem/5134044>
+fast/frames/frame-src-attribute.html
+
+# keepWebHistory is not implemented in DRT in boomer <rdar://problem/5133816>
+fast/history/clicked-link-is-visited.html
+
+# fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
+fast/html/keygen.html
+fast/invalid/residual-style.html
+
+# dispatchEvent doesn't seem to be working <rdar://problems/5103985>
+fast/html/tab-order.html
+
+# Infinite recursion in JSValue::mark <rdar://problem/4928697>
+fast/js/toString-stack-overflow.html
+
+# Number LayoutTest fails on boomer <rdar://problem/5130681>
+fast/js/kde/Number.html
+
+# Symlinks arn't working correctly. <rdar://problem/5128536>
+fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
+fast/loader/local-iFrame-source-from-local.html
+fast/loader/local-image-from-local.html
+
+# XPath fails LayoutTests on boomer <rdar://problem/5130630>
+fast/xpath/nan-to-boolean.html
+fast/xpath/4XPath/Core/test_core_functions.html
+fast/xpath/4XPath/Core/test_numeric_expr.html
+fast/xpath/4XPath/Core/test_parser.html
+
+# DRT doesn't support tests with multiple windows <rdar://problem/5133670>
+http/tests/navigation/new-window-redirect-history.html
+
+# Some LayoutTests fail when not run by themselves <rdar://problem/5224271>
+http/tests/navigation/anchor-frames.html
+
+# DRT doesn't support tests with multiple windows <rdar://problem/5133670>
+http/tests/navigation/new-window-redirect-history.html
+
+# Console messages are not being printed out for failed canLoad checks <rdar://problem/5128314>
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
+
+# Local image loaded remotely in boomer. <rdar://problem/5128339>
+http/tests/security/local-image-from-remote.html
+
+# No built-in plugin in DRT <rdar://problem/5074411>
+plugins/bindings-test.html
+plugins/call-as-function-test.html
+plugins/embed-attributes-setting.html
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+plugins/get-url-with-blank-target.html
+plugins/jsobjc-dom-wrappers.html
+plugins/jsobjc-simple.html
+plugins/mouse-events.html
+plugins/open-and-close-window-with-plugin.html
+plugins/plugin-javascript-access.html
+plugins/root-object-premature-delete-crash.html
+plugins/throw-on-dealloc.html
+plugins/undefined-property-crash.html
+
+# Debug C Runtime assertion <rdar://problem/5079945>
+svg/custom/mask-excessive-malloc.svg
+
+# SVG is painting on Windows when it appears not to be doing so on X. <rdar://problem/5128229>
+svg/custom/text-repaint-including-stroke.svg
+svg/custom/use-elementInstance-event-target.svg
+
+# String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
+svg/custom/path-bad-data.svg
+svg/dom/length-list-parser.html
+svg/hixie/links/001.xml
+svg/hixie/perf/001.xml
+svg/hixie/perf/002.xml
+svg/hixie/perf/007.xml
+svg/hixie/viewbox/preserveAspectRatio/001.xml
+
+# No support for WebArchives in WebKitWin <rdar://problem/5066490>
+webarchive
+
+# PNG in <object> rendered as image document <rdar://problem/5234139>
+css2.1/t0801-c412-hz-box-00-b-a.html
+fast/invalid/td-inside-object.html
+
+# Image document in frame has no size <rdar://problem/5230233>
+dom/xhtml/level2/html/frame.xhtml
+tables/mozilla/bugs/bug50695-2.html
+
+# execCommand("Paste") fails? <rdar://problem/5230263>
+editing/pasteboard/4242293-1.html
+editing/style/non-inheritable-styles.html
+
+# <rdar://problem/5225119> support smart pasting on boomer
+editing/pasteboard/paste-line-endings-002.html
+editing/pasteboard/paste-line-endings-003.html
+editing/pasteboard/paste-line-endings-004.html
+editing/pasteboard/paste-line-endings-005.html
+editing/pasteboard/paste-line-endings-007.html
+editing/pasteboard/paste-line-endings-008.html
+editing/pasteboard/paste-line-endings-009.html
+editing/pasteboard/paste-line-endings-010.html
+
+# Some text tests are missing a trailing newline <rdar://problem/5230362>
+fast/dom/early-frame-url.html
+fast/dom/title-text-property-2.html
+fast/events/drag-outside-window.html
+fast/frames/frame-js-url-clientWidth.html
+fast/frames/frame-name-reset.html
+fast/frames/frameElement-widthheight.html
+fast/frames/negative-remaining-length-crash.html
+fast/frames/set-unloaded-frame-location.html
+fast/inspector/cssURLQuotes.html
+fast/loader/loadInProgress.html
+fast/loader/simultaneous-reloads-assert.html
+fast/parser/script-after-frameset-assert.html
+http/tests/misc/onload-remove-iframe-crash-2.html
+plugins/inner-html-display-none.html
+
+# Negatively-sized RenderView <rdar://problem/5230387>
+fast/events/focusingUnloadedFrame.html
+
+# No onChange fires <rdar://problem/5230392>
+fast/events/onchange-select-popup.html
+fast/forms/select-double-onchange.html
+
+# <rdar://problem/5230396> layoutTestController.addFileToPasteboardOnDrag is unimplemented
+fast/forms/dragging-to-file-input.html
+
+# <rdar://problem/5230478> FrameLoadDelegate callbacks are not dumped in DRT
+http/tests/loading/bad-scheme-subframe.html
+http/tests/loading/bad-server-subframe.html
+http/tests/loading/basic.html
+http/tests/loading/empty-subframe.html
+http/tests/loading/simple-subframe.html
+
+# <rdar://problem/5233929> frame-loading-via-document-write.html is failing
+fast/dom/frame-loading-via-document-write.html
+http/tests/security/frame-loading-via-document-write.html
+
+################################################################################
+####################### No bugs filed about the below yet#######################
+################################################################################
+
+# emacs key bindings
+editing/input/emacs-ctrl-o.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/emacs-cntl-y-001.html
+
+# Text, caret
+editing/pasteboard/4944770-2.html
+editing/pasteboard/5028447.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/copy-paste-bidi.html
+
+# Text, RenderText, caret
+editing/deleting/delete-to-end-of-paragraph.html
+
+# Text, renderText, selection
+editing/pasteboard/4861080.html
+
+# Text, renderText
+editing/pasteboard/4947130.html
+
+
+# BR, caret
+editing/pasteboard/paste-4039777-fix.html
+
+# Spacing
+editing/pasteboard/paste-table-002.html
+
+# Caret, RenderBlock
+editing/pasteboard/copy-standalone-image.html
+editing/pasteboard/paste-table-003.html
+editing/pasteboard/paste-text-009.html
+editing/pasteboard/paste-text-012.html
+editing/pasteboard/paste-text-013.html
+
+# Text, caret, RenderBlock
+editing/pasteboard/5027857.html
+editing/pasteboard/input-field-1.html
+editing/pasteboard/paste-4038267-fix.html
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
+editing/pasteboard/paste-list-001.html
+editing/pasteboard/paste-pre-001.html
+editing/pasteboard/paste-pre-002.html
+editing/pasteboard/paste-table-001.html
+editing/pasteboard/paste-text-004.html
+editing/pasteboard/paste-text-005.html
+editing/pasteboard/paste-text-006.html
+editing/pasteboard/paste-text-007.html
+editing/pasteboard/paste-text-015.html
+editing/pasteboard/paste-text-016.html
+editing/pasteboard/paste-text-017.html
+
+# Text, caret
+editing/pasteboard/paste-unrendered-select.html
+editing/pasteboard/smart-paste-001.html
+editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003.html
+editing/pasteboard/smart-paste-004.html
+editing/pasteboard/smart-paste-005.html
+editing/pasteboard/smart-paste-007.html
+editing/pasteboard/smart-paste-008.html
+
+# Caret
+editing/pasteboard/paste-4035648-fix.html
+editing/pasteboard/paste-text-014.html
+editing/pasteboard/select-element-1.html
+
+# Text
+editing/pasteboard/subframe-dragndrop-1.html
+editing/selection/caret-rtl-2.html
+editing/selection/caret-rtl.html
+
+# Caret, RenderBlock
+editing/pasteboard/undoable-fragment-removes.html
+
+################################################################################
+######################### All of above may be related ##########################
+################################################################################
+
+# These tests only fail in Release builds
+editing/execCommand/find-after-replace.html
+editing/inserting/insert-3786362-fix.html
+editing/pasteboard/3976872.html
+editing/pasteboard/4076267-2.html
+editing/pasteboard/4076267-3.html
+editing/pasteboard/4076267.html
+editing/pasteboard/4242293.html
+editing/pasteboard/4641033.html
+editing/pasteboard/4944770-1.html
+editing/pasteboard/4989774.html
+editing/pasteboard/5006779.html
+editing/pasteboard/5065605.html
+editing/pasteboard/5071074.html
+editing/pasteboard/5075944-2.html
+editing/pasteboard/5075944.html
+editing/pasteboard/display-block-on-spans.html
+editing/pasteboard/paste-line-endings-001.html
+editing/pasteboard/paste-line-endings-006.html
+editing/pasteboard/paste-match-style-001.html
+editing/pasteboard/paste-match-style-002.html
+editing/pasteboard/paste-text-001.html
+editing/pasteboard/paste-text-002.html
+editing/pasteboard/paste-text-003.html
+editing/pasteboard/paste-text-008.html
+editing/pasteboard/paste-text-010.html
+editing/pasteboard/paste-text-011.html
+editing/pasteboard/paste-text-018.html
+editing/pasteboard/paste-text-019.html
+editing/pasteboard/paste-text-at-tabspan-001.html
+editing/pasteboard/paste-text-at-tabspan-002.html
+editing/pasteboard/paste-text-at-tabspan-003.html
+editing/pasteboard/paste-xml.xhtml
+editing/pasteboard/pasting-tabs.html
+editing/pasteboard/smart-paste-006.html
+editing/pasteboard/styled-element-markup.html
+editing/pasteboard/testcase-9507.html
+editing/style/5065910.html
+editing/style/smoosh-styles-001.html
+editing/style/smoosh-styles-002.html
+editing/style/smoosh-styles-003.html
+fast/forms/input-truncate-newline.html
+fast/forms/plaintext-mode-2.html
+fast/forms/textarea-paste-newline.html
+
+# Seems to be a difference btw. WebScriptObject and the JSCore API
+fast/dom/Window/window-properties.html
+
+# Is the x-nextstep encoding Mac-specific?
+fast/encoding/char-decoding.html
+
+# Unimplemented part of DRT. (This test is currently disabled).
+# http/tests/plugins/npapi-response-headers.html
+
+# used to be crashers but are now failures.
+security/block-test.html
+
+# Timed out Loading Page (check if missing DRT functionality)
+editing/selection/4975120.html
+editing/selection/designmode-no-caret.html
+fast/encoding/char-encoding.html
+fast/frames/frame-navigation.html
+http/tests/incremental/slow-utf8-css.pl
+http/tests/incremental/slow-utf8-text.pl
+http/tests/local/file-url-sent-as-referer.html
+http/tests/misc/redirect-to-about-blank.html
+http/tests/xmlhttprequest/basic-auth.html
+http/tests/multipart/invalid-image-data.html
+
+# Random sizing issues (Renderblock, RenderTableCells)
+fast/dom/Window/window-onFocus.html
+fast/forms/searchfield-heights.html
+fast/table/frame-and-rules.html
+fast/table/giantCellspacing.html
+
+# Crash in CMM8Bit3ChanNoConvEncoder::InnerDoEncode
+fast/css/contentDivWithChildren.html

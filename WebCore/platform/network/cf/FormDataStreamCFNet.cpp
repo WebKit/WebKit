@@ -1,6 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +40,12 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 
+#define USE_V1_CFSTREAM_CALLBACKS
+#ifdef USE_V1_CFSTREAM_CALLBACKS
+typedef CFReadStreamCallBacksV1 WCReadStreamCallBacks;
+#else
+typedef CFReadStreamCallBacks WCReadStreamCallBacks;
+#endif
 
 namespace WebCore {
 
@@ -138,7 +143,11 @@ static void advanceCurrentStream(FormStreamFields *form)
         form->currentData = data;
     } else {
         CFStringRef filename = nextInput.m_filename.createCFString();
+#if PLATFORM(WIN)
+        CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLWindowsPathStyle, FALSE);
+#else
         CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLPOSIXPathStyle, FALSE);
+#endif
         CFRelease(filename);
         form->currentStream = CFReadStreamCreateWithFile(0, fileURL);
         CFRelease(fileURL);
@@ -346,10 +355,10 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
         CFRelease(lengthStr);
     }
 
-    static CFReadStreamCallBacks formDataStreamCallbacks = 
-        { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule};
+    static WCReadStreamCallBacks formDataStreamCallbacks = 
+        { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule };
 
-    CFReadStreamRef stream = CFReadStreamCreate(0, &formDataStreamCallbacks, formData.releaseRef());
+    CFReadStreamRef stream = CFReadStreamCreate(0, (CFReadStreamCallBacks *)&formDataStreamCallbacks, formData.releaseRef());
     CFURLRequestSetHTTPRequestBodyStream(request, stream);
     CFRelease(stream);
 }
