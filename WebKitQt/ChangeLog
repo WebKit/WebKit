@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Rename QWebNetworkJob::request() into QWebNetworkJob::httpHeader() and added
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkJob::postData):
+        (WebCoreHttp::WebCoreHttp):
+        (WebCoreHttp::scheduleNextRequest):
+        * Api/qwebnetworkinterface.h:
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Introduce QWebNetworkRequest in the public API.
 
         * Api/qwebnetworkinterface.cpp:

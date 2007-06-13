@@ -56,7 +56,9 @@ public:
     void setPostData(const QByteArray &data);
 
 private:
+    explicit QWebNetworkRequest(QWebNetworkRequestPrivate *priv);
     QWebNetworkRequestPrivate *d;
+    friend class QWebNetworkJob;
 };
 
 class QWEBKIT_EXPORT QWebNetworkJob
@@ -69,7 +71,8 @@ public:
     };
     QUrl url() const;
     QByteArray postData() const;
-    QHttpRequestHeader request() const;
+    QHttpRequestHeader httpHeader() const;
+    QWebNetworkRequest request() const;
 
     QHttpResponseHeader response() const;
     void setResponse(const QHttpResponseHeader &response);
