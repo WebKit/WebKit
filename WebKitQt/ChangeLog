@@ -1,3 +1,11 @@
+2007-06-12  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by George Staikos.
+
+        Remove duplicate symbols.
+
+        * Api/qwebobjectplugin_p.h:
+
 2007-06-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Niko.

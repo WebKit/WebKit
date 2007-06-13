@@ -12,7 +12,7 @@ class QFactoryLoaderPrivate;
 
 class Q_CORE_EXPORT QFactoryLoader : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT_FAKE
     Q_DECLARE_PRIVATE(QFactoryLoader)
 
 public:
