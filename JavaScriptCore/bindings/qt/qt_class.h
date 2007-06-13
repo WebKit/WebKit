@@ -39,9 +39,6 @@ public:
     virtual MethodList methodsNamed(const Identifier&, Instance*) const;
     virtual Field* fieldNamed(const Identifier&, Instance*) const;
 
-    virtual Constructor* constructorAt(int) const { return 0; }
-    virtual int numConstructors() const { return 0; }
-
 private:
     QtClass(const QtClass&); // prohibit copying
     QtClass& operator=(const QtClass&); // prohibit assignment
