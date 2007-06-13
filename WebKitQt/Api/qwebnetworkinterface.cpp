@@ -66,10 +66,10 @@ void QWebNetworkRequest::init(const WebCore::ResourceRequest &resourceRequest)
 
 void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest)
 {
-    request = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
-    request.setValue(QLatin1String("User-Agent"),
-                             QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
-    request.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
+    httpHeader = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
+    httpHeader.setValue(QLatin1String("User-Agent"),
+                         QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
+    httpHeader.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
     setURL(url);
 
     if (resourceRequest) {
@@ -77,20 +77,20 @@ void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebC
         if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
             QString cookies = WebCore::cookies(resourceRequest->url());
             if (!cookies.isEmpty())
-                request.setValue(QLatin1String("Cookie"), cookies);
+                httpHeader.setValue(QLatin1String("Cookie"), cookies);
         }
 
 
         const HTTPHeaderMap& loaderHeaders = resourceRequest->httpHeaderFields();
         HTTPHeaderMap::const_iterator end = loaderHeaders.end();
         for (HTTPHeaderMap::const_iterator it = loaderHeaders.begin(); it != end; ++it)
-            request.setValue(it->first, it->second);
+            httpHeader.setValue(it->first, it->second);
 
         // handle and perform a 'POST' request
         if (method == "POST") {
             DeprecatedString pd = resourceRequest->httpBody()->flattenToString().deprecatedString();
             postData = QByteArray(pd.ascii(), pd.length());
-            request.setValue(QLatin1String("content-length"), QString::number(postData.size()));
+            httpHeader.setValue(QLatin1String("content-length"), QString::number(postData.size()));
         }
     }
 }
@@ -100,9 +100,9 @@ void QWebNetworkRequest::setURL(const QUrl &u)
     url = u;
     int port = url.port();
     if (port > 0 && port != 80)
-        request.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
+        httpHeader.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
     else
-        request.setValue(QLatin1String("Host"), url.host());
+        httpHeader.setValue(QLatin1String("Host"), url.host());
 }
 
 /*!
@@ -161,7 +161,7 @@ QByteArray QWebNetworkJob::postData() const
 */
 QHttpRequestHeader QWebNetworkJob::request() const
 {
-    return d->request;
+    return d->httpHeader;
 }
 
 /*!
@@ -258,10 +258,10 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
     if (handle->method() != "POST" && handle->method() != "GET") {
         // don't know what to do! (probably a request error!!)
         // but treat it like a 'GET' request
-        qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.toString()));
+        qWarning("REQUEST: [%s]\n", qPrintable(job->d->httpHeader.toString()));
     }
 
-    DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.toString();
+    DEBUG() << "QWebNetworkManager::add:" <<  job->d->httpHeader.toString();
 
     interface->addJob(job);
 
@@ -343,7 +343,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
             newRequest.setURL(KURL(newRequest.url(), DeprecatedString(location)));
             if (client)
                 client->willSendRequest(job->d->resourceHandle, newRequest, response);
-            job->d->request.setRequest(job->d->request.method(), newRequest.url().path() + newRequest.url().query());
+            job->d->httpHeader.setRequest(job->d->httpHeader.method(), newRequest.url().path() + newRequest.url().query());
             job->d->setURL(QString(newRequest.url().url()));
             job->d->redirected = true;
             return;

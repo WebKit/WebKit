@@ -1,3 +1,18 @@
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Rename QWebNetworkRequest::request into QWebNetworkRequest::httpHeader.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequest::init):
+        (QWebNetworkRequest::setURL):
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::started):
+        * Api/qwebnetworkinterface_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
 2007-06-12  Lars Knoll <lars@trolltech.com>
 
         Reviewed by George Staikos.
