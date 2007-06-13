@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Minor QWebNetworkRequet API fixlet
+
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Use QWebNetworkRequest for QWebPage::navigationRequested.
 
         * Api/qwebnetworkinterface.cpp:

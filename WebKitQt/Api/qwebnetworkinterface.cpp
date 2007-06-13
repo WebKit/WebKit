@@ -132,8 +132,8 @@ QWebNetworkRequest &QWebNetworkRequest::operator=(const QWebNetworkRequest &othe
 /*!
   \internal
 */
-QWebNetworkRequest::QWebNetworkRequest(QWebNetworkRequestPrivate *priv)
-    : d(new QWebNetworkRequestPrivate(*priv))
+QWebNetworkRequest::QWebNetworkRequest(const QWebNetworkRequestPrivate &priv)
+    : d(new QWebNetworkRequestPrivate(priv))
 {
 }
 
@@ -259,7 +259,7 @@ QHttpRequestHeader QWebNetworkJob::httpHeader() const
 */
 QWebNetworkRequest QWebNetworkJob::request() const
 {
-    return QWebNetworkRequest(&d->request);
+    return QWebNetworkRequest(d->request);
 }
 
 /*!
