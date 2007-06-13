@@ -72,6 +72,7 @@ private:
     friend class WebCore::FrameLoaderClientQt;
 
     QWebNetworkRequestPrivate *d;
+    friend class QWebObjectPluginConnector;
 };
 
 class QWEBKIT_EXPORT QWebNetworkJob

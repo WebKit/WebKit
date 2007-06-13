@@ -48,7 +48,7 @@ public:
         Parent,
         Top
     };
-    QWebNetworkJob *requestUrl(QWebNetworkRequest::Method, const QUrl &url, Target target = Plugin);
+    QWebNetworkJob *requestUrl(const QWebNetworkRequest &request, Target target = Plugin);
 
 signals:
     void started(QWebNetworkJob*);
