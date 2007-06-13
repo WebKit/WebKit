@@ -909,6 +909,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)PDFViewSavePDFToDownloadFolder:(PDFView *)sender
 {
+    // We don't want to write the file until we have a document to write (see 5267607).
+    if (![PDFSubview document]) {
+        NSBeep();
+        return;
+    }
+
     // Delegate method sent when the user requests downloading the PDF file to disk. We pass NO for
     // showingPanel: so that the PDF file is saved to the standard location without user intervention.
     id UIDelegate = [[self _webView] UIDelegate];

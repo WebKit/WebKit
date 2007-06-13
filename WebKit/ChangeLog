@@ -1,3 +1,15 @@
+2007-06-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson
+        
+        - fixed <rdar://problem/5267607> Clicking the "Save to Downloads" button in 
+          PDF overlay too soon results in corrupt file
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewSavePDFToDownloadFolder:]):
+        Just beep if the document isn't available yet, since trying to save it as a file
+        really isn't a good idea.
+
 2007-06-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
