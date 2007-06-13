@@ -37,8 +37,6 @@ protected:
     ObjcClass (ClassStructPtr aClass); // Use classForIsA to create an ObjcClass.
     
 public:
-    ~ObjcClass();
-
     // Return the cached ObjC of the specified name.
     static ObjcClass *classForIsA(ClassStructPtr);
     
@@ -56,8 +54,8 @@ public:
     
 private:
     ClassStructPtr _isa;
-    CFMutableDictionaryRef _methods;
-    CFMutableDictionaryRef _fields;
+    RetainPtr<CFMutableDictionaryRef> _methods;
+    RetainPtr<CFMutableDictionaryRef> _fields;
 };
 
 } // namespace Bindings

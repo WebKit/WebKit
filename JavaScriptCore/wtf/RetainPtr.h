@@ -26,6 +26,10 @@
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
 
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#endif
+
 namespace WTF {
 
     template <typename T> struct RemovePointer {

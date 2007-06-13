@@ -42,22 +42,19 @@ using namespace KJS;
 
 ObjcInstance::ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject> rootObject) 
     : Instance(rootObject)
+    , _instance(instance)
+    , _class(0)
+    , _pool(0)
+    , _beginCount(0)
 {
-    _instance = instance;
-    if (_instance)
-        CFRetain(_instance);
-    _class = 0;
-    _pool = 0;
-    _beginCount = 0;
 }
 
 ObjcInstance::~ObjcInstance() 
 {
     begin(); // -finalizeForWebScript and -dealloc/-finalize may require autorelease pools.
-    if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
-        [_instance performSelector:@selector(finalizeForWebScript)];
-    if (_instance)
-        CFRelease(_instance);
+    if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
+        [_instance.get() performSelector:@selector(finalizeForWebScript)];
+    _instance = 0;
     end();
 }
 
@@ -89,7 +86,7 @@ Bindings::Class* ObjcInstance::getClass() const
 
 bool ObjcInstance::implementsCall() const
 {
-    return [_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
+    return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
 }
 
 JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList, const List &args)
@@ -112,7 +109,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
 #else
     [invocation setSelector:(SEL)method->name()];
 #endif
-    [invocation setTarget:_instance];
+    [invocation setTarget:_instance.get()];
 
     if (method->isFallbackMethod()) {
         if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
@@ -211,20 +208,20 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     return result;
 }
 
-JSValue* ObjcInstance::invokeDefaultMethod (ExecState* exec, const List &args)
+JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const List &args)
 {
     JSValue* result = jsUndefined();
 
    JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
 @try {
-    if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
+    if (![_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
         return result;
 
-    NSMethodSignature* signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
+    NSMethodSignature* signature = [_instance.get() methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
     [invocation setSelector:@selector(invokeDefaultMethodWithArguments:)];
-    [invocation setTarget:_instance];
+    [invocation setTarget:_instance.get()];
 
     if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
         NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
@@ -319,9 +316,9 @@ JSValue* ObjcInstance::defaultValue(JSType hint) const
     case BooleanType:
         return booleanValue();
     case UnspecifiedType:
-        if ([_instance isKindOfClass:[NSString class]])
+        if ([_instance.get() isKindOfClass:[NSString class]])
             return stringValue();
-        if ([_instance isKindOfClass:[NSNumber class]])
+        if ([_instance.get() isKindOfClass:[NSNumber class]])
             return numberValue();
     default:
         return valueOf();

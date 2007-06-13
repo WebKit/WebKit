@@ -74,15 +74,6 @@ NSMethodSignature* ObjcMethod::getMethodSignature() const
 #endif
 }
 
-void ObjcMethod::setJavaScriptName (CFStringRef n)
-{
-    if (n != _javaScriptName) {
-        if (_javaScriptName)
-            CFRelease (_javaScriptName);
-        _javaScriptName = (CFStringRef)CFRetain (n);
-    }
-}
-
 // ---------------------- ObjcField ----------------------
 
 ObjcField::ObjcField(Ivar ivar) 
@@ -106,7 +97,7 @@ const char* ObjcField::name() const
     if (_ivar)
         return _ivar->ivar_name;
 #endif
-    return [(NSString*)_name UTF8String];
+    return [(NSString*)_name.get() UTF8String];
 }
 
 RuntimeType ObjcField::type() const 
@@ -173,23 +164,18 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
 
 ObjcArray::ObjcArray(ObjectStructPtr a, PassRefPtr<RootObject> rootObject)
     : Array(rootObject)
+    , _array(a)
 {
-    _array = (id)CFRetain(a);
-}
-
-ObjcArray::~ObjcArray () 
-{
-    CFRelease(_array);
 }
 
 void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue* aValue) const
 {
-    if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
+    if (![_array.get() respondsToSelector:@selector(insertObject:atIndex:)]) {
         throwError(exec, TypeError, "Array is not mutable.");
         return;
     }
 
-    if (index > [_array count]) {
+    if (index > [_array.get() count]) {
         throwError(exec, RangeError, "Index exceeds array size.");
         return;
     }
@@ -199,7 +185,7 @@ void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue* aValue)
     ObjcValue oValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
 
     @try {
-        [_array insertObject:oValue.objectValue atIndex:index];
+        [_array.get() insertObject:oValue.objectValue atIndex:index];
     } @catch(NSException* localException) {
         throwError(exec, GeneralError, "Objective-C exception.");
     }
@@ -207,10 +193,10 @@ void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue* aValue)
 
 JSValue* ObjcArray::valueAt(ExecState* exec, unsigned int index) const
 {
-    if (index > [_array count])
+    if (index > [_array.get() count])
         return throwError(exec, RangeError, "Index exceeds array size.");
     @try {
-        id obj = [_array objectAtIndex:index];
+        id obj = [_array.get() objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (exec, &obj, ObjcObjectType);
     } @catch(NSException* localException) {
@@ -221,7 +207,7 @@ JSValue* ObjcArray::valueAt(ExecState* exec, unsigned int index) const
 
 unsigned int ObjcArray::getLength() const
 {
-    return [_array count];
+    return [_array.get() count];
 }
 
 const ClassInfo ObjcFallbackObjectImp::info = {"ObjcFallbackObject", 0, 0, 0};

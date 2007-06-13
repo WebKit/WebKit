@@ -1,5 +1,37 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        Use RetainPtr throughout the bindings code.
+        
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::ObjcClass):
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fieldNamed):
+        * bindings/objc/objc_instance.h:
+        (KJS::Bindings::ObjcInstance::getObject):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance):
+        (ObjcInstance::~ObjcInstance):
+        (ObjcInstance::implementsCall):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::defaultValue):
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcMethod::setJavaScriptName):
+        (KJS::Bindings::ObjcMethod::javaScriptName):
+        (KJS::Bindings::ObjcArray::getObjcArray):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::name):
+        (ObjcArray::ObjcArray):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+        (ObjcArray::getLength):
+        * wtf/RetainPtr.h:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Maciej.
 
         Have JSCell inherit from Noncopyable.
