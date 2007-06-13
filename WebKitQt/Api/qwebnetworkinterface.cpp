@@ -189,6 +189,16 @@ void QWebNetworkRequest::setHttpHeader(const QHttpRequestHeader &header) const
     d->httpHeader = header;
 }
 
+QString QWebNetworkRequest::httpHeaderField(const QString &key) const
+{
+    return d->httpHeader.value(key);
+}
+
+void QWebNetworkRequest::setHttpHeaderField(const QString &key, const QString &value)
+{
+    d->httpHeader.setValue(key, value);
+}
+
 /*!
     Post data sent with HTTP POST requests.
 */

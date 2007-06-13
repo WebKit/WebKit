@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Added httpHeaderField setter/getter to QWebNetworkRequest for convenience.
+
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed QWebObjectPluginConnector::requestUrl to take a QWebNetworkRequest as argument.
 
         * Api/qwebnetworkinterface.h:

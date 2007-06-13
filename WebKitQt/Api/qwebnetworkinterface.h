@@ -62,6 +62,9 @@ public:
     QHttpRequestHeader httpHeader() const;
     void setHttpHeader(const QHttpRequestHeader &header) const;
 
+    QString httpHeaderField(const QString &key) const;
+    void setHttpHeaderField(const QString &key, const QString &value);
+
     QByteArray postData() const;
     void setPostData(const QByteArray &data);
 
