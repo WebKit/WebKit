@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Added a QWebNetworkRequest convenience constructor.
+
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::open):
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed the QWebPage::open(const QUrl &url, const QHttpRequestHeader &httpHeader, const QByteArray &postData)
         overload to take a QWebNetworkRequest instead.
 

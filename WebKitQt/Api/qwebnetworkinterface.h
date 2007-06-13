@@ -50,6 +50,7 @@ public:
     };
 
     QWebNetworkRequest();
+    explicit QWebNetworkRequest(const QUrl &url, Method method = Get, const QByteArray &postData = QByteArray());
     QWebNetworkRequest(const QWebNetworkRequest &other);
 
     QWebNetworkRequest &operator=(const QWebNetworkRequest &other);
