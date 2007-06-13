@@ -139,16 +139,16 @@ void QWebPage::open(const QUrl &url, const QHttpRequestHeader &httpHeader, const
     d->insideOpenCall = true;
     WebCore::ResourceRequest request(KURL(url.toString()));
 
-    if (httpHeader.isValid()) {
-        request.setHTTPMethod(httpHeader.method());
-        foreach (QString key, httpHeader.keys()) {
-            request.addHTTPHeaderField(key, httpHeader.value(key));
-        }
+    QString method = httpHeader.method();
+    if (!method.isEmpty())
+        request.setHTTPMethod(method);
 
-        if (!postData.isEmpty()) {
-            WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
-            request.setHTTPBody(formData);
-        }
+    foreach (QString key, httpHeader.keys())
+        request.addHTTPHeaderField(key, httpHeader.value(key));
+
+    if (!postData.isEmpty()) {
+        WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
+        request.setHTTPBody(formData);
     }
 
     mainFrame()->d->frame->loader()->load(request);
