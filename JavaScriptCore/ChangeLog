@@ -1,5 +1,12 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+        
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::invokeMethod):
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         Move the notion of field type to the JNI runtime since that's the only 
