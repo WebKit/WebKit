@@ -1,3 +1,12 @@
+2007-06-13  Adam Roben  <aroben@apple.com>
+
+        Fix one more BITMAPINFO/BITMAPINFOHEADER typo.
+
+        Rubberstamped by Oliver.
+
+        * platform/win/DragImageWin.cpp:
+        (WebCore::allocImage):
+
 2007-06-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

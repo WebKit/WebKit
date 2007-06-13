@@ -56,7 +56,7 @@ HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
 {
     HBITMAP hbmp;
     BITMAPINFO bmpInfo = {0};
-    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmpInfo.bmiHeader.biWidth = size.width();
     bmpInfo.bmiHeader.biHeight = size.height();
     bmpInfo.bmiHeader.biPlanes = 1;
