@@ -53,7 +53,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
     static bool doAlpha = supportsAlphaCursors();
     HBITMAP hCursor;
     BITMAPINFO cursorImage = {0};
-    cursorImage.bmiHeader.biSize = sizeof(BITMAPINFO);
+    cursorImage.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     cursorImage.bmiHeader.biWidth = img->width();
     cursorImage.bmiHeader.biHeight = img->height();
     cursorImage.bmiHeader.biPlanes = 1;

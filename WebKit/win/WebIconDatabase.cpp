@@ -241,7 +241,7 @@ HBITMAP createDIB(LPSIZE size)
     HBITMAP result;
 
     BITMAPINFO bmInfo = {0};
-    bmInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+    bmInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmInfo.bmiHeader.biWidth = size->cx;
     bmInfo.bmiHeader.biHeight = size->cy;
     bmInfo.bmiHeader.biPlanes = 1;

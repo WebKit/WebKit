@@ -188,7 +188,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     HBITMAP oldBitmap = (HBITMAP)SelectObject(compatibleDC, resultBitmap);
 
     BITMAPINFO bmInfo = {0};
-    bmInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+    bmInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmInfo.bmiHeader.biWidth = image->width();
     bmInfo.bmiHeader.biHeight = image->height();
     bmInfo.bmiHeader.biPlanes = 1;

@@ -1,3 +1,14 @@
+2007-06-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Use correct size for BITMAPINFOHEADER -- whoops.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2007-06-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

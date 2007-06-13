@@ -1,3 +1,13 @@
+2007-06-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Use correct size for BITMAPINFOHEADER -- whoops.
+
+        * win/WebIconDatabase.cpp:
+        (createDIB):
+        (WebIconDatabase::getOrCreateDefaultIconBitmap):
+
 2007-06-10  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 14037, make sure respondsToSelector does the write thing
