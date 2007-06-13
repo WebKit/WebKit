@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Added a make install target that installs the Qt port and renamed
+        WebKitQt to QtWebKit
+
+        * Api/headers.pri: Added.
+        * Api/qtwebkit.prf: Added.
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added httpHeaderField setter/getter to QWebNetworkRequest for convenience.
 
         * Api/qwebnetworkinterface.cpp:

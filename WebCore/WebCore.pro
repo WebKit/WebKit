@@ -5,7 +5,7 @@ qt-port:LIBS -= -lWebKitQt
 gdk-port:LIBS -= -lWebKitGdk
 
 TEMPLATE = lib
-qt-port:TARGET = WebKitQt
+qt-port:TARGET = QtWebKit
 gdk-port:TARGET = WebKitGdk
 OBJECTS_DIR = tmp
 INCLUDEPATH += tmp $$OUTPUT_DIR/WebCore/tmp
@@ -15,13 +15,6 @@ DEPENDPATH += css dom loader editing history html \
 	loader page platform platform/graphics rendering xml
 
 include($$OUTPUT_DIR/config.pri)
-
-unix {
-    CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_LIBDIR = $$DESTDIR
-    QMAKE_PKGCONFIG_INCDIR = $$PWD/../WebKitQt/Api
-    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-}
 
 CONFIG -= warn_on
 QMAKE_CXXFLAGS += -Wreturn-type
@@ -1416,4 +1409,24 @@ xpathbison.variable_out = GENERATED_SOURCES
 xpathbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += xpathbison
 
+qt-port {
+    target.path = $$[QT_INSTALL_LIBS]
+    include($$PWD/../WebKitQt/Api/headers.pri)
+    headers.files = $$WEBKIT_API_HEADERS
+    headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+    prf.files = $$PWD/../WebKitQt/Api/qtwebkit.prf
+    prf.path = $$[QT_INSTALL_PREFIX]/mkspecs/features
+
+    INSTALLS += target headers prf
+
+    unix {
+        CONFIG += create_pc create_prl
+        QMAKE_PKGCONFIG_LIBDIR = $$target.path
+        QMAKE_PKGCONFIG_INCDIR = $$headers.path
+        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+        lib_replace.match = $$DESTDIR
+        lib_replace.replace = $$[QT_INSTALL_LIBS]
+        QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
+    }
+}
 

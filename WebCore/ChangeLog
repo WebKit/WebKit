@@ -1,3 +1,12 @@
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Added a make install target that installs the Qt port and renamed
+        WebKitQt to QtWebKit
+
+        * WebCore.pro:
+
 2007-06-13  Adam Roben  <aroben@apple.com>
 
         Fix one more BITMAPINFO/BITMAPINFOHEADER typo.
