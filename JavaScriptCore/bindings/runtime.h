@@ -46,14 +46,6 @@ class RootObject;
 // For now just use Java style type descriptors.
 typedef const char * RuntimeType;
 
-// FIXME:  Parameter should be removed from abstract runtime classes.
-class Parameter
-{
-public:
-    virtual RuntimeType type() const = 0;
-    virtual ~Parameter() {}
-};
-
 class Field
 {
 public:

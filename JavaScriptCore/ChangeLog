@@ -1,5 +1,23 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        Get rid of the Parameter class.
+        
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::signature):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaParameter::JavaParameter):
+        (KJS::Bindings::JavaParameter::~JavaParameter):
+        (KJS::Bindings::JavaParameter::type):
+        (KJS::Bindings::JavaMethod::parameterAt):
+        (KJS::Bindings::JavaMethod::numParameters):
+        * bindings/runtime.h:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
         
         * bindings/qt/qt_class.h:

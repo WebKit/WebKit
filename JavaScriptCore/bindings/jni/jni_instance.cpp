@@ -135,7 +135,7 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
         jArgs = 0;
         
     for (i = 0; i < count; i++) {
-        JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
+        JavaParameter* aParameter = jMethod->parameterAt(i);
         jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter->getJNIType(), aParameter->type());
         JS_LOG("arg[%d] = %s\n", i, args.at(i)->toString(exec).ascii());
     }

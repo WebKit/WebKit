@@ -318,7 +318,7 @@ const char *JavaMethod::signature() const
 
         UString signatureBuilder("(");
         for (int i = 0; i < _numParameters; i++) {
-            JavaParameter *aParameter = static_cast<JavaParameter *>(parameterAt(i));
+            JavaParameter* aParameter = parameterAt(i);
             JNIType _JNIType = aParameter->getJNIType();
             if (_JNIType == array_type)
                 appendClassName(signatureBuilder, aParameter->type());
