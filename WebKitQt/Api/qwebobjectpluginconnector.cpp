@@ -57,7 +57,7 @@ QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkJob::Method met
     p->connector = this;
 
     QString m = (method == QWebNetworkJob::Get ? "GET" : "POST");
-    p->init(m, url);
+    p->request.init(m, url);
 
     d->frame->page()->networkInterface()->addJob(job);
     return job;

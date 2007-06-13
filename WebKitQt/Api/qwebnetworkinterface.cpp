@@ -145,7 +145,7 @@ QWebNetworkJob::~QWebNetworkJob()
 */
 QUrl QWebNetworkJob::url() const
 {
-    return d->url;
+    return d->request.url;
 }
 
 /*!
@@ -153,7 +153,7 @@ QUrl QWebNetworkJob::url() const
 */
 QByteArray QWebNetworkJob::postData() const
 {
-    return d->postData;
+    return d->request.postData;
 }
 
 /*!
@@ -161,7 +161,7 @@ QByteArray QWebNetworkJob::postData() const
 */
 QHttpRequestHeader QWebNetworkJob::request() const
 {
-    return d->httpHeader;
+    return d->request.httpHeader;
 }
 
 /*!
@@ -253,15 +253,15 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
     job->d->interface = interface;
     job->d->connector = 0;
 
-    job->d->init(handle->request());
+    job->d->request.init(handle->request());
 
     if (handle->method() != "POST" && handle->method() != "GET") {
         // don't know what to do! (probably a request error!!)
         // but treat it like a 'GET' request
-        qWarning("REQUEST: [%s]\n", qPrintable(job->d->httpHeader.toString()));
+        qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.httpHeader.toString()));
     }
 
-    DEBUG() << "QWebNetworkManager::add:" <<  job->d->httpHeader.toString();
+    DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
 
     interface->addJob(job);
 
@@ -314,7 +314,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
     }
     if (contentType.isEmpty()) {
         // let's try to guess from the extension
-        QString extension = job->d->url.path();
+        QString extension = job->d->request.url.path();
         int index = extension.lastIndexOf(QLatin1Char('.'));
         if (index > 0) {
             extension = extension.mid(index + 1);
@@ -343,8 +343,8 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
             newRequest.setURL(KURL(newRequest.url(), DeprecatedString(location)));
             if (client)
                 client->willSendRequest(job->d->resourceHandle, newRequest, response);
-            job->d->httpHeader.setRequest(job->d->httpHeader.method(), newRequest.url().path() + newRequest.url().query());
-            job->d->setURL(QString(newRequest.url().url()));
+            job->d->request.httpHeader.setRequest(job->d->request.httpHeader.method(), newRequest.url().path() + newRequest.url().query());
+            job->d->request.setURL(QString(newRequest.url().url()));
             job->d->redirected = true;
             return;
         }
@@ -371,7 +371,7 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
     if (job->d->redirected)
         return; // don't emit the "Document has moved here" type of HTML
 
-    DEBUG() << "receivedData" << job->d->url.path();
+    DEBUG() << "receivedData" << job->d->request.url.path();
     if (client)
         client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
     if (job->d->connector)
@@ -406,8 +406,8 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
         if (errorCode) {
             //FIXME: error setting error was removed from ResourceHandle
             client->didFail(job->d->resourceHandle,
-                            ResourceError(job->d->url.host(), job->d->response.statusCode(),
-                                          job->d->url.toString(), String()));
+                            ResourceError(job->d->request.url.host(), job->d->response.statusCode(),
+                                          job->d->request.url.toString(), String()));
         } else {
             client->didFinishLoading(job->d->resourceHandle);
         }
@@ -416,7 +416,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
     if (job->d->connector)
         emit job->d->connector->finished(job, errorCode);
     
-    DEBUG() << "receivedFinished done" << job->d->url;
+    DEBUG() << "receivedFinished done" << job->d->request.url;
 
     job->deref();
 }

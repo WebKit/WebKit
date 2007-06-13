@@ -47,7 +47,7 @@ struct QWebNetworkRequest
     void setURL(const QUrl &u);
 };
 
-class QWebNetworkJobPrivate : public QWebNetworkRequest
+class QWebNetworkJobPrivate
 {
 public:
     QWebNetworkJobPrivate()
@@ -59,6 +59,7 @@ public:
         {}
     int ref;
 
+    QWebNetworkRequest request;
     QHttpResponseHeader response;
 
     WebCore::ResourceHandle *resourceHandle;

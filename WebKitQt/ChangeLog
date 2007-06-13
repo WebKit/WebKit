@@ -2,6 +2,21 @@
 
         Reviewed by Lars.
 
+        Changed QWebNetworkJobPrivate to aggregate a QWebNetworkRequest instead of inheriting from it.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::requestUrl):
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Rename QWebNetworkRequest::request into QWebNetworkRequest::httpHeader.
 
         * Api/qwebnetworkinterface.cpp:
