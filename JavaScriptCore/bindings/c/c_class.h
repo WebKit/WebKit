@@ -49,9 +49,6 @@ public:
     virtual int numConstructors() const { return 0; }
 
 private:
-    CClass(const CClass&); // prohibit copying
-    CClass& operator=(const CClass&); // prohibit assignment
-
     NPClass* _isa;
     mutable MethodMap _methods;
     mutable FieldMap _fields;

@@ -121,11 +121,8 @@ private:
 class ObjcArray : public Array
 {
 public:
-    ObjcArray(ObjectStructPtr);
+    ObjcArray(ObjectStructPtr, PassRefPtr<RootObject>);
 
-    ObjcArray(const ObjcArray &);
-    ObjcArray &operator=(const ObjcArray &);
-    
     virtual ~ObjcArray();
 
     virtual void setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const;
@@ -140,7 +137,7 @@ private:
     ObjectStructPtr _array;
 };
 
-class ObjcFallbackObjectImp : public JSObject {
+class ObjcFallbackObjectImp : public JSObject, Noncopyable {
 public:
     ObjcFallbackObjectImp(ObjcInstance *i, const Identifier propertyName);
 
@@ -159,8 +156,6 @@ public:
 
 private:
     ObjcFallbackObjectImp(); // prevent default construction
-    ObjcFallbackObjectImp(const ObjcFallbackObjectImp& other); // prevent copying
-    ObjcFallbackObjectImp& operator=(const ObjcFallbackObjectImp& other); // ditto
     
     static const ClassInfo info;
 

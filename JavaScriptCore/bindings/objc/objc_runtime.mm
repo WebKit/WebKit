@@ -171,7 +171,8 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
 
 // ---------------------- ObjcArray ----------------------
 
-ObjcArray::ObjcArray (ObjectStructPtr a) 
+ObjcArray::ObjcArray(ObjectStructPtr a, PassRefPtr<RootObject> rootObject)
+    : Array(rootObject)
 {
     _array = (id)CFRetain(a);
 }
@@ -179,21 +180,6 @@ ObjcArray::ObjcArray (ObjectStructPtr a)
 ObjcArray::~ObjcArray () 
 {
     CFRelease(_array);
-}
-
-ObjcArray::ObjcArray (const ObjcArray &other) : Array() 
-{
-    _array = other._array;
-    CFRetain(_array);
-}
-
-ObjcArray &ObjcArray::operator=(const ObjcArray &other)
-{
-    ObjectStructPtr _oldArray = _array;
-    _array = other._array;
-    CFRetain(_array);
-    CFRelease(_oldArray);
-    return* this;
 }
 
 void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue* aValue) const

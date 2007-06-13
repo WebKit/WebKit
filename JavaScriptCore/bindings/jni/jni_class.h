@@ -56,8 +56,6 @@ public:
     
 private:
     JavaClass ();                                 // prevent default construction
-    JavaClass (const JavaClass &other);           // prevent copying
-    JavaClass &operator=(const JavaClass &other); // prevent copying
     
     const char *_name;
     FieldMap _fields;

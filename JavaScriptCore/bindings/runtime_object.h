@@ -29,9 +29,11 @@
 #include "runtime.h"
 #include "object.h"
 
+#include <wtf/Noncopyable.h>
+
 namespace KJS {
 
-class RuntimeObjectImp : public JSObject {
+class RuntimeObjectImp : public JSObject, Noncopyable {
 public:
     RuntimeObjectImp(Bindings::Instance *i);
 
@@ -52,8 +54,6 @@ public:
 
 private:
     RuntimeObjectImp(); // prevent default construction
-    RuntimeObjectImp(const RuntimeObjectImp& other); // prevent copying
-    RuntimeObjectImp& operator=(const RuntimeObjectImp& other); // ditto
     
     static JSValue *fallbackObjectGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     static JSValue *fieldGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);

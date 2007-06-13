@@ -1,3 +1,29 @@
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Maciej.
+
+        More cleanup. Use our Noncopyable WTF class, add a root object member
+        to the Array class.
+        
+        * bindings/c/c_class.h:
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::JavaArray):
+        * bindings/jni/jni_runtime.h:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcArray::ObjcArray):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Array::Array):
+        (KJS::Bindings::Array::~Array):
+        * bindings/runtime.h:
+        * bindings/runtime_object.h:
+        * bindings/runtime_root.h:
+
 2007-06-08  Zack Rusin  <zrusin@trolltech.com>
 
         Fix the Qt build

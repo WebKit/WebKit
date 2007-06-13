@@ -380,7 +380,8 @@ jmethodID JavaMethod::methodID (jobject obj) const
 }
 
 
-JavaArray::JavaArray(jobject array, const char* type, PassRefPtr<RootObject> rootObject) 
+JavaArray::JavaArray(jobject array, const char* type, PassRefPtr<RootObject> rootObject)
+    : Array(rootObject)
 {
     _array = new JObjectWrapper(array);
     // Java array are fixed length, so we can cache length.

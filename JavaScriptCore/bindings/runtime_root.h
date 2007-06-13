@@ -32,6 +32,8 @@
 #endif
 #include "protect.h"
 
+#include <wtf/Noncopyable.h>
+
 namespace KJS {
 
 namespace Bindings {
@@ -44,7 +46,7 @@ typedef HashCountedSet<JSObject*> ProtectCountSet;
 extern RootObject* findRootObject(JSObject*);
 extern RootObject* findRootObject(Interpreter*);
 
-class RootObject
+class RootObject : Noncopyable
 {
 friend class JavaJSObject;
 public:
@@ -83,10 +85,6 @@ public:
 private:
     RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter);
     ~RootObject();
-    
-    // Uncopyable
-    RootObject(const RootObject&);
-    RootObject& operator=(const RootObject&);
     
     unsigned m_refCount;
     bool m_isValid;

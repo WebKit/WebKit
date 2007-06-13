@@ -94,6 +94,14 @@ MethodList &MethodList::operator=(const MethodList &other)
     return *this;
 }
 
+Array::Array(PassRefPtr<RootObject> rootObject)
+    : _rootObject(rootObject)
+{
+}
+
+Array::~Array()
+{
+}
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
     : _rootObject(rootObject)
