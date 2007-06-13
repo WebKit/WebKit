@@ -105,6 +105,14 @@ void QWebNetworkRequestPrivate::setURL(const QUrl &u)
         httpHeader.setValue(QLatin1String("Host"), url.host());
 }
 
+/*!
+  \class QWebNetworkRequest
+
+  The QWebNetworkRequest class represents a request for data from the network with all the
+  necessary information needed for retrieval. This includes the url, extra HTTP header fields
+  as well as data for a HTTP POST request.
+*/
+
 QWebNetworkRequest::QWebNetworkRequest()
     : d(new QWebNetworkRequestPrivate)
 {
@@ -131,16 +139,27 @@ QWebNetworkRequest::~QWebNetworkRequest()
     delete d;
 }
 
+/*!
+  The requested URL
+*/
 QUrl QWebNetworkRequest::url() const
 {
     return d->url;
 }
 
+/*!
+   Sets the URL to request.
+
+   Note that setting the URL also sets the "Host" field in the HTTP header.
+*/
 void QWebNetworkRequest::setUrl(const QUrl &url)
 {
     d->setURL(url);
 }
 
+/*!
+   The http request header information.
+*/
 QHttpRequestHeader QWebNetworkRequest::httpHeader() const
 {
     return d->httpHeader;
@@ -151,6 +170,9 @@ void QWebNetworkRequest::setHttpHeader(const QHttpRequestHeader &header) const
     d->httpHeader = header;
 }
 
+/*!
+    Post data sent with HTTP POST requests.
+*/
 QByteArray QWebNetworkRequest::postData() const
 {
     return d->postData;

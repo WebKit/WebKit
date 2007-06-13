@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Some docs for QWebNetworkRequest
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequest::QWebNetworkRequest):
+        (QWebNetworkRequest::~QWebNetworkRequest):
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved QWebNetworkJob::Method enum into QWebNetworkRequest.
 
         * Api/qwebnetworkinterface.h:
