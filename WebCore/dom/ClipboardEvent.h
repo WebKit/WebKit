@@ -4,7 +4,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,7 +37,9 @@ namespace WebCore {
         ClipboardEvent(const AtomicString& type, bool canBubbleArg, bool cancelableArg, Clipboard* clipboardArg);
 
         Clipboard* clipboard() const { return m_clipboard.get(); }
+
         virtual bool isClipboardEvent() const;
+
     private:
         RefPtr<Clipboard> m_clipboard;
     };

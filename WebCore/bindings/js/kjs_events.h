@@ -38,7 +38,7 @@ namespace WebCore {
 namespace KJS {
 
     class Window;
-    class Clipboard;
+    class JSClipboard;
     
     class JSAbstractEventListener : public WebCore::EventListener {
     public:
@@ -98,44 +98,60 @@ namespace KJS {
     public:
         DOMEvent(ExecState*, WebCore::Event*);
         virtual ~DOMEvent();
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        virtual void put(ExecState*, const Identifier&, JSValue*, int attr = None);
-        void putValueProperty(ExecState*, int token, JSValue*, int);
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-        enum { Type, Target, CurrentTarget, EventPhase, Bubbles,
-               Cancelable, TimeStamp, StopPropagation, PreventDefault, InitEvent,
-               // MS IE equivalents
-               SrcElement, ReturnValue, CancelBubble, ClipboardData, DataTransfer };
-        WebCore::Event *impl() const { return m_impl.get(); }
-        virtual void mark();
-    protected:
-        RefPtr<WebCore::Event> m_impl;
-        mutable Clipboard* clipboard;
-    };
 
-    JSValue* toJS(ExecState*, WebCore::Event*);
-
-    WebCore::Event* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
-
-    KJS_DEFINE_PROTOTYPE(DOMEventPrototype)
-
-    class Clipboard : public DOMObject {
-    friend class ClipboardPrototypeFunction;
-    public:
-        Clipboard(ExecState*, WebCore::Clipboard *ds);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
         virtual void put(ExecState*, const Identifier&, JSValue*, int attr = None);
         void putValueProperty(ExecState*, int token, JSValue*, int attr);
-        virtual bool toBoolean(ExecState*) const { return true; }
+
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
-        enum { ClearData, GetData, SetData, Types, SetDragImage, DropEffect, EffectAllowed };
-    private:
-        RefPtr<WebCore::Clipboard> clipboard;
+
+        enum { 
+            Type, Target, CurrentTarget, EventPhase,
+            Bubbles, Cancelable, TimeStamp, StopPropagation,
+            PreventDefault, InitEvent,
+
+            // MS IE equivalents
+            SrcElement, ReturnValue, CancelBubble, ClipboardData,
+            DataTransfer
+        };
+
+        WebCore::Event* impl() const { return m_impl.get(); }
+
+    protected:
+        RefPtr<WebCore::Event> m_impl;
     };
+
+    JSValue* toJS(ExecState*, WebCore::Event*);
+    WebCore::Event* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
+
+    KJS_DEFINE_PROTOTYPE(DOMEventPrototype)
+
+    class JSClipboard : public DOMObject {
+        friend class JSClipboardPrototypeFunction;
+    public:
+        JSClipboard(ExecState*, WebCore::Clipboard* ds);
+        virtual ~JSClipboard();
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
+        virtual void put(ExecState*, const Identifier&, JSValue*, int attr = None);
+        void putValueProperty(ExecState*, int token, JSValue*, int attr);
+
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+
+        enum { ClearData, GetData, SetData, Types, SetDragImage, DropEffect, EffectAllowed };
+
+        WebCore::Clipboard* impl() const { return m_impl.get(); }
+
+    private:
+        RefPtr<WebCore::Clipboard> m_impl;
+    };
+
+    JSValue* toJS(ExecState*, WebCore::Clipboard*);
+    WebCore::Clipboard* toClipboard(JSValue*);
 
 } // namespace
 

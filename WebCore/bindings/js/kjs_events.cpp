@@ -387,8 +387,8 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMEventPrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventPrototype, DOMEventPrototypeFunction)
 
-DOMEvent::DOMEvent(ExecState *exec, Event *e)
-  : m_impl(e), clipboard(0) 
+DOMEvent::DOMEvent(ExecState* exec, Event* event)
+    : m_impl(event)
 {
     setPrototype(DOMEventPrototype::self(exec));
 }
@@ -398,183 +398,170 @@ DOMEvent::~DOMEvent()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-// pass marks through to JS objects we hold during garbage collection
-void DOMEvent::mark()
-{
-    DOMObject::mark();
-    if (clipboard && !clipboard->marked())
-        clipboard->mark();
-}
-
 bool DOMEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<DOMEvent, DOMObject>(exec, &DOMEventTable, this, propertyName, slot);
 }
 
-JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
+JSValue* DOMEvent::getValueProperty(ExecState* exec, int token) const
 {
-  Event &event = *m_impl;
-  switch (token) {
-  case Type:
-    return jsString(event.type());
-  case Target:
-  case SrcElement: /*MSIE extension - "the object that fired the event"*/
-    return toJS(exec, event.target());
-  case CurrentTarget:
-    return toJS(exec, event.currentTarget());
-  case EventPhase:
-    return jsNumber(event.eventPhase());
-  case Bubbles:
-    return jsBoolean(event.bubbles());
-  case CancelBubble:
-    return jsBoolean(event.cancelBubble());
-  case ReturnValue:
-    return jsBoolean(!event.defaultPrevented());
-  case Cancelable:
-    return jsBoolean(event.cancelable());
-  case TimeStamp:
-    return jsNumber(event.timeStamp());
-  case ClipboardData:
-  {
-    if (event.isClipboardEvent()) {
-      ClipboardEvent *impl = static_cast<ClipboardEvent *>(&event);
-      if (!clipboard)
-        clipboard = new Clipboard(exec, impl->clipboard());
-      return clipboard;
-    } else
-      return jsUndefined();
-  }
-  case DataTransfer:
-  {
-    if (event.isDragEvent()) {
-      MouseEvent *impl = static_cast<MouseEvent *>(&event);
-      if (!clipboard)
-        clipboard = new Clipboard(exec, impl->clipboard());
-      return clipboard;
-    } else
-      return jsUndefined();
-  }
-  default:
-    return 0;
-  }
+    Event* event = impl();
+    switch (token) {
+        case Type:
+            return jsString(event->type());
+        case Target:
+            return toJS(exec, event->target());
+        case SrcElement:
+            return toJS(exec, event->srcElement());
+        case CurrentTarget:
+            return toJS(exec, event->currentTarget());
+        case EventPhase:
+            return jsNumber(event->eventPhase());
+        case Bubbles:
+            return jsBoolean(event->bubbles());
+        case CancelBubble:
+            return jsBoolean(event->cancelBubble());
+        case ReturnValue:
+            return jsBoolean(event->returnValue());
+        case Cancelable:
+            return jsBoolean(event->cancelable());
+        case TimeStamp:
+            return jsNumber(event->timeStamp());
+        case ClipboardData:
+            if (event->isClipboardEvent())
+                return toJS(exec, event->clipboardData());
+            return jsUndefined();
+        case DataTransfer:
+            if (event->isDragEvent())
+                return toJS(exec, event->dataTransfer());
+            return jsUndefined();
+        default:
+            return 0;
+    }
 }
 
-void DOMEvent::put(ExecState *exec, const Identifier &propertyName,
-                      JSValue *value, int attr)
+void DOMEvent::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
     lookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr, &DOMEventTable, this);
 }
 
-void DOMEvent::putValueProperty(ExecState *exec, int token, JSValue *value, int)
+void DOMEvent::putValueProperty(ExecState* exec, int token, JSValue* value, int)
 {
-  Event &event = *m_impl;
-  switch (token) {
-  case ReturnValue:
-    event.setDefaultPrevented(!value->toBoolean(exec));
-    break;
-  case CancelBubble:
-    event.setCancelBubble(value->toBoolean(exec));
-    break;
-  default:
-    break;
-  }
+    Event* event = m_impl.get();
+    switch (token) {
+        case ReturnValue:
+            event->setDefaultPrevented(!value->toBoolean(exec));
+            break;
+        case CancelBubble:
+            event->setCancelBubble(value->toBoolean(exec));
+            break;
+        default:
+            break;
+    }
 }
 
-JSValue *DOMEventPrototypeFunction::callAsFunction(ExecState *exec, JSObject * thisObj, const List &args)
+JSValue* DOMEventPrototypeFunction::callAsFunction(ExecState *exec, JSObject * thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMEvent::info))
-    return throwError(exec, TypeError);
-  Event &event = *static_cast<DOMEvent *>( thisObj )->impl();
-  switch (id) {
-    case DOMEvent::StopPropagation:
-      event.stopPropagation();
-      return jsUndefined();
-    case DOMEvent::PreventDefault:
-      event.preventDefault();
-      return jsUndefined();
-    case DOMEvent::InitEvent:
-      event.initEvent(AtomicString(args[0]->toString(exec)), args[1]->toBoolean(exec), args[2]->toBoolean(exec));
-      return jsUndefined();
+    if (!thisObj->inherits(&DOMEvent::info))
+        return throwError(exec, TypeError);
+
+    Event* event = static_cast<DOMEvent*>(thisObj)->impl();
+    switch (id) {
+        case DOMEvent::StopPropagation:
+            event->stopPropagation();
+            return jsUndefined();
+        case DOMEvent::PreventDefault:
+            event->preventDefault();
+            return jsUndefined();
+        case DOMEvent::InitEvent:
+            event->initEvent(AtomicString(args[0]->toString(exec)), args[1]->toBoolean(exec), args[2]->toBoolean(exec));
+            return jsUndefined();
   };
   return jsUndefined();
 }
 
-JSValue* toJS(ExecState* exec, Event* e)
+JSValue* toJS(ExecState* exec, Event* event)
 {
-  if (!e)
-    return jsNull();
+    if (!event)
+        return jsNull();
 
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
+    ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
 
-  JSLock lock;
+    JSLock lock;
 
-  DOMObject* ret = interp->getDOMObject(e);
-  if (!ret) {
-    if (e->isKeyboardEvent())
-      ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent*>(e));
-    else if (e->isTextEvent())
-      ret = new JSTextEvent(exec, static_cast<TextEvent*>(e));
-    else if (e->isMouseEvent())
-      ret = new JSMouseEvent(exec, static_cast<MouseEvent*>(e));
-    else if (e->isWheelEvent())
-      ret = new JSWheelEvent(exec, static_cast<WheelEvent*>(e));
-    else if (e->isUIEvent())
-      ret = new JSUIEvent(exec, static_cast<UIEvent*>(e));
-    else if (e->isMutationEvent())
-      ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(e));
-    else if (e->isOverflowEvent())
-      ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(e));
+    DOMObject* ret = interp->getDOMObject(event);
+    if (ret)
+        return ret;
+
+    if (event->isKeyboardEvent())
+        ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent*>(event));
+    else if (event->isTextEvent())
+        ret = new JSTextEvent(exec, static_cast<TextEvent*>(event));
+    else if (event->isMouseEvent())
+        ret = new JSMouseEvent(exec, static_cast<MouseEvent*>(event));
+    else if (event->isWheelEvent())
+        ret = new JSWheelEvent(exec, static_cast<WheelEvent*>(event));
+    else if (event->isUIEvent())
+        ret = new JSUIEvent(exec, static_cast<UIEvent*>(event));
+    else if (event->isMutationEvent())
+        ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(event));
+    else if (event->isOverflowEvent())
+        ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(event));
     else
-      ret = new JSEvent(exec, e);
+        ret = new JSEvent(exec, event);
 
-    interp->putDOMObject(e, ret);
-  }
-
-  return ret;
+    interp->putDOMObject(event, ret);
+    return ret;
 }
 
-Event *toEvent(JSValue *val)
+Event* toEvent(JSValue* val)
 {
     if (!val || !val->isObject(&DOMEvent::info))
         return 0;
-    return static_cast<DOMEvent *>(val)->impl();
+    return static_cast<DOMEvent*>(val)->impl();
 }
 
 // -------------------------------------------------------------------------
 
-const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
+const ClassInfo JSClipboard::info = { "Clipboard", 0, &JSClipboardTable, 0 };
 
-/* Source for ClipboardTable. Use "make hashtables" to regenerate.
-@begin ClipboardTable 3
-  dropEffect    Clipboard::DropEffect   DontDelete
-  effectAllowed Clipboard::EffectAllowed        DontDelete
-  types         Clipboard::Types        DontDelete|ReadOnly
+/* Source for JSClipboardTable. Use "make hashtables" to regenerate.
+@begin JSClipboardTable 3
+  dropEffect    JSClipboard::DropEffect   DontDelete
+  effectAllowed JSClipboard::EffectAllowed        DontDelete
+  types         JSClipboard::Types        DontDelete|ReadOnly
 @end
-@begin ClipboardPrototypeTable 4
-  clearData     Clipboard::ClearData    DontDelete|Function 0
-  getData       Clipboard::GetData      DontDelete|Function 1
-  setData       Clipboard::SetData      DontDelete|Function 2
-  setDragImage  Clipboard::SetDragImage DontDelete|Function 3
+@begin JSClipboardPrototypeTable 4
+  clearData     JSClipboard::ClearData    DontDelete|Function 0
+  getData       JSClipboard::GetData      DontDelete|Function 1
+  setData       JSClipboard::SetData      DontDelete|Function 2
+  setDragImage  JSClipboard::SetDragImage DontDelete|Function 3
 @end
 */
 
-KJS_DEFINE_PROTOTYPE(ClipboardPrototype)
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(ClipboardPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("Clipboard", ClipboardPrototype, ClipboardPrototypeFunction)
+KJS_DEFINE_PROTOTYPE(JSClipboardPrototype)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSClipboardPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("Clipboard", JSClipboardPrototype, JSClipboardPrototypeFunction)
 
-Clipboard::Clipboard(ExecState *exec, WebCore::Clipboard *cb)
-  : clipboard(cb)
+JSClipboard::JSClipboard(ExecState* exec, WebCore::Clipboard* cb)
+    : m_impl(cb)
 {
-    setPrototype(ClipboardPrototype::self(exec));
+    setPrototype(JSClipboardPrototype::self(exec));
 }
 
-bool Clipboard::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+JSClipboard::~JSClipboard()
 {
-    return getStaticValueSlot<Clipboard, DOMObject>(exec, &ClipboardTable, this, propertyName, slot);
+    ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
+bool JSClipboard::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return getStaticValueSlot<JSClipboard, DOMObject>(exec, &JSClipboardTable, this, propertyName, slot);
+}
+
+JSValue* JSClipboard::getValueProperty(ExecState* exec, int token) const
+{
+    WebCore::Clipboard* clipboard = impl();
     switch (token) {
         case DropEffect:
             ASSERT(clipboard->isForDragging() || clipboard->dropEffect().isNull());
@@ -586,27 +573,28 @@ JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
         {
             HashSet<String> types = clipboard->types();
             if (types.isEmpty())
-                return jsNull(); 
+                return jsNull();
             else {
                 List list;
                 HashSet<String>::const_iterator end = types.end();
-                for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it) 
+                for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
                     list.append(jsString(UString(*it)));
                 return exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
             }
         }
         default:
-            return NULL;
+            return 0;
     }
 }
 
-void Clipboard::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void JSClipboard::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
-    lookupPut<Clipboard,DOMObject>(exec, propertyName, value, attr, &ClipboardTable, this );
+    lookupPut<JSClipboard, DOMObject>(exec, propertyName, value, attr, &JSClipboardTable, this );
 }
 
-void Clipboard::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
 {
+    WebCore::Clipboard* clipboard = impl();
     switch (token) {
         case DropEffect:
             // can never set this when not for dragging, thus getting always returns NULL string
@@ -621,52 +609,50 @@ void Clipboard::putValueProperty(ExecState *exec, int token, JSValue *value, int
     }
 }
 
-JSValue *ClipboardPrototypeFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* JSClipboardPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&Clipboard::info))
+    if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
 
-    Clipboard *cb = static_cast<Clipboard *>(thisObj);
+    WebCore::Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
     switch (id) {
-        case Clipboard::ClearData:
+        case JSClipboard::ClearData:
             if (args.size() == 0) {
-                cb->clipboard->clearAllData();
+                clipboard->clearAllData();
                 return jsUndefined();
             } else if (args.size() == 1) {
-                cb->clipboard->clearData(args[0]->toString(exec));
+                clipboard->clearData(args[0]->toString(exec));
                 return jsUndefined();
             } else
                 return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
-        case Clipboard::GetData:
+        case JSClipboard::GetData:
         {
             if (args.size() == 1) {
                 bool success;
-                String result = cb->clipboard->getData(args[0]->toString(exec), success);
+                String result = clipboard->getData(args[0]->toString(exec), success);
                 if (success)
                     return jsString(result);
-                else
-                    return jsUndefined();
+                return jsUndefined();
             } else
                 return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
         }
-        case Clipboard::SetData:
+        case JSClipboard::SetData:
             if (args.size() == 2)
-                return jsBoolean(cb->clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
-            else
-                return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
-        case Clipboard::SetDragImage:
+                return jsBoolean(clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
+            return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
+        case JSClipboard::SetDragImage:
         {
-            if (!cb->clipboard->isForDragging())
+            if (!clipboard->isForDragging())
                 return jsUndefined();
 
             if (args.size() != 3)
                 return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
 
-            int x = (int)args[1]->toNumber(exec);
-            int y = (int)args[2]->toNumber(exec);
+            int x = static_cast<int>(args[1]->toNumber(exec));
+            int y = static_cast<int>(args[2]->toNumber(exec));
 
             // See if they passed us a node
-            Node *node = toNode(args[0]);
+            Node* node = toNode(args[0]);
             if (!node)
                 return throwError(exec, TypeError);
             
@@ -675,14 +661,24 @@ JSValue *ClipboardPrototypeFunction::callAsFunction(ExecState *exec, JSObject *t
 
             if (static_cast<Element*>(node)->hasLocalName(imgTag) && 
                 !node->inDocument())
-                cb->clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
+                clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
             else
-                cb->clipboard->setDragImageElement(node, IntPoint(x, y));                    
+                clipboard->setDragImageElement(node, IntPoint(x, y));                    
                 
             return jsUndefined();
         }
     }
     return jsUndefined();
+}
+
+JSValue* toJS(ExecState* exec, WebCore::Clipboard* obj)
+{
+    return cacheDOMObject<WebCore::Clipboard, JSClipboard>(exec, obj);
+}
+
+WebCore::Clipboard* toClipboard(JSValue* val)
+{
+    return val->isObject(&JSClipboard::info) ? static_cast<JSClipboard*>(val)->impl() : 0;
 }
 
 }

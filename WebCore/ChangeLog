@@ -1,3 +1,40 @@
+2007-06-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14109
+        Cleanup JSEvent and JSClipboard in preperation for autogeneration
+
+        * bindings/js/kjs_events.cpp:
+        (KJS::DOMEvent::DOMEvent):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMEvent::put):
+        (KJS::DOMEvent::putValueProperty):
+        (KJS::DOMEventPrototypeFunction::callAsFunction):
+        (KJS::toJS):
+        (KJS::toEvent):
+        (KJS::):
+        (KJS::JSClipboard::JSClipboard):
+        (KJS::JSClipboard::~JSClipboard):
+        (KJS::JSClipboard::getOwnPropertySlot):
+        (KJS::JSClipboard::getValueProperty):
+        (KJS::JSClipboard::put):
+        (KJS::JSClipboard::putValueProperty):
+        (KJS::JSClipboardPrototypeFunction::callAsFunction):
+        (KJS::toClipboard):
+        * bindings/js/kjs_events.h:
+        (KJS::DOMEvent::):
+        (KJS::DOMEvent::impl):
+        (KJS::JSClipboard::impl):
+        * dom/ClipboardEvent.h:
+        * dom/Event.h:
+        (WebCore::Event::srcElement):
+        (WebCore::Event::returnValue):
+        (WebCore::Event::clipboardData):
+        (WebCore::Event::dataTransfer):
+        (WebCore::Event::clipboard):
+        * dom/MouseEvent.h:
+
 2007-06-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Niko.

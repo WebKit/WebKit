@@ -4,7 +4,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,8 @@
 #include "Shared.h"
 
 namespace WebCore {
+
+    class Clipboard;
 
     // FIXME: this should probably defined elsewhere.
     typedef unsigned long long DOMTimeStamp;
@@ -89,6 +91,12 @@ namespace WebCore {
         DOMTimeStamp timeStamp() { return m_createTime; }
         void stopPropagation() { m_propagationStopped = true; }
 
+        // IE Extensions
+        EventTarget* srcElement() const { return target(); } // MSIE extension - "the object that fired the event"
+        bool returnValue() const { return !m_defaultPrevented; }
+        Clipboard* clipboardData() const { return isClipboardEvent() ? clipboard() : 0; }
+        Clipboard* dataTransfer() const { return isMouseEvent() ? clipboard() : 0; }
+
         virtual bool isUIEvent() const;
         virtual bool isMouseEvent() const;
         virtual bool isMutationEvent() const;
@@ -120,6 +128,8 @@ namespace WebCore {
 
         virtual bool storesResultAsString() const;
         virtual void storeResult(const String&);
+
+        virtual Clipboard* clipboard() const { return 0; }
 
     protected:
         virtual void receivedTarget();
