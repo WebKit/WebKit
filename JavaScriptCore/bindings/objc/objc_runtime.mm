@@ -100,20 +100,6 @@ const char* ObjcField::name() const
     return [(NSString*)_name.get() UTF8String];
 }
 
-RuntimeType ObjcField::type() const 
-{ 
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-    if (_ivar)
-        return ivar_getTypeEncoding(_ivar);
-#else
-    if (_ivar)
-        return _ivar->ivar_type;
-#endif
-
-    // Type is irrelevant if we use KV to set/get the value.
-    return "";
-}
-
 JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) const
 {
     JSValue* result = jsUndefined();

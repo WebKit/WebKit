@@ -98,7 +98,6 @@ CodeType RuntimeMethod::codeType() const
     return FunctionCode;
 }
 
-
 Completion RuntimeMethod::execute(ExecState*)
 {
     return Completion(Normal, jsUndefined());

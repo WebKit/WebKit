@@ -35,6 +35,8 @@ namespace KJS
 namespace Bindings
 {
 
+typedef const char* RuntimeType;
+
 class JavaString
 {
 public:

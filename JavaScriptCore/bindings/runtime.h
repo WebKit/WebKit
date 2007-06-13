@@ -44,16 +44,12 @@ class Instance;
 class Method;
 class RootObject;
 
-// For now just use Java style type descriptors.
-typedef const char * RuntimeType;
-
 typedef Vector<Method*> MethodList;
 
 class Field
 {
 public:
     virtual const char* name() const = 0;
-    virtual RuntimeType type() const = 0;
 
     virtual JSValue* valueFromInstance(ExecState*, const Instance*) const = 0;
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const = 0;

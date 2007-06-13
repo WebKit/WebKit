@@ -1,5 +1,21 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        Move the notion of field type to the JNI runtime since that's the only 
+        one that was actually using it.
+        
+        * bindings/c/c_runtime.h:
+        (KJS::Bindings::CField::CField):
+        * bindings/jni/jni_runtime.h:
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        * bindings/qt/qt_runtime.h:
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
         
         * bindings/qt/qt_class.cpp:

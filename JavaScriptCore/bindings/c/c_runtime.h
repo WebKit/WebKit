@@ -34,12 +34,11 @@ namespace Bindings {
 
 class CField : public Field {
 public:
-    CField(NPIdentifier ident) : _fieldIdentifier(ident) { _fieldIdentifier = ident; }
+    CField(NPIdentifier ident) : _fieldIdentifier(ident) { }
 
     virtual JSValue* valueFromInstance(ExecState*, const Instance*) const;
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const;
     virtual const char* name() const;
-    virtual RuntimeType type() const { return ""; }
 
 private:
     NPIdentifier _fieldIdentifier;
