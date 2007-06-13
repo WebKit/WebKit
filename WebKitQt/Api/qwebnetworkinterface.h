@@ -35,6 +35,8 @@ class QWebObjectPluginConnector;
 
 namespace WebCore {
     class WebCoreHttp;
+    class ResourceRequest;
+    class FrameLoaderClientQt;
 }
 
 struct QWebNetworkRequestPrivate;
@@ -49,6 +51,7 @@ public:
 
     QWebNetworkRequest();
     QWebNetworkRequest(const QWebNetworkRequest &other);
+
     QWebNetworkRequest &operator=(const QWebNetworkRequest &other);
     ~QWebNetworkRequest();
 
@@ -63,8 +66,11 @@ public:
 
 private:
     explicit QWebNetworkRequest(QWebNetworkRequestPrivate *priv);
-    QWebNetworkRequestPrivate *d;
+    explicit QWebNetworkRequest(const WebCore::ResourceRequest &request);
     friend class QWebNetworkJob;
+    friend class WebCore::FrameLoaderClientQt;
+
+    QWebNetworkRequestPrivate *d;
 };
 
 class QWEBKIT_EXPORT QWebNetworkJob

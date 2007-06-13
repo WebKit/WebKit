@@ -61,7 +61,7 @@ public:
     bool modified;
 
     bool insideOpenCall;
-    QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QUrl &url, const QHttpRequestHeader &request, const QByteArray &postData);
+    QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request);
 };
 
 #endif

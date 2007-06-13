@@ -2,6 +2,22 @@
 
         Reviewed by Lars.
 
+        Use QWebNetworkRequest for QWebPage::navigationRequested.
+
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::navigationRequested):
+        (QWebPage::navigationRequested):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Some docs for QWebNetworkRequest
 
         * Api/qwebnetworkinterface.cpp:

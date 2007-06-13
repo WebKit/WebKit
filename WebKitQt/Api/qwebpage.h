@@ -33,6 +33,7 @@ class QWebFrame;
 class QUndoStack;
 class QUrl;
 class QHttpRequestHeader;
+class QWebNetworkRequest;
 
 class QWebPagePrivate;
 class QWebFrameData;
@@ -142,7 +143,7 @@ protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
 
-    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QUrl &url, const QHttpRequestHeader &request, const QByteArray &postData);
+    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request);
 
 private:
     friend class QWebFrame;
