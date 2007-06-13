@@ -40,6 +40,7 @@ DEFINES += ENABLE_XPATH=1
 DEFINES += ENABLE_XSLT=1
 #DEFINES += ENABLE_XBL=1
 qt-port:DEFINES += ENABLE_SVG=1
+gdk-port:DEFINES += ENABLE_SVG=1
 
 DEFINES += WTF_CHANGES=1
 
@@ -70,6 +71,7 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 }
 
 gdk-port:INCLUDEPATH += \
+    $$PWD/platform/graphics/svg/cairo \
     $$PWD/platform/image-decoders/bmp \
     $$PWD/platform/image-decoders/gif \
     $$PWD/platform/image-decoders/ico \
@@ -920,6 +922,10 @@ contains(DEFINES, ENABLE_SVG=1) {
 	DEPENDPATH += platform/graphics/svg/qt
     }
 
+    gdk-port {
+	DEPENDPATH += platform/graphics/svg/cairo
+    }
+
     SVG_NAMES = $$PWD/ksvg2/svg/svgtags.in
 
     XLINK_NAMES = $$PWD/ksvg2/misc/xlinkattrs.in
@@ -1232,6 +1238,15 @@ qt-port:SOURCES += \
         platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
         platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
         platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
+
+gdk-port:SOURCES += \
+        platform/graphics/svg/cairo/RenderPathCairo.cpp \
+        platform/graphics/svg/cairo/SVGPaintServerCairo.cpp \
+        platform/graphics/svg/cairo/SVGPaintServerGradientCairo.cpp \
+        platform/graphics/svg/cairo/SVGPaintServerPatternCairo.cpp \
+        platform/graphics/svg/cairo/SVGPaintServerSolidCairo.cpp \
+        platform/graphics/svg/cairo/SVGResourceClipperCairo.cpp \
+        platform/graphics/svg/cairo/SVGResourceMaskerCairo.cpp
 
         # GENERATOR 5-C:
         svgnames_a.output = tmp/SVGNames.cpp

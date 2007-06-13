@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerSolid_h
-#define SVGPaintServerSolid_h
+#include "config.h"
 
 #if ENABLE(SVG)
-
-#include "Color.h"
 #include "SVGPaintServer.h"
+
+#include "GraphicsContext.h"
+#include "KCanvasRenderingStyle.h"
+#include "RenderPath.h"
+
+#include <cairo.h>
 
 namespace WebCore {
 
-    class SVGPaintServerSolid : public SVGPaintServer {
-    public:
-        SVGPaintServerSolid();
-        virtual ~SVGPaintServerSolid();
+void SVGPaintServer::draw(GraphicsContext*& context, const RenderPath* path, SVGPaintTargetType type) const
+{
+    if (!setup(context, path, type))
+        return;
 
-        virtual SVGPaintServerType type() const { return SolidPaintServer; }
+    renderPath(context, path, type);
+    teardown(context, path, type);
+}
 
-        Color color() const;
-        void setColor(const Color&);
+void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const
+{
+    // no-op
+}
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderPath* path, SVGPaintTargetType type) const
+{
+    cairo_t* cr = context->platformContext();
+    const SVGRenderStyle* style = path->style()->svgStyle();
 
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
+    cairo_set_fill_rule(cr, style->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
 
-    private:
-        Color m_color;
-    };
+    if ((type & ApplyToFillTargetType) && style->hasFill())
+        cairo_fill_preserve(cr);
+
+    if ((type & ApplyToStrokeTargetType) && style->hasStroke())
+        cairo_stroke_preserve(cr);
+
+    cairo_new_path(cr);
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // SVGPaintServerSolid_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerSolid_h
-#define SVGPaintServerSolid_h
+#include "config.h"
 
 #if ENABLE(SVG)
+#include "SVGResourceMasker.h"
+#include "ImageBuffer.h"
+#include "GraphicsContext.h"
 
-#include "Color.h"
-#include "SVGPaintServer.h"
+#include <cairo.h>
 
 namespace WebCore {
 
-    class SVGPaintServerSolid : public SVGPaintServer {
-    public:
-        SVGPaintServerSolid();
-        virtual ~SVGPaintServerSolid();
-
-        virtual SVGPaintServerType type() const { return SolidPaintServer; }
-
-        Color color() const;
-        void setColor(const Color&);
-
-        virtual TextStream& externalRepresentation(TextStream&) const;
-
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
-
-    private:
-        Color m_color;
-    };
+void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox) const
+{
+    cairo_t* cr = context->platformContext();
+    cairo_surface_t* surface = mask()->surface();
+    if (!surface)
+        return;
+    cairo_pattern_t* mask = cairo_pattern_create_for_surface(surface);
+    cairo_mask(cr, mask);
+    cairo_pattern_destroy(mask);
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // SVGPaintServerSolid_h

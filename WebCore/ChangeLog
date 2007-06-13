@@ -1,3 +1,32 @@
+2007-06-13  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Rob.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14060
+        Cairo SVG support
+
+        * WebCore.pro: Add new files to the build.
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGPaintServerSolid.h:
+        * platform/graphics/svg/cairo: Added.
+        * platform/graphics/svg/cairo/RenderPathCairo.cpp: Added.
+        (WebCore::RenderPath::strokeContains):
+        (WebCore::RenderPath::strokeBBox):
+        * platform/graphics/svg/cairo/SVGPaintServerCairo.cpp: Added.
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/cairo/SVGPaintServerGradientCairo.cpp: Added.
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cairo/SVGPaintServerPatternCairo.cpp: Added.
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cairo/SVGPaintServerSolidCairo.cpp: Added.
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/cairo/SVGResourceClipperCairo.cpp: Added.
+        (WebCore::SVGResourceClipper::applyClip):
+        * platform/graphics/svg/cairo/SVGResourceMaskerCairo.cpp: Added.
+        (WebCore::SVGResourceMasker::applyMask):
+
 2007-06-13  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

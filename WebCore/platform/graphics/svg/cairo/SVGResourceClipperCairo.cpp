@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerSolid_h
-#define SVGPaintServerSolid_h
+#include "config.h"
 
 #if ENABLE(SVG)
+#include "SVGResourceClipper.h"
+#include "AffineTransform.h"
+#include "GraphicsContext.h"
 
-#include "Color.h"
-#include "SVGPaintServer.h"
+#include <cairo.h>
 
 namespace WebCore {
 
-    class SVGPaintServerSolid : public SVGPaintServer {
-    public:
-        SVGPaintServerSolid();
-        virtual ~SVGPaintServerSolid();
+void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& boundingBox) const
+{
+    Vector<ClipData> data = m_clipData.clipData();
+    unsigned int count = data.size();
+    if (!count)
+        return;
 
-        virtual SVGPaintServerType type() const { return SolidPaintServer; }
+    cairo_t* cr = context->platformContext();
+    cairo_reset_clip(cr);
 
-        Color color() const;
-        void setColor(const Color&);
+    for (unsigned int x = 0; x < count; x++) {
+        Path path = data[x].path;
+        if (path.isEmpty())
+            continue;
+        path.closeSubpath();
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+        if (data[x].bboxUnits) {
+            // Make use of the clipping units
+            AffineTransform transform;
+            transform.translate(boundingBox.x(), boundingBox.y());
+            transform.scale(boundingBox.width(), boundingBox.height());
+            path.transform(transform);
+        }
 
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
+        cairo_set_fill_rule(cr, data[x].windRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
 
-    private:
-        Color m_color;
-    };
+        // TODO: review this code, clipping may not be having the desired effect
+        context->clip(path);
+    }
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // SVGPaintServerSolid_h

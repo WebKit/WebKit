@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerSolid_h
-#define SVGPaintServerSolid_h
+#include "config.h"
+#include "RenderPath.h"
 
-#if ENABLE(SVG)
-
-#include "Color.h"
-#include "SVGPaintServer.h"
+#include "CairoPath.h"
+#include "KCanvasRenderingStyle.h"
 
 namespace WebCore {
 
-    class SVGPaintServerSolid : public SVGPaintServer {
-    public:
-        SVGPaintServerSolid();
-        virtual ~SVGPaintServerSolid();
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
+{
+    if (requiresStroke && !KSVGPainterFactory::strokePaintServer(style(), this))
+        return false;
 
-        virtual SVGPaintServerType type() const { return SolidPaintServer; }
+    cairo_t* cr = path().platformPath()->m_cr;
 
-        Color color() const;
-        void setColor(const Color&);
+    // TODO: set stroke properties
+    return cairo_in_stroke(cr, point.x(), point.y());
+}
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+FloatRect RenderPath::strokeBBox() const
+{
+    // TODO: this implementation is naive
 
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
+    cairo_t* cr = path().platformPath()->m_cr;
 
-    private:
-        Color m_color;
-    };
+    double x0, x1, y0, y1;
+    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
+    FloatRect bbox = FloatRect(x0, y0, x1 - x0, y1 - y0);
 
-} // namespace WebCore
+    return bbox;
+}
 
-#endif
-
-#endif // SVGPaintServerSolid_h
+}
