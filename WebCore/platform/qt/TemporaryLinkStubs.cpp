@@ -68,8 +68,6 @@ using namespace WebCore;
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int, int, int) const { notImplemented(); return FloatRect(); }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
-void WebCore::refreshPlugins(bool) { notImplemented(); }
-
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 
 // LocalizedStrings
@@ -159,15 +157,11 @@ bool AXObjectCache::gAccessibilityEnabled = false;
 
 Vector<char> loadResourceIntoArray(const char*) { return Vector<char>(); }
 
-PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0; }
-unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
-bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
-
 namespace WebCore {
-    
+
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
-    
+
 float userIdleTime() { notImplemented(); return 0.0; }
 
 }

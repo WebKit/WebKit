@@ -1,3 +1,18 @@
+2007-06-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Niko
+
+        Implement the parts required for the JS bridge
+        to know about the plugins.
+
+        * WebCore.pro:
+        * platform/qt/PlugInInfoStoreQt.cpp: Added.
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PlugInInfoStore::pluginCount):
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        (WebCore::refreshPlugins):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-06-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
          Reviewed by Maciej.

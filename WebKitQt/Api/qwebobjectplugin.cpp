@@ -1,28 +1,29 @@
 /*
   Copyright (C) 2007 Trolltech ASA
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
   License as published by the Free Software Foundation; either
   version 2 of the License, or (at your option) any later version.
-  
+
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Library General Public License for more details.
-  
+
   You should have received a copy of the GNU Library General Public License
   along with this library; see the file COPYING.LIB.  If not, write to
   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
   Boston, MA 02111-1307, USA.
-  
+
   This class provides all functionality needed for loading images, style sheets and html
   pages from the web. It has a memory cache for these objects.
 */
 #include "qwebobjectplugin_p.h"
 #include <qwebobjectpluginconnector.h>
 #include <qcoreapplication.h>
-    
+#include <qfileinfo.h>
+
 #ifndef QT_NO_LIBRARY
 Q_GLOBAL_STATIC_WITH_ARGS(QWebFactoryLoader, loader,
                           (QWebObjectPluginFactoryInterface_iid, QCoreApplication::libraryPaths(), QLatin1String("/webplugins")))
@@ -37,11 +38,17 @@ QWebFactoryLoader::QWebFactoryLoader(const char *iid, const QStringList &paths, 
         QWebObjectPlugin *plugin = qobject_cast<QWebObjectPlugin *>(instance(k));
         if (!plugin)
             continue;
-        QStringList extensions = plugin->extensionsForMimetype(k);
-        foreach(QString ext, extensions) {
-            m_extensions.append(ext);
-            m_mimeTypesForExtension.append(k);
+        Info info;
+        info.name = k;
+        info.description = plugin->descriptionForKey(k);
+        QStringList mimetypes = plugin->mimetypesForKey(k);
+        foreach(QString m, mimetypes) {
+            MimeInfo mime;
+            mime.type = m;
+            mime.extensions = plugin->extensionsForMimetype(m);
+            info.mimes << mime;
         }
+        m_pluginInfo.append(info);
     }
 }
 
@@ -49,22 +56,76 @@ QWebFactoryLoader *QWebFactoryLoader::self()
 {
     return loader();
 }
-    
+
+
+QString QWebFactoryLoader::descriptionForName(const QString &key) const
+{
+    foreach(const Info &info, m_pluginInfo) {
+        if (info.name == key)
+            return info.description;
+    }
+    return QString();
+}
+
+QStringList QWebFactoryLoader::mimetypesForName(const QString &key) const
+{
+    foreach(const Info &info, m_pluginInfo) {
+        if (info.name == key) {
+            QStringList mimetypes;
+            foreach (const MimeInfo &m, info.mimes)
+                mimetypes.append(m.type);
+            return mimetypes;
+        }
+    }
+    return QStringList();
+}
+
 QString QWebFactoryLoader::mimeTypeForExtension(const QString &extension)
 {
-    int idx = m_extensions.indexOf(extension);
-    if (idx > 0)
-        return m_mimeTypesForExtension.at(idx);
+    foreach(const Info &info, m_pluginInfo) {
+        foreach (const MimeInfo &m, info.mimes) {
+            if (m.extensions.contains(extension))
+                return m.type;
+        }
+    }
+    return QString();
+}
+
+
+QStringList QWebFactoryLoader::extensions() const
+{
+    QStringList extensions;
+    foreach(const Info &info, m_pluginInfo) {
+        foreach (const MimeInfo &m, info.mimes)
+            extensions << m.extensions;
+    }
+    return QStringList();
+
+}
+
+QString QWebFactoryLoader::nameForMimetype(const QString &mimeType) const
+{
+    foreach(const Info &info, m_pluginInfo) {
+        foreach (const MimeInfo &m, info.mimes)
+            if (m.type == mimeType)
+                return info.name;
+    }
     return QString();
 }
 
 QObject *QWebFactoryLoader::create(QWebFrame *frame,
-                                   const QUrl &url, 
-                                   const QString &mimeType,
+                                   const QUrl &url,
+                                   const QString &_mimeType,
                                    const QStringList &argumentNames,
                                    const QStringList &argumentValues)
 {
-    QWebObjectPlugin *plugin = qobject_cast<QWebObjectPlugin *>(instance(mimeType));
+    QString mimeType = _mimeType;
+    if (mimeType.isEmpty()) {
+        QFileInfo fi(url.path());
+        mimeType = mimeTypeForExtension(fi.suffix());
+    }
+    QString name = nameForMimetype(mimeType);
+    QWebObjectPlugin *plugin = qobject_cast<QWebObjectPlugin *>(instance(name));
     if (!plugin)
         return 0;
     QWebObjectPluginConnector *connector = new QWebObjectPluginConnector(frame);
@@ -91,8 +152,25 @@ QWebObjectPlugin::~QWebObjectPlugin()
 /*!
   \fn QStringList QWebObjectPlugin::keys() const
 
-  The keys are the mimetypes the plugin can handle
+  The keys should be unique names.
 */
+
+/*!
+  A description for \a key.
+*/
+QString QWebObjectPlugin::descriptionForKey(const QString &key) const
+{
+    return QString();
+}
+
+/*!
+  returns the mimetypes that can be handled by \a key.
+*/
+QStringList QWebObjectPlugin::mimetypesForKey(const QString &key) const
+{
+    return QStringList();
+}
+
 
 /*!
   \fn QStringList QWebObjectPlugin::extensionsForMimetype() const

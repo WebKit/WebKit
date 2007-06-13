@@ -26,6 +26,7 @@
 #include "qwebobjectpluginconnector.h"
 #include <qdebug.h>
 #include <qfile.h>
+#include <qurl.h>
 
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
@@ -185,7 +186,7 @@ void QWebNetworkJob::setResponse(const QHttpResponseHeader &response)
 */
 bool QWebNetworkJob::cancelled() const
 {
-    return !d->resourceHandle;
+    return !d->resourceHandle && !d->connector;
 }
 
 /*!
@@ -273,6 +274,7 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
     if (!job)
         return;
     job->d->resourceHandle = 0;
+    job->d->connector = 0;
     job->d->interface->cancelJob(job);
     handle->getInternal()->m_job = 0;
 }
@@ -292,7 +294,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
     DEBUG() << job->d->response.toString();
 
     QStringList cookies = job->d->response.allValues("Set-Cookie");
-    KURL url = job->d->resourceHandle->url();
+    KURL url(job->url().toString());
     foreach (QString c, cookies) {
         setCookies(url, url, c);
     }
@@ -401,14 +403,14 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
         job->d->resourceHandle->getInternal()->m_job = 0;
 
     if (client) {
-    if (errorCode) {
-        //FIXME: error setting error was removed from ResourceHandle
-        client->didFail(job->d->resourceHandle,
-                        ResourceError(job->d->url.host(), job->d->response.statusCode(),
-                                      job->d->url.toString(), String()));
-    } else {
-        client->didFinishLoading(job->d->resourceHandle);
-    }
+        if (errorCode) {
+            //FIXME: error setting error was removed from ResourceHandle
+            client->didFail(job->d->resourceHandle,
+                            ResourceError(job->d->url.host(), job->d->response.statusCode(),
+                                          job->d->url.toString(), String()));
+        } else {
+            client->didFinishLoading(job->d->resourceHandle);
+        }
     }
 
     if (job->d->connector)

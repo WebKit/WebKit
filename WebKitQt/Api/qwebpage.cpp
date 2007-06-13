@@ -26,6 +26,7 @@
 #include "qwebframe.h"
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
+#include "qwebnetworkinterface.h"
 #include "qwebpagehistory.h"
 #include "qwebpagehistory_p.h"
 #include "qwebsettings.h"
@@ -315,7 +316,10 @@ void QWebPage::setNetworkInterface(QWebNetworkInterface *interface)
 
 QWebNetworkInterface *QWebPage::networkInterface() const
 {
-    return d->networkInterface;
+    if (d->networkInterface)
+        return d->networkInterface;
+    else
+        return QWebNetworkInterface::defaultInterface();
 }
 
 void QWebPage::setSettings(const QWebSettings &settings)

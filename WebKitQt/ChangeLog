@@ -1,3 +1,36 @@
+2007-06-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Niko.
+
+        Parts of the patch done by Zack.
+        Fix up some parts in the implementation of QWebNetworkInterface
+        so it can be used by plugins.
+        Change the plugin API so we can actually get all the information
+        required by the JS bridge from them as well.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkJob::cancelled):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::finished):
+        * Api/qwebobjectplugin.cpp:
+        (QWebFactoryLoader::QWebFactoryLoader):
+        (QWebFactoryLoader::descriptionForName):
+        (QWebFactoryLoader::mimetypesForName):
+        (QWebFactoryLoader::mimeTypeForExtension):
+        (QWebFactoryLoader::extensions):
+        (QWebFactoryLoader::nameForMimetype):
+        (QWebFactoryLoader::create):
+        (QWebObjectPlugin::descriptionForKey):
+        (QWebObjectPlugin::mimetypesForKey):
+        * Api/qwebobjectplugin.h:
+        * Api/qwebobjectplugin_p.h:
+        (QWebFactoryLoader::names):
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::requestUrl):
+        * Api/qwebpage.cpp:
+        (QWebPage::networkInterface):
+
 2007-06-11  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

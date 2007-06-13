@@ -768,6 +768,7 @@ qt-port:SOURCES += \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScrollBarQt.cpp \
+    platform/qt/PlugInInfoStoreQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \

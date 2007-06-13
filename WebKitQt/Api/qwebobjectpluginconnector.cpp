@@ -50,9 +50,10 @@ QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkJob::Method met
 {
     if (target != Plugin)
         return 0;
-    
+
     QWebNetworkJob *job = new QWebNetworkJob;
     QWebNetworkJobPrivate *p = job->d;
+    p->interface = d->frame->page()->networkInterface();
     p->connector = this;
 
     QString m = (method == QWebNetworkJob::Get ? "GET" : "POST");
@@ -61,4 +62,3 @@ QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkJob::Method met
     d->frame->page()->networkInterface()->addJob(job);
     return job;
 }
-    

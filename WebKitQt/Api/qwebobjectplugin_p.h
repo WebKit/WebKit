@@ -18,21 +18,30 @@ public:
 
     static QWebFactoryLoader *self();
 
-    QStringList mimeTypes() { return keys(); }
-    QStringList extensions() { return m_extensions; }
+    QStringList names() const { return keys(); }
+    QStringList extensions() const;
+    QString descriptionForName(const QString &key) const;
+    QStringList mimetypesForName(const QString &key) const;
+    QString nameForMimetype(const QString &mimeType) const;
 
     QString mimeTypeForExtension(const QString &extension);
-    bool supportsMimeType(const QString &mimeType) { return keys().contains(mimeType); }
-    
+
     QObject *create(QWebFrame *frame,
-                    const QUrl &url, 
+                    const QUrl &url,
                     const QString &mimeType,
                     const QStringList &argumentNames,
                     const QStringList &argumentValues);
 
-private:
-    QStringList m_extensions;
-    QStringList m_mimeTypesForExtension;
+    struct MimeInfo {
+        QString type;
+        QStringList extensions;
+    };
+    struct Info {
+        QString name;
+        QString description;
+        QList<MimeInfo> mimes;
+    };
+    QList<Info> m_pluginInfo;
 };
 
 #endif
