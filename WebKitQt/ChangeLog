@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Moved QWebNetworkJob::Method enum into QWebNetworkRequest.
+
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::requestUrl):
+        * Api/qwebobjectpluginconnector.h:
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Rename QWebNetworkJob::request() into QWebNetworkJob::httpHeader() and added
 
         * Api/qwebnetworkinterface.cpp:

@@ -46,7 +46,7 @@ QWidget *QWebObjectPluginConnector::pluginParentWidget() const
     return d->frame->viewport();
 }
 
-QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkJob::Method method, const QUrl &url, Target target)
+QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkRequest::Method method, const QUrl &url, Target target)
 {
     if (target != Plugin)
         return 0;
@@ -56,7 +56,7 @@ QWebNetworkJob *QWebObjectPluginConnector::requestUrl(QWebNetworkJob::Method met
     p->interface = d->frame->page()->networkInterface();
     p->connector = this;
 
-    QString m = (method == QWebNetworkJob::Get ? "GET" : "POST");
+    QString m = (method == QWebNetworkRequest::Get ? "GET" : "POST");
     p->request.init(m, url);
 
     d->frame->page()->networkInterface()->addJob(job);
