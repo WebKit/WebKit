@@ -1,3 +1,25 @@
+2007-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5267992>
+        Make sure an alert doesn't allow loading to continue inside a script.
+        
+        Make sure to defer all loads where it's possible for a second main loop to be running.
+        
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runModal):
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+        Implement this.
+
 2007-06-13  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Rob.

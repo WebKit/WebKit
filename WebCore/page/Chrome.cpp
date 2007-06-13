@@ -33,6 +33,14 @@
 
 namespace WebCore {
 
+class PageGroupLoadDeferrer : Noncopyable {
+public:
+    PageGroupLoadDeferrer(Page*, bool deferSelf);
+    ~PageGroupLoadDeferrer();
+private:
+    Vector<Page*, 16> m_deferredPages;
+};
+
 Chrome::Chrome(Page* page, ChromeClient* client)
     : m_page(page)
     , m_client(client)
@@ -121,25 +129,10 @@ void Chrome::runModal() const
 
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
-    Vector<Page*> pagesToDefer;
-    if (const HashSet<Page*>* group = m_page->frameNamespace()) {
-        HashSet<Page*>::const_iterator end = group->end();
-        for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
-            Page* otherPage = *it;
-            if (otherPage != m_page && !otherPage->defersLoading())
-                pagesToDefer.append(otherPage);
-        }
-    }
-    size_t count = pagesToDefer.size();
-    for (size_t i = 0; i < count; ++i)
-        pagesToDefer[i]->setDefersLoading(true);
+    PageGroupLoadDeferrer deferrer(m_page, false);
 
     // Go run the modal event loop.
     m_client->runModal();
-    
-    // Restore loading for any views that we shut down.
-    for (size_t i = 0; i < count; ++i)
-        pagesToDefer[i]->setDefersLoading(false);
 }
 
 void Chrome::setToolbarsVisible(bool b) const
@@ -200,6 +193,10 @@ bool Chrome::canRunBeforeUnloadConfirmPanel()
 
 bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
     return m_client->runBeforeUnloadConfirmPanel(message, frame);
 }
 
@@ -210,14 +207,23 @@ void Chrome::closeWindowSoon()
 
 void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 {
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
     ASSERT(frame);
     String text = message;
     text.replace('\\', frame->backslashAsCurrencySymbol());
+
     m_client->runJavaScriptAlert(frame, text);
 }
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 {
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
     ASSERT(frame);
     String text = message;
     text.replace('\\', frame->backslashAsCurrencySymbol());
@@ -227,6 +233,10 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
 {
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
     ASSERT(frame);
     String promptText = prompt;
     promptText.replace('\\', frame->backslashAsCurrencySymbol());
@@ -252,6 +262,10 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
 
 bool Chrome::shouldInterruptJavaScript()
 {
+    // Defer loads in case the client method runs a new event loop that would 
+    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
+    PageGroupLoadDeferrer deferrer(m_page, true);
+
     return m_client->shouldInterruptJavaScript();
 }
 
@@ -273,6 +287,28 @@ void Chrome::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, c
 void Chrome::updateBackingStore()
 {
     m_client->updateBackingStore();
+}
+
+PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
+{
+    if (const HashSet<Page*>* group = page->frameNamespace()) {
+        HashSet<Page*>::const_iterator end = group->end();
+        for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
+            Page* otherPage = *it;
+            if ((deferSelf || otherPage != page) && !otherPage->defersLoading())
+                m_deferredPages.append(otherPage);
+        }
+    }
+    size_t count = m_deferredPages.size();
+    for (size_t i = 0; i < count; ++i)
+        m_deferredPages[i]->setDefersLoading(true);
+}
+
+PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
+{
+    size_t count = m_deferredPages.size();
+    for (size_t i = 0; i < count; ++i)
+        m_deferredPages[i]->setDefersLoading(false);
 }
 
 } // namespace WebCore

@@ -399,4 +399,12 @@ void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
     allowsAnyHTTPSCertificateHosts().add(host.lower());
 }
 
+void ResourceHandle::setDefersLoading(bool defers)
+{
+    if (defers)
+        CFURLConnectionHalt(d->m_connection.get());
+    else
+        CFURLConnectionResume(d->m_connection.get());
+}
+
 } // namespace WebCore
