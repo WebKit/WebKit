@@ -4,7 +4,29 @@
 #include <qglobal.h>
 #include <qwebobjectplugin.h>
 
-#include <private/qfactoryloader_p.h>
+/*
+  FIXME: This is copied from qfactoryloader_p.h.
+  Remove this once we made qfactoryloader public in Qt
+*/
+class QFactoryLoaderPrivate;
+
+class Q_CORE_EXPORT QFactoryLoader : public QObject
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QFactoryLoader)
+
+public:
+    QFactoryLoader(const char *iid,
+                   const QStringList &paths = QStringList(),
+                   const QString &suffix = QString(),
+                   Qt::CaseSensitivity = Qt::CaseSensitive);
+    ~QFactoryLoader();
+
+    QStringList keys() const;
+    QObject *instance(const QString &key) const;
+
+};
+
 class QWebFrame;
 
 class QWebFactoryLoader : public QFactoryLoader
@@ -23,6 +45,9 @@ public:
     QString descriptionForName(const QString &key) const;
     QStringList mimetypesForName(const QString &key) const;
     QString nameForMimetype(const QString &mimeType) const;
+    inline bool supportsMimeType(const QString &mimeType) const {
+        return !nameForMimetype(mimeType).isEmpty();
+    }
 
     QString mimeTypeForExtension(const QString &extension);
 

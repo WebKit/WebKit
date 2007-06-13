@@ -2,6 +2,16 @@
 
         Reviewed by Niko.
 
+        Fix compilation, and remove dependency on Qt
+        private header.
+
+        * Api/qwebobjectplugin_p.h:
+        (QWebFactoryLoader::supportsMimeType):
+
+2007-06-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Niko.
+
         Parts of the patch done by Zack.
         Fix up some parts in the implementation of QWebNetworkInterface
         so it can be used by plugins.

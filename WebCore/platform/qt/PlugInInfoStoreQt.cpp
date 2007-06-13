@@ -56,7 +56,7 @@ unsigned PlugInInfoStore::pluginCount() const
 
 bool PlugInInfoStore::supportsMIMEType(const WebCore::String& string)
 {
-    bool supports = !QWebFactoryLoader::self()->nameForMimetype(string).isEmpty();
+    bool supports = QWebFactoryLoader::self()->supportsMimeType(string);
     //qDebug() << ">>>>>>>>>>> PlugInInfoStore::supportsMIMEType(" << string << ") =" << supports;
     return supports;
 }

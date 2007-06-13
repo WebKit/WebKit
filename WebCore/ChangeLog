@@ -1,5 +1,14 @@
 2007-06-13  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Niko.
+
+        Small cleanup
+
+        * platform/qt/PlugInInfoStoreQt.cpp:
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+
+2007-06-13  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Niko
 
         Implement the parts required for the JS bridge
