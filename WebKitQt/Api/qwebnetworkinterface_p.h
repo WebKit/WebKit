@@ -36,7 +36,7 @@ namespace WebCore {
     class ResourceHandle;
 }
 
-struct QWebNetworkRequest
+struct QWebNetworkRequestPrivate
 {
     QUrl url;
     QHttpRequestHeader httpHeader;
@@ -59,7 +59,7 @@ public:
         {}
     int ref;
 
-    QWebNetworkRequest request;
+    QWebNetworkRequestPrivate request;
     QHttpResponseHeader response;
 
     WebCore::ResourceHandle *resourceHandle;

@@ -37,6 +37,28 @@ namespace WebCore {
     class WebCoreHttp;
 }
 
+struct QWebNetworkRequestPrivate;
+class QWEBKIT_EXPORT QWebNetworkRequest
+{
+public:
+    QWebNetworkRequest();
+    QWebNetworkRequest(const QWebNetworkRequest &other);
+    QWebNetworkRequest &operator=(const QWebNetworkRequest &other);
+    ~QWebNetworkRequest();
+
+    QUrl url() const;
+    void setUrl(const QUrl &url);
+
+    QHttpRequestHeader httpHeader() const;
+    void setHttpHeader(const QHttpRequestHeader &header) const;
+
+    QByteArray postData() const;
+    void setPostData(const QByteArray &data);
+
+private:
+    QWebNetworkRequestPrivate *d;
+};
+
 class QWEBKIT_EXPORT QWebNetworkJob
 {
 public:

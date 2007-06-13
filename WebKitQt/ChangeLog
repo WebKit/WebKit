@@ -2,6 +2,19 @@
 
         Reviewed by Lars.
 
+        Introduce QWebNetworkRequest in the public API.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequestPrivate::init):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed QWebNetworkJobPrivate to aggregate a QWebNetworkRequest instead of inheriting from it.
 
         * Api/qwebnetworkinterface.cpp:

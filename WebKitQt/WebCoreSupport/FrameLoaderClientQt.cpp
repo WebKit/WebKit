@@ -811,7 +811,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
     Q_ASSERT(!m_policyFunction);
     m_policyFunction = function;
     if (m_webFrame) {
-        QWebNetworkRequest r;
+        QWebNetworkRequestPrivate r;
         r.init(request);
         QWebPage *page = m_webFrame->page();
 

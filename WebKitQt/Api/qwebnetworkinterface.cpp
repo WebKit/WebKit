@@ -57,14 +57,14 @@ static bool operator==(const HostInfo &i1, const HostInfo &i2)
     return i1.port == i2.port && i1.host == i2.host;
 }
 
-void QWebNetworkRequest::init(const WebCore::ResourceRequest &resourceRequest)
+void QWebNetworkRequestPrivate::init(const WebCore::ResourceRequest &resourceRequest)
 {
     KURL url = resourceRequest.url();
     QUrl qurl = QString(url.url());
     init(resourceRequest.httpMethod(), qurl, &resourceRequest);
 }
 
-void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest)
+void QWebNetworkRequestPrivate::init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest)
 {
     httpHeader = QHttpRequestHeader(method, url.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
     httpHeader.setValue(QLatin1String("User-Agent"),
@@ -95,7 +95,7 @@ void QWebNetworkRequest::init(const QString &method, const QUrl &url, const WebC
     }
 }
 
-void QWebNetworkRequest::setURL(const QUrl &u)
+void QWebNetworkRequestPrivate::setURL(const QUrl &u)
 {
     url = u;
     int port = url.port();
@@ -103,6 +103,57 @@ void QWebNetworkRequest::setURL(const QUrl &u)
         httpHeader.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
     else
         httpHeader.setValue(QLatin1String("Host"), url.host());
+}
+
+QWebNetworkRequest::QWebNetworkRequest()
+    : d(new QWebNetworkRequestPrivate)
+{
+}
+
+QWebNetworkRequest::QWebNetworkRequest(const QWebNetworkRequest &other)
+    : d(new QWebNetworkRequestPrivate(*other.d))
+{
+}
+
+QWebNetworkRequest &QWebNetworkRequest::operator=(const QWebNetworkRequest &other)
+{
+    *d = *other.d;
+    return *this;
+}
+
+QWebNetworkRequest::~QWebNetworkRequest()
+{
+    delete d;
+}
+
+QUrl QWebNetworkRequest::url() const
+{
+    return d->url;
+}
+
+void QWebNetworkRequest::setUrl(const QUrl &url)
+{
+    d->setURL(url);
+}
+
+QHttpRequestHeader QWebNetworkRequest::httpHeader() const
+{
+    return d->httpHeader;
+}
+
+void QWebNetworkRequest::setHttpHeader(const QHttpRequestHeader &header) const
+{
+    d->httpHeader = header;
+}
+
+QByteArray QWebNetworkRequest::postData() const
+{
+    return d->postData;
+}
+
+void QWebNetworkRequest::setPostData(const QByteArray &data)
+{
+    d->postData = data;
 }
 
 /*!
