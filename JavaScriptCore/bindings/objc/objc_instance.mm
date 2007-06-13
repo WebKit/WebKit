@@ -97,11 +97,11 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
 
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
-    assert(methodList.length() == 1);
+    assert(methodList.size() == 1);
 
 @try {
     ObjcMethod* method = 0;
-    method = static_cast<ObjcMethod*>(methodList.methodAt(0));
+    method = static_cast<ObjcMethod*>(methodList[0]);
     NSMethodSignature* signature = method->getMethodSignature();
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2

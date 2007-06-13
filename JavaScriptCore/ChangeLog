@@ -1,5 +1,34 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver.
+        
+        Get rid of the MethodList class and use a good ol' Vector instead.
+
+        * bindings/c/c_class.cpp:
+        (KJS::Bindings::CClass::methodsNamed):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::callAsFunction):
+        * bindings/runtime.cpp:
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::lengthGetter):
+        (RuntimeMethod::callAsFunction):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::getOwnPropertySlot):
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         Make RuntimeMethod's method list a pointer so that the object size doesn't

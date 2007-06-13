@@ -104,8 +104,9 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
             MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
-            if (methodList.length() > 0) {
+            if (methodList.size() > 0) {
                 slot.setCustom(this, methodGetter);
+                
                 instance->end();
                 return true;
             }

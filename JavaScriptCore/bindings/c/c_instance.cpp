@@ -77,9 +77,9 @@ JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, 
 {
     // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
-    assert(methodList.length() == 1);
+    assert(methodList.size() == 1);
 
-    CMethod* method = static_cast<CMethod*>(methodList.methodAt(0));
+    CMethod* method = static_cast<CMethod*>(methodList[0]);
 
     NPIdentifier ident = _NPN_GetStringIdentifier(method->name());
     if (!_object->_class->hasMethod(_object, ident))

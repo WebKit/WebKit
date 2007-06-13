@@ -77,7 +77,7 @@ JavaClass::JavaClass(jobject anInstance)
                 _methods.set(Identifier(aMethod->name()).ustring().rep(), methodList);
             }
         }
-        methodList->addMethod(aMethod);
+        methodList->append(aMethod);
         env->DeleteLocalRef(aJMethod);
     }    
 }
@@ -93,9 +93,7 @@ JavaClass::~JavaClass() {
     MethodListMap::const_iterator end = _methods.end();
     for (MethodListMap::const_iterator it = _methods.begin(); it != end; ++it) {
         const MethodList* methodList = it->second;
-        int length = methodList->length();
-        for (int i = 0; i < length; i++)
-            delete methodList->methodAt(i);    
+        deleteAllValues(*methodList);
         delete methodList;
     }
     _methods.clear();

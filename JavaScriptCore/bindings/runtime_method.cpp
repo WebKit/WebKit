@@ -53,7 +53,7 @@ JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, c
     // Java does.
     // FIXME: a better solution might be to give the maximum number of parameters
     // of any method
-    return jsNumber(thisObj->_methodList->methodAt(0)->numParameters());
+    return jsNumber(thisObj->_methodList->at(0)->numParameters());
 }
 
 bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
@@ -68,30 +68,29 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& proper
 
 JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-    if (_methodList->length() > 0) {
-        RuntimeObjectImp *imp = 0;
+    if (_methodList->isEmpty())
+        return jsUndefined();
+    
+    RuntimeObjectImp *imp = 0;
 
-        if (thisObj->classInfo() == &KJS::RuntimeObjectImp::info) {
-            imp = static_cast<RuntimeObjectImp*>(thisObj);
-        } else {
-            // If thisObj is the DOM object for a plugin, get the corresponding
-            // runtime object from the DOM object.
-            JSValue* value = thisObj->get(exec, "__apple_runtime_object");
-            if (value->isObject(&KJS::RuntimeObjectImp::info))    
-                imp = static_cast<RuntimeObjectImp*>(value);
-        }
-
-        if (!imp)
-            return throwError(exec, TypeError);
-
-        Instance *instance = imp->getInternalInstance();
-        instance->begin();
-        JSValue *aValue = instance->invokeMethod(exec, *_methodList, args);
-        instance->end();
-        return aValue;
+    if (thisObj->classInfo() == &KJS::RuntimeObjectImp::info) {
+        imp = static_cast<RuntimeObjectImp*>(thisObj);
+    } else {
+        // If thisObj is the DOM object for a plugin, get the corresponding
+        // runtime object from the DOM object.
+        JSValue* value = thisObj->get(exec, "__apple_runtime_object");
+        if (value->isObject(&KJS::RuntimeObjectImp::info))    
+            imp = static_cast<RuntimeObjectImp*>(value);
     }
 
-    return jsUndefined();
+    if (!imp)
+        return throwError(exec, TypeError);
+
+    Instance *instance = imp->getInternalInstance();
+    instance->begin();
+    JSValue *aValue = instance->invokeMethod(exec, *_methodList, args);
+    instance->end();
+    return aValue;
 }
 
 CodeType RuntimeMethod::codeType() const

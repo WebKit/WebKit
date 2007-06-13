@@ -77,7 +77,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
 
     Method* method = _methods.get(identifier.ustring().rep());
     if (method) {
-        methodList.addMethod(method);
+        methodList.append(method);
         return methodList;
     }
 
@@ -90,7 +90,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
             JSLock lock;
             _methods.set(identifier.ustring().rep(), aMethod);
         }
-        methodList.addMethod(aMethod);
+        methodList.append(aMethod);
     }
     
     return methodList;

@@ -95,12 +95,12 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
     RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer, kCFStringEncodingASCII));
     Method* method = (Method*)CFDictionaryGetValue(_methods.get(), methodName.get());
     if (method) {
-        methodList.addMethod(method);
+        methodList.append(method);
         return methodList;
     }
 
     ClassStructPtr thisClass = _isa;
-    while (thisClass && methodList.length() < 1) {
+    while (thisClass && methodList.isEmpty()) {
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
         unsigned numMethodsInClass = 0;
         MethodStructPtr* objcMethodList = class_copyMethodList(thisClass, &numMethodsInClass);
@@ -135,7 +135,7 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
                 if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer) == 0) {
                     Method* aMethod = new ObjcMethod(thisClass, objcMethodSelectorName); // deleted when the dictionary is destroyed
                     CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
-                    methodList.addMethod(aMethod);
+                    methodList.append(aMethod);
                     break;
                 }
             }

@@ -30,6 +30,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace KJS  {
 
@@ -46,6 +47,8 @@ class RootObject;
 // For now just use Java style type descriptors.
 typedef const char * RuntimeType;
 
+typedef Vector<Method*> MethodList;
+
 class Field
 {
 public:
@@ -56,25 +59,6 @@ public:
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const = 0;
 
     virtual ~Field() {}
-};
-
-class MethodList
-{
-public:
-    MethodList() : _methods(0), _length(0) {}
-    
-    void addMethod(Method*);
-    unsigned int length() const;
-    Method* methodAt(unsigned int index) const;
-    
-    ~MethodList();
-    
-    MethodList(const MethodList&);
-    MethodList& operator=(const MethodList&);
-
-private:
-    Method **_methods;
-    unsigned int _length;
 };
 
 class Method : Noncopyable
