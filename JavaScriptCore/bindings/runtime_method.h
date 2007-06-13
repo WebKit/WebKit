@@ -51,7 +51,7 @@ public:
 private:
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
-    Bindings::MethodList _methodList;
+    OwnPtr<Bindings::MethodList> _methodList;
 };
 
 } // namespace KJS

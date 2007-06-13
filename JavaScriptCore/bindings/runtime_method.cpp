@@ -35,8 +35,8 @@ using namespace KJS;
 
 RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings::MethodList &m) 
     : InternalFunctionImp (static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), ident)
+    , _methodList(new MethodList(m))
 {
-    _methodList = m;
 }
 
 RuntimeMethod::~RuntimeMethod()
@@ -53,7 +53,7 @@ JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, c
     // Java does.
     // FIXME: a better solution might be to give the maximum number of parameters
     // of any method
-    return jsNumber(thisObj->_methodList.methodAt(0)->numParameters());
+    return jsNumber(thisObj->_methodList->methodAt(0)->numParameters());
 }
 
 bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
@@ -68,7 +68,7 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& proper
 
 JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-    if (_methodList.length() > 0) {
+    if (_methodList->length() > 0) {
         RuntimeObjectImp *imp = 0;
 
         if (thisObj->classInfo() == &KJS::RuntimeObjectImp::info) {
@@ -86,7 +86,7 @@ JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const
 
         Instance *instance = imp->getInternalInstance();
         instance->begin();
-        JSValue *aValue = instance->invokeMethod(exec, _methodList, args);
+        JSValue *aValue = instance->invokeMethod(exec, *_methodList, args);
         instance->end();
         return aValue;
     }

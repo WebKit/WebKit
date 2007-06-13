@@ -2,6 +2,19 @@
 
         Reviewed by Geoff.
 
+        Make RuntimeMethod's method list a pointer so that the object size doesn't
+        grow beyond 32 bytes when we later will replace MethodList with a Vector.
+        
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::RuntimeMethod):
+        (RuntimeMethod::lengthGetter):
+        (RuntimeMethod::callAsFunction):
+        * bindings/runtime_method.h:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
         Get rid of the Parameter class.
         
         * bindings/jni/jni_instance.cpp:
