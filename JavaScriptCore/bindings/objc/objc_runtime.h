@@ -31,7 +31,7 @@
 #include <JavaScriptCore/object.h>
 #include <JavaScriptCore/runtime.h>
 
-#include <WTF/RetainPtr.h>
+#include <wtf/RetainPtr.h>
 
 namespace KJS {
 namespace Bindings {
