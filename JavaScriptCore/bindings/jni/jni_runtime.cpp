@@ -245,23 +245,6 @@ void JavaField::setValueToInstance(ExecState *exec, const Instance *i, JSValue *
     }
 }
 
-JavaConstructor::JavaConstructor (JNIEnv *env, jobject aConstructor)
-{
-    // Get parameters
-    jarray jparameters = (jarray)callJNIObjectMethod (aConstructor, "getParameterTypes", "()[Ljava/lang/Class;");
-    _numParameters = env->GetArrayLength (jparameters);
-    _parameters = new JavaParameter[_numParameters];
-    
-    int i;
-    for (i = 0; i < _numParameters; i++) {
-        jobject aParameter = env->GetObjectArrayElement ((jobjectArray)jparameters, i);
-        jstring parameterName = (jstring)callJNIObjectMethod (aParameter, "getName", "()Ljava/lang/String;");
-        _parameters[i] = JavaParameter(env, parameterName);
-        env->DeleteLocalRef (aParameter);
-        env->DeleteLocalRef (parameterName);
-    }
-}
-
 JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
 {
     // Get return type

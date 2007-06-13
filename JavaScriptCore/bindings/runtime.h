@@ -54,18 +54,6 @@ public:
     virtual ~Parameter() {}
 };
 
-// FIXME:  Constructor should be removed from abstract runtime classes
-// unless we want to support instantiation of runtime objects from
-// JavaScript.
-class Constructor
-{
-public:
-    virtual Parameter* parameterAt(int i) const = 0;
-    virtual int numParameters() const = 0;
-
-    virtual ~Constructor() {}
-};
-
 class Field
 {
 public:
@@ -113,9 +101,6 @@ public:
     virtual const char *name() const = 0;
     
     virtual MethodList methodsNamed(const Identifier&, Instance*) const = 0;
-    
-    virtual Constructor *constructorAt(int i) const = 0;
-    virtual int numConstructors() const = 0;
     
     virtual Field *fieldNamed(const Identifier&, Instance*) const = 0;
 

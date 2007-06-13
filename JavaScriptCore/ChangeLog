@@ -2,6 +2,22 @@
 
         Reviewed by Geoff.
 
+        Get rid of Constructor and its only subclass JavaConstructor.
+        
+        * bindings/c/c_class.h:
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_runtime.cpp:
+        * bindings/jni/jni_runtime.h:
+        * bindings/objc/objc_class.h:
+        * bindings/runtime.h:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
         Use RetainPtr throughout the bindings code.
         
         * bindings/objc/objc_class.h:

@@ -91,26 +91,7 @@ public:
     JavaParameter () : _JNIType(invalid_type) {};
     
     JavaParameter (JNIEnv *env, jstring type);
-        
-    ~JavaParameter() {
-    };
 
-    JavaParameter(const JavaParameter &other) : Parameter() {
-        _type = other._type;
-        _JNIType = other._JNIType;
-    };
-
-    JavaParameter &operator=(const JavaParameter &other)
-    {
-        if (this == &other)
-            return *this;
-                    
-        _type = other._type;
-        _JNIType = other._JNIType;
-
-        return *this;
-    }
-    
     virtual RuntimeType type() const { return _type.UTF8String(); }
 
     JNIType getJNIType() const { return _JNIType; }
@@ -121,72 +102,12 @@ private:
 };
 
 
-class JavaConstructor : public Constructor
-{
-public:
-    JavaConstructor() : _parameters (0), _numParameters(0) {};
-    
-    JavaConstructor (JNIEnv *e, jobject aConstructor);
-    
-    ~JavaConstructor() {
-        delete [] _parameters;
-    };
-
-    void _commonCopy(const JavaConstructor &other) {
-        _numParameters = other._numParameters;
-        _parameters = new JavaParameter[_numParameters];
-        int i;
-        for (i = 0; i < _numParameters; i++) {
-            _parameters[i] = other._parameters[i];
-        }
-    }
-    
-    JavaConstructor(const JavaConstructor &other) : Constructor() {
-        _commonCopy (other);
-    };
-
-    JavaConstructor &operator=(const JavaConstructor &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        delete [] _parameters;
-        
-        _commonCopy (other);
-
-        return *this;
-    }
-
-    virtual Parameter *parameterAt(int i) const { return &_parameters[i]; };
-    virtual int numParameters() const { return _numParameters; };
-    
-private:
-    JavaParameter *_parameters;
-    int _numParameters;
-};
-
-
 class JavaField : public Field
 {
 public:
     JavaField() : _field(0) {};
     JavaField (JNIEnv *env, jobject aField);
 
-    JavaField(const JavaField &other) : 
-        Field(), _name(other._name), _type(other._type) {};
-
-    JavaField &operator=(const JavaField &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        _name = other._name;
-        _type = other._type;
-        _field = other._field;
-
-        return *this;
-    }
-    
     virtual JSValue *valueFromInstance(ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const;
     

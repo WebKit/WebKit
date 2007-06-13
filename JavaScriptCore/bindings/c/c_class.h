@@ -45,9 +45,6 @@ public:
     virtual MethodList methodsNamed(const Identifier&, Instance*) const;
     virtual Field* fieldNamed(const Identifier&, Instance*) const;
 
-    virtual Constructor* constructorAt(int) const { return 0; }
-    virtual int numConstructors() const { return 0; }
-
 private:
     NPClass* _isa;
     mutable MethodMap _methods;
