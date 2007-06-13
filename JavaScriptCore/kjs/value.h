@@ -54,7 +54,7 @@ struct ClassInfo;
  * only (all of which are provided internally by KJS). Instead, inherit from
  * JSObject.
  */
-class JSValue {
+class JSValue : Noncopyable {
     friend class JSCell; // so it can derive from this class
     friend class Collector; // so it can call asCell()
 

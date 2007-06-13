@@ -33,7 +33,7 @@
 
 namespace KJS {
 
-class RuntimeObjectImp : public JSObject, Noncopyable {
+class RuntimeObjectImp : public JSObject {
 public:
     RuntimeObjectImp(Bindings::Instance *i);
 

@@ -1,5 +1,15 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej.
+
+        Have JSCell inherit from Noncopyable.
+        
+        * bindings/objc/objc_runtime.h:
+        * bindings/runtime_object.h:
+        * kjs/value.h:
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin and Maciej.
 
         More cleanup. Use our Noncopyable WTF class, add a root object member
