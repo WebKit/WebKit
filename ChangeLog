@@ -1,3 +1,9 @@
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        * WebKit.pri: WebKitQt is now called QtWebKit.
+
 2007-05-31  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Eric Seidel.

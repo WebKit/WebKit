@@ -5,7 +5,7 @@ isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/WebKitBuild/Release
 
 !gdk-port:CONFIG += qt-port
 qt-port:DEFINES += BUILDING_QT__=1
-qt-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitQt
+qt-port:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
 gdk-port:CONFIG += link_pkgconfig
 gdk-port:PKGCONFIG += cairo gdk-2.0 gtk+-2.0 libcurl
 gdk-port:DEFINES += BUILDING_GDK__=1 BUILDING_CAIRO__
