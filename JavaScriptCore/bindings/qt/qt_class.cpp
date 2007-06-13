@@ -79,7 +79,7 @@ MethodList QtClass::methodsNamed(const Identifier& identifier, Instance*) const
         signature.truncate(signature.indexOf('('));
         if (signature == name) {
             Method* method = new QtMethod(metaObject, i, signature, m.parameterTypes().size()); 
-            methodList.addMethod(method);
+            methodList.append(method);
             break;
         }
     }

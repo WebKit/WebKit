@@ -87,7 +87,7 @@ JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList,
     // ### Should we support overloading methods?
     ASSERT(methodList.length() == 1);
 
-    QtMethod* method = static_cast<QtMethod*>(methodList.methodAt(0));
+    QtMethod* method = static_cast<QtMethod*>(methodList[0]);
 
     if (method->metaObject != _object->metaObject()) 
         return jsUndefined();

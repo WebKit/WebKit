@@ -1,5 +1,14 @@
 2007-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * bindings/qt/qt_class.cpp:
+        (KJS::Bindings::QtClass::methodsNamed):
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::invokeMethod):
+
+2007-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Oliver.
         
         Get rid of the MethodList class and use a good ol' Vector instead.
