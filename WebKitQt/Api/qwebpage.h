@@ -32,7 +32,6 @@
 class QWebFrame;
 class QUndoStack;
 class QUrl;
-class QHttpRequestHeader;
 class QWebNetworkRequest;
 
 class QWebPagePrivate;
@@ -63,7 +62,7 @@ public:
 
 
     void open(const QUrl &url);
-    void open(const QUrl &url, const QHttpRequestHeader &httpHeader, const QByteArray &postData);
+    void open(const QWebNetworkRequest &request);
 
     QWebFrame *mainFrame() const;
 

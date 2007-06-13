@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Changed the QWebPage::open(const QUrl &url, const QHttpRequestHeader &httpHeader, const QByteArray &postData)
+        overload to take a QWebNetworkRequest instead.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::open):
+        * Api/qwebpage.h:
+
+2007-06-13  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         In QWebPage::open(const QUrl &, const QHttpRequestHeader &, ...) don't make the population
         of the WebCore::ResourceRequest depend on the validity of the QHttpRequestHeader but just
         pick the individual fields if we can use them.

@@ -131,12 +131,19 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
 
 void QWebPage::open(const QUrl &url)
 {
-    open(url, QHttpRequestHeader(), QByteArray());
+    QWebNetworkRequest request;
+    request.setUrl(url);
+    open(request);
 }
 
-void QWebPage::open(const QUrl &url, const QHttpRequestHeader &httpHeader, const QByteArray &postData)
+void QWebPage::open(const QWebNetworkRequest &req)
 {
     d->insideOpenCall = true;
+
+    QUrl url = req.url();
+    QHttpRequestHeader httpHeader = req.httpHeader();
+    QByteArray postData = req.postData();
+
     WebCore::ResourceRequest request(KURL(url.toString()));
 
     QString method = httpHeader.method();
