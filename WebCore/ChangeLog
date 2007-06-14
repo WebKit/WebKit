@@ -1,3 +1,20 @@
+2007-06-14  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for Bugzilla bug 14806, missing text for bold/italic fonts in non-English Windows installs.
+        
+        This patch adds an additional step after the lookup by full name fails.  It will then look up
+        a PostScript name in a (localized full name) -> (PostScript name) cache.  If the name is not
+        found, then the font's name table is obtained and searched for a PostScript name (and the
+        result is cached).
+        
+        If lookup on PostScript name fails too, then we now properly fall back to the next font in the
+        list (so text should never be missing).
+
+        Reviewed by Darin (thoroughly reviewed, super reviewed even)
+
+        * platform/win/FontCacheWin.cpp:
+        * platform/win/FontPlatformDataWin.cpp:
+
 2007-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

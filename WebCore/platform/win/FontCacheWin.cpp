@@ -158,8 +158,18 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         return 0;
     }
     
-    return new FontPlatformData(hfont, fontDescription.computedPixelSize(),
-        fontDescription.bold(), fontDescription.italic());
+    FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(),
+                                                    fontDescription.bold(), fontDescription.italic());
+    if (!result->cgFont()) {
+        // The creation of the CGFontRef failed for some reason.  We already asserted in debug builds, but to make
+        // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next
+        // font.
+        delete result;
+        DeleteObject(hfont);
+        return 0;
+    }        
+
+    return result;
 }
 
 }
