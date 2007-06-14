@@ -1,5 +1,6 @@
 # -*- Mode:makefile -*-
 # WebCore - qmake build info
+CONFIG += building-libs
 include($$PWD/../WebKit.pri)
 qt-port:LIBS -= -lWebKitQt
 gdk-port:LIBS -= -lWebKitGdk
