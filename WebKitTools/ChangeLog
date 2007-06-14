@@ -1,3 +1,14 @@
+2007-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady.
+
+        Update set of files to download for cygwin to include
+        diffutils and regenerate the zip file.  This should fix
+        an issue on vista where svn-create-patch doesn't work.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2007-06-14  Mark Rowe  <mrowe@apple.com>
 
         Update script to match new nightly.webkit.org infrastructure.
