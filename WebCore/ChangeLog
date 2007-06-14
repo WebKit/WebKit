@@ -1,3 +1,17 @@
+2007-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - fix <rdar://problem/5264923> Safari frequently "stalls" beneath
+          +[NSFont fontWithName:size:] while loading a web page (searching on disk for the font)
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:size:]): Renamed from fontWithFamily.
+        Took out the auto-activation code.
+        (+[WebFontCache fontWithFamily:traits:size:]): Added. Calls internalFontWithFamily,
+        then calls NSFont to trigger activation if that returned nil, then calls
+        internalFontWithFamily again.
+
 2007-06-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
