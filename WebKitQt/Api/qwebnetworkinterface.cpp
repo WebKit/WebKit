@@ -454,12 +454,17 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         QString location = job->d->response.value("location");
         DEBUG() << "Redirection";
         if (!location.isEmpty()) {
-            ResourceRequest newRequest = job->d->resourceHandle->request();
-            newRequest.setURL(KURL(newRequest.url(), DeprecatedString(location)));
-            if (client)
-                client->willSendRequest(job->d->resourceHandle, newRequest, response);
-            job->d->request.httpHeader.setRequest(job->d->request.httpHeader.method(), newRequest.url().path() + newRequest.url().query());
-            job->d->request.setURL(QString(newRequest.url().url()));
+            QUrl newUrl = job->d->request.url.resolved(location);
+            if (job->d->resourceHandle) {
+                ResourceRequest newRequest = job->d->resourceHandle->request();
+                newRequest.setURL(KURL(newUrl.toString()));
+                if (client)
+                    client->willSendRequest(job->d->resourceHandle, newRequest, response);
+            }
+            
+            job->d->request.httpHeader.setRequest(job->d->request.httpHeader.method(),
+                                                  newUrl.toEncoded(QUrl::RemoveScheme|QUrl::RemoveAuthority));
+            job->d->request.setURL(newUrl);
             job->d->redirected = true;
             return;
         }

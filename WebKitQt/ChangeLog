@@ -1,5 +1,15 @@
 2007-06-14  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by George
+
+        Fix a crash when a request from the plugin resulted
+        in a HTTP redirect.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+
+2007-06-14  Lars Knoll <lars@trolltech.com>
+
         Reviewed by George.
 
         Work around a bug in Qt's QHttp implementation and
