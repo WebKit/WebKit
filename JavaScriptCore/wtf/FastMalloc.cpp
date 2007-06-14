@@ -70,12 +70,10 @@
 #include <pthread.h>
 #endif
 
-#ifndef USE_SYSTEM_MALLOC
-#ifndef NDEBUG
-#define USE_SYSTEM_MALLOC 1
+#if !defined(USE_SYSTEM_MALLOC) && defined(NDEBUG)
+#define FORCE_SYSTEM_MALLOC 0
 #else
-#define USE_SYSTEM_MALLOC 0
-#endif
+#define FORCE_SYSTEM_MALLOC 1
 #endif
 
 #ifndef NDEBUG
@@ -129,7 +127,7 @@ void fastMallocAllow()
 } // namespace WTF
 #endif // NDEBUG
 
-#if USE_SYSTEM_MALLOC
+#if FORCE_SYSTEM_MALLOC
 
 #include <stdlib.h>
 #if !PLATFORM(WIN_OS)

@@ -197,4 +197,8 @@
 #define WTF_USE_CURL 1
 #endif
 
+#if PLATFORM(QT)
+#define USE_SYSTEM_MALLOC 1
+#endif
+
 #endif /* WTF_Platform_h */

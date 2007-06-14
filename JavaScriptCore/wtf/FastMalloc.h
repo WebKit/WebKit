@@ -61,10 +61,12 @@ using WTF::fastMallocAllow;
 
 #ifndef _CRTDBG_MAP_ALLOC
 
+#if !(USE_SYSTEM_MALLOC)
 WTF_PRIVATE_INLINE void* operator new(size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
+#endif
 
 #endif // _CRTDBG_MAP_ALLOC
 

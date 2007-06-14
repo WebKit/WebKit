@@ -1,3 +1,15 @@
+2007-06-14  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej.
+
+        Disable FastMalloc for the Qt build and make sure we
+        don't reimplement the global new/delete operators
+        when using the system malloc.
+
+        * wtf/FastMalloc.cpp:
+        * wtf/FastMalloc.h:
+        * wtf/Platform.h:
+
 2007-06-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
