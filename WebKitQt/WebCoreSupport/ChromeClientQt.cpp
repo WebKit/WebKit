@@ -29,8 +29,10 @@
 #include "ChromeClientQt.h"
 
 #include "Frame.h"
-#include "FrameView.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClientQt.h"
+#include "FrameView.h"
 #include "NotImplemented.h"
 
 #include "qwebpage.h"
@@ -222,14 +224,12 @@ void ChromeClientQt::chromeDestroyed()
 
 bool ChromeClientQt::canRunBeforeUnloadConfirmPanel()
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool ChromeClientQt::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
-    notImplemented();
-    return false;
+    return runJavaScriptConfirm(frame, message);
 }
 
 void ChromeClientQt::closeWindowSoon()
@@ -237,27 +237,33 @@ void ChromeClientQt::closeWindowSoon()
     notImplemented();
 }
 
-void ChromeClientQt::runJavaScriptAlert(Frame*, const String& msg)
+void ChromeClientQt::runJavaScriptAlert(Frame* f, const String& msg)
 {
     QString x = msg;
-    m_webPage->runJavaScriptAlert(0, x);
+    FrameLoaderClientQt *fl = static_cast<FrameLoaderClientQt*>(f->loader()->client());
+    m_webPage->javaScriptAlert(fl->webFrame(), x);
 }
 
-bool ChromeClientQt::runJavaScriptConfirm(Frame*, const String&)
+bool ChromeClientQt::runJavaScriptConfirm(Frame* f, const String& msg)
 {
-    notImplemented();
-    return false;
+    QString x = msg;
+    FrameLoaderClientQt *fl = static_cast<FrameLoaderClientQt*>(f->loader()->client());
+    return m_webPage->javaScriptConfirm(fl->webFrame(), x);
 }
 
-bool ChromeClientQt::runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result)
+bool ChromeClientQt::runJavaScriptPrompt(Frame* f, const String& message, const String& defaultValue, String& result)
 {
-    notImplemented();
-    return false;
+    QString x = result;
+    FrameLoaderClientQt *fl = static_cast<FrameLoaderClientQt*>(f->loader()->client());
+    bool rc = m_webPage->javaScriptPrompt(fl->webFrame(), (QString)message, (QString)defaultValue, &x);
+    result = x;
+    return rc;
 }
 
-void ChromeClientQt::setStatusbarText(const String&)
+void ChromeClientQt::setStatusbarText(const String& msg)
 {
-    notImplemented();
+    QString x = msg;
+    emit m_webPage->statusBarTextChanged(x);
 }
 
 bool ChromeClientQt::shouldInterruptJavaScript()

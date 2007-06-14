@@ -1,3 +1,30 @@
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
+        Implement all of the Javascript dialogs and file chooser.
+        Also makes the statusbar virtual into a signal and shuffles some
+        virtuals around a bit.  The helper in FrameLoaderClientQt may go away
+        shortly.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::chooseFile):
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runJavaScriptAlert):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::setStatusbarText):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::chooseFile):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-06-14  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

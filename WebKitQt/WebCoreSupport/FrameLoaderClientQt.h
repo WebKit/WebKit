@@ -222,6 +222,8 @@ namespace WebCore {
         
         virtual void windowObjectCleared() const;
 
+        QString chooseFile(const QString& oldFile);
+
     private:
         Frame *m_frame;
         QWebFrame *m_webFrame;

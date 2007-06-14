@@ -60,7 +60,6 @@ public:
     QWebPage(QWidget *parent);
     ~QWebPage();
 
-
     void open(const QUrl &url);
     void open(const QWebNetworkRequest &request);
 
@@ -79,19 +78,8 @@ public:
 
     bool isModified() const;
 
-    virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
-
-    virtual void statusTextChanged(const QString& text);
-
-    virtual void runJavaScriptAlert(QWebFrame *frame, const QString& msg);
-
     QUndoStack *undoStack();
     
-    virtual void dragEnterEvent(QDragEnterEvent *);
-    virtual void dragLeaveEvent(QDragLeaveEvent *);
-    virtual void dragMoveEvent(QDragMoveEvent *);
-    virtual void dropEvent(QDropEvent *);
-
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
 
@@ -137,12 +125,26 @@ signals:
      * isn't hovering over any link element.
      */
     void hoveringOverLink(const QString &link, const QString &title);
+    /**
+     * Signal is emitted when the statusbar text is changed by the page.
+     */
+    void statusBarTextChanged(const QString& text);
 
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request);
+    virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
+    virtual void javaScriptAlert(QWebFrame *frame, const QString& msg);
+    virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
+    virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
+    virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+
+    virtual void dragEnterEvent(QDragEnterEvent *);
+    virtual void dragLeaveEvent(QDragLeaveEvent *);
+    virtual void dragMoveEvent(QDragMoveEvent *);
+    virtual void dropEvent(QDropEvent *);
 
 private:
     friend class QWebFrame;

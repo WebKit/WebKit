@@ -948,4 +948,9 @@ String FrameLoaderClientQt::overrideMediaType() const
     return String();
 }
 
+QString FrameLoaderClientQt::chooseFile(const QString& oldFile)
+{
+    return webFrame()->page()->chooseFile(webFrame(), oldFile);
+}
+
 }
