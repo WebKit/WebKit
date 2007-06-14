@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -330,7 +330,7 @@ static int compareByStringForQSort(const void *a, const void *b)
 
 void ArrayInstance::sort(ExecState* exec)
 {
-    size_t lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
+    size_t lengthNotIncludingUndefined = compactForSorting();
       
     ExecState* oldExec = execForCompareByStringForQSort;
     execForCompareByStringForQSort = exec;
@@ -397,7 +397,7 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 
 void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
 {
-    size_t lengthNotIncludingUndefined = pushUndefinedObjectsToEnd(exec);
+    size_t lengthNotIncludingUndefined = compactForSorting();
 
     CompareWithCompareFunctionArguments* oldArgs = compareWithCompareFunctionArguments;
     CompareWithCompareFunctionArguments args(exec, compareFunction);
@@ -422,7 +422,7 @@ void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
     compareWithCompareFunctionArguments = oldArgs;
 }
 
-unsigned ArrayInstance::pushUndefinedObjectsToEnd(ExecState *exec)
+unsigned ArrayInstance::compactForSorting()
 {
     JSValue *undefined = jsUndefined();
 
@@ -447,8 +447,8 @@ unsigned ArrayInstance::pushUndefinedObjectsToEnd(ExecState *exec)
     PropertyNameArrayIterator end = sparseProperties.end();
     for (PropertyNameArrayIterator it = sparseProperties.begin(); it != end; ++it) {
         Identifier name = *it;
-        storage[o] = get(exec, name);
-        JSObject::deleteProperty(exec, name);
+        storage[o] = getDirect(name);
+        _prop.remove(name);
         o++;
     }
     

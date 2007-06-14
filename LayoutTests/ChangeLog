@@ -1,3 +1,14 @@
+2007-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14132
+          array sort with > 10000 elements sets elements > 10000 undefined
+
+        * fast/js/resources/sort-large-array.js: Added.
+        * fast/js/sort-large-array-expected.txt: Added.
+        * fast/js/sort-large-array.html: Added.
+
 2007-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

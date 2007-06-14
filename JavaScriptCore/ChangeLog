@@ -1,3 +1,22 @@
+2007-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14132
+          array sort with > 10000 elements sets elements > 10000 undefined
+
+        Test: fast/js/sort-large-array.html
+
+        * kjs/array_instance.h: Replaced pushUndefinedObjectsToEnd with
+        compactForSorting, and removed ExecState parameters.
+
+        * kjs/array_object.cpp:
+        (ArrayInstance::sort): Changed to call compactForSorting.
+        (ArrayInstance::compactForSorting): Do the get and delete of the
+        properties directly on the property map instead of using public
+        calls from JSObject. The public calls would just read the undefined
+        values from the compacted sort results array!
+
 2007-06-13  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.
