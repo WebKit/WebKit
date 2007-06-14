@@ -1,3 +1,13 @@
+2007-06-14  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by George.
+
+        Work around a bug in Qt's QHttp implementation and
+        get web pages to load again.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::open):
+
 2007-06-13  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

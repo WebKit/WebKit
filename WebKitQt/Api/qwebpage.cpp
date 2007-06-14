@@ -148,8 +148,11 @@ void QWebPage::open(const QWebNetworkRequest &req)
     if (!method.isEmpty())
         request.setHTTPMethod(method);
 
-    foreach (QString key, httpHeader.keys())
-        request.addHTTPHeaderField(key, httpHeader.value(key));
+    QList<QPair<QString, QString> > values = httpHeader.values();
+    for (int i = 0; i < values.size(); ++i) {
+        const QPair<QString, QString> &val = values.at(i);
+        request.addHTTPHeaderField(val.first, val.second);
+    }
 
     if (!postData.isEmpty()) {
         WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
