@@ -1,3 +1,12 @@
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
+        Add missing initialization of pointer.
+
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+
 2007-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
+    : m_hitTestResult(result), m_menu(0)
 {
 }
 
