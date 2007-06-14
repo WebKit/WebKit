@@ -1,3 +1,12 @@
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Maciej.
+
+        Test for keypress causing typeahead crash on empty selects (% 0)
+
+        * fast/forms/listbox-typeahead-empty-expected.txt: Added.
+        * fast/forms/listbox-typeahead-empty.html: Added.
+
 2007-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

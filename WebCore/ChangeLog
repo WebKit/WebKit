@@ -1,3 +1,12 @@
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Maciej.
+
+        Keypress causes typeahead crash on empty selects due to modulo 0.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind):
+
 2007-06-13  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.
