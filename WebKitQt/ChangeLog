@@ -1,3 +1,12 @@
+2007-06-14  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Make it possible to copy QWebHistoryItem objects.
+
+        * Api/qwebpagehistory.cpp:
+        * Api/qwebpagehistory.h:
+
 2007-06-14  Lars Knoll <lars@trolltech.com>
 
         Reviewed by George

@@ -96,6 +96,8 @@ class QWebHistoryItemPrivate;
 class QWEBKIT_EXPORT QWebHistoryItem
 {
 public:
+    QWebHistoryItem(const QWebHistoryItem &other);
+    QWebHistoryItem &operator=(const QWebHistoryItem &other);
     ~QWebHistoryItem();
 
     QWebHistoryItem *parent() const;
