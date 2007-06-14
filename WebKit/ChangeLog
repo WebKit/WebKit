@@ -1,3 +1,15 @@
+2007-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Call cleanupScriptObjectsForPlugin on the frame after destroying the plug-in.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _destroyPlugin]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+
 2007-06-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson

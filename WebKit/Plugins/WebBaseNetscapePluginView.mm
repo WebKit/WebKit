@@ -2640,6 +2640,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NPError npErr;
     npErr = NPP_Destroy(plugin, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
+    
+    if (Frame* frame = core([self webFrame]))
+        frame->cleanupScriptObjectsForPlugin(self);
+        
     free(plugin);
     plugin = NULL;
 }
