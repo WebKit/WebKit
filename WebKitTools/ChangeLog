@@ -1,3 +1,9 @@
+2007-06-14  Mark Rowe  <mrowe@apple.com>
+
+        Update script to match new nightly.webkit.org infrastructure.
+
+        * BuildSlaveSupport/build-launcher-dmg:  Upload to the live web server, not the caching proxy.  Let the server know it's a Mac build.
+
 2007-06-12  Adam Roben  <aroben@apple.com>
 
         Land CygwinDownloader.

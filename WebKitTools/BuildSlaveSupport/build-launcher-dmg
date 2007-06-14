@@ -41,7 +41,7 @@ my $nightlyLauncherStagingPath = productDir() . "/WebKit.app";
 my $droseraStagingPath = productDir() . "/DroseraLauncher.app";
 my $nightlyLauncherDiskImagePath;
 
-my $nightlyRemoteHost = 'webkit-nightlies@nightly.webkit.org';
+my $nightlyRemoteHost = 'webkit-nightlies@live.nightly.webkit.org';
 my $nightlyRemotePath = "/home/webkit-nightlies";
 my $nightlyRemoteLatestPath = "$nightlyRemotePath/update-latest.sh";
 
@@ -88,7 +88,7 @@ sub uploadNightlyDiskImage
     my $nightlyRemoteDiskImagePath = "$nightlyRemotePath/builds/" . basename($nightlyLauncherDiskImagePath);
     my $revision = currentSVNRevision();
     system("rsync", "-vP", $nightlyLauncherDiskImagePath, "$nightlyRemoteHost:$nightlyRemoteDiskImagePath") == 0 or die "Failed uploading disk image";
-    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $nightlyRemoteDiskImagePath, $revision) == 0 or die "Failed linking disk image to latest";
+    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, "mac", $nightlyRemoteDiskImagePath, $revision) == 0 or die "Failed linking disk image to latest";
 }
 
 sub uploadBuildSlaveDiskImage
