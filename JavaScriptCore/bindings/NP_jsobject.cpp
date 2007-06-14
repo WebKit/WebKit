@@ -36,11 +36,11 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-static List listFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount)
+static List listFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject)
 {
     List aList; 
     for (unsigned i = 0; i < argCount; i++)
-        aList.append(convertNPVariantToValue(exec, &args[i]));    
+        aList.append(convertNPVariantToValue(exec, &args[i], rootObject));
     return aList;
 }
 
@@ -123,7 +123,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         if (!funcImp->implementsCall())
             return false;
         
-        List argList = listFromVariantArgs(exec, args, argCount);
+        List argList = listFromVariantArgs(exec, args, argCount, rootObject);
         JSValue *resultV = funcImp->call (exec, funcImp, argList);
         
         // Convert and return the result of the function call.
@@ -176,7 +176,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         // Call the function object.
         JSObject *funcImp = static_cast<JSObject*>(func);
         JSObject *thisObj = const_cast<JSObject*>(obj->imp);
-        List argList = listFromVariantArgs(exec, args, argCount);
+        List argList = listFromVariantArgs(exec, args, argCount, rootObject);
         JSValue *resultV = funcImp->call (exec, thisObj, argList);
 
         // Convert and return the result of the function call.
@@ -289,9 +289,9 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
         JSLock lock;
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString)
-            obj->imp->put(exec, identifierFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant));
+            obj->imp->put(exec, identifierFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant, rootObject));
         else
-            obj->imp->put(exec, i->value.number, convertNPVariantToValue(exec, variant));
+            obj->imp->put(exec, i->value.number, convertNPVariantToValue(exec, variant, rootObject));
         return true;
     }
 

@@ -225,7 +225,7 @@ JSValue *convertNSStringToString(NSString *nsstring)
     id              object wrapper
     other           should not happen
 */
-JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type)
+JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type, RootObject* rootObject)
 {
     JSLock lock;
     
@@ -243,14 +243,14 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
             if ([obj isKindOfClass:[NSNumber class]])
                 return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
-                return new RuntimeArray(exec, new ObjcArray(obj, 0));
+                return new RuntimeArray(exec, new ObjcArray(obj, rootObject));
             if ([obj isKindOfClass:webScriptObjectClass()])
                 return [obj _imp];
             if ([obj isKindOfClass:[NSNull class]])
                 return jsNull();
             if (obj == 0)
                 return jsUndefined();
-            return Instance::createRuntimeObject(Instance::ObjectiveCLanguage, obj);
+            return Instance::createRuntimeObject(Instance::ObjectiveCLanguage, obj, rootObject);
         }
         case ObjcCharType:
             return jsNumber(*(char *)buffer);

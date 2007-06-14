@@ -245,14 +245,14 @@ static void _didExecute(WebScriptObject *obj)
     return NO;
 }
 
-static List listFromNSArray(ExecState *exec, NSArray *array)
+static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObject)
 {
     int i, numObjects = array ? [array count] : 0;
     List aList;
     
     for (i = 0; i < numObjects; i++) {
         id anObject = [array objectAtIndex:i];
-        aList.append(convertObjcValueToValue(exec, &anObject, ObjcObjectType));
+        aList.append(convertObjcValueToValue(exec, &anObject, ObjcObjectType, rootObject));
     }
     return aList;
 }
@@ -271,7 +271,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     JSLock lock;
     
-    JSValue *v = convertObjcValueToValue(exec, &name, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &name, ObjcObjectType, [self _rootObject]);
     Identifier identifier(v->toString(exec));
     JSValue *func = [self _imp]->get(exec, identifier);
 
@@ -285,7 +285,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return 0;
 
     JSObject *thisObj = const_cast<JSObject*>([self _imp]);
-    List argList = listFromNSArray(exec, args);
+    List argList = listFromNSArray(exec, args, [self _rootObject]);
     JSValue *result = funcImp->call(exec, thisObj, argList);
 
     if (exec->hadException()) {
@@ -316,7 +316,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     JSValue *result;
     JSLock lock;
     
-    JSValue *v = convertObjcValueToValue(exec, &script, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &script, ObjcObjectType, [self _rootObject]);
     Completion completion = [self _rootObject]->interpreter()->evaluate(UString(), 0, v->toString(exec));
     ComplType type = completion.complType();
     
@@ -352,8 +352,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
-    [self _imp]->put(exec, Identifier(v->toString(exec)), convertObjcValueToValue(exec, &value, ObjcObjectType));
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType, [self _rootObject]);
+    [self _imp]->put(exec, Identifier(v->toString(exec)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
         LOG_EXCEPTION(exec);
@@ -375,7 +375,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType, [self _rootObject]);
     JSValue *result = [self _imp]->get(exec, Identifier(v->toString(exec)));
     
     if (exec->hadException()) {
@@ -405,7 +405,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType, [self _rootObject]);
     [self _imp]->deleteProperty(exec, Identifier(v->toString(exec)));
 
     if (exec->hadException()) {
@@ -478,7 +478,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType));
+    [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
         LOG_EXCEPTION(exec);

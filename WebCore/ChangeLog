@@ -1,5 +1,20 @@
 2007-06-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        Pass the root object to methods that end up creating new ObjcInstance objects.
+        
+        * bindings/objc/WebScriptObject.mm:
+        (listFromNSArray):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+
+2007-06-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/5267992>

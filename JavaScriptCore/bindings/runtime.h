@@ -99,8 +99,8 @@ public:
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
     
-    static Instance* createBindingForLanguageInstance(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject> = 0);
-    static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject> = 0);
+    static Instance* createBindingForLanguageInstance(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
+    static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
 
     void ref() { _refCount++; }
     void deref() 

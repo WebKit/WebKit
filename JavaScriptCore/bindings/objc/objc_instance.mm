@@ -201,7 +201,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
 
     if (*type != 'v') {
         [invocation getReturnValue:buffer];
-        result = convertObjcValueToValue(exec, buffer, objcValueType);
+        result = convertObjcValueToValue(exec, buffer, objcValueType, _rootObject.get());
     }
 } @catch(NSException* localException) {
 }
@@ -248,7 +248,7 @@ JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const List &args)
     // OK with 32 here.
     char buffer[32];
     [invocation getReturnValue:buffer];
-    result = convertObjcValueToValue(exec, buffer, objcValueType);
+    result = convertObjcValueToValue(exec, buffer, objcValueType, _rootObject.get());
 } @catch(NSException* localException) {
 }
 
@@ -297,7 +297,7 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
         @try {
             id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii() encoding:NSASCIIStringEncoding]];
-            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
+            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, _rootObject.get());
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }

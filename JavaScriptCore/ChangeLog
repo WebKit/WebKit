@@ -1,3 +1,35 @@
+2007-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Make sure that bindings instances get correct root objects.
+        
+        * JavaScriptCore.exp:
+        * bindings/NP_jsobject.cpp:
+        (listFromVariantArgs):
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_SetProperty):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        * bindings/c/c_runtime.cpp:
+        (KJS::Bindings::CField::valueFromInstance):
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertNPVariantToValue):
+        * bindings/c/c_utility.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcArray::valueAt):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.h:
+
 2007-06-13  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

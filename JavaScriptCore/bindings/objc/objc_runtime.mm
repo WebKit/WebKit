@@ -111,7 +111,7 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
     @try {
         NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
         if (id objcValue = [targetObject valueForKey:key])
-            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
+            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
     } @catch(NSException* localException) {
         JSLock::lock();
         throwError(exec, GeneralError, [localException reason]);
@@ -184,7 +184,7 @@ JSValue* ObjcArray::valueAt(ExecState* exec, unsigned int index) const
     @try {
         id obj = [_array.get() objectAtIndex:index];
         if (obj)
-            return convertObjcValueToValue (exec, &obj, ObjcObjectType);
+            return convertObjcValueToValue (exec, &obj, ObjcObjectType, _rootObject.get());
     } @catch(NSException* localException) {
         return throwError(exec, GeneralError, "Objective-C exception.");
     }
