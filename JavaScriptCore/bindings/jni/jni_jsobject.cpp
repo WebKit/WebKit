@@ -397,6 +397,9 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
             if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
                 RuntimeObjectImp *runtimeImp = static_cast<RuntimeObjectImp*>(value);
                 JavaInstance *runtimeInstance = static_cast<JavaInstance *>(runtimeImp->getInternalInstance());
+                if (!runtimeInstance)
+                    return 0;
+                
                 return runtimeInstance->javaInstance();
             }
             else {

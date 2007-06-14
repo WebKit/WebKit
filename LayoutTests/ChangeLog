@@ -1,3 +1,12 @@
+2007-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add test that manipulates plug-in script objects after the plug-in has been destroyed.
+        
+        * plugins/netscape-destroy-plugin-script-objects-expected.txt: Added.
+        * plugins/netscape-destroy-plugin-script-objects.html: Added.
+
 2007-06-14  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

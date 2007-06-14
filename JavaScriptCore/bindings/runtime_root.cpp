@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+#include "runtime_root.h"
 
 #include "object.h"
-#include "runtime_root.h"
+#include "runtime.h"
+#include "runtime_object.h"
+
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
@@ -218,6 +221,14 @@ void RootObject::invalidate()
     if (!m_isValid)
         return;
 
+    {
+        HashSet<RuntimeObjectImp*>::iterator end = m_runtimeObjects.end();
+        for (HashSet<RuntimeObjectImp*>::iterator it = m_runtimeObjects.begin(); it != end; ++it)
+            (*it)->invalidate();
+        
+        m_runtimeObjects.clear();
+    }
+    
     m_isValid = false;
 
     m_nativeHandle = 0;
@@ -274,6 +285,22 @@ Interpreter* RootObject::interpreter() const
 { 
     ASSERT(m_isValid);
     return m_interpreter.get(); 
+}
+
+void RootObject::addRuntimeObject(RuntimeObjectImp* object)
+{
+    ASSERT(m_isValid);
+    ASSERT(!m_runtimeObjects.contains(object));
+    
+    m_runtimeObjects.add(object);
+}        
+    
+void RootObject::removeRuntimeObject(RuntimeObjectImp* object)
+{
+    ASSERT(m_isValid);
+    ASSERT(m_runtimeObjects.contains(object));
+    
+    m_runtimeObjects.remove(object);
 }
 
 } } // namespace KJS::Bindings

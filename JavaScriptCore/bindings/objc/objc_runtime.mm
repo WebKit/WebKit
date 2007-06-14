@@ -251,6 +251,9 @@ JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisOb
     RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisObj);
     Instance* instance = imp->getInternalInstance();
 
+    if (!instance)
+        return RuntimeObjectImp::throwInvalidAccessError(exec);
+    
     instance->begin();
 
     ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);

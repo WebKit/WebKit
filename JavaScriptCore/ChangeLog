@@ -1,5 +1,60 @@
 2007-06-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/5103077> 
+        Crash at _NPN_ReleaseObject when quitting page at http://eshop.macsales.com/shop/ModBook
+        
+        <rdar://problem/5183692>
+        http://bugs.webkit.org/show_bug.cgi?id=13547
+        REGRESSION: Crash in _NPN_ReleaseObject when closing Safari on nba.com (13547)
+        
+        <rdar://problem/5261499>
+        CrashTracer: [USER] 75 crashes in Safari at com.apple.JavaScriptCore: KJS::Bindings::CInstance::~CInstance + 40
+        
+        Have the root object track all live instances of RuntimeObjectImp. When invalidating 
+        the root object, also invalidate all live runtime objects by zeroing out their instance ivar.
+        This prevents instances from outliving their plug-ins which lead to crashes.
+        
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertValueToJObject):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::callAsFunction):
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::RuntimeArray):
+        * bindings/runtime_array.h:
+        (KJS::RuntimeArray::getConcreteArray):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::callAsFunction):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::~RuntimeObjectImp):
+        (RuntimeObjectImp::invalidate):
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::getOwnPropertySlot):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::defaultValue):
+        (RuntimeObjectImp::implementsCall):
+        (RuntimeObjectImp::callAsFunction):
+        (RuntimeObjectImp::getPropertyNames):
+        (RuntimeObjectImp::throwInvalidAccessError):
+        * bindings/runtime_object.h:
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::RootObject::invalidate):
+        (KJS::Bindings::RootObject::addRuntimeObject):
+        (KJS::Bindings::RootObject::removeRuntimeObject):
+        * bindings/runtime_root.h:
+
+2007-06-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         <rdar://problem/5244948>

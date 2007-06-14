@@ -116,9 +116,11 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
         if (object->classInfo() == &RuntimeObjectImp::info) {
             RuntimeObjectImp* imp = static_cast<RuntimeObjectImp *>(value);
             CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
-            NPObject* obj = instance->getObject();
-            _NPN_RetainObject(obj);
-            OBJECT_TO_NPVARIANT(obj, *result);
+            if (instance) {
+                NPObject* obj = instance->getObject();
+                _NPN_RetainObject(obj);
+                OBJECT_TO_NPVARIANT(obj, *result);
+            }
         } else {
             Interpreter* originInterpreter = exec->dynamicInterpreter();
             RootObject* originRootObject = findRootObject(originInterpreter);

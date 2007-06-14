@@ -26,6 +26,8 @@
 #ifndef RUNTIME_ARRAY_H_
 #define RUNTIME_ARRAY_H_
 
+#include <wtf/OwnPtr.h>
+
 #include "array_instance.h"
 #include "runtime.h"
 
@@ -34,7 +36,6 @@ namespace KJS {
 class RuntimeArray : public JSObject {
 public:
     RuntimeArray(ExecState *exec, Bindings::Array *i);
-    ~RuntimeArray();
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
@@ -48,7 +49,7 @@ public:
     
     unsigned getLength() const { return getConcreteArray()->getLength(); }
     
-    Bindings::Array *getConcreteArray() const { return _array; }
+    Bindings::Array *getConcreteArray() const { return _array.get(); }
 
     static const ClassInfo info;
 
@@ -56,7 +57,7 @@ private:
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
-    Bindings::Array *_array;
+    OwnPtr<Bindings::Array> _array;
 };
     
 } // namespace KJS

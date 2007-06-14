@@ -39,10 +39,6 @@ RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings:
 {
 }
 
-RuntimeMethod::~RuntimeMethod()
-{
-}
-
 JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeMethod *thisObj = static_cast<RuntimeMethod *>(slot.slotBase());
@@ -87,6 +83,9 @@ JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const
         return throwError(exec, TypeError);
 
     Instance *instance = imp->getInternalInstance();
+    if (!instance) 
+        return RuntimeObjectImp::throwInvalidAccessError(exec);
+        
     instance->begin();
     JSValue *aValue = instance->invokeMethod(exec, *_methodList, args);
     instance->end();
