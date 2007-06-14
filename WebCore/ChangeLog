@@ -2,6 +2,18 @@
 
         Reviewed by Geoff.
 
+        Add Frame::cleanupScriptObjectsForPlugin which will invalidate the root object
+        for a given plug-in.
+
+        * WebCore.exp:
+        * page/Frame.cpp:
+        (WebCore::Frame::cleanupScriptObjectsForPlugin):
+        * page/Frame.h:
+
+2007-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
         <rdar://problem/5211677>
         -[WebPreferences setJavaEnabled:] only disables java inside <applet>, not <object>
         

@@ -233,6 +233,7 @@ public:
     void dashboardRegionsChanged();
 
     void cleanupScriptObjects();
+    void cleanupScriptObjectsForPlugin(void*);
 
 private:
     void cleanupPlatformScriptObjects();

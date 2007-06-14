@@ -685,3 +685,4 @@ _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 _wkSupportsMultipartXMixedReplace
+__ZN7WebCore5Frame29cleanupScriptObjectsForPluginEPv
