@@ -124,8 +124,10 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
             return false;
         
         List argList = listFromVariantArgs(exec, args, argCount, rootObject);
+        rootObject->interpreter()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, funcImp, argList);
-        
+        rootObject->interpreter()->stopTimeoutCheck();
+
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
         return true;        
@@ -177,7 +179,9 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         JSObject *funcImp = static_cast<JSObject*>(func);
         JSObject *thisObj = const_cast<JSObject*>(obj->imp);
         List argList = listFromVariantArgs(exec, args, argCount, rootObject);
+        rootObject->interpreter()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, thisObj, argList);
+        rootObject->interpreter()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -209,7 +213,9 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         NPUTF16* scriptString;
         unsigned int UTF16Length;
         convertNPStringToUTF16(s, &scriptString, &UTF16Length); // requires free() of returned memory
+        rootObject->interpreter()->startTimeoutCheck();
         Completion completion = rootObject->interpreter()->evaluate(UString(), 0, UString((const UChar*)scriptString,UTF16Length));
+        rootObject->interpreter()->stopTimeoutCheck();
         ComplType type = completion.complType();
         
         JSValue* result;

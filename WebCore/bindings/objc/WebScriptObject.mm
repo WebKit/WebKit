@@ -286,7 +286,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObj
 
     JSObject *thisObj = const_cast<JSObject*>([self _imp]);
     List argList = listFromNSArray(exec, args, [self _rootObject]);
+    [self _rootObject]->interpreter()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, thisObj, argList);
+    [self _rootObject]->interpreter()->stopTimeoutCheck();
 
     if (exec->hadException()) {
         LOG_EXCEPTION(exec);
@@ -317,7 +319,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObj
     JSLock lock;
     
     JSValue *v = convertObjcValueToValue(exec, &script, ObjcObjectType, [self _rootObject]);
+    [self _rootObject]->interpreter()->startTimeoutCheck();
     Completion completion = [self _rootObject]->interpreter()->evaluate(UString(), 0, v->toString(exec));
+    [self _rootObject]->interpreter()->stopTimeoutCheck();
     ComplType type = completion.complType();
     
     if (type == Normal) {

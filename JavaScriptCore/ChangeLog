@@ -1,3 +1,23 @@
+2007-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5244948>
+        Safari keeps on complaining about slow script playing NBC TV video (14133)
+
+        http://bugs.webkit.org/show_bug.cgi?id=14133
+        Runaway JavaScript timer fires when spinning around in Google Maps street view
+
+        Make sure to start and stop the timeout checker around calls to JS.
+        
+        * bindings/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+
 2007-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

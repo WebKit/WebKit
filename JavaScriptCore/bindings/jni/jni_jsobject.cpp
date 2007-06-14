@@ -177,7 +177,9 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     JSObject *funcImp = static_cast<JSObject*>(func);
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     List argList = listFromJArray(args);
+    rootObject->interpreter()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, thisObj, argList);
+    rootObject->interpreter()->stopTimeoutCheck();
 
     return convertValueToJObject(result);
 }
@@ -195,7 +197,9 @@ jobject JavaJSObject::eval(jstring script) const
     if (!rootObject)
         return 0;
 
+    rootObject->interpreter()->startTimeoutCheck();
     Completion completion = rootObject->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
+    rootObject->interpreter()->stopTimeoutCheck();
     ComplType type = completion.complType();
     
     if (type == Normal) {
