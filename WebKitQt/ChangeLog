@@ -2,6 +2,16 @@
 
         Reviewed by Zack.
 
+        Removed QWebHistoryItem::parent() as it is not implemented and WebCore's
+
+        HistoryItem itself doesn't seem to have a parent pointer either.
+
+        * Api/qwebpagehistory.h:
+
+2007-06-14  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
         Make it possible to copy QWebHistoryItem objects.
 
         * Api/qwebpagehistory.cpp:
