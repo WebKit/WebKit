@@ -1,3 +1,16 @@
+2007-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin.
+
+        <rdar://problem/5271774> REGRESSION: A crash occurs when closing a window that contains a QT movie
+        
+        In some cases, calling [super dealloc] might end up calling visibleRect, so make sure to
+        set _element to 0 so we won't send a message to a freed object and crash.
+        
+        * Plugins/WebKitPluginContainerView.mm:
+        (-[WebKitPluginContainerView dealloc]):
+        (-[WebKitPluginContainerView visibleRect]):
+
 2007-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
