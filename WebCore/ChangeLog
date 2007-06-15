@@ -1,3 +1,14 @@
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
+        Implement missing tab support and a slight refactor.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::keyIdentifierForQtKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-06-14  Dave Hyatt  <hyatt@apple.com>
 
         Fix for Bugzilla bug 14806, missing text for bold/italic fonts in non-English Windows installs.

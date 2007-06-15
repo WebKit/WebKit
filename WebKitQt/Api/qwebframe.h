@@ -72,6 +72,9 @@ protected:
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
     virtual void scrollContentsBy(int dx, int dy);
+    virtual void focusInEvent(QFocusEvent *e);
+    virtual void focusOutEvent(QFocusEvent *e);
+    virtual bool focusNextPrevChild(bool next);
     
 private:
     friend class QWebPage;

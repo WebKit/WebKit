@@ -125,6 +125,10 @@ static String keyIdentifierForQtKeyCode(int keyCode)
             // Standard says that DEL becomes U+007F.
         case Qt::Key_Delete:
             return "U+007F";
+        case Qt::Key_Tab:
+            return "U+0009";
+        case Qt::Key_Backtab:
+            return "U+0009";
         default:
             return String::format("U+%04X", toupper(keyCode));
     }
@@ -168,6 +172,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
         */
         case Qt::Key_Backspace:
             return VK_BACK; // (08) BACKSPACE key
+        case Qt::Key_Backtab:
         case Qt::Key_Tab:
             return VK_TAB; // (09) TAB key
         case Qt::Key_Clear:
@@ -427,17 +432,18 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event, bool isKeyUp)
 {
+    const int state = event->modifiers();
     m_text = event->text();
     m_unmodifiedText = event->text(); // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
     m_isKeyUp = isKeyUp;
     m_autoRepeat = event->isAutoRepeat();
+    m_ctrlKey = (state & Qt::ControlModifier) != 0;
+    m_altKey = (state & Qt::AltModifier) != 0;
+    m_metaKey = (state & Qt::MetaModifier) != 0;    
     m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event->key());
-    m_isKeypad = (event->modifiers() & Qt::KeypadModifier) != 0;
-    m_shiftKey = (event->modifiers() & Qt::ShiftModifier) != 0;
-    m_ctrlKey = (event->modifiers() & Qt::ControlModifier) != 0;
-    m_altKey = (event->modifiers() & Qt::AltModifier) != 0;
-    m_metaKey = (event->modifiers() & Qt::MetaModifier) != 0;    
+    m_isKeypad = (state & Qt::KeypadModifier) != 0;
+    m_shiftKey = (state & Qt::ShiftModifier) != 0 || event->key() == Qt::Key_Backtab; // Simulate Shift+Tab with Key_Backtab
 }
 
 }

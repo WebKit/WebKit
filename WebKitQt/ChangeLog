@@ -2,6 +2,29 @@
 
         Reviewed by Lars.
 
+        Implement most of the editing commands, better focus handling, fix some
+        keyboard and mouse handling, and add keyboard navigation.  May be
+        refactored later as the key switches are ugly.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFrame::mousePressEvent):
+        (QWebFrame::mouseReleaseEvent):
+        (QWebFrame::wheelEvent):
+        (QWebFrame::keyPressEvent):
+        (QWebFrame::keyReleaseEvent):
+        (QWebFrame::focusInEvent):
+        (QWebFrame::focusOutEvent):
+        (QWebFrame::focusNextPrevChild):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeypress):
+
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
         Implement all of the Javascript dialogs and file chooser.
         Also makes the statusbar virtual into a signal and shuffles some
         virtuals around a bit.  The helper in FrameLoaderClientQt may go away

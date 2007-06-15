@@ -25,6 +25,7 @@
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
 
+#include "FocusController.h"
 #include "FrameLoaderClientQt.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -36,6 +37,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ResourceRequest.h"
+#include "SelectionController.h"
 
 #include "markup.h"
 #include "RenderTreeAsText.h"
@@ -51,10 +53,10 @@
 
 #include "wtf/HashMap.h"
 
-#include <qpainter.h>
-#include <qevent.h>
-#include <qscrollbar.h>
 #include <qdebug.h>
+#include <qevent.h>
+#include <qpainter.h>
+#include <qscrollbar.h>
 
 using namespace WebCore;
 
@@ -66,7 +68,7 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     q->setMidLineWidth(0);
     q->setFrameShape(QFrame::NoFrame);
     q->setMouseTracking(true);
-    q->setFocusPolicy(Qt::StrongFocus);
+    q->setFocusPolicy(Qt::ClickFocus);
     q->verticalScrollBar()->setSingleStep(20);
     q->horizontalScrollBar()->setSingleStep(20);
 
@@ -96,18 +98,6 @@ void QWebFramePrivate::_q_adjustScrollbars()
 
     vbar->setRange(0, docSize.height() - viewportSize.height());
     vbar->setPageStep(viewportSize.height());
-}
-
-void QWebFramePrivate::_q_handleKeyEvent(QKeyEvent *ev, bool isKeyUp)
-{
-    PlatformKeyboardEvent kevent(ev, isKeyUp);
-
-    if (!eventHandler)
-        return;
-
-    bool handled = eventHandler->keyEvent(kevent);
-
-    ev->setAccepted(handled);
 }
 
 QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
@@ -283,7 +273,10 @@ void QWebFrame::mousePressEvent(QMouseEvent *ev)
     if (!d->eventHandler)
         return;
 
-    d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    if (ev->button() == Qt::RightButton)
+        d->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
+    else d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    setFocus();
 }
 
 void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
@@ -292,6 +285,7 @@ void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
         return;
 
     d->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+    setFocus();
 }
 
 void QWebFrame::wheelEvent(QWheelEvent *e)
@@ -304,16 +298,95 @@ void QWebFrame::wheelEvent(QWheelEvent *e)
     e->setAccepted(accepted);
     if (!accepted)
         QAbstractScrollArea::wheelEvent(e);
+    setFocus();
 }
 
 void QWebFrame::keyPressEvent(QKeyEvent *ev)
 {
-    d->_q_handleKeyEvent(ev, false);
+    PlatformKeyboardEvent kevent(ev, false);
+
+    if (!d->eventHandler)
+        return;
+
+    bool handled = d->eventHandler->keyEvent(kevent);
+    if (handled) {
+    } else {
+        handled = true;
+        QScrollBar *h, *v;
+        h = horizontalScrollBar();
+        v = verticalScrollBar();
+        switch (ev->key()) {
+            case Qt::Key_Up:
+                v->setValue(v->value() - 10);
+                viewport()->update();
+                break;
+            case Qt::Key_Down:
+                v->setValue(v->value() + 10);
+                viewport()->update();
+                break;
+            case Qt::Key_Left:
+                h->setValue(h->value() - 10);
+                viewport()->update();
+                break;
+            case Qt::Key_Right:
+                h->setValue(h->value() + 10);
+                viewport()->update();
+                break;
+            case Qt::Key_PageUp:
+                v->setValue(v->value() - viewport()->height());
+                viewport()->update();
+                break;
+            case Qt::Key_PageDown:
+                v->setValue(v->value() + viewport()->height());
+                viewport()->update();
+                break;
+            default:
+                handled = false;
+                break;
+        }
+    }
+   
+    ev->setAccepted(handled);
 }
 
 void QWebFrame::keyReleaseEvent(QKeyEvent *ev)
 {
-    d->_q_handleKeyEvent(ev, true);
+    if (ev->isAutoRepeat()) {
+        ev->setAccepted(true);
+        return;
+    }
+
+    PlatformKeyboardEvent kevent(ev, true);
+
+    if (!d->eventHandler)
+        return;
+
+    bool handled = d->eventHandler->keyEvent(kevent);
+    ev->setAccepted(handled);
+}
+
+void QWebFrame::focusInEvent(QFocusEvent *e)
+{
+    if (e->reason() != Qt::PopupFocusReason) {
+        d->frame->page()->focusController()->setFocusedFrame(d->frame);
+        d->frame->setIsActive(true);
+    }
+    QAbstractScrollArea::focusInEvent(e);
+}
+
+void QWebFrame::focusOutEvent(QFocusEvent *e)
+{
+    QAbstractScrollArea::focusOutEvent(e);
+    if (e->reason() != Qt::PopupFocusReason) {
+        d->frame->selectionController()->clear();
+        d->frame->setIsActive(false);
+    }
+}
+
+bool QWebFrame::focusNextPrevChild(bool next)
+{
+    Q_UNUSED(next)
+    return false;
 }
 
 /*!\reimp
@@ -322,3 +395,4 @@ void QWebFrame::scrollContentsBy(int dx, int dy)
 {
     viewport()->scroll(dx, dy);
 }
+

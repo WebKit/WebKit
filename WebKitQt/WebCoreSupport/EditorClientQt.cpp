@@ -33,6 +33,7 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
+#include "Document.h"
 #include "EditCommandQt.h"
 #include "Editor.h"
 #include "FocusController.h"
@@ -216,21 +217,30 @@ void EditorClientQt::toggleGrammarChecking()
 void EditorClientQt::handleKeypress(KeyboardEvent* event)
 {
     Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
-    if (!frame)
+    if (!frame || !frame->document()->focusedNode())
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (kevent && !kevent->isKeyUp()) {
-        Node* start = frame->selectionController()->start().node();
-        if (start && start->isContentEditable()) {
-            switch(kevent->WindowsKeyCode()) {
+    if (kevent->isKeyUp())
+        return;
+
+    Node* start = frame->selectionController()->start().node();
+    if (!start)
+        return;
+
+    // FIXME: refactor all of this to use Actions or something like them
+    if (start->isContentEditable()) {
+        switch(kevent->WindowsKeyCode()) {
+            case VK_RETURN:
+                frame->editor()->execCommand("InsertLineBreak");
+                break;
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
-                                                     CharacterGranularity, false, true);
+                        CharacterGranularity, false, true);
                 break;
             case VK_DELETE:
                 frame->editor()->deleteWithDirection(SelectionController::FORWARD,
-                                                     CharacterGranularity, false, true);
+                        CharacterGranularity, false, true);
                 break;
             case VK_LEFT:
                 if (kevent->shiftKey())
@@ -252,16 +262,86 @@ void EditorClientQt::handleKeypress(KeyboardEvent* event)
                     frame->editor()->execCommand("MoveDownAndModifySelection");
                 else frame->editor()->execCommand("MoveDown");
                 break;
-            case VK_RETURN:
-                frame->editor()->insertLineBreak();
+            case VK_PRIOR:  // PageUp
+                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                break;
+            case VK_NEXT:  // PageDown
+                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                break;
+            case VK_TAB:
+                return;
+            default:
+                if (!kevent->ctrlKey() && !kevent->altKey() && !kevent->text().isEmpty()) {
+                    frame->editor()->insertText(kevent->text(), event);
+                } else if (kevent->ctrlKey()) {
+                    switch (kevent->WindowsKeyCode()) {
+                        case VK_A:
+                            frame->editor()->execCommand("SelectAll");
+                            break;
+                        case VK_B:
+                            frame->editor()->execCommand("ToggleBold");
+                            break;
+                        case VK_C:
+                            frame->editor()->execCommand("Copy");
+                            break;
+                        case VK_I:
+                            frame->editor()->execCommand("ToggleItalic");
+                            break;
+                        case VK_V:
+                            frame->editor()->execCommand("Paste");
+                            break;
+                        case VK_X:
+                            frame->editor()->execCommand("Cut");
+                            break;
+                        case VK_Y:
+                            frame->editor()->execCommand("Redo");
+                            break;
+                        case VK_Z:
+                            frame->editor()->execCommand("Undo");
+                            break;
+                        default:
+                            return;
+                    }
+                } else return;
+        }
+    } else {
+        switch (kevent->WindowsKeyCode()) {
+            case VK_UP:
+                frame->editor()->execCommand("MoveUp");
+                break;
+            case VK_DOWN:
+                frame->editor()->execCommand("MoveDown");
+                break;
+            case VK_PRIOR:  // PageUp
+                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                break;
+            case VK_NEXT:  // PageDown
+                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                break;
+            case VK_HOME:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                break;
+            case VK_END:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToEndOfDocument");
                 break;
             default:
-                if (!kevent->ctrlKey() && !kevent->altKey())
-                    frame->editor()->insertText(kevent->text(), event);
-            }
-            event->setDefaultHandled();
+                if (kevent->ctrlKey()) {
+                    switch(kevent->WindowsKeyCode()) {
+                        case VK_A:
+                            frame->editor()->execCommand("SelectAll");
+                            break;
+                        case VK_C: case VK_X:
+                            frame->editor()->execCommand("Copy");
+                            break;
+                        default:
+                            return;
+                    }
+                } else return;
         }
     }
+    event->setDefaultHandled();
 }
 
 void EditorClientQt::handleInputMethodKeypress(KeyboardEvent*)
