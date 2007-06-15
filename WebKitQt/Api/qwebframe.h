@@ -56,6 +56,9 @@ public:
 
     QList<QWebFrame*> childFrames() const;
 
+public Q_SLOTS:
+    QString evaluateJavaScript(const QString& scriptSource);
+
 signals:
     void cleared();
     void loadDone(bool ok);

@@ -48,6 +48,8 @@
 
 #include "bindings/runtime.h"
 #include "bindings/runtime_root.h"
+#include "kjs_proxy.h"
+#include "kjs_binding.h"
 #include "ExecState.h"
 #include "object.h"
 
@@ -387,6 +389,19 @@ bool QWebFrame::focusNextPrevChild(bool next)
 {
     Q_UNUSED(next)
     return false;
+}
+
+QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
+{
+    KJSProxy *proxy = d->frame->scriptProxy();
+    QString rc;
+    if (proxy) {
+        KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource, d->frame->document());
+        if (v) {
+            rc = String(v->toString(proxy->interpreter()->globalExec()));
+        }
+    }
+    return rc;
 }
 
 /*!\reimp

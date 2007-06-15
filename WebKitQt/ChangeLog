@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Add evaluateJavaScript() method.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebframe.h:
+
+2007-06-14  George Staikos  <staikos@kde.org>
+
+        Reviewed by Lars.
+
         Implement most of the editing commands, better focus handling, fix some
         keyboard and mouse handling, and add keyboard navigation.  May be
         refactored later as the key switches are ugly.
