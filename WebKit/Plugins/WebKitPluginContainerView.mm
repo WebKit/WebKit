@@ -45,16 +45,12 @@
 {
     [_element release];
     
-    // Calling [super dealloc] can end up calling visibleRect so we need to set
-    // the _element instance to 0 here so we can check for it in our visibleRect.
-    _element = 0;
-    
     [super dealloc];
 }
 
 - (NSRect)visibleRect
 {
-    if (!_element)
+    if (![self window])
         return [super visibleRect];
     
     // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch

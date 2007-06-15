@@ -2,6 +2,17 @@
 
         Reviewed by Kevin.
 
+        A better fix for <rdar://problem/5271774>. Only try to access the element if the
+        view has an associated window. This also works with GC. (Fix suggested by Kevin.)
+
+        * Plugins/WebKitPluginContainerView.mm:
+        (-[WebKitPluginContainerView dealloc]):
+        (-[WebKitPluginContainerView visibleRect]):
+
+2007-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin.
+
         <rdar://problem/5271774> REGRESSION: A crash occurs when closing a window that contains a QT movie
         
         In some cases, calling [super dealloc] might end up calling visibleRect, so make sure to
