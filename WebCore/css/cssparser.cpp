@@ -2824,8 +2824,10 @@ struct BorderImageParseContext
         // Fill in STRETCH as the default if it wasn't specified.
         if (!m_horizontalRule)
             m_horizontalRule = CSS_VAL_STRETCH;
+            
+        // The vertical rule should match the horizontal rule if unspecified.
         if (!m_verticalRule)
-            m_verticalRule = CSS_VAL_STRETCH;
+            m_verticalRule = m_horizontalRule;
 
         // Make our new border image value now and add it as the result.
         CSSBorderImageValue* borderImage = new CSSBorderImageValue(m_image, rect, m_horizontalRule, m_verticalRule);

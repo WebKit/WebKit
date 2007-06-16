@@ -1,3 +1,19 @@
+2007-06-15  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla bugs 14183 and 14184, 'repeat' regressed in border-image
+        because of a botched 'round' support removal.  Also update for a change in
+        the spec that has the second stretch/round/repeat keyword match the first
+        if omitted.
+        
+        Reviewed by olliej
+
+        * css/cssparser.cpp:
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        (WebCore::Image::):
+
 2007-06-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
