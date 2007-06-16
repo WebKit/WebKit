@@ -137,7 +137,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Counter> c)
     m_value.counter = c.releaseRef();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<RectImpl> r)
+CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Rect> r)
     : m_type(CSS_RECT)
 {
     m_value.rect = r.releaseRef();
@@ -522,7 +522,7 @@ String CSSPrimitiveValue::cssText() const
             // FIXME: Add list-style and separator
             break;
         case CSS_RECT: {
-            RectImpl* rectVal = getRectValue();
+            Rect* rectVal = getRectValue();
             text = "rect(";
             text += rectVal->top()->cssText() + " ";
             text += rectVal->right()->cssText() + " ";

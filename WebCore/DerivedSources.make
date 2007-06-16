@@ -406,6 +406,7 @@ all : \
     JSProcessingInstruction.h \
     JSRange.h \
     JSRangeException.h \
+    JSRect.h \
     JSSVGZoomEvent.h \
     JSSVGAElement.h \
     JSSVGAngle.h \

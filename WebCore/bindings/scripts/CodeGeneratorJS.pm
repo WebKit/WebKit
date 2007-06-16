@@ -187,7 +187,7 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor") {
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -1386,7 +1386,7 @@ sub NativeToJSValue
 
     if ($type eq "RGBColor") {
         $implIncludes{"kjs_css.h"} = 1;
-        return "getDOMRGBColor(exec, $value)";
+        return "getJSRGBColor(exec, $value)";
     }
 
     if ($codeGenerator->IsPodType($type)) {
@@ -1431,6 +1431,10 @@ sub NativeToJSValue
         $implIncludes{"NamedAttrMap.h"} = 1;
     }
 
+    if ($type eq "NodeList") {
+        $implIncludes{"NameNodeList.h"} = 1;
+    }
+
     if ($type eq "EventTarget") {
         $implIncludes{"EventTargetNode.h"} = 1;
         $implIncludes{"JSEventTargetNode.h"} = 1;
@@ -1438,13 +1442,6 @@ sub NativeToJSValue
     } elsif ($type eq "Event") {
         $implIncludes{"kjs_events.h"} = 1;
         $implIncludes{"Event.h"} = 1;
-    } elsif ($type eq "NodeList") {
-        $implIncludes{"JS$type.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
-        $implIncludes{"NameNodeList.h"} = 1;
-    } elsif ($type eq "Rect") {
-        $implIncludes{"RectImpl.h"} = 1;
-        $implIncludes{"kjs_css.h"} = 1;
     } elsif ($type eq "HTMLCanvasElement") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"HTMLCanvasElement.h"} = 1;

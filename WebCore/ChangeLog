@@ -1,3 +1,72 @@
+2007-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14053
+        Autogenerate JS binding for Rect
+
+        - Renames RectImpl to Rect, DOMStyleSheetList to JSStyleSheetList 
+          and DOMRGBColor to JSRGBColor
+        - Moves JSStyleSheetList and JSRGBColor into the WebCore namespace.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        (WebCore::):
+        (WebCore::JSStyleSheetList::JSStyleSheetList):
+        (WebCore::JSStyleSheetList::~JSStyleSheetList):
+        (WebCore::JSStyleSheetList::getValueProperty):
+        (WebCore::JSStyleSheetList::indexGetter):
+        (WebCore::JSStyleSheetList::nameGetter):
+        (WebCore::JSStyleSheetList::getOwnPropertySlot):
+        (WebCore::toJS):
+        (WebCore::JSStyleSheetListFunc::callAsFunction):
+        (WebCore::JSRGBColor::JSRGBColor):
+        (WebCore::JSRGBColor::~JSRGBColor):
+        (WebCore::JSRGBColor::getOwnPropertySlot):
+        (WebCore::JSRGBColor::getValueProperty):
+        (WebCore::getJSRGBColor):
+        * bindings/js/kjs_css.h:
+        (WebCore::JSStyleSheetList::classInfo):
+        (WebCore::JSStyleSheetList::):
+        (WebCore::JSStyleSheetList::impl):
+        (WebCore::JSRGBColor::classInfo):
+        (WebCore::JSRGBColor::):
+        (WebCore::JSRGBColor::impl):
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        * css/CSSBorderImageValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::):
+        * css/DashboardRegion.h:
+        * css/Rect.h: Copied from css/RectImpl.h.
+        (WebCore::Rect::~Rect):
+        (WebCore::Rect::top):
+        (WebCore::Rect::right):
+        (WebCore::Rect::bottom):
+        (WebCore::Rect::left):
+        (WebCore::Rect::setTop):
+        (WebCore::Rect::setRight):
+        (WebCore::Rect::setBottom):
+        (WebCore::Rect::setLeft):
+        * css/Rect.idl:
+        * css/RectImpl.h: Removed.
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseShape):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/DOMWindow.idl:
+
 2007-06-14  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.

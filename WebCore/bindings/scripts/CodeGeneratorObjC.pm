@@ -332,7 +332,6 @@ sub GetImplClassName
     my $name = $codeGenerator->StripModule(shift);
 
     return "DOMImplementationFront" if $name eq "DOMImplementation";
-    return "RectImpl" if $name eq "Rect";
     return "DOMWindow" if $name eq "AbstractView";
     return $name;
 }
@@ -545,12 +544,6 @@ sub AddIncludesForType
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
-        return;
-    }
-
-    if ($type eq "Rect") {
-        $implIncludes{"RectImpl.h"} = 1;
-        $implIncludes{"DOM$type.h"} = 1;
         return;
     }
 

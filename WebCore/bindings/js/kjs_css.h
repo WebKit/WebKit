@@ -24,76 +24,64 @@
 #define kjs_css_h
 
 #include "Color.h"
-#include "RectImpl.h"
 #include "JSStyleSheet.h"
 #include "kjs_binding.h"
 
 namespace WebCore {
+
     class Counter;
     class CSSStyleSheet;
     class StyleSheet;
     class StyleSheetList;
-}
 
-namespace KJS {
+    class JSStyleSheetList : public KJS::DOMObject {
+    public:
+        JSStyleSheetList(KJS::ExecState*, StyleSheetList*, Document*);
+        virtual ~JSStyleSheetList();
 
-  class DOMStyleSheetList : public DOMObject {
-  public:
-    DOMStyleSheetList(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
-    virtual ~DOMStyleSheetList();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState*) const { return true; }
-    static const ClassInfo info;
-    WebCore::StyleSheetList* impl() const { return m_impl.get(); }
-    enum { Item, Length };
-  private:
-    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
+        // no put - all read-only
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
 
-    RefPtr<WebCore::StyleSheetList> m_impl;
-    RefPtr<WebCore::Document> m_doc;
-  };
+        enum { Item, Length };
 
-  // The document is only used for get-stylesheet-by-name (make optional if necessary)
-  JSValue* toJS(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
+        StyleSheetList* impl() const { return m_impl.get(); }
 
-  class DOMRGBColor : public DOMObject {
-  public:
-    DOMRGBColor(ExecState*, unsigned color);
-    ~DOMRGBColor();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Red, Green, Blue };
-    unsigned impl() const { return m_color; }
-  private:
-    unsigned m_color;
-  };
+    private:
+        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* nameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
 
-  JSValue* getDOMRGBColor(ExecState*, unsigned color);
+        RefPtr<StyleSheetList> m_impl;
+        RefPtr<Document> m_doc;
+    };
 
-  class DOMRect : public DOMObject {
-  public:
-    DOMRect(ExecState*, WebCore::RectImpl* r);
-    ~DOMRect();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Top, Right, Bottom, Left };
-    WebCore::RectImpl* impl() const { return m_rect.get(); }
-  private:
-    RefPtr<WebCore::RectImpl> m_rect;
-  };
+    // The document is only used for get-stylesheet-by-name (make optional if necessary)
+    KJS::JSValue* toJS(KJS::ExecState*, StyleSheetList*, Document*);
 
-  JSValue* toJS(ExecState*, WebCore::RectImpl*);
+    class JSRGBColor : public KJS::DOMObject {
+    public:
+        JSRGBColor(KJS::ExecState*, unsigned color);
+        ~JSRGBColor();
 
-} // namespace
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
+        // no put - all read-only
 
-#endif
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
+
+        enum { Red, Green, Blue };
+
+        unsigned impl() const { return m_color; }
+
+    private:
+        unsigned m_color;
+    };
+
+    KJS::JSValue* getJSRGBColor(KJS::ExecState*, unsigned color);
+
+} // namespace WebCore
+
+#endif // kjs_css_h

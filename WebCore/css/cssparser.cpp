@@ -2245,7 +2245,7 @@ bool CSSParser::parseShape(int propId, bool important)
     // rect(t, r, b, l) || rect(t r b l)
     if (args->size() != 4 && args->size() != 7)
         return false;
-    RectImpl *rect = new RectImpl();
+    Rect *rect = new Rect();
     bool valid = true;
     int i = 0;
     Value *a = args->current();
@@ -2818,7 +2818,7 @@ struct BorderImageParseContext
              m_left = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
              
         // Now build a rect value to hold all four of our primitive values.
-        RectImpl* rect = new RectImpl;
+        Rect* rect = new Rect;
         rect->setTop(m_top); rect->setRight(m_right); rect->setBottom(m_bottom); rect->setLeft(m_left);
 
         // Fill in STRETCH as the default if it wasn't specified.

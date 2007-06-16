@@ -159,6 +159,7 @@ IDL_BINDINGS += \
     css/CSSValue.idl \
     css/CSSValueList.idl \
     css/MediaList.idl \
+    css/Rect.idl \
     css/StyleSheet.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \

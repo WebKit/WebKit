@@ -23,11 +23,11 @@
 #ifndef DashboardRegion_h
 #define DashboardRegion_h
 
-#include "RectImpl.h"
+#include "Rect.h"
 
 namespace WebCore {
 
-class DashboardRegion : public RectImpl {
+class DashboardRegion : public Rect {
 public:
     DashboardRegion() : m_isCircle(0), m_isRectangle(0) { }
 

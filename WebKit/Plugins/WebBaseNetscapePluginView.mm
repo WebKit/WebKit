@@ -341,7 +341,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifndef NP_NO_QUICKDRAW
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
     if (drawingModel == NPDrawingModelQuickDraw) {
-        Rect portBounds;
+        ::Rect portBounds;
         CGrafPtr port = GetWindowPort(windowRef);
         GetPortBounds(port, &portBounds);
 
@@ -396,7 +396,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifndef NP_NO_QUICKDRAW
         case NPDrawingModelQuickDraw: {
             // Set up NS_Port.
-            Rect portBounds;
+            ::Rect portBounds;
             CGrafPtr port = GetWindowPort(windowRef);
             GetPortBounds(port, &portBounds);
             nPort.qdPort.port = port;
@@ -430,7 +430,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 void* offscreenData = CGBitmapContextGetData(currentContext);
                 if (offscreenData) {
                     // If the current context is an offscreen bitmap, then create a GWorld for it.
-                    Rect offscreenBounds;
+                    ::Rect offscreenBounds;
                     offscreenBounds.top = 0;
                     offscreenBounds.left = 0;
                     offscreenBounds.right = CGBitmapContextGetWidth(currentContext);
@@ -733,7 +733,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Note that PaintRect() only works for QuickDraw plugins; otherwise the current QD port is undefined.
     if (drawingModel == NPDrawingModelQuickDraw && !isTransparent && event->what == updateEvt) {
         ForeColor(greenColor);
-        const Rect bigRect = { -10000, -10000, 10000, 10000 };
+        const ::Rect bigRect = { -10000, -10000, 10000, 10000 };
         PaintRect(&bigRect);
         ForeColor(blackColor);
     }
@@ -1736,7 +1736,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return;
     }
     CGrafPtr port = GetWindowPort(windowRef);
-    Rect bounds;
+    ::Rect bounds;
     GetPortBounds(port, &bounds);
     WKCallDrawingNotification(port, &bounds);
 }
@@ -2411,7 +2411,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 #ifndef NP_NO_QUICKDRAW
         case NPDrawingModelQuickDraw:
         {
-            Rect qdRect;
+            ::Rect qdRect;
             GetRegionBounds((NPQDRegion)invalidRegion, &qdRect);
             invalidRect = NSMakeRect(qdRect.left, qdRect.top, qdRect.right - qdRect.left, qdRect.bottom - qdRect.top);
         }
@@ -2698,7 +2698,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(bitmap);
     
     // Create a GWorld with the same underlying buffer into which the plugin can draw
-    Rect printGWorldBounds;
+    ::Rect printGWorldBounds;
     SetRect(&printGWorldBounds, 0, 0, window.width, window.height);
     GWorldPtr printGWorld;
     if (NewGWorldFromPtr(&printGWorld,

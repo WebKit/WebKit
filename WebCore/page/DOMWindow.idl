@@ -41,6 +41,7 @@ module window {
                                        in [Optional] boolean authorOnly);
         readonly attribute double devicePixelRatio;
 
+#if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
         attribute StyleSheetConstructor StyleSheet;
         attribute CSSStyleSheetConstructor CSSStyleSheet;
@@ -61,6 +62,7 @@ module window {
         attribute MediaListConstructor MediaList;
         attribute CounterConstructor Counter;
         attribute CSSRuleListConstructor CSSRuleList;
+        attribute RectConstructor Rect;
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
 //        attribute DOMExceptionConstructor DOMException;
@@ -170,6 +172,7 @@ module window {
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
 #endif
+#endif // defined(LANGUAGE_JAVASCRIPT)
     };
 
 }

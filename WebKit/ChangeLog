@@ -1,3 +1,19 @@
+2007-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14053
+        Autogenerate JS binding for Rect
+
+        - Fix conflicts by using ::Rect instead of Rect.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        (-[WebBaseNetscapePluginView tellQuickTimeToChill]):
+        (-[WebBaseNetscapePluginView invalidateRegion:]):
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+
 2007-06-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin.
