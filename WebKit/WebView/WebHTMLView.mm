@@ -2439,14 +2439,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     [super addSubview:view];
 
-    if ([view isKindOfClass:[WebKitPluginContainerView class]])
-        [[self _pluginController] addPlugin:[[view subviews] objectAtIndex:0]];
+    if ([WebPluginController isPlugInView:view])
+        [[self _pluginController] addPlugin:view];
 }
 
 - (void)willRemoveSubview:(NSView *)subview
 {
-    if ([subview isKindOfClass:[WebKitPluginContainerView class]])
-        [[self _pluginController] destroyPlugin:[[subview subviews] objectAtIndex:0]];
+    if ([WebPluginController isPlugInView:subview])
+        [[self _pluginController] destroyPlugin:subview];
+
     [super willRemoveSubview:subview];
 }
 

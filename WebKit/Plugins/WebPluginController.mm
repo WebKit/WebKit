@@ -30,7 +30,6 @@
 #import <WebKit/WebPluginController.h>
 
 #import <Foundation/NSURLRequest.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/PlatformString.h>
@@ -53,8 +52,6 @@
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewInternal.h>
-
-using namespace WebCore;
 
 @interface NSView (PluginSecrets)
 - (void)setContainingWindow:(NSWindow *)w;
@@ -232,9 +229,6 @@ static NSMutableSet *pluginViews = nil;
             [view pluginDestroy];
         }
         
-        if (Frame* frame = core([self webFrame]))
-            frame->cleanupScriptObjectsForPlugin(view);
-                
         [pluginViews removeObject:view];
         [_views removeObject:view];
     }
@@ -273,7 +267,6 @@ static void cancelOutstandingCheck(const void *item, void *context)
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
-        
         if ([aView respondsToSelector:@selector(webPlugInDestroy)]) {
             KJS::JSLock::DropAllLocks dropAllLocks;
             [aView webPlugInDestroy];
@@ -281,16 +274,9 @@ static void cancelOutstandingCheck(const void *item, void *context)
             KJS::JSLock::DropAllLocks dropAllLocks;
             [aView pluginDestroy];
         }
-
-        if (Frame* frame = core([self webFrame]))
-            frame->cleanupScriptObjectsForPlugin(aView);
-                
         [pluginViews removeObject:aView];
-        
-        // Remove the containing view.
-        [[aView superview] removeFromSuperviewWithoutNeedingDisplay];
     }
-
+    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views release];
     _views = nil;
 

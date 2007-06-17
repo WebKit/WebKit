@@ -419,15 +419,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
     [view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-
     [attributes release];
-    
-    WebKitPluginContainerView* containerView = [[[WebKitPluginContainerView alloc] initWithFrame:NSZeroRect DOMElement:element] autorelease];
-    [view setFrame:NSZeroRect];
-    [containerView setAutoresizesSubviews:YES];
-    [containerView addSubview:view];
-    
-    return containerView;
+    return view;
 }
 
 - (NSString *)valueForKey:(NSString *)key keys:(NSArray *)keys values:(NSArray *)values
