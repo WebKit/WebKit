@@ -1,3 +1,9 @@
+2007-06-17  Sam Weinig  <sam@webkit.org>
+
+        Win32 build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-06-15  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bugs 14183 and 14184, 'repeat' regressed in border-image

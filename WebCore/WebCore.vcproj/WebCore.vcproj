@@ -1107,7 +1107,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\WebCore\DerivedSources\JSNamedNodeMap.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSNamedNodeMap.h"
 				>
 			</File>
 			<File
@@ -1180,6 +1180,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRangeException.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRect.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRect.h"
 				>
 			</File>
 			<File
@@ -4457,7 +4465,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\RectImpl.h"
+				RelativePath="..\css\Rect.h"
 				>
 			</File>
 			<File
