@@ -949,6 +949,9 @@ static const KeyEntry keyEntries[] = {
     { VK_TAB,    0,                  "InsertTab"                                   },
     { VK_TAB,    ShiftKey,           "InsertBacktab"                               },
     { VK_RETURN, 0,                  "InsertNewline"                               },
+    { VK_RETURN, CtrlKey,            "InsertNewline"                               },
+    { VK_RETURN, AltKey,             "InsertNewline"                               },
+    { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
 
     { 'C',       CtrlKey,            "Copy"                                        },
     { 'V',       CtrlKey,            "Paste"                                       },

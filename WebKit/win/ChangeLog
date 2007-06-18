@@ -1,5 +1,14 @@
 2007-06-18  Dave Hyatt  <hyatt@apple.com>
 
+        Let through more newline+modifier key combos in order to support Alt+Enter and Ctrl+Enter in the
+        SafariWin URL bar.
+       
+        Reviewed by mccullough
+
+        * WebView.cpp:
+
+2007-06-18  Dave Hyatt  <hyatt@apple.com>
+
         Add support for horizontal mouse wheeling to Windows.  Shift+wheel is supported for horizontal
         wheeling just like on OS X.  In addition, the WM_MOUSEHWHEEL event is now processed correctly so that
         input devices like tilt wheels will now work.
