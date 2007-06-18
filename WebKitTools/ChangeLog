@@ -1,3 +1,20 @@
+2007-06-18  Jake Helfert  <jake@jakeonthenet.com>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14154
+          Spinneret doesn't build against the new Win32 port.
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (_tWinMain): 
+            -Changed IWebViewExt to IWebViewPrivate
+            -Changed Co[Un]initialize to Ole[Un]initialize because WebKit now calls
+             the WIN32 function RegisterDragDrop which requires the Ole* calls.
+        * Spinneret/Spinneret/Spinneret.h:
+        (SpinneretWebHost::didReceiveIcon): Updated method signature.
+        (SpinneretWebHost::willPerformClientRedirectToURL): Updated method signature.
+        (SpinneretWebHost::windowScriptObjectAvailable): Updated method signature.
+
 2007-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady.

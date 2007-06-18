@@ -166,7 +166,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         return FALSE;
 
     // Init COM
-    CoInitialize(NULL);
+    OleInitialize(NULL);
 
     hURLBarWnd = CreateWindow(L"EDIT", 0,
                         WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
@@ -189,13 +189,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (FAILED(hr))
         goto exit;
 
-    hr = gWebView->setHostWindow(hMainWnd);
+    hr = gWebView->setHostWindow((OLE_HANDLE) hMainWnd);
     if (FAILED(hr))
         goto exit;
 
     RECT clientRect;
     GetClientRect(hMainWnd, &clientRect);
-    hr = gWebView->initWithFrame(&clientRect, 0, 0);
+    hr = gWebView->initWithFrame(clientRect, 0, 0);
     if (FAILED(hr))
         goto exit;
 
@@ -209,11 +209,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     frame->loadHTMLString(defaultHTML, 0);
     frame->Release();
 
-    IWebViewExt* viewExt;
-    hr = gWebView->QueryInterface(IID_IWebViewExt, (void**)&viewExt);
+    IWebViewPrivate* viewExt;
+    hr = gWebView->QueryInterface(IID_IWebViewPrivate, (void**)&viewExt);
     if (FAILED(hr))
         goto exit;
-    hr = viewExt->viewWindow(&gViewWindow);
+    hr = viewExt->viewWindow((OLE_HANDLE*) &gViewWindow);
     viewExt->Release();
     if (FAILED(hr) || !gViewWindow)
         goto exit;
@@ -240,7 +240,7 @@ exit:
 #endif
 
     // Shut down COM.
-    CoUninitialize();
+    OleUninitialize();
     
     return (int) msg.wParam;
 }

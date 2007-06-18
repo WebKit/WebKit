@@ -64,7 +64,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IWebImage *image,
+        /* [in] */ OLE_HANDLE hBitmap,
         /* [in] */ IWebFrame *frame) { return S_OK; }
     
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
@@ -79,12 +79,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame( 
         /* [in] */ IWebView *webView,
         /* [in] */ IWebFrame *frame) { return S_OK; }
-    
+
     virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL( 
         /* [in] */ IWebView *webView,
         /* [in] */ BSTR url,
-        UINT delaySeconds,
-        /* [in] */ UINT fireDate,
+        /* [in] */ double delaySeconds,
+        /* [in] */ DATE fireDate,
         /* [in] */ IWebFrame *frame) { return S_OK; }
     
     virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame( 
@@ -95,9 +95,10 @@ public:
         /* [in] */ IWebView *webView,
         /* [in] */ IWebFrame *frame) { return S_OK; }
     
-    virtual HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
+    virtual /* [local] */ HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IWebScriptObject *windowScriptObject) { return S_OK; }
+        /* [in] */ JSContextRef context,
+        /* [in] */ JSObjectRef windowScriptObject)  { return S_OK; }
 
     // SpinneretWebHost
 
