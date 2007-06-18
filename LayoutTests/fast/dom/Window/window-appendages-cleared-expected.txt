@@ -2,8 +2,6 @@ PASS history.back == "LEFTOVER" is false
 PASS history.forward == "LEFTOVER" is false
 PASS history.go == "LEFTOVER" is false
 PASS history.length == "LEFTOVER" is false
-PASS frames.length == "LEFTOVER" is false
-PASS frames.location == "LEFTOVER" is false
 PASS location.assign == "LEFTOVER" is false
 PASS location.hash == "LEFTOVER" is false
 PASS location.host == "LEFTOVER" is false

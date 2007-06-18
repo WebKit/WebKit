@@ -1,3 +1,17 @@
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Update tests now that window.frames points to window and not FrameArray
+        (which has been removed).
+
+        * fast/dom/Window/resources/window-appendages-cleared-results.html:
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/dom/Window/window-appendages-cleared.html:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/toString-and-valueOf-override-expected.txt:
+        * fast/js/toString-and-valueOf-override.html:
+
 2007-06-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

@@ -1,3 +1,19 @@
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Remove the FrameArray class and instead make window.frames another
+        self-reference for window (like window.window, window.self, etc).
+        This is what Firefox and what the HTML5 dictates.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::Window::mark):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::Window::disconnectFrame):
+        * bindings/js/kjs_window.h:
+
 2007-06-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

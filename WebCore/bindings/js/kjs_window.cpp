@@ -84,7 +84,6 @@ struct WindowPrivate {
     WindowPrivate() 
         : screen(0)
         , history(0)
-        , frames(0)
         , loc(0)
         , m_selection(0)
         , m_locationbar(0)
@@ -104,7 +103,6 @@ struct WindowPrivate {
     Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
     mutable Screen* screen;
     mutable History* history;
-    mutable FrameArray* frames;
     mutable Location* loc;
     mutable Selection* m_selection;
     mutable BarInfo* m_locationbar;
@@ -172,28 +170,6 @@ public:
     enum { Back, Forward, Go, Length };
     void disconnectFrame() { m_frame = 0; }
   private:
-    Frame* m_frame;
-  };
-
-
-  class FrameArray : public DOMObject {
-  public:
-    FrameArray(ExecState *exec, Frame *f)
-      : m_frame(f)
-    {
-      setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-    }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token);
-    enum { Length, Location };
-    void disconnectFrame() { m_frame = 0; }
-  private:
-    static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
     Frame* m_frame;
   };
 
@@ -502,8 +478,6 @@ void Window::mark()
     d->screen->mark();
   if (d->history && !d->history->marked())
     d->history->mark();
-  if (d->frames && !d->frames->marked())
-    d->frames->mark();
   if (d->loc && !d->loc->marked())
     d->loc->mark();
   if (d->m_selection && !d->m_selection->marked())
@@ -744,9 +718,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Status:
       return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
-      if (!d->frames)
-        d->frames = new FrameArray(exec, m_frame);
-      return d->frames;
+      return retrieve(m_frame);
     case History_:
       if (!d->history)
         d->history = new History(exec, m_frame);
@@ -1400,7 +1372,6 @@ void Window::clearHelperObjectProperties()
 {
   d->screen = 0;
   d->history = 0;
-  d->frames = 0;
   d->loc = 0;
   d->m_selection = 0;
   d->m_locationbar = 0;
@@ -2055,8 +2026,6 @@ void Window::disconnectFrame()
         d->m_toolbar->m_frame = 0;
     if (d->m_scrollbars)
         d->m_scrollbars->m_frame = 0;
-    if (d->frames)
-        d->frames->disconnectFrame();
     if (d->history)
         d->history->disconnectFrame();
 }
@@ -2079,70 +2048,6 @@ Window::UnprotectedListenersMap& Window::jsUnprotectedEventListeners()
 Window::UnprotectedListenersMap& Window::jsUnprotectedHTMLEventListeners()
 {
     return d->jsUnprotectedHTMLEventListeners;
-}
-
-const ClassInfo FrameArray::info = { "FrameArray", 0, &FrameArrayTable, 0 };
-
-/*
-@begin FrameArrayTable 2
-length          FrameArray::Length      DontDelete|ReadOnly
-location        FrameArray::Location    DontDelete|ReadOnly
-@end
-*/
-
-JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
-{
-  switch (token) {
-  case Length:
-    return jsNumber(m_frame->tree()->childCount());
-  case Location:
-    // non-standard property, but works in NS and IE
-    if (JSObject *obj = Window::retrieveWindow(m_frame))
-      return obj->get(exec, "location");
-    return jsUndefined();
-  default:
-    ASSERT(0);
-    return jsUndefined();
-  }
-}
-
-JSValue* FrameArray::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
-{
-    return Window::retrieve(static_cast<FrameArray*>(slot.slotBase())->m_frame->tree()->child(slot.index()));
-}
-  
-JSValue* FrameArray::nameGetter(ExecState*, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
-{
-    return Window::retrieve(static_cast<FrameArray*>(slot.slotBase())->m_frame->tree()->child(AtomicString(propertyName)));
-}
-
-bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  if (!m_frame) {
-    slot.setUndefined(this);
-    return true;
-  }
-
-  const HashEntry* entry = Lookup::findEntry(&FrameArrayTable, propertyName);
-  if (entry) {
-    slot.setStaticEntry(this, entry, staticValueGetter<FrameArray>);
-    return true;
-  }
-
-  // check for the name or number
-  if (m_frame->tree()->child(propertyName)) {
-    slot.setCustom(this, nameGetter);
-    return true;
-  }
-
-  bool ok;
-  unsigned i = propertyName.toArrayIndex(&ok);
-  if (ok && i < m_frame->tree()->childCount()) {
-    slot.setCustomIndex(this, i, indexGetter);
-    return true;
-  }
-
-  return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 ////////////////////// Location Object ////////////////////////

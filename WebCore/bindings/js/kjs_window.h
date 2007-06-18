@@ -37,7 +37,6 @@ namespace WebCore {
 namespace KJS {
 
     class BarInfo;
-    class FrameArray;
     class History;
     class JSEventListener;
     class JSLazyEventListener;
