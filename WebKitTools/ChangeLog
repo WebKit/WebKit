@@ -1,3 +1,11 @@
+2007-06-18  Adam Treat <adam@staikos.net>
+
+        Reviewed by George.
+
+        Reflect the library name change.
+
+        * Scripts/webkitdirs.pm:
+
 2007-06-18  Jake Helfert  <jake@jakeonthenet.com>
 
         Reviewed by Adam.
