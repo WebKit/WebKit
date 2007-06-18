@@ -27,9 +27,12 @@
 #define DOMWindow_h
 
 #include "Shared.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+    class BarInfo;
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Document;
@@ -40,8 +43,19 @@ namespace WebCore {
     class DOMWindow : public Shared<DOMWindow> {
     public:
         DOMWindow(Frame*);
+        virtual ~DOMWindow();
+
         Frame* frame();
         void disconnectFrame();
+
+        // DOM Level 0
+        BarInfo* locationbar() const;
+        BarInfo* menubar() const;
+        BarInfo* personalbar() const;
+        BarInfo* scrollbars() const;
+        BarInfo* statusbar() const;
+        BarInfo* toolbar() const;
+
 
         // DOM Level 2 AbstractView Interface
         Document* document() const;
@@ -55,6 +69,12 @@ namespace WebCore {
         
     private:
         Frame* m_frame;
+        mutable RefPtr<BarInfo> m_locationbar;
+        mutable RefPtr<BarInfo> m_menubar;
+        mutable RefPtr<BarInfo> m_personalbar;
+        mutable RefPtr<BarInfo> m_scrollbars;
+        mutable RefPtr<BarInfo> m_statusbar;
+        mutable RefPtr<BarInfo> m_toolbar;
     };
 
 } // namespace WebCore

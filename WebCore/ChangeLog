@@ -1,5 +1,43 @@
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14211
+        Move the BarInfo object out of the JS bindings
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::Window::mark):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::Window::disconnectFrame):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * page/BarInfo.cpp: Added.
+        (WebCore::BarInfo::BarInfo):
+        (WebCore::BarInfo::disconnectFrame):
+        (WebCore::BarInfo::visible):
+        * page/BarInfo.h: Added.
+        (WebCore::BarInfo::):
+        * page/BarInfo.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::disconnectFrame):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin.
 
         Remove the FrameArray class and instead make window.frames another

@@ -86,12 +86,6 @@ struct WindowPrivate {
         , history(0)
         , loc(0)
         , m_selection(0)
-        , m_locationbar(0)
-        , m_menubar(0)
-        , m_personalbar(0)
-        , m_scrollbars(0)
-        , m_statusbar(0)
-        , m_toolbar(0)
         , m_evt(0)
         , m_returnValueSlot(0)
     {
@@ -105,12 +99,6 @@ struct WindowPrivate {
     mutable History* history;
     mutable Location* loc;
     mutable Selection* m_selection;
-    mutable BarInfo* m_locationbar;
-    mutable BarInfo* m_menubar;
-    mutable BarInfo* m_personalbar;
-    mutable BarInfo* m_scrollbars;
-    mutable BarInfo* m_statusbar;
-    mutable BarInfo* m_toolbar;
     WebCore::Event *m_evt;
     JSValue **m_returnValueSlot;
     typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
@@ -255,11 +243,9 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   innerWidth    Window::InnerWidth      DontDelete|ReadOnly
   length        Window::Length          DontDelete|ReadOnly
   location      Window::Location_       DontDelete
-  locationbar   Window::Locationbar     DontDelete
   name          Window::Name            DontDelete
   navigator     Window::Navigator_      DontDelete|ReadOnly
   clientInformation     Window::ClientInformation       DontDelete|ReadOnly
-  menubar       Window::Menubar         DontDelete|ReadOnly
   offscreenBuffering    Window::OffscreenBuffering      DontDelete|ReadOnly
   opener        Window::Opener          DontDelete|ReadOnly
   outerHeight   Window::OuterHeight     DontDelete|ReadOnly
@@ -267,14 +253,10 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   pageXOffset   Window::PageXOffset     DontDelete|ReadOnly
   pageYOffset   Window::PageYOffset     DontDelete|ReadOnly
   parent        Window::Parent          DontDelete|ReadOnly
-  personalbar   Window::Personalbar     DontDelete|ReadOnly
   screenX       Window::ScreenX         DontDelete|ReadOnly
   screenY       Window::ScreenY         DontDelete|ReadOnly
   screenLeft    Window::ScreenLeft      DontDelete|ReadOnly
   screenTop     Window::ScreenTop       DontDelete|ReadOnly
-  scrollbars    Window::Scrollbars      DontDelete|ReadOnly
-  statusbar     Window::Statusbar       DontDelete|ReadOnly
-  toolbar       Window::Toolbar         DontDelete|ReadOnly
   scroll        Window::Scroll          DontDelete|Function 2
   scrollBy      Window::ScrollBy        DontDelete|Function 2
   scrollTo      Window::ScrollTo        DontDelete|Function 2
@@ -428,48 +410,6 @@ bool Window::find(const String& string, bool caseSensitive, bool backwards, bool
     return m_frame->findString(string, !backwards, caseSensitive, wrap, false);
 }
 
-BarInfo *Window::locationbar(ExecState *exec) const
-{
-  if (!d->m_locationbar)
-    d->m_locationbar = new BarInfo(exec, m_frame, BarInfo::Locationbar);
-  return d->m_locationbar;
-}
-
-BarInfo *Window::menubar(ExecState *exec) const
-{
-  if (!d->m_menubar)
-    d->m_menubar = new BarInfo(exec, m_frame, BarInfo::Menubar);
-  return d->m_menubar;
-}
-
-BarInfo *Window::personalbar(ExecState *exec) const
-{
-  if (!d->m_personalbar)
-    d->m_personalbar = new BarInfo(exec, m_frame, BarInfo::Personalbar);
-  return d->m_personalbar;
-}
-
-BarInfo *Window::statusbar(ExecState *exec) const
-{
-  if (!d->m_statusbar)
-    d->m_statusbar = new BarInfo(exec, m_frame, BarInfo::Statusbar);
-  return d->m_statusbar;
-}
-
-BarInfo *Window::toolbar(ExecState *exec) const
-{
-  if (!d->m_toolbar)
-    d->m_toolbar = new BarInfo(exec, m_frame, BarInfo::Toolbar);
-  return d->m_toolbar;
-}
-
-BarInfo *Window::scrollbars(ExecState *exec) const
-{
-  if (!d->m_scrollbars)
-    d->m_scrollbars = new BarInfo(exec, m_frame, BarInfo::Scrollbars);
-  return d->m_scrollbars;
-}
-
 // reference our special objects during garbage collection
 void Window::mark()
 {
@@ -482,18 +422,6 @@ void Window::mark()
     d->loc->mark();
   if (d->m_selection && !d->m_selection->marked())
     d->m_selection->mark();
-  if (d->m_locationbar && !d->m_locationbar->marked())
-    d->m_locationbar->mark();
-  if (d->m_menubar && !d->m_menubar->marked())
-    d->m_menubar->mark();
-  if (d->m_personalbar && !d->m_personalbar->marked())
-    d->m_personalbar->mark();
-  if (d->m_scrollbars && !d->m_scrollbars->marked())
-    d->m_scrollbars->mark();
-  if (d->m_statusbar && !d->m_statusbar->marked())
-    d->m_statusbar->mark();
-  if (d->m_toolbar && !d->m_toolbar->marked())
-    d->m_toolbar->mark();
 }
 
 static bool allowPopUp(ExecState *exec, Window *window)
@@ -751,10 +679,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
       return n;
     }
-    case Locationbar:
-      return locationbar(exec);
-    case Menubar:
-      return menubar(exec);
     case OffscreenBuffering:
       return jsBoolean(true);
     case Opener:
@@ -777,8 +701,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return jsNumber(m_frame->view()->contentsY());
     case Parent:
       return retrieve(m_frame->tree()->parent() ? m_frame->tree()->parent() : m_frame);
-    case Personalbar:
-      return personalbar(exec);
     case ScreenLeft:
     case ScreenX:
       return jsNumber(m_frame->page()->chrome()->windowRect().x());
@@ -795,12 +717,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
         return jsUndefined();
       updateLayout();
       return jsNumber(m_frame->view()->contentsY());
-    case Scrollbars:
-      return scrollbars(exec);
-    case Statusbar:
-      return statusbar(exec);
-    case Toolbar:
-      return toolbar(exec);
     case Self:
     case Window_:
       return retrieve(m_frame);
@@ -1374,12 +1290,6 @@ void Window::clearHelperObjectProperties()
   d->history = 0;
   d->loc = 0;
   d->m_selection = 0;
-  d->m_locationbar = 0;
-  d->m_menubar = 0;
-  d->m_personalbar = 0;
-  d->m_scrollbars = 0;
-  d->m_statusbar = 0;
-  d->m_toolbar = 0;
   d->m_evt = 0;
 }
 
@@ -2014,18 +1924,6 @@ void Window::disconnectFrame()
         d->loc->m_frame = 0;
     if (d->m_selection)
         d->m_selection->m_frame = 0;
-    if (d->m_locationbar)
-        d->m_locationbar->m_frame = 0;
-    if (d->m_menubar)
-        d->m_menubar->m_frame = 0;
-    if (d->m_personalbar)
-        d->m_personalbar->m_frame = 0;
-    if (d->m_statusbar)
-        d->m_statusbar->m_frame = 0;
-    if (d->m_toolbar)
-        d->m_toolbar->m_frame = 0;
-    if (d->m_scrollbars)
-        d->m_scrollbars->m_frame = 0;
     if (d->history)
         d->history->disconnectFrame();
 }
@@ -2383,50 +2281,6 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     }
 
     return jsUndefined();
-}
-
-////////////////////// BarInfo Object ////////////////////////
-
-const ClassInfo BarInfo::info = { "BarInfo", 0, &BarInfoTable, 0 };
-/*
-@begin BarInfoTable 1
-  visible                BarInfo::Visible                        DontDelete|ReadOnly
-@end
-*/
-BarInfo::BarInfo(ExecState *exec, Frame *f, Type barType) 
-  : m_frame(f)
-  , m_type(barType)
-{
-  setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-}
-
-JSValue *BarInfo::getValueProperty(ExecState *exec, int token) const
-{
-    ASSERT(token == Visible);
-    switch (m_type) {
-    case Locationbar:
-        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
-    case Toolbar:
-        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
-    case Personalbar:
-        return jsBoolean(m_frame->page()->chrome()->toolbarsVisible());
-    case Menubar: 
-        return jsBoolean(m_frame->page()->chrome()->menubarVisible());
-    case Scrollbars: 
-        return jsBoolean(m_frame->page()->chrome()->scrollbarsVisible());
-    case Statusbar:
-        return jsBoolean(m_frame->page()->chrome()->statusbarVisible());
-    default:
-        return jsBoolean(false);
-    }
-}
-
-bool BarInfo::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  if (!m_frame)
-    return false;
-  
-  return getStaticValueSlot<BarInfo, JSObject>(exec, &BarInfoTable, this, propertyName, slot);
 }
 
 ////////////////////// History Object ////////////////////////

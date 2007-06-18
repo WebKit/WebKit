@@ -347,6 +347,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSBarInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSBarInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasGradient.cpp"
 				>
 			</File>
@@ -2337,6 +2345,14 @@
 		<Filter
 			Name="page"
 			>
+			<File
+				RelativePath="..\page\BarInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\BarInfo.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\Chrome.cpp"
 				>

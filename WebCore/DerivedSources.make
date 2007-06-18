@@ -299,6 +299,7 @@ all : \
     DocTypeStrings.cpp \
     HTMLEntityNames.c \
     JSAttr.h \
+    JSBarInfo.h \
     JSCDATASection.h \
     JSCSSCharsetRule.h \
     JSCSSFontFaceRule.h \

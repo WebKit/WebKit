@@ -2734,6 +2734,11 @@
 		BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */; };
 		BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */; };
 		BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */; };
+		BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EE40C2641CD009E2349 /* BarInfo.cpp */; };
+		BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarInfo.h */; };
+		BC124EE90C2641CD009E2349 /* BarInfo.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC124EE60C2641CD009E2349 /* BarInfo.idl */; };
+		BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */; };
+		BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EFE0C26447A009E2349 /* JSBarInfo.h */; };
 		BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */; };
 		BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5CE0B2A886F0018461D /* TextBreakIterator.h */; };
 		BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C5CF0B2A886F0018461D /* TextBreakIteratorICU.cpp */; };
@@ -6027,6 +6032,11 @@
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC124EE40C2641CD009E2349 /* BarInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BarInfo.cpp; sourceTree = "<group>"; };
+		BC124EE50C2641CD009E2349 /* BarInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BarInfo.h; sourceTree = "<group>"; };
+		BC124EE60C2641CD009E2349 /* BarInfo.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = BarInfo.idl; sourceTree = "<group>"; };
+		BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSBarInfo.cpp; sourceTree = "<group>"; };
+		BC124EFE0C26447A009E2349 /* JSBarInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSBarInfo.h; sourceTree = "<group>"; };
 		BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElementCustom.cpp; sourceTree = "<group>"; };
 		BC18C5CE0B2A886F0018461D /* TextBreakIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBreakIterator.h; sourceTree = "<group>"; };
 		BC18C5CF0B2A886F0018461D /* TextBreakIteratorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIteratorICU.cpp; sourceTree = "<group>"; };
@@ -6470,6 +6480,8 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */,
+				BC124EFE0C26447A009E2349 /* JSBarInfo.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
@@ -7198,19 +7210,26 @@
 			children = (
 				93C09A820B064F05005ABD4D /* mac */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
+				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
+				BC124EE50C2641CD009E2349 /* BarInfo.h */,
+				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
+				14D824060AF93AEB0004F057 /* ChromeClient.h */,
 				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
 				065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */,
 				065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */,
-				14D824060AF93AEB0004F057 /* ChromeClient.h */,
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
-				93C09A520B064DB3005ABD4D /* EventHandler.h */,
+				A718760D0B2A120100A16ECE /* DragActions.h */,
+				A7CA59620B27C1F200FA021D /* DragClient.h */,
+				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
+				A7CA595B0B27BD9E00FA021D /* DragController.h */,
 				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
-				14993BE40B2F2B1C0050497F /* FocusController.h */,
+				93C09A520B064DB3005ABD4D /* EventHandler.h */,
 				14993BE30B2F2B1C0050497F /* FocusController.cpp */,
+				14993BE40B2F2B1C0050497F /* FocusController.h */,
 				062287830B4DB322000C34DF /* FocusDirection.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
@@ -7225,12 +7244,8 @@
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
 				65D1C1C909932B22000CB324 /* Plugin.h */,
-				F587863A02DE3A1401EA4122 /* Settings.h */,
-				A7CA595B0B27BD9E00FA021D /* DragController.h */,
-				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
-				A7CA59620B27C1F200FA021D /* DragClient.h */,
-				A718760D0B2A120100A16ECE /* DragActions.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
+				F587863A02DE3A1401EA4122 /* Settings.h */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -11559,6 +11574,8 @@
 				BC6DC7A10C1A4BFA004E2017 /* JSHTMLAllCollection.h in Headers */,
 				BCFE2F120C1B58380020235F /* JSRect.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
+				BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */,
+				BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11672,6 +11689,7 @@
 				BC491B4F0C023E2D009D6316 /* HTMLMarqueeElement.idl in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				BC124EE90C2641CD009E2349 /* BarInfo.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12983,6 +13001,8 @@
 				BCCBAD3B0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp in Sources */,
 				BCCBAD400C18C14200CE890F /* JSHTMLCollection.cpp in Sources */,
 				BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */,
+				BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */,
+				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

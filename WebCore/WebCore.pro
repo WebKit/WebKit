@@ -256,6 +256,7 @@ IDL_BINDINGS += \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
+    page/BarInfo.idl \
     page/DOMWindow.idl \
     xml/DOMParser.idl \
     xml/XMLSerializer.idl
@@ -557,6 +558,7 @@ SOURCES += \
     loader/SubresourceLoader.cpp \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
+    page/BarInfo.cpp \
     page/Chrome.cpp \
     page/ContextMenuController.cpp \
     page/DOMWindow.cpp \

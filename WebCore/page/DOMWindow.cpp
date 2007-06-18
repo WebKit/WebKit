@@ -26,21 +26,26 @@
 #include "config.h"
 #include "DOMWindow.h"
 
-#include "cssstyleselector.h"
-#include "Chrome.h"
+#include "BarInfo.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
+#include "Chrome.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
 #include "Screen.h"
+#include "cssstyleselector.h"
 
 namespace WebCore {
 
 DOMWindow::DOMWindow(Frame* f)
     : m_frame(f)
+{
+}
+
+DOMWindow::~DOMWindow()
 {
 }
 
@@ -52,6 +57,60 @@ Frame* DOMWindow::frame()
 void DOMWindow::disconnectFrame()
 {
     m_frame = 0;
+    if (m_locationbar)
+        m_locationbar->disconnectFrame();
+    if (m_menubar)
+        m_menubar->disconnectFrame();
+    if (m_personalbar)
+        m_personalbar->disconnectFrame();
+    if (m_scrollbars)
+        m_scrollbars->disconnectFrame();
+    if (m_statusbar)
+        m_statusbar->disconnectFrame();
+    if (m_toolbar)
+        m_toolbar->disconnectFrame();
+}
+
+BarInfo* DOMWindow::locationbar() const
+{
+    if (!m_locationbar)
+        m_locationbar = new BarInfo(m_frame, BarInfo::Locationbar);
+    return m_locationbar.get();
+}
+
+BarInfo* DOMWindow::menubar() const
+{
+    if (!m_menubar)
+        m_menubar = new BarInfo(m_frame, BarInfo::Menubar);
+    return m_menubar.get();
+}
+
+BarInfo* DOMWindow::personalbar() const
+{
+    if (!m_personalbar)
+        m_personalbar = new BarInfo(m_frame, BarInfo::Personalbar);
+    return m_personalbar.get();
+}
+
+BarInfo* DOMWindow::scrollbars() const
+{
+    if (!m_scrollbars)
+        m_scrollbars = new BarInfo(m_frame, BarInfo::Scrollbars);
+    return m_scrollbars.get();
+}
+
+BarInfo* DOMWindow::statusbar() const
+{
+    if (!m_statusbar)
+        m_statusbar = new BarInfo(m_frame, BarInfo::Statusbar);
+    return m_statusbar.get();
+}
+
+BarInfo* DOMWindow::toolbar() const
+{
+    if (!m_toolbar)
+        m_toolbar = new BarInfo(m_frame, BarInfo::Toolbar);
+    return m_toolbar.get();
 }
 
 Document* DOMWindow::document() const

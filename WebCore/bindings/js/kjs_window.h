@@ -132,12 +132,6 @@ namespace KJS {
     Location *location() const;
     Selection *selection() const;
     bool find(const WebCore::String&, bool, bool, bool, bool, bool, bool) const;
-    BarInfo *locationbar(ExecState*) const;
-    BarInfo *menubar(ExecState*) const;
-    BarInfo *personalbar(ExecState*) const;
-    BarInfo *scrollbars(ExecState*) const;
-    BarInfo *statusbar(ExecState*) const;
-    BarInfo *toolbar(ExecState*) const;
 
     // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
     JSEventListener* findJSEventListener(JSValue*, bool html = false);
@@ -170,9 +164,9 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { AToB, BToA, Closed, Crypto, DefaultStatus, Status, DOMException, Frames, History_, Event_, InnerHeight,
-           InnerWidth, Length, Location_, Locationbar, Name, Navigator_, ClientInformation,
-           Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
-           Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
+           InnerWidth, Length, Location_, Name, Navigator_, ClientInformation,
+           OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
+           Parent, ScreenX, ScreenY, Scroll, ScrollBy,
            ScreenTop, ScreenLeft,
            ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top, Screen_,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
@@ -183,7 +177,7 @@ namespace KJS {
            Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload, Onbeforeunload,
-           Statusbar, Toolbar, FrameElement, ShowModalDialog, Find, Stop };
+           FrameElement, ShowModalDialog, Find, Stop };
 
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;
@@ -253,22 +247,6 @@ namespace KJS {
     friend class Window;
     Selection(WebCore::Frame*);
     WebCore::Frame* m_frame;
-  };
-
-  class BarInfo : public DOMObject {
-  public:
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    enum { Visible };
-    enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
-    WebCore::Frame* frame() const { return m_frame; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    friend class Window;
-    BarInfo(ExecState*, WebCore::Frame*, Type);
-    WebCore::Frame* m_frame;
-    Type m_type;
   };
 
 } // namespace
