@@ -421,7 +421,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
 
     document()->updateLayout();
 
-    if (style()->visibility() == HIDDEN) {
+    if (style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderer()->height()) {
         if (m_multiLine)
             static_cast<HTMLTextAreaElement*>(node())->cacheSelection(start, end);
         else

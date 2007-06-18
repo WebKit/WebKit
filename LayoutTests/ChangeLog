@@ -1,3 +1,13 @@
+2007-06-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13413
+          Failed assertion in RenderTextControl::setSelectionRange in Google Spreadsheets
+
+        * fast/forms/input-zero-height-focus-expected.txt: Added.
+        * fast/forms/input-zero-height-focus.html: Added.
+
 2007-06-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
