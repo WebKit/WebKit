@@ -45,11 +45,9 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
     return point;
 }
 
-PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
+PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isHorizontal)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
-    , m_deltaX(0) // FIXME: We may want to map a key + wheel to be horizontal scrolling (like OS X)
-    , m_deltaY(short(HIWORD(wParam)) / 120.0f)
     , m_isAccepted(false)
     , m_shiftKey(wParam & MK_SHIFT)
     , m_ctrlKey(wParam & MK_CONTROL)
@@ -57,6 +55,14 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
     , m_isContinuous(false)
 {
+    float delta = short(HIWORD(wParam)) / (float)WHEEL_DELTA;
+    if (isHorizontal) {
+        m_deltaX = delta;
+        m_deltaY = 0;
+    } else {
+        m_deltaX = 0;
+        m_deltaY = delta;
+    }
 }
 
 }

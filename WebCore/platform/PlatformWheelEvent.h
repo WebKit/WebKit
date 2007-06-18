@@ -82,7 +82,7 @@ namespace WebCore {
         PlatformWheelEvent(NSEvent*);
 #endif
 #if PLATFORM(WIN)
-        PlatformWheelEvent(HWND, WPARAM, LPARAM);
+        PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isHorizontal);
 #endif
 #if PLATFORM(GDK)
         PlatformWheelEvent(GdkEvent*);

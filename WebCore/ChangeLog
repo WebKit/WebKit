@@ -1,3 +1,13 @@
+2007-06-18  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for horizontal mouse wheeling on Windows.
+        
+        Reviewed by aroben
+
+        * platform/PlatformWheelEvent.h:
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-06-17  Sam Weinig  <sam@webkit.org>
 
         Win32 build fix.
