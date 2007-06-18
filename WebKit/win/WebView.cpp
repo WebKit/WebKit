@@ -841,6 +841,18 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
 bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam)
 {
+    // Ctrl+Mouse wheel doesn't ever go into WebCore.  It is used to
+    // zoom instead (Mac zooms the whole Desktop, but Windows browsers trigger their
+    // own local zoom modes for Ctrl+wheel).
+    if (wParam & MK_CONTROL) {
+        short delta = short(HIWORD(wParam));
+        if (delta < 0)
+            makeTextLarger(0);
+        else
+            makeTextSmaller(0);
+        return true;
+    }
+
     PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam);
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)

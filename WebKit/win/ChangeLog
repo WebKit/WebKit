@@ -1,3 +1,12 @@
+2007-06-17  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for Ctrl+Mouse Wheel to increase/decrease text zoom (Win32 only).
+       
+        Reviewed by aroben
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+
 2007-06-09  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
@@ -2125,8 +2134,6 @@
         * WebEditorClient.cpp: (WebEditorClient::doTextFieldCommandFromEvent):
 
 2007-03-14  Steve Falkenburg  <sfalken@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         <rdar://problem/5050470> Reproducible crash doing find on page at cnn.com
         
@@ -5560,9 +5567,7 @@
         * WebLocalizableStrings.h: Added.
 
 2006-12-04  Steve Falkenburg  <sfalken@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-        
+       
         Checkpoint of <rdar://4601521>
         Use CoreFoundation bundles w/ Localizable.strings for localization.
 
@@ -5750,9 +5755,7 @@
         (WebFrame::initWithWebFrameView):
 
 2006-11-28  Steve Falkenburg  <sfalken@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-        
+       
         Make COM registration fall back to per-user for Vista LUA compatibility.
 
         Only affects our development builds since the installer will set these
@@ -8224,8 +8227,6 @@
         (WebFrame::submitForm):
 
 2006-09-12  Steve Falkenburg  <sfalken@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         Get Boomer ready for B&I submission.
       
