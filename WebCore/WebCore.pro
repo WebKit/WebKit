@@ -825,6 +825,7 @@ gdk-port:SOURCES += \
         platform/gdk/ScrollViewGdk.cpp \
         platform/gdk/ScreenGdk.cpp \
         platform/gdk/SharedTimerLinux.cpp \
+        platform/gdk/SoundGdk.cpp \
         platform/gdk/SystemTimeLinux.cpp \
         platform/gdk/TemporaryLinkStubs.cpp \
         platform/gdk/WheelEventGdk.cpp \

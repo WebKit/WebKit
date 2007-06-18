@@ -1,3 +1,16 @@
+2007-06-18  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14052
+        Implement SoundGdk
+
+        * WebCore.pro:
+        * platform/gdk/SoundGdk.cpp: Added.
+        (WebCore::systemBeep):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::systemBeep):
+
 2007-06-18  Dave Hyatt  <hyatt@apple.com>
 
         Add support for horizontal mouse wheeling on Windows.

@@ -296,7 +296,6 @@ void ContextMenuItem::setEnabled(bool) { notImplemented(); }
 namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
-void systemBeep() { notImplemented(); }
 float userIdleTime() { notImplemented(); return 0.0; }
 }
 
