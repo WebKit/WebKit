@@ -99,6 +99,7 @@ using std::min;
 const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 
 const int WM_XP_THEMECHANGED = 0x031A;
+const int WM_VISTA_MOUSEHWHEEL = 0x020E;
 
 static ATOM registerWebView();
 static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -839,7 +840,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     return handled;
 }
 
-bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam)
+bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isHorizontal)
 {
     // Ctrl+Mouse wheel doesn't ever go into WebCore.  It is used to
     // zoom instead (Mac zooms the whole Desktop, but Windows browsers trigger their
@@ -853,7 +854,7 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam)
         return true;
     }
 
-    PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam);
+    PlatformWheelEvent wheelEvent(m_viewWindow, wParam, lParam, isHorizontal);
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
         return false;
@@ -1187,9 +1188,10 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                     handled = webView->handleMouseEvent(message, wParam, lParam);
             break;
         case WM_MOUSEWHEEL:
+        case WM_VISTA_MOUSEHWHEEL:
             if (Frame* coreFrame = core(mainFrameImpl))
                 if (coreFrame->view()->didFirstLayout())
-                    handled = webView->mouseWheel(wParam, lParam);
+                    handled = webView->mouseWheel(wParam, lParam, (wParam & MK_SHIFT) || message == WM_VISTA_MOUSEHWHEEL);
             break;
         case WM_KEYDOWN:
             handled = webView->keyDown(wParam, lParam);

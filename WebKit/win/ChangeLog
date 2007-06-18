@@ -1,3 +1,16 @@
+2007-06-18  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for horizontal mouse wheeling to Windows.  Shift+wheel is supported for horizontal
+        wheeling just like on OS X.  In addition, the WM_MOUSEHWHEEL event is now processed correctly so that
+        input devices like tilt wheels will now work.
+       
+        Reviewed by aroben
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+        (WebViewWndProc):
+        * WebView.h:
+
 2007-06-17  Dave Hyatt  <hyatt@apple.com>
 
         Add support for Ctrl+Mouse Wheel to increase/decrease text zoom (Win32 only).
