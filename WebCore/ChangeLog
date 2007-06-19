@@ -1,3 +1,9 @@
+2007-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+        
+        * platform/win/PopupMenuWin.cpp:
+
 2007-06-19  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

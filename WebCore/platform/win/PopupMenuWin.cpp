@@ -30,10 +30,10 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformScreen.h"
 #include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "Screen.h"
 #include "TextStyle.h"
 #include <tchar.h>
 #include <windows.h>
