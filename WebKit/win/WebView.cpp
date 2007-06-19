@@ -1016,9 +1016,8 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
     // FIXME: We may need to handle other messages for international text.
 
     // Don't send key events for shift, ctrl, and capslock keys when they're by themselves
-    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL) {
+    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL)
         return false;
-    }
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
@@ -1026,10 +1025,17 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
     if (frame->eventHandler()->keyEvent(keyEvent))
         return true;
 
+    // We need to handle back/forward using either Backspace(+Shift) or Ctrl+Left/Right Arrow keys.
+    int windowsKeyCode = keyEvent.WindowsKeyCode();
+    if ((windowsKeyCode == VK_BACK && keyEvent.shiftKey()) || (windowsKeyCode == VK_RIGHT && keyEvent.ctrlKey()))
+        m_page->goForward();
+    else if (windowsKeyCode == VK_BACK || (windowsKeyCode == VK_LEFT && keyEvent.ctrlKey()))
+        m_page->goBack();
+    
     // Need to scroll the page if the arrow keys, space(shift), pgup/dn, or home/end are hit.
     ScrollDirection direction;
     ScrollGranularity granularity;
-    switch (keyEvent.WindowsKeyCode()) {
+    switch (windowsKeyCode) {
         case VK_LEFT:
             granularity = ScrollByLine;
             direction = ScrollLeft;

@@ -1,3 +1,13 @@
+2007-06-19  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5022197>, backspace and ctrl+left arrow should go back.  Shift+backspace
+        and ctrl+right arrow should go forward.  Add support for these keybindings to Windows.
+       
+        Reviewed by ada
+
+        * WebView.cpp:
+        (WebView::keyDown):
+
 2007-06-18  Dave Hyatt  <hyatt@apple.com>
 
         Let through more newline+modifier key combos in order to support Alt+Enter and Ctrl+Enter in the
