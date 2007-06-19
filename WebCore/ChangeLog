@@ -1,3 +1,13 @@
+2007-06-19  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Justin Garcia.
+        
+        <rdar://problem/3992645> VO view bounds misplaced when reading text after a line wrap
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXBoundsForTextMarkerRange:]):
+        Improve the accuracy of the bounds for a given range
+        
 2007-06-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

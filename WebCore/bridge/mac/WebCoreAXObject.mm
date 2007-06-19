@@ -1396,6 +1396,20 @@ static NSString *nsStringForReplacedNode(Node* replacedNode)
 
     IntRect rect1 = startVisiblePosition.caretRect();
     IntRect rect2 = endVisiblePosition.caretRect();
+
+    // readjust for position at the edge of a line.  This is to exclude line rect that doesn't need to be accounted in the range bounds 
+    if (rect2.y() != rect1.y()) {
+        VisiblePosition endOfFirstLine = endOfLine(startVisiblePosition);
+        if (startVisiblePosition == endOfFirstLine) {
+            startVisiblePosition.setAffinity(DOWNSTREAM);
+            rect1 = startVisiblePosition.caretRect();
+        }
+        if (endVisiblePosition == endOfFirstLine) {
+            endVisiblePosition.setAffinity(UPSTREAM);
+            rect2 = endVisiblePosition.caretRect();
+        }
+    }
+
     IntRect ourrect = rect1;
     ourrect.unite(rect2);
 
@@ -1405,12 +1419,15 @@ static NSString *nsStringForReplacedNode(Node* replacedNode)
     FrameView* frameView = renderer ? renderer->document()->view() : 0;
     if (!frameView)
         frameView = [self frameView];
-    NSView* view = frameView->getView();
+    NSView *view = frameView->getView();
 
-    // if the rectangle spans lines, it is to extend across the width of the view
+    // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
     if (rect1.bottom() != rect2.bottom()) {
-        ourrect.setX(static_cast<int>([view frame].origin.x));
-        ourrect.setWidth(static_cast<int>([view frame].size.width));
+        RefPtr<Range> dataRange = makeRange(startVisiblePosition, endVisiblePosition);
+        IntRect boundingBox = dataRange->boundingBox();
+        DeprecatedString rangeString = plainText(dataRange.get());
+        if (rangeString.length() > 1 && !boundingBox.isEmpty()) 
+            ourrect = boundingBox;
     }
  
     // convert our rectangle to screen coordinates
