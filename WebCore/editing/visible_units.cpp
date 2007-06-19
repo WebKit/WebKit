@@ -268,7 +268,8 @@ static RootInlineBox *rootBoxForLine(const VisiblePosition &c)
     return box->root();
 }
 
-VisiblePosition startOfLine(const VisiblePosition& c)
+
+static VisiblePosition startPositionForLine(const VisiblePosition& c)
 {
     if (c.isNull())
         return VisiblePosition();
@@ -312,7 +313,30 @@ VisiblePosition startOfLine(const VisiblePosition& c)
     return VisiblePosition(startNode, startOffset, DOWNSTREAM);
 }
 
-VisiblePosition endOfLine(const VisiblePosition& c)
+VisiblePosition startOfLine(const VisiblePosition& c)
+{
+    VisiblePosition visPos = startPositionForLine(c);
+    
+    if (visPos.isNotNull())
+    {
+        // Make sure the start of line is not greater than the given input position.  Else use the previous position to 
+        // obtain start of line.  This condition happens when the input position is before the space character at the end 
+        // of a soft-wrapped non-editable line. In this scenario, startPositionForLine would incorrectly hand back a position
+        // greater than the input position.  This fix is to account for the discrepancy between lines with webkit-line-break:after-white-space 
+        // style versus lines without that style, which would break before a space by default. 
+        Position p = visPos.deepEquivalent();
+        if (p.offset() > c.deepEquivalent().offset() && p.node()->isSameNode(c.deepEquivalent().node())) {
+            visPos = c.previous();
+            if (visPos.isNull())
+                return VisiblePosition();
+            visPos = startPositionForLine(visPos);
+        }
+    }
+    
+    return visPos;
+}
+
+static VisiblePosition endPositionForLine(const VisiblePosition& c)
 {
     if (c.isNull())
         return VisiblePosition();
@@ -358,6 +382,25 @@ VisiblePosition endOfLine(const VisiblePosition& c)
     }
     
     return VisiblePosition(endNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);
+}
+
+VisiblePosition endOfLine(const VisiblePosition& c)
+{
+    VisiblePosition visPos = endPositionForLine(c);
+    
+    // Make sure the end of line is at the same line as the given input position.  Else use the previous position to 
+    // obtain end of line.  This condition happens when the input position is before the space character at the end 
+    // of a soft-wrapped non-editable line. In this scenario, endPositionForLine would incorrectly hand back a position
+    // in the next line instead. This fix is to account for the discrepancy between lines with webkit-line-break:after-white-space style
+    // versus lines without that style, which would break before a space by default. 
+    if (!inSameLine(c, visPos)) {
+        visPos = c.previous();
+        if (visPos.isNull())
+            return VisiblePosition();
+        visPos = endPositionForLine(visPos);
+    }
+    
+    return visPos;
 }
 
 bool inSameLine(const VisiblePosition &a, const VisiblePosition &b)

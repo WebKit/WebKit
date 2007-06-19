@@ -1,3 +1,19 @@
+2007-06-19  Patti Hoa <patti@apple.com>
+
+        Reviewed by Justin Garcia.
+        
+        <rdar://problem/5237325> Incorrect AXLeftLineTextMarkerRangeForTextMarker/AXPreviousLineStartTextMarkerForTextMarker for non-editable text
+        
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::startOfLine):
+        (WebCore::endPositionForLine):
+        (WebCore::endOfLine):
+        Break down the line routines to allow another try to ask for start/end of line if the returned position is not valid.
+        An example would be when lineStart/lineEnd at different line than the input position.
+        This can happen if the input position is before the space character at the end of a soft-wrapped non-editable line, 
+        specifically a line without webkit-line-break:after-white-space style.
+
 2007-06-19  Patti Hoa  <patti@apple.com>
 
         Reviewed by Justin Garcia.
