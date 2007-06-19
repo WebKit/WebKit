@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,9 +42,9 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/Screen.h>
 #import <wtf/PassRefPtr.h>
 
 @interface NSView (AppKitSecretsWebBridgeKnowsAbout)

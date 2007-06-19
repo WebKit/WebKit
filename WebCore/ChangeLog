@@ -1,3 +1,25 @@
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth.
+
+        Fix build and update licenses. 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/BarInfo.cpp:
+        * page/BarInfo.h:
+        * page/BarInfo.idl:
+        * page/Screen.cpp:
+        (WebCore::Screen::height):
+        (WebCore::Screen::width):
+        (WebCore::Screen::colorDepth):
+        (WebCore::Screen::pixelDepth):
+        (WebCore::Screen::availLeft):
+        (WebCore::Screen::availTop):
+        (WebCore::Screen::availHeight):
+        (WebCore::Screen::availWidth):
+        * page/Screen.h:
+        * page/Screen.idl:
+
 2007-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

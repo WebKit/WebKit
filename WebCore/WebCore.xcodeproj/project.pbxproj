@@ -2944,7 +2944,7 @@
 		BCEC01BF0C274DAC009F4EC9 /* Screen.idl in Resources */ = {isa = PBXBuildFile; fileRef = BCEC01BC0C274DAC009F4EC9 /* Screen.idl */; };
 		BCEC01C20C274DDD009F4EC9 /* JSScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */; };
 		BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01C10C274DDD009F4EC9 /* JSScreen.h */; };
-		BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */; };
+		BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */; };
 		BCF7C0780A1680C00032F75B /* FontFallbackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */; };
