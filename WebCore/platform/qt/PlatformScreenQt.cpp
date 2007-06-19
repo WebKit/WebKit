@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +58,14 @@ bool screenIsMonochrome(Widget* w)
 
 FloatRect screenRect(Widget* w)
 {
-    return static_cast<QRectF>(QApplication::desktop()->screenGeometry(w->qwidget()));
+    QRect r = QApplication::desktop()->screenGeometry(w->qwidget());
+    return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
 FloatRect screenAvailableRect(Widget* w)
 {
-    return static_cast<QRectF>(QApplication::desktop()->availableGeometry(w->qwidget()));
+    QRect r = QApplication::desktop()->availableGeometry(w->qwidget());
+    return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
 } // namespace WebCore

@@ -1,3 +1,13 @@
+2007-06-19  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Implement these methods correctly.
+
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2007-06-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
