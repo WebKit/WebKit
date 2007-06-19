@@ -1,5 +1,21 @@
 2007-06-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Fixed up these tests because they broke the bot.
+        
+        - Removed reliance on suppressConsoleMessages because I never checked
+        that in and I decided it would just be a headache on other platforms.
+        - Removed call to frames[0].stop() because it was nonsense.
+        - Added console messages to results.
+
+        * http/tests/security/cross-frame-access-expected.txt:
+        * http/tests/security/cross-frame-access-first-time-expected.txt:
+        * http/tests/security/cross-frame-access-first-time.html:
+        * http/tests/security/cross-frame-access.html:
+
+2007-06-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         Tests for cross-frame access. <rdar://problem/5251309>.

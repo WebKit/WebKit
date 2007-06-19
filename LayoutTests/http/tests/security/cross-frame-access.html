@@ -291,7 +291,6 @@ window.onload = function()
 {
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-        layoutTestController.suppressConsoleMessages();
     }
         
     log("\n----- tests for getting/setting vanilla properties -----\n");
@@ -399,6 +398,5 @@ window.onload = function()
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();
-    frames[0].stop();
 }
 </script>
