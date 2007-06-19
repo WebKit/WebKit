@@ -258,6 +258,7 @@ IDL_BINDINGS += \
     html/HTMLUListElement.idl \
     page/BarInfo.idl \
     page/DOMWindow.idl \
+    page/History.idl \
     page/Screen.idl \
     xml/DOMParser.idl \
     xml/XMLSerializer.idl
@@ -569,6 +570,7 @@ SOURCES += \
     page/Frame.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
+    page/History.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
     page/Screen.cpp \

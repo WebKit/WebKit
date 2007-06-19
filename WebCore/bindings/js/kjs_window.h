@@ -36,8 +36,6 @@ namespace WebCore {
 
 namespace KJS {
 
-    class BarInfo;
-    class History;
     class JSEventListener;
     class JSLazyEventListener;
     class JSUnprotectedEventListener;
@@ -150,7 +148,7 @@ namespace KJS {
     
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { AToB, BToA, Closed, Crypto, DefaultStatus, Status, DOMException, Frames, History_, Event_, InnerHeight,
+    enum { AToB, BToA, Closed, Crypto, DefaultStatus, Status, DOMException, Frames, Event_, InnerHeight,
            InnerWidth, Length, Location_, Name, Navigator_, ClientInformation,
            OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, ScreenX, ScreenY, Scroll, ScrollBy,

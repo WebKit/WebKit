@@ -39,7 +39,7 @@
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
 #include "Screen.h"
-#include "History.h"
+#include "GlobalHistory.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "PlugInInfoStore.h"

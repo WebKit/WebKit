@@ -393,6 +393,7 @@ all : \
     JSHTMLTextAreaElement.h \
     JSHTMLTitleElement.h \
     JSHTMLUListElement.h \
+    JSHistory.h \
     JSKeyboardEvent.h \
     JSMediaList.h \
     JSMouseEvent.h \

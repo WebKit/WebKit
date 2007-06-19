@@ -40,7 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "History.h"
+#include "GlobalHistory.h"
 #include "IconLoader.h"
 #include "IntPoint.h"
 #include "KURL.h"

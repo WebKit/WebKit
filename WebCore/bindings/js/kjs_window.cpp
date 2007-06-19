@@ -82,8 +82,7 @@ const double cMinimumTimerInterval = 0.010;
 
 struct WindowPrivate {
     WindowPrivate() 
-        : history(0)
-        , loc(0)
+        : loc(0)
         , m_selection(0)
         , m_evt(0)
         , m_returnValueSlot(0)
@@ -94,7 +93,6 @@ struct WindowPrivate {
     Window::ListenersMap jsHTMLEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
-    mutable History* history;
     mutable Location* loc;
     mutable Selection* m_selection;
     WebCore::Event *m_evt;
@@ -139,27 +137,7 @@ public:
     ScheduledAction *action;
 };
 
-////////////////////// History Object ////////////////////////
-
-  class History : public DOMObject {
-    friend class HistoryFunc;
-  public:
-    History(ExecState *exec, Frame *f)
-      : m_frame(f)
-    {
-      setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-    }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Back, Forward, Go, Length };
-    void disconnectFrame() { m_frame = 0; }
-  private:
-    Frame* m_frame;
-  };
-
-}
+} // namespace KJS
 
 #include "kjs_window.lut.h"
 
@@ -180,7 +158,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   status        Window::Status          DontDelete
   DOMException  Window::DOMException    DontDelete
   frames        Window::Frames          DontDelete|ReadOnly
-  history       Window::History_        DontDelete|ReadOnly
   event         Window::Event_          DontDelete
   innerHeight   Window::InnerHeight     DontDelete|ReadOnly
   innerWidth    Window::InnerWidth      DontDelete|ReadOnly
@@ -356,8 +333,6 @@ bool Window::find(const String& string, bool caseSensitive, bool backwards, bool
 void Window::mark()
 {
   JSObject::mark();
-  if (d->history && !d->history->marked())
-    d->history->mark();
   if (d->loc && !d->loc->marked())
     d->loc->mark();
   if (d->m_selection && !d->m_selection->marked())
@@ -587,10 +562,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
       return retrieve(m_frame);
-    case History_:
-      if (!d->history)
-        d->history = new History(exec, m_frame);
-      return d->history;
     case Event_:
       if (!d->m_evt)
         return jsUndefined();
@@ -1222,7 +1193,6 @@ JSUnprotectedEventListener *Window::findOrCreateJSUnprotectedEventListener(JSVal
 
 void Window::clearHelperObjectProperties()
 {
-  d->history = 0;
   d->loc = 0;
   d->m_selection = 0;
   d->m_evt = 0;
@@ -1859,8 +1829,6 @@ void Window::disconnectFrame()
         d->loc->m_frame = 0;
     if (d->m_selection)
         d->m_selection->m_frame = 0;
-    if (d->history)
-        d->history->disconnectFrame();
 }
 
 Window::ListenersMap& Window::jsEventListeners()
@@ -2216,56 +2184,6 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     }
 
     return jsUndefined();
-}
-
-////////////////////// History Object ////////////////////////
-
-const ClassInfo History::info = { "History", 0, &HistoryTable, 0 };
-/*
-@begin HistoryTable 4
-  length        History::Length         DontDelete|ReadOnly
-  back          History::Back           DontDelete|Function 0
-  forward       History::Forward        DontDelete|Function 0
-  go            History::Go             DontDelete|Function 1
-@end
-*/
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(HistoryFunc)
-
-bool History::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticPropertySlot<HistoryFunc, History, JSObject>(exec, &HistoryTable, this, propertyName, slot);
-}
-
-JSValue *History::getValueProperty(ExecState *, int token) const
-{
-    ASSERT(token == Length);
-    return m_frame ? jsNumber(m_frame->loader()->getHistoryLength()) : jsNumber(0);
-}
-
-JSValue *HistoryFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&History::info))
-    return throwError(exec, TypeError);
-  History *history = static_cast<History *>(thisObj);
-
-  int steps;
-  switch (id) {
-  case History::Back:
-    steps = -1;
-    break;
-  case History::Forward:
-    steps = 1;
-    break;
-  case History::Go:
-    steps = args[0]->toInt32(exec);
-    break;
-  default:
-    return jsUndefined();
-  }
-
-  if (Frame* frame = history->m_frame)
-      frame->loader()->scheduleHistoryNavigation(steps);
-  return jsUndefined();
 }
 
 /////////////////////////////////////////////////////////////////////////////

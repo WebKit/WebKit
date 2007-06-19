@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "History.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "Screen.h"
@@ -60,6 +61,8 @@ void DOMWindow::disconnectFrame()
     m_frame = 0;
     if (m_screen)
         m_screen->disconnectFrame();
+    if (m_history)
+        m_history->disconnectFrame();
     if (m_locationbar)
         m_locationbar->disconnectFrame();
     if (m_menubar)
@@ -79,6 +82,13 @@ Screen* DOMWindow::screen() const
     if (!m_screen)
         m_screen = new Screen(m_frame);
     return m_screen.get();
+}
+
+History* DOMWindow::history() const
+{
+    if (!m_history)
+        m_history = new History(m_frame);
+    return m_history.get();
 }
 
 BarInfo* DOMWindow::locationbar() const

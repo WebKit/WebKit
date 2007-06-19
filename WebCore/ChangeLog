@@ -1,3 +1,50 @@
+2007-06-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14226
+        Move the History object out of the JS bindings
+
+        - Autogenerate JSHistory.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::Window::mark):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::Window::disconnectFrame):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bridge/GlobalHistory.h: Copied from WebCore/bridge/History.h.
+        * bridge/History.h: Removed.
+        * bridge/mac/GlobalHistoryMac.mm: Copied from WebCore/bridge/mac/HistoryMac.mm.
+        * bridge/mac/HistoryMac.mm: Removed.
+        * bridge/win/GlobalHistoryWin.cpp: Copied from WebCore/bridge/win/HistoryWin.cpp.
+        * bridge/win/HistoryWin.cpp: Removed.
+        * css/cssstyleselector.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::disconnectFrame):
+        (WebCore::DOMWindow::history):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/History.cpp: Added.
+        (WebCore::History::History):
+        (WebCore::History::frame):
+        (WebCore::History::disconnectFrame):
+        (WebCore::History::length):
+        (WebCore::History::back):
+        (WebCore::History::forward):
+        (WebCore::History::go):
+        * page/History.h: Added.
+        * page/History.idl: Added.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
         Qt build fix.

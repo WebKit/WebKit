@@ -603,6 +603,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHistory.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAnchorElement.cpp"
 				>
 			</File>
@@ -2467,6 +2475,14 @@
 			</File>
 			<File
 				RelativePath="..\page\FrameView.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\History.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\History.h"
 				>
 			</File>
 			<File
@@ -5848,7 +5864,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\bridge\History.h"
+				RelativePath="..\bridge\GlobalHistory.h"
 				>
 			</File>
 			<File
@@ -5875,7 +5891,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bridge\win\HistoryWin.cpp"
+					RelativePath="..\bridge\win\GlobalHistoryWin.cpp"
 					>
 				</File>
 				<File

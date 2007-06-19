@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,18 +20,58 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef History_h
-#define History_h
+#include "config.h"
+#include "History.h"
+
+#include "Frame.h"
+#include "FrameLoader.h"
 
 namespace WebCore {
 
-    class DeprecatedString;
-
-    bool historyContains(const DeprecatedString&);
-
+History::History(Frame* frame)
+    : m_frame(frame)
+{
 }
 
-#endif
+Frame* History::frame() const
+{
+    return m_frame;
+}
+
+void History::disconnectFrame()
+{
+    m_frame = 0;
+}
+
+unsigned History::length() const
+{
+    if (!m_frame)
+        return 0;
+    return m_frame->loader()->getHistoryLength();
+}
+
+void History::back()
+{
+    if (!m_frame)
+        return;
+    m_frame->loader()->scheduleHistoryNavigation(-1);
+}
+
+void History::forward()
+{
+    if (!m_frame)
+        return;
+    m_frame->loader()->scheduleHistoryNavigation(1);
+}
+
+void History::go(int distance)
+{
+    if (!m_frame)
+        return;
+    m_frame->loader()->scheduleHistoryNavigation(distance);
+}
+
+} // namespace WebCore
