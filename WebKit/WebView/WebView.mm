@@ -2963,12 +2963,15 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         // FIXME: introduce a protocol, or otherwise make this work with other types
         if ([view isKindOfClass:[WebHTMLView class]]) {
             WebHTMLView *htmlView = (WebHTMLView *)view;
+            NSRect htmlViewVisibleRect = [htmlView visibleRect];
             NSArray *originalRects = [htmlView rectsForTextMatches];
             unsigned rectCount = [originalRects count];
             unsigned rectIndex;
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             for (rectIndex = 0; rectIndex < rectCount; ++rectIndex) {
                 NSRect r = [[originalRects objectAtIndex:rectIndex] rectValue];
+                // Clip rect to HTMLView's visible rect so rect is confined to subframe
+                r = NSIntersectionRect(r, htmlViewVisibleRect);
                 if (NSIsEmptyRect(r))
                     continue;
                 

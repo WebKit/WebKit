@@ -1,3 +1,13 @@
+2007-06-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        - fixed <rdar://problem/5272011> Hole for find-on-page match in subframe isn't clipped by frame bounds
+
+        * WebView/WebView.mm:
+        (-[WebView rectsForTextMatches]):
+        intersect the HTMLView's computed rect with the visible rect for that view
+
 2007-06-19  Jim Correia  <jim.correia@pobox.com>
 
         Reviewed by Kevin Decker
