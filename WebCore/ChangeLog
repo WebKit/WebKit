@@ -1,5 +1,16 @@
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
+        Qt build fix.
+
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Beth.
 
         Fix build and update licenses. 
