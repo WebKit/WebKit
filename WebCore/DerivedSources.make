@@ -408,7 +408,6 @@ all : \
     JSRange.h \
     JSRangeException.h \
     JSRect.h \
-    JSSVGZoomEvent.h \
     JSSVGAElement.h \
     JSSVGAngle.h \
     JSSVGAnimatedAngle.h \
@@ -531,6 +530,8 @@ all : \
     JSSVGMaskElement.h \
     JSSVGMarkerElement.h \
     JSSVGTransform.h \
+    JSSVGZoomEvent.h \
+    JSScreen.h \
     JSStyleSheet.h \
     JSText.h \
     JSTextEvent.h \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,62 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DOMWindow_h
-#define DOMWindow_h
+#ifndef Screen_h
+#define Screen_h
 
 #include "Shared.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class BarInfo;
-    class CSSRuleList;
-    class CSSStyleDeclaration;
-    class Document;
-    class Element;
     class Frame;
-    class Screen;
-    class String;
-    
-    class DOMWindow : public Shared<DOMWindow> {
-    public:
-        DOMWindow(Frame*);
-        virtual ~DOMWindow();
 
-        Frame* frame();
+    class Screen : public Shared<Screen> {
+    public:
+        Screen(Frame*);
         void disconnectFrame();
 
-        // DOM Level 0
-        Screen* screen() const;
-        BarInfo* locationbar() const;
-        BarInfo* menubar() const;
-        BarInfo* personalbar() const;
-        BarInfo* scrollbars() const;
-        BarInfo* statusbar() const;
-        BarInfo* toolbar() const;
-
-        // DOM Level 2 AbstractView Interface
-        Document* document() const;
-
-        // DOM Level 2 Style Interface
-        PassRefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;
-
-        // WebKit extensions
-        PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
-        double devicePixelRatio() const;
+        unsigned height() const;
+        unsigned width() const;
+        unsigned colorDepth() const;
+        unsigned pixelDepth() const;
+        unsigned availLeft() const;
+        unsigned availTop() const;
+        unsigned availHeight() const;
+        unsigned availWidth() const;
 
     private:
         Frame* m_frame;
-        mutable RefPtr<Screen> m_screen;
-        mutable RefPtr<BarInfo> m_locationbar;
-        mutable RefPtr<BarInfo> m_menubar;
-        mutable RefPtr<BarInfo> m_personalbar;
-        mutable RefPtr<BarInfo> m_scrollbars;
-        mutable RefPtr<BarInfo> m_statusbar;
-        mutable RefPtr<BarInfo> m_toolbar;
     };
 
 } // namespace WebCore
 
-#endif
+#endif // Screen_h

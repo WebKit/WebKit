@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,46 +25,79 @@
 
 #include "config.h"
 #include "Screen.h"
-#include "Widget.h"
 
-#include "NotImplemented.h"
-#include <wtf/Assertions.h>
-#include <gdk/gdk.h>
-#include <stdio.h>
+#include "FloatRect.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "PlatformScreen.h"
+#include "Widget.h"
 
 namespace WebCore {
 
-int screenDepth(Widget* widget) 
+Screen::Screen(Frame* frame)
+    : m_frame(frame)
 {
-    ASSERT(widget->drawable());
-
-    gint dummy, depth;
-    gdk_window_get_geometry(widget->drawable(), &dummy, &dummy, &dummy, &dummy, &depth);
-    return depth;
 }
 
-int screenDepthPerComponent(Widget*)
+void Screen::disconnectFrame()
 {
-    notImplemented();
-    return 8;
+    m_frame = 0;
 }
 
-bool screenIsMonochrome(Widget*) 
-{ 
-    notImplemented(); 
-    return false; 
+unsigned Screen::height() const
+{
+    if (!m_frame)
+        return 0;
+    return screenRect(m_frame->view()).height();
 }
 
-FloatRect screenRect(Widget*) 
-{ 
-    notImplemented();
-    return FloatRect(); 
+unsigned Screen::width() const
+{
+    if (!m_frame)
+        return 0;
+    return screenRect(m_frame->view()).width();
 }
 
-FloatRect screenAvailableRect(Widget*) 
-{ 
-    notImplemented(); 
-    return FloatRect(); 
+unsigned Screen::colorDepth() const
+{
+    if (!m_frame)
+        return 0;
+    return screenDepth(m_frame->view());
 }
 
+unsigned Screen::pixelDepth() const
+{
+    if (!m_frame)
+        return 0;
+    return screenDepth(m_frame->view());
 }
+
+unsigned Screen::availLeft() const
+{
+    if (!m_frame)
+        return 0;
+    return screenAvailableRect(m_frame->view()).x();
+}
+
+unsigned Screen::availTop() const
+{
+    if (!m_frame)
+        return 0;
+    return screenAvailableRect(m_frame->view()).y();
+}
+
+unsigned Screen::availHeight() const
+{
+    if (!m_frame)
+        return 0;
+    return screenAvailableRect(m_frame->view()).height();
+}
+
+unsigned Screen::availWidth() const
+{
+    if (!m_frame)
+        return 0;
+    return screenAvailableRect(m_frame->view()).width();
+}
+
+} // namespace WebCore

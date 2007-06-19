@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Screen.h"
+#include "PlatformScreen.h"
 
 #include "IntRect.h"
 #include "FloatRect.h"

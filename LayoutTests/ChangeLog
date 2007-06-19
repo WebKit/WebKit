@@ -1,5 +1,15 @@
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff.
+
+        Updates tests for http://bugs.webkit.org/show_bug.cgi?id=14193
+        Move the Screen object out of the JS bindings
+
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-06-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin.
 
         Update tests now that window.frames points to window and not FrameArray

@@ -56,7 +56,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "Screen.h"
+#include "PlatformScreen.h"
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
 #include "cssstyleselector.h"

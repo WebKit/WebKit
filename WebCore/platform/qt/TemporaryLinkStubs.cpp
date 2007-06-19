@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
@@ -31,37 +31,33 @@
 
 #include "config.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "Node.h"
+#include "AXObjectCache.h"
+#include "CachedResource.h"
+#include "CookieJar.h"
+#include "Cursor.h"
+#include "Font.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "Font.h"
-#include "IntPoint.h"
-#include "Widget.h"
-#include "GraphicsContext.h"
-#include "Cursor.h"
-#include "loader.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
+#include "History.h"
+#include "IconLoader.h"
+#include "IntPoint.h"
 #include "KURL.h"
-#include "CachedResource.h"
+#include "Language.h"
+#include "loader.h"
+#include "LocalizedStrings.h"
+#include "Node.h"
+#include "NotImplemented.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
-#include "CookieJar.h"
-#include "Screen.h"
-#include "History.h"
-#include "Language.h"
-#include "LocalizedStrings.h"
 #include "PlugInInfoStore.h"
 #include "RenderTheme.h"
-#include "TextBoundaries.h"
-#include "AXObjectCache.h"
-#include "IconLoader.h"
 #include "SystemTime.h"
-#include "NotImplemented.h"
-
-#include <QApplication>
-#include <QDesktopWidget>
+#include "TextBoundaries.h"
+#include "Widget.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace WebCore;
 
@@ -123,33 +119,6 @@ String WebCore::AXImageMapText() { return String(); }
 String WebCore::AXHeadingText() { return String(); }
 
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
-
-int WebCore::screenDepth(Widget *w)
-{
-    QDesktopWidget *d = QApplication::desktop();
-    return d->screen(d->screenNumber(w->qwidget()))->depth();
-}
-
-int WebCore::screenDepthPerComponent(Widget *w)
-{
-    return w->qwidget()->depth();
-}
-
-bool WebCore::screenIsMonochrome(Widget *w)
-{
-    QDesktopWidget *d = QApplication::desktop();
-    return d->screen(d->screenNumber(w->qwidget()))->numColors() < 2;
-}
-
-FloatRect WebCore::screenRect(Widget *w)
-{
-    return (QRectF)QApplication::desktop()->screenGeometry(w->qwidget());
-}
-
-FloatRect WebCore::screenAvailableRect(Widget *w)
-{
-    return (QRectF)QApplication::desktop()->availableGeometry(w->qwidget());
-}
 
 void FrameView::updateBorder() { notImplemented(); }
 

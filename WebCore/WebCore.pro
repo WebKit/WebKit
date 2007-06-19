@@ -258,6 +258,7 @@ IDL_BINDINGS += \
     html/HTMLUListElement.idl \
     page/BarInfo.idl \
     page/DOMWindow.idl \
+    page/Screen.idl \
     xml/DOMParser.idl \
     xml/XMLSerializer.idl
 
@@ -570,6 +571,7 @@ SOURCES += \
     page/FrameView.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
+    page/Screen.cpp \
     page/Settings.cpp \
     platform/Arena.cpp \
     platform/ArrayImpl.cpp \
@@ -765,12 +767,12 @@ qt-port:SOURCES += \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
+    platform/qt/PlatformScreenQt.cpp \
     platform/qt/PlatformScrollBarQt.cpp \
     platform/qt/PlugInInfoStoreQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
-    platform/qt/ScreenQt.cpp \
     platform/qt/ScrollViewQt.cpp \
     platform/qt/SearchPopupMenuQt.cpp \
     platform/qt/SharedTimerQt.cpp \
@@ -821,11 +823,11 @@ gdk-port:SOURCES += \
         platform/gdk/LoggingGdk.cpp \
         platform/gdk/MimeTypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \
+        platform/gdk/PlatformScreenGdk.cpp \
         platform/gdk/PlatformScrollBarGdk.cpp \
         platform/gdk/PopupMenuGdk.cpp \
         platform/gdk/RenderThemeGdk.cpp \
         platform/gdk/ScrollViewGdk.cpp \
-        platform/gdk/ScreenGdk.cpp \
         platform/gdk/SharedTimerLinux.cpp \
         platform/gdk/SoundGdk.cpp \
         platform/gdk/SystemTimeLinux.cpp \

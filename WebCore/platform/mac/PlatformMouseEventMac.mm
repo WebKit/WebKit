@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlatformMouseEvent.h"
 
-#import "Screen.h"
+#import "PlatformScreen.h"
 
 namespace WebCore {
 

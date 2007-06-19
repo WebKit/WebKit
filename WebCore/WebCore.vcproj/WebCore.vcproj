@@ -1199,6 +1199,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSScreen.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleSheet.cpp"
 				>
 			</File>
@@ -2482,6 +2490,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\Screen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Screen.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Settings.cpp"
 				>
 			</File>
@@ -3058,7 +3074,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\Screen.h"
+				RelativePath="..\platform\PlatformScreen.h"
 				>
 			</File>
 			<File
@@ -3377,7 +3393,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\ScreenWin.cpp"
+					RelativePath="..\platform\win\PlatformScreenWin.cpp"
 					>
 				</File>
 				<File

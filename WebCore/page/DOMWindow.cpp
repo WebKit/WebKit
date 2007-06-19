@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,14 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
+#include "PlatformScreen.h"
 #include "Screen.h"
 #include "cssstyleselector.h"
 
 namespace WebCore {
 
-DOMWindow::DOMWindow(Frame* f)
-    : m_frame(f)
+DOMWindow::DOMWindow(Frame* frame)
+    : m_frame(frame)
 {
 }
 
@@ -57,6 +58,8 @@ Frame* DOMWindow::frame()
 void DOMWindow::disconnectFrame()
 {
     m_frame = 0;
+    if (m_screen)
+        m_screen->disconnectFrame();
     if (m_locationbar)
         m_locationbar->disconnectFrame();
     if (m_menubar)
@@ -69,6 +72,13 @@ void DOMWindow::disconnectFrame()
         m_statusbar->disconnectFrame();
     if (m_toolbar)
         m_toolbar->disconnectFrame();
+}
+
+Screen* DOMWindow::screen() const
+{
+    if (!m_screen)
+        m_screen = new Screen(m_frame);
+    return m_screen.get();
 }
 
 BarInfo* DOMWindow::locationbar() const

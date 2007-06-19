@@ -29,6 +29,7 @@ module window {
     // For the same reason, there's no need to.
     interface [LegacyParent=KJS::Window, DoNotCache, GenerateNativeConverter, CustomGetOwnPropertySlot] DOMWindow {
         // DOM Level 0
+        readonly attribute Screen screen;
         readonly attribute BarInfo locationbar;
         readonly attribute BarInfo menubar;
         readonly attribute BarInfo personalbar;

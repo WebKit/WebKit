@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "Screen.h"
+#import "PlatformScreen.h"
 
 #import "FloatRect.h"
 #import "Frame.h"

@@ -42,7 +42,7 @@
 #include "MediaQueryExp.h"
 #include "Page.h"
 #include "RenderStyle.h"
-#include "Screen.h"
+#include "PlatformScreen.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

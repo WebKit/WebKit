@@ -67,19 +67,6 @@ namespace KJS {
 
     class DOMWindowTimer;
 
-  class Screen : public DOMObject {
-  public:
-    enum { Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight, AvailWidth };
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    friend class Window;
-    Screen(ExecState*, WebCore::Frame*);
-    WebCore::Frame* m_frame;
-  };
-
   class WindowPrivate;
 
   class Window : public DOMObject {
@@ -168,7 +155,7 @@ namespace KJS {
            OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, ScreenX, ScreenY, Scroll, ScrollBy,
            ScreenTop, ScreenLeft,
-           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top, Screen_,
+           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
            Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,

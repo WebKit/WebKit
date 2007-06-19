@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,47 +22,51 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Screen_h
-#define Screen_h
+#include "config.h"
+#include "PlatformScreen.h"
 
-#include "FloatRect.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
-
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-    @class NSScreen;
-    @class NSWindow;
-#else
-    class NSScreen;
-    class NSWindow;
-#endif
-#endif
+#include "NotImplemented.h"
+#include "Widget.h"
+#include <gdk/gdk.h>
+#include <stdio.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-    class FloatRect;
-    class Widget;
-    
-    int screenDepth(Widget*);
-    int screenDepthPerComponent(Widget*);
-    bool screenIsMonochrome(Widget*);
+int screenDepth(Widget* widget) 
+{
+    ASSERT(widget->drawable());
 
-    FloatRect screenRect(Widget*);
-    FloatRect screenAvailableRect(Widget*);
-    
-#if PLATFORM(MAC)
-    NSScreen *screenForWindow(NSWindow *);
+    gint dummy, depth;
+    gdk_window_get_geometry(widget->drawable(), &dummy, &dummy, &dummy, &dummy, &depth);
+    return depth;
+}
 
-    FloatRect toUserSpace(const NSRect&, NSWindow *destination);
-    NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
+int screenDepthPerComponent(Widget*)
+{
+    notImplemented();
+    return 8;
+}
 
-    NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
-#endif
+bool screenIsMonochrome(Widget*) 
+{ 
+    notImplemented(); 
+    return false; 
+}
+
+FloatRect screenRect(Widget*) 
+{ 
+    notImplemented();
+    return FloatRect(); 
+}
+
+FloatRect screenAvailableRect(Widget*) 
+{ 
+    notImplemented(); 
+    return FloatRect(); 
+}
 
 } // namespace WebCore
-
-#endif // Screen_h

@@ -52,9 +52,9 @@
 #include "JSXMLHttpRequest.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PlatformScreen.h"
 #include "PlugInInfoStore.h"
 #include "RenderView.h"
-#include "Screen.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
@@ -82,8 +82,7 @@ const double cMinimumTimerInterval = 0.010;
 
 struct WindowPrivate {
     WindowPrivate() 
-        : screen(0)
-        , history(0)
+        : history(0)
         , loc(0)
         , m_selection(0)
         , m_evt(0)
@@ -95,7 +94,6 @@ struct WindowPrivate {
     Window::ListenersMap jsHTMLEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
-    mutable Screen* screen;
     mutable History* history;
     mutable Location* loc;
     mutable Selection* m_selection;
@@ -167,61 +165,6 @@ public:
 
 namespace KJS {
 
-////////////////////// Screen Object ////////////////////////
-
-// table for screen object
-/*
-@begin ScreenTable 7
-  height        Screen::Height          DontEnum|ReadOnly
-  width         Screen::Width           DontEnum|ReadOnly
-  colorDepth    Screen::ColorDepth      DontEnum|ReadOnly
-  pixelDepth    Screen::PixelDepth      DontEnum|ReadOnly
-  availLeft     Screen::AvailLeft       DontEnum|ReadOnly
-  availTop      Screen::AvailTop        DontEnum|ReadOnly
-  availHeight   Screen::AvailHeight     DontEnum|ReadOnly
-  availWidth    Screen::AvailWidth      DontEnum|ReadOnly
-@end
-*/
-
-const ClassInfo Screen::info = { "Screen", 0, &ScreenTable, 0 };
-
-// We set the object prototype so that toString is implemented
-Screen::Screen(ExecState* exec, Frame* f)
-    : m_frame(f)
-{
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-}
-
-bool Screen::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<Screen, JSObject>(exec, &ScreenTable, this, propertyName, slot);
-}
-
-JSValue* Screen::getValueProperty(ExecState*, int token) const
-{
-  Widget* widget = m_frame ? m_frame->view() : 0;  
-
-  switch (token) {
-  case Height:
-    return jsNumber(screenRect(widget).height());
-  case Width:
-    return jsNumber(screenRect(widget).width());
-  case ColorDepth:
-  case PixelDepth:
-    return jsNumber(screenDepth(widget));
-  case AvailLeft:
-    return jsNumber(screenAvailableRect(widget).x());
-  case AvailTop:
-    return jsNumber(screenAvailableRect(widget).y());
-  case AvailHeight:
-    return jsNumber(screenAvailableRect(widget).height());
-  case AvailWidth:
-    return jsNumber(screenAvailableRect(widget).width());
-  default:
-    return jsUndefined();
-  }
-}
-
 ////////////////////// Window Object ////////////////////////
 
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
@@ -269,7 +212,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   self          Window::Self            DontDelete|ReadOnly
   window        Window::Window_         DontDelete|ReadOnly
   top           Window::Top             DontDelete|ReadOnly
-  screen        Window::Screen_         DontDelete|ReadOnly
   Image         Window::Image           DontDelete
   Option        Window::Option          DontDelete
   XMLHttpRequest        Window::XMLHttpRequest  DontDelete
@@ -414,8 +356,6 @@ bool Window::find(const String& string, bool caseSensitive, bool backwards, bool
 void Window::mark()
 {
   JSObject::mark();
-  if (d->screen && !d->screen->marked())
-    d->screen->mark();
   if (d->history && !d->history->marked())
     d->history->mark();
   if (d->loc && !d->loc->marked())
@@ -722,10 +662,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return retrieve(m_frame);
     case Top:
       return retrieve(m_frame->page()->mainFrame());
-    case Screen_:
-      if (!d->screen)
-        d->screen = new Screen(exec, m_frame);
-      return d->screen;
     case Image:
       // FIXME: this property (and the few below) probably shouldn't create a new object every
       // time
@@ -1286,7 +1222,6 @@ JSUnprotectedEventListener *Window::findOrCreateJSUnprotectedEventListener(JSVal
 
 void Window::clearHelperObjectProperties()
 {
-  d->screen = 0;
   d->history = 0;
   d->loc = 0;
   d->m_selection = 0;
