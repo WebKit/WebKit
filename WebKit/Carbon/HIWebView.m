@@ -757,7 +757,12 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 
                             HIViewRef view;
                             HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+#ifndef BUILDING_ON_TIGER
                             if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
+#else
+                            GetControlKind(view, &kind);
+                            if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+#endif
                                 result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                         }
                     }
@@ -769,7 +774,12 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
                     {
                         HIViewRef view;
                         HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+#ifndef BUILDING_ON_TIGER
                         if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
+#else
+                        GetControlKind(view, &kind);
+                        if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+#endif                        
                             result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                     }
                     break;

@@ -1,3 +1,13 @@
+2007-06-18  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed: <rdar://problem/5276135> With Safari 3 Tiger Beta installed, a crash occurs in BBEdit while mousing down and dragging outside of HTML preview window
+
+        * Carbon/HIWebView.m:
+        (WindowHandler): Because the fix for 5051616 causes Tiger to crash in HIToolbox (but not on Leopard), I reverted back to using GetControlKind
+        on Tiger only, instead of HIObjectIsOfClass.
+
 2007-06-16  David Hyatt  <hyatt@apple.com>
 
         Back out fix for 13972.  Quicktime will no longer clip correctly. :(
