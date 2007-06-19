@@ -760,8 +760,9 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 #ifndef BUILDING_ON_TIGER
                             if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
 #else
+                            ControlKind kind;
                             GetControlKind(view, &kind);
-                            if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+                            if (kind.signature == 'appl' && kind.kind == 'wbvw')
 #endif
                                 result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                         }
@@ -777,8 +778,9 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 #ifndef BUILDING_ON_TIGER
                         if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
 #else
+                        ControlKind kind;
                         GetControlKind(view, &kind);
-                        if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+                        if (kind.signature == 'appl' && kind.kind == 'wbvw')
 #endif                        
                             result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                     }
