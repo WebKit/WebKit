@@ -1,0 +1,8 @@
+This test checks cross-frame access security for first-time access to the document (rdar://problem/5251309).
+
+
+canGet(frames[0], 'document'): false
+canGet(frames[0].document, 'cookie'): false
+canGet(frames[0].document, 'body'): false
+canGet(frames[0].document, 'location'): false
+

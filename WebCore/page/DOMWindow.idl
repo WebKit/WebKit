@@ -25,12 +25,10 @@
 
 module window {
 
-    // You can't cache the Window object in the global object because it *is* the global object.
-    // For the same reason, there's no need to.
-    interface [LegacyParent=KJS::Window, DoNotCache, GenerateNativeConverter, CustomGetOwnPropertySlot] DOMWindow {
+    interface [LegacyParent=KJS::Window, DoNotCache, CheckDomainSecurity, GenerateNativeConverter, CustomGetOwnPropertySlot] DOMWindow {
         // DOM Level 0
         readonly attribute Screen screen;
-        readonly attribute History history;
+        readonly attribute [DoNotCheckDomainSecurity] History history;
         readonly attribute BarInfo locationbar;
         readonly attribute BarInfo menubar;
         readonly attribute BarInfo personalbar;

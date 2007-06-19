@@ -553,24 +553,38 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Closed:
       return jsBoolean(!m_frame);
    case Crypto:
-      return jsUndefined(); // ###
+      if (!isSafeScript(exec))
+        return jsUndefined();
+      return jsUndefined(); // FIXME: implement this
    case DefaultStatus:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsString(UString(m_frame->jsDefaultStatusBarText()));
    case DOMException:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return getDOMExceptionConstructor(exec);
    case Status:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
       return retrieve(m_frame);
     case Event_:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!d->m_evt)
         return jsUndefined();
       return toJS(exec, d->m_evt);
     case InnerHeight:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       return jsNumber(m_frame->view()->height());
     case InnerWidth:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       return jsNumber(m_frame->view()->width());
@@ -579,9 +593,13 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Location_:
       return location();
     case Name:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsString(m_frame->tree()->name());
     case Navigator_:
     case ClientInformation: {
+      if (!isSafeScript(exec))
+        return jsUndefined();
       // Store the navigator in the object so we get the same one each time.
       Navigator *n = new Navigator(exec, m_frame);
       // FIXME: this will make the "navigator" object accessible from windows that fail
@@ -591,21 +609,31 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return n;
     }
     case OffscreenBuffering:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsBoolean(true);
     case Opener:
       if (m_frame->loader()->opener())
         return retrieve(m_frame->loader()->opener());
       return jsNull();
     case OuterHeight:
+      if (!isSafeScript(exec))
+        return jsUndefined();
         return jsNumber(m_frame->page()->chrome()->windowRect().height());
     case OuterWidth:
+      if (!isSafeScript(exec))
+        return jsUndefined();
         return jsNumber(m_frame->page()->chrome()->windowRect().width());
     case PageXOffset:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       updateLayout();
       return jsNumber(m_frame->view()->contentsX());
     case PageYOffset:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       updateLayout();
@@ -614,16 +642,24 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return retrieve(m_frame->tree()->parent() ? m_frame->tree()->parent() : m_frame);
     case ScreenLeft:
     case ScreenX:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsNumber(m_frame->page()->chrome()->windowRect().x());
     case ScreenTop:
     case ScreenY:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return jsNumber(m_frame->page()->chrome()->windowRect().y());
     case ScrollX:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       updateLayout();
       return jsNumber(m_frame->view()->contentsX());
     case ScrollY:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (!m_frame->view())
         return jsUndefined();
       updateLayout();
@@ -634,21 +670,31 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Top:
       return retrieve(m_frame->page()->mainFrame());
     case Image:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       // FIXME: this property (and the few below) probably shouldn't create a new object every
       // time
       return new ImageConstructorImp(exec, m_frame->document());
     case Option:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return new JSHTMLOptionElementConstructor(exec, m_frame->document());
     case XMLHttpRequest:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
 #if ENABLE(XSLT)
     case XSLTProcessor_:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       return new XSLTProcessorConstructorImp(exec);
 #else
     case XSLTProcessor_:
       return jsUndefined();
 #endif
     case FrameElement:
+      if (!isSafeScript(exec))
+        return jsUndefined();
       if (Document* doc = m_frame->document())
         if (Element* fe = doc->ownerElement())
           if (checkNodeSecurity(exec, fe))

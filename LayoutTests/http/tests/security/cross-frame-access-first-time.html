@@ -1,0 +1,34 @@
+<p>This test checks cross-frame access security for first-time access to the document (rdar://problem/5251309).</p>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe.html" style=""></iframe>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function canGet(keyPath)
+{
+    try {
+        return eval("window." + keyPath) !== undefined;
+    } catch(e) {
+        return false;
+    }
+}
+
+window.onload = function()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.suppressConsoleMessages();
+    }
+        
+    var doc = frames[0].document;
+
+    log("canGet(frames[0], 'document'): " + (doc !== undefined));
+    log("canGet(frames[0].document, 'cookie'): " + canGet(doc, 'cookie'));
+    log("canGet(frames[0].document, 'body'): " + canGet(doc, 'body'));
+    log("canGet(frames[0].document, 'location'): " + canGet(doc, 'location'));
+}
+</script>

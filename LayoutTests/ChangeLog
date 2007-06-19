@@ -1,3 +1,15 @@
+2007-06-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for cross-frame access. <rdar://problem/5251309>.
+
+        * http/tests/security/cross-frame-access-expected.txt: Added.
+        * http/tests/security/cross-frame-access-first-time-expected.txt: Added.
+        * http/tests/security/cross-frame-access-first-time.html: Added.
+        * http/tests/security/cross-frame-access.html: Added.
+        * http/tests/security/resources/cross-frame-iframe.html: Added.
+
 2007-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
