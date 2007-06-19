@@ -1,3 +1,14 @@
+2007-06-19  George Staikos  <staikos@kde.org>
+
+        Reviewed by Tim Hatcher.
+
+        Add https support.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (WebCoreHttp::WebCoreHttp):
+
 2007-06-14  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.

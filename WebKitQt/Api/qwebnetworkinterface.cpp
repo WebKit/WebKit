@@ -718,7 +718,7 @@ QWebNetworkInterface::~QWebNetworkInterface()
 void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 {
     QString protocol = job->url().scheme();
-    if (protocol == QLatin1String("http")) {
+    if (protocol == QLatin1String("http") || protocol == QLatin1String("https")) {
         QWebNetworkManager::self()->addHttpJob(job);
         return;
     }
@@ -772,7 +772,7 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 void QWebNetworkInterface::cancelJob(QWebNetworkJob *job)
 {
     QString protocol = job->url().scheme();
-    if (protocol == QLatin1String("http"))
+    if (protocol == QLatin1String("http") || protocol == QLatin1String("https"))
         QWebNetworkManager::self()->cancelHttpJob(job);
 }
 
@@ -782,7 +782,7 @@ WebCoreHttp::WebCoreHttp(QObject* parent, const HostInfo &hi)
       m_inCancel(false)
 {
     for (int i = 0; i < 2; ++i) {
-        connection[i].http = new QHttp(info.host, info.port);
+        connection[i].http = new QHttp(info.host, (hi.protocol == QLatin1String("https")) ? QHttp::ConnectionModeHttps : QHttp::ConnectionModeHttp, info.port);
         connection[i].current = 0;
         connect(connection[i].http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
                 this, SLOT(onResponseHeaderReceived(const QHttpResponseHeader&)));
