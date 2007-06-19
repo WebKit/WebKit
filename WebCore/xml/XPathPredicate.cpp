@@ -36,10 +36,7 @@
 #include "XPathUtil.h"
 #include "XPathValue.h"
 #include <math.h>
-
-#ifdef _MSC_VER // math functions missing from Microsoft Visual Studio standard C library
-#define remainder(x, y) fmod((x), (y))
-#endif
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace XPath {

@@ -33,7 +33,9 @@
 #include "XPathUtil.h"
 
 #include <wtf/MathExtras.h>
-#include <math.h>
+#include <limits>
+
+using std::numeric_limits;
 
 namespace WebCore {
 namespace XPath {
@@ -87,7 +89,7 @@ double Value::toNumber() const
             double value = m_data->m_string.simplifyWhiteSpace().toDouble(&canConvert);
             if (canConvert)
                 return value;
-            return NAN;
+            return numeric_limits<double>::quiet_NaN();
         }
         case BooleanValue:
             return m_bool;

@@ -1,3 +1,17 @@
+2007-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5130630>
+        XPath fails LayoutTests on Windows
+        
+        * xml/XPathPredicate.cpp:
+        Include MathExtras.h here so we get a version of fmod that works around a bug in the Microsoft CRT.
+        
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toNumber):
+        Instead of using NAN, which isn't really the NaN value on Windows, use numeric_limits.
+        
 2007-06-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
