@@ -1,3 +1,11 @@
+2007-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Update result, we shouldn't call didFinishLoadForFrame if the URL isn't valid.
+        
+        * http/tests/loading/bad-scheme-subframe-expected.txt:
+
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

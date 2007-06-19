@@ -157,6 +157,9 @@
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+    ASSERT([frame dataSource]);
+    ASSERT(frame == [[frame dataSource] webFrame]);
+    
     if (shouldDumpFrameLoadCallbacks && !done) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);

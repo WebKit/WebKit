@@ -1,3 +1,15 @@
+2007-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5277008> Assertion in [LocationChangeHandler finishedLoadingFrame:]
+        
+        Don't send any frame load callbacks if the document load hasn't been
+        committed for real.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
