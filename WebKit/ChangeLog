@@ -1,3 +1,10 @@
+2007-06-19  Jim Correia  <jim.correia@pobox.com>
+
+        Reviewed by Kevin Decker
+        
+        * Carbon/HIWebView.m:
+        (WindowHandler): HIObjectIsOfClass requires non-NULL input on Tiger. Reworked Kevin Decker's patch to remove the conditional compilation for Tiger, yet still avoid crashing BBEdit.
+
 2007-06-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth.

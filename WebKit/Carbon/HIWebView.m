@@ -755,15 +755,11 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
                             SetEventParameter(inEvent, kEventParamWindowRef, typeWindowRef, sizeof(WindowRef), &window);
                             SetEventParameter(inEvent, kEventParamWindowMouseLocation, typeQDPoint, sizeof(Point), &where);
 
-                            HIViewRef view;
-                            HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
-#ifndef BUILDING_ON_TIGER
-                            if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
-#else
-                            ControlKind kind;
-                            GetControlKind(view, &kind);
-                            if (kind.signature == 'appl' && kind.kind == 'wbvw')
-#endif
+                            OSStatus err = noErr;
+                            HIViewRef view = NULL;
+
+                            err = HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+                            if (err == noErr && view && HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
                                 result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                         }
                     }
@@ -773,15 +769,11 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
                 case kEventMouseDragged:
                 case kEventMouseWheelMoved:
                     {
-                        HIViewRef view;
-                        HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
-#ifndef BUILDING_ON_TIGER
-                        if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
-#else
-                        ControlKind kind;
-                        GetControlKind(view, &kind);
-                        if (kind.signature == 'appl' && kind.kind == 'wbvw')
-#endif                        
+                        OSStatus err = noErr;
+                        HIViewRef view = NULL;
+
+                        err = HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+                        if (err == noErr && view && HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
                             result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                     }
                     break;
