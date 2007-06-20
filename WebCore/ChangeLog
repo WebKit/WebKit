@@ -1,3 +1,19 @@
+2007-06-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14040
+          Top and bottom border images flipped when using -webkit-border-image when border end up tiled
+
+        Test: fast/borders/border-image-01.html
+
+        Correctly account for the fact that "pattern space" is flipped.
+
+        * platform/graphics/Image.cpp: (WebCore::Image::drawTiled):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPatternCallback):
+        (WebCore::Image::drawPattern):
+
 2007-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

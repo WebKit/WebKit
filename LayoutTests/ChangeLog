@@ -1,3 +1,16 @@
+2007-06-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=14040
+          Top and bottom border images flipped when using -webkit-border-image when border end up tiled
+
+        * fast/borders/border-image-01-expected.checksum: Added.
+        * fast/borders/border-image-01-expected.png: Added.
+        * fast/borders/border-image-01-expected.txt: Added.
+        * fast/borders/border-image-01.html: Added.
+        * fast/borders/resources/border-image.png: Added.
+
 2007-06-20  Anders Carlsson  <andersca@apple.com>
 
 		Remove the XPath tests, they all pass now.
