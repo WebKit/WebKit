@@ -1,3 +1,14 @@
+2007-06-20  Patti Hoa  <patti@apple.com>
+
+        Reviewed by Tristan O'Tierney.
+
+        <rdar://problem/4882527> VO should speak URL of image links that lack tags
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Return the url of images.
+
 2007-06-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

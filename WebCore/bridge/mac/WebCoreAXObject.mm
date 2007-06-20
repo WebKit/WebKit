@@ -37,6 +37,7 @@
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
 #import "HTMLFrameElementBase.h"
+#import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLMapElement.h"
@@ -888,7 +889,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if ([self isTextControl])
         return textAttrs;
 
-    if ([self isAnchor])
+    if ([self isAnchor] || m_renderer->isImage())
         return anchorAttrs;
 
     return attributes;
@@ -1081,15 +1082,23 @@ static IntRect boundingBoxRect(RenderObject* obj)
         }
     }
     
-    if ([self isAnchor] && [attributeName isEqualToString: NSAccessibilityURLAttribute]) {
-        HTMLAnchorElement* anchor = [self anchorElement];
-        if (anchor) {
-            DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
-            if (!s.isNull()) {
-                s = anchor->document()->completeURL(s);
-                return KURL(s).getNSURL();
+    if ([attributeName isEqualToString: NSAccessibilityURLAttribute]) {
+        if ([self isAnchor]) {
+            HTMLAnchorElement* anchor = [self anchorElement];
+            if (anchor) {
+                DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
+                if (!s.isNull()) {
+                    s = anchor->document()->completeURL(s);
+                    return KURL(s).getNSURL();
+                }
             }
         }
+        else if (m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isHTMLElement()) {
+            DeprecatedString src = static_cast<HTMLImageElement*>(m_renderer->element())->src().deprecatedString();
+            if (!src.isNull()) 
+                return KURL(src).getNSURL();
+        }
+        return nil;
     }
 
     if ([attributeName isEqualToString: @"AXVisited"])
