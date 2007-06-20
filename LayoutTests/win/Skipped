@@ -372,12 +372,6 @@ fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
 
-# XPath fails LayoutTests on boomer <rdar://problem/5130630>
-fast/xpath/nan-to-boolean.html
-fast/xpath/4XPath/Core/test_core_functions.html
-fast/xpath/4XPath/Core/test_numeric_expr.html
-fast/xpath/4XPath/Core/test_parser.html
-
 # DRT doesn't support tests with multiple windows <rdar://problem/5133670>
 http/tests/navigation/new-window-redirect-history.html
 
