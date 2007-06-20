@@ -1,3 +1,14 @@
+2007-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5245555> REGRESSION: HTTP header injection in XMLHttpRequest.setRequestHeader
+        
+        Check for either '\r' or '\n' in the header value.
+        
+        * xml/xmlhttprequest.cpp:
+        (WebCore::isValidHeaderValue):
+
 2007-06-20  Patti Hoa  <patti@apple.com>
 
         Reviewed by Geoffrey Garen.
