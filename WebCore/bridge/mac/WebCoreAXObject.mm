@@ -1093,7 +1093,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
                 }
             }
         }
-        else if (m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isHTMLElement()) {
+        else if (m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasTagName(imgTag)) {
             DeprecatedString src = static_cast<HTMLImageElement*>(m_renderer->element())->src().deprecatedString();
             if (!src.isNull()) 
                 return KURL(src).getNSURL();

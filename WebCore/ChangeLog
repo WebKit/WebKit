@@ -1,5 +1,16 @@
 2007-06-20  Patti Hoa  <patti@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/4882527> VO should speak URL of image links that lack tags
+        Add additional change from review
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Check if the element has imgTag before asking for its url
+        
+2007-06-20  Patti Hoa  <patti@apple.com>
+
         Reviewed by Tristan O'Tierney.
 
         <rdar://problem/4882527> VO should speak URL of image links that lack tags
