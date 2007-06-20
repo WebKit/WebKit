@@ -1,3 +1,17 @@
+2007-06-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5263541> REGRESSION (Safari 3 Beta 1): Pressing Delete doesn't delete an HTML message in Mail
+        
+        Mail wasn't receiving the keyDown event because WebFrameView was blocking it.
+        It blocks the event and moves back/forward on Delete/Shift+Delete if the
+        back/forward list is enabled.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:]): Check to see if the BackForwardList is
+        enabled.  It always exists.
+
 2007-06-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
