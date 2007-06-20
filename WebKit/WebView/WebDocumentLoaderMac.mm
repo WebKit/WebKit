@@ -43,7 +43,21 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 {
 }
 
-void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView* webView)
+static inline bool needsAppKitWorkaround(WebView *webView)
+{
+#ifndef BUILDING_ON_TIGER
+    return false;
+#else    
+    id frameLoadDelegate = [webView frameLoadDelegate];
+    if (!frameLoadDelegate)
+        return false;
+    
+    NSString *bundleIdentifier = [[NSBundle bundleForClass:[frameLoadDelegate class]] bundleIdentifier];
+    return [bundleIdentifier isEqualToString:@"com.apple.AppKit"];
+#endif
+}
+
+void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *webView)
 {
     ASSERT(!m_dataSource);
     HardRetain(dataSource);
@@ -51,6 +65,11 @@ void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView* web
     
     m_resourceLoadDelegate = [webView resourceLoadDelegate];
     m_downloadDelegate = [webView downloadDelegate];
+    
+    // Possibly work around a bug in Tiger AppKit where timers do not fire sometimes
+    // See <rdar://problem/5266289>
+    if (needsAppKitWorkaround(webView))
+        m_deferMainResourceDataLoad = false;
 }
 
 WebDataSource *WebDocumentLoaderMac::dataSource() const

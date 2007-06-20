@@ -1,3 +1,20 @@
+2007-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/5266289> REGRESSION (Safari 3 Beta 1): Incoming iChat messages are delayed
+        
+        Add a new m_deferMainResourceDataLoad that can be used to control whether a data load should be deferred using a timer or not.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::deferMainResourceDataLoad):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::handleDataLoadSoon):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::setDefersLoading):
+
 2007-06-19  Patti Hoa <patti@apple.com>
 
         Reviewed by Justin Garcia.

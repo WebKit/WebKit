@@ -338,7 +338,11 @@ void MainResourceLoader::handleDataLoadNow(Timer<MainResourceLoader>*)
 void MainResourceLoader::handleDataLoadSoon(ResourceRequest& r)
 {
     m_initialRequest = r;
-    m_dataLoadTimer.startOneShot(0);
+    
+    if (m_documentLoader->deferMainResourceDataLoad())
+        m_dataLoadTimer.startOneShot(0);
+    else
+        handleDataLoadNow(0);
 }
 
 bool MainResourceLoader::loadNow(ResourceRequest& r)
@@ -364,7 +368,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
         return true;
 
-    if (m_substituteData.isValid())
+    if (m_substituteData.isValid()) 
         handleDataLoadSoon(r);
     else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
@@ -411,8 +415,9 @@ void MainResourceLoader::setDefersLoading(bool defers)
         if (m_initialRequest.isNull())
             return;
         
-        if (m_substituteData.isValid())
-            m_dataLoadTimer.startOneShot(0);
+        if (m_substituteData.isValid() &&
+            m_documentLoader->deferMainResourceDataLoad())
+                m_dataLoadTimer.startOneShot(0);
         else {
             ResourceRequest r(m_initialRequest);
             m_initialRequest = ResourceRequest();

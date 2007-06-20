@@ -1,3 +1,16 @@
+2007-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/5266289> REGRESSION (Safari 3 Beta 1): Incoming iChat messages are delayed
+
+        * WebView/WebDocumentLoaderMac.mm:
+        (needsAppKitWorkaround):
+        New function which checks if the frame load delegate belongs to AppKit.
+        
+        (WebDocumentLoaderMac::setDataSource):
+        If the frame load delegate belongs to AppKit, set m_deferMainResourceDataLoad to false.
+
 2007-06-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher
