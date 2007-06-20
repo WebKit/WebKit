@@ -45,4 +45,6 @@ checkFrameworks();
 print "Start $ARGV[0] with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-exec "open -a @ARGV";
+
+unshift(@ARGV, "-a");
+exec "open", @ARGV;

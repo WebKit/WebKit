@@ -1,3 +1,11 @@
+2007-06-19  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Mark Rowe.
+        
+        Support applications with spaces or special characters in their names
+
+        * Scripts/run-webkit-app:
+
 2007-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
