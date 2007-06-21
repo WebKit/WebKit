@@ -2,6 +2,22 @@
 
         Reviewed by Simon.
 
+        store the metrics and space width in the Font object
+
+        * platform/Font.h:
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         simplify some codepaths
 
         * platform/qt/FontQt.cpp:

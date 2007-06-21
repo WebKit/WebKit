@@ -38,13 +38,17 @@ namespace WebCore {
 Font::Font()
     : m_letterSpacing(0)
     , m_wordSpacing(0)
+    , m_font()
+    , m_metrics(QFont())
 {
+    m_spaceWidth = m_metrics.width(QLatin1Char(' '));
 }
 
 Font::Font(const FontDescription& description, short letterSpacing, short wordSpacing)
     : m_fontDescription(description)
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
+    , m_metrics(QFont())
 {
     const FontFamily* family = &description.family();
     QString familyName;
@@ -64,6 +68,8 @@ Font::Font(const FontDescription& description, short letterSpacing, short wordSp
     } else {
         m_font.setWeight(description.weight());
     }
+    m_metrics = QFontMetrics(m_font);
+    m_spaceWidth = m_metrics.width(QLatin1Char(' '));
 }
 
 Font::~Font()
@@ -75,6 +81,8 @@ Font::Font(const Font& other)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_font(other.m_font)
+    , m_metrics(other.m_metrics)
+    , m_spaceWidth(other.m_spaceWidth)
 {
 }
 
@@ -84,6 +92,8 @@ Font& Font::operator=(const Font& other)
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
     m_font = other.m_font;
+    m_metrics = other.m_metrics;
+    m_spaceWidth = other.m_spaceWidth;
     return *this;
 }
 
@@ -125,7 +135,6 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
             }
             x += m_wordSpacing + add;
         }
-        QFontMetrics fm(m_font);
         for (int i = 1; i < from; ++i) {
             uint ch = run[i];
             if (QChar(ch).isHighSurrogate() && QChar(run[i-1]).isLowSurrogate())
@@ -144,7 +153,7 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
             } else if (i >= from && i < to) {
                 QString str(reinterpret_cast<const QChar*>(run.characters() + start), i - start);
                 p->drawText(QPointF(x, y), str);
-                x += fm.width(str);
+                x += m_metrics.width(str);
                 start = i + 1;
             }
         }
@@ -154,14 +163,13 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
         int start = 0;
         qreal x = point.x();
         qreal y = point.y();
-        QFontMetrics fm(m_font);
         for (int i = 0; i < run.length(); ++i) {
             if (treatAsSpace(run[i])) {
                 QString str(reinterpret_cast<const QChar*>(run.characters() + start), i - start);
 //                 qDebug() << "drawing " << str << "at " << x;
                 if (i >= from && i < to) 
                     p->drawText(QPointF(x, y), str);
-                x += fm.width(str);
+                x += m_metrics.width(str);
 
                 int add = 0;
                 if (numSpaces) {
@@ -196,7 +204,6 @@ int Font::width(const TextRun& run, const TextStyle& style) const
         if (m_wordSpacing)
             w += m_wordSpacing*numSpaces;
     }
-    QFontMetrics metrics(m_font);
     if (m_letterSpacing) {
         for (int i = 1; i < run.length(); ++i) {
             uint ch = run[i];
@@ -204,11 +211,11 @@ int Font::width(const TextRun& run, const TextStyle& style) const
                 continue;
             if (QChar(ch).isHighSurrogate() && QChar(run[i-1]).isLowSurrogate()) {
                 ch = QChar::surrogateToUcs4(ch, run[i-1]);
-                w += metrics.width(QString((QChar *)run.characters() + i - 1, 2));
+                w += m_metrics.width(QString((QChar *)run.characters() + i - 1, 2));
             } else if (treatAsSpace(ch)) {
                 w += spaceWidth();
             } else {
-                w += metrics.width(QChar(run[i]));
+                w += m_metrics.width(QChar(run[i]));
             }
             w += m_letterSpacing;
         }
@@ -217,12 +224,12 @@ int Font::width(const TextRun& run, const TextStyle& style) const
         for (int i = 0; i < run.length(); ++i) {
             if (treatAsSpace(run[i])) {
                 QString str(reinterpret_cast<const QChar*>(run.characters() + start), i - start);
-                w += metrics.width(str) + spaceWidth();
+                w += m_metrics.width(str) + spaceWidth();
                 start = i + 1;
             }
         }
         QString str(reinterpret_cast<const QChar*>(run.characters() + start), run.length() - start);
-        w += metrics.width(str);
+        w += m_metrics.width(str);
     }
 //     qDebug() << ">>>> width" << QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length()) << w << style.padding() << m_wordSpacing << m_letterSpacing << hex << run[0];
     return w;
@@ -267,7 +274,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style,
     layout.beginLayout();
     QTextLine l = layout.createLine();
     if (!l.isValid())
-        return FloatRect(0, 0, 0, QFontMetrics(m_font).height());
+        return FloatRect(0, 0, 0, m_metrics.height());
 
     l.setLineWidth(INT_MAX/256);
     layout.endLayout();
@@ -288,27 +295,27 @@ bool Font::isFixedPitch() const
 // Metrics that we query the FontFallbackList for.
 int Font::ascent() const
 {
-    return QFontMetrics(m_font).ascent();
+    return m_metrics.ascent();
 }
 
 int Font::descent() const
 {
-    return QFontMetrics(m_font).descent();
+    return m_metrics.descent();
 }
 
 int Font::lineSpacing() const
 {
-    return QFontMetrics(m_font).lineSpacing();
+    return m_metrics.lineSpacing();
 }
 
 float Font::xHeight() const
 {
-    return QFontMetrics(m_font).xHeight();
+    return m_metrics.xHeight();
 }
 
 int Font::spaceWidth() const
 {
-    return QFontMetrics(m_font).width(QLatin1Char(' '));
+    return m_spaceWidth;
 }
 
 Font::operator QFont() const

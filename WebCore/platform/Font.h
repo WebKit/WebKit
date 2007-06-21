@@ -31,6 +31,7 @@
 
 #if PLATFORM(QT)
 #include <QtGui/qfont.h>
+#include <QtGui/qfontmetrics.h>
 #endif
 
 namespace WebCore {
@@ -193,6 +194,8 @@ private:
     bool m_isPlatformFont;
 #else
     QFont m_font;
+    QFontMetrics m_metrics;
+    int m_spaceWidth;
 #endif
 };
 
