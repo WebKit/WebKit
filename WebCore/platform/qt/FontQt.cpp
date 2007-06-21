@@ -115,7 +115,7 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
             if (treatAsSpace(run[i]))
                 ++numSpaces;      
     }
-    qDebug() << ">>>>>>> drawText" << padding << numSpaces;
+//     qDebug() << ">>>>>>> drawText" << padding << numSpaces;
     
     if (m_letterSpacing) {
         // need to draw every letter on it's own
@@ -123,9 +123,13 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
         qreal x = point.x();
         qreal y = point.y();
         if (treatAsSpace(run[0])) {
-            int add = padding/numSpaces;
+            int add = 0;
+            if (numSpaces) {
+                add = padding/numSpaces;
+                padding -= add;
+                --numSpaces;
+            }
             x += m_wordSpacing + add;
-            padding -= add;
         }
         QFontMetrics fm(m_font);
         for (int i = 1; i < from; ++i) {
@@ -135,43 +139,51 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
             if (QChar(ch).isLowSurrogate() || QChar::category(ch) == QChar::Mark_NonSpacing)
                 continue;
             start = i;
+            int add = 0;
             if (treatAsSpace(run[i])) {
-                int add = padding/numSpaces;
-                x += m_wordSpacing + add + spaceWidth();
-                padding -= add;
+                if (numSpaces) {
+                    add = padding/numSpaces;
+                    padding -= add;
+                    --numSpaces;
+                }
+                x += m_wordSpacing + add;
             } else if (i >= from && i < to) {
                 QString str(reinterpret_cast<const QChar*>(run.characters() + start), i - start);
                 p->drawText(QPointF(x, y), str);
                 x += fm.width(str);
-                start = i;
+                start = i + 1;
             }
         }
         QString str(reinterpret_cast<const QChar*>(run.characters() + start), run.length() - start);
         p->drawText(QPointF(x, y), str);
-    } else if (padding || m_wordSpacing) {
+    } else { //if (padding || m_wordSpacing) {
         int start = 0;
         qreal x = point.x();
         qreal y = point.y();
         QFontMetrics fm(m_font);
-        for (int i = 0; i < from; ++i) {
+        for (int i = 0; i < run.length(); ++i) {
             if (treatAsSpace(run[i])) {
                 QString str(reinterpret_cast<const QChar*>(run.characters() + start), i - start);
-                qDebug() << "drawing " << str << "at " << x;
+//                 qDebug() << "drawing " << str << "at " << x;
                 if (i >= from && i < to) 
                     p->drawText(QPointF(x, y), str);
                 x += fm.width(str);
-                
-                int add = padding/numSpaces;
+
+                int add = 0;
+                if (numSpaces) {
+                    add = padding/numSpaces;
+                    padding -= add;
+                    --numSpaces;
+                }
                 x += m_wordSpacing + add + spaceWidth();
-                padding -= add;
-                start = i;
+                start = i + 1;
             }
         }
         QString str(reinterpret_cast<const QChar*>(run.characters() + start), run.length() - start);
-        qDebug() << "drawing " << str << "at " << x;
+//         qDebug() << "drawing " << str << "at " << x;
         p->drawText(QPointF(x, y), str);
-    } else {
-        p->drawText(point, QString(reinterpret_cast<const QChar*>(run.characters() + from), to - from));
+//     } else {
+//         p->drawText(point, QString(reinterpret_cast<const QChar*>(run.characters() + from), to - from));
     }
 }
 

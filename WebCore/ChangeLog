@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Compile fixes
+
+        * platform/Font.h:
+        (WebCore::Font::isRoundingHackCharacter):
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawText):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Some more work on the implementation of FontQt.
 
         * platform/qt/FontQt.cpp:
