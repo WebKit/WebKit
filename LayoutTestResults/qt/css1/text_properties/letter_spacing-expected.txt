@@ -64,12 +64,12 @@ layer at (0,0) size 800x1390
       RenderBlock {P} at (0,674) size 784x38
         RenderText {#text} at (0,0) size 765x38
           text run at (0,0) width 765: "This letters in this sentence should have extra space between them,"
-          text run at (0,19) width 438: "but the last few words in the sentence "
+          text run at (0,19) width 443: "but the last few words in the sentence "
         RenderInline {SPAN} at (0,0) size 180x19
-          RenderText {#text} at (438,19) size 180x19
-            text run at (438,19) width 180: "should show normal spacing"
-        RenderText {#text} at (618,19) size 9x19
-          text run at (618,19) width 9: "."
+          RenderText {#text} at (443,19) size 180x19
+            text run at (443,19) width 180: "should show normal spacing"
+        RenderText {#text} at (623,19) size 9x19
+          text run at (623,19) width 9: "."
       RenderBlock {P} at (0,726) size 784x38
         RenderText {#text} at (0,0) size 747x38
           text run at (0,0) width 747: "This letters in this sentence should have normal space between them, since percentage values are not allowed on this"
@@ -122,12 +122,12 @@ layer at (0,0) size 800x1390
               RenderBlock {P} at (4,406) size 762x38
                 RenderText {#text} at (0,0) size 695x38
                   text run at (0,0) width 695: "This letters in this sentence should have extra space between"
-                  text run at (0,19) width 508: "them, but the last few words in the sentence "
+                  text run at (0,19) width 513: "them, but the last few words in the sentence "
                 RenderInline {SPAN} at (0,0) size 180x19
-                  RenderText {#text} at (508,19) size 180x19
-                    text run at (508,19) width 180: "should show normal spacing"
-                RenderText {#text} at (688,19) size 9x19
-                  text run at (688,19) width 9: "."
+                  RenderText {#text} at (513,19) size 180x19
+                    text run at (513,19) width 180: "should show normal spacing"
+                RenderText {#text} at (693,19) size 9x19
+                  text run at (693,19) width 9: "."
               RenderBlock {P} at (4,458) size 762x38
                 RenderText {#text} at (0,0) size 747x38
                   text run at (0,0) width 747: "This letters in this sentence should have normal space between them, since percentage values are not allowed on this"

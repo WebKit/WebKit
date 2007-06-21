@@ -16,26 +16,26 @@ layer at (0,0) size 800x319
         RenderText {#text} at (0,-1) size 360x26
           text run at (0,-1) width 360: "x x   x x   x x"
       RenderBlock {DIV} at (0,105) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,129) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,153) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,177) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,201) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,225) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,249) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 376x26
-          text run at (0,-1) width 376: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"
       RenderBlock {DIV} at (0,273) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 384x26
-          text run at (0,-1) width 384: "xx xx xx"
+        RenderText {#text} at (0,-1) size 192x26
+          text run at (0,-1) width 192: "xx xx xx"

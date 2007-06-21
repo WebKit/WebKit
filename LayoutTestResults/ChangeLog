@@ -1,3 +1,33 @@
+2007-06-21  Lars Knoll <lars@trolltech.com>
+
+        Update test results after my font refactoring.
+
+        * qt/css1/font_properties/font-expected.txt:
+        * qt/css1/font_properties/font_variant-expected.txt:
+        * qt/css1/pseudo/firstline-expected.txt:
+        * qt/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * qt/css1/text_properties/letter_spacing-expected.txt:
+        * qt/css1/text_properties/text-transCapitalize-expected.txt:
+        * qt/css2.1/t040103-escapes-01-b-expected.txt:
+        * qt/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * qt/css2.1/t051201-c23-first-line-00-b-expected.txt:
+        * qt/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * qt/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * qt/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt:
+        * qt/css2.1/t100801-c544-valgn-01-d-ag-expected.txt:
+        * qt/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * qt/css2.1/t1505-c524-font-var-00-b-expected.txt:
+        * qt/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * qt/css2.1/t1508-c527-font-00-b-expected.txt:
+        * qt/css2.1/t1508-c527-font-04-b-expected.txt:
+        * qt/css2.1/t1508-c527-font-05-b-expected.txt:
+        * qt/css2.1/t1508-c527-font-06-b-expected.txt:
+        * qt/css2.1/t1508-c527-font-07-b-expected.txt:
+        * qt/css2.1/t1508-c527-font-10-c-expected.txt:
+        * qt/css2.1/t1604-c541-word-sp-01-b-a-expected.txt:
+        * qt/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * qt/css2.1/t1604-c542-letter-sp-01-b-a-expected.txt:
+
 2007-05-28  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (newly passing tests).

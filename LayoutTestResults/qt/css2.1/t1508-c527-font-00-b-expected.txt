@@ -1,24 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {HTML} at (0,0) size 800x152
-    RenderBody {BODY} at (8,13) size 784x126 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x126
-        RenderText {#text} at (0,0) size 762x36
-          text run at (0,0) width 762: "This text should be 13px Helvetica in small-caps and italicized. There should be a small gap between"
-          text run at (0,18) width 77: "each line. "
-        RenderInline {SPAN} at (0,0) size 777x108 [color=#C0C0C0]
-          RenderText {#text} at (77,18) size 777x108
-            text run at (77,18) width 508: "dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (585,18) width 178: "text dummy text dummy"
-            text run at (0,36) width 364: "text dummy text dummy text dummy text dummy "
-            text run at (364,36) width 398: "text dummy text dummy text dummy text dummy text"
-            text run at (0,54) width 144: "dummy text dummy "
-            text run at (144,54) width 546: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (690,54) width 87: "text dummy"
-            text run at (0,72) width 455: "text dummy text dummy text dummy text dummy text dummy "
-            text run at (455,72) width 307: "text dummy text dummy text dummy text"
-            text run at (0,90) width 235: "dummy text dummy text dummy "
-            text run at (235,90) width 542: "text dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (0,108) width 489: "text dummy text dummy text dummy text dummy text dummy text"
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,13) size 784x90 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x90
+        RenderText {#text} at (0,0) size 637x18
+          text run at (0,0) width 637: "This text should be 13px Helvetica in small-caps and italicized. There should be a small gap between each line. "
+        RenderInline {SPAN} at (0,0) size 784x90 [color=#C0C0C0]
+          RenderText {#text} at (637,0) size 784x90
+            text run at (637,0) width 132: "dummy text dummy text"
+            text run at (0,18) width 244: "dummy text dummy text dummy text dummy "
+            text run at (244,18) width 408: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (652,18) width 132: "text dummy text dummy"
+            text run at (0,36) width 272: "text dummy text dummy text dummy text dummy "
+            text run at (272,36) width 408: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (680,36) width 92: "text dummy text"
+            text run at (0,54) width 312: "dummy text dummy text dummy text dummy text dummy "
+            text run at (312,54) width 408: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (720,54) width 64: "text dummy"
+            text run at (0,72) width 340: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (340,72) width 364: "text dummy text dummy text dummy text dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0

@@ -26,5 +26,5 @@ layer at (0,0) size 800x199
         RenderText {#text} at (0,-1) size 264x26
           text run at (0,-1) width 264: "x  x  xx xx"
       RenderBlock {DIV} at (48,153) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,-1) size 264x26
-          text run at (0,-1) width 264: "x   x   xx  xx"
+        RenderText {#text} at (0,-1) size 144x26
+          text run at (0,-1) width 144: "x   x   xx  xx"
