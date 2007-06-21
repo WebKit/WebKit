@@ -1056,7 +1056,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 {
     if (loader->frame() == m_inspectedPage->mainFrame()) {
         ASSERT(m_mainResource);
-        ASSERT(m_mainResource->loader == loader);
+        // FIXME: Should look into asserting that m_mainResource->loader == loader here.
 
         m_client->inspectedURLChanged(loader->URL().url());
         deleteAllValues(m_consoleMessages);

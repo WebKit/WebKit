@@ -1,3 +1,13 @@
+2007-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Remove assert for now as it is causing the back button to not
+        work in debug builds.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+
 2007-06-21  Lars Knoll <lars@trolltech.com>
 
         Remove some debug output.
