@@ -54,10 +54,10 @@ macx {
     LIBS += -lxml2 -lxslt
 }
 
+qt-port {
 QTPLUGIN += qtwebico
 LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
 
-qt-port {
 INCLUDEPATH += \
                 $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/ \
                 $$PWD/platform/qt \

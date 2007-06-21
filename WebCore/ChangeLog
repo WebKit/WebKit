@@ -1,5 +1,11 @@
 2007-06-20  Adam Roben  <aroben@apple.com>
 
+        Speculative Gdk build fix.
+
+        * WebCore.pro: Don't try to build WebKitQt/Plugins on Gdk.
+
+2007-06-20  Adam Roben  <aroben@apple.com>
+
         Windows build fix.
 
         * WebCore.vcproj/WebCore.vcproj: Include ForwardingHeaders after
