@@ -1,3 +1,19 @@
+2007-06-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam.
+
+        Reinstate the WebInspector class so WebKit clients that currently depend on it
+        will build and run correctly.
+
+        * WebInspector/WebInspector.h: Added.
+        * WebInspector/WebInspector.mm: Added.
+        (+[WebInspector webInspector]):
+        (-[WebInspector dealloc]):
+        (-[WebInspector setWebFrame:]):
+        (-[WebInspector showWindow:]):
+        * WebKit.exp:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         Land the new Inspector.

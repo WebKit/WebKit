@@ -16,6 +16,7 @@
 .objc_class_name_WebHistory
 .objc_class_name_WebHistoryItem
 .objc_class_name_WebIconDatabase
+.objc_class_name_WebInspector
 .objc_class_name_WebJavaScriptTextInputPanel
 .objc_class_name_WebKeyGenerator
 .objc_class_name_WebKitStatistics
@@ -31,12 +32,8 @@
 _HIWebViewCreate
 _HIWebViewGetWebView
 _WebActionButtonKey
-_WebActionButtonKey
-_WebActionElementKey
 _WebActionElementKey
 _WebActionModifierFlagsKey
-_WebActionModifierFlagsKey
-_WebActionNavigationTypeKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
 _WebArchivePboardType
