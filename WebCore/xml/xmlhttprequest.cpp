@@ -579,14 +579,20 @@ String XMLHttpRequest::getResponseHeader(const String& name) const
     return m_response.httpHeaderField(name);
 }
 
-bool XMLHttpRequest::responseIsXML() const
+String XMLHttpRequest::responseMIMEType() const
 {
     String mimeType = getMIMEType(m_mimeTypeOverride);
     if (mimeType.isEmpty())
         mimeType = getMIMEType(getResponseHeader("Content-Type"));
     if (mimeType.isEmpty())
         mimeType = "text/xml";
-    return DOMImplementation::isXMLMIMEType(mimeType);
+    
+    return mimeType;
+}
+
+bool XMLHttpRequest::responseIsXML() const
+{
+    return DOMImplementation::isXMLMIMEType(responseMIMEType());
 }
 
 int XMLHttpRequest::getStatus(ExceptionCode& ec) const
@@ -697,9 +703,11 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
     if (!m_decoder) {
         if (!m_encoding.isEmpty())
             m_decoder = new TextResourceDecoder("text/plain", m_encoding);
+        // allow TextResourceDecoder to look inside the m_response if it's XML or HTML
         else if (responseIsXML())
-            // allow TextResourceDecoder to look inside the m_response if it's XML
             m_decoder = new TextResourceDecoder("application/xml");
+        else if (responseMIMEType() == "text/html")
+            m_decoder = new TextResourceDecoder("text/html");
         else
             m_decoder = new TextResourceDecoder("text/plain", "UTF-8");
     }

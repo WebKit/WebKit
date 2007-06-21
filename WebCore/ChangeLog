@@ -1,3 +1,22 @@
+2007-06-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13905
+        REGRESSION: A Chinese dictionary widget has a problem with XMLHttpRequest response encoding
+
+        Tiger WebKit accidentally looked at HTML Http-Equiv META to determine the response encoding
+        (regardless of the actual response MIME type). This was corrected a while ago to match other 
+        browsers and the draft XHR spec.
+
+        Now restoring this functionality for "text/html", with spec editor's blessing.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::responseMIMEType):
+        (WebCore::XMLHttpRequest::responseIsXML):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/xmlhttprequest.h:
+
 2007-06-21  Andrew Wellington  <proton@wiretapped.net>
 
         Mac build fix.

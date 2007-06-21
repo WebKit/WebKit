@@ -104,10 +104,15 @@
              getWithOverride('resources/reply3.xml', 'text/xml; charset=windows-1251', true);
            } else if (asyncStep == 8) {
              asyncStep = 9;
-             log("Async: XML, koi8-r specified in XML declaration, but overridden by windows-1251 in overrideMimeType: " + req.responseXML.getElementsByTagName('node')[0].childNodes[0].nodeValue + ". responseText: " + req.responseText);
+             log("Async: XML, koi8-r specified in XML declaration, but overridden by windows-1251 in overrideMimeType: " + 
+                 (req.responseXML ? req.responseXML.getElementsByTagName('node')[0].childNodes[0].nodeValue  : "<No responseXML>") + ". responseText: " + req.responseText);
              get('resources/reply5.txt', true);
            } else if (asyncStep == 9) {
+             asyncStep = 10;
              log("Async: XML transferred as text/plain, UTF-8 as default (ignore XML text declaration): " + req.responseText);
+             get('resources/1251.html', true);
+           } else if (asyncStep == 10) {
+             log("Async: HTML, charset determined by a META: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
            }
         } else {
            log("Error loading URL: status " + req.status);

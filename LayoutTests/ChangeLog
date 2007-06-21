@@ -2,6 +2,17 @@
 
         Reviewed by Anders.
 
+        http://bugs.webkit.org/show_bug.cgi?id=13905
+        REGRESSION: A Chinese dictionary widget has a problem with XMLHttpRequest response encoding
+
+        * http/tests/xmlhttprequest/resources/1251.html: Added.
+        * http/tests/xmlhttprequest/response-encoding-expected.txt:
+        * http/tests/xmlhttprequest/response-encoding.html:
+
+2007-06-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
         One more test for XHR header injection.
 
         * http/tests/xmlhttprequest/inject-header-expected.txt: Added.
