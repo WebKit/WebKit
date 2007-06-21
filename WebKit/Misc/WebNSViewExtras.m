@@ -226,4 +226,35 @@
            ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
 }
 
+- (NSRect)_web_convertRect:(NSRect)aRect toView:(NSView *)aView
+{
+    // Converting to this view's window; let -convertRect:toView: handle it
+    if (aView == nil)
+        return [self convertRect:aRect toView:nil];
+        
+    // This view must be in a window.  Do whatever weird thing -convertRect:toView: does in this situation.
+    NSWindow *thisWindow = [self window];
+    if (!thisWindow)
+        return [self convertRect:aRect toView:aView];
+    
+    // The other view must be in a window, too.
+    NSWindow *otherWindow = [aView window];
+    if (!otherWindow)
+        return [self convertRect:aRect toView:aView];
+
+    // Convert to this window's coordinates
+    NSRect convertedRect = [self convertRect:aRect toView:nil];
+    
+    // Convert to screen coordinates
+    convertedRect.origin = [thisWindow convertBaseToScreen:convertedRect.origin];
+    
+    // Convert to other window's coordinates
+    convertedRect.origin = [otherWindow convertScreenToBase:convertedRect.origin];
+    
+    // Convert to other view's coordinates
+    convertedRect = [aView convertRect:convertedRect fromView:nil];
+    
+    return convertedRect;
+}
+
 @end

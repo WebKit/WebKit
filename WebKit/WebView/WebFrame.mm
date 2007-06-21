@@ -137,8 +137,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [webFrameView release];
     
     [scriptDebugger release];
-    
-    [inspectors release];
 
     [super dealloc];
 }
@@ -536,20 +534,6 @@ WebView *getWebView(WebFrame *webFrame)
    if (!coreFrame)
        return NO;
    return coreFrame == coreFrame->page()->mainFrame() ;
-}
-
-- (void)_addInspector:(WebInspector *)inspector
-{
-    if (!_private->inspectors)
-        _private->inspectors = [[NSMutableSet alloc] init];
-    ASSERT(![_private->inspectors containsObject:inspector]);
-    [_private->inspectors addObject:inspector];
-}
-
-- (void)_removeInspector:(WebInspector *)inspector
-{
-    ASSERT([_private->inspectors containsObject:inspector]);
-    [_private->inspectors removeObject:inspector];
 }
 
 - (FrameLoader*)_frameLoader

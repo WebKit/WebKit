@@ -28,10 +28,19 @@
 
 @class WebNodeHighlight;
 
-@interface WebNodeHighlightView : NSView
-{
-    WebNodeHighlight *_highlight;
-    NSImage *_highlightRingImage;
+@interface WebNodeHighlightView : NSView {
+    WebNodeHighlight *_webNodeHighlight;
+    float _fractionFadedIn;
 }
-- (id)initWithHighlight:(WebNodeHighlight *)hightlight andRects:(NSArray *)rects forView:(NSView *)view;
+- (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight;
+
+- (WebNodeHighlight *)webNodeHighlight;
+- (void)detachFromWebNodeHighlight;
+
+// Value between 0.0 (completely faded out of view) and 1.0 (completely faded into view) that represents
+// the progress of the fading animation.
+- (float)fractionFadedIn;
+- (void)setFractionFadedIn:(float)alpha;
+
+- (void)setHolesNeedUpdateInRect:(NSRect)rect;
 @end

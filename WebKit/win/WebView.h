@@ -34,9 +34,11 @@
 #include "WebFrame.h"
 
 #include <WebCore/IntRect.h>
+#include <wtf/OwnPtr.h>
 
 class WebFrame;
 class WebBackForwardList;
+class WebInspectorClient;
 
 WebCore::Page* core(IWebView*);
 
@@ -612,7 +614,6 @@ public:
     bool onInitMenuPopup(WPARAM, LPARAM);
     bool onUninitMenuPopup(WPARAM, LPARAM);
     void performContextMenuAction(WPARAM, LPARAM);
-    void inspectElement(const WebCore::HitTestResult&);
     bool mouseWheel(WPARAM, LPARAM, bool isHorizontal);
     bool execCommand(WPARAM wParam, LPARAM lParam);
     bool keyDown(WPARAM, LPARAM);
@@ -631,6 +632,8 @@ public:
     void frameRect(RECT* rect);
     void closeWindow();
     void close();
+    bool didClose() const { return m_didClose; }
+    void setProhibitsMainFrameScrolling(bool = true);
 
     HRESULT registerDragDrop();
     HRESULT revokeDragDrop();
@@ -693,6 +696,7 @@ protected:
     unsigned m_paintCount;
     bool m_hasSpellCheckerDocumentTag;
     bool m_smartInsertDeleteEnabled;
+    bool m_didClose;
 
     static bool s_allowSiteSpecificHacks;
 };

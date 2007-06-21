@@ -51,6 +51,7 @@ namespace WebCore {
         ~ContextMenu();
 
         void populate();
+        void addInspectElementItem();
         void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
         void insertItem(unsigned position, ContextMenuItem&);

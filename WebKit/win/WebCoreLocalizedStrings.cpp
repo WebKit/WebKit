@@ -71,6 +71,7 @@ String WebCore::contextMenuItemTagDefaultDirection() { return String(LPCTSTR_UI_
 String WebCore::contextMenuItemTagLeftToRight() { return String(LPCTSTR_UI_STRING("Left to Right", "Left to Right context menu item")); }
 String WebCore::contextMenuItemTagRightToLeft() { return String(LPCTSTR_UI_STRING("Right to Left", "Right to Left context menu item")); }
 String WebCore::contextMenuItemTagShowSpellingPanel(bool show) { return String(show ? LPCTSTR_UI_STRING("Show Spelling and Grammar", "menu item title") : LPCTSTR_UI_STRING("Hide Spelling and Grammar", "menu item title")); }
+String WebCore::contextMenuItemTagInspectElement() { return String(LPCTSTR_UI_STRING("Inspect Element", "Inspect Element context menu item")); }
 String WebCore::searchMenuNoRecentSearchesText() { return String(LPCTSTR_UI_STRING("No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed")); }
 String WebCore::searchMenuRecentSearchesText() { return String(LPCTSTR_UI_STRING("Recent Searches", "label for first item in the menu that appears when clicking on the search field image, used as embedded menu title")); }
 String WebCore::searchMenuClearRecentSearchesText() { return String(LPCTSTR_UI_STRING("Clear Recent Searches", "menu item in Recent Searches menu that empties menu's contents")); }

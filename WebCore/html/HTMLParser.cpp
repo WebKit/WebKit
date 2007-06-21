@@ -109,7 +109,7 @@ struct HTMLStackElem : Noncopyable {
  *
  */
 
-HTMLParser::HTMLParser(HTMLDocument* doc) 
+HTMLParser::HTMLParser(HTMLDocument* doc, bool reportErrors)
     : document(doc)
     , current(doc)
     , didRefCurrent(false)
@@ -119,7 +119,7 @@ HTMLParser::HTMLParser(HTMLDocument* doc)
     , haveContent(false)
     , haveFrameSet(false)
     , m_isParsingFragment(false)
-    , m_reportErrors(false)
+    , m_reportErrors(reportErrors)
     , inStrayTableContent(0)
 {
 }

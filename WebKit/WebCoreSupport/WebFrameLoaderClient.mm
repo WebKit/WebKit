@@ -224,7 +224,6 @@ void WebFrameLoaderClient::setCopiesOnScroll()
 
 void WebFrameLoaderClient::detachedFromParent2()
 {
-    [m_webFrame->_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:m_webFrame.get()];
     [m_webFrame->_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 }
 
@@ -272,9 +271,9 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
     WebView *webView = getWebView(m_webFrame.get());
+
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
-
     if (!implementations.delegateImplementsDidLoadResourceFromMemoryCache)
         return false;
 
@@ -296,7 +295,9 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
         object = [[NSObject alloc] init];
         shouldRelease = YES;
     }
+
     [webView _addObject:object forIdentifier:identifier];
+
     if (shouldRelease)
         [object release];
 }
@@ -383,7 +384,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsi
     WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
-    
+
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
         implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, [webView _objectForIdentifier:identifier], dataSource(loader));
     [webView _removeObjectForIdentifier:identifier];

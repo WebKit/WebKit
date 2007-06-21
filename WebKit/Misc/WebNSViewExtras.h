@@ -68,4 +68,6 @@
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView;
 
+- (NSRect)_web_convertRect:(NSRect)aRect toView:(NSView *)aView;
+
 @end

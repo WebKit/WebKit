@@ -49,6 +49,7 @@ namespace WebCore {
         virtual void lookUpInDictionary(Frame*) = 0;
         virtual void speak(const String&) = 0;
         virtual void stopSpeaking() = 0;
+        virtual bool shouldIncludeInspectElementItem() = 0;
 
 #if PLATFORM(MAC)
         virtual void searchWithSpotlight() = 0;

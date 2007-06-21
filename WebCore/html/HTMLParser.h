@@ -48,7 +48,7 @@ struct HTMLStackElem;
  */
 class HTMLParser : Noncopyable {
 public:
-    HTMLParser(HTMLDocument*);
+    HTMLParser(HTMLDocument*, bool reportErrors);
     HTMLParser(DocumentFragment*);
     virtual ~HTMLParser();
 

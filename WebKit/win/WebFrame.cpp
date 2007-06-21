@@ -2100,7 +2100,7 @@ void WebFrame::dispatchDidFailLoading(DocumentLoader* loader, unsigned long iden
     }
 }
 
-bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int)
+bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
 {
     notImplemented();
     return false;
@@ -2534,16 +2534,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     }
  
     return S_OK;
-}
-
-void WebFrame::addInspector(WebInspector*)
-{
-    notImplemented();
-}
-
-void WebFrame::removeInspector(WebInspector*)
-{
-    notImplemented();
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::isFrameSet( 

@@ -1,3 +1,292 @@
+2007-06-20  Adam Roben  <aroben@apple.com>
+
+        Land the new Inspector.
+
+        Co-written with Tim Hatcher.
+
+        Reviewed by Anders, Adele, Hyatt, and Sam.
+
+        No regression tests possible.
+
+        Add a new InspectorController that is in charge of the Inspector. It
+        has an InspectorClient that controls the Inspector's window and node
+        highlight.
+
+        * page/InspectorClient.h: Added.
+        (WebCore::InspectorClient::~InspectorClient):
+        * page/InspectorController.cpp: Added.
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::InspectorResource::): Represents a single resource that the
+        Inspector knows about.
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::~InspectorResource):
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::setScriptObject):
+        (WebCore::addSourceToFrame): Callback available from JS.
+        (WebCore::getResourceDocumentNode): Ditto.
+        (WebCore::highlightDOMNode): Ditto.
+        (WebCore::hideDOMNodeHighlight): Ditto.
+        (WebCore::loaded): Ditto.
+        (WebCore::unloading): Ditto.
+        (WebCore::attach): Ditto.
+        (WebCore::detach): Ditto.
+        (WebCore::log): Ditto.
+        (WebCore::search): Ditto.
+        (WebCore::inspectedWindow): Ditto.
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::inspect): Called by
+        ContextMenuController to inspect a node.
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::highlight):
+        (WebCore::InspectorController::hideHighlight):
+        (WebCore::InspectorController::windowVisible):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::attachWindow):
+        (WebCore::InspectorController::detachWindow):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::windowUnloading):
+        (WebCore::addHeaders): Static helper function.
+        (WebCore::objectForRequest): Ditto.
+        (WebCore::objectForResponse): Ditto.
+        (WebCore::InspectorController::addScriptResource):
+        (WebCore::InspectorController::addAndUpdateScriptResource):
+        (WebCore::InspectorController::removeScriptResource):
+        (WebCore::InspectorController::updateScriptResource):
+        (WebCore::InspectorController::populateScriptResources):
+        (WebCore::InspectorController::addScriptConsoleMessage):
+        (WebCore::callClearFunction): Static helper function.
+        (WebCore::InspectorController::clearScriptResources):
+        (WebCore::InspectorController::clearScriptConsoleMessages):
+        (WebCore::InspectorController::clearNetworkTimeline):
+        (WebCore::InspectorController::pruneResources):
+        (WebCore::InspectorController::didCommitLoad): Callback from
+        FrameLoader.
+        (WebCore::InspectorController::frameDetachedFromParent): Ditto.
+        (WebCore::InspectorController::addResource): Ditto.
+        (WebCore::InspectorController::removeResource): Ditto.
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache): Ditto.
+        (WebCore::InspectorController::identifierForInitialRequest): Ditto.
+        (WebCore::InspectorController::willSendRequest): Ditto.
+        (WebCore::InspectorController::didReceiveResponse): Ditto.
+        (WebCore::InspectorController::didReceiveContentLength): Ditto.
+        (WebCore::InspectorController::didFinishLoading): Ditto.
+        (WebCore::InspectorController::didFailLoading): Ditto.
+        * page/InspectorController.h: Added.
+        (WebCore::InspectorController::inspectedPage):
+        (WebCore::InspectorController::scriptContext):
+        (WebCore::InspectorController::setScriptContext):
+        (WebCore::InspectorController::resources):
+        (WebCore::InspectorController::removeAllResources):
+
+        Add the JavaScript that defines most of the behavior of the Inspector.
+        
+        * page/inspector/ConsolePanel.js: Added.
+        * page/inspector/NetworkPanel.js: Added.
+        * page/inspector/Resource.js: Added.
+        * page/inspector/ResourceCategory.js: Added.
+        * page/inspector/ResourcePanel.js: Added.
+        * page/inspector/inspector.js: Added.
+        * page/inspector/treeoutline.js: Renamed from WebKit/WebInspector/webInspector/treeoutline.js.
+        * page/inspector/utilities.js: Added.
+
+        Add the Inspector's CSS and HTML.
+
+        * page/inspector/inspector.css: Added.
+        * page/inspector/inspector.html: Added.
+
+        Hang the InspectorController off of Page. We only create an
+        InspectorController if an InspectorClient is given to the Page.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::inspectorController):
+
+        Use FrameLoader to notify the InspectorController of resource loads.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::didFinishLoad):
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        (WebCore::FrameLoader::dispatchAssignIdentifierToInitialRequest):
+        (WebCore::FrameLoader::dispatchWillSendRequest):
+        (WebCore::FrameLoader::dispatchDidReceiveResponse):
+        (WebCore::FrameLoader::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoader::dispatchDidFinishLoading):
+        (WebCore::FrameLoader::dispatchDidLoadResourceFromMemoryCache):
+        * loader/FrameLoader.h:
+
+        Send console messages to the InspectorController.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::addMessageToConsole): Send all console messages to
+        the InspectorController.
+        * page/Chrome.h: Add a new MessageLevel and MessageSource that are
+        used in the Inspector JS.
+
+        Report HTML errors when the Inspector window is open.
+        We don't report errors when the window is closed because we don't want
+        to slow down the HTMLTokenizer.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        * html/HTMLParser.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        * html/HTMLTokenizer.h:
+
+        Append the "Inspect Element" context menu item after passing the
+        context menu to the ContextMenuClient. This work used to be done in
+        WebKit.
+
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Add the
+        "Inspect Element" item.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Handle the
+        "Inspect Element" item.
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::addInspectElementItem):
+        (WebCore::ContextMenu::checkOrEnableIfNeeded): Updated for "Inspect
+        Element" item.
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        (WebCore::): Add ContextMenuItemTagInspectElement.
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        * page/mac/WebCoreViewFactory.h: Add the "Inspect Element" localized
+        string.
+        * platform/LocalizedStrings.h: Ditto.
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::contextMenuItemTagInspectElement): Ditto.
+
+        Miscellaneous changes:
+
+        * css/view-source.css: Add message bubble styles.
+        * loader/DocumentLoader.h: Add a frame getter.
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars): Respect
+        Frame::prohibitsScrolling.
+
+        Add new images needed for the Inspector.
+
+        * page/inspector/Images/attachedShadow.png: Added.
+        * page/inspector/Images/bottomShadow.png: Added.
+        * page/inspector/Images/breadcrumbBackground.png: Added.
+        * page/inspector/Images/checker.png: Added.
+        * page/inspector/Images/console.png: Added.
+        * page/inspector/Images/darkShadow.png: Added.
+        * page/inspector/Images/disclosureDownPressed.png: Added.
+        * page/inspector/Images/disclosureRightDown.png: Added.
+        * page/inspector/Images/disclosureRightPressed.png: Added.
+        * page/inspector/Images/document.png: Added.
+        * page/inspector/Images/domViewButton.png: Added.
+        * page/inspector/Images/domViewButtonSelected.png: Added.
+        * page/inspector/Images/downTriangle.png: Added.
+        * page/inspector/Images/errorIcon.png: Added.
+        * page/inspector/Images/errorMediumIcon.png: Added.
+        * page/inspector/Images/folder.png: Added.
+        * page/inspector/Images/goArrow.png: Added.
+        * page/inspector/Images/gradient.png: Added.
+        * page/inspector/Images/gradientHighlight.png: Added.
+        * page/inspector/Images/gradientHighlightBottom.png: Added.
+        * page/inspector/Images/hideStatusWidget.png: Added.
+        * page/inspector/Images/hideStatusWidgetPressed.png: Added.
+        * page/inspector/Images/network.png: Added.
+        * page/inspector/Images/paneBottomGrow.png: Added.
+        * page/inspector/Images/paneBottomGrowActive.png: Added.
+        * page/inspector/Images/paneGrowHandleLine.png: Added.
+        * page/inspector/Images/paneHeader.png: Added.
+        * page/inspector/Images/paneHeaderActive.png: Added.
+        * page/inspector/Images/plainDocument.png: Added.
+        * page/inspector/Images/popupArrows.png: Added.
+        * page/inspector/Images/rightTriangle.png: Added.
+        * page/inspector/Images/segment.png: Added.
+        * page/inspector/Images/segmentEnd.png: Added.
+        * page/inspector/Images/segmentHover.png: Added.
+        * page/inspector/Images/segmentHoverEnd.png: Added.
+        * page/inspector/Images/segmentSelected.png: Added.
+        * page/inspector/Images/segmentSelectedEnd.png: Added.
+        * page/inspector/Images/showStatusWidget.png: Added.
+        * page/inspector/Images/showStatusWidgetPressed.png: Added.
+        * page/inspector/Images/sidbarItemBackground.png: Added.
+        * page/inspector/Images/sidebarActionWidget.png: Added.
+        * page/inspector/Images/sidebarActionWidgetPressed.png: Added.
+        * page/inspector/Images/sidebarAttachWidget.png: Added.
+        * page/inspector/Images/sidebarAttachWidgetPressed.png: Added.
+        * page/inspector/Images/sidebarDetachWidget.png: Added.
+        * page/inspector/Images/sidebarDetachWidgetPressed.png: Added.
+        * page/inspector/Images/sidebarResizeWidget.png: Added.
+        * page/inspector/Images/sidebarSelection.png: Added.
+        * page/inspector/Images/sidebarSelectionBlurred.png: Added.
+        * page/inspector/Images/sidebarSelectionBlurredTall.png: Added.
+        * page/inspector/Images/sidebarSelectionGray.png: Added.
+        * page/inspector/Images/sidebarSelectionGrayTall.png: Added.
+        * page/inspector/Images/sidebarSelectionTall.png: Added.
+        * page/inspector/Images/sidebarStatusAreaBackground.png: Added.
+        * page/inspector/Images/sourceViewButton.png: Added.
+        * page/inspector/Images/sourceViewButtonSelected.png: Added.
+        * page/inspector/Images/splitviewDimple.png: Added.
+        * page/inspector/Images/splitviewDividerBackground.png: Added.
+        * page/inspector/Images/tab.png: Added.
+        * page/inspector/Images/tabSelected.png: Added.
+        * page/inspector/Images/timelinePillBlue.png: Added.
+        * page/inspector/Images/timelinePillGray.png: Added.
+        * page/inspector/Images/timelinePillGreen.png: Added.
+        * page/inspector/Images/timelinePillOrange.png: Added.
+        * page/inspector/Images/timelinePillPurple.png: Added.
+        * page/inspector/Images/timelinePillRed.png: Added.
+        * page/inspector/Images/timelinePillYellow.png: Added.
+        * page/inspector/Images/tipBalloon.png: Added.
+        * page/inspector/Images/tipBalloonBottom.png: Added.
+        * page/inspector/Images/tipIcon.png: Added.
+        * page/inspector/Images/tipIconPressed.png: Added.
+        * page/inspector/Images/toggleDown.png: Added.
+        * page/inspector/Images/toggleUp.png: Added.
+        * page/inspector/Images/toolbarBackground.png: Added.
+        * page/inspector/Images/toolbarBackgroundInactive.png: Added.
+        * page/inspector/Images/toolbarButton.png: Added.
+        * page/inspector/Images/toolbarButtonInactive.png: Added.
+        * page/inspector/Images/toolbarButtonPressed.png: Added.
+        * page/inspector/Images/toolbarButtonPressedInactive.png: Added.
+        * page/inspector/Images/toolbarSplitButtonDivider.png: Added.
+        * page/inspector/Images/toolbarSplitButtonDividerInactive.png: Added.
+        * page/inspector/Images/treeDownTriangleBlack.png: Added.
+        * page/inspector/Images/treeDownTriangleWhite.png: Added.
+        * page/inspector/Images/treeLeftTriangleBlack.png: Added.
+        * page/inspector/Images/treeRightTriangleBlack.png: Added.
+        * page/inspector/Images/treeRightTriangleWhite.png: Added.
+        * page/inspector/Images/warningIcon.png: Added.
+        * page/inspector/Images/warningMediumIcon.png: Added.
+        * page/inspector/Images/warningsErrors.png: Added.
+
+        Build-fu:
+
+        * WebCore.exp: Added new symbols.
+        * WebCore.xcodeproj/project.pbxproj: Added new source files and
+        resources.
+        * WebCore.vcproj/WebCore.vcproj: Ditto, and copy the resources to
+        $WebKitOutputDir.
+
+        Windows build fixes:
+
+        * history/HistoryItem.h: ResourceRequest is a struct.
+        * loader/FrameLoaderClient.h: Ditto.
+
 2007-06-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.

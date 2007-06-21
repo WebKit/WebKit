@@ -38,7 +38,7 @@
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
 #include "WebDragClient.h"
-#include "WebInspector/WebInspector.h"
+#include "WebInspectorClient.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
 #include "WebMutableURLRequest.h"
@@ -131,6 +131,7 @@ WebView::WebView()
 , m_paintCount(0)
 , m_hasSpellCheckerDocumentTag(false)
 , m_smartInsertDeleteEnabled(false)
+, m_didClose(false)
 {
     KJS::Collector::registerAsMainThread();
 
@@ -178,6 +179,11 @@ WebView* WebView::createInstance()
 
 void WebView::close()
 {
+    if (m_didClose)
+        return;
+
+    m_didClose = true;
+
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     COMPtr<IWebPreferences> prefs;
     if (SUCCEEDED(preferences(&prefs)))
@@ -733,46 +739,10 @@ void WebView::performContextMenuAction(WPARAM wParam, LPARAM /*lParam*/)
 {
     ContextMenu* menu = m_page->contextMenuController()->contextMenu();
     ASSERT(menu);
-    if (wParam == WebMenuItemTagInspectElement) {
-        inspectElement(menu->hitTestResult());
-        return;
-    }
+
     ContextMenuItem* item = menu->itemWithAction((ContextMenuAction)wParam);
     m_page->contextMenuController()->contextMenuItemSelected(item);
     delete item;
-}
-
-void WebView::inspectElement(const HitTestResult& hitTestResult)
-{
-    Node* node = hitTestResult.innerNonSharedNode();
-    if (!node)
-        return;
-
-    WebFrame* frame = kit(node->document()->frame());
-    if (!frame)
-        return;
-
-    if (node->nodeType() != Node::ELEMENT_NODE || node->nodeType() != Node::DOCUMENT_NODE)
-        node = node->parentNode();
-
-    COMPtr<IDOMNode> domNode;
-    domNode.adoptRef(DOMNode::createInstance(node));
-
-    WebInspector* inspector = WebInspector::sharedWebInspector();
-    inspector->setWebFrame(frame);
-    inspector->setFocusedDOMNode(domNode.get());
-
-    if (node)
-        node = node->parentNode();
-    if (node)
-        node = node->parentNode();
-    if (node) {
-        COMPtr<IDOMNode> domNode;
-        domNode.adoptRef(DOMNode::createInstance(node));
-        inspector->setRootDOMNode(domNode.get());
-    }
-
-    inspector->show();
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
@@ -1746,6 +1716,9 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_groupName = String(groupName, SysStringLen(groupName));
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this));
+    // FIXME: make this read a preference like the Mac's WebKitDeveloperExtras or when Safari's IncludeDebugMenu is set
+    if (true)
+        m_page->setInspectorClient(new WebInspectorClient(this));
     // FIXME: 4931464 - When we do cache pages on Windows this needs to be removed so the "should I cache this page?" check
     // in FrameLoader::provisionalLoadStarted() doesn't always fail
     m_page->settings()->setUsesPageCache(false);
@@ -3557,6 +3530,11 @@ HRESULT WebView::revokeDragDrop()
 {
     ASSERT(::IsWindow(m_viewWindow));
     return ::RevokeDragDrop(m_viewWindow);
+}
+
+void WebView::setProhibitsMainFrameScrolling(bool b)
+{
+    m_page->mainFrame()->setProhibitsScrolling(b);
 }
 
 class EnumTextMatches : public IEnumTextMatches

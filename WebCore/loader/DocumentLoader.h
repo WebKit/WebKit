@@ -61,6 +61,8 @@ namespace WebCore {
         virtual ~DocumentLoader();
 
         void setFrame(Frame*);
+        Frame* frame() const { return m_frame; }
+
         virtual void attachToFrame();
         virtual void detachFromFrame();
 

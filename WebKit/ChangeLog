@@ -1,3 +1,139 @@
+2007-06-20  Adam Roben  <aroben@apple.com>
+
+        Land the new Inspector.
+
+        Co-written with Tim Hatcher.
+
+        Reviewed by Anders, Adele, Hyatt, and Sam.
+
+        Implement the InspectorClient interface.
+
+        * WebCoreSupport/WebInspectorClient.h: Added.
+        * WebCoreSupport/WebInspectorClient.mm: Added.
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::createPage):
+        (WebInspectorClient::showWindow):
+        (WebInspectorClient::closeWindow):
+        (WebInspectorClient::attachWindow):
+        (WebInspectorClient::detachWindow):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::hideHighlight):
+        (WebInspectorClient::inspectedURLChanged):
+        (WebInspectorClient::updateWindowTitle):
+        (-[WebInspectorWindowController init]):
+        (-[WebInspectorWindowController initWithInspectedWebView:]):
+        (-[WebInspectorWindowController dealloc]):
+        (-[WebInspectorWindowController inspectorVisible]):
+        (-[WebInspectorWindowController webView]):
+        (-[WebInspectorWindowController window]):
+        (-[WebInspectorWindowController windowShouldClose:]):
+        (-[WebInspectorWindowController close]):
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController attach]):
+        (-[WebInspectorWindowController detach]):
+        (-[WebInspectorWindowController highlightAndScrollToNode:]):
+        (-[WebInspectorWindowController highlightNode:]):
+        (-[WebInspectorWindowController hideHighlight]):
+        (-[WebInspectorWindowController animationDidEnd:]):
+
+        Add an easier-to-see highlight.
+
+        * Misc/WebNSViewExtras.h:
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_convertRect:toView:]):
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlightFadeInAnimation setCurrentProgress:]):
+        (-[WebNodeHighlight initWithTargetView:]):
+        (-[WebNodeHighlight setHighlightedNode:]):
+        (-[WebNodeHighlight highlightedNode]):
+        (-[WebNodeHighlight dealloc]):
+        (-[WebNodeHighlight attachHighlight]):
+        (-[WebNodeHighlight delegate]):
+        (-[WebNodeHighlight detachHighlight]):
+        (-[WebNodeHighlight show]):
+        (-[WebNodeHighlight hide]):
+        (-[WebNodeHighlight animationDidEnd:]):
+        (-[WebNodeHighlight ignoresMouseEvents]):
+        (-[WebNodeHighlight highlightView]):
+        (-[WebNodeHighlight setDelegate:]):
+        (-[WebNodeHighlight setHolesNeedUpdateInTargetViewRect:]):
+        (-[WebNodeHighlight setIgnoresMouseEvents:]):
+        (-[WebNodeHighlight targetView]):
+        (-[WebNodeHighlight _computeHighlightWindowFrame]):
+        (-[WebNodeHighlight _repositionHighlightWindow]):
+        * WebInspector/WebNodeHighlightView.h:
+        * WebInspector/WebNodeHighlightView.m:
+        (-[WebNodeHighlightView initWithWebNodeHighlight:]):
+        (-[WebNodeHighlightView dealloc]):
+        (-[WebNodeHighlightView detachFromWebNodeHighlight]):
+        (-[WebNodeHighlightView drawRect:]):
+        (-[WebNodeHighlightView webNodeHighlight]):
+        (-[WebNodeHighlightView fractionFadedIn]):
+        (-[WebNodeHighlightView setFractionFadedIn:]):
+        (-[WebNodeHighlightView setHolesNeedUpdateInRect:]):
+        (-[WebNodeHighlightView _holes]):
+
+        WebView changes needed for the new Inspector.
+
+        * WebView/WebView.mm: Remove the old _inspectElement method now that
+        this is handled by WebCore.
+        (-[WebView _isClosed]): Added.
+        (-[WebView initWithFrame]): Give each Page an InspectorClient to
+        enable the Inspector.
+        * WebView/WebViewPrivate.h:
+
+        Updates needed for WebCore changes.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory contextMenuItemTagInspectElement]):
+        * WebView/WebUIDelegatePrivate.h:
+
+        Remove old Inspector code.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        * WebInspector/WebInspector.m: Removed.
+        * WebInspector/WebInspectorPanel.h: Removed.
+        * WebInspector/WebInspectorPanel.m: Removed.
+        * WebInspector/webInspector/Images/button.png: Removed.
+        * WebInspector/webInspector/Images/buttonDivider.png: Removed.
+        * WebInspector/webInspector/Images/buttonPressed.png: Removed.
+        * WebInspector/webInspector/Images/close.png: Removed.
+        * WebInspector/webInspector/Images/closePressed.png: Removed.
+        * WebInspector/webInspector/Images/downTriangle.png: Removed.
+        * WebInspector/webInspector/Images/menu.png: Removed.
+        * WebInspector/webInspector/Images/menuPressed.png: Removed.
+        * WebInspector/webInspector/Images/popup.png: Removed.
+        * WebInspector/webInspector/Images/popupPressed.png: Removed.
+        * WebInspector/webInspector/Images/resize.png: Removed.
+        * WebInspector/webInspector/Images/rightTriangle.png: Removed.
+        * WebInspector/webInspector/Images/scrollThumbBottom.png: Removed.
+        * WebInspector/webInspector/Images/scrollThumbMiddle.png: Removed.
+        * WebInspector/webInspector/Images/scrollTrackBottom.png: Removed.
+        * WebInspector/webInspector/Images/upTriangle.png: Removed.
+        * WebInspector/webInspector/inspector.css: Removed.
+        * WebInspector/webInspector/inspector.html: Removed.
+        * WebInspector/webInspector/inspector.js: Removed.
+        * WebInspector/webInspector/scrollarea.js: Removed.
+        * WebInspector/webInspector/scrollbar.js: Removed.
+        * WebInspector/webInspector/utilities.js: Removed.
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView menuForEvent:]):
+
+        Build-fu:
+
+        * WebKit.exp:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-06-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

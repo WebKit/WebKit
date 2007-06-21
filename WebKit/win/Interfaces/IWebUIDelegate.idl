@@ -122,8 +122,7 @@ typedef enum WebMenuItemTag {
     WebMenuItemTagRightToLeft,
     WebMenuItemTagPDFSinglePageScrolling,
     WebMenuItemTagPDFFacingPagesScrolling,
-    // WebMenuItemTagInspectElement is only known to WebKit
-    WebMenuItemTagInspectElement=9999,
+    WebMenuItemTagInspectElement,
     WebMenuItemBaseApplicationTag=10000
 } WebMenuItemTag;
 

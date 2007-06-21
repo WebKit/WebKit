@@ -103,8 +103,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\webInspector\Images&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\Images\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector\Images&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
-			/>
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
+                />
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -194,7 +194,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\webInspector\Images&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\Images\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector\Images&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -285,7 +285,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\webInspector\Images&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\WebInspector\webInspector\Images\*&quot; &quot;$(OutDir)\$(ProjectName).resources\webInspector\Images&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebLocalizableStrings.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\WebKitGraphics.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ProgIDMacros.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\WebCore\npfunctions.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npapi.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\include\JavaScriptCore\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\WebKit&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\$(ProjectName).resources\*&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\English.lproj\Localizable.strings&quot; &quot;$(OutDir)\WebKit.resources\en.lproj\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -306,11 +306,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebInspectorClient.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebKitClassFactory.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\WebKitDLL.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebNodeHighlight.cpp"
 				>
 			</File>
 		</Filter>
@@ -444,6 +452,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebInspectorClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebJavaScriptCollector.h"
 				>
 			</File>
@@ -477,6 +489,10 @@
 			</File>
 			<File
 				RelativePath="..\WebMutableURLRequest.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebNodeHighlight.h"
 				>
 			</File>
 			<File
@@ -741,18 +757,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore\JSStringRefCF.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="WebInspector"
-			>
-			<File
-				RelativePath="..\WebInspector\WebInspector.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebInspector\WebInspector.h"
 				>
 			</File>
 		</Filter>

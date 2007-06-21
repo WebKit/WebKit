@@ -1,3 +1,105 @@
+2007-06-20  Adam Roben  <aroben@apple.com>
+
+        Land the new Inspector.
+
+        Co-written with Tim Hatcher.
+
+        Reviewed by Anders, Adele, Hyatt, and Sam.
+
+        Implement the InspectorClient interface.
+
+        * WebInspectorClient.cpp: Added.
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::~WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::createPage):
+        (WebInspectorClient::showWindow):
+        (WebInspectorClient::closeWindow):
+        (WebInspectorClient::windowVisible):
+        (WebInspectorClient::attachWindow):
+        (WebInspectorClient::detachWindow):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::hideHighlight):
+        (WebInspectorClient::inspectedURLChanged):
+        (WebInspectorClient::updateWindowTitle):
+        (WebInspectorClient::onSize):
+        (WebInspectorClient::onClose):
+        (WebInspectorClient::onWebViewWindowPosChanging):
+        (WebInspectorWndProc):
+        (SubclassedWebViewWndProc):
+        (registerWindowClass):
+        * WebInspectorClient.h: Added.
+
+        Add an easier-to-see highlight.
+
+        * WebNodeHighlight.cpp: Added.
+        (WebNodeHighlight::WebNodeHighlight):
+        (WebNodeHighlight::~WebNodeHighlight):
+        (WebNodeHighlight::highlight):
+        (WebNodeHighlight::hide):
+        (WebNodeHighlight::visible):
+        (WebNodeHighlight::updateWindow):
+        (WebNodeHighlight::removeSubclass):
+        (registerOverlayClass):
+        (OverlayWndProc):
+        (SubclassedWndProc):
+        * WebNodeHighlight.h: Added.
+
+        WebView changes needed for the new Inspector.
+
+        * WebView.cpp: Removed old inspectElement method now that this is
+        handled by WebCore.
+        (WebView::WebView):
+        (WebView::close):
+        (WebView::performContextMenuAction): Removed handling of the Inspect
+        Element context menu item.
+        (WebView::initWithFrame): Give each Page an InspectorClient to enable
+        the Inspector.
+        (WebView::setProhibitsMainFrameScrolling): Added.
+        * WebView.h:
+
+        Updates needed for WebCore changes.
+
+        * Interfaces/IWebUIDelegate.idl:
+        * WebContextMenuClient.cpp:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebContextMenuClient.h:
+        * WebCoreLocalizedStrings.cpp:
+
+        Remove old Inspector code.
+
+        * WebFrame.cpp:
+        * WebFrame.h:
+        * WebInspector/WebInspector.cpp: Removed.
+        * WebInspector/WebInspector.h: Removed.
+        * WebInspector/webInspector/Images/button.png: Removed.
+        * WebInspector/webInspector/Images/buttonDivider.png: Removed.
+        * WebInspector/webInspector/Images/buttonPressed.png: Removed.
+        * WebInspector/webInspector/Images/close.png: Removed.
+        * WebInspector/webInspector/Images/closePressed.png: Removed.
+        * WebInspector/webInspector/Images/downTriangle.png: Removed.
+        * WebInspector/webInspector/Images/menu.png: Removed.
+        * WebInspector/webInspector/Images/menuPressed.png: Removed.
+        * WebInspector/webInspector/Images/popup.png: Removed.
+        * WebInspector/webInspector/Images/popupPressed.png: Removed.
+        * WebInspector/webInspector/Images/resize.png: Removed.
+        * WebInspector/webInspector/Images/rightTriangle.png: Removed.
+        * WebInspector/webInspector/Images/scrollThumbBottom.png: Removed.
+        * WebInspector/webInspector/Images/scrollThumbMiddle.png: Removed.
+        * WebInspector/webInspector/Images/scrollTrackMiddle.png: Removed.
+        * WebInspector/webInspector/Images/upTriangle.png: Removed.
+        * WebInspector/webInspector/inspector.css: Removed.
+        * WebInspector/webInspector/inspector.html: Removed.
+        * WebInspector/webInspector/inspector.js: Removed.
+        * WebInspector/webInspector/scrollarea.js: Removed.
+        * WebInspector/webInspector/scrollbar.js: Removed.
+        * WebInspector/webInspector/treeoutline.js: Removed.
+        * WebInspector/webInspector/utilities.js: Removed.
+
+        Build-fu:
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-06-19  Dave Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5022197>, backspace and ctrl+left arrow should go back.  Shift+backspace

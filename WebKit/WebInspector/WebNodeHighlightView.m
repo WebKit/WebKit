@@ -26,159 +26,150 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebNodeHighlight.h"
 #import "WebNodeHighlightView.h"
-#import <WebKitSystemInterface.h>
+#import "WebNodeHighlight.h"
+#import "WebNSViewExtras.h"
+
+#import <WebKit/DOMCore.h>
+#import <WebKit/DOMExtensions.h>
+
+#import <JavaScriptCore/Assertions.h>
+
+#define OVERLAY_MAX_ALPHA 0.7
+#define OVERLAY_WHITE_VALUE 0.1
+
+#define WHITE_FRAME_THICKNESS 1.0
+
+@interface WebNodeHighlightView (FileInternal)
+- (NSArray *)_holes;
+@end
 
 @implementation WebNodeHighlightView
-- (NSBezierPath *)roundedRect:(NSRect)rect withRadius:(float)radius
+
+- (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight
 {
-    NSBezierPath *path = [[NSBezierPath alloc] init];
-
-    NSRect irect = NSInsetRect(rect, radius, radius);
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMinY(irect)) radius:radius startAngle:180.0f endAngle:270.0f];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMinY(irect)) radius:radius startAngle:270.0f endAngle:360.0f];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMaxX(irect), NSMaxY(irect)) radius:radius startAngle:0.0f endAngle:90.0f];
-    [path appendBezierPathWithArcWithCenter:NSMakePoint(NSMinX(irect), NSMaxY(irect)) radius:radius startAngle:90.0f endAngle:180.0f];
-    [path closePath];
-
-    return [path autorelease];
-}
-
-- (id)initWithHighlight:(WebNodeHighlight *)highlight andRects:(NSArray *)rects forView:(NSView *)view
-{
-    if (![self init])
+    self = [self initWithFrame:NSZeroRect];
+    if (!self)
         return nil;
 
-    _highlight = highlight; // don't retain, would cause a circular retain
-
-    NSRect visibleRect = [view visibleRect];
-
-    NSRect rect = NSZeroRect;
-    NSBezierPath *path = nil;
-    NSBezierPath *straightPath = nil;
-
-    if([rects count] == 1) {
-        NSValue *value = (NSValue *)[rects objectAtIndex:0];
-        rect = NSInsetRect([value rectValue], -1.0f, -1.0f);
-        rect = NSIntersectionRect(rect, visibleRect);
-        if (!NSIsEmptyRect(rect))
-            path = [[self roundedRect:rect withRadius:3.0f] retain];
-
-        // shift everything to the corner
-        NSAffineTransform *transform = [[NSAffineTransform alloc] init];
-        [transform translateXBy:(NSMinX(rect) * -1.0f) + 2.5f yBy:(NSMinY(rect) * -1.0f) + 2.5f];
-        [path transformUsingAffineTransform:transform];
-        [straightPath transformUsingAffineTransform:transform];
-        [transform release];
-    } else if ([rects count] > 1) {
-        path = [[NSBezierPath alloc] init];
-        straightPath = [path copy];
-
-        // roundedRect: returns an autoreleased path, so release them soon with a pool
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-        NSEnumerator *enumerator = [rects objectEnumerator];
-        NSValue *value = nil;
-        while ((value = [enumerator nextObject])) {
-            rect = NSIntersectionRect([value rectValue], visibleRect);
-            if (!NSIsEmptyRect(rect)) {
-                [straightPath appendBezierPathWithRect:rect];
-                [path appendBezierPath:[self roundedRect:rect withRadius:3.0f]];
-            }
-        }
-
-        [pool drain];
-
-        rect = [path bounds];
-
-        [straightPath setWindingRule:NSNonZeroWindingRule];
-        [straightPath setLineJoinStyle:NSRoundLineJoinStyle];
-        [straightPath setLineCapStyle:NSRoundLineCapStyle];
-
-        // multiple rects we get from WebCore need flipped to show up correctly
-        NSAffineTransform *transform = [[NSAffineTransform alloc] init];
-        [transform scaleXBy:1.0f yBy:-1.0f];
-        [path transformUsingAffineTransform:transform];
-        [straightPath transformUsingAffineTransform:transform];
-        [transform release];
-
-        // shift everything to the corner
-        transform = [[NSAffineTransform alloc] init];
-        [transform translateXBy:(NSMinX(rect) * -1.0f) + 2.5f yBy:NSMaxY(rect) + 2.5f];
-        [path transformUsingAffineTransform:transform];
-        [straightPath transformUsingAffineTransform:transform];
-        [transform release];
-    }
-
-    if (!path || [path isEmpty]) {
-        [self release];
-        return nil;
-    }
-
-    [path setWindingRule:NSNonZeroWindingRule];
-    [path setLineJoinStyle:NSRoundLineJoinStyle];
-    [path setLineCapStyle:NSRoundLineCapStyle];
-
-    // make the drawing area larger for the focus ring blur
-    rect = [path bounds];
-    rect.size.width += 5.0f;
-    rect.size.height += 5.0f;
-    [self setFrameSize:rect.size];
-
-    // draw into an image
-    _highlightRingImage = [[NSImage alloc] initWithSize:rect.size];
-    [_highlightRingImage lockFocus];
-    [NSGraphicsContext saveGraphicsState];
-
-    if (straightPath) {
-        [[NSColor redColor] set];
-        [path setLineWidth:4.0f];
-        [path stroke];
-
-        // clear the center to eliminate thick inner strokes for overlapping rects
-        [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeClear];
-        [path fill];
-
-        // stroke the straight line path with a light color to show any inner rects
-        [[NSGraphicsContext currentContext] setCompositingOperation:NSCompositeDestinationOver];
-        [[[NSColor redColor] colorWithAlphaComponent:0.6f] set];
-        [straightPath setLineWidth:1.0f];
-        [straightPath stroke];
-    } else {
-        [[NSColor redColor] set];
-        [path setLineWidth:2.0f];
-        [path stroke];
-    }
-
-    [NSGraphicsContext restoreGraphicsState];
-    [_highlightRingImage unlockFocus];
-
-    [path release];
-    [straightPath release];
+    _webNodeHighlight = [webNodeHighlight retain];
 
     return self;
 }
 
 - (void)dealloc
 {
-    [_highlightRingImage release];
+    [self detachFromWebNodeHighlight];
     [super dealloc];
 }
 
-- (BOOL)isOpaque
+- (void)detachFromWebNodeHighlight
 {
-    return NO;
+    [_webNodeHighlight release];
+    _webNodeHighlight = nil;
 }
 
-- (void)drawRect:(NSRect)rect
+- (void)drawRect:(NSRect)rect 
 {
-    double alpha = 1.0 - [_highlight fractionComplete];
-    if (alpha > 1.0)
-        alpha = 1.0;
-    else if (alpha < 0.0)
-        alpha = 0.0;
+    [NSGraphicsContext saveGraphicsState];
 
-    [_highlightRingImage drawInRect:rect fromRect:rect operation:NSCompositeCopy fraction:(float)alpha];
+    // draw translucent gray fill, out of which we will cut holes
+    [[NSColor colorWithCalibratedWhite:OVERLAY_WHITE_VALUE alpha:(_fractionFadedIn * OVERLAY_MAX_ALPHA)] set];
+    NSRectFill(rect);
+
+    // determine set of holes
+    NSArray *holes = [self _holes];
+    int holeCount = [holes count];
+    int holeIndex;
+
+    // Draw white frames around holes in first pass, so they will be erased in
+    // places where holes overlap or abut.
+    [[NSColor colorWithCalibratedWhite:1.0 alpha:_fractionFadedIn] set];
+
+    // white frame is just outside of the hole that the delegate returned
+    for (holeIndex = 0; holeIndex < holeCount; ++holeIndex) {
+        NSRect hole = [[holes objectAtIndex:holeIndex] rectValue];
+        hole = NSInsetRect(hole, -WHITE_FRAME_THICKNESS, -WHITE_FRAME_THICKNESS);
+        NSRectFill(hole);
+    }
+
+    [[NSColor clearColor] set];
+
+    // Erase holes in second pass.
+    for (holeIndex = 0; holeIndex < holeCount; ++holeIndex)
+        NSRectFill([[holes objectAtIndex:holeIndex] rectValue]);
+
+    [NSGraphicsContext restoreGraphicsState];
 }
+
+- (WebNodeHighlight *)webNodeHighlight
+{
+    return _webNodeHighlight;
+}
+
+- (float)fractionFadedIn
+{
+    return _fractionFadedIn;
+}
+
+- (void)setFractionFadedIn:(float)fraction
+{
+    ASSERT_ARG(fraction, fraction >= 0.0 && fraction <= 1.0);
+
+    if (_fractionFadedIn == fraction)
+        return;
+    
+    _fractionFadedIn = fraction;
+    [self setNeedsDisplay:YES];
+}
+
+- (void)setHolesNeedUpdateInRect:(NSRect)rect
+{
+    // Redisplay a slightly larger rect to account for white border around holes
+    rect = NSInsetRect(rect, -1 * WHITE_FRAME_THICKNESS, 
+                             -1 * WHITE_FRAME_THICKNESS);
+
+    [self setNeedsDisplayInRect:rect];
+}
+
+@end
+
+@implementation WebNodeHighlightView (FileInternal)
+
+- (NSArray *)_holes
+{
+    DOMNode *node = [_webNodeHighlight highlightedNode];
+
+    // FIXME: node view needs to be the correct frame document view, it isn't always the main frame
+    NSView *nodeView = [_webNodeHighlight targetView];
+
+    NSArray *lineBoxRects = nil;
+    if ([node isKindOfClass:[DOMElement class]]) {
+        DOMCSSStyleDeclaration *style = [[node ownerDocument] getComputedStyle:(DOMElement *)node pseudoElement:@""];
+        if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
+            lineBoxRects = [node lineBoxRects];
+    } else if ([node isKindOfClass:[DOMText class]]) {
+#if ENABLE(SVG)
+        if (![[node parentNode] isKindOfClass:NSClassFromString(@"DOMSVGElement")])
+#endif
+            lineBoxRects = [node lineBoxRects];
+    }
+
+    if (![lineBoxRects count]) {
+        NSRect boundingBox = [nodeView _web_convertRect:[node boundingBox] toView:self];
+        return [NSArray arrayWithObject:[NSValue valueWithRect:boundingBox]];
+    }
+
+    NSMutableArray *rects = [[NSMutableArray alloc] initWithCapacity:[lineBoxRects count]];
+
+    unsigned lineBoxRectCount = [lineBoxRects count];
+    for (unsigned lineBoxRectIndex = 0; lineBoxRectIndex < lineBoxRectCount; ++lineBoxRectIndex) {
+        NSRect r = [[lineBoxRects objectAtIndex:lineBoxRectIndex] rectValue];
+        NSRect overlayViewRect = [nodeView _web_convertRect:r toView:self];
+        [rects addObject:[NSValue valueWithRect:overlayViewRect]];
+    }
+
+    return [rects autorelease];
+}
+
 @end

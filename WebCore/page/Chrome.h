@@ -47,10 +47,12 @@ namespace WebCore {
         HTMLMessageSource,
         XMLMessageSource,
         JSMessageSource,
-        CSSMessageSource
+        CSSMessageSource,
+        OtherMessageSource
     };
 
     enum MessageLevel {
+        TipMessageLevel,
         LogMessageLevel,
         WarningMessageLevel,
         ErrorMessageLevel

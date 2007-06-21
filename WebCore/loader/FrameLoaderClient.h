@@ -58,12 +58,13 @@ namespace WebCore {
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
-    class ResourceRequest;
     class ResourceResponse;
     class SharedBuffer;
     class SubstituteData;
     class String;
     class Widget;
+
+    struct ResourceRequest;
 
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,111 +26,239 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <mach/mach_time.h>
-#import "WebNodeHighlightView.h"
 #import "WebNodeHighlight.h"
+#import "WebNodeHighlightView.h"
+#import "WebNSViewExtras.h"
 
-NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotification";
+#import <JavaScriptCore/Assertions.h>
+
+#define FADE_ANIMATION_DURATION 0.2
+
+@interface WebNodeHighlightFadeInAnimation : NSAnimation
+@end
+
+@interface WebNodeHighlight (FileInternal)
+- (NSRect)_computeHighlightWindowFrame;
+- (void)_repositionHighlightWindow;
+- (void)_animateFadeIn:(WebNodeHighlightFadeInAnimation *)animation;
+@end
+
+@implementation WebNodeHighlightFadeInAnimation
+
+- (void)setCurrentProgress:(NSAnimationProgress)progress
+{
+    [super setCurrentProgress:progress];
+    [(WebNodeHighlight *)[self delegate] _animateFadeIn:self];
+}
+
+@end
 
 @implementation WebNodeHighlight
-- (id)initWithBounds:(NSRect)bounds andRects:(NSArray *)rects forView:(NSView *)view
+
+- (id)initWithTargetView:(NSView *)targetView
 {
-    if (![self init])
+    self = [super init];
+    if (!self)
         return nil;
 
-    _startTime = 0.0;
-    _duration = 3.0;
+    _targetView = [targetView retain];
 
-    if ([[[NSApplication sharedApplication] currentEvent] modifierFlags] & NSShiftKeyMask)
-        _duration = 6.0;
+    int styleMask = NSBorderlessWindowMask;
+    NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
+    _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    [_highlightWindow setBackgroundColor:[NSColor clearColor]];
+    [_highlightWindow setOpaque:NO];
+    [_highlightWindow setIgnoresMouseEvents:YES];
+    [_highlightWindow setReleasedWhenClosed:NO];
 
-    if (!rects)
-        rects = [NSArray arrayWithObject:[NSValue valueWithRect:bounds]];
-
-    _webNodeHighlightView = [[WebNodeHighlightView alloc] initWithHighlight:self andRects:rects forView:view];
-    if (!_webNodeHighlightView) {
-        [self release];
-        return nil;
-    }
-
-    // adjust size and position for rect padding that the view adds
-    bounds.origin.y -= 3.0f;
-    bounds.origin.x -= 3.0f;
-    bounds.size = [_webNodeHighlightView frame].size;
-
-    NSRect windowBounds = [view convertRect:bounds toView:nil];
-    windowBounds.origin = [[view window] convertBaseToScreen:windowBounds.origin]; // adjust for screen coords
-
-    _webNodeHighlightWindow = [[NSWindow alloc] initWithContentRect:windowBounds styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-    [_webNodeHighlightWindow setBackgroundColor:[NSColor clearColor]];
-    [_webNodeHighlightWindow setOpaque:NO];
-    [_webNodeHighlightWindow setHasShadow:NO];
-    [_webNodeHighlightWindow setIgnoresMouseEvents:YES];
-    [_webNodeHighlightWindow setReleasedWhenClosed:YES];
-    [_webNodeHighlightWindow setContentView:_webNodeHighlightView];
-    [_webNodeHighlightView release];
-
-    [[view window] addChildWindow:_webNodeHighlightWindow ordered:NSWindowAbove];
-
-    // 30 frames per second time interval will play well with the CPU and still look smooth
-    _timer = [[NSTimer scheduledTimerWithTimeInterval:(1.0 / 30.0) target:self selector:@selector(redraw:) userInfo:nil repeats:YES] retain];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSViewBoundsDidChangeNotification object:view];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSViewBoundsDidChangeNotification object:[view superview]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSWindowDidResizeNotification object:[view window]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(expire) name:NSWindowWillCloseNotification object:[view window]];
+    _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
+    [_highlightView setFractionFadedIn:0.0];
+    [_highlightWindow setContentView:_highlightView];
+    [_highlightView release];
 
     return self;
 }
 
+- (void)setHighlightedNode:(DOMNode *)node
+{
+    id old = _highlightNode;
+    _highlightNode = [node retain];
+    [old release];
+}
+
+- (DOMNode *)highlightedNode
+{
+    return _highlightNode;
+}
+
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
+    [self detachHighlight];
 
-    [_timer invalidate];
-    [_timer release];
+    ASSERT(!_highlightWindow);
+    ASSERT(!_targetView);
+
+    [_fadeInAnimation setDelegate:nil];
+    [_fadeInAnimation stopAnimation];
+    [_fadeInAnimation release];
+
+    [_highlightNode release];
 
     [super dealloc];
 }
 
-- (double)fractionComplete
+- (void)attachHighlight
 {
-    if (_startTime == 0.0)
-        _startTime = CFAbsoluteTimeGetCurrent();
+    ASSERT(_targetView);
+    ASSERT([_targetView window]);
+    ASSERT(_highlightWindow);
 
-    return ((CFAbsoluteTimeGetCurrent() - _startTime) / _duration);
+    // Disable screen updates so the highlight moves in sync with the view.
+    [[_targetView window] disableScreenUpdatesUntilFlush];
+    [[_targetView window] addChildWindow:_highlightWindow ordered:NSWindowAbove];
+
+    // Observe both frame-changed and bounds-changed notifications because either one could leave
+    // the highlight incorrectly positioned with respect to the target view. We need to do this for
+    // the entire superview hierarchy to handle scrolling, bars coming and going, etc. 
+    // (without making concrete assumptions about the view hierarchy).
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    for (NSView *v = _targetView; v; v = [v superview]) {
+        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewFrameDidChangeNotification object:v];
+        [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewBoundsDidChangeNotification object:v];
+    }
+
+    if (_delegate && [_delegate respondsToSelector:@selector(didAttachWebNodeHighlight:)])
+        [_delegate didAttachWebNodeHighlight:self];
 }
 
-- (void)expire
+- (id)delegate
 {
-    if (![_timer isValid])  // make sure it has not been expired already (loop prevention)
+    return _delegate;
+}
+
+- (void)detachHighlight
+{
+    if (!_highlightWindow) {
+        ASSERT(!_targetView);
         return;
-    
-    [_timer invalidate];
-    [_timer release];
-    _timer = nil;
+    }
 
-    // remove this observation before closing the window (more loop prevention)
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:nil];
-    
-    [[_webNodeHighlightWindow parentWindow] removeChildWindow:_webNodeHighlightWindow];
-    [_webNodeHighlightWindow close];
-    _webNodeHighlightWindow = nil;
+    if (_delegate && [_delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
+        [_delegate willDetachWebNodeHighlight:self];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebNodeHighlightExpiredNotification object:self userInfo:nil];
+    // FIXME: is this necessary while detaching? Should test.
+    [[_targetView window] disableScreenUpdatesUntilFlush];
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
+    [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
+
+    [[_highlightWindow parentWindow] removeChildWindow:_highlightWindow];
+
+    [_highlightWindow release];
+    _highlightWindow = nil;
+
+    [_targetView release];
+    _targetView = nil;
+
+    // We didn't retain _highlightView, but we do need to tell it to forget about us, so it doesn't
+    // try to send our delegate messages after we've been dealloc'ed, e.g.
+    [_highlightView detachFromWebNodeHighlight];
+    _highlightView = nil;
 }
 
-- (void)redraw:(NSTimer *)timer
+- (void)show
 {
-    [_webNodeHighlightView setNeedsDisplay:YES];    
+    ASSERT(!_fadeInAnimation);
+    if (_fadeInAnimation || [_highlightView fractionFadedIn] == 1.0)
+        return;
 
-    if (_startTime == 0.0)
-        _startTime = CFAbsoluteTimeGetCurrent();
-
-    if ((CFAbsoluteTimeGetCurrent() - _startTime) > _duration)
-        [self expire];
+    _fadeInAnimation = [[WebNodeHighlightFadeInAnimation alloc] initWithDuration:FADE_ANIMATION_DURATION animationCurve:NSAnimationEaseInOut];
+    [_fadeInAnimation setAnimationBlockingMode:NSAnimationNonblocking];
+    [_fadeInAnimation setDelegate:self];
+    [_fadeInAnimation startAnimation];
 }
+
+- (void)hide
+{
+    [_highlightView setFractionFadedIn:0.0];
+}
+
+- (void)animationDidEnd:(NSAnimation *)animation
+{
+    ASSERT(animation == _fadeInAnimation);
+    [_fadeInAnimation release];
+    _fadeInAnimation = nil;
+}
+
+- (BOOL)ignoresMouseEvents
+{
+    ASSERT(_highlightWindow);
+    return [_highlightWindow ignoresMouseEvents];
+}
+
+- (WebNodeHighlightView *)highlightView
+{
+    return _highlightView;
+}
+
+- (void)setDelegate:(id)delegate
+{
+    // The delegate is not retained, as usual in Cocoa.
+    _delegate = delegate;
+}
+
+- (void)setHolesNeedUpdateInTargetViewRect:(NSRect)rect
+{
+    ASSERT(_targetView);
+
+    [_highlightView setHolesNeedUpdateInRect:[_targetView _web_convertRect:rect toView:_highlightView]];
+
+    // Redraw highlight view immediately so it updates in sync with the target view
+    // if we called disableScreenUpdatesUntilFlush on the target view earlier. This
+    // is especially visible when resizing the window.
+    [_highlightView displayIfNeeded];
+}
+
+- (void)setIgnoresMouseEvents:(BOOL)newValue
+{
+    ASSERT(_highlightWindow);
+    [_highlightWindow setIgnoresMouseEvents:newValue];
+}
+
+- (NSView *)targetView
+{
+    return _targetView;
+}
+
+@end
+
+@implementation WebNodeHighlight (FileInternal)
+
+- (NSRect)_computeHighlightWindowFrame
+{
+    ASSERT(_targetView);
+    ASSERT([_targetView window]);
+
+    NSRect highlightWindowFrame = [_targetView convertRect:[_targetView visibleRect] toView:nil];
+    highlightWindowFrame.origin = [[_targetView window] convertBaseToScreen:highlightWindowFrame.origin];
+
+    return highlightWindowFrame;
+}
+
+- (void)_repositionHighlightWindow
+{
+    ASSERT([_targetView window]);
+
+    // Disable screen updates so the highlight moves in sync with the view.
+    [[_targetView window] disableScreenUpdatesUntilFlush];
+
+    [_highlightWindow setFrame:[self _computeHighlightWindowFrame] display:YES];
+}
+
+- (void)_animateFadeIn:(WebNodeHighlightFadeInAnimation *)animation
+{
+    [_highlightView setFractionFadedIn:[animation currentValue]];
+}
+
 @end

@@ -40,7 +40,6 @@
 @class DOMElement;
 @class DOMNode;
 @class DOMRange;
-@class WebInspector;
 @class WebFrameView;
 @class WebFrameBridge;
 @class WebHistoryItem;
@@ -103,8 +102,6 @@ WebView *getWebView(WebFrame *webFrame);
 
     WebScriptDebugger *scriptDebugger;
     id internalLoadDelegate;
-    
-    NSMutableSet *inspectors;
 }
 @end
 
@@ -133,9 +130,6 @@ struct WebCoreHistoryItem;
 #endif
 
 - (BOOL)_isMainFrame;
-
-- (void)_addInspector:(WebInspector *)inspector;
-- (void)_removeInspector:(WebInspector *)inspector;
 
 #ifdef __cplusplus
 

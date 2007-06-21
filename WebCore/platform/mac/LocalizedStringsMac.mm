@@ -424,6 +424,14 @@ String contextMenuItemTagRightToLeft()
     return String();
 }
 
+String contextMenuItemTagInspectElement()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagInspectElement];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String searchMenuNoRecentSearchesText()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

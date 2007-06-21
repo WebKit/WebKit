@@ -42,6 +42,7 @@
 #include "FrameLoadRequest.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InspectorController.h"
 #include "KURL.h"
 #include "MouseEvent.h"
 #include "Node.h"
@@ -93,6 +94,8 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     m_contextMenu->populate();
     PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
     m_contextMenu->setPlatformDescription(customMenu);
+    if (m_client->shouldIncludeInspectElementItem())
+        m_contextMenu->addInspectElementItem();
     event->setDefaultHandled();
 }
 
@@ -269,6 +272,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             frame->editor()->showColorPanel();
             break;
 #endif
+        case ContextMenuItemTagInspectElement:
+            if (InspectorController* inspector = frame->page()->inspectorController())
+                inspector->inspect(result.innerNonSharedNode());
+            break;
         default:
             break;
     }

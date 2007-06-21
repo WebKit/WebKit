@@ -61,7 +61,6 @@ typedef struct OpaqueJSValue* JSObjectRef;
 class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
-class WebInspector;
 class WebView;
 
 interface IWebHistoryItemPrivate;
@@ -321,8 +320,6 @@ public:
     WebCore::Frame* impl();
     void invalidate();
     void receivedData(const char*, int, const WebCore::String&);
-    void addInspector(WebInspector*);
-    void removeInspector(WebInspector*);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 

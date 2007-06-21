@@ -58,7 +58,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebIconDatabase.h"
-#import "WebInspector.h"
+#import "WebInspectorClient.h"
 #import "WebKitErrors.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
@@ -275,7 +275,7 @@ static int pluginDatabaseClientCount = 0;
     id editingDelegateForwarder;
     id scriptDebugDelegate;
     id scriptDebugDelegateForwarder;
-    
+
     BOOL allowsUndo;
         
     float textSizeMultiplier;
@@ -448,7 +448,7 @@ static BOOL grammarCheckingEnabled;
     
     [preferences release];
     [hostWindow release];
-    
+
     [policyDelegateForwarder release];
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
@@ -643,6 +643,13 @@ static bool debugWidget = true;
 + (NSString *)suggestedFileExtensionForMIMEType:(NSString *)type
 {
     return WKGetPreferredExtensionForMIMEType(type);
+}
+
+- (BOOL)_isClosed
+{
+    if (!_private || _private->closed)
+        return YES;
+    return NO;
 }
 
 - (void)_close
@@ -1190,14 +1197,14 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
         [self _willChangeValueForKey: _WebMainFrameURLKey];
     }
+
     [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
-    if (frame == [self mainFrame]){
+    if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebMainFrameURLKey];
-    }
     [NSApp setWindowsNeedUpdate:YES];
 }
 
@@ -1751,6 +1758,8 @@ NSMutableDictionary *countInvocations;
     [WebView _initializeCacheSizesIfNecessary];
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self));
+    if ([WebView _developerExtrasEnabled])
+        _private->page->setInspectorClient(new WebInspectorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
 
     [self _addToAllWebViewsSet];
@@ -2025,7 +2034,6 @@ NS_ENDHANDLER
     _private->resourceProgressDelegate = delegate;
     [self _cacheResourceLoadDelegateImplementations];
 }
-
 
 - resourceLoadDelegate
 {
@@ -2568,29 +2576,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)drawsBackground
 {
     return _private->drawsBackground;
-}
-
-- (void)_inspectElement:(id)sender
-{
-    NSDictionary *element = [sender representedObject];
-    WebFrame *frame = [element objectForKey:WebElementFrameKey];
-    DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
-    if (!node || !frame)
-        return;
-
-    if ([node nodeType] != DOM_ELEMENT_NODE || [node nodeType] != DOM_DOCUMENT_NODE)
-        node = [node parentNode];
-
-    WebInspector *inspector = [WebInspector sharedWebInspector];
-    [inspector setWebFrame:frame];
-    [inspector setFocusedDOMNode:node];
-
-    node = [node parentNode];
-    node = [node parentNode];
-    if (node) // set the root node to something relatively close to the focused node
-        [inspector setRootDOMNode:node];
-
-    [inspector showWindow:nil];
 }
 
 @end

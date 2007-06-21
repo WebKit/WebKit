@@ -89,6 +89,7 @@
 - (NSString *)contextMenuItemTagDefaultDirection;
 - (NSString *)contextMenuItemTagLeftToRight;
 - (NSString *)contextMenuItemTagRightToLeft;
+- (NSString *)contextMenuItemTagInspectElement;
 
 - (NSString *)searchMenuNoRecentSearchesText;
 - (NSString *)searchMenuRecentSearchesText;

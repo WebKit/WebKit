@@ -2557,21 +2557,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             [menu addItem:[menuItems objectAtIndex:i]];
     }
 
-    // Add the Inspect Element menu item if the preference is set or if this is a debug build
-    if ([WebView _developerExtrasEnabled]) {
-        if (!menu)
-            menu = [[[NSMenu alloc] init] autorelease];
-        else if ([menu numberOfItems])
-            [menu addItem:[NSMenuItem separatorItem]];
-        NSMenuItem *inspectorItem = [[NSMenuItem alloc] init];
-        [inspectorItem setAction:@selector(_inspectElement:)];
-        [inspectorItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
-        [inspectorItem setRepresentedObject:[[[WebElementDictionary alloc] initWithHitTestResult:
-            coreMenu->hitTestResult()] autorelease]];
-        [menu addItem:inspectorItem];
-        [inspectorItem release];
-    }
-
     return menu;
 }
 

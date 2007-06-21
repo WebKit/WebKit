@@ -47,6 +47,7 @@ public:
     virtual void speak(const WebCore::String&);
     virtual void stopSpeaking();
     virtual void searchWithSpotlight();
+    virtual bool shouldIncludeInspectElementItem();
 
     WebView *webView() { return m_webView; }
         

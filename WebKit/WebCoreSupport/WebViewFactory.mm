@@ -381,6 +381,11 @@
     return UI_STRING("Right to Left", "Right to Left context menu item");
 }
 
+- (NSString *)contextMenuItemTagInspectElement
+{
+    return UI_STRING("Inspect Element", "Inspect Element context menu item");
+}
+
 - (BOOL)objectIsTextMarker:(id)object
 {
     return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerTypeID();

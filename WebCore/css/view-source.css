@@ -87,10 +87,15 @@ td {
     color: rgb(26, 26, 166)
 }
 
-/*
 .webkit-html-external-link {
+    text-decoration: none;
 }
 
+.webkit-html-external-link:hover {
+    text-decoration: underline;
+}
+
+/*
 .webkit-html-resource-link {
 }
 */
@@ -105,4 +110,36 @@ td {
 
 .webkit-html-entity {
     rgb(136, 18, 128);
+}
+
+.webkit-html-message-bubble {
+    -webkit-box-shadow: black 0px 2px 5px;
+    -webkit-border-radius: 9px;
+    -webkit-border-fit: lines;
+    font-size: 9px;
+    font-family: Lucida Grande;
+    font-weight: bold;
+    margin: 6px 25px;
+    padding: 0 7px 1px;
+}
+
+.webkit-html-warning-message {
+    background-color: rgb(100%, 62%, 42%);
+    border: 2px solid rgb(100%, 52%, 21%);
+}
+
+.webkit-html-error-message {
+    background-color: rgb(100%, 42%, 42%);
+    border: 2px solid rgb(100%, 31%, 31%);
+}
+
+.webkit-html-message-line {
+    padding-left: 23px;
+    text-indent: -20px;
+}
+
+.webkit-html-message-icon {
+    position: relative;
+    top: 2px;
+    margin: 0 4px;
 }

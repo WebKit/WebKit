@@ -58,7 +58,7 @@ HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return 0;
+        return menu->platformDescription();
 
     ASSERT(uiDelegate);
 
@@ -67,25 +67,7 @@ HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
     propertyBag.adoptRef(WebElementPropertyBag::createInstance(menu->hitTestResult()));
     // FIXME: We need to decide whether to do the default before calling this delegate method
     if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), (OLE_HANDLE)(ULONG64)menu->platformDescription(), (OLE_HANDLE*)&newMenu)))
-        newMenu = menu->platformDescription();
-
-    // FIXME: Only do this if m_webView->developerExtrasEnabled()
-    if (::GetMenuItemCount(newMenu) > 0) {
-        MENUITEMINFO separator = {0};
-        separator.cbSize = sizeof(separator);
-        separator.fMask = MIIM_FTYPE;
-        separator.fType = MFT_SEPARATOR;
-        ::InsertMenuItem(newMenu, (UINT)-1, TRUE, &separator);
-    }
-
-    MENUITEMINFO info = {0};
-    info.cbSize = sizeof(info);
-    info.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_ID;
-    info.fType = MFT_STRING;
-    info.dwTypeData = _tcsdup(LPCTSTR_UI_STRING("Inspect Element", "Inspect Element context menu item"));
-    info.wID = WebMenuItemTagInspectElement;
-
-    ::InsertMenuItem(newMenu, (UINT)-1, TRUE, &info);
+        return menu->platformDescription();
 
     return newMenu;
 }
@@ -152,4 +134,10 @@ void WebContextMenuClient::speak(const String&)
 void WebContextMenuClient::stopSpeaking()
 {
     notImplemented();
+}
+
+bool WebContextMenuClient::shouldIncludeInspectElementItem()
+{
+    notImplemented();
+    return true;
 }
