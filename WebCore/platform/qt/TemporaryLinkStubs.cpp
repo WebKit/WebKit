@@ -109,6 +109,7 @@ String WebCore::contextMenuItemTagWritingDirectionMenu() { return String(); }
 String WebCore::contextMenuItemTagDefaultDirection() { return String(); }
 String WebCore::contextMenuItemTagLeftToRight() { return String(); }
 String WebCore::contextMenuItemTagRightToLeft() { return String(); }
+String WebCore::contextMenuItemTagInspectElement() { return String(); }
 String WebCore::searchMenuNoRecentSearchesText() { return String(); }
 String WebCore::searchMenuRecentSearchesText() { return String(); }
 String WebCore::searchMenuClearRecentSearchesText() { return String(); }
