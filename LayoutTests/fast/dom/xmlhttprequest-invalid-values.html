@@ -31,8 +31,9 @@ function testInvalidHeaderName() {
     debug('testInvalidHeaderName: ' + result);    
 }
 
-function testInvalidHeaderValue() {
+function testInvalidHeaderValues() {
     var result = 'FAILURE';
+    var successCount = 0;
 
     var req = new XMLHttpRequest();
     req.open('GET', 'http://localhost', true)
@@ -41,10 +42,27 @@ function testInvalidHeaderValue() {
         req.setRequestHeader("X-Hack", "Test\r\nHost: www.example.com\r\n\r\nGET / HTTP/1.1");
     } catch (e) {
         if (e.code == DOMException.SYNTAX_ERR)
-            result = 'SUCCESS';
+            successCount++;
+    }
+
+    try {
+        req.setRequestHeader("X-Hack", "Test\nHost: www.example.com\n\nGET / HTTP/1.1");
+    } catch (e) {
+        if (e.code == DOMException.SYNTAX_ERR)
+            successCount++;
+    }
+
+    try {
+        req.setRequestHeader("X-Hack", "Test\rHost: www.example.com\r\rGET / HTTP/1.1");
+    } catch (e) {
+        if (e.code == DOMException.SYNTAX_ERR)
+            successCount++;
     }
     
-    debug('testInvalidHeaderName: ' + result);    
+    if (successCount == 3)
+        result = 'SUCCESS';
+        
+    debug('testInvalidHeaderValues: ' + result);    
 }
 
 function debug(str) {
@@ -60,7 +78,7 @@ function runTest() {
 
     testInvalidMethod();
     testInvalidHeaderName();
-    testInvalidHeaderValue();
+    testInvalidHeaderValues();
 }
 </script>
 <body onload="runTest()">

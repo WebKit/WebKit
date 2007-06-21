@@ -1,3 +1,11 @@
+2007-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+		Make sure that the test case tests '\n' and '\r' too.
+		
+        * fast/dom/xmlhttprequest-invalid-values.html:
+
 2007-06-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.
