@@ -46,6 +46,8 @@ namespace WebCore {
         virtual void speak(const String&);
         virtual void stopSpeaking();
         virtual void searchWithGoogle(const Frame*);
+
+        virtual bool shouldIncludeInspectElementItem();
     };
 }
 

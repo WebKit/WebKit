@@ -1,3 +1,11 @@
+2007-06-15  George Staikos  <staikos@kde.org>
+
+        Fixing the Qt build.
+
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::shouldIncludeInspectElementItem):
+        * WebCoreSupport/ContextMenuClientQt.h:
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         More speculative Qt build fixes.

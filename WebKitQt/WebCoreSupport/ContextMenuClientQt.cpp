@@ -76,5 +76,11 @@ void ContextMenuClientQt::searchWithGoogle(const Frame*)
     notImplemented();
 }
 
+bool ContextMenuClientQt::shouldIncludeInspectElementItem()
+{
+    notImplemented();
+    return false;
+}
+
 }
 

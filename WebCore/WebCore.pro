@@ -81,6 +81,7 @@ gdk-port:INCLUDEPATH += \
 
 INCLUDEPATH +=  $$PWD \
                 $$PWD/ForwardingHeaders \
+                $$PWD/.. \
                 $$PWD/../JavaScriptCore/kjs \
                 $$PWD/../JavaScriptCore/bindings \
                 $$PWD/platform \
