@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 !gdk-port:CONFIG += qt-port
-SUBDIRS = \
-        WebKitQt/Plugins \
+qt-port:SUBDIRS += WebKitQt/Plugins
+SUBDIRS += \
         WebCore \
         JavaScriptCore/kjs/testkjs.pro
 
