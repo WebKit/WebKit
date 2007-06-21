@@ -1,5 +1,14 @@
 2007-06-21  Adam Roben  <aroben@apple.com>
 
+        More Gdk build fixes.
+
+        * page/gdk/ContextMenuClientGdk.cpp:
+        (WebCore::ContextMenuClientGdk::shouldIncludeInspectElementItem):
+        * page/gdk/ContextMenuClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-06-21  Adam Roben  <aroben@apple.com>
+
         Speculative Gdk build fix.
 
         * page/InspectorController.h: Only include the JS headers we really
