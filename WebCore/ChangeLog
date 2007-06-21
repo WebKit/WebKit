@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        correctly load fonts when a list of font families is given
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::Font):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix some more of the font support
 
         * platform/qt/FontQt.cpp:
