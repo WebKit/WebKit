@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        fix some more of the font support
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Compile fixes
 
         * platform/Font.h:
