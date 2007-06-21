@@ -1,8 +1,17 @@
+2007-06-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
+        One more test for XHR header injection.
+
+        * http/tests/xmlhttprequest/inject-header-expected.txt: Added.
+        * http/tests/xmlhttprequest/inject-header.html: Added.
+
 2007-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
 
-		Make sure that the test case tests '\n' and '\r' too.
+        Make sure that the test case tests '\n' and '\r' too.
 		
         * fast/dom/xmlhttprequest-invalid-values.html:
 
