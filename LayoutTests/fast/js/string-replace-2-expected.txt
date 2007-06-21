@@ -9,6 +9,9 @@ PASS testString.replace(/[aeiou]/gi,'-') is "-t's th- -nd -f th- w-rld -s w- kn-
 PASS testString.replace(/[aeiou]/gi, function Capitalize(s){ return s.toUpperCase(); }) is "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
 PASS testString.replace(/([aeiou])([a-z])/g, function Capitalize(){ return RegExp.$1.toUpperCase()+RegExp.$2; }) is "It's the End Of the wOrld As we knOw It, And I fEel fIne."
 PASS testString.replace(/([aeiou])([a-z])/g, function Capitalize(orig,re1,re2) { return re1.toUpperCase()+re2; }) is "It's the End Of the wOrld As we knOw It, And I fEel fIne."
+PASS testString.replace(/(.*)/g, function replaceWithDollars(matchGroup) { return '$1'; }) is "$1$1"
+PASS testString.replace(/(.)(.*)/g, function replaceWithMultipleDollars(matchGroup) { return '$1$2'; }) is "$1$2"
+PASS testString.replace(/(.)(.*)/, function checkReplacementArguments() { return arguments.length; }) is "5"
 PASS successfullyParsed is true
 
 TEST COMPLETE

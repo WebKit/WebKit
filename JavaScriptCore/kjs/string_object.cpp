@@ -344,27 +344,28 @@ static JSValue *replace(ExecState *exec, const UString &source, JSValue *pattern
 
       pushSourceRange(sourceRanges, sourceRangeCount, sourceRangeCapacity, UString::Range(lastIndex, matchIndex - lastIndex));
 
+      UString substitutedReplacement;
       if (replacementFunction) {
           int completeMatchStart = ovector[0];
           List args;
 
           args.append(jsString(matchString));
-          
+
           for (unsigned i = 0; i < reg->subPatterns(); i++) {
               int matchStart = ovector[(i + 1) * 2];
               int matchLen = ovector[(i + 1) * 2 + 1] - matchStart;
-              
+
               args.append(jsString(source.substr(matchStart, matchLen)));
           }
           
           args.append(jsNumber(completeMatchStart));
           args.append(jsString(source));
 
-          replacementString = replacementFunction->call(exec, exec->dynamicInterpreter()->globalObject(), 
-                                                        args)->toString(exec);
-      }
-      
-      UString substitutedReplacement = substituteBackreferences(replacementString, source, ovector, reg);
+          substitutedReplacement = replacementFunction->call(exec, exec->dynamicInterpreter()->globalObject(), 
+                                                             args)->toString(exec);
+      } else
+          substitutedReplacement = substituteBackreferences(replacementString, source, ovector, reg);
+
       pushReplacement(replacements, replacementCount, replacementCapacity, substitutedReplacement);
 
       lastIndex = matchIndex + matchLen;

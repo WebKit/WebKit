@@ -1,3 +1,14 @@
+2007-06-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14244
+        Bug 14244: Data corruption when using a replace() callback function with data containing "$"
+
+        * kjs/string_object.cpp:
+        (KJS::replace):  When 'replacement' is a function, do not replace $n placeholders in its return value.
+        This matches the behaviour described in ECMA 262 3rd Ed section 15.5.4.1, and as implemented in Firefox.
+
 2007-06-14  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

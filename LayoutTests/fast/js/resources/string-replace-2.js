@@ -15,5 +15,8 @@ shouldBe("testString.replace(/([aeiou])([a-z])/g, function Capitalize(){ return 
          "\"It's the End Of the wOrld As we knOw It, And I fEel fIne.\"");
 shouldBe("testString.replace(/([aeiou])([a-z])/g, function Capitalize(orig,re1,re2) { return re1.toUpperCase()+re2; })",
         "\"It's the End Of the wOrld As we knOw It, And I fEel fIne.\"");
+shouldBe("testString.replace(/(.*)/g, function replaceWithDollars(matchGroup) { return '$1'; })", "\"$1$1\"");
+shouldBe("testString.replace(/(.)(.*)/g, function replaceWithMultipleDollars(matchGroup) { return '$1$2'; })", "\"$1$2\"");
+shouldBe("testString.replace(/(.)(.*)/, function checkReplacementArguments() { return arguments.length; })", "\"5\"");
 
 var successfullyParsed = true;

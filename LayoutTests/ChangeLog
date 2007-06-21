@@ -1,3 +1,13 @@
+2007-06-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14244
+        Bug 14244: Data corruption when using a replace() callback function with data containing "$"
+
+        * fast/js/resources/string-replace-2.js: Update to test with 'replaceValue' being a function returning strings with "$n" placeholders.
+        * fast/js/string-replace-2-expected.txt:
+
 2007-06-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
