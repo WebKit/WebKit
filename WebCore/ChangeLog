@@ -1,3 +1,19 @@
+2007-06-20  Adam Roben  <aroben@apple.com>
+
+        Speculative Qt/Gdk build fix.
+
+        Added forwarding headers for JavaScriptCore. We may eventually move
+        InspectorController off of the JSC API, but for now this is the
+        quickest way to a working build.
+
+        * ForwardingHeaders/JavaScriptCore/JSBase.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JSContextRef.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JSObjectRef.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JSStringRef.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JSStringRefCF.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JSValueRef.h: Added.
+        * ForwardingHeaders/JavaScriptCore/JavaScriptCore.h: Added.
+
 2007-06-20  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Adam Roben.
