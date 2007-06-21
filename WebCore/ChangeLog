@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        fix copyright header
+
+        * platform/qt/FontQt.cpp:
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         correctly load fonts when a list of font families is given
 
         * platform/qt/FontQt.cpp:
