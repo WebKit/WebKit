@@ -131,13 +131,13 @@ void Font::update() const
 
 static int generateComponents(Vector<TextRunComponent, 1024>* components, const Font &font, const TextRun &run, const TextStyle &style)
 {
-    qDebug() << "generateComponents" << QString((const QChar *)run.characters(), run.length());
+//     qDebug() << "generateComponents" << QString((const QChar *)run.characters(), run.length());
     int letterSpacing = font.letterSpacing();
     int wordSpacing = font.wordSpacing();
     bool smallCaps = font.fontDescription().smallCaps();
     int padding = style.padding();
     int numSpaces = 0;
-    if (padding || wordSpacing) {
+    if (padding) {
         for (int i = 0; i < run.length(); i++)
             if (Font::treatAsSpace(run[i]))
                 ++numSpaces;      
@@ -155,7 +155,8 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                 padding -= add;
                 --numSpaces;
             }
-            offset += wordSpacing + add;
+            offset += add + letterSpacing + font.spaceWidth();
+            start = 1;
         } else if (smallCaps) {
             f = (QChar::category(run[0]) == QChar::Letter_Lowercase ? &font.scFont() : &font.font());
         }
@@ -165,14 +166,14 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                 ch = QChar::surrogateToUcs4(ch, run[i-1]);
             if (QChar(ch).isLowSurrogate() || QChar::category(ch) == QChar::Mark_NonSpacing)
                 continue;
-            int add = 0;
             if (Font::treatAsSpace(run[i])) {
-                qDebug() << "    treatAsSpace:" << i << start;
+                int add = 0;
+//                 qDebug() << "    treatAsSpace:" << i << start;
                 if (i - start > 0) {
                     components->append(TextRunComponent(run.characters() + start, i - start,
                                                         f, offset, f == &font.scFont()));
                     offset += components->last().width + letterSpacing;
-                    qDebug() << "   appending(1) " << components->last().string << QFontInfo(*components->last().font).pointSizeF();
+//                     qDebug() << "   appending(1) " << components->last().string << components->last().width;
                 }
                 if (numSpaces) {
                     add = padding/numSpaces;
@@ -183,8 +184,8 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                 start = i + 1;
                 continue;
             } else if (!letterSpacing) {
-                qDebug() << i << char(run[i]) << (QChar::category(ch) == QChar::Letter_Lowercase) <<
-                    QFontInfo(*f).pointSizeF();
+//                 qDebug() << i << char(run[i]) << (QChar::category(ch) == QChar::Letter_Lowercase) <<
+//                     QFontInfo(*f).pointSizeF();
                 if (QChar::category(ch) == QChar::Letter_Lowercase) {
                     if (f == &font.scFont())
                         continue;
@@ -194,11 +195,9 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                 }
             }
             if (i - start > 0) {
-                components->append(TextRunComponent(run.characters() + start, i - start,
-                                                    f, offset, f == &font.scFont()));
                 components->append(TextRunComponent(run.characters() + start, i - start, f, offset, f == &font.scFont()));
                 offset += components->last().width + letterSpacing;
-                qDebug() << "   appending(2) " << components->last().string << QFontInfo(*f).pointSizeF();
+//                 qDebug() << "   appending(2) " << components->last().string << components->last().width;
             }
             f = (QChar::category(ch) == QChar::Letter_Lowercase ? &font.scFont() : &font.font());
             start = i;
@@ -207,6 +206,7 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
             components->append(TextRunComponent(run.characters() + start, run.length() - start,
                                                 f, offset, f == &font.scFont()));
             offset += components->last().width;
+//             qDebug() << "   appending(3) " << components->last().string << components->last().width;
         }
     } else { //if (padding || m_wordSpacing) {
         int start = 0;
@@ -222,7 +222,9 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                     padding -= add;
                     --numSpaces;
                 }
-                offset += wordSpacing + add + font.spaceWidth();
+                offset += add + font.spaceWidth();
+                if (i)
+                    offset += wordSpacing;
                 start = i + 1;
             }
         }
@@ -258,7 +260,7 @@ int Font::width(const TextRun& run, const TextStyle& style) const
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
 
-    qDebug() << "     width=" << w;
+//     qDebug() << "     width=" << w;
     return w;
 }
 

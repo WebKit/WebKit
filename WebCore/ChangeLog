@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        fix word-spacing
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::generateComponents):
+        (WebCore::Font::width):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix letterspacing and small caps.
 
         * platform/Font.h:
