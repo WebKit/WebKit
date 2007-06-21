@@ -1,3 +1,11 @@
+2007-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Don't dump didFirstLayout callbacks, they happen intermittently.
+        
+        * DumpRenderTree/FrameLoadDelegate.m:
+
 2007-06-21  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
