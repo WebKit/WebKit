@@ -20,3 +20,4 @@ include($$PWD/../JavaScriptCore.pri)
 
 # Hack!  Fix this.
 SOURCES -= API/JSValueRef.cpp
+SOURCES -= API/JSCallbackObject.cpp

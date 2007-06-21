@@ -1,5 +1,12 @@
 2007-06-15  George Staikos  <staikos@kde.org>
 
+        Another Qt build fix.
+
+        * JavaScriptCore.pri:
+        * kjs/testkjs.pro:
+
+2007-06-15  George Staikos  <staikos@kde.org>
+
         Fixing Qt build.
 
         * JavaScriptCore.pri:

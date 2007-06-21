@@ -40,6 +40,7 @@ SOURCES += \
     bindings/c/c_runtime.cpp \
     bindings/c/c_utility.cpp \
     API/JSValueRef.cpp \
+    API/JSCallbackObject.cpp \
     kjs/DateMath.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/PropertyNameArray.cpp \
