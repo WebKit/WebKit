@@ -818,7 +818,7 @@ void GraphicsContext::setPlatformFont(const Font& aFont)
 {
     if (paintingDisabled())
         return;
-    m_data->p().setFont(aFont);
+    m_data->p().setFont(aFont.font());
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& color)

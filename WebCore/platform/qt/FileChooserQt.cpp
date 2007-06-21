@@ -60,7 +60,7 @@ void FileChooser::openFileChooser(Document* doc)
 
 String FileChooser::basenameForWidth(const Font& f, int width) const
 {
-    QFontMetrics fm((QFont)f);
+    QFontMetrics fm(f.font());
     return fm.elidedText(m_filename, Qt::ElideLeft, width);
 }
 

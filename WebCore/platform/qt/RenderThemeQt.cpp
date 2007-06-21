@@ -453,7 +453,7 @@ void RenderThemeQt::setSizeFromFont(RenderStyle* style) const
 
 IntSize RenderThemeQt::sizeForFont(RenderStyle* style) const
 {
-    const QFontMetrics fm(style->font());
+    const QFontMetrics fm(style->font().font());
     QSize size(0, 0);
     switch (style->appearance()) {
     case CheckboxAppearance: {
