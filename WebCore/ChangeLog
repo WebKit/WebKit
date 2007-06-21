@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Some more work on the implementation of FontQt.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::~Font):
+        (WebCore::Font::operator=):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Started work on the new font infrastructure for the Qt port.
 
         * WebCore.pro:
