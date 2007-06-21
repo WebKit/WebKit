@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        another small fix for letter spacing
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::generateComponents):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix word-spacing
 
         * platform/qt/FontQt.cpp:
