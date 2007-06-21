@@ -30,12 +30,8 @@
 #define InspectorController_h
 
 #include "Chrome.h"
-#if PLATFORM(QT)
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
-#else
-#include <JavaScriptCore/JavaScriptCore.h>
-#endif
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

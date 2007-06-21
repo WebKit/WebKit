@@ -1,3 +1,10 @@
+2007-06-21  Adam Roben  <aroben@apple.com>
+
+        Speculative Gdk build fix.
+
+        * page/InspectorController.h: Only include the JS headers we really
+        need to avoid pulling in ones like JSStringRefCF.h.
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         Speculative Gdk build fix.
