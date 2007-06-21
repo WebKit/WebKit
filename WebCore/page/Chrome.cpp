@@ -39,7 +39,7 @@ public:
     PageGroupLoadDeferrer(Page*, bool deferSelf);
     ~PageGroupLoadDeferrer();
 private:
-    Vector<Page*, 16> m_deferredPages;
+    Vector<RefPtr<Frame>, 16> m_deferredFrames;
 };
 
 Chrome::Chrome(Page* page, ChromeClient* client)
@@ -300,19 +300,21 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
         for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
             Page* otherPage = *it;
             if ((deferSelf || otherPage != page) && !otherPage->defersLoading())
-                m_deferredPages.append(otherPage);
+                m_deferredFrames.append(otherPage->mainFrame());
         }
     }
-    size_t count = m_deferredPages.size();
+    size_t count = m_deferredFrames.size();
     for (size_t i = 0; i < count; ++i)
-        m_deferredPages[i]->setDefersLoading(true);
+        if (Page* page = m_deferredFrames[i]->page())
+            page->setDefersLoading(true);
 }
 
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
-    size_t count = m_deferredPages.size();
+    size_t count = m_deferredFrames.size();
     for (size_t i = 0; i < count; ++i)
-        m_deferredPages[i]->setDefersLoading(false);
+        if (Page* page = m_deferredFrames[i]->page())
+            page->setDefersLoading(false);
 }
 
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2007-06-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej, Anders.
+        
+        <rdar://problem/5283789> Crash after dismissing JavaScript alert at end of test on http://lcamtuf.coredump.cx/ierace/
+
+        Keep a reference to the Page (via the main frame) for the
+        load deferred pages.
+        
+        Reference is held via the frame since Page isn't refcounted.
+
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+
 2007-06-15  Adam Treat <adam@staikos.net>
 
         Reviewed by George Staikos.
