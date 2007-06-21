@@ -594,13 +594,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
-    platform/FontCache.cpp \
-    platform/Font.cpp \
-    platform/FontData.cpp \
-    platform/FontFallbackList.cpp \
     platform/FontFamily.cpp \
-    platform/GlyphPageTreeNode.cpp \
-    platform/GlyphWidthMap.cpp \
     platform/graphics/AffineTransform.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
@@ -722,6 +716,16 @@ SOURCES += \
     xml/XSLStyleSheet.cpp \
     xml/XSLTProcessor.cpp
 
+gtk-port {
+  SOURCES += \
+    platform/GlyphPageTreeNode.cpp \
+    platform/GlyphWidthMap.cpp \
+    platform/FontCache.cpp \
+    platform/Font.cpp \
+    platform/FontData.cpp \
+    platform/FontFallbackList.cpp 
+}
+
 qt-port:HEADERS += \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/SharedTimerQt.h \
@@ -765,9 +769,6 @@ qt-port:SOURCES += \
     platform/qt/DragDataQt.cpp \
     platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
-    platform/qt/FontCacheQt.cpp \
-    platform/qt/FontDataQt.cpp \
-    platform/qt/FontPlatformDataQt.cpp \
     platform/qt/FontQt.cpp \
     platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/MimeTypeRegistryQt.cpp \

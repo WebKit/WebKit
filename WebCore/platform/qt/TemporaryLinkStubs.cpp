@@ -38,6 +38,11 @@
 #include "Font.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "IntPoint.h"
+#include "Widget.h"
+#include "GraphicsContext.h"
+#include "Cursor.h"
+#include "loader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GlobalHistory.h"
@@ -61,8 +66,6 @@
 
 using namespace WebCore;
 
-FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int, int, int) const { notImplemented(); return FloatRect(); }
-int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 

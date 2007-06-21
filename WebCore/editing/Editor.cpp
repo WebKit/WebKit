@@ -47,7 +47,6 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
-#include "FontData.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -72,6 +71,7 @@
 
 namespace WebCore {
 
+class FontData;
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -459,6 +459,7 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
 
 const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
+#if !PLATFORM(QT)
     hasMultipleFonts = false;
 
     if (!m_frame->selectionController()->isRange()) {
@@ -502,6 +503,9 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     return font;
+#else
+    return 0;
+#endif
 }
 
 Frame::TriState Editor::selectionUnorderedListState() const

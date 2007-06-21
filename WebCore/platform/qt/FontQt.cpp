@@ -40,58 +40,58 @@ namespace WebCore {
 
 Font::operator QFont() const
 {
-    return primaryFont()->platformData().font();
+    return m_font;
 }
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer,
-                      int from, int numGlyphs, const FloatPoint& point) const
-{
-    QPainter& p = *graphicsContext->platformContext();
+// void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer,
+//                       int from, int numGlyphs, const FloatPoint& point) const
+// {
+//     QPainter& p = *graphicsContext->platformContext();
 
-    Color color = graphicsContext->fillColor();
-    p.setPen(QColor(color));
-    p.setFont(font->platformData().font());
+//     Color color = graphicsContext->fillColor();
+//     p.setPen(QColor(color));
+//     p.setFont(font->platformData().font());
 
-    const GlyphBufferGlyph *glyphs = glyphBuffer.glyphs(from);
-    const GlyphBufferAdvance *advances = glyphBuffer.advances(from);
+//     const GlyphBufferGlyph *glyphs = glyphBuffer.glyphs(from);
+//     const GlyphBufferAdvance *advances = glyphBuffer.advances(from);
 
-    int spanStart = 0;
-    qreal x = point.x();
-    qreal y = point.y();
-    qreal width = 0;
-    int i = 0;
-    for (; i < numGlyphs; ++i) {
-        if (advances[i].width() == font->widthForGlyph(glyphs[i])
-            && advances[i].height() == 0) {
-            width += advances[i].width();
-            continue;
-        }
-        QString string = QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart);
-        p.drawText(QPointF(x, y), string);
-        x += width;
-        width = advances[i].width();
-        spanStart = i;
-    }
+//     int spanStart = 0;
+//     qreal x = point.x();
+//     qreal y = point.y();
+//     qreal width = 0;
+//     int i = 0;
+//     for (; i < numGlyphs; ++i) {
+//         if (advances[i].width() == font->widthForGlyph(glyphs[i])
+//             && advances[i].height() == 0) {
+//             width += advances[i].width();
+//             continue;
+//         }
+//         QString string = QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart);
+//         p.drawText(QPointF(x, y), string);
+//         x += width;
+//         width = advances[i].width();
+//         spanStart = i;
+//     }
 
-    if (i - spanStart > 0)
-        p.drawText(QPointF(x, y), QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart));
-}
+//     if (i - spanStart > 0)
+//         p.drawText(QPointF(x, y), QString::fromRawData(reinterpret_cast<const QChar *>(glyphs + spanStart), i - spanStart));
+// }
 
-void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const TextStyle&, const FloatPoint& point, int from, int to) const
-{
-    // FIXME: style, run.from()/length() cut-off
-    ctx->platformContext()->drawText(point, 
-                                     QString::fromRawData(
-                                         reinterpret_cast<const QChar*>(
-                                             run.characters() + from), run.length()));
-}
+// void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const TextStyle&, const FloatPoint& point, int from, int to) const
+// {
+//     // FIXME: style, run.from()/length() cut-off
+//     ctx->platformContext()->drawText(point, 
+//                                      QString::fromRawData(
+//                                          reinterpret_cast<const QChar*>(
+//                                              run.characters() + from), run.length()));
+// }
 
-float Font::floatWidthForComplexText(const TextRun& run, const TextStyle&) const
-{
-    // FIXME: style
-    QFontMetricsF metrics(primaryFont()->m_font.font());
-    return metrics.width(QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length()));
-}
+// float Font::floatWidthForComplexText(const TextRun& run, const TextStyle&) const
+// {
+//     // FIXME: style
+//     QFontMetricsF metrics(primaryFont()->m_font.font());
+//     return metrics.width(QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length()));
+// }
 
 }
 

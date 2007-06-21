@@ -1,3 +1,20 @@
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Started work on the new font infrastructure for the Qt port.
+
+        * WebCore.pro:
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection):
+        * platform/Font.h:
+        (WebCore::Font::treatAsSpace):
+        (WebCore::Font::treatAsZeroWidthSpace):
+        (WebCore::Font::isRoundingHackCharacter):
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::operator QFont):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-06-21  Adam Roben  <aroben@apple.com>
 
         More Gdk build fixes.
