@@ -1,3 +1,23 @@
+2007-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Fixed <rdar://problem/4977124> | http://bugs.webkit.org/show_bug.cgi?id=12646
+        REGRESSION: RapidWeaver's "Hello" HTML page doesn't display any DHTML 
+        effects when clicking on its links (12646)
+        
+        Added layout test for this bug:
+
+        * fast/invalid/nestedh3s-rapidweaver-expected.txt: Added.
+        * fast/invalid/nestedh3s-rapidweaver.html: Added.
+
+        Reversed the expected results for this test because I rolled out r7703:
+
+        * fast/invalid/nestedh3s-expected.checksum:
+        * fast/invalid/nestedh3s-expected.png:
+        * fast/invalid/nestedh3s-expected.txt:
+        * fast/invalid/nestedh3s.html:
+
 2007-06-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

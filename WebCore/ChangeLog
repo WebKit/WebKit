@@ -1,3 +1,25 @@
+2007-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Fixed <rdar://problem/4977124> | http://bugs.webkit.org/show_bug.cgi?id=12646
+        REGRESSION: RapidWeaver's "Hello" HTML page doesn't display any DHTML 
+        effects when clicking on its links (12646)
+        
+        I'm rolling our r7703 for these reasons:
+
+        1. It broke RapidWeaver.
+        
+        2. WebKit is now orders of magnitude faster when handling deep nesting
+        (5 seconds vs 3 minutes on my MBP in this particular case).
+
+        3. Firefox, IE, and HTML5 all allow nested heading tags.
+        
+        4. Hyatt said so.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+
 2007-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

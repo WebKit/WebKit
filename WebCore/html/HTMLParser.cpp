@@ -237,10 +237,6 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         if (e->endTagRequirement() == TagStatusOptional)
             popBlock(t->tagName);
             
-        if (isHeaderTag(t->tagName))
-            // Do not allow two header tags to be nested if the intervening tags are inlines.
-            popNestedHeaderTag();
-            
         // If the node does not have a forbidden end tag requirement, and if the broken XML self-closing
         // syntax was used, report an error.
         if (t->brokenXMLStyle && e->endTagRequirement() != TagStatusForbidden) {
@@ -881,21 +877,6 @@ bool HTMLParser::isHeaderTag(const AtomicString& tagName)
     }
     
     return headerTags.contains(tagName.impl());
-}
-
-void HTMLParser::popNestedHeaderTag()
-{
-    // This function only cares about checking for nested headers that have only inlines in between them.
-    Node* currNode = current;
-    for (HTMLStackElem* curr = blockStack; curr; curr = curr->next) {
-        if (isHeaderTag(curr->tagName)) {
-            popBlock(curr->tagName);
-            return;
-        }
-        if (currNode && !isInline(currNode))
-            return;
-        currNode = curr->node;
-    }
 }
 
 bool HTMLParser::isInline(Node* node) const
