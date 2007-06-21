@@ -387,11 +387,14 @@ void ContextMenu::addInspectElementItem()
     if (!frame)
         return;
 
-    if (!frame->page()->inspectorController())
+    Page* page = frame->page();
+    if (!page)
+        return;
+
+    if (!page->inspectorController())
         return;
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
-    // FIXME: Need to only add this if the developer tools preference is set
     appendItem(*separatorItem());
     appendItem(InspectElementItem);
 }

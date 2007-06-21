@@ -21,6 +21,17 @@
 
 2007-06-20  Adam Roben  <aroben@apple.com>
 
+        Addressed some of Geoff's comments.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Added a
+        FIXME.
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::addInspectElementItem): Null-check
+        frame->page().
+
+2007-06-20  Adam Roben  <aroben@apple.com>
+
         Fix crash in fast/dom/dir-no-body.html
 
         Reviewed by Mark.
