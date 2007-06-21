@@ -1,5 +1,18 @@
 2007-06-20  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14056
+          REGRESSION (r21113-21143): TR background not repainted via style class change
+
+        Test: fast/repaint/table-row.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout): Added a repaint to make up for the case where the
+        table row also needs layout, so it doesn't get a repaint in setStyle().
+
+2007-06-20  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Adele.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14040
