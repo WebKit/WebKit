@@ -19,5 +19,13 @@ include($$OUTPUT_DIR/config.pri)
 include($$PWD/../JavaScriptCore.pri)
 
 # Hack!  Fix this.
-SOURCES -= API/JSValueRef.cpp
-SOURCES -= API/JSCallbackObject.cpp
+SOURCES -= API/JSBase.cpp \
+    API/JSCallbackConstructor.cpp \
+    API/JSCallbackFunction.cpp \
+    API/JSCallbackObject.cpp \
+    API/JSClassRef.cpp \
+    API/JSContextRef.cpp \
+    API/JSObjectRef.cpp \
+    API/JSStringRef.cpp \
+    API/JSValueRef.cpp
+

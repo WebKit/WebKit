@@ -39,8 +39,15 @@ SOURCES += \
     bindings/c/c_instance.cpp \
     bindings/c/c_runtime.cpp \
     bindings/c/c_utility.cpp \
-    API/JSValueRef.cpp \
+    API/JSBase.cpp \
+    API/JSCallbackConstructor.cpp \
+    API/JSCallbackFunction.cpp \
     API/JSCallbackObject.cpp \
+    API/JSClassRef.cpp \
+    API/JSContextRef.cpp \
+    API/JSObjectRef.cpp \
+    API/JSStringRef.cpp \
+    API/JSValueRef.cpp \
     kjs/DateMath.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/PropertyNameArray.cpp \
