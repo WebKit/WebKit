@@ -1,5 +1,15 @@
 2007-06-20  Adam Roben  <aroben@apple.com>
 
+        Fix crash in fast/dom/dir-no-body.html
+
+        Reviewed by Mark.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer): Don't assume we have a
+        Frame, since we won't if someone creates an HTMLDocument from JS.
+
+2007-06-20  Adam Roben  <aroben@apple.com>
+
         Land the new Inspector.
 
         Co-written with Tim Hatcher.

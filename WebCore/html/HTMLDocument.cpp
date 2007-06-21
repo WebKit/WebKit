@@ -285,9 +285,10 @@ void HTMLDocument::releaseEvents()
 Tokenizer *HTMLDocument::createTokenizer()
 {
     bool reportErrors = false;
-    if (Page* page = m_frame->page())
-        if (InspectorController* controller = page->inspectorController())
-            reportErrors = controller->windowVisible();
+    if (m_frame)
+        if (Page* page = m_frame->page())
+            if (InspectorController* controller = page->inspectorController())
+                reportErrors = controller->windowVisible();
 
     return new HTMLTokenizer(this, reportErrors);
 }
