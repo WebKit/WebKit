@@ -3587,6 +3587,20 @@ static WebFrameView *containingFrameView(NSView *view)
     return responder;
 }
 
+- (void)_openFrameInNewWindowFromMenu:(NSMenuItem *)sender
+{
+    ASSERT_ARG(sender, [sender isKindOfClass:[NSMenuItem class]]);
+
+    NSDictionary *element = [sender representedObject];
+    ASSERT([element isKindOfClass:[NSDictionary class]]);
+    
+    NSURLRequest *request = [[[[element objectForKey:WebElementFrameKey] dataSource] request] copy];
+    ASSERT(request);
+    
+    [self _openNewWindowWithRequest:request];
+    [request release];
+}
+
 - (void)_searchWithGoogleFromMenu:(id)sender
 {
     id documentView = [[[self selectedFrame] frameView] documentView];

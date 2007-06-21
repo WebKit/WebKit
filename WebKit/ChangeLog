@@ -1,3 +1,34 @@
+2007-06-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele
+        
+        - fixed <rdar://problem/5268673> REGRESSION: Context menu missing for PDF in frame when there's no selection
+        
+        This was surprisingly interesting. It turns out that at least for Safari, the method [WebDefaultUIDelegate
+        webView:contextMenuItemsForElement:defaultMenuItems:] is only exercised from WebPDFView these days. It mimics
+        some of the code that was moved to WebCore as part of the Great Context Menu Refactoring of 2006, but is
+        independent of that code. And it was partly broken/incomplete, probably as a result of said refactoring.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (localizedMenuTitleFromAppKit()):
+        deleted this function since I removed all callers
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        Handle WebMenuItemTagOpenFrameInNewWindow tag, since code later in this file was relying on it. Added
+        ASSERT_NOT_REACHED to the default case, since returning nil from this method is bad.
+        Also, use WebKit versions of menu title strings rather than AppKit versions. We added these strings to WebKit 
+        a while back so we don't need to sneakily find them in AppKit anymore.
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        make the WebView be the target of the Open Frame in New Window item; previously it was self, but that was
+        just silly (probably a leftover from some code shuffling when context menus were reimplemented)
+
+        * WebView/WebView.mm:
+        (-[WebView _openFrameInNewWindowFromMenu:]):
+        new method, used by Open Frame in New Window menu item.
+
+        * WebView/WebViewInternal.h:
+        Declare new method used by menu item. This isn't necessary for compilation, but could prevent the accidental
+        deletion of the method implementation.
+
 2007-06-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam.

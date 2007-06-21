@@ -55,19 +55,6 @@
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 
-static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
-{
-    NSBundle *appKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.AppKit"];
-    if (!appKitBundle) {
-        return key;
-    }
-    NSString *result = NSLocalizedStringFromTableInBundle(key, @"MenuCommands", appKitBundle, comment);
-    if (result == nil) {
-        return key;
-    }
-    return result;
-}
-
 - (NSMenuItem *)menuItemWithTag:(int)tag target:(id)target representedObject:(id)representedObject
 {
     NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
@@ -100,27 +87,29 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             action = @selector(reload:);
             break;
         case WebMenuItemTagSearchInSpotlight:
-            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
-            title = localizedMenuTitleFromAppKit(@"Search in Spotlight", @"Search in Spotlight menu title.");
+            title = UI_STRING("Search in Spotlight", "Search in Spotlight context menu item");
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb:
-            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
-            title = localizedMenuTitleFromAppKit(@"Search in Google", @"Search in Google menu title.");
+            title = UI_STRING("Search in Google", "Search in Google context menu item");
             action = @selector(_searchWithGoogleFromMenu:);
             break;
         case WebMenuItemTagLookUpInDictionary:
-            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
-            title = localizedMenuTitleFromAppKit(@"Look Up in Dictionary", @"Look Up in Dictionary menu title.");
+            title = UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
             action = @selector(_lookUpInDictionaryFromMenu:);
             break;
+        case WebMenuItemTagOpenFrameInNewWindow:
+            title = UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item");
+            action = @selector(_openFrameInNewWindowFromMenu:);
+            break;
         default:
+            ASSERT_NOT_REACHED();
             return nil;
     }
 
-    if (title != nil) {
+    if (title)
         [menuItem setTitle:title];
-    }
+
     [menuItem setAction:action];
     
     return menuItem;
@@ -182,7 +171,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         }
 
         if (webFrame != [wv mainFrame]) {
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow target:self representedObject:element]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow target:wv representedObject:element]];
         }
     }
     
