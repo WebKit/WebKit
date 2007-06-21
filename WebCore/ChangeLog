@@ -1,3 +1,9 @@
+2007-06-21  Andrew Wellington  <proton@wiretapped.net>
+
+        Mac build fix.
+
+        * platform/Font.h:
+
 2007-06-21  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
