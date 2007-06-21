@@ -2,6 +2,9 @@
 
         Reviewed by Adam.
 
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14255.
+        Bug 14255: Reproducible crash opening web inspector from debug menu
+
         Reinstate the WebInspector class so WebKit clients that currently depend on it
         will build and run correctly.
 
