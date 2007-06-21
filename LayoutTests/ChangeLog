@@ -1,3 +1,11 @@
+2007-06-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Update test result.
+        
+        * fast/dom/xmlhttprequest-invalid-values-expected.txt:
+
 2007-06-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.
