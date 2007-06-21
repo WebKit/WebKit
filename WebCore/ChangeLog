@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        simplify some codepaths
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+
+2007-06-21  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix copyright header
 
         * platform/qt/FontQt.cpp:
