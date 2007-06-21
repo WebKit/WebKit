@@ -29,6 +29,7 @@
 #include "Settings.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include "IconDatabase.h"
 
 #include <QHash>
 #include <QSharedData>
@@ -128,6 +129,25 @@ void QWebSettings::setUserStyleSheetLocation(const QString &location)
 QString QWebSettings::userStyleSheetLocation() const
 {
     return d->userStyleSheetLocation;
+}
+
+void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
+{
+    WebCore::iconDatabase()->setEnabled(enabled);
+    if (enabled) {
+      if (!location.isEmpty()) {
+          WebCore::iconDatabase()->open(location);
+      } else {
+          WebCore::iconDatabase()->open(WebCore::iconDatabase()->defaultDatabaseFilename());
+      }
+    } else {
+      WebCore::iconDatabase()->close();
+    }
+}
+
+bool QWebSettings::iconDatabaseEnabled() const
+{
+    return WebCore::iconDatabase()->enabled() && WebCore::iconDatabase()->isOpen();
 }
 
 QWebSettings::QWebSettings(const QWebSettings &other)

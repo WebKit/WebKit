@@ -42,6 +42,8 @@
 #include "Page.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "Image.h"
+#include "IconDatabase.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -341,6 +343,19 @@ QWebNetworkInterface *QWebPage::networkInterface() const
         return d->networkInterface;
     else
         return QWebNetworkInterface::defaultInterface();
+}
+
+QPixmap QWebPage::icon() const
+{
+    Image* image = iconDatabase()->iconForPageURL(url().toString(), IntSize(16, 16));
+    if (!image) {
+      return QPixmap();
+    }
+
+    QPixmap *icon = image->getPixmap();
+    Q_ASSERT(icon);
+    Q_ASSERT(!icon->isNull());
+    return *icon;
 }
 
 void QWebPage::setSettings(const QWebSettings &settings)

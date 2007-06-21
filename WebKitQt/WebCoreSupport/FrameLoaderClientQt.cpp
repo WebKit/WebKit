@@ -587,7 +587,9 @@ String FrameLoaderClientQt::userAgent(const KURL&)
 
 void FrameLoaderClientQt::dispatchDidReceiveIcon()
 {
-    notImplemented();
+    if (m_webFrame) {
+        emit m_webFrame->page()->iconLoaded();
+    }
 }
 
 void FrameLoaderClientQt::frameLoaderDestroyed()

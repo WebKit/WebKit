@@ -80,6 +80,9 @@ public:
     void setUserStyleSheetLocation(const QString &location);
     QString userStyleSheetLocation() const;
 
+    void setIconDatabaseEnabled(bool enabled, const QString &location = QString());
+    bool iconDatabaseEnabled() const;
+
 private:
     QSharedDataPointer<QWebSettingsPrivate> d;
 };
