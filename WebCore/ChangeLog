@@ -1,5 +1,11 @@
 2007-06-20  Adam Roben  <aroben@apple.com>
 
+        More speculative Qt/Gdk build fixes.
+
+        * WebCore.pro: Add new files.
+
+2007-06-20  Adam Roben  <aroben@apple.com>
+
         Speculative Qt/Gdk build fix.
 
         Added forwarding headers for JavaScriptCore. We may eventually move

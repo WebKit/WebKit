@@ -571,6 +571,7 @@ SOURCES += \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/History.cpp \
+    page/InspectorController.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
     page/Screen.cpp \
@@ -793,6 +794,7 @@ qt-port:SOURCES += \
     ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
     ../WebKitQt/WebCoreSupport/EditCommandQt.cpp \
     ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/InspectorClientQt.cpp \
     ../WebKitQt/Api/qwebframe.cpp \
     ../WebKitQt/Api/qwebnetworkinterface.cpp \
     ../WebKitQt/Api/qcookiejar.cpp \

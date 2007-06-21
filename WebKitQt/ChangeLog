@@ -1,3 +1,20 @@
+2007-06-20  Adam Roben  <aroben@apple.com>
+
+        More speculative Qt build fixes.
+
+        Add a stub implementation of InspectorClientQt.
+
+        * WebCoreSupport/InspectorClientQt.cpp: Added.
+        (WebCore::InspectorClientQt::inspectorDestroyed):
+        (WebCore::InspectorClientQt::createPage):
+        (WebCore::InspectorClientQt::showWindow):
+        (WebCore::InspectorClientQt::closeWindow):
+        (WebCore::InspectorClientQt::attachWindow):
+        (WebCore::InspectorClientQt::detachWindow):
+        (WebCore::InspectorClientQt::highlight):
+        (WebCore::InspectorClientQt::hideHighlight):
+        * WebCoreSupport/InspectorClientQt.h: Added.
+
 2007-06-19  George Staikos  <staikos@kde.org>
 
         Reviewed by Tim Hatcher.
