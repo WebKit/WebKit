@@ -1,3 +1,33 @@
+2007-06-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tim.
+        
+        <rdar://problem/5237524> 
+        REGRESSION: Keyboard commands don't work in a message window until you click inside the message
+        
+        When you open a message in its own window, Mail creates an empty 
+        WebView, makes that WebView firstResponder and then sets off a 
+        load inside that WebView.
+        
+        When we're asked to create the empty WebView, we put an empty 
+        WebHTMLView inside it (in r21367 we began creating a document 
+        for empty frames).  When Mail makes the WebView first responder 
+        we make that empty WebHTMLView firstResponder.  Then when the 
+        load finishes we create a new WebHTMLView and set it as the 
+        document view.  
+        
+        Inside _setDocumentView, if the old document view or one of its
+        descendants was the first responder, we'd makeFirstResponder:nil 
+        so that the window wouldn't be left with a firstResponder that 
+        was no longer inside of it.  This change fixes the bug by instead 
+        transferring firstResponder status to the new document view.
+        
+        We could also fix this by not allowing the WebHTMLView to become
+        firstResponder when it's in the provisional state mentioned above.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+
 2007-06-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele
