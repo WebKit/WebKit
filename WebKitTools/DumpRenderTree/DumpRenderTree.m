@@ -400,6 +400,45 @@ WebView *createWebView()
     return webView;
 }
 
+void testStringByEvaluatingJavaScriptFromString()
+{
+    // maps expected result <= JavaScript expression
+    NSDictionary *expressions = [NSDictionary dictionaryWithObjectsAndKeys:
+        @"", @"", 
+        @"", @"''", 
+        @"", @"new String()", 
+        @"", @"throw 1", 
+        @"", @"{ }", 
+        @"", @"[ ]", 
+        @"", @"//", 
+        @"", @"a.b.c", 
+        @"", @"(function() { throw 'error'; })()", 
+        @"0", @"new String('0')", 
+        @"0", @"0", 
+        @"0", @"'0'", 
+        @"true", @"true",
+        @"false", @"false",
+        @"null", @"null",
+        @"undefined", @"undefined",
+        nil
+    ];
+
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""];
+
+    NSEnumerator *enumerator = [expressions keyEnumerator];
+    id expression;
+    while ((expression = [enumerator nextObject])) {
+        NSString *expectedResult = [expressions objectForKey:expression];
+        NSString *result = [webView stringByEvaluatingJavaScriptFromString:expression];
+        assert([result isEqualToString:expectedResult]);
+    }
+
+    [webView close];
+    [webView release];
+    [pool release];
+}
+
 void dumpRenderTree(int argc, const char *argv[])
 {    
     [NSApplication sharedApplication];
@@ -498,6 +537,9 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     
+    // <rdar://problem/5222911>
+    testStringByEvaluatingJavaScriptFromString();
+
     if (threaded)
         startJavaScriptThreads();
     

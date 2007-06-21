@@ -1,3 +1,24 @@
+2007-06-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele Peterson, Oliver Hunt, Anders Carlsson.
+
+        Fixed <rdar://problem/5222911> Leopard9A446 : VitalSource Bookshelf 4.5: 
+        Crashes when you click on sign in (stringByEvaluatingJavaScriptFromString 
+        returning nil instead of "")
+
+        I'm basically rolling out the change for <rdar://problem/4782422> because
+        my testing shows that it was backwards.
+        
+        * html/HTMLElement.cpp:
+        (dumpInnerHTML): New debug-only function to work around gdb being 
+        perpetually suck-tastic.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        
+        Return "", not nil. This function never used to return nil, so let's not
+        start now. I've filed <rdar://problem/5283271> to cover the documentation bug,
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         Fix crash in fast/dom/dir-no-body.html
