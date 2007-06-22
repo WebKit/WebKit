@@ -1,3 +1,17 @@
+2007-06-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5272440> Adding To Do via Note received in e-mail adds newlines on delete
+        
+        Deletion inserts a placeholder after it removes full paragraphs if
+        one doesn't already exist.  The code that looked for a pre-existing
+        placeholder didn't work because of a bug in enclosingNodeOfType.
+
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingNodeOfType): We start looking at node->parentNode(),
+        but don't go above an editing root.
+
 2007-06-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej and Geoff.

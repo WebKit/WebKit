@@ -1,3 +1,19 @@
+2007-06-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5272440> Adding To Do via Note received in e-mail adds newlines when pressing return
+
+        Demonstrates bug:
+        * editing/deleting/5272440-expected.checksum: Added.
+        * editing/deleting/5272440-expected.png: Added.
+        * editing/deleting/5272440-expected.txt: Added.
+        * editing/deleting/5272440.html: Added.
+        
+        upstream() now works for the positions visually equivalent to [span, 0]
+        where span is an inline root editable element:
+        * editing/deleting/delete-mixed-editable-content-001-expected.txt:
+
 2007-06-22  Anders Carlsson  <andersca@apple.com>
 
         Add result.

@@ -579,6 +579,8 @@ Node* enclosingNodeOfType(Node* node, bool (*nodeIsOfType)(Node*))
         return 0;
         
     Node* root = highestEditableRoot(Position(node, 0));
+    if (root == node)
+        return 0;
     
     for (Node* n = node->parentNode(); n; n = n->parentNode()) {
         if ((*nodeIsOfType)(n))
