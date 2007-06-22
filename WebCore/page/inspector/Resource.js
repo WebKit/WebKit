@@ -443,6 +443,7 @@ WebInspector.Resource.prototype = {
     _shouldCompress: function()
     {
         return WebInspector.Resource.Type.isTextType(this.type)
+            && this.domain
             && !("Content-Encoding" in this.responseHeaders)
             && this.contentLength !== undefined
             && this.contentLength >= 512;

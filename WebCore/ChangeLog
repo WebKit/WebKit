@@ -1,3 +1,14 @@
+2007-06-21  Richard Connamacher  <rich@indieimage.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 14305: Web Inspector marks local files with server-side compression tip
+        http://bugs.webkit.org/show_bug.cgi?id=14305
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource._shouldCompress): Prevent server-side compression tip
+        from being given to local files
+
 2007-06-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.
