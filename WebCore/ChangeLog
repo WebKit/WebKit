@@ -1,3 +1,20 @@
+2007-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5288617>
+        Crash playing a very large QuickTime movie inside Safari.
+
+        Get rid of m_completeDeliveryData and use the loader's resource data instead. This reduces the memory usage for 
+        plug-ins which loads large files and use a transfer mode of NP_ASFILE or NP_ASFILEONLY.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::PluginStreamWin):
+        (WebCore::PluginStreamWin::~PluginStreamWin):
+        (WebCore::PluginStreamWin::didReceiveData):
+        (WebCore::PluginStreamWin::didFinishLoading):
+        * plugins/win/PluginStreamWin.h:
+
 2007-06-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver and Darin.
