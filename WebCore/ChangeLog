@@ -1,3 +1,19 @@
+2007-06-21  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Implement the default resources on Qt.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::BitmapImage::getPixmap):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-06-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

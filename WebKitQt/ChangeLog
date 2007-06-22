@@ -1,3 +1,17 @@
+2007-06-21  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Implement the default resources on Qt.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::icon):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setWebGraphic):
+        (QWebSettings::webGraphic):
+        (loadResourcePixmap):
+        * Api/qwebsettings.h:
+
 2007-06-15  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.

@@ -60,6 +60,7 @@ public:
     int defaultFontSize;
     int defaultFixedFontSize;
     QHash<int, bool> attributes;
+    QHash<int, QPixmap> graphics;
     QString userStyleSheetLocation;
 };
 
@@ -150,6 +151,19 @@ bool QWebSettings::iconDatabaseEnabled() const
     return WebCore::iconDatabase()->enabled() && WebCore::iconDatabase()->isOpen();
 }
 
+void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
+{
+    d->graphics[type] = graphic;
+}
+
+QPixmap QWebSettings::webGraphic(WebGraphic type) const
+{
+    if (d->graphics.contains(type))
+      return d->graphics[type];
+    else
+      return QPixmap();
+}
+
 QWebSettings::QWebSettings(const QWebSettings &other)
 {
     d = other.d;
@@ -187,3 +201,20 @@ bool QWebSettings::testAttribute(WebAttribute attr) const
     return d->attributes[attr];
 }
 
+QPixmap loadResourcePixmap(const char *name)
+{
+    const QWebSettings settings = QWebSettings::global();
+    const QString resource = name;
+
+    QPixmap pixmap;
+    if (resource == "missingImage")
+        pixmap = settings.webGraphic(QWebSettings::MissingImageGraphic);
+    else if (resource == "nullPlugin")
+        pixmap = settings.webGraphic(QWebSettings::MissingPluginGraphic);
+    else if (resource == "urlIcon")
+        pixmap = settings.webGraphic(QWebSettings::DefaultFaviconGraphic);
+    else if (resource == "textAreaResizeCorner")
+        pixmap = settings.webGraphic(QWebSettings::TextAreaResizeCornerGraphic);
+
+    return pixmap;
+}

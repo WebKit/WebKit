@@ -26,6 +26,7 @@
 #include <qwebkitglobal.h>
 
 #include <QString>
+#include <QPixmap>
 #include <QSharedDataPointer>
 
 class QWebPage;
@@ -52,6 +53,12 @@ public:
         PluginsEnabled,
         PrivateBrowsingEnabled,
         JavascriptCanOpenWindows
+    };
+    enum WebGraphic {
+        MissingImageGraphic,
+        MissingPluginGraphic,
+        DefaultFaviconGraphic,
+        TextAreaResizeCornerGraphic
     };
 
     QWebSettings();
@@ -82,6 +89,9 @@ public:
 
     void setIconDatabaseEnabled(bool enabled, const QString &location = QString());
     bool iconDatabaseEnabled() const;
+
+    void setWebGraphic(WebGraphic type, const QPixmap &graphic);
+    QPixmap webGraphic(WebGraphic type) const;
 
 private:
     QSharedDataPointer<QWebSettingsPrivate> d;

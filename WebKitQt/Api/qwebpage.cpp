@@ -348,13 +348,18 @@ QWebNetworkInterface *QWebPage::networkInterface() const
 QPixmap QWebPage::icon() const
 {
     Image* image = iconDatabase()->iconForPageURL(url().toString(), IntSize(16, 16));
+    if (!image || image->isNull()) {
+        image = iconDatabase()->defaultIcon(IntSize(16, 16));
+    }
+
     if (!image) {
-      return QPixmap();
+        return QPixmap();
     }
 
     QPixmap *icon = image->getPixmap();
-    Q_ASSERT(icon);
-    Q_ASSERT(!icon->isNull());
+    if (!icon) {
+        return QPixmap();
+    }
     return *icon;
 }
 

@@ -128,8 +128,6 @@ void FrameView::updateBorder() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-Vector<char> loadResourceIntoArray(const char*) { return Vector<char>(); }
-
 namespace WebCore {
 
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }

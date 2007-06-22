@@ -51,7 +51,7 @@ typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 #if PLATFORM(QT)
-class QPixmap;
+#include <QPixmap>
 #endif
 
 namespace WebCore {
