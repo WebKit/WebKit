@@ -53,10 +53,37 @@ typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, voi
 
 #define URL_BYTES_BUFFER_LENGTH 2048
 
-#define DIVISION_SLASH 0x2215
-
 static pthread_once_t IDNScriptWhiteListFileRead = PTHREAD_ONCE_INIT;
 static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
+
+static inline BOOL isSlashOrPeriodLookalike(int charCode)
+{
+// FIXME: Move this code down into WebCore so it can be shared with other platforms.
+/*
+    There are a few characters that look like they should belong in this list, 
+    but the IDN functions in ICU convert them to the plain ASCII equivalent
+    
+    Fullwidth Solidus   0xFF0F
+    One Dot Leader      0x2024
+    Small Full Stop     0xFE52
+    Fullwidth Full Stop 0xFF0E
+*/
+    switch (charCode) {
+        case 0x2215: /* Division Slash */
+        case 0x2044: /* Fraction Slash */
+        case 0x2571: /* Box Drawings Light Diagonal Upper Right To Lower Left */
+        case 0x0337: /* Combining Short Solidus Overlay */
+        case 0x0338: /* Combining Long Solidus Overlay */
+        case 0x29F8: /* Big Solidus */
+        case 0x0660: /* Arabic Indic Digit Zero */
+        case 0x06F0: /* Extended Arabic Indic Digit Zero */
+        case 0x05B4: /* Hebrew Point Hiriq */
+        case 0x05BC: /* Hebrew Point Dagesh Or Mapiq */
+            return YES;
+        default:
+            return NO;
+    }
+}
 
 static char hexDigit(int i)
 {
@@ -855,8 +882,8 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
         if (!(IDNScriptWhiteList[index] & mask)) {
             return NO;
         }
-        // Always disallow division slash since this looks like a forward slash.
-        if (c == DIVISION_SLASH)
+
+        if (isSlashOrPeriodLookalike(c))
             return NO;
     }
     return YES;

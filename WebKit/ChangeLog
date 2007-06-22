@@ -1,3 +1,13 @@
+2007-06-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff and Darin.
+
+        Fix for: <rdar://problem/5239236> Other slash characters should not be permitted as part of a domain name
+
+        * Misc/WebNSURLExtras.m:
+        (isSlashOrPeriodLookalike):
+        (allCharactersInIDNScriptWhiteList):
+
 2007-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Antti.
