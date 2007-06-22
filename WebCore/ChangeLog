@@ -1,3 +1,20 @@
+2007-06-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver and Darin.
+
+        Fix for <rdar://problem/5266999> Loading page from MangleMe fuzz 
+        tester crashes in RenderTableRow::addChild (giant ROWSPAN)
+
+        We already have code that tries to prevent allocating too-large 
+        rowspans. The rowspan in this test, however, was small enough that 
+        we thought it was okay in that code, even though clearly it was 
+        still too large. I did a bunch of testing in Firefox, and it seems 
+        that they set a hard limit on the maximum rowspan right in the DOM 
+        -- 8k. So that is what this patch implements. 
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseMappedAttribute):
+
 2007-06-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

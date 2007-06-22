@@ -32,7 +32,13 @@
 #include "HTMLTableElement.h"
 #include "RenderTableCell.h"
 
+using std::max;
+using std::min;
+
 namespace WebCore {
+
+// Clamp rowspan at 8k to match Firefox.
+static const int maxRowspan = 8190;
 
 using namespace HTMLNames;
 
@@ -82,12 +88,12 @@ void HTMLTableCellElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == rowspanAttr) {
         rSpan = !attr->isNull() ? attr->value().toInt() : 1;
-        if (rSpan < 1) rSpan = 1;
+        rSpan = max(1, min(rSpan, maxRowspan));
         if (renderer() && renderer()->isTableCell())
             static_cast<RenderTableCell*>(renderer())->updateFromElement();
     } else if (attr->name() == colspanAttr) {
         cSpan = !attr->isNull() ? attr->value().toInt() : 1;
-        if (cSpan < 1) cSpan = 1;
+        cSpan = max(1, cSpan);
         if (renderer() && renderer()->isTableCell())
             static_cast<RenderTableCell*>(renderer())->updateFromElement();
     } else if (attr->name() == nowrapAttr) {
