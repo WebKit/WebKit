@@ -56,24 +56,27 @@ namespace WebCore {
 
 using namespace EventNames;
 
-static NSEvent *currentEvent;
+static RetainPtr<NSEvent>& currentEvent()
+{
+    static RetainPtr<NSEvent> event;
+    return event;
+}
 
 NSEvent *EventHandler::currentNSEvent()
 {
-    return currentEvent;
+    return currentEvent().get();
 }
 
 bool EventHandler::wheelEvent(NSEvent *event)
 {
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
 
     PlatformWheelEvent wheelEvent(event);
     handleWheelEvent(wheelEvent);
 
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
 
     return wheelEvent.isAccepted();
 }
@@ -132,14 +135,13 @@ bool EventHandler::keyEvent(NSEvent *event)
 
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
 
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
 
     result = keyEvent(PlatformKeyboardEvent(event));
     
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
 
     return result;
 
@@ -189,9 +191,9 @@ static bool lastEventIsMouseUp()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-    if (currentEvent != currentEventAfterHandlingMouseDown &&
+    if (currentEvent() != currentEventAfterHandlingMouseDown &&
         [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp &&
-        [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent timestamp])
+        [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent().get() timestamp])
             return true;
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -212,7 +214,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     NSView *nodeView = widget->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
-    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent().get() locationInWindow] fromView:nil]];
     if (!view)
         // We probably hit the border of a RenderWidget
         return true;
@@ -241,7 +243,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     } else {
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
-        if ([currentEvent clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey]) {
+        if ([currentEvent().get() clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey]) {
             [m_frame->bridge() makeFirstResponder:view];
         }
     }
@@ -259,7 +261,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
-    [view mouseDown:currentEvent];
+    [view mouseDown:currentEvent().get()];
     m_sendingEventToSubview = false;
     
     if (!wasDeferringLoading)
@@ -333,7 +335,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     if (!m_mouseDownWasInSubframe) {
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [view mouseDragged:currentEvent];
+        [view mouseDragged:currentEvent().get()];
         END_BLOCK_OBJC_EXCEPTIONS;
         m_sendingEventToSubview = false;
     }
@@ -359,7 +361,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     if (!m_mouseDownWasInSubframe) {
         m_sendingEventToSubview = true;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [view mouseUp:currentEvent];
+        [view mouseUp:currentEvent().get()];
         END_BLOCK_OBJC_EXCEPTIONS;
         m_sendingEventToSubview = false;
     }
@@ -371,9 +373,9 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    switch ([currentEvent type]) {
+    switch ([currentEvent().get() type]) {
         case NSMouseMoved:
-            subframe->eventHandler()->mouseMoved(currentEvent);
+            subframe->eventHandler()->mouseMoved(currentEvent().get());
             return true;
         
         case NSLeftMouseDown: {
@@ -399,7 +401,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
                 return false;
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
-            [view mouseUp:currentEvent];
+            [view mouseUp:currentEvent().get()];
             m_sendingEventToSubview = false;
             return true;
         }
@@ -411,7 +413,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
                 return false;
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
-            [view mouseDragged:currentEvent];
+            [view mouseDragged:currentEvent().get()];
             m_sendingEventToSubview = false;
             return true;
         }
@@ -427,19 +429,19 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
         
-    if ([currentEvent type] != NSScrollWheel || m_sendingEventToSubview || !widget) 
+    if ([currentEvent().get() type] != NSScrollWheel || m_sendingEventToSubview || !widget) 
         return false;
 
     NSView *nodeView = widget->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
-    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent().get() locationInWindow] fromView:nil]];
     if (!view)
         // We probably hit the border of a RenderWidget
         return true;
 
     m_sendingEventToSubview = true;
-    [view scrollWheel:currentEvent];
+    [view scrollWheel:currentEvent().get()];
     m_sendingEventToSubview = false;
     return true;
             
@@ -460,15 +462,14 @@ void EventHandler::mouseDown(NSEvent *event)
     m_mouseDownView = nil;
     dragState().m_dragSrc = 0;
     
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
     m_mouseDown = PlatformMouseEvent(event);
     
     handleMousePressEvent(event);
     
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -481,14 +482,13 @@ void EventHandler::mouseDragged(NSEvent *event)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
 
     handleMouseMoveEvent(event);
     
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -501,8 +501,8 @@ void EventHandler::mouseUp(NSEvent *event)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
 
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
@@ -517,9 +517,8 @@ void EventHandler::mouseUp(NSEvent *event)
     else
         handleMouseReleaseEvent(event);
     
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
     
     m_mouseDownView = nil;
 
@@ -595,14 +594,13 @@ void EventHandler::mouseMoved(NSEvent *event)
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSEvent *oldCurrentEvent = currentEvent;
-    currentEvent = HardRetain(event);
+    RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
+    currentEvent() = event;
     
     handleMouseMoveEvent(event);
     
-    ASSERT(currentEvent == event);
-    HardRelease(event);
-    currentEvent = oldCurrentEvent;
+    ASSERT(currentEvent() == event);
+    currentEvent() = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

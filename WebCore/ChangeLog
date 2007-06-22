@@ -1,3 +1,27 @@
+2007-06-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Use RetainPtr for holding currentEvent.  This removes explicit HardRetain/Release calls
+        and makes reference handling simpler in advance of IME refactoring.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::currentEvent):
+        (WebCore::EventHandler::currentNSEvent):
+        (WebCore::EventHandler::wheelEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseDragged):
+        (WebCore::EventHandler::mouseUp):
+        (WebCore::EventHandler::mouseMoved):
+
 2007-06-21  George Staikos  <staikos@kde.org>
 
         Reviewed by George & Marius.
