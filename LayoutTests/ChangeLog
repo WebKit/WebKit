@@ -1,3 +1,15 @@
+2007-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5228168> Leopard regression test failures: fast/applescript
+        
+        New results to match the DumpRenderTree changes.
+
+        * fast/AppleScript/001-expected.txt:
+        * fast/AppleScript/array-expected.txt:
+        * fast/AppleScript/date-expected.txt:
+
 2007-06-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.

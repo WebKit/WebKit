@@ -62,6 +62,9 @@ static id convertAEDescToObject(NSAppleEventDescriptor *aeDesc)
 
     DescType descType = [aeDesc descriptorType];
     switch (descType) {
+        case typeUnicodeText:
+            value = [NSString stringWithFormat:@"\"%@\"", [aeDesc stringValue]];
+            break;
         case typeLongDateTime:
             if ([[aeDesc data] length] == sizeof(LongDateTime)) {
                 LongDateTime d;
@@ -70,13 +73,31 @@ static id convertAEDescToObject(NSAppleEventDescriptor *aeDesc)
             }
             break;
         case typeAEList:
-            value = [NSMutableArray array];
+            value = [NSMutableString stringWithString:@"("];
             int numItems = [aeDesc numberOfItems];
-            for (int i = 0; i < numItems; ++i)
-                [(NSMutableArray*)value addObject:convertAEDescToObject([aeDesc descriptorAtIndex:(i + 1)])];
+            for (int i = 0; i < numItems; ++i) {
+                if (i != 0)
+                    [(NSMutableString*)value appendString:@", "];
+                id obj = convertAEDescToObject([aeDesc descriptorAtIndex:(i + 1)]);
+                [(NSMutableString*)value appendString:[obj description]];
+            }
+            [(NSMutableString*)value appendString:@")"];
             break;
+        case typeType: {
+            OSType type = [aeDesc typeCodeValue];
+
+            char typeStr[5];
+            typeStr[0] = type >> 24;
+            typeStr[1] = type >> 16;
+            typeStr[2] = type >> 8;
+            typeStr[3] = type;
+            typeStr[4] = 0;
+
+            value = [NSString stringWithFormat:@"'%s'", typeStr];
+            break;
+        }
     }
- 
+
     if (!value)
         value = [aeDesc stringValue];
     if (!value)

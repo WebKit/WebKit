@@ -1,3 +1,21 @@
+2007-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5228168> Leopard regression test failures: fast/applescript
+
+        There were some changes in Leopard that made our test output inconsistent with Tiger.
+
+        NSAppleEventDescriptor no longer returns a stringValue for typeType descriptors
+        on Leopard, so output our own readable string for typeType descriptors.
+
+        NSArray's description also changed on Leopard to output more whitespace, so
+        make our own string representation for typeAEList descriptors. This requires
+        a special case typeUnicodeText too, so the output is a quoted string.
+
+        * DumpRenderTree/AppleScriptController.m:
+        (convertAEDescToObject):
+
 2007-06-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
