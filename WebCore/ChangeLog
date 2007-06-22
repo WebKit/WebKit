@@ -2,6 +2,14 @@
 
         Reviewed by Darin.
 
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::didFinishLoading):
+        No need to fetch the size from resourceData.
+
+2007-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         <rdar://problem/5288617>
         Crash playing a very large QuickTime movie inside Safari.
 

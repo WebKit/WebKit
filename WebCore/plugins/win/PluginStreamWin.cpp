@@ -360,7 +360,7 @@ void PluginStreamWin::didFinishLoading(SubresourceLoader* loader)
         bool retval = true;
 
         if (dataSize)
-            retval = WriteFile(tempFile, resourceData->data(), resourceData->size(), &written, 0);
+            retval = WriteFile(tempFile, resourceData->data(), dataSize, &written, 0);
         CloseHandle(tempFile);
 
         if (!retval || written != dataSize) {
