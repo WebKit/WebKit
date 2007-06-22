@@ -51,10 +51,10 @@ Loader::~Loader()
     deleteAllValues(m_requestsLoading);
 }
 
-void Loader::load(DocLoader* dl, CachedResource* object, bool incremental, bool skipCanLoadCheck)
+void Loader::load(DocLoader* dl, CachedResource* object, bool incremental, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
     ASSERT(dl);
-    Request* req = new Request(dl, object, incremental, skipCanLoadCheck);
+    Request* req = new Request(dl, object, incremental, skipCanLoadCheck, sendResourceLoadCallbacks);
     m_requestsPending.append(req);
     dl->incrementRequestCount();
     servePendingRequests();
@@ -82,7 +82,7 @@ void Loader::servePendingRequests()
             domain = static_cast<HTMLDocument*>(dl->doc())->domain().deprecatedString();
         
         RefPtr<SubresourceLoader> loader = SubresourceLoader::create(dl->doc()->frame(),
-            this, request, req->shouldSkipCanLoadCheck());
+            this, request, req->shouldSkipCanLoadCheck(), req->sendResourceLoadCallbacks());
 
         if (loader) {
             m_requestsLoading.add(loader.release(), req);

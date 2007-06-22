@@ -91,7 +91,7 @@ public:
     void decrementRequestCount();
     int requestCount();
 private:
-    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false);
+    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true);
 
     void checkForReload(const KURL&);
     void checkCacheObjectStatus(CachedResource*);

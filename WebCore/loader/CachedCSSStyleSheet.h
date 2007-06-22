@@ -39,7 +39,7 @@ namespace WebCore {
 
     class CachedCSSStyleSheet : public CachedResource {
     public:
-        CachedCSSStyleSheet(DocLoader*, const String& URL, const String& charset, bool skipCanLoadCheck = false);
+        CachedCSSStyleSheet(DocLoader*, const String& URL, const String& charset, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true);
         virtual ~CachedCSSStyleSheet();
 
         const String& sheet() const { return m_sheet; }

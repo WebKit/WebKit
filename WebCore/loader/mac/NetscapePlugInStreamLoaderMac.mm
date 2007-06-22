@@ -39,7 +39,7 @@
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, id <WebPlugInStreamLoaderDelegate> stream)
-    : ResourceLoader(frame)
+    : ResourceLoader(frame, true)
     , m_stream(stream)
 {
 }

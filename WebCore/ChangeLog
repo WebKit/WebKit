@@ -1,3 +1,57 @@
+2007-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej and Geoff.
+
+        <rdar://problem/5244734>
+        WebKit shouldn't send delegate resource load methods for the user stylesheet (doing so causes assertions in Safari)
+        
+        Add a sendResourceLoadCallbacks argument to the ResourceLoader and only send resource load callbacks if it's true. Make it so that
+        loading the user style sheet creates a resource loader with sendResourceLoadCallbacks set to false (done by adding a sendResourceLoadCallbacks 
+        argument to a bunch of classes).
+        
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::sendResourceLoadCallbacks):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestCSSStyleSheet):
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::checkCacheObjectStatus):
+        * loader/DocLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        * loader/Request.cpp:
+        (WebCore::Request::Request):
+        * loader/Request.h:
+        (WebCore::Request::sendResourceLoadCallbacks):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::didCancel):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::sendResourceLoadCallbacks):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        * loader/loader.h:
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+
 2007-06-21  Richard Connamacher  <rich@indieimage.com>
 
         Reviewed by Tim Hatcher.

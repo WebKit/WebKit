@@ -61,7 +61,7 @@ public:
         Cached       // regular case
     };
 
-    CachedResource(const String& URL, Type, bool forCache = true);
+    CachedResource(const String& URL, Type, bool forCache = true, bool sendResourceLoadCallbacks = false);
     virtual ~CachedResource();
 
     virtual void setEncoding(const String&) { }
@@ -127,7 +127,8 @@ public:
 
     bool errorOccurred() const { return m_errorOccurred; }
     bool treatAsLocal() const { return m_shouldTreatAsLocal; }
-
+    bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
+    
     virtual void destroyDecodedData() {};
 
 protected:
@@ -152,6 +153,7 @@ private:
     unsigned m_accessCount;
     unsigned m_liveAccessCount;
     
+    bool m_sendResourceLoadCallbacks;
 protected:
     bool m_inCache;
     bool m_loading;

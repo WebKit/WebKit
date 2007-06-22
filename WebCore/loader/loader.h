@@ -37,7 +37,7 @@ namespace WebCore {
         Loader();
         ~Loader();
 
-        void load(DocLoader*, CachedResource*, bool incremental = true, bool skipCanLoadCheck = false);
+        void load(DocLoader*, CachedResource*, bool incremental = true, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true);
 
         void cancelRequests(DocLoader*);
 

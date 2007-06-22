@@ -52,10 +52,11 @@ PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
     return 0;
 }
 
-ResourceLoader::ResourceLoader(Frame* frame)
+ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks)
     : m_reachedTerminalState(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
+    , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
     , m_frame(frame)
     , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
@@ -171,12 +172,15 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         
     ASSERT(!m_reachedTerminalState);
 
-    if (!m_identifier) {
-        m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
-        frameLoader()->assignIdentifierToInitialRequest(m_identifier, request);
-    }
+    if (m_sendResourceLoadCallbacks) {
+        if (!m_identifier) {
+            m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
+            frameLoader()->assignIdentifierToInitialRequest(m_identifier, request);
+        }
 
-    frameLoader()->willSendRequest(this, request, redirectResponse);
+        frameLoader()->willSendRequest(this, request, redirectResponse);
+    }
+    
     m_request = request;
 }
 
@@ -190,7 +194,8 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     m_response = r;
 
-    frameLoader()->didReceiveResponse(this, m_response);
+    if (m_sendResourceLoadCallbacks)
+        frameLoader()->didReceiveResponse(this, m_response);
 }
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
@@ -206,7 +211,7 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
     RefPtr<ResourceLoader> protector(this);
 
     addData(data, length, allAtOnce);
-    if (m_frame)
+    if (m_sendResourceLoadCallbacks && m_frame)
         frameLoader()->didReceiveData(this, data, length, lengthReceived);
 }
 
@@ -237,7 +242,8 @@ void ResourceLoader::didFinishLoadingOnePart()
     if (m_calledDidFinishLoad)
         return;
     m_calledDidFinishLoad = true;
-    frameLoader()->didFinishLoad(this);
+    if (m_sendResourceLoadCallbacks)
+        frameLoader()->didFinishLoad(this);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -250,7 +256,7 @@ void ResourceLoader::didFail(const ResourceError& error)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    if (!m_calledDidFinishLoad)
+    if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad)
         frameLoader()->didFailToLoad(this, error);
 
     releaseResources();
@@ -281,7 +287,7 @@ void ResourceLoader::didCancel(const ResourceError& error)
         m_handle->cancel();
         m_handle = 0;
     }
-    if (!m_calledDidFinishLoad)
+    if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad)
         frameLoader()->didFailToLoad(this, error);
 
     releaseResources();

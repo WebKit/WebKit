@@ -1,3 +1,13 @@
+2007-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5244734>
+        WebKit shouldn't send delegate resource load methods for the user stylesheet (doing so causes assertions in Safari)
+
+        * fast/loader/resources/user-style-sheet.css: Added.
+        * fast/loader/user-style-sheet-resource-load-callbacks.html: Added.
+
 2007-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.

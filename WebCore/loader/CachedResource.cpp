@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
-CachedResource::CachedResource(const String& URL, Type type, bool forCache)
-    : m_inCache(forCache)
+CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool sendResourceLoadCallbacks)
+    : m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
+    , m_inCache(forCache)
 {
     m_url = URL;
     m_type = type;

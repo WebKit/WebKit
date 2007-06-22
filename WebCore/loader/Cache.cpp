@@ -56,14 +56,14 @@ Cache::Cache()
 {
 }
 
-static CachedResource* createResource(CachedResource::Type type, DocLoader* docLoader, const KURL& url, const String* charset, bool skipCanLoadCheck = false)
+static CachedResource* createResource(CachedResource::Type type, DocLoader* docLoader, const KURL& url, const String* charset, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true)
 {
     switch (type) {
     case CachedResource::ImageResource:
         // User agent images need to null check the docloader.  No other resources need to.
         return new CachedImage(docLoader, url.url(), true /* for cache */);
     case CachedResource::CSSStyleSheet:
-        return new CachedCSSStyleSheet(docLoader, url.url(), *charset, skipCanLoadCheck);
+        return new CachedCSSStyleSheet(docLoader, url.url(), *charset, skipCanLoadCheck, sendResourceLoadCallbacks);
     case CachedResource::Script:
         return new CachedScript(docLoader, url.url(), *charset);
 #if ENABLE(XSLT)
@@ -81,7 +81,7 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
     return 0;
 }
 
-CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, const String* charset, bool skipCanLoadCheck)
+CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
     // Look up the resource in our map.
     CachedResource* resource = m_resources.get(url.url());
@@ -104,7 +104,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         }
 
         // The resource does not exist. Create it.
-        resource = createResource(type, docLoader, url, charset, skipCanLoadCheck);
+        resource = createResource(type, docLoader, url, charset, skipCanLoadCheck, sendResourceLoadCallbacks);
         ASSERT(resource);
         ASSERT(resource->inCache());
         if (!disabled())

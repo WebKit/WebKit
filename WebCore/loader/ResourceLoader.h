@@ -103,9 +103,10 @@ namespace WebCore {
 #endif
 
         ResourceHandle* handle() const { return m_handle.get(); }
+        bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
 
     protected:
-        ResourceLoader(Frame*);
+        ResourceLoader(Frame*, bool sendResourceLoadCallbacks);
 
         virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart();
@@ -125,6 +126,7 @@ namespace WebCore {
         bool m_cancelled;
         bool m_calledDidFinishLoad;
 
+        bool m_sendResourceLoadCallbacks;
 protected:
         // FIXME: Once everything is made cross platform, these can be private instead of protected
         RefPtr<Frame> m_frame;

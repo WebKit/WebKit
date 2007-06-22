@@ -57,8 +57,8 @@ unsigned SubresourceLoaderCounter::count = 0;
 static SubresourceLoaderCounter subresourceLoaderCounter;
 #endif
 
-SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client)
-    : ResourceLoader(frame)
+SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, bool sendResourceLoadCallbacks)
+    : ResourceLoader(frame, sendResourceLoadCallbacks)
     , m_client(client)
     , m_loadingMultipartContent(false)
 {
@@ -82,7 +82,7 @@ bool SubresourceLoader::load(const ResourceRequest& r)
     return ResourceLoader::load(r);
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, bool skipCanLoadCheck)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
     if (!frame)
         return 0;
@@ -118,7 +118,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     fl->addExtraFieldsToRequest(newRequest, false, false);
 
-    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
+    RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client, sendResourceLoadCallbacks));
     if (!subloader->load(newRequest))
         return 0;
 

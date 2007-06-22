@@ -28,12 +28,13 @@
 
 namespace WebCore {
 
-Request::Request(DocLoader* docLoader, CachedResource* object, bool incremental, bool shouldSkipCanLoadCheck)
+Request::Request(DocLoader* docLoader, CachedResource* object, bool incremental, bool shouldSkipCanLoadCheck, bool sendResourceLoadCallbacks)
     : m_object(object)
     , m_docLoader(docLoader)
     , m_incremental(incremental)
     , m_multipart(false)
     , m_shouldSkipCanLoadCheck(shouldSkipCanLoadCheck)
+    , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
 {
     m_object->setRequest(this);
 }
