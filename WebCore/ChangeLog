@@ -1,3 +1,11 @@
+2007-06-21  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Timothy.
+
+        Stop shift+scroll wheel performing a horizontal scroll in Web Inspector
+
+        * page/inspector/inspector.css: Set body margin to 0
+
 2007-06-21  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.

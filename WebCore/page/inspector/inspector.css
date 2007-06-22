@@ -32,6 +32,7 @@ body {
     width: 100%;
     overflow: hidden;
     font-family: Lucida Grande, sans-serif;
+    margin: 0;
 }
 
 iframe, a img {
