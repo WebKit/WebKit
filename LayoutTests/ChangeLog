@@ -1,5 +1,11 @@
 2007-06-22  Anders Carlsson  <andersca@apple.com>
 
+        Add result.
+        
+        * fast/loader/user-style-sheet-resource-load-callbacks-expected.txt: Added.
+
+2007-06-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/5244734>
