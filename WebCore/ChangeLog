@@ -1,3 +1,54 @@
+2007-06-21  George Staikos  <staikos@kde.org>
+
+        Reviewed by George & Marius.
+
+        Patch by me, revision by Marius, minor rev by me.  Adds rendered
+        and stylable scrollbars.
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/Widget.h:
+        * platform/qt/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::isWidget):
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::~PlatformScrollbar):
+        (WebCore::PlatformScrollbar::updateThumbPosition):
+        (WebCore::PlatformScrollbar::updateThumbProportion):
+        (WebCore::PlatformScrollbar::width):
+        (WebCore::PlatformScrollbar::height):
+        (WebCore::PlatformScrollbar::setRect):
+        (WebCore::PlatformScrollbar::isEnabled):
+        (WebCore::PlatformScrollbar::setEnabled):
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::thumbPosition):
+        (WebCore::PlatformScrollbar::thumbLength):
+        (WebCore::PlatformScrollbar::trackLength):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseOutEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        (WebCore::PlatformScrollbar::startTimerIfNeeded):
+        (WebCore::PlatformScrollbar::stopTimerIfNeeded):
+        (WebCore::PlatformScrollbar::autoscrollPressedPart):
+        (WebCore::PlatformScrollbar::autoscrollTimerFired):
+        (WebCore::PlatformScrollbar::pressedPartScrollDirection):
+        (WebCore::PlatformScrollbar::pressedPartScrollGranularity):
+        (WebCore::PlatformScrollbar::thumbUnderMouse):
+        (WebCore::PlatformScrollbar::horizontalScrollbarHeight):
+        (WebCore::PlatformScrollbar::verticalScrollbarWidth):
+        (WebCore::PlatformScrollbar::windowClipRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::setParent):
+        (WebCore::Widget::parent):
+
 2007-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

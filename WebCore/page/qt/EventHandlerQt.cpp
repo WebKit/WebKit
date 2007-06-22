@@ -142,8 +142,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& event, PlatformScrollbar* scrollbar)
 {
-    notImplemented();
-    return false;
+    return scrollbar->handleMousePressEvent(event.event());
 }
 
 }

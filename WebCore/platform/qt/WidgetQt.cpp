@@ -30,12 +30,13 @@
 
 #include "config.h"
 
-#include "Font.h"
-#include "Widget.h"
 #include "Cursor.h"
+#include "Font.h"
+#include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RenderObject.h"
-#include "GraphicsContext.h"
+#include "ScrollView.h"
+#include "Widget.h"
 #include "WidgetClient.h"
 #include "NotImplemented.h"
 
@@ -47,7 +48,7 @@ namespace WebCore {
 
 struct WidgetPrivate
 {
-    WidgetPrivate() : m_client(0), m_widget(0), m_scrollArea(0) { }
+    WidgetPrivate() : m_client(0), m_widget(0), m_scrollArea(0), m_parentScrollView(0) { }
     ~WidgetPrivate() { delete m_widget; }
 
     QWidget* canvas() const {
@@ -82,8 +83,9 @@ struct WidgetPrivate
 
     WidgetClient* m_client;
 
-    QWidget*     m_widget;
+    QWidget* m_widget;
     QAbstractScrollArea* m_scrollArea;
+    ScrollView *m_parentScrollView;
 };
 
 Widget::Widget()
@@ -144,7 +146,6 @@ void Widget::setQWidget(QWidget* child)
 {
     data->m_widget = child;
     data->m_scrollArea = qobject_cast<QAbstractScrollArea*>(child);
-
 }
 
 QWidget* Widget::qwidget() const
@@ -192,17 +193,35 @@ void Widget::invalidate()
 {
     if (data->m_widget)
         data->m_widget->update();
+    else if (canvas())
+        canvas()->update();
+    else if (parent())
+        parent()->update();
 }
 
 void Widget::invalidateRect(const IntRect& r)
 {
     if (data->m_widget)
         data->m_widget->update(r);
+    else if (canvas())
+        canvas()->update(r);
+    else if (parent())
+        parent()->updateContents(r);
 }
 
 void Widget::removeFromParent()
 {
     notImplemented();
+}
+
+void Widget::setParent(ScrollView* sv)
+{
+    data->m_parentScrollView = sv;
+}
+
+ScrollView* Widget::parent() const
+{
+    return data->m_parentScrollView;
 }
 
 }

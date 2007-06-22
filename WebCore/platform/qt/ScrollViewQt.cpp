@@ -286,11 +286,14 @@ void ScrollView::setStaticBackground(bool flag)
 void ScrollView::addChild(Widget* child)
 {
     QWidget* w = child->qwidget();
-    w->setParent(m_area->viewport());
+    if (w)
+        w->setParent(m_area->viewport());
+    child->setParent(this);
 }
 
 void ScrollView::removeChild(Widget* child)
 {
+    child->setParent(0);
     child->hide();
 }
 
