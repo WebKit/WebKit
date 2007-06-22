@@ -1,3 +1,12 @@
+2007-06-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5266928> REGRESSION: crash/assert failure beneath RenderFrameSet::layOutAxis when loading
+
+        * fast/frames/frame-set-whitespace-attributes-expected.txt: Added.
+        * fast/frames/frame-set-whitespace-attributes.html: Added.
+
 2007-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

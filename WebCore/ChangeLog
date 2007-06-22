@@ -1,3 +1,13 @@
+2007-06-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5266928> REGRESSION: crash/assert failure beneath RenderFrameSet::layOutAxis when loading
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toLengthArray): Simplify whitespace before checking for an empty string.  This avoids returning
+        a length of zero when the string is collapsed to empty by whitespace simplification.
+
 2007-06-21  Dave Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5286978>, large font sizes crash Windows.
