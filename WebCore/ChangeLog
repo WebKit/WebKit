@@ -1,3 +1,15 @@
+2007-06-21  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5286978>, large font sizes crash Windows.
+        
+        Limit the maximum font size to 1,000,000 to avoid crashes and issues with platforms that
+        start failing to do anything useful if the font size is too big.
+        
+        Reviewed by olliej
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        
 2007-06-21  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Timothy.
