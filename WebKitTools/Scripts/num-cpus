@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Win32API::Registry 0.21 qw( :ALL );
+
+
+my $key;
+my $i = 0;
+while (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\$i", 0, KEY_READ, $key)) {
+    $i++;
+    RegCloseKey($key);
+}
+
+print "$i\n"; 

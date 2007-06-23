@@ -1,3 +1,11 @@
+2007-06-23  Adam Roben  <aroben@apple.com>
+
+        Land num-cpus for the Windows build.
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/num-cpus: Added.
+
 2007-06-22  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Adam Roben.

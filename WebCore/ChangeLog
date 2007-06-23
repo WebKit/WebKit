@@ -1,3 +1,12 @@
+2007-06-23  Adam Roben  <aroben@apple.com>
+
+        Silence a build warning about not finding `num-cpus`
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.vcproj/build-generated-files.sh: Look for num-cpus in its new
+        location.
+
 2007-06-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

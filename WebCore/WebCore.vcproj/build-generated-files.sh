@@ -1,12 +1,8 @@
 #!/usr/bin/bash
 
-NUMCPUS=`../../../Tools/Scripts/num-cpus`
+NUMCPUS=`../../WebKitTools/Scripts/num-cpus`
 
-if [ -e "../../../../OpenSource/WebCore" ]; then
-    XSRCROOT="`pwd`/../../../../OpenSource/WebCore"
-else
-    XSRCROOT="`pwd`/.."
-fi
+XSRCROOT="`pwd`/.."
 XSRCROOT=`realpath "$XSRCROOT"`
 # Do a little dance to get the path into 8.3 form to make it safe for gnu make
 # http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
