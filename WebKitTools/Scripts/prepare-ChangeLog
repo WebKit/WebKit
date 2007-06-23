@@ -79,18 +79,25 @@ sub processPaths(\@);
 sub isGit();
 sub isSVN();
 
+my $gitCommit = 0;
+my $gitReviewer = "";
 my $openChangeLogs = 0;
 my $showHelp = 0;
-my $updateChangeLogs = 1;
 my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
+my $updateChangeLogs = 1;
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
+               "git-commit:s" => \$gitCommit,
+               "git-reviewer:s" => \$gitReviewer,
                "help|h!" => \$showHelp,
                "open|o!" => \$openChangeLogs,
                "update!" => \$updateChangeLogs);
 if (!$parseOptionsResult || $showHelp) {
-    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [svndir1 [svndir2 ...]]\n";
+    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
     print STDERR "  -d|--diff      Spew diff to stdout when running\n";
+    print STDERR "  --git-commit   Populate the ChangeLogs from the specified git commit\n";
+    print STDERR "  --git-reviewer When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
+    print STDERR "                 This option is useful when the git commit lacks a Signed-Off-By: line\n";
     print STDERR "  -h|--help      Show this help message\n";
     print STDERR "  -o|--open      Open ChangeLogs in an editor when done\n";
     print STDERR "  --[no-]update  Update ChangeLogs from svn before adding entry (default: update)\n";
@@ -209,6 +216,11 @@ my $email_address = $ENV{CHANGE_LOG_EMAIL_ADDRESS}
   || $ENV{EMAIL_ADDRESS}
   || "set EMAIL_ADDRESS environment variable";
 
+if ($gitCommit) {
+    $name = `$GIT log --max-count=1 --pretty=\"format:%an\" \"$gitCommit\"`;
+    $email_address = `$GIT log --max-count=1 --pretty=\"format:%ae\" \"$gitCommit\"`;
+}
+
 # Remove trailing parenthesized notes from user name (bit of hack).
 $name =~ s/\(.*?\)\s*$//g;
 
@@ -257,9 +269,51 @@ foreach my $prefix (sort keys %files) {
     close OLD_CHANGE_LOG;
     open CHANGE_LOG, "> ${prefix}ChangeLog" or die "Could not write ${prefix}ChangeLog\n.";
     print CHANGE_LOG "$date  $name  <$email_address>\n\n";
-    print CHANGE_LOG "        Reviewed by NOBODY (OO" . "PS!).\n\n";
-    if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $changedLayoutTests;
+
+    if ($gitCommit) {
+        my $gitLog = `$GIT cat-file commit \"$gitCommit\"`;
+        my @lines = split(/\n/, $gitLog);
+
+        my $reviewer = "";
+
+        $gitLog = "";
+        my $inHeader = 1;
+        foreach my $line (@lines) {
+            if ($inHeader) {
+                if (!$line) {
+                    $inHeader = 0;
+                }
+                next;
+            }
+            if ($line =~ /[Ss]igned-[Oo]ff-[Bb]y: (.+)/) {
+                if (!$reviewer) {
+                    $reviewer = $1;
+                } else {
+                    $reviewer .= ", " . $1;
+                }
+            } elsif (length $line == 0) {
+                $gitLog = $gitLog . "\n";
+            } else {
+                $gitLog = $gitLog . "        " . $line . "\n";
+            }
+        }
+
+        if (!$reviewer) {
+            $reviewer = $gitReviewer;
+        }
+
+        if (!$reviewer) {
+            print "WARNING!!! Change was not reviewed!\n";
+            $reviewer = "NOBODY (OO" . "PS!)";
+        }
+
+        print CHANGE_LOG "        Reviewed by $reviewer.\n\n";
+        print CHANGE_LOG $gitLog . "\n";
+    } else {
+        print CHANGE_LOG "        Reviewed by NOBODY (OO" . "PS!).\n\n";
+        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
+            print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $changedLayoutTests;
+        }
     }
 
     foreach my $file (sort @{$files{$prefix}}) {
@@ -871,7 +925,11 @@ sub diffCommand(@)
     if (isSVN()) {
         $prefix = "$SVN diff --diff-cmd diff -x -N";
     } elsif (isGit()) {
-        $prefix = "$GIT diff HEAD --";
+        if ($gitCommit) {
+            return "$GIT diff \"$gitCommit^\" \"$gitCommit\"";
+        } else {
+            $prefix = "$GIT diff HEAD --";
+        }
     }
 
     return "$prefix '" . join("' '", @paths) . "'";
@@ -888,7 +946,11 @@ sub statusCommand(@)
     } elsif (isGit()) {
         # FIXME: This command will give status for the whole repository, not
         # just the files passed in.
-        $command = "$GIT status";
+        if ($gitCommit) {
+            $command = "$GIT diff -r --name-status -M \"$gitCommit^\" \"$gitCommit\"";
+        } else {
+            $command = "$GIT status";
+        }
     }
 
     return "$command 2> /dev/stdout";
@@ -952,16 +1014,29 @@ sub generateFileList(\@\@\%)
                 print;  # error output from svn stat
             }
         } elsif (isGit()) {
-            if (/^# Changes to be committed:$/ || /^# Changed but not updated:$/) {
-                $inGitCommitSection = 1;
-                next;
-            }
-            last if $inGitCommitSection && /^# \S/;
+            if ($gitCommit) {
+                if (/^([ADM])\t(.+)$/) {
+                    $status = $1;
+                    $file = $2;
+                } elsif (/^(R)[0-9]{1,3}\t([^\t]+)\t([^\t\n]+)$/) { # for example: R90%    newfile    oldfile
+                    $status = $1;
+                    $file = $2;
+                    $original = $3;
+                } else {
+                    print;  # error output from git diff
+                }
+            } else {
+                if (/^# Changes to be committed:$/ || /^# Changed but not updated:$/) {
+                    $inGitCommitSection = 1;
+                    next;
+                }
+                last if $inGitCommitSection && /^# \S/;
 
-            if ($inGitCommitSection && /^#\s+([^:]+):\s+((.+) -> )?(.+)$/) {
-                $status = $1;
-                $original = $3;
-                $file = $4;
+                if ($inGitCommitSection && /^#\s+([^:]+):\s+((.+) -> )?(.+)$/) {
+                    $status = $1;
+                    $original = $3;
+                    $file = $4;
+                }
             }
         }
 
@@ -999,7 +1074,8 @@ sub isModifiedOrAddedStatus($)
         "renamed" => 1,
     );
 
-    return $svn{$status} if isSVN();
+    # deliberately share the same description between svn status output and git diff --name-status
+    return $svn{$status} if (isSVN() || $gitCommit);
     return $git{$status} if isGit();
 }
 
@@ -1016,6 +1092,7 @@ sub isConflictStatus($)
     );
 
     return $svn{$status} if isSVN();
+    return 0 if $gitCommit; # an existing commit cannot have conflicts
     return $git{$status} if isGit();
 }
 
@@ -1037,7 +1114,8 @@ sub statusDescription($$)
         "renamed" => " Renamed from \%s.",
     );
 
-    return sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
+    # deliberately share the same description between svn status output and git diff --name-status
+    return sprintf($svn{$status}, $original) if (isSVN() || $gitCommit) && exists $svn{$status};
     return sprintf($git{$status}, $original) if isGit() && exists $git{$status};
     return undef;
 }

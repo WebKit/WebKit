@@ -1,3 +1,12 @@
+2007-06-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Added support for populating ChangeLog entries from given git commits
+        using --git-commit=<commitish> and --git-reviewer=<name>.
+
+        * Scripts/prepare-ChangeLog:
+
 2007-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.
