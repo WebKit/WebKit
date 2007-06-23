@@ -1,3 +1,10 @@
+2007-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Uploading the correct expected results -- the ones checked in expected
+        an "unkown" callback, which was incorrect behavior.
+
+        * fast/loader/user-style-sheet-resource-load-callbacks-expected.txt:
+
 2007-06-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver and Darin.
