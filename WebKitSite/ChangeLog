@@ -1,3 +1,9 @@
+2007-06-23  Mark Rowe  <mrowe@apple.com>
+
+        Not reviewed.
+
+        * building/checkout.html: Update link to bypass caching proxy as it has a habit of breaking huge downloads.
+
 2007-06-12  Adam Roben  <aroben@apple.com>
 
         Update the location of cygwin-downloader.zip.
