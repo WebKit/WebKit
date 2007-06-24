@@ -275,6 +275,9 @@
 
         Reviewed by Tim Hatcher.
 
+        http://bugs.webkit.org/show_bug.cgi?id=14260
+        ASSERTION FAILED: m_mainResource->loader == loader going back in history on any page
+
         Remove assert for now as it is causing the back button to not
         work in debug builds.
 
