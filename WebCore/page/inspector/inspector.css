@@ -274,9 +274,18 @@ body.inactive #sidebar {
     height: 21px;
     border-top: 1px solid #bbb;
     -webkit-box-sizing: border-box;
-    background-image: url(Images/sidebarResizeWidget.png), url(Images/sidebarStatusAreaBackground.png);
+    background-image: url(Images/sidebarStatusAreaBackground.png);
     background-position: right, center;
     background-repeat: no-repeat, repeat-x;
+}
+
+#statusbar #sidebarResizeWidget {
+    display: block;
+    float: right;
+    width: 17px;
+    height: 20px;
+    background: url(Images/sidebarResizeWidget.png) right no-repeat;
+    cursor: col-resize;
 }
 
 #statusbar button {

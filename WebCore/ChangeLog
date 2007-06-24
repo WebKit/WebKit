@@ -1,3 +1,14 @@
+2007-06-24  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 14265: Cannot resize columns in webinspector
+        http://bugs.webkit.org/show_bug.cgi?id=14265
+
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html:
+        * page/inspector/inspector.js:
+
 2007-06-23  Adam Roben  <aroben@apple.com>
 
         Silence a build warning about not finding `num-cpus`

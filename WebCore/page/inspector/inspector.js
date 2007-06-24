@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,6 +236,7 @@ WebInspector.loaded = function(event)
 
     document.getElementById("attachToggle").addEventListener("click", function(event) { WebInspector.toggleAttach() }, true);
     document.getElementById("statusToggle").addEventListener("click", function(event) { WebInspector.toggleStatusArea() }, true);
+    document.getElementById("sidebarResizeWidget").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
 
     document.body.addStyleClass("detached");
 
@@ -428,6 +430,67 @@ WebInspector.toggleAttach = function()
 WebInspector.toggleStatusArea = function()
 {
     this.showingStatusArea = !this.showingStatusArea;
+}
+
+WebInspector.sidebarResizerDragStart = function(event)
+{
+    WebInspector.dividerDragStart(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event, "col-resize");
+}
+
+WebInspector.sidebarResizerDragEnd = function(event)
+{
+    WebInspector.dividerDragEnd(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event);
+}
+
+WebInspector.sidebarResizerDrag = function(event)
+{
+    var sidebar = document.getElementById("sidebar");
+    if (sidebar.dragging == true) {
+        var main = document.getElementById("main");
+
+        var x = event.clientX + window.scrollX;
+        var delta = sidebar.dragLastX - x;
+        var newWidth = WebInspector.constrainedWidthFromElement(x, main);
+
+        if (x == newWidth)
+            sidebar.dragLastX = x;
+
+        sidebar.style.width = newWidth + "px";
+        main.style.left = newWidth + "px";
+        event.preventDefault();
+    }
+}
+
+WebInspector.dividerDragStart = function(element, dividerDrag, dividerDragEnd, event, cursor) 
+{
+    element.dragging = true;
+    element.dragLastY = event.clientY + window.scrollY;
+    element.dragLastX = event.clientX + window.scrollX;
+    document.addEventListener("mousemove", dividerDrag, true);
+    document.addEventListener("mouseup", dividerDragEnd, true);
+    document.body.style.cursor = cursor;
+    event.preventDefault();
+}
+
+WebInspector.dividerDragEnd = function(element, dividerDrag, dividerDragEnd, event) 
+{
+    element.dragging = false;
+    document.removeEventListener("mousemove", dividerDrag, true);
+    document.removeEventListener("mouseup", dividerDragEnd, true);
+    document.body.style.removeProperty("cursor");
+}
+
+WebInspector.constrainedWidthFromElement = function(width, element, constrainLeft, constrainRight) 
+{
+    if (constrainLeft === undefined) constrainLeft = 0.25;
+    if (constrainRight === undefined) constrainRight = 0.75;
+
+    if (width < element.clientWidth * constrainLeft)
+        width = 200;
+    else if (width > element.clientWidth * constrainRight)
+        width = element.clientWidth * constrainRight;
+
+    return width;
 }
 
 WebInspector.back = function()
