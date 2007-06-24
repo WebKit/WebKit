@@ -80,7 +80,7 @@ widows: 2;
 width: 784px;
 word-spacing: 0px;
 word-wrap: normal;
-z-index: normal;
+z-index: auto;
 -webkit-appearance: none;
 -webkit-background-clip: border;
 -webkit-background-composite: source-over;

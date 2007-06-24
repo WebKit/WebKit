@@ -1,3 +1,15 @@
+2007-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14321
+        getComputedStyle(...).zIndex returns string "normal"
+
+        Test: fast/css/getComputedStyle-zIndex-auto.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Return 'auto' instead of 'normal'.
+
 2007-06-24  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Tim Hatcher.

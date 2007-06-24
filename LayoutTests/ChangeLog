@@ -1,3 +1,14 @@
+2007-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=14321
+        getComputedStyle(...).zIndex returns string "normal"
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/getComputedStyle-zIndex-auto-expected.txt: Added.
+        * fast/css/getComputedStyle-zIndex-auto.html: Added.
+
 2007-06-23  Geoffrey Garen  <ggaren@apple.com>
 
         Uploading the correct expected results -- the ones checked in expected
