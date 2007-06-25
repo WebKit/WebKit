@@ -69,7 +69,7 @@
 		14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D8238A0AF92DF60004F057 /* Chrome.cpp */; };
 		14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D824060AF93AEB0004F057 /* ChromeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DC0D3509FED073007B0235 /* JSNode.cpp */; };
-		14DC0D3809FED073007B0235 /* JSNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DC0D3609FED073007B0235 /* JSNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 14DC0D3609FED073007B0235 /* JSNode.h */; settings = {ATTRIBUTES = (); }; };
 		14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E8378309F85D1C00B85AE4 /* JSEvent.cpp */; };
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3055,6 +3055,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 				BC6E2B290C04B95400444EF8 /* DOMHTMLDocumentPrivate.h in Copy Generated Headers */,
 				BC5156E80C03B741008BB0EE /* DOMHTMLMarqueeElement.h in Copy Generated Headers */,
 				BC5156F40C03B7DC008BB0EE /* DOMHTMLFrameElementPrivate.h in Copy Generated Headers */,
@@ -10526,7 +10527,6 @@
 				14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
-				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
 				142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */,
 				BCC71A130A0FF94D0014EE6E /* GlyphBuffer.h in Headers */,
 				1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */,
