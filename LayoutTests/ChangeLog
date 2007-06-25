@@ -1,3 +1,15 @@
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=14245
+          Underline painted under <br>, not repainted properly
+
+        * fast/inline/br-text-decoration-expected.checksum: Added.
+        * fast/inline/br-text-decoration-expected.png: Added.
+        * fast/inline/br-text-decoration-expected.txt: Added.
+        * fast/inline/br-text-decoration.html: Added.
+
 2007-06-25  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Sam Weinig.

@@ -1,5 +1,19 @@
 2007-06-25  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14245
+          Underline painted under <br>, not repainted properly
+
+        Test: fast/inline/br-text-decoration.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Added an early return if the line width
+        is zero. Also changed the line stroke to a rect fill, so that lines with length shorter
+        than their thickness paint correctly.
+
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14341

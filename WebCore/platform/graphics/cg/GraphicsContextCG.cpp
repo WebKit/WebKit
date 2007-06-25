@@ -707,6 +707,9 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool pri
     if (paintingDisabled())
         return;
 
+    if (width <= 0)
+        return;
+
     CGContextSaveGState(platformContext());
 
     float x = point.x();
@@ -735,17 +738,9 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool pri
         }
     }
     
-    CGContextSetLineWidth(platformContext(), thickness);
-
-    float halfThickness = thickness / 2;
-
-    // FIXME: How about using a rectangle fill instead of drawing a line?
-    CGPoint linePoints[2];
-    linePoints[0].x = x + halfThickness;
-    linePoints[0].y = y + halfThickness;
-    linePoints[1].x = x + lineLength - halfThickness;
-    linePoints[1].y = y + halfThickness;
-    CGContextStrokeLineSegments(platformContext(), linePoints, 2);
+    if (fillColor() != strokeColor())
+        setCGFillColor(platformContext(), strokeColor());
+    CGContextFillRect(platformContext(), CGRectMake(x, y, lineLength, thickness));
 
     CGContextRestoreGState(platformContext());
 }
