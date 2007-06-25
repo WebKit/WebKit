@@ -904,8 +904,13 @@ WebInspector.ResourcePanel.prototype = {
             if (!hasChildren)
                 continue;
 
-            var title = Object.prototype.toString.call(prototype).replace(/^\[object (\w*?)(Prototype)?\]$/i, "$1");
-            var section = new WebInspector.PropertiesSection(title);
+            var title = Object.describe(prototype);
+            var subtitle;
+            if (title.match(/Prototype$/)) {
+                title = title.replace(/Prototype$/, "");
+                subtitle = "Prototype";
+            }
+            var section = new WebInspector.PropertiesSection(title, subtitle);
             section.onpopulate = WebInspector.DOMPropertiesSection.onpopulate(prototype);
 
             propertiesBody.appendChild(section.element);
