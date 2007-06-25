@@ -91,7 +91,7 @@ DragController::~DragController()
 }
     
 static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, RefPtr<Range> context,
-                                          bool allowPlainText, bool chosePlainText)
+                                          bool allowPlainText, bool& chosePlainText)
 {
     ASSERT(dragData);
     chosePlainText = false;

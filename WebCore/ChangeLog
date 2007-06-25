@@ -1,3 +1,15 @@
+2007-06-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5293444> REGRESSION: Dragging plain text into a styled text region does not acquire the correct style info
+
+        Fixing logic error in DragController
+
+        * manual-tests/drop-text-acquires-style.html: Added.
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+
 2007-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
