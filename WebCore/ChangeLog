@@ -1,3 +1,12 @@
+2007-06-25  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14386
+        Gdk build fix
+
+        * WebCore.pro: Fix gtk/gdk typo.
+
 2007-06-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.

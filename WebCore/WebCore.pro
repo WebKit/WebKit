@@ -716,7 +716,7 @@ SOURCES += \
     xml/XSLStyleSheet.cpp \
     xml/XSLTProcessor.cpp
 
-gtk-port {
+gdk-port {
   SOURCES += \
     platform/GlyphPageTreeNode.cpp \
     platform/GlyphWidthMap.cpp \
