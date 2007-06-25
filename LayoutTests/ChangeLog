@@ -1,3 +1,30 @@
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=14341
+          rules="none" ignored in certain cases
+
+        * tables/mozilla/marvin/table_rules_none-expected.checksum: Added.
+        * tables/mozilla/marvin/table_rules_none-expected.png: Added.
+        * tables/mozilla/marvin/table_rules_none-expected.txt: Added.
+        * tables/mozilla/marvin/table_rules_none.html: Copied from LayoutTests/tables/mozilla_expected_failures/marvin/table_rules_none.html.
+        * tables/mozilla/marvin/x_table_rules_none-expected.checksum: Added.
+        * tables/mozilla/marvin/x_table_rules_none-expected.png: Added.
+        * tables/mozilla/marvin/x_table_rules_none-expected.txt: Added.
+        * tables/mozilla/marvin/x_table_rules_none.xml: Copied from LayoutTests/tables/mozilla_expected_failures/marvin/x_table_rules_none.xml.
+        * tables/mozilla_expected_failures/core/table_rules-expected.checksum:
+        * tables/mozilla_expected_failures/core/table_rules-expected.png:
+        * tables/mozilla_expected_failures/core/table_rules-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_rules_none-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/marvin/table_rules_none-expected.png: Removed.
+        * tables/mozilla_expected_failures/marvin/table_rules_none-expected.txt: Removed.
+        * tables/mozilla_expected_failures/marvin/table_rules_none.html: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_none-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_none-expected.png: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_none-expected.txt: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_none.xml: Removed.
+
 2007-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

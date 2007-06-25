@@ -1,3 +1,15 @@
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14341
+          rules="none" ignored in certain cases
+
+        Covered by existing tests.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::getSharedCellDecl):
+
 2007-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
