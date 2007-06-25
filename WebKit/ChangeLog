@@ -1,3 +1,14 @@
+2007-06-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Fixed <rdar://problem/5292259> Find on Page doesn't work (throws exception) on page that includes PDF in a subframe
+
+        * WebView/WebView.mm:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]):
+        We were testing whether the view was an HTMLView, but then running code that assumed it was an HTMLView outside of
+        that test. That's a bad idea.
+
 2007-06-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff and Darin.

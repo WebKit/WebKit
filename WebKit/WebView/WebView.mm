@@ -2910,15 +2910,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
         // FIXME: introduce a protocol, or otherwise make this work with other types
-        if ([view isKindOfClass:[WebHTMLView class]])
+        if ([view isKindOfClass:[WebHTMLView class]]) {
             [(WebHTMLView *)view setMarkedTextMatchesAreHighlighted:highlight];
         
-        ASSERT(limit == 0 || matchCount < limit);
-        matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
+            ASSERT(limit == 0 || matchCount < limit);
+            matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
 
-        // Stop looking if we've reached the limit. A limit of 0 means no limit.
-        if (limit > 0 && matchCount >= limit)
-            break;
+            // Stop looking if we've reached the limit. A limit of 0 means no limit.
+            if (limit > 0 && matchCount >= limit)
+                break;
+        }
         
         frame = incrementFrame(frame, YES, NO);
     } while (frame);
