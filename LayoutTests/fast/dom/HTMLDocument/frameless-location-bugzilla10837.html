@@ -1,3 +1,7 @@
+<script>
+  if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+</script>
 <frameset cols="1,1">
     <frame src="data:text/html,
         <div id='result'>
@@ -6,7 +10,7 @@
         <script>
             var f = parent.frames[1];
             var d = f.document;
-            f.location = 'data:text/html,foo';
+            f.location = 'data:text/html,%3Cbody onload=%22if (window.layoutTestController) layoutTestController.notifyDone();%22%3Efoo%3C/body%3E';
             var test = d.location;
             document.getElementById('result').innerHTML = 'PASSED';
         </script>
