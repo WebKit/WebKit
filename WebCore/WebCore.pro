@@ -855,53 +855,7 @@ gdk-port:SOURCES += \
         platform/image-decoders/gif/GIFImageDecoder.cpp \
         platform/image-decoders/gif/GIFImageReader.cpp  \
         platform/image-decoders/png/PNGImageDecoder.cpp \
-        platform/image-decoders/png/png.c \
-        platform/image-decoders/png/pngerror.c \
-        platform/image-decoders/png/pnggccrd.c \
-        platform/image-decoders/png/pngget.c \
-        platform/image-decoders/png/pngmem.c \
-        platform/image-decoders/png/pngpread.c \
-        platform/image-decoders/png/pngread.c \
-        platform/image-decoders/png/pngrio.c \
-        platform/image-decoders/png/pngrtran.c \
-        platform/image-decoders/png/pngrutil.c \
-        platform/image-decoders/png/pngset.c \
-        platform/image-decoders/png/pngtrans.c \
-        platform/image-decoders/png/pngvcrd.c \
-        platform/image-decoders/png/pngwio.c \
-        platform/image-decoders/png/pngwrite.c \
-        platform/image-decoders/png/pngwtran.c \
-        platform/image-decoders/png/pngwutil.c \
         platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
-        platform/image-decoders/jpeg/jcomapi.c \
-        platform/image-decoders/jpeg/jdapimin.c \
-        platform/image-decoders/jpeg/jdapistd.c \
-        platform/image-decoders/jpeg/jdatadst.c \
-        platform/image-decoders/jpeg/jdatasrc.c \
-        platform/image-decoders/jpeg/jdcoefct.c \
-        platform/image-decoders/jpeg/jdcolor.c \
-        platform/image-decoders/jpeg/jddctmgr.c \
-        platform/image-decoders/jpeg/jdhuff.c \
-        platform/image-decoders/jpeg/jdinput.c \
-        platform/image-decoders/jpeg/jdmainct.c \
-        platform/image-decoders/jpeg/jdmarker.c \
-        platform/image-decoders/jpeg/jdmaster.c \
-        platform/image-decoders/jpeg/jdmerge.c \
-        platform/image-decoders/jpeg/jdphuff.c \
-        platform/image-decoders/jpeg/jdpostct.c \
-        platform/image-decoders/jpeg/jdsample.c \
-        platform/image-decoders/jpeg/jerror.c \
-        platform/image-decoders/jpeg/jfdctflt.c \
-        platform/image-decoders/jpeg/jfdctfst.c \
-        platform/image-decoders/jpeg/jfdctint.c \
-        platform/image-decoders/jpeg/jidctflt.c \
-        platform/image-decoders/jpeg/jidctfst.c \
-        platform/image-decoders/jpeg/jidctint.c \
-        platform/image-decoders/jpeg/jmemmgr.c \
-        platform/image-decoders/jpeg/jmemnobs.c \
-        platform/image-decoders/jpeg/jquant1.c \
-        platform/image-decoders/jpeg/jquant2.c \
-        platform/image-decoders/jpeg/jutils.c \
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp

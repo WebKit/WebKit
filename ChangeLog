@@ -1,3 +1,12 @@
+2007-06-25  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mark.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13975
+        Use system-provided libjpeg and libpng
+
+        * WebKit.pri: Link against external libjpeg and libpng.
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         Reviewed by Simon Hausmann.

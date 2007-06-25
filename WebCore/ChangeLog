@@ -1,3 +1,14 @@
+2007-06-25  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mark.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13975
+        Use system-provided libjpeg and libpng
+
+        * WebCore.pro: Remove bundled libjpeg and libpng sources.
+        * platform/image-decoders/jpeg: Remove sources.
+        * platform/image-decoders/png: Remove sources.
+
 2007-06-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
