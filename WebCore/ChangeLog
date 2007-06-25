@@ -1,5 +1,16 @@
 2007-06-24  Adam Roben  <aroben@apple.com>
 
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14374
+        Bug 14374: Computed Style section should be expanded by default
+
+        Reviewed by Sam.
+
+        No regression test possible.
+
+        * page/inspector/ResourcePanel.js: Expand all style sections.
+
+2007-06-24  Adam Roben  <aroben@apple.com>
+
         Unify the style of enums in the Inspector JS
 
         All our enums are now represented by an object with a property for

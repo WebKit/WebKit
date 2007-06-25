@@ -701,8 +701,7 @@ WebInspector.ResourcePanel.prototype = {
                 var selectorText = styleRules[i].selectorText;
 
                 var section = new WebInspector.PropertiesSection(selectorText);
-                if (!styleRules[i].isComputedStyle)
-                    section.expanded = true;
+                section.expanded = true;
 
                 if (!styleRules[i].isComputedStyle) {
                     var sheet;
