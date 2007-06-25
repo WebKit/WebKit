@@ -971,6 +971,23 @@ body.inactive #sidebar li.selected {
     word-wrap: break-word;
 }
 
+.section .header label {
+    display: none;
+}
+
+.section.expanded .header label {
+    display: inline;
+}
+
+.section .header input[type=checkbox] {
+    height: 1em;
+    width: 1em;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: top;
+}
+
 .section .header .subtitle {
     margin-top: 2px;
     font-size: 10px;
@@ -1039,6 +1056,15 @@ body.inactive #sidebar li.selected {
 
 .section .properties .implicit {
     opacity: 0.5;
+}
+
+.section .properties .inherited {
+    display: none;
+    opacity: 0.5;
+}
+
+.section.show-inherited .properties .inherited {
+    display: inline;
 }
 
 .section .properties .name {
@@ -1262,17 +1288,17 @@ body.inactive #sidebar li.selected {
 }
 
 .console-error-level::before {
-	content: url(Images/errorMediumIcon.png);
-	position: absolute;
-	left: 4px;
-	top: 3px;
+    content: url(Images/errorMediumIcon.png);
+    position: absolute;
+    left: 4px;
+    top: 3px;
 }
 
 .console-warning-level::before {
-	content: url(Images/warningMediumIcon.png);
-	position: absolute;
-	left: 4px;
-	top: 3px;
+    content: url(Images/warningMediumIcon.png);
+    position: absolute;
+    left: 4px;
+    top: 3px;
 }
 
 .console-command-input, .console-command-output {
@@ -1286,9 +1312,9 @@ body.inactive #sidebar li.selected {
     font-weight: bold;
     font-size: 15px;
     color: blue;
-	position: absolute;
-	left: 7px;
-	top: 1px;
+    position: absolute;
+    left: 7px;
+    top: 1px;
 }
 
 .network-timeline {

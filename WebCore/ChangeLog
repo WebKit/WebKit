@@ -1,3 +1,16 @@
+2007-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Bug 14385: Web Inspector's computed style doesn't show implicitly set properties
+        http://bugs.webkit.org/show_bug.cgi?id=14385
+
+        Add a toggle to show implict computed properties.
+
+        * page/inspector/ResourcePanel.js:
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+
 2007-06-25  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Mark.

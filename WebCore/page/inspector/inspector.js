@@ -31,7 +31,8 @@ var Preferences = {
     ignoreWhitespace: true,
     showUserAgentStyles: true,
     maxInlineTextChildLength: 80,
-    maxTextSearchResultLength: 80
+    maxTextSearchResultLength: 80,
+    showInheritedComputedStyleProperties: false
 }
 
 var WebInspector = {

@@ -703,7 +703,28 @@ WebInspector.ResourcePanel.prototype = {
                 var section = new WebInspector.PropertiesSection(selectorText);
                 section.expanded = true;
 
-                if (!styleRules[i].isComputedStyle) {
+                if (styleRules[i].isComputedStyle) {
+                    var showInheritedLabel = document.createElement("label");
+                    var showInheritedInput = document.createElement("input");
+                    showInheritedInput.type = "checkbox";
+                    showInheritedInput.checked = Preferences.showInheritedComputedStyleProperties;
+
+                    var computedStyleSection = section;
+                    var showInheritedToggleFunction = function(event) {
+                        Preferences.showInheritedComputedStyleProperties = showInheritedInput.checked;
+                        if (Preferences.showInheritedComputedStyleProperties)
+                            computedStyleSection.element.addStyleClass("show-inherited");
+                        else
+                            computedStyleSection.element.removeStyleClass("show-inherited");
+                        event.stopPropagation();
+                    };
+
+                    showInheritedLabel.addEventListener("click", showInheritedToggleFunction, false);
+
+                    showInheritedLabel.appendChild(showInheritedInput);
+                    showInheritedLabel.appendChild(document.createTextNode("Show implicit properties"));
+                    section.subtitleElement.appendChild(showInheritedLabel);
+                } else {
                     var sheet;
                     var file = false;
                     if (styleRules[i].subtitle)
@@ -728,15 +749,11 @@ WebInspector.ResourcePanel.prototype = {
 
                 var properties = styleProperties[i];
                 var isComputedStyle = styleRules[i].isComputedStyle;
-                var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
 
                 for (var j = 0; j < properties.length; ++j) {
                     var prop = properties[j];
 
-                    if (isComputedStyle && !alwaysShowComputedProperties[prop.name] && !usedProperties[prop.name])
-                        continue;
-
-                    var propTreeElement = new WebInspector.StylePropertyTreeElement(prop, isComputedStyle);
+                    var propTreeElement = new WebInspector.StylePropertyTreeElement(prop, isComputedStyle, usedProperties);
                     section.propertiesTreeOutline.appendChild(propTreeElement);
                 }
             }
@@ -1211,7 +1228,7 @@ WebInspector.DOMNodeTreeElement.doubleClicked = function(element)
     panel.focusedDOMNode = element.representedObject;
 }
 
-WebInspector.StylePropertyTreeElement = function(prop, computedStyle)
+WebInspector.StylePropertyTreeElement = function(prop, computedStyle, usedProperties)
 {
     var overloadCount = 0;
     var priority;
@@ -1229,7 +1246,7 @@ WebInspector.StylePropertyTreeElement = function(prop, computedStyle)
         priority = prop.style.getPropertyPriority(prop.name);
 
     var overloaded = (prop.unusedProperties[prop.name] || overloadCount === prop.subProperties.length);
-    var title = WebInspector.StylePropertyTreeElement.createTitle(prop.name, prop.style, overloaded, priority, computedStyle);
+    var title = WebInspector.StylePropertyTreeElement.createTitle(prop.name, prop.style, overloaded, priority, computedStyle, usedProperties);
 
     var item = new TreeElement(title, prop, (prop.subProperties && prop.subProperties.length > 1));
     item.computedStyle = computedStyle;
@@ -1237,7 +1254,7 @@ WebInspector.StylePropertyTreeElement = function(prop, computedStyle)
     return item;
 }
 
-WebInspector.StylePropertyTreeElement.createTitle = function(name, style, overloaded, priority, computed)
+WebInspector.StylePropertyTreeElement.createTitle = function(name, style, overloaded, priority, computed, usedProperties)
 {
     // "Nicknames" for some common values that are easier to read.
     var valueNickname = {
@@ -1245,6 +1262,8 @@ WebInspector.StylePropertyTreeElement.createTitle = function(name, style, overlo
         "rgb(255, 255, 255)": "white",
         "rgba(0, 0, 0, 0)": "transparent"
     };
+
+    var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
 
     var value = style.getPropertyValue(name);
 
@@ -1266,6 +1285,8 @@ WebInspector.StylePropertyTreeElement.createTitle = function(name, style, overlo
     var classes = [];
     if (!computed && (style.isPropertyImplicit(name) || value == "initial"))
         classes.push("implicit");
+    if (computed && !usedProperties[name] && !alwaysShowComputedProperties[name])
+        classes.push("inherited");
     if (overloaded)
         classes.push("overloaded");
 
