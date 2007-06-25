@@ -1,3 +1,13 @@
+2007-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14379
+        Anchor elements show up as their href in the properties pane, not HTMLAnchorElement
+
+        * page/inspector/ResourcePanel.js: make sure not to call an overriden
+        toString() by using Object.prototype.toString.call().
+
 2007-06-24  Adam Roben  <aroben@apple.com>
 
         Fix http://bugs.webkit.org/show_bug.cgi?id=14374
