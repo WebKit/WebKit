@@ -1,3 +1,19 @@
+2007-06-24  Adam Roben  <aroben@apple.com>
+
+        Unify the style of enums in the Inspector JS
+
+        All our enums are now represented by an object with a property for
+        each enum value.
+
+        Reviewed by Sam.
+
+        No regression test possible.
+
+        * page/inspector/ConsolePanel.js:
+        * page/inspector/Resource.js:
+        * page/inspector/ResourcePanel.js:
+        * page/inspector/inspector.js:
+
 2007-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

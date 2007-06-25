@@ -602,11 +602,11 @@ WebInspector.addMessageToConsole = function(msg)
 {
     this.consolePanel.addMessage(msg);
     switch (msg.level) {
-        case WebInspector.ConsoleMessage.WarningMessageLevel:
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
             ++this.consoleListItem.warnings;
             this.showingStatusArea = true;
             break;
-        case WebInspector.ConsoleMessage.ErrorMessageLevel:
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
             ++this.consoleListItem.errors;
             this.showingStatusArea = true;
             break;

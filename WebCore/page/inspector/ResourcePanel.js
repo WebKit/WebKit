@@ -99,11 +99,11 @@ WebInspector.ResourcePanel.prototype = {
         }
         var imageURL;
         switch (msg.level) {
-            case WebInspector.ConsoleMessage.ErrorMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
                 errorDiv.addStyleClass("webkit-html-error-message");
                 imageURL = "Images/errorIcon.png";
                 break;
-            case WebInspector.ConsoleMessage.WarningMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 errorDiv.addStyleClass("webkit-html-warning-message");
                 imageURL = "Images/warningIcon.png";
                 break;

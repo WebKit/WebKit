@@ -412,8 +412,8 @@ WebInspector.Resource.prototype = {
         // FIXME: Re-enable this code once we have a scope bar in the Console.
         // Otherwise, we flood the Console with too many tips.
         /*
-        var msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.OtherMessageSource,
-                    WebInspector.ConsoleMessage.TipMessageLevel, tip.message, -1, this.url);
+        var msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+                    WebInspector.ConsoleMessage.MessageLevel.Tip, tip.message, -1, this.url);
         WebInspector.consolePanel.addMessage(msg);
         */
 
@@ -473,8 +473,8 @@ WebInspector.Resource.prototype = {
         switch (warning.id) {
             case WebInspector.Warnings.IncorrectMIMEType.id:
                 if (!this._mimeTypeIsConsistentWithType())
-                    msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.OtherMessageSource,
-                                WebInspector.ConsoleMessage.WarningMessageLevel,
+                    msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+                                WebInspector.ConsoleMessage.MessageLevel.Warning,
                                 String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message,
                                     WebInspector.Resource.Type.toString(this.type), this.mimeType),
                                 -1, this.url);

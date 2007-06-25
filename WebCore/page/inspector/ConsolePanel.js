@@ -67,11 +67,11 @@ WebInspector.ConsolePanel.prototype = {
         if (msg.url in WebInspector.resourceURLMap) {
             msg.resource = WebInspector.resourceURLMap[msg.url];
             switch (msg.level) {
-                case WebInspector.ConsoleMessage.WarningMessageLevel:
+                case WebInspector.ConsoleMessage.MessageLevel.Warning:
                     ++msg.resource.warnings;
                     msg.resource.panel.addMessageToSource(msg);
                     break;
-                case WebInspector.ConsoleMessage.ErrorMessageLevel:
+                case WebInspector.ConsoleMessage.MessageLevel.Error:
                     ++msg.resource.errors;
                     msg.resource.panel.addMessageToSource(msg);
                     break;
@@ -163,7 +163,7 @@ WebInspector.ConsolePanel.prototype = {
             exception = true;
         }
 
-        var level = exception ? WebInspector.ConsoleMessage.ErrorMessageLevel : WebInspector.ConsoleMessage.LogMessageLevel;
+        var level = exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
 
         this.addMessage(new WebInspector.ConsoleCommand(str, this._outputToNode(result)));
     },
@@ -241,34 +241,34 @@ WebInspector.ConsoleMessage.prototype = {
         var item = document.createElement("li");
         item.className = "console-message";
         switch (this.source) {
-            case WebInspector.ConsoleMessage.HTMLMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.HTML:
                 item.className += " console-html-source";
                 break;
-            case WebInspector.ConsoleMessage.XMLMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.XML:
                 item.className += " console-xml-source";
                 break;
-            case WebInspector.ConsoleMessage.JSMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.JS:
                 item.className += " console-js-source";
                 break;
-            case WebInspector.ConsoleMessage.CSSMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.CSS:
                 item.className += " console-css-source";
                 break;
-            case WebInspector.ConsoleMessage.OtherMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.Other:
                 item.className += " console-other-source";
                 break;
         }
 
         switch (this.level) {
-            case WebInspector.ConsoleMessage.TipMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 item.className += " console-tip-level";
                 break;
-            case WebInspector.ConsoleMessage.LogMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Log:
                 item.className += " console-log-level";
                 break;
-            case WebInspector.ConsoleMessage.WarningMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 item.className += " console-warning-level";
                 break;
-            case WebInspector.ConsoleMessage.ErrorMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
                 item.className += " console-error-level";
         }
 
@@ -297,35 +297,35 @@ WebInspector.ConsoleMessage.prototype = {
     {
         var sourceString;
         switch (this.source) {
-            case WebInspector.ConsoleMessage.HTMLMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.HTML:
                 sourceString = "HTML";
                 break;
-            case WebInspector.ConsoleMessage.XMLMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.XML:
                 sourceString = "XML";
                 break;
-            case WebInspector.ConsoleMessage.JSMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.JS:
                 sourceString = "JS";
                 break;
-            case WebInspector.ConsoleMessage.CSSMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.CSS:
                 sourceString = "CSS";
                 break;
-            case WebInspector.ConsoleMessage.OtherMessageSource:
+            case WebInspector.ConsoleMessage.MessageSource.Other:
                 sourceString = "Other";
                 break;
         }
 
         var levelString;
         switch (this.level) {
-            case WebInspector.ConsoleMessage.TipMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 levelString = "Tip";
                 break;
-            case WebInspector.ConsoleMessage.LogMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Log:
                 levelString = "Log";
                 break;
-            case WebInspector.ConsoleMessage.WarningMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 levelString = "Warning";
                 break;
-            case WebInspector.ConsoleMessage.ErrorMessageLevel:
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
                 levelString = "Error";
                 break;
         }
@@ -335,16 +335,20 @@ WebInspector.ConsoleMessage.prototype = {
 }
 
 // Note: Keep these constants in sync with the ones in Chrome.h
-WebInspector.ConsoleMessage.HTMLMessageSource = 0;
-WebInspector.ConsoleMessage.XMLMessageSource  = 1;
-WebInspector.ConsoleMessage.JSMessageSource   = 2;
-WebInspector.ConsoleMessage.CSSMessageSource  = 3;
-WebInspector.ConsoleMessage.OtherMessageSource = 4;
+WebInspector.ConsoleMessage.MessageSource = {
+    HTML: 0,
+    XML: 1,
+    JS: 2,
+    CSS: 3,
+    Other: 4,
+};
 
-WebInspector.ConsoleMessage.TipMessageLevel     = 0;
-WebInspector.ConsoleMessage.LogMessageLevel     = 1;
-WebInspector.ConsoleMessage.WarningMessageLevel = 2;
-WebInspector.ConsoleMessage.ErrorMessageLevel   = 3;
+WebInspector.ConsoleMessage.MessageLevel = {
+    Tip: 0,
+    Log: 1,
+    Warning: 2,
+    Error: 3,
+};
 
 WebInspector.ConsoleCommand = function(input, output)
 {
