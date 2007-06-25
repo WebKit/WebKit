@@ -276,8 +276,11 @@ void RenderTable::layout()
     m_overflowTop = 0;
     initMaxMarginValues();
     
-    //int oldWidth = m_width;
+    int oldWidth = m_width;
     calcWidth();
+
+    if (m_caption && m_width != oldWidth)
+        m_caption->setNeedsLayout(true, false);
 
     // FIXME: The optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table

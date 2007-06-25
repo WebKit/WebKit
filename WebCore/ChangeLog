@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14202
+          Table caption renders too narrow sometimes
+
+        Test: fast/table/caption-relayout.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Mark the caption for layout if the table
+        width changed.
+
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=14245
           Underline painted under <br>, not repainted properly
 

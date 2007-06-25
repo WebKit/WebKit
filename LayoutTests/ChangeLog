@@ -2,6 +2,39 @@
 
         Reviewed by Darin.
 
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=14202
+          Table caption renders too narrow sometimes
+
+        * fast/table/caption-relayout-expected.checksum: Added.
+        * fast/table/caption-relayout-expected.png: Added.
+        * fast/table/caption-relayout-expected.txt: Added.
+        * fast/table/caption-relayout.html: Added.
+        * tables/mozilla/marvin/x_caption_class-expected.checksum:
+        * tables/mozilla/marvin/x_caption_class-expected.png:
+        * tables/mozilla/marvin/x_caption_class-expected.txt:
+        * tables/mozilla/marvin/x_caption_id-expected.checksum:
+        * tables/mozilla/marvin/x_caption_id-expected.png:
+        * tables/mozilla/marvin/x_caption_id-expected.txt:
+        * tables/mozilla/marvin/x_caption_style-expected.checksum:
+        * tables/mozilla/marvin/x_caption_style-expected.png:
+        * tables/mozilla/marvin/x_caption_style-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug29058-2-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug29058-2-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug29058-2-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug3166-5-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug3166-5-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug3166-5-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug3166-6-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug3166-6-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug3166-6-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug3166-9-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug3166-9-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug3166-9-expected.txt:
+
+2007-06-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - pixel test for http://bugs.webkit.org/show_bug.cgi?id=14245
           Underline painted under <br>, not repainted properly
 
