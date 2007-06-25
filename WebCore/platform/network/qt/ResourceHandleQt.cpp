@@ -28,8 +28,6 @@
 
 #include "config.h"
 
-#include <QRegExp>
-
 #include "Frame.h"
 #include "DocLoader.h"
 #include "ResourceHandle.h"
@@ -38,6 +36,7 @@
 #include "qwebnetworkinterface_p.h"
 #include "qwebpage_p.h"
 #include "ChromeClientQt.h"
+#include "FrameLoaderClientQt.h"
 #include "Page.h"
 
 #include "NotImplemented.h"
@@ -71,9 +70,8 @@ bool ResourceHandle::start(Frame* frame)
         return false;
     }
 
-    ChromeClientQt *client = static_cast<ChromeClientQt *>(page->chrome()->client());
-    QWebPagePrivate *webPage = client->m_webPage->d;
-    return QWebNetworkManager::self()->add(this, webPage->networkInterface);
+    getInternal()->m_frame = static_cast<FrameLoaderClientQt*>(frame->loader()->client())->webFrame();
+    return QWebNetworkManager::self()->add(this, getInternal()->m_frame->page()->d->networkInterface);
 }
 
 void ResourceHandle::cancel()

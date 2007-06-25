@@ -129,7 +129,11 @@ namespace WebCore {
         void onResponseHeaderReceived(const QHttpResponseHeader& resp);
         void onReadyRead();
         void onRequestFinished(int, bool);
+        void onDone(bool);
         void onStateChanged(int);
+        void onSslErrors(const QList<QSslError>&);
+        void onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator *);
+        void onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator *);
 
         void scheduleNextRequest();
 
@@ -142,6 +146,7 @@ namespace WebCore {
         struct HttpConnection {
             QHttp *http;
             QWebNetworkJob *current;
+            bool proxyDone;
         };
         HttpConnection connection[2];
         bool m_inCancel;

@@ -29,9 +29,10 @@
 #include <qwebkitglobal.h>
 
 #include <qwidget.h>
-class QWebFrame;
+class QNetworkProxy;
 class QUndoStack;
 class QUrl;
+class QWebFrame;
 class QWebNetworkRequest;
 
 class QWebPagePrivate;
@@ -84,6 +85,9 @@ public:
     QWebNetworkInterface *networkInterface() const;
 
     QPixmap icon() const;
+
+    void setNetworkProxy(const QNetworkProxy& proxy);
+    QNetworkProxy networkProxy() const;
 
 public slots:
     /**

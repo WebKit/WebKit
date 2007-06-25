@@ -21,11 +21,14 @@
   pages from the web. It has a memory cache for these objects.
 */
 #include <qglobal.h>
+#include "qwebframe.h"
 #include "qwebnetworkinterface.h"
 #include "qwebnetworkinterface_p.h"
 #include "qwebobjectpluginconnector.h"
+#include "qwebpage.h"
 #include <qdebug.h>
 #include <qfile.h>
+#include <qnetworkproxy.h>
 #include <qurl.h>
 
 #include "ResourceHandle.h"
@@ -99,7 +102,8 @@ void QWebNetworkRequestPrivate::setURL(const QUrl &u)
 {
     url = u;
     int port = url.port();
-    if (port > 0 && port != 80)
+    const QString scheme = u.scheme();
+    if (port > 0 && (port != 80 || scheme != "http") && (port != 443 || scheme != "https"))
         httpHeader.setValue(QLatin1String("Host"), url.host() + QLatin1Char(':') + QString::number(port));
     else
         httpHeader.setValue(QLatin1String("Host"), url.host());
@@ -334,6 +338,20 @@ bool QWebNetworkJob::deref()
 QWebNetworkInterface *QWebNetworkJob::networkInterface() const
 {
     return d->interface;
+}
+
+/*!
+   Returns the network interface that is associated with this job.
+*/
+QWebFrame *QWebNetworkJob::frame() const
+{
+    if (d->resourceHandle) {
+        ResourceHandleInternal *rhi = d->resourceHandle->getInternal();
+        if (rhi) {
+            return rhi->m_frame;
+        }
+    }
+    return 0;
 }
 
 /*!
@@ -790,8 +808,16 @@ WebCoreHttp::WebCoreHttp(QObject* parent, const HostInfo &hi)
                 this, SLOT(onReadyRead()));
         connect(connection[i].http, SIGNAL(requestFinished(int, bool)),
                 this, SLOT(onRequestFinished(int, bool)));
+        connect(connection[i].http, SIGNAL(done(bool)),
+                this, SLOT(onDone(bool)));
         connect(connection[i].http, SIGNAL(stateChanged(int)),
                 this, SLOT(onStateChanged(int)));
+        connect(connection[i].http, SIGNAL(authenticationRequired(const QString&, quint16, QAuthenticator*)),
+                this, SLOT(onAuthenticationRequired(const QString&, quint16, QAuthenticator*)));
+        connect(connection[i].http, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
+                this, SLOT(onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+        connect(connection[i].http, SIGNAL(sslErrors(const QList<QSslError>&)),
+                this, SLOT(onSslErrors(const QList<QSslError>&)));
     }
 }
 
@@ -830,12 +856,16 @@ void WebCoreHttp::scheduleNextRequest()
         return;
     
     QHttp *http = connection[c].http;
+
+    connection[c].current = job;
+    http->setProxy(job->frame()->page()->networkProxy());
+    connection[c].proxyDone = false;
+
     QByteArray postData = job->postData();
     if (!postData.isEmpty())
         http->request(job->httpHeader(), postData);
     else
         http->request(job->httpHeader());
-    connection[c].current = job;
 
     DEBUG() << "WebCoreHttp::scheduleNextRequest: using connection" << c;
 //     DEBUG() << job->request.toString();
@@ -879,17 +909,21 @@ void WebCoreHttp::onReadyRead()
     emit req->networkInterface()->data(req, data);
 }
 
-void WebCoreHttp::onRequestFinished(int, bool error)
+void WebCoreHttp::onRequestFinished(int id, bool error)
 {
     int c = getConnection();
+    if (!connection[c].proxyDone) {
+        connection[c].proxyDone = true;
+        return;
+    }
     QWebNetworkJob *req = connection[c].current;
     if (!req) {
         scheduleNextRequest();
         return;
     }
+
     QHttp *http = connection[c].http;
     DEBUG() << "WebCoreHttp::slotFinished connection=" << c << error << req;
-
     if (error)
         DEBUG() << "   error: " << http->errorString();
 
@@ -900,6 +934,22 @@ void WebCoreHttp::onRequestFinished(int, bool error)
         emit req->networkInterface()->data(req, data);
     }
     emit req->networkInterface()->finished(req, error ? 1 : 0);
+}
+
+void WebCoreHttp::onDone(bool error)
+{
+    int c = getConnection();
+    QWebNetworkJob *req = connection[c].current;
+    if (!req) {
+        scheduleNextRequest();
+        return;
+    }
+
+    DEBUG() << "WebCoreHttp::DONE connection=" << c << error << req;
+    QHttp *http = connection[c].http;
+
+    if (error)
+        DEBUG() << "   error: " << http->errorString();
 
     connection[c].current = 0;
     scheduleNextRequest();
@@ -934,6 +984,34 @@ void WebCoreHttp::cancel(QWebNetworkJob* request)
     if (m_pendingRequests.isEmpty()
         && !connection[0].current && !connection[1].current)
         emit connectionClosed(info);
+}
+
+void WebCoreHttp::onSslErrors(const QList<QSslError>& errors)
+{
+    int c = getConnection();
+    QWebNetworkJob *req = connection[c].current;
+    if (!req) {
+        return;
+    }
+
+    qDebug() << "SSL ERRORS";
+    //emit req->frame()->page()->sslErrors(req->frame(), errors);
+}
+
+void WebCoreHttp::onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator *auth)
+{
+    int c = getConnection();
+    QWebNetworkJob *req = connection[c].current;
+    if (!req) {
+        return;
+    }
+
+    qDebug() << "AUTH REQUIRED" << hostname << port << auth;
+    //emit req->frame()->page()->authenticate(req->frame(), hostname, port, auth);
+}
+
+void WebCoreHttp::onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator *auth)
+{
 }
 
 HostInfo::HostInfo(const QUrl& url)

@@ -29,6 +29,7 @@
 
 #include <qwebkitglobal.h>
 
+class QWebFrame;
 class QWebNetworkJobPrivate;
 class QWebNetworkInterface;
 class QWebObjectPluginConnector;
@@ -96,6 +97,8 @@ public:
 
     QWebNetworkInterface *networkInterface() const;
     
+    QWebFrame *frame() const;
+
 private:
     QWebNetworkJob();
     ~QWebNetworkJob();
