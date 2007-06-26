@@ -2214,7 +2214,7 @@ NS_ENDHANDLER
         dataSource = [[self mainFrame] _dataSource];
     if (dataSource == nil)
         return nil;
-    return [dataSource _documentLoader]->overrideEncoding();
+    return nsStringNilIfEmpty([dataSource _documentLoader]->overrideEncoding());
 }
 
 - (NSString *)customTextEncodingName

@@ -1,3 +1,14 @@
+2007-06-25  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5294036> -[WebView customTextEncodingName] API may return empty string instead of nil
+
+        * WebView/WebView.mm:
+        (-[WebView _mainFrameOverrideEncoding]): Addded the nsStringNilIfEmpty() inline to the data being returned because 
+        our API says "The custom text encoding name or nil if no custom text encoding name has been set." I also verified
+        the standing Tiger WebKit behavior for this method and it does indeed return nil if a custom encoding wasn't set.
+
 2007-06-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
