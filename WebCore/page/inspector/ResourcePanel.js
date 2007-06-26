@@ -704,6 +704,9 @@ WebInspector.ResourcePanel.prototype = {
                 section.expanded = true;
 
                 if (styleRules[i].isComputedStyle) {
+                    if (Preferences.showInheritedComputedStyleProperties)
+                        section.element.addStyleClass("show-inherited");
+
                     var showInheritedLabel = document.createElement("label");
                     var showInheritedInput = document.createElement("input");
                     showInheritedInput.type = "checkbox";
