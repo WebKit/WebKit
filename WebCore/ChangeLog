@@ -1,5 +1,15 @@
 2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
 
+        Reviewed by Mitz, landed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14421
+        Implement GraphicsContext::clearRect()
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clearRect):
+
+2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
+
         Reviewed and landed by Anders.
 
         http://bugs.webkit.org/show_bug.cgi?id=14416
