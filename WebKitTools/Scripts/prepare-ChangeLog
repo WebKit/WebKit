@@ -303,7 +303,7 @@ foreach my $prefix (sort keys %files) {
         }
 
         if (!$reviewer) {
-            print "WARNING!!! Change was not reviewed!\n";
+            print STDERR "WARNING!!! Change was not reviewed!\n";
             $reviewer = "NOBODY (OO" . "PS!)";
         }
 
@@ -961,6 +961,7 @@ sub createPatchCommand($)
     my ($changedFilesString) = @_;
 
     return "'$FindBin::Bin/svn-create-patch' $changedFilesString" if isSVN();
+    return "$GIT diff -C -M \"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
     return "$GIT diff -C -M HEAD -- $changedFilesString" if isGit();
 }
 

@@ -1,5 +1,16 @@
 2007-06-25  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 14403: prepare-ChangeLog --git-commit doesn't support --diff
+        http://bugs.webkit.org/show_bug.cgi?id=14403
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/prepare-ChangeLog: Don't spew to stdout, use stderr instead.
+        (sub createPatchCommand): Generate a correct diff in the $gitCommit
+        case.
+
+2007-06-25  Adam Roben  <aroben@apple.com>
+
         Land pdevenv and supporting scripts/programs
 
         pdevenv is a script that will open an instance of Visual Studio that
