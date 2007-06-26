@@ -158,7 +158,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event";
     return 0;
 }
 
@@ -1404,7 +1404,7 @@ sub NativeToJSValue
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "jsBoolean($value)" if $type eq "boolean";
-    return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+    return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp";
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"PlatformString.h"} = 1;
@@ -1474,9 +1474,6 @@ sub NativeToJSValue
         $implIncludes{"EventTargetNode.h"} = 1;
         $implIncludes{"JSEventTargetNode.h"} = 1;
         $implIncludes{"kjs_dom.h"} = 1;
-    } elsif ($type eq "Event") {
-        $implIncludes{"kjs_events.h"} = 1;
-        $implIncludes{"Event.h"} = 1;
     } elsif ($type eq "HTMLCanvasElement") {
         $implIncludes{"kjs_dom.h"} = 1;
         $implIncludes{"HTMLCanvasElement.h"} = 1;
@@ -1484,6 +1481,9 @@ sub NativeToJSValue
         $implIncludes{"kjs_window.h"} = 1;
     } elsif ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
+    } elsif ($type eq "Clipboard") {
+        $implIncludes{"kjs_events.h"} = 1;
+        $implIncludes{"Clipboard.h"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;

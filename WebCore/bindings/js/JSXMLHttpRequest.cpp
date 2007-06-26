@@ -26,15 +26,16 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSDocument.h"
+#include "JSEvent.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
 #include "xmlhttprequest.h"
 
 #include "JSXMLHttpRequest.lut.h"
 
-using namespace WebCore;
-
 namespace KJS {
+
+using namespace WebCore;
 
 ////////////////////// JSXMLHttpRequest Object ////////////////////////
 

@@ -31,6 +31,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTargetNode.h"
+#include "JSEvent.h"
 #include "Node.h"
 #include "kjs_events.h"
 #include "kjs_window.h"

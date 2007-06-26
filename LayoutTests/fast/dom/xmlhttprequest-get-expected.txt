@@ -47,7 +47,6 @@ cancelBubble : 'false'
 cancelable : 'true'
 clipboardData : 'undefined'
 currentTarget : '[object JSXMLHttpRequest]'
-dataTransfer : 'undefined'
 eventPhase : '0'
 initEvent : '
 function initEvent() {

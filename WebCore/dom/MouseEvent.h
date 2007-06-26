@@ -58,6 +58,8 @@ namespace WebCore {
         Node* toElement() const;
         Node* fromElement() const;
 
+        Clipboard* dataTransfer() const { return isDragEvent() ? m_clipboard.get() : 0; }
+
         virtual bool isMouseEvent() const;
         virtual bool isDragEvent() const;
         virtual int which() const;

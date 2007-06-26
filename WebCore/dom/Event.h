@@ -93,9 +93,11 @@ namespace WebCore {
 
         // IE Extensions
         EventTarget* srcElement() const { return target(); } // MSIE extension - "the object that fired the event"
-        bool returnValue() const { return !m_defaultPrevented; }
+
+        bool returnValue() const { return !defaultPrevented(); }
+        void setReturnValue(bool returnValue) { setDefaultPrevented(!returnValue); }
+
         Clipboard* clipboardData() const { return isClipboardEvent() ? clipboard() : 0; }
-        Clipboard* dataTransfer() const { return isMouseEvent() ? clipboard() : 0; }
 
         virtual bool isUIEvent() const;
         virtual bool isMouseEvent() const;

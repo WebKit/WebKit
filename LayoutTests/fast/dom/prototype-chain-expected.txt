@@ -42,21 +42,17 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object HTMLFormElementPrototype]
 
------ [object UIEvent] (4 prototypes) -----
+----- [object UIEvent] (3 prototypes) -----
 
 [object Object]
-
-[object DOMEventPrototype]
 
 [object EventPrototype]
 
 [object UIEventPrototype]
 
------ [object MouseEvent] (5 prototypes) -----
+----- [object MouseEvent] (4 prototypes) -----
 
 [object Object]
-
-[object DOMEventPrototype]
 
 [object EventPrototype]
 
@@ -64,11 +60,9 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object MouseEventPrototype]
 
------ [object KeyboardEvent] (5 prototypes) -----
+----- [object KeyboardEvent] (4 prototypes) -----
 
 [object Object]
-
-[object DOMEventPrototype]
 
 [object EventPrototype]
 

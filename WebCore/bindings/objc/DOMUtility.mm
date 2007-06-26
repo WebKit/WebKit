@@ -78,6 +78,7 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     WRAP(CSSStyleDeclaration)
     WRAP(CSSValue)
     WRAP(Counter)
+    WRAP(Event)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)
     WRAP(NamedNodeMap)
@@ -94,14 +95,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
     // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
     // binding, but not a subclass in the ObjC binding.
     WRAP(HTMLCollection)
-
-    #undef WRAP
-
-    #define WRAP(className) \
-        if (object->inherits(&DOM##className::info)) \
-            return [objc_getClass("DOM" #className) _wrap##className:static_cast<DOM##className*>(object)->impl()];
-
-    WRAP(Event)
 
     #undef WRAP
 

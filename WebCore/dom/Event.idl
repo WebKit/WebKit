@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMEvent, GenerateConstructor, ObjCCustomInternalImpl] Event {
+    interface [GenerateConstructor, ObjCCustomInternalImpl] Event {
 
         // DOM PhaseType
         const unsigned short CAPTURING_PHASE     = 1;
@@ -48,7 +48,6 @@ module events {
         const unsigned short CHANGE              = 32768;
 #endif
 
-#if !defined(LANGUAGE_JAVASCRIPT)
         readonly attribute DOMString        type;
         readonly attribute EventTarget      target;
         readonly attribute EventTarget      currentTarget;
@@ -61,6 +60,14 @@ module events {
         [OldStyleObjC] void initEvent(in DOMString eventTypeArg, 
                                       in boolean canBubbleArg, 
                                       in boolean cancelableArg);
+
+        // IE Extensions
+        readonly attribute EventTarget      srcElement;
+                 attribute boolean          returnValue;
+                 attribute boolean          cancelBubble;
+
+#if defined(LANGUAGE_JAVASCRIPT)
+        readonly attribute [Custom] Clipboard        clipboardData;
 #endif
 
     };

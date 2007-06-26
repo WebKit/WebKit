@@ -2956,6 +2956,7 @@
 		BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */; };
+		BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */; };
 		BCF7C0780A1680C00032F75B /* FontFallbackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */; };
 		BCF7C0B80A1687CC0032F75B /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF7C0B70A1687CC0032F75B /* FontCache.h */; };
 		BCF7C2340A16B5F80032F75B /* FontCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */; };
@@ -6275,6 +6276,7 @@
 		BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScreen.h; sourceTree = "<group>"; };
 		BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventCustom.cpp; sourceTree = "<group>"; };
 		BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFallbackList.cpp; sourceTree = "<group>"; };
 		BCF7C0B70A1687CC0032F75B /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheMac.mm; sourceTree = "<group>"; };
@@ -9356,6 +9358,7 @@
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
+				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
@@ -13059,6 +13062,7 @@
 				BC94D14E0C275C68006BC617 /* JSHistory.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
 				BC94D1590C275CB6006BC617 /* GlobalHistoryMac.mm in Sources */,
+				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

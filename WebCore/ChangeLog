@@ -1,3 +1,32 @@
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14111
+        Autogenerate Event JS binding
+
+        - Moves the dataTransfer method into MouseEvent where it should be.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp: Added.
+        (WebCore::JSEvent::clipboardData):
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetNode.cpp:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_events.h:
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Event.h:
+        (WebCore::Event::returnValue):
+        (WebCore::Event::setReturnValue):
+        (WebCore::Event::clipboardData):
+        * dom/Event.idl:
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::dataTransfer):
+        * dom/MouseEvent.idl:
+
 2007-06-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

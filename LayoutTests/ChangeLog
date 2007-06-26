@@ -1,3 +1,14 @@
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Update tests for http://bugs.webkit.org/show_bug.cgi?id=14111
+        Autogenerate Event JS binding
+
+        * fast/dom/prototype-chain-expected.txt: DOMEventPrototype is no longer
+        in the prototype chain.
+        * fast/dom/xmlhttprequest-get-expected.txt:
+
 2007-06-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.
