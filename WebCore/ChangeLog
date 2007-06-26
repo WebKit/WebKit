@@ -1,3 +1,16 @@
+2007-06-25  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14402: Main resource of http://www.apple.com/safari/ is called "www.apple.com" instead of "safari"
+        http://bugs.webkit.org/show_bug.cgi?id=14402
+
+        The solution was to make KURL::lastPathComponent ignore trailing
+        slashes, which is what -[NSURL lastPathComponent] does, too.
+
+        Reviewed by Oliver.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::lastPathComponent):
+
 2007-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -490,8 +490,16 @@ DeprecatedString KURL::lastPathComponent() const
     if (!hasPath())
         return DeprecatedString();
 
-    int start = urlString.findRev('/', pathEndPos);    
-    return urlString.mid(start + 1, pathEndPos - start - 1);
+    int end = pathEndPos - 1;
+    if (urlString[end] == '/')
+        --end;
+
+    int start = urlString.findRev('/', end);
+    if (start < portEndPos)
+        return DeprecatedString();
+    ++start;
+
+    return urlString.mid(start, end - start + 1);
 }
 
 DeprecatedString KURL::protocol() const
