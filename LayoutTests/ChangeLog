@@ -1,3 +1,22 @@
+2007-06-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5290534> Crash RenderTextControl::calcHeight() after deleting text in a search field
+
+        Demonstrates the bug:
+        * editing/deleting/5290534-expected.txt: Added.
+        * editing/deleting/5290534.html: Added.
+
+        Fixed a bug (an extra br was inserted) and removed a FIXME:
+        * editing/deleting/4845371-expected.checksum:
+        * editing/deleting/4845371-expected.png:
+        * editing/deleting/4845371-expected.txt:
+        * editing/deleting/4845371.html:
+        
+        Removed an unrendered br that was being incorrectly inserted:
+        * editing/deleting/5126166-expected.txt:
+
 2007-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

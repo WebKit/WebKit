@@ -1,3 +1,18 @@
+2007-06-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5290534> Crash at RenderTextControl::calcHeight() after deleting text in a search field
+        
+        Editing removed a node that was part of a search field's internal
+        structure that should not be removed.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): If the
+        selection to delete ends at [container, x], where x is the number
+        of children in container, don't remove container.  Special case
+        code elsewhere in this function will remove it if necessary.
+
 2007-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

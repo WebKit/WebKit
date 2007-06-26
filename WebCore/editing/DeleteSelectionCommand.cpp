@@ -410,11 +410,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
         
         if (m_downstreamEnd.node() != startNode && !m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMinOffset()) {
-            if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node())) {
-                // need to delete whole node
-                // we can get here if this is the last node in the block
-                // remove an ancestor of m_downstreamEnd.node(), and thus m_downstreamEnd.node() itself
-                // FIXME: Shouldn't remove m_downstreamEnd.node() if its offsets refer to children.
+            if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node()) && !canHaveChildrenForEditing(m_downstreamEnd.node())) {
+                // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.node());
             } else {
                 if (m_downstreamEnd.node()->isTextNode()) {
