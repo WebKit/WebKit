@@ -277,6 +277,7 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
+    bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \

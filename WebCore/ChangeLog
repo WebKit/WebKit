@@ -1,5 +1,11 @@
 2007-06-26  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt and Gdk builds.
+
+        * WebCore.pro:
+
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=14111
