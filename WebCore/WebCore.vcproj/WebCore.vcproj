@@ -6991,6 +6991,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSEventCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSEventTargetNode.h"
 					>
 				</File>

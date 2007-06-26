@@ -1,5 +1,11 @@
 2007-06-26  Sam Weinig  <sam@webkit.org>
 
+        Fix Win32 build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
         Fix Qt and Gdk builds.
 
         * WebCore.pro:
