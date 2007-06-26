@@ -1,3 +1,15 @@
+2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed and landed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14416
+        Content does not render fully in some cases
+
+        Fix mismatched calls to cairo_save/restore due to an early method return.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine):
+
 2007-06-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by John Sullivan.

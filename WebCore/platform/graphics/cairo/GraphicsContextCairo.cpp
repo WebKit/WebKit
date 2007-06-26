@@ -187,12 +187,13 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (paintingDisabled())
         return;
 
-    cairo_t* context = m_data->context;
-    cairo_save(context);
-
     StrokeStyle style = strokeStyle();
     if (style == NoStroke)
         return;
+
+    cairo_t* context = m_data->context;
+    cairo_save(context);
+
     float width = strokeThickness();
     if (width < 1)
         width = 1;
