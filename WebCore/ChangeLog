@@ -1,3 +1,15 @@
+2007-06-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5286410> Scrollbar and resize corner for overflow area is not hidden with style "visibility: hidden;"
+        http://bugs.webkit.org/show_bug.cgi?id=14297
+
+        Test: fast/overflow/hidden-scrollbar-resize.html
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::paintLayer):
+        Updated our shouldPaint check to consider visibility.
+
 2007-06-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
