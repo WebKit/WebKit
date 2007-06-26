@@ -92,13 +92,16 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
 /*!
 @function
 @abstract Performs a JavaScript garbage collection. 
-@param ctx  The execution context to use.
+@param ctx This parameter is currently unused. Pass NULL.
 @discussion JavaScript values that are on the machine stack, in a register, 
  protected by JSValueProtect, set as the global object of an execution context, 
  or reachable from any such value will not be collected. 
  
- You are not required to call this function; the JavaScript engine will garbage 
- collect as needed.
+ During JavaScript execution, you are not required to call this function; the 
+ JavaScript engine will garbage collect as needed. One place you may want to call 
+ this function, however, is after releasing the last reference to a JSGlobalContextRef. 
+ At that point, a garbage collection can free the objects still referenced by the 
+ JSGlobalContextRef's global object, along with the global object itself.
 */
 void JSGarbageCollect(JSContextRef ctx);
 
