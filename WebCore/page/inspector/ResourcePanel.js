@@ -1190,7 +1190,7 @@ WebInspector.DOMNodeTreeElement.populate = function(element)
     }
 
     if (element.representedObject.nodeType == Node.ELEMENT_NODE) {
-        var title = "<span class=\"tag close\">&lt;/" + element.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+        var title = "<span class=\"webkit-html-tag close\">&lt;/" + element.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
         var item = new TreeElement(title, element.representedObject, false);
         item.selectable = false;
         element.appendChild(item);

@@ -1,3 +1,16 @@
+2007-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14369
+        HTML syntax highlighting colors and DOM tree colors should be the same
+
+        * css/view-source.css:
+        * page/inspector/ResourcePanel.js:
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+
 2007-06-25  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14402: Main resource of http://www.apple.com/safari/ is called "www.apple.com" instead of "safari"

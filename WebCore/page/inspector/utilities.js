@@ -509,18 +509,20 @@ function nodeTitleInfo(hasChildren, linkify)
             break;
 
         case Node.ELEMENT_NODE:
-            info.title = "<span class=\"tag\">&lt;" + this.nodeName.toLowerCase().escapeHTML();
+            info.title = "<span class=\"webkit-html-tag\">&lt;" + this.nodeName.toLowerCase().escapeHTML();
 
             if (this.hasAttributes()) {
                 for (var i = 0; i < this.attributes.length; ++i) {
                     var attr = this.attributes[i];
                     var value = attr.value.escapeHTML();
-                    value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;")
-                    if (linkify && (attr.name === "src" || attr.name === "href"))
-                        value = linkify(attr.value, value, this.nodeName.toLowerCase() == "a");
+                    value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
 
-                    info.title += " <span class=\"attr\">" + attr.name.escapeHTML() + "</span>=&#8203;";
-                    info.title += "<span class=\"value\">\"" + value + "\"</span>";
+                    info.title += " <span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;";
+
+                    if (linkify && (attr.name === "src" || attr.name === "href"))
+                        info.title += linkify(attr.value, value, "webkit-html-attribute-value", this.nodeName.toLowerCase() == "a");
+                    else
+                        info.title += "<span class=\"webkit-html-attribute-value\">\"" + value + "\"</span>";
                 }
             }
             info.title += "&gt;</span>&#8203;";
@@ -533,7 +535,7 @@ function nodeTitleInfo(hasChildren, linkify)
             var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
 
             if (showInlineText) {
-                info.title += textChild.nodeValue.escapeHTML() + "&#8203;<span class=\"tag\">&lt;/" + this.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+                info.title += textChild.nodeValue.escapeHTML() + "&#8203;<span class=\"webkit-html-tag\">&lt;/" + this.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
                 info.hasChildren = false;
             }
             break;
@@ -546,7 +548,7 @@ function nodeTitleInfo(hasChildren, linkify)
             break
 
         case Node.COMMENT_NODE:
-            info.title = "<span class=\"comment\">&lt;!--" + this.nodeValue.escapeHTML() + "--&gt;</span>";
+            info.title = "<span class=\"webkit-html-comment\">&lt;!--" + this.nodeValue.escapeHTML() + "--&gt;</span>";
             break;
 
         default:

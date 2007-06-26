@@ -880,7 +880,7 @@ body.inactive #sidebar li.selected {
     text-indent: -12px
 }
 
-.content.tree li .tag.close {
+.content.tree li .webkit-html-tag.close {
     margin-left: -12px;
 }
 
@@ -905,31 +905,38 @@ body.inactive #sidebar li.selected {
     display: block;
 }
 
-.content.tree li .comment, body.inactive .content.tree li .comment {
-    color: rgb(0, 116, 0);
+.webkit-html-comment {
+    /* Keep this in sync with view-source.css (.webkit-html-comment) */
+    color: rgb(35, 110, 37);
 }
 
-.content.tree li .tag, body.inactive .content.tree li .tag {
-    color: rgb(170, 13, 145);
+.webkit-html-tag {
+    /* Keep this in sync with view-source.css (.webkit-html-tag) */
+    color: rgb(136, 18, 128);
 }
 
-.content.tree li .attr, body.inactive .content.tree li .attr {
-    color: rgb(131, 108, 40);
+.webkit-html-attribute-name {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
+    color: rgb(153, 69, 0);
 }
 
-.content.tree li .value, body.inactive .content.tree li .value {
-    color: rgb(196, 26, 22);
+.webkit-html-attribute-value {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-value) */
+    color: rgb(26, 26, 166);
 }
 
-.webkit-html-external-link, -webkit-html-resource-link {
+.webkit-html-external-link, .webkit-html-resource-link {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link, .webkit-html-resource-link) */
     color: #00e;
 }
 
 .webkit-html-external-link {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link) */
     text-decoration: none;
 }
 
 .webkit-html-external-link:hover {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link:hover) */
     text-decoration: underline;
 }
 

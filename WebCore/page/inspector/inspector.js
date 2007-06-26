@@ -696,12 +696,13 @@ WebInspector.showResourceForURL = function(url)
     return true;
 }
 
-WebInspector.linkifyURL = function(url, linkText, isExternal)
+WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 {
     if (linkText === undefined)
         linkText = url.escapeHTML();
-    var className = isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
-    var link = "<a href=\"" + url + "\" class=\"" + className + "\" target=\"_blank\">" + linkText + "</a>";
+    classes = (classes === undefined) ? "" : classes + " ";
+    classes += isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
+    var link = "<a href=\"" + url + "\" class=\"" + classes + "\" target=\"_blank\">" + linkText + "</a>";
     return link;
 }
 
