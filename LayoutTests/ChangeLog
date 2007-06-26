@@ -1,3 +1,14 @@
+2007-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11315
+        Mutating document.constructor.prototype mutates Object.prototype
+
+        * fast/js/constructor-expected.txt: Added.
+        * fast/js/constructor.html: Added.
+        * fast/js/resources/constructor.js: Added.
+
 2007-06-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

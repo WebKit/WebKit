@@ -1,3 +1,16 @@
+2007-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11315
+        Mutating document.constructor.prototype mutates Object.prototype
+
+        Test: fast/js/constructor.html
+
+        * bindings/scripts/CodeGeneratorJS.pm: add constructor attribute to
+        classes with constructors.  It is an non-enumeratable, non-deletable,
+        readonly attribute.
+
 2007-06-26  George Staikos  <staikos@kde.org>
 
         Repair the OS X build.

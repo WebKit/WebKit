@@ -323,7 +323,7 @@ sub GenerateHeader
     }
 
     # Getters
-    if ($numAttributes > 0) {
+    if ($numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
         push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
         if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
@@ -369,16 +369,15 @@ sub GenerateHeader
 
     # Constructor object getter
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
-        push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n")
+        push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n");
     }
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
 
     # Attribute and function enums
-    if ($numAttributes + $numFunctions > 0) {
-        push(@headerContent, "    enum {\n")
-    }
+    my $hasAttrFunctionEnum = ($numAttributes + $numFunctions > 0) || $dataNode->extendedAttributes->{"GenerateConstructor"};
+    push(@headerContent, "    enum {\n") if ($hasAttrFunctionEnum);
 
     if ($numAttributes > 0) {
         push(@headerContent, "        // Attributes\n        ");
@@ -397,14 +396,19 @@ sub GenerateHeader
             my $value = $attribute->signature->type =~ /Constructor$/
                       ? $attribute->signature->name . "ConstructorAttrNum"
                       : WK_ucfirst($attribute->signature->name) . "AttrNum";
-            $value .= ", " if (($i < $numAttributes - 1));
-            $value .= ", " if (($i eq $numAttributes - 1) and ($numFunctions ne 0));
+            $value .= ", " if (($i < $numAttributes - 1) or (($i eq $numAttributes - 1) and (($numFunctions ne 0) or $dataNode->extendedAttributes->{"GenerateConstructor"})));
             push(@headerContent, $value);
         }
     }
 
-    if ($numFunctions > 0) {
+    if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@headerContent, "\n\n") if $numAttributes > 0;
+        push(@headerContent, "        // The Constructor Attribute\n");
+        push(@headerContent, "        ConstructorAttrNum" . ($numFunctions ? ", " : ""));
+    }
+
+    if ($numFunctions > 0) {
+        push(@headerContent, "\n\n") if $numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"};
         push(@headerContent,"        // Functions\n        ");
 
         $i = -1;
@@ -421,7 +425,8 @@ sub GenerateHeader
         }
     }
 
-    push(@headerContent, "\n    };\n") if ($numAttributes + $numFunctions > 0);
+
+    push(@headerContent, "\n    };\n") if ($hasAttrFunctionEnum);
 
     if ($numCustomAttributes > 0) {
         push(@headerContent, "\n    // Custom attributes\n");
@@ -576,6 +581,8 @@ sub GenerateImplementation
 
     # - Add all attributes in a hashtable definition
     my $numAttributes = @{$dataNode->attributes};
+    $numAttributes++ if $dataNode->extendedAttributes->{"GenerateConstructor"};
+
     if ($numAttributes > 0) {
         my $hashSize = $numAttributes;
         my $hashName = $className . "Table";
@@ -602,6 +609,13 @@ sub GenerateImplementation
 
             my $numParameters = "0";
             push(@hashParameters, $numParameters);
+        }
+
+        if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
+            push(@hashKeys, "constructor");
+            push(@hashValues, $className . "::ConstructorAttrNum");
+            push(@hashSpecials, "DontDelete|DontEnum|ReadOnly");
+            push(@hashParameters, "0");
         }
 
         $object->GenerateHashTable($hashName, $hashSize,
@@ -847,7 +861,7 @@ sub GenerateImplementation
 
         if ($podType) {
             push(@implContent, "    $podType& imp(*impl());\n\n");
-        } else {
+        } elsif (!($numAttributes == 1 && $dataNode->extendedAttributes->{"GenerateConstructor"})) {
             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
         }
 
@@ -943,6 +957,12 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
         }
+
+        if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
+            push(@implContent, "    case ConstructorAttrNum:\n");
+            push(@implContent, "        return getConstructor(exec);\n");
+        }
+
         push(@implContent, "    }\n    return 0;\n}\n\n");
 
         # Check if we have any writable attributes
