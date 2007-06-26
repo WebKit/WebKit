@@ -26,7 +26,10 @@
 #ifndef IconDatabase_h
 #define IconDatabase_h
 
+#if USE(ICONDATABASE)
 #include "SQLDatabase.h"
+#endif
+
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
@@ -39,12 +42,15 @@ class Image;
 class IntSize;
 class IconDataCache;
 class SharedBuffer;
+
+#if USE(ICONDATABASE)
 class SQLTransaction;
+#endif
 
 class IconDatabase : Noncopyable {
 public:
     bool open(const String& path);
-    bool isOpen() { return m_mainDB.isOpen() && m_privateBrowsingDB.isOpen(); }
+    bool isOpen();
     void close();
     
     void removeAllIcons();
@@ -60,7 +66,7 @@ public:
     void releaseIconForPageURL(const String&);
     
     void setPrivateBrowsingEnabled(bool flag);
-    bool isPrivateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
+    bool isPrivateBrowsingEnabled() const;
 
     bool hasEntryForIconURL(const String&);
 
@@ -73,7 +79,7 @@ public:
     bool setIconURLForPageURL(const String& iconURL, const String& pageURL);
     
     void setEnabled(bool enabled);
-    bool enabled() const { return m_isEnabled; }
+    bool enabled() const;
 
     bool imported();
     void setImported(bool);
@@ -85,6 +91,7 @@ private:
     ~IconDatabase();
     friend IconDatabase* iconDatabase();
 
+#if USE(ICONDATABASE)
     // This tries to get the iconID for the IconURL and, if it doesn't exist and createIfNecessary is true,
     // it will create the entry and return the new iconID
     int64_t establishIconIDForIconURL(SQLDatabase&, const String&, bool createIfNecessary = true);
@@ -209,6 +216,7 @@ private:
 
     HashSet<String> m_pageURLsPendingDeletion;
     HashSet<String> m_iconURLsPendingDeletion;
+#endif
 };
 
 // Function to obtain the global icon database.

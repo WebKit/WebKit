@@ -1,3 +1,15 @@
+2007-06-26  Adam Treat  <adam@staikos.net>
+
+        Reviewed by Adam Roben.
+
+        Make the SQLite icon database optional.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::isOpen):
+        (WebCore::IconDatabase::isPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::enabled):
+        * loader/icon/IconDatabase.h:
+
 2007-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
