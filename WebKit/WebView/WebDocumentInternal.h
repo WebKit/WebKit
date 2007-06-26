@@ -29,6 +29,12 @@
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLView.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebNSUInteger unsigned int
+#else
+#define WebNSUInteger NSUInteger
+#endif
+
 /*!
 @protocol _WebDocumentTextSizing
 @discussion Optional protocol for making text larger and smaller.
@@ -61,6 +67,15 @@
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 @end
 
+@protocol WebMultipleTextMatches <NSObject>
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
+- (BOOL)markedTextMatchesAreHighlighted;
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit;
+- (void)unmarkAllTextMatches;
+- (NSArray *)rectsForTextMatches;
+@end
+
+
 /* Used to save and restore state in the view, typically when going back/forward */
 @protocol _WebDocumentViewState <NSObject>
 - (NSPoint)scrollPoint;
@@ -69,5 +84,5 @@
 - (void)setViewState:(id)statePList;
 @end
 
-@interface WebHTMLView (WebDocumentInternalProtocols) <WebDocumentElement>
+@interface WebHTMLView (WebDocumentInternalProtocols) <WebDocumentElement, WebMultipleTextMatches>
 @end

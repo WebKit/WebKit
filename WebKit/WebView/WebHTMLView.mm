@@ -1587,31 +1587,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     frame->setWindowHasFocus(frame == focusedFrame && windowOrSheetIsKey);
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
-{
-    return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
-}
-
-- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
-{
-    [[self _bridge] setMarkedTextMatchesAreHighlighted:newValue];
-}
-
-- (BOOL)markedTextMatchesAreHighlighted
-{
-    return [[self _bridge] markedTextMatchesAreHighlighted];
-}
-
-- (void)unmarkAllTextMatches
-{
-    return [[self _bridge] unmarkAllTextMatches];
-}
-
-- (NSArray *)rectsForTextMatches
-{
-    return [[self _bridge] rectsForTextMatches];
-}
-
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     ASSERT([self _hasSelection]);
@@ -5984,6 +5959,31 @@ BOOL isTextInput(Frame *coreFrame)
     if (coreframe) 
         return [[[WebElementDictionary alloc] initWithHitTestResult:coreframe->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
     return nil;
+}
+
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
+{
+    return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
+}
+
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
+{
+    [[self _bridge] setMarkedTextMatchesAreHighlighted:newValue];
+}
+
+- (BOOL)markedTextMatchesAreHighlighted
+{
+    return [[self _bridge] markedTextMatchesAreHighlighted];
+}
+
+- (void)unmarkAllTextMatches
+{
+    return [[self _bridge] unmarkAllTextMatches];
+}
+
+- (NSArray *)rectsForTextMatches
+{
+    return [[self _bridge] rectsForTextMatches];
 }
 
 @end

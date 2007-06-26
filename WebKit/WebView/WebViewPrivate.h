@@ -227,6 +227,7 @@ typedef enum {
 // These methods might end up moving into a protocol, so different document types can specify
 // whether or not they implement the protocol. For now we'll just deal with HTML.
 // These methods are still in flux; don't rely on them yet.
+- (BOOL)canMarkAllTextMatches;
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;

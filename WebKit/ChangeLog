@@ -2,6 +2,42 @@
 
         Reviewed by Darin
         
+        - WebKit part of <rdar://problem/5293820>, needed to support multiple matches in PDFs
+
+        * WebView/WebDocumentInternal.h:
+        Added WebMultipleTextMatches protocol, containing five methods that were formerly implemented in WebHTMLView
+        * WebView/WebHTMLViewPrivate.h:
+        Removed declarations for the methods that are now in WebMultipleTextMatches protocol
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]):
+        moved this method into the WebDocumentInternalProtocols portion of the file
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]):
+        ditto
+        (-[WebHTMLView markedTextMatchesAreHighlighted]):
+        ditto
+        (-[WebHTMLView unmarkAllTextMatches]):
+        ditto
+        (-[WebHTMLView rectsForTextMatches]):
+        ditto
+
+        * WebView/WebView.mm:
+        (-[WebView canMarkAllTextMatches]):
+        new method, returns YES only if the documentView of every frame implements WebMultipleTextMatches
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:limit:]):
+        check for WebMultipleTextMatches protocol instead of checking for WebHTMLView class
+        (-[WebView unmarkAllTextMatches]):
+        ditto
+        (-[WebView rectsForTextMatches]):
+        ditto
+
+        * WebView/WebViewPrivate.h:
+        declared new method canMarkAllTextMatches
+
+2007-06-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
         Fixed <rdar://problem/5292259> Find on Page doesn't work (throws exception) on page that includes PDF in a subframe
 
         * WebView/WebView.mm:

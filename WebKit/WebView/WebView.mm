@@ -2903,18 +2903,31 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
 }
 
+- (BOOL)canMarkAllTextMatches
+{
+    WebFrame *frame = [self mainFrame];
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        if (view && ![view conformsToProtocol:@protocol(WebMultipleTextMatches)])
+            return NO;
+        
+        frame = incrementFrame(frame, YES, NO);
+    } while (frame);
+    
+    return YES;
+}
+
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit
 {
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
-        // FIXME: introduce a protocol, or otherwise make this work with other types
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view setMarkedTextMatchesAreHighlighted:highlight];
+        if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)]) {
+            [(NSView <WebMultipleTextMatches>*)view  setMarkedTextMatchesAreHighlighted:highlight];
         
             ASSERT(limit == 0 || matchCount < limit);
-            matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
+            matchCount += [(NSView <WebMultipleTextMatches>*)view markAllMatchesForText:string caseSensitive:caseFlag limit:limit == 0 ? 0 : limit - matchCount];
 
             // Stop looking if we've reached the limit. A limit of 0 means no limit.
             if (limit > 0 && matchCount >= limit)
@@ -2932,9 +2945,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     WebFrame *frame = [self mainFrame];
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
-        // FIXME: introduce a protocol, or otherwise make this work with other types
-        if ([view isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)view unmarkAllTextMatches];
+        if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)])
+            [(NSView <WebMultipleTextMatches>*)view unmarkAllTextMatches];
         
         frame = incrementFrame(frame, YES, NO);
     } while (frame);
@@ -2946,23 +2958,22 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     WebFrame *frame = [self mainFrame];
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
-        // FIXME: introduce a protocol, or otherwise make this work with other types
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            WebHTMLView *htmlView = (WebHTMLView *)view;
-            NSRect htmlViewVisibleRect = [htmlView visibleRect];
-            NSArray *originalRects = [htmlView rectsForTextMatches];
+        if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)]) {
+            NSView <WebMultipleTextMatches> *documentView = (NSView <WebMultipleTextMatches> *)view;
+            NSRect documentViewVisibleRect = [documentView visibleRect];
+            NSArray *originalRects = [documentView rectsForTextMatches];
             unsigned rectCount = [originalRects count];
             unsigned rectIndex;
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             for (rectIndex = 0; rectIndex < rectCount; ++rectIndex) {
                 NSRect r = [[originalRects objectAtIndex:rectIndex] rectValue];
-                // Clip rect to HTMLView's visible rect so rect is confined to subframe
-                r = NSIntersectionRect(r, htmlViewVisibleRect);
+                // Clip rect to document view's visible rect so rect is confined to subframe
+                r = NSIntersectionRect(r, documentViewVisibleRect);
                 if (NSIsEmptyRect(r))
                     continue;
                 
                 // Convert rect to our coordinate system
-                r = [htmlView convertRect:r toView:self];
+                r = [documentView convertRect:r toView:self];
                 [result addObject:[NSValue valueWithRect:r]];
                 if (rectIndex % 10 == 0) {
                     [pool drain];
