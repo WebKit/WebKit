@@ -218,7 +218,7 @@ my $testDirectory = File::Spec->rel2abs($layoutTestsName);
 my $platformTestDirectory = $testDirectory;
 my $expectedDirectory = $testDirectory;
 if (isQt()) {
-    $expectedDirectory = "LayoutTestResults/qt";
+    $expectedDirectory = "LayoutTests/qt/";
     $platformTestDirectory = $expectedDirectory;
 } elsif (isCygwin()) {
     $expectedDirectory = "LayoutTests";
