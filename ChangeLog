@@ -1,5 +1,11 @@
 2007-06-25  Adam Roben  <aroben@apple.com>
 
+        Really remove LayoutTestResults.
+
+        * LayoutTestResults: Removed.
+
+2007-06-25  Adam Roben  <aroben@apple.com>
+
         Fix Bug 14405: LayoutTestResults/qt should be in LayoutTests/qt
         http://bugs.webkit.org/show_bug.cgi?id=14405
 
