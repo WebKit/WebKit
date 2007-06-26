@@ -121,6 +121,9 @@ struct InspectorResource : public Shared<InspectorResource> {
         if (!frameLoader)
             return Other;
 
+        if (request.url() == frameLoader->iconURL())
+            return Image;
+
         Document* doc = frameLoader->frame()->document();
         if (!doc)
             return Other;

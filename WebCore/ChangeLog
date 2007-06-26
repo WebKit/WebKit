@@ -1,3 +1,13 @@
+2007-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14257
+        Web Inspector lists favicon.ico as "other" instead of "image"
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::type):
+
 2007-06-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
