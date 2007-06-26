@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+use File::Temp qw/tempfile/;
+use FindBin;
+
+my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
+
+chomp(my $vcBin = `cygpath -w "$FindBin::Bin/../vcbin"`);
+
+print $fh "\@echo off\n\n";
+print $fh "call \"\%VS80COMNTOOLS\%\\vsvars32.bat\"\n\n";
+print $fh "set PATH=$vcBin;\%PATH\%\n\n";
+print $fh "devenv /useenv\n";
+
+close $fh;
+
+chmod 0755, $path;
+
+chomp($path = `cygpath -w -s '$path'`);
+
+exec("cmd /c \"call $path\"");

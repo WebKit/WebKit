@@ -1,3 +1,35 @@
+2007-06-25  Adam Roben  <aroben@apple.com>
+
+        Land pdevenv and supporting scripts/programs
+
+        pdevenv is a script that will open an instance of Visual Studio that
+        can compile multiple files in parallel, similar to make -jN. It uses
+        the following scripts/programs to accomplish this:
+
+        CLWrapper: Compiles to vcbin/cl.exe. Calls Scripts/parallelcl.
+
+        parallelcl: Actually performs the parallel compilation by forking
+        multiple instances of the Microsoft-supplied cl.exe.
+
+        MIDLWrapper: Compiles to vcbin/midl.exe. Calls through to the
+        Microsoft-supplied midl.exe. This avoids having to invoke perl for
+        every invocation of midl.exe, which would be quite slow.
+
+        Rubberstamped by Sam.
+
+        * CLWrapper/CLWrapper.cpp: Added.
+        (wmain):
+        * CLWrapper/CLWrapper.sln: Added.
+        * CLWrapper/CLWrapper.vcproj: Added.
+        * MIDLWrapper/MIDLWrapper.cpp: Added.
+        (wmain):
+        * MIDLWrapper/MIDLWrapper.sln: Added.
+        * MIDLWrapper/MIDLWrapper.vcproj: Added.
+        * Scripts/parallelcl: Added.
+        * Scripts/pdevenv: Added.
+        * vcbin/cl.exe: Added.
+        * vcbin/midl.exe: Added.
+
 2007-06-23  Adam Roben  <aroben@apple.com>
 
         Land num-cpus for the Windows build.
