@@ -74,9 +74,13 @@ sub slowestcmp($$);
 sub splitpath($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($);
+sub toURL($);
+sub toWindowsPath($);
+sub closeCygpaths();
 
 # Argument handling
 my $shouldCheckLeaks = '';
+my $configuration = '';
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $ignoreTests = '';
@@ -97,6 +101,7 @@ my $verbose = 0;
 my $useValgrind = 0;
 my $strictTesting = 0;
 my $generateNewResults = 1;
+my $stripEditingCallbacks = isCygwin();
 
 my $expectedTag = "expected";
 my $actualTag = "actual";
@@ -124,15 +129,14 @@ my $usage =
     "  --svg                   Run only SVG tests (implies --pixel-tests)\n" .
     "  -t|--threaded           Run a concurrent JavaScript thead with each test\n" .
     "  -v|--verbose            More verbose output (overrides --quiet)\n" .
-    "  --debug|--release       Set DumpRenderTree build configuration\n" .
     "  --valgrind              Run DumpRenderTree inside valgrind (Qt/Linux only)\n" .
-    "  --strict                Do a comparison with the output on Mac (Qt only)\n";
-
-# Parse out build options (--debug or --release) first
-setConfiguration();
-my $configurationOption = "--" . lc configuration();
+    "  --strict                Do a comparison with the output on Mac (Qt only)\n" .
+    "  -c|--configuration config       Set DumpRenderTree build configuration\n" .
+    "  --[no-]strip-editing-callbacks  Remove editing callbacks from expected results\n";
 
 my $getOptionsResult = GetOptions(
+    'c|configuration=s' => \$configuration,
+    'debug|devel' => sub { $configuration = "Debug" },
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
     'horizontal-sweep|h' => \$repaintSweepHorizontally,
@@ -143,6 +147,7 @@ my $getOptionsResult = GetOptions(
     'pixel-tests|p' => \$pixelTests,
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
+    'release|deploy' => sub { $configuration = "Release" },
     'repaint-tests|r' => \$repaintTests,
     'reset-results' => \$resetResults,
     'new-test-results!' => \$generateNewResults,
@@ -155,12 +160,17 @@ my $getOptionsResult = GetOptions(
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
     'strict' => \$strictTesting,
+    'strip-editing-callbacks!' => \$stripEditingCallbacks,
 );
 
 if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
     exit 1;
 }
+
+setConfiguration($configuration);
+
+my $configurationOption = "--" . lc($configuration);
 
 $repaintTests = 1 if $repaintSweepHorizontally;
 
@@ -181,33 +191,45 @@ $productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
 
 chdirWebKit();
 
-my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
-exit WEXITSTATUS($buildResult) if $buildResult;
+my $buildResult;
+if (isCygwin()) {
+    $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln");
+} else { 
+    $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
+}
+
+if ($buildResult) {
+    print STDERR "Compiling DumpRenderTree failed!\n";
+    exit WEXITSTATUS($buildResult);
+}
 
 my $dumpToolName = "DumpRenderTree";
+$dumpToolName .= "_debug" if isCygwin() && $configuration ne "Release";
 my $dumpTool = "$productDir/$dumpToolName";
 die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;
 
 my $imageDiffTool = "$productDir/ImageDiff";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
-checkFrameworks();
+checkFrameworks() unless isCygwin();
 
 my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
+my $platformTestDirectory = $testDirectory;
 my $expectedDirectory = $testDirectory;
-my $expectedDirectoryText = $testDirectory;
 if (isQt()) {
     $expectedDirectory = "LayoutTestResults/qt";
+    $platformTestDirectory = $expectedDirectory;
 } elsif (isCygwin()) {
-    $expectedDirectory = "LayoutTestResults/win";
+    $expectedDirectory = "LayoutTests";
+    $platformTestDirectory = "LayoutTests/win/";
 }
+
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
 if ($testOnlySVGs) {
     $testDirectory .= "/svg";
     $expectedDirectory .= "/svg";
-    $expectedDirectoryText .= "/svg";
 }
 
 my $testResults = catfile($testResultsDirectory, "results.html");
@@ -217,7 +239,7 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 my %testType = ();
 
-system "ln -s $testDirectory /tmp/LayoutTests" unless -x "/tmp/LayoutTests";
+system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTests";
 
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
@@ -226,6 +248,10 @@ my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
 if ($testOnlySVGs) {
     %supportedFileExtensions = map { $_ => 1 } qw(svg xml);
 } elsif (checkWebCoreSVGSupport($testOnlySVGs)) { 
+    $supportedFileExtensions{'svg'} = 1;
+} elsif (isCygwin()) {
+    # FIXME: We should fix webkitdirs.pm:hasSVGSupport() to do the correct
+    # check for Windows instead of forcing this here.
     $supportedFileExtensions{'svg'} = 1;
 } else {
     $ignoredLocalDirectories{'svg'} = 1;
@@ -238,7 +264,7 @@ if ($ignoreTests) {
     processIgnoreTests($ignoreTests);
 }
 
-if (open SKIPPED, "<", "$expectedDirectory/Skipped") {
+if (open SKIPPED, "<", "$platformTestDirectory/Skipped") {
     if ($verbose) {
         print "Skipped tests:\n";
     }
@@ -367,9 +393,8 @@ for my $test (@tests) {
     if ($test !~ /^http\//) {
         my $testPath = "$testDirectory/$test";
         if (isCygwin()) {
-            $testPath = `cygpath -m -s "$testPath"`;
-        }
-        else {
+            $testPath = toWindowsPath($testPath);
+        } else {
             $testPath = canonpath($testPath);
         }
         print OUT "$testPath\n";
@@ -379,11 +404,10 @@ for my $test (@tests) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path\n";
-        }
-        else {
+        } else {
             my $testPath = "$testDirectory/$test";
             if (isCygwin()) {
-                $testPath = `cygpath -m -s "$testPath"`;
+                $testPath = toWindowsPath($testPath);
             }
             else {
                 $testPath = canonpath($testPath);
@@ -397,22 +421,26 @@ for my $test (@tests) {
         last if /#EOF/;
         $actual .= $_;
     }
+    $actual =~ s/\r//g if isCygwin();
+    
     my $isText = isTextOnlyTest($actual);
 
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    my $expectedDir = expectedDirectoryForTest($isText);
+    my $expectedDir = expectedDirectoryForTest($base);
+
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
         $expected = "";
         while (<EXPECTED>) {
+            next if $stripEditingCallbacks && $_ =~ /^EDITING DELEGATE:/;
             $expected .= $_;
         }
         close EXPECTED;
     }
     my $expectedMac;
-    if (isQt() && $strictTesting && !$isText) {
-      if (!$resetResults && open EXPECTED, "<", "$expectedDirectoryText/$base-$expectedTag.txt") {
+    if (!isOSX() && $strictTesting && !$isText) {
+      if (!$resetResults && open EXPECTED, "<", "$expectedDirectory/$base-$expectedTag.txt") {
         $expectedMac = "";
         while (<EXPECTED>) {
           $expectedMac .= $_;
@@ -487,7 +515,7 @@ for my $test (@tests) {
         }
     }
 
-    if (isQt() && $strictTesting && !$isText) {
+    if (!isOSX() && $strictTesting && !$isText) {
       if (defined $expectedMac) {
         my $simplified_actual;
         $simplified_actual = $actual;
@@ -753,15 +781,10 @@ if ($counts{mismatch}) {
     for my $test (@{$tests{mismatch}}) {
         my $base = $test;
         $base =~ s/\.[a-zA-Z]+$//;
-        my $expectedDir;
-        if ($testType{$test}) {
-            $expectedDir = $expectedDirectoryText;
-        } else {
-            $expectedDir = $expectedDirectory;
-        }
+        my $expectedDir = expectedDirectoryForTest($base);
         copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
         print HTML "<tr>\n";            
-        print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
         if (-s "$testResultsDirectory/$base-$diffsTag.txt") {
             print HTML "<td><a href=\"$base-$expectedTag.txt\">expected</a></td>\n";
             print HTML "<td><a href=\"$base-$actualTag.txt\">actual</a></td>\n";
@@ -787,15 +810,10 @@ if ($counts{fail}) {
     print HTML "<table>\n";
     for my $test (@{$tests{fail}}) {
         my $base = $test;
-        my $expectedDir;
-        if ($testType{$test}) {
-            $expectedDir = $expectedDirectoryText;
-        } else {
-            $expectedDir = $expectedDirectory;
-        }
         $base =~ s/\.[a-zA-Z]+$//;
+        my $expectedDir = expectedDirectoryForTest($base);
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
         print HTML "</tr>\n";
     }
     print HTML "</table>\n";
@@ -806,18 +824,13 @@ if ($counts{new}) {
     print HTML "<table>\n";
     for my $test (@{$tests{new}}) {
         my $base = $test;
-        my $expectedDir;
-        if ($testType{$test}) {
-            $expectedDir = $expectedDirectoryText;
-        } else {
-            $expectedDir = $expectedDirectory;
-        }
         $base =~ s/\.[a-zA-Z]+$//;
+        my $expectedDir = expectedDirectoryForTest($base);
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"$expectedDir/$test\">$base</a></td>\n";
-        print HTML "<td><a href=\"$expectedDir/$base-$expectedTag.txt\">results</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$expectedDir/$base-$expectedTag.txt") . "\">results</a></td>\n";
         if ($pixelTests && -f "$expectedDir/$base-$expectedTag.png") {
-            print HTML "<td><a href=\"$expectedDir/$base-$expectedTag.png\">image</a></td>\n";
+            print HTML "<td><a href=\"" . toURL("$expectedDir/$base-$expectedTag.png") . "\">image</a></td>\n";
         }
         print HTML "</tr>\n";
     }
@@ -830,9 +843,13 @@ close HTML;
 
 if(isQt()) {
   system "konqueror", $testResults if $launchSafari;
+} elsif (isCygwin()) {
+  system "cygstart", $testResults if $launchSafari;
 } else {
   system "WebKitTools/Scripts/run-safari", $configurationOption, "-NSOpen", $testResults if $launchSafari;
 }
+
+closeCygpaths() if isCygwin();
 
 exit 1;
 
@@ -976,6 +993,9 @@ sub openDumpTool()
     my $display = $ENV{'DISPLAY'};
     my $testfonts = $ENV{'WEBKIT_TESTFONTS'};
 
+    my $homeDrive = $ENV{'HOMEDRIVE'};
+    my $homePath = $ENV{'HOMEPATH'};
+        
     my $isQt = isQt();
     local %ENV;
     if ($isQt) {
@@ -997,6 +1017,12 @@ sub openDumpTool()
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
     $ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;
     $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
+    
+    if (isCygwin()) {
+        $ENV{HOMEDRIVE} = $homeDrive;
+        $ENV{HOMEPATH} = $homePath;
+    }
+        
     my @args = ();
     if ($useValgrind) {
       push @args, $dumpTool;
@@ -1043,8 +1069,18 @@ sub openHTTPDIfNeeded()
     }
     
     my $httpdPath = "/usr/sbin/httpd";
-    my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
-    $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    my $httpdConfig;
+    if (isCygwin()) {
+        my $windowsConfDirectory = "$FindBin::Bin/../../OpenSourceWin/LayoutTestsWin/http/conf/";
+        unless (-x "/usr/lib/apache/libphp4.dll") {
+            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
+            chmod(0755, "/usr/lib/apache/libphp4.dll");
+        }
+        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } else {
+        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    }
     my $documentRoot = "$testDirectory/http/tests";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
@@ -1128,10 +1164,70 @@ sub isTextOnlyTest($)
 
 sub expectedDirectoryForTest($)
 {
-    my ($isText) = @_;
-    if($isText) {
-        return $expectedDirectoryText;
-    } else {
-        return $expectedDirectory;
+    my ($base) = @_;
+    return (-f "$platformTestDirectory/$base-$expectedTag.txt") ? $platformTestDirectory : $expectedDirectory;
+}
+
+my %cygpaths = ();
+
+sub openCygpathIfNeeded($)
+{
+    my ($options) = @_;
+
+    return unless isCygwin();
+    return $cygpaths{$options} if $cygpaths{$options} && $cygpaths{$options}->{"open"};
+
+    local (*CYGPATHIN, *CYGPATHOUT);
+    my $pid = open2(\*CYGPATHIN, \*CYGPATHOUT, "cygpath -f - $options");
+    my $cygpath =  {
+        "pid" => $pid,
+        "in" => *CYGPATHIN,
+        "out" => *CYGPATHOUT,
+        "open" => 1
+    };
+
+    $cygpaths{$options} = $cygpath;
+
+    return $cygpath;
+}
+
+sub closeCygpaths()
+{
+    return unless isCygwin();
+
+    foreach my $cygpath (values(%cygpaths)) {
+        close $cygpath->{"in"};
+        close $cygpath->{"out"};
+        waitpid($cygpath->{"pid"}, 0);
+        $cygpath->{"open"} = 0;
+
     }
+}
+
+sub convertPathUsingCygpath($$)
+{
+    my ($path, $options) = @_;
+
+    my $cygpath = openCygpathIfNeeded($options);
+    local *inFH = $cygpath->{"in"};
+    local *outFH = $cygpath->{"out"};
+    print outFH $path . "\n";
+    chomp(my $convertedPath = <inFH>);
+    return $convertedPath;
+}
+
+sub toWindowsPath($)
+{
+    my ($path) = @_;
+    return unless isCygwin();
+
+    return convertPathUsingCygpath($path, "-w");
+}
+
+sub toURL($)
+{
+    my ($path) = @_;
+    return $path unless isCygwin();
+    
+    return "file:///" . convertPathUsingCygpath($path, "-m");
 }

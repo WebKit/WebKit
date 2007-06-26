@@ -1,5 +1,16 @@
 2007-06-25  Adam Roben  <aroben@apple.com>
 
+        Enable running the regression tests on Windows.
+
+        These changes were developed alongside the Windows WebKit port and
+        have been well tested.
+
+        Rubberstamped by Sam.
+
+        * Scripts/run-webkit-tests:
+
+2007-06-25  Adam Roben  <aroben@apple.com>
+
         Fix Bug 14403: prepare-ChangeLog --git-commit doesn't support --diff
         http://bugs.webkit.org/show_bug.cgi?id=14403
 
