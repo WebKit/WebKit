@@ -164,3 +164,25 @@
 }
 
 @end
+
+@implementation DOMHTMLInputElement (FormPromptAdditions)
+- (BOOL)_isEdited
+{
+    WebCore::RenderObject *renderer = [self _node]->renderer();
+    if (renderer && [self _isTextField])
+        return renderer->isEdited();
+    
+    return NO;
+}
+@end
+
+@implementation DOMHTMLTextAreaElement (FormPromptAdditions)
+- (BOOL)_isEdited
+{
+    WebCore::RenderObject *renderer = [self _node]->renderer();
+    if (renderer)
+        return renderer->isEdited();
+    
+    return NO;
+}
+@end

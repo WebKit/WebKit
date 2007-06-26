@@ -103,7 +103,7 @@
 // They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
 // replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
 // and these will be deleted.
-@interface DOMHTMLInputElement(FormsAutoFillTransition)
+@interface DOMHTMLInputElement (FormsAutoFillTransition)
 - (BOOL)_isTextField;
 - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index;
@@ -111,10 +111,20 @@
 - (void)_setAutofilled:(BOOL)filled;
 @end
 
+// These changes are necessary to detect whether a form input was modified by a user
+// or javascript
+@interface DOMHTMLInputElement (FormPromptAdditions)
+- (BOOL)_isEdited;
+@end
+
+@interface DOMHTMLTextAreaElement (FormPromptAdditions)
+- (BOOL)_isEdited;
+@end
+
 // All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
 // They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
 // replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
 // and these will be deleted.
-@interface DOMHTMLSelectElement(FormsAutoFillTransition)
+@interface DOMHTMLSelectElement (FormsAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
 @end

@@ -1,3 +1,17 @@
+2007-06-26  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Added two accessor functions for <rdar://problem/4119138>
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isEdited]):
+        (-[DOMHTMLTextAreaElement _isEdited]):
+        Added an accessor to the isEdited value of a DOM node's render object
+
+        * bindings/objc/DOMPrivate.h:
+        Added header definitions for _isEdited
+
 2007-06-26  Sam Weinig  <sam@webkit.org>
 
         Fix Win32 build.
