@@ -31,6 +31,7 @@
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
+#include "RenderListItem.h"
 
 namespace WebCore {
 
@@ -116,6 +117,17 @@ void BreakBlockquoteCommand::doApply()
         RefPtr<Node> clonedAncestor = clonedBlockquote;
         for (size_t i = ancestors.size(); i != 0; --i) {
             RefPtr<Node> clonedChild = ancestors[i - 1]->cloneNode(false); // shallow clone
+            // Preserve list item numbering in cloned lists.
+            if (clonedChild->isElementNode() && clonedChild->hasTagName(olTag)) {
+                Node* listChildNode = i > 1 ? ancestors[i - 2] : startNode;
+                // The first child of the cloned list might not be a list item element, 
+                // find the first one so that we know where to start numbering.
+                while (listChildNode && !listChildNode->hasTagName(liTag))
+                    listChildNode = listChildNode->nextSibling();
+                if (listChildNode && listChildNode->renderer())
+                    setNodeAttribute(static_cast<Element*>(clonedChild.get()), startAttr, String::number(static_cast<RenderListItem*>(listChildNode->renderer())->value()));
+            }
+                
             appendNode(clonedChild.get(), clonedAncestor.get());
             clonedAncestor = clonedChild;
         }

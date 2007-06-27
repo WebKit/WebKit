@@ -1,3 +1,17 @@
+2007-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4580583> Breaking blockquoted list should not automatically renumber the second list
+        
+        When a quoted numbered list is broken in half, it's cloned
+        to make the second list. That second list needs its start attribute
+        set so that the numbers of the list items in it will be preserved.
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Set the start attribute
+        of a cloned list to be the original number of the first list item in it.
+
 2007-06-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
