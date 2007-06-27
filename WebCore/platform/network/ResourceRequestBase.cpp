@@ -24,32 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+#include "ResourceRequestBase.h"
 #include "ResourceRequest.h"
 
 namespace WebCore {
 
-bool ResourceRequest::isEmpty() const
+inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
+{
+    return *static_cast<const ResourceRequest*>(this);
+}
+
+bool ResourceRequestBase::isEmpty() const
 {
     updateResourceRequest(); 
     
     return m_url.isEmpty(); 
 }
 
-bool ResourceRequest::isNull() const
+bool ResourceRequestBase::isNull() const
 {
     updateResourceRequest(); 
     
     return m_url.url().isNull();
 }
 
-const KURL& ResourceRequest::url() const 
+const KURL& ResourceRequestBase::url() const 
 {
     updateResourceRequest(); 
     
     return m_url;
 }
 
-void ResourceRequest::setURL(const KURL& url)
+void ResourceRequestBase::setURL(const KURL& url)
 { 
     updateResourceRequest(); 
 
@@ -58,14 +64,14 @@ void ResourceRequest::setURL(const KURL& url)
     m_platformRequestUpdated = false;
 }
 
-const ResourceRequestCachePolicy ResourceRequest::cachePolicy() const
+const ResourceRequestCachePolicy ResourceRequestBase::cachePolicy() const
 {
     updateResourceRequest(); 
     
     return m_cachePolicy; 
 }
 
-void ResourceRequest::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
+void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
 {
     updateResourceRequest(); 
     
@@ -74,14 +80,14 @@ void ResourceRequest::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
     m_platformRequestUpdated = false;
 }
 
-double ResourceRequest::timeoutInterval() const
+double ResourceRequestBase::timeoutInterval() const
 {
     updateResourceRequest(); 
     
     return m_timeoutInterval; 
 }
 
-void ResourceRequest::setTimeoutInterval(double timeoutInterval) 
+void ResourceRequestBase::setTimeoutInterval(double timeoutInterval) 
 {
     updateResourceRequest(); 
     
@@ -90,14 +96,14 @@ void ResourceRequest::setTimeoutInterval(double timeoutInterval)
     m_platformRequestUpdated = false;
 }
 
-const KURL& ResourceRequest::mainDocumentURL() const
+const KURL& ResourceRequestBase::mainDocumentURL() const
 {
     updateResourceRequest(); 
     
     return m_mainDocumentURL; 
 }
 
-void ResourceRequest::setMainDocumentURL(const KURL& mainDocumentURL)
+void ResourceRequestBase::setMainDocumentURL(const KURL& mainDocumentURL)
 { 
     updateResourceRequest(); 
     
@@ -106,14 +112,14 @@ void ResourceRequest::setMainDocumentURL(const KURL& mainDocumentURL)
     m_platformRequestUpdated = false;
 }
 
-const String& ResourceRequest::httpMethod() const
+const String& ResourceRequestBase::httpMethod() const
 {
     updateResourceRequest(); 
     
     return m_httpMethod; 
 }
 
-void ResourceRequest::setHTTPMethod(const String& httpMethod) 
+void ResourceRequestBase::setHTTPMethod(const String& httpMethod) 
 {
     updateResourceRequest(); 
 
@@ -122,21 +128,21 @@ void ResourceRequest::setHTTPMethod(const String& httpMethod)
     m_platformRequestUpdated = false;
 }
 
-const HTTPHeaderMap& ResourceRequest::httpHeaderFields() const
+const HTTPHeaderMap& ResourceRequestBase::httpHeaderFields() const
 {
     updateResourceRequest(); 
 
     return m_httpHeaderFields; 
 }
 
-String ResourceRequest::httpHeaderField(const String& name) const
+String ResourceRequestBase::httpHeaderField(const String& name) const
 {
     updateResourceRequest(); 
     
     return m_httpHeaderFields.get(name);
 }
 
-void ResourceRequest::setHTTPHeaderField(const String& name, const String& value)
+void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& value)
 {
     updateResourceRequest(); 
     
@@ -145,14 +151,14 @@ void ResourceRequest::setHTTPHeaderField(const String& name, const String& value
     m_platformRequestUpdated = false;
 }
 
-FormData* ResourceRequest::httpBody() const 
+FormData* ResourceRequestBase::httpBody() const 
 { 
     updateResourceRequest(); 
     
     return m_httpBody.get(); 
 }
 
-void ResourceRequest::setHTTPBody(PassRefPtr<FormData> httpBody)
+void ResourceRequestBase::setHTTPBody(PassRefPtr<FormData> httpBody)
 {
     updateResourceRequest(); 
     
@@ -161,14 +167,14 @@ void ResourceRequest::setHTTPBody(PassRefPtr<FormData> httpBody)
     m_platformRequestUpdated = false;
 } 
 
-bool ResourceRequest::allowHTTPCookies() const 
+bool ResourceRequestBase::allowHTTPCookies() const 
 {
     updateResourceRequest(); 
     
     return m_allowHTTPCookies; 
 }
 
-void ResourceRequest::setAllowHTTPCookies(bool allowHTTPCookies)
+void ResourceRequestBase::setAllowHTTPCookies(bool allowHTTPCookies)
 {
     updateResourceRequest(); 
     
@@ -177,29 +183,7 @@ void ResourceRequest::setAllowHTTPCookies(bool allowHTTPCookies)
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequest::updatePlatformRequest() const
-{
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    if (m_platformRequestUpdated)
-        return;
-    
-    const_cast<ResourceRequest*>(this)->doUpdatePlatformRequest();
-    m_platformRequestUpdated = true;
-#endif
-}
-
-void ResourceRequest::updateResourceRequest() const
-{
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    if (m_resourceRequestUpdated)
-        return;
-
-    const_cast<ResourceRequest*>(this)->doUpdateResourceRequest();
-    m_resourceRequestUpdated = true;
-#endif
-}
-
-void ResourceRequest::addHTTPHeaderField(const String& name, const String& value) 
+void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& value) 
 {
     updateResourceRequest();
     pair<HTTPHeaderMap::iterator, bool> result = m_httpHeaderFields.add(name, value); 
@@ -207,14 +191,14 @@ void ResourceRequest::addHTTPHeaderField(const String& name, const String& value
         result.first->second += "," + value;
 }
 
-void ResourceRequest::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
+void ResourceRequestBase::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
 {
     HTTPHeaderMap::const_iterator end = headerFields.end();
     for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it)
         addHTTPHeaderField(it->first, it->second);
 }
 
-bool operator==(const ResourceRequest& a, const ResourceRequest& b)
+bool operator==(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())
         return false;
@@ -251,13 +235,31 @@ bool operator==(const ResourceRequest& a, const ResourceRequest& b)
     return true;
 }
 
-bool ResourceRequest::isConditional() const
+bool ResourceRequestBase::isConditional() const
 {
     return (m_httpHeaderFields.contains("If-Match") ||
             m_httpHeaderFields.contains("If-Modified-Since") ||
             m_httpHeaderFields.contains("If-None-Match") ||
             m_httpHeaderFields.contains("If-Range") ||
             m_httpHeaderFields.contains("If-Unmodified-Since"));
+}
+
+void ResourceRequestBase::updatePlatformRequest() const
+{
+    if (m_platformRequestUpdated)
+        return;
+    
+    const_cast<ResourceRequest&>(asResourceRequest()).doUpdatePlatformRequest();
+    m_platformRequestUpdated = true;
+}
+
+void ResourceRequestBase::updateResourceRequest() const
+{
+    if (m_resourceRequestUpdated)
+        return;
+
+    const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceRequest();
+    m_resourceRequestUpdated = true;
 }
 
 }

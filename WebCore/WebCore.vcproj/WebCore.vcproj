@@ -4160,11 +4160,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceRequest.cpp"
+					RelativePath="..\platform\network\ResourceRequestBase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceRequest.h"
+					RelativePath="..\platform\network\ResourceRequestBase.h"
 					>
 				</File>
 				<File
@@ -4200,6 +4200,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\ResourceHandleCFNet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\ResourceRequest.h"
 						>
 					</File>
 					<File

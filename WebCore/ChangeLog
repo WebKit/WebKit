@@ -1,3 +1,75 @@
+2007-06-26  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Implement http://bugs.webkit.org/show_bug.cgi?id=14225
+        Bug 14225: Make it possible to define platform-specific ResourceRequest without #ifdefs
+
+        This change moves the bulk of ResourceRequest into a base class named
+        ResourceRequestBase with all platform-specific bits pushed into
+        ResourceRequest.  This allows ports to easily add new members to a
+        ResourceRequest without having to #ifdef the code that is shared
+        between ports.
+
+        * WebCore.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/ResourceRequest.cpp: Removed.
+        * platform/network/ResourceRequest.h: Removed.
+        * platform/network/ResourceRequestBase.cpp: Added.
+        (WebCore::ResourceRequestBase::asResourceRequest):
+        (WebCore::ResourceRequestBase::isEmpty):
+        (WebCore::ResourceRequestBase::isNull):
+        (WebCore::ResourceRequestBase::url):
+        (WebCore::ResourceRequestBase::setURL):
+        (WebCore::ResourceRequestBase::cachePolicy):
+        (WebCore::ResourceRequestBase::setCachePolicy):
+        (WebCore::ResourceRequestBase::timeoutInterval):
+        (WebCore::ResourceRequestBase::setTimeoutInterval):
+        (WebCore::ResourceRequestBase::mainDocumentURL):
+        (WebCore::ResourceRequestBase::setMainDocumentURL):
+        (WebCore::ResourceRequestBase::httpMethod):
+        (WebCore::ResourceRequestBase::setHTTPMethod):
+        (WebCore::ResourceRequestBase::httpHeaderFields):
+        (WebCore::ResourceRequestBase::httpHeaderField):
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):
+        (WebCore::ResourceRequestBase::httpBody):
+        (WebCore::ResourceRequestBase::setHTTPBody):
+        (WebCore::ResourceRequestBase::allowHTTPCookies):
+        (WebCore::ResourceRequestBase::setAllowHTTPCookies):
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+        (WebCore::ResourceRequestBase::addHTTPHeaderFields):
+        (WebCore::operator==):
+        (WebCore::ResourceRequestBase::isConditional):
+        (WebCore::ResourceRequestBase::updatePlatformRequest):
+        (WebCore::ResourceRequestBase::updateResourceRequest):
+        * platform/network/ResourceRequestBase.h: Added.
+        (WebCore::):
+        (WebCore::ResourceRequestBase::httpContentType):
+        (WebCore::ResourceRequestBase::setHTTPContentType):
+        (WebCore::ResourceRequestBase::httpReferrer):
+        (WebCore::ResourceRequestBase::setHTTPReferrer):
+        (WebCore::ResourceRequestBase::clearHTTPReferrer):
+        (WebCore::ResourceRequestBase::httpUserAgent):
+        (WebCore::ResourceRequestBase::setHTTPUserAgent):
+        (WebCore::ResourceRequestBase::httpAccept):
+        (WebCore::ResourceRequestBase::setHTTPAccept):
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        (WebCore::operator!=):
+        * platform/network/cf/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/curl/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/mac/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/qt/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2007-06-26  Adam Roben  <aroben@apple.com>
 
         Add ChangeLog entries from the Windows merge.

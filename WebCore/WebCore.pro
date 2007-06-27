@@ -620,7 +620,7 @@ SOURCES += \
     platform/network/HTTPParsers.cpp \
     platform/network/ProtectionSpace.cpp \
     platform/network/ResourceHandle.cpp \
-    platform/network/ResourceRequest.cpp \
+    platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponse.cpp \
     platform/RegularExpression.cpp \
     platform/ScrollBar.cpp \

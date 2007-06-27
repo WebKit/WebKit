@@ -25,24 +25,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceRequest_h
-#define ResourceRequest_h
+#ifndef ResourceRequestBase_h
+#define ResourceRequestBase_h
 
 #include "FormData.h"
 #include "KURL.h"
 #include "HTTPHeaderMap.h"
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSURLRequest;
-#else
-class NSURLRequest;
-#endif
-#elif USE(CFNETWORK)
-#include <wtf/RetainPtr.h>
-typedef const struct _CFURLRequest* CFURLRequestRef;
-#endif
 
 namespace WebCore {
 
@@ -53,52 +41,10 @@ namespace WebCore {
         ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
     };
 
-    struct ResourceRequest {
+    struct ResourceRequest;
 
-        
-        ResourceRequest(const String& url) 
-            : m_url(url.deprecatedString())
-            , m_cachePolicy(UseProtocolCachePolicy)
-            , m_timeoutInterval(defaultTimeoutInterval)
-            , m_httpMethod("GET")
-            , m_allowHTTPCookies(true)
-            , m_resourceRequestUpdated(true)
-            , m_platformRequestUpdated(false)
-        {
-        }
-
-        ResourceRequest(const KURL& url) 
-            : m_url(url)
-            , m_cachePolicy(UseProtocolCachePolicy)
-            , m_timeoutInterval(defaultTimeoutInterval)
-            , m_httpMethod("GET")
-            , m_allowHTTPCookies(true)
-            , m_resourceRequestUpdated(true)
-            , m_platformRequestUpdated(false)
-        {
-        }
-
-        ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
-            : m_url(url)
-            , m_cachePolicy(policy)
-            , m_timeoutInterval(defaultTimeoutInterval)
-            , m_httpMethod("GET")
-            , m_allowHTTPCookies(true)
-            , m_resourceRequestUpdated(true)
-            , m_platformRequestUpdated(false)
-        {
-            setHTTPReferrer(referrer);
-        }
-        
-        ResourceRequest()
-            : m_cachePolicy(UseProtocolCachePolicy)
-            , m_timeoutInterval(defaultTimeoutInterval)
-            , m_httpMethod("GET")
-            , m_allowHTTPCookies(true)
-            , m_resourceRequestUpdated(true)
-            , m_platformRequestUpdated(false)
-        {
-        }
+    // Do not use this type directly.  Use ResourceRequest instead.
+    struct ResourceRequestBase {
 
         bool isNull() const;
         bool isEmpty() const;
@@ -145,30 +91,28 @@ namespace WebCore {
 
         bool isConditional() const;
         
-#if PLATFORM(MAC)
-        ResourceRequest(NSURLRequest* nsRequest)
+    protected:
+        // Used when ResourceRequest is initialized from a platform representation of the request
+        ResourceRequestBase()
             : m_resourceRequestUpdated(false)
             , m_platformRequestUpdated(true)
-            , m_nsRequest(nsRequest) { }
-        
-        NSURLRequest* nsURLRequest() const;
-#elif USE(CFNETWORK)
-        ResourceRequest(CFURLRequestRef cfRequest)
-            : m_resourceRequestUpdated(false)
-            , m_platformRequestUpdated(true)
-            , m_cfRequest(cfRequest) { }
-        
-        CFURLRequestRef cfURLRequest() const;       
-#endif
-    private:
+        {
+        }
+
+        ResourceRequestBase(const KURL& url, ResourceRequestCachePolicy policy)
+            : m_url(url)
+            , m_cachePolicy(policy)
+            , m_timeoutInterval(defaultTimeoutInterval)
+            , m_httpMethod("GET")
+            , m_allowHTTPCookies(true)
+            , m_resourceRequestUpdated(true)
+            , m_platformRequestUpdated(false)
+        {
+        }
+
         void updatePlatformRequest() const; 
         void updateResourceRequest() const; 
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
-        void doUpdatePlatformRequest();
-        void doUpdateResourceRequest();
-#endif
-        
         static const int defaultTimeoutInterval = 60;
 
         KURL m_url;
@@ -182,16 +126,14 @@ namespace WebCore {
         bool m_allowHTTPCookies;
         mutable bool m_resourceRequestUpdated;
         mutable bool m_platformRequestUpdated;
-#if PLATFORM(MAC)
-        RetainPtr<NSURLRequest> m_nsRequest;
-#elif USE(CFNETWORK)
-        RetainPtr<CFURLRequestRef> m_cfRequest;      
-#endif
+
+    private:
+        const ResourceRequest& asResourceRequest() const;
     };
 
-    bool operator==(const ResourceRequest& a, const ResourceRequest& b);
-    inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
+    bool operator==(const ResourceRequestBase& a, const ResourceRequestBase& b);
+    inline bool operator!=(ResourceRequestBase& a, const ResourceRequestBase& b) { return !(a == b); }
 
 } // namespace WebCore
 
-#endif // ResourceRequest_h
+#endif // ResourceRequestBase_h
