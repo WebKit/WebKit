@@ -1,10 +1,10 @@
-2007-06-27  Steve Falkenburg  <set EMAIL_ADDRESS environment variable>
+2007-06-27  Steve Falkenburg  <sfalken@apple.com>
 
         Turn on static code analysis.
 
         Reviewed by Oliver.
         
-        Effects only folks that have Visual Studio Team Suite installed,
+        Affects only folks that have Visual Studio Team Suite installed,
         or who have replaced their compiler with the version shipping in the
         Vista SDK.
 
