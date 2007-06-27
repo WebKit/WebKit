@@ -1,3 +1,22 @@
+2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14058
+        Gdk font backend cleanup
+
+        * platform/FontData.h: Remove obsolete function.
+        * platform/gdk/FontDataGdk.cpp:
+        (WebCore::FontData::containsCharacters): Lock/unlock only once.
+        (WebCore::FontData::platformWidthForGlyph): Remove needless cast.
+        * platform/gdk/FontPlatformData.h: Remove obsolete function.
+        * platform/gdk/FontPlatformDataGdk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Pass the actual size,
+        not the pixel size.
+        (WebCore::FontPlatformData::~FontPlatformData): Free m_fontMatrix.
+        * platform/gdk/GlyphPageTreeNodeGdk.cpp:
+        (WebCore::GlyphPage::fill): Lock/unlock only once.
+
 2007-06-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

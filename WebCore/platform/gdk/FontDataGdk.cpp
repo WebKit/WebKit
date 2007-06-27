@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,9 +78,20 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    for (unsigned i = 0; i < length; i++)
-        if (getGlyphIndex(characters[i]) == 0)
+    FT_Face face = cairo_ft_scaled_font_lock_face(m_font.m_scaledFont);
+
+    if (!face)
+        return false;
+
+    for (unsigned i = 0; i < length; i++) {
+        if (FcFreeTypeCharIndex(face, characters[i]) == 0) {
+            cairo_ft_scaled_font_unlock_face(m_font.m_scaledFont);
             return false;
+        }
+    }
+
+    cairo_ft_scaled_font_unlock_face(m_font.m_scaledFont);
+
     return true;
 }
 
@@ -91,7 +103,7 @@ void FontData::determinePitch()
 float FontData::platformWidthForGlyph(Glyph glyph) const
 {
     cairo_glyph_t cglyph;
-    cglyph.index = (int)glyph;
+    cglyph.index = glyph;
     cairo_text_extents_t extents;
     cairo_scaled_font_glyph_extents(m_font.m_scaledFont, &cglyph, 1, &extents);
     float w = extents.x_advance;

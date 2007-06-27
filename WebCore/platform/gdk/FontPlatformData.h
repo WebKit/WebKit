@@ -47,7 +47,6 @@ public:
     static bool init();
 
     static cairo_font_face_t** list(FontDescription&, const AtomicString& familyName, int* length);
-    Glyph index(unsigned ucs4) const;
 
     bool isFixedPitch();
 

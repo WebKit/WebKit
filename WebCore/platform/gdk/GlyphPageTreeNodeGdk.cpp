@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,8 +38,16 @@ namespace WebCore {
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
+    FT_Face face = cairo_ft_scaled_font_lock_face(fontData->m_font.m_scaledFont);
+
+    if (!face)
+        return false;
+
     for (unsigned i = 0; i < bufferLength; i++)
-        setGlyphDataForIndex(i, fontData->getGlyphIndex(buffer[i]), fontData);
+        setGlyphDataForIndex(i, FcFreeTypeCharIndex(face, buffer[i]), fontData);
+
+    cairo_ft_scaled_font_unlock_face(fontData->m_font.m_scaledFont);
+
     return true;
 }
 
