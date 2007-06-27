@@ -64,6 +64,7 @@ namespace WebCore {
         bool fetchInfo();
 
         bool m_isLoaded;
+        int m_loadCount;
 
         String m_description;
         String m_path;
