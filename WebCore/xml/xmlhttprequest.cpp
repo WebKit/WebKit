@@ -582,8 +582,12 @@ String XMLHttpRequest::getResponseHeader(const String& name) const
 String XMLHttpRequest::responseMIMEType() const
 {
     String mimeType = getMIMEType(m_mimeTypeOverride);
-    if (mimeType.isEmpty())
-        mimeType = getMIMEType(getResponseHeader("Content-Type"));
+    if (mimeType.isEmpty()) {
+        if (m_response.isHTTP())
+            mimeType = getMIMEType(getResponseHeader("Content-Type"));
+        else
+            mimeType = m_response.mimeType();
+    }
     if (mimeType.isEmpty())
         mimeType = "text/xml";
     

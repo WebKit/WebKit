@@ -1,3 +1,16 @@
+2007-06-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14288
+        XMLHttpRequest doesn't use a correct content type for file:// URLs
+
+        Test: fast/dom/xmlhttprequest-html-response-encoding.html
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::responseMIMEType): Use MIME type provided by
+        the network layer, since it provides it even for non-HTTP responses.
+
 2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Sam Weinig.
