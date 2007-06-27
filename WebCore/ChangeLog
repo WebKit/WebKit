@@ -1,3 +1,19 @@
+2007-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5247341> REGRESSION: Pasting sometimes leaves out trailing newline
+        
+        Pasting with a trailing interchange newline doesn't work when pasting
+        into an empty line.  Code that handles removing brs at the insertion
+        position tries to also handle trailing interchange newlines by re-using
+        those brs and fails.  Removed that code and handle all interchange
+        newlines with code later in doApply().
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Don't try to re-use the
+        endBR when there's a trailing interchange newline.
+        
 2007-06-27  George Staikos  <staikos@kde.org>
 
         Rubber stamped by Mitz.

@@ -2,6 +2,31 @@
 
         Reviewed by John.
         
+        <rdar://problem/5247341> REGRESSION: Pasting sometimes loses trailing newline
+        
+        Demonstrates the bug:
+        * editing/pasteboard/5247341-expected.checksum: Added.
+        * editing/pasteboard/5247341-expected.png: Added.
+        * editing/pasteboard/5247341-expected.txt: Added.
+        * editing/pasteboard/5247341.html: Added.
+        
+        The changes in this patch exposed three bugs (5296964, 5296977, and 5299425).
+        Added FIXMES for them.  Also removed tabs in them:
+        * editing/pasteboard/paste-table-003-expected.checksum:
+        * editing/pasteboard/paste-table-003-expected.png:
+        * editing/pasteboard/paste-table-003-expected.txt:
+        * editing/pasteboard/paste-table-003.html:
+        * fast/forms/textarea-paste-newline.html:
+        
+        Equivalent trees:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.txt:
+
+
+2007-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
         <rdar://problem/4580583> Breaking blockquoted list should not automatically renumber the second list
 
         Splits a quoted list w/o splitting a list item:

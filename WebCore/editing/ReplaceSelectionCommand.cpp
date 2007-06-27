@@ -597,14 +597,8 @@ void ReplaceSelectionCommand::doApply()
     
     bool interchangeNewlineAtEnd = fragment.hasInterchangeNewlineAtEnd();
 
-    if (shouldRemoveEndBR(endBR)) {
-        if (interchangeNewlineAtEnd) {
-            interchangeNewlineAtEnd = false;
-            m_lastLeafInserted = endBR;
-            lastPositionToSelect = VisiblePosition(Position(m_lastLeafInserted.get(), 0)).deepEquivalent();
-        } else
-            removeNodeAndPruneAncestors(endBR);
-    }
+    if (shouldRemoveEndBR(endBR))
+        removeNodeAndPruneAncestors(endBR);
         
     if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
         VisiblePosition destination = startOfInsertedContent.previous();

@@ -14,12 +14,12 @@ function test()
     document.execCommand("paste");
     var result2 = ta.value;
 
-    if (result1 == "abc\n" && result2 == "abc\nabc\n")
+    if (result1 == "abc\n\n" && result2 == "abc\nabc\n\n")
         document.write("<p>Hooray, the test was successful!</p>");
     else if (result1 == "")
         document.write("<p>The test failed; doesn't work in release builds of Safari because paste is not allowed.</p>");
     else
-        document.write("<p>The test failed, result 1 was '" + result1.replace("\n", "\\n") + "' and result 2 was '" + result2.replace("\n", "\\n") + "'.</p>");
+        document.write("<p>The test failed, result 1 was '" + result1.replace("\n", "\\n") + "' and result 2 was '" + result2.replace("\n", "\\n") + "'. This test demonstrates a bug (5299425): the final '\n' in a textarea is reported by .value even if it is collapsed.</p>");
 }
 </script>
 <body onload="test()">

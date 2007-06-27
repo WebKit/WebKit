@@ -1,0 +1,14 @@
+<p>This tests for a bug where newlines would not be preserved during copy/paste. Below you should see two paragaphs containing "Hello World!" and an empty third paragraph with the caret in it.</p>
+<div id="root" contenteditable="true">Hello World!<div id="div"><br></div></div>
+
+<script>
+root = document.getElementById("root");
+root.focus();
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+
+selection = window.getSelection();
+div = document.getElementById("div");
+selection.setPosition(div, 0);
+document.execCommand("Paste");
+</script>
