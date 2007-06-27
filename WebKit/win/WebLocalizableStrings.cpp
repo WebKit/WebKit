@@ -49,12 +49,16 @@ static CFBundleRef createWebKitBundle()
 {
     WCHAR pathStr[MAX_PATH];
     DWORD length = ::GetModuleFileNameW(gInstance, pathStr, MAX_PATH);
-    if (!length || GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+    if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
         return 0;
 
     bool found = false;
-    for (int i=length; i>0; i--) {
+    for (int i = length - 1; i >= 0; i--) {
+        // warning C6385: Invalid data: accessing 'pathStr', the readable size is '520' bytes, but '2000' bytes might be read
+        #pragma warning(suppress: 6385)
         if (pathStr[i] == L'\\') {
+            // warning C6386: Buffer overrun: accessing 'pathStr', the writable size is '520' bytes, but '1996' bytes might be written
+            #pragma warning(suppress: 6386)
             pathStr[i] = 0;
             found = true;
             break;
@@ -134,7 +138,7 @@ LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR 
     if (cfStr)
         CFRelease(cfStr);
     for (unsigned int i=1; i<str.length(); i++)
-        if (str[i] == '@' && str[i-1] == '%')
+        if (str[i] == '@' && str[i - 1] == '%')
             str.replace(i, 1, "s");
 
     LPCTSTR lpszStr = str.charactersWithNullTermination();
