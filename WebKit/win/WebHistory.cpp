@@ -250,16 +250,9 @@ exit:
     return hr;
 }
 
-CFDictionaryRef createHistoryListFromStream(CFReadStreamRef stream, CFPropertyListFormat format)
+static CFDictionaryRef createHistoryListFromStream(CFReadStreamRef stream, CFPropertyListFormat format)
 {
-    __try // FIXME- <rdar://4754295> Prevent crash when reading corrupt plists for the seed.  Real fix is to figure out why CF$UID plist entries get written out by CF occasionally.
-    {
-        return (CFDictionaryRef)CFPropertyListCreateFromStream(0, stream, 0, kCFPropertyListImmutable, &format, 0);
-    }
-    __except(1) // FIXME- <rdar://4754295> Prevent crash when reading corrupt plists for the seed.  Real fix is to figure out why CF$UID plist entries get written out by CF occasionally.
-    {
-        return 0;
-    }
+    return (CFDictionaryRef)CFPropertyListCreateFromStream(0, stream, 0, kCFPropertyListImmutable, &format, 0);
 }
 
 HRESULT WebHistory::loadHistoryGutsFromURL(CFURLRef url, CFMutableArrayRef discardedItems, IWebError** /*error*/) //FIXME
