@@ -1058,12 +1058,11 @@ IntRect RenderText::selectionRect(bool clipToVisibleContent)
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rect.unite(box->selectionRect(0, 0, startPos, endPos));
 
-    if (cb->hasColumns())
-        cb->adjustRectForColumns(rect);
-
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
+        if (cb->hasColumns())
+            cb->adjustRectForColumns(rect);
         int absx, absy;
         absolutePosition(absx, absy);
         rect.move(absx, absy);

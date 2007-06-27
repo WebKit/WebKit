@@ -1,3 +1,16 @@
+2007-06-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Oliver.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=14329
+          REGRESSION: TEXTAREA - cannot drag-and-drop text at en.wikipedia.org/
+
+        * fast/repaint/resources/text-selection-rect-in-overflow-frame.html: Added.
+        * fast/repaint/text-selection-rect-in-overflow-2-expected.checksum: Added.
+        * fast/repaint/text-selection-rect-in-overflow-2-expected.png: Added.
+        * fast/repaint/text-selection-rect-in-overflow-2-expected.txt: Added.
+        * fast/repaint/text-selection-rect-in-overflow-2.html: Added.
+
 2007-06-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

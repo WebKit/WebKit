@@ -1,5 +1,21 @@
 2007-06-26  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14329
+          REGRESSION: TEXTAREA - cannot drag-and-drop text at en.wikipedia.org/
+
+        Test: fast/repaint/text-selection-rect-in-overflow-2.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeAbsoluteRepaintRect): Added code to account
+        for overflow scroll and columns.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRect): Adjust for columns only in the
+        non-clipped case, since RenderObject::absolutePosition() does not.
+
+2007-06-26  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Sam.
 
         - http://bugs.webkit.org/show_bug.cgi?id=14415

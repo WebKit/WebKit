@@ -1900,10 +1900,31 @@ IntRect RenderObject::absoluteClippedOverflowRect()
     return IntRect();
 }
 
-void RenderObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
+void RenderObject::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 {
-    if (parent())
-        parent()->computeAbsoluteRepaintRect(r, f);
+    if (RenderObject* o = parent()) {
+        if (o->isBlockFlow()) {
+            RenderBlock* cb = static_cast<RenderBlock*>(o);
+            if (cb->hasColumns())
+                cb->adjustRectForColumns(rect);
+        }
+
+        if (o->hasOverflowClip()) {
+            // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
+            // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
+            // anyway if its size does change.
+            IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
+            int x = rect.x();
+            int y = rect.y();
+            o->layer()->subtractScrollOffset(x, y); // For overflow:auto/scroll/hidden.
+            IntRect repaintRect(x, y, rect.width(), rect.height());
+            rect = intersection(repaintRect, boxRect);
+            if (rect.isEmpty())
+                return;
+        }
+
+        o->computeAbsoluteRepaintRect(rect, fixed);
+    }
 }
 
 void RenderObject::dirtyLinesFromChangedChild(RenderObject* child)
