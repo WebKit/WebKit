@@ -100,8 +100,10 @@ BSTR MarshallingHelpers::CFStringRefToBSTR(CFStringRef str)
 
     CFIndex length = CFStringGetLength(str);
     BSTR bstr = SysAllocStringLen(0, length);
-    CFStringGetCharacters(str, CFRangeMake(0, length), (UniChar*)bstr);
-    bstr[length] = 0;
+    if (bstr) {
+        CFStringGetCharacters(str, CFRangeMake(0, length), (UniChar*)bstr);
+        bstr[length] = 0;
+    }
     return bstr;
 }
 
