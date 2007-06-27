@@ -176,7 +176,7 @@ module window {
         attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
-#if ENABLE_XPATH
+#if ENABLE(XPATH)
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
 #endif

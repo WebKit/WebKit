@@ -43,7 +43,7 @@ module html {
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;
 
-#if ENABLE_SVG
+#if ENABLE(SVG)
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
 #endif

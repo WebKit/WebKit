@@ -1,3 +1,14 @@
+2007-06-27  George Staikos  <staikos@kde.org>
+
+        Rubber stamped by Mitz.
+
+        Use the proper platform macros so that it builds with !SVG and !XPATH
+
+        * dom/Document.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/DOMWindow.idl:
+
 2007-06-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

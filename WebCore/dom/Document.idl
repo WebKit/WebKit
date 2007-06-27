@@ -111,7 +111,7 @@ module core {
         [OldStyleObjC] CSSStyleDeclaration getOverrideStyle(in Element element,
                                                             in DOMString pseudoElement);
 
-#ifdef ENABLE_XPATH
+#if ENABLE(XPATH)
         // DOM Level 3 XPath (XPathEvaluator interface)
         [OldStyleObjC] XPathExpression createExpression(in DOMString expression,
                                                         in XPathNSResolver resolver)
