@@ -36,7 +36,7 @@ module html {
                  attribute [ConvertFromString] long width;
 #endif
 
-#if ENABLE(SVG)
+#if ENABLE_SVG
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
 #endif
