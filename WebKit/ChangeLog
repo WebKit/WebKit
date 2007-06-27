@@ -1,3 +1,37 @@
+2007-06-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Hopefully fix remainder of the IME issues on Mac.  
+        We now assume that the IME silently consumes any event given
+        to it during text composition, and only override this assumption
+        if the NSTextInput or NSResponder callbacks are made.
+
+        This prevents us from treating those events that the IME has 
+        consumed internally (eg. candidate window navigation) as unhandled
+        events that should be bubbled.
+
+        This fixes:
+          <rdar://problem/5107538> Major problems handling key press event with non-english Input Methods
+          <rdar://problem/4196249> REGRESSION: Mail: Inputting space (U+0020) with IM deletes subsequent line breaks on Mail.app
+          <rdar://problem/5015544> REGRESSION: Reverse conversion keyboard command does not work in Safari.
+          <rdar://problem/5045121> REGRESSION: Inline is confirmed after press left/right arrow keys, happens in Mail but not in TextEdit.
+          <rdar://problem/5076807> REGRESSION: Can't undo conversion of inline text (by hitting ESC)
+          <rdar://problem/5085781> REGRESSION: Active input area lost "selected" highlight
+          <rdar://problem/5094200> space key pressed to close the associated words candidate window gets inserted as text
+          <rdar://problem/5228294> Candidate item for character matrix is sometimes skipped
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView launchKeyEvent:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+        (-[WebHTMLView unmarkText]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+
 2007-06-26  Jim Correia  <jim.correia@pobox.com>
 
         Reviewed by Darin.

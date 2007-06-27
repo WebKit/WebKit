@@ -301,6 +301,9 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     KeyboardEvent* event;
     BOOL eventWasHandled;
     BOOL shouldSaveCommand;
+    // The Input Method may consume an event and not tell us, in
+    // which case we should not bubble the event up the DOM
+    BOOL consumedByIM;
 };
 
 @implementation WebHTMLViewPrivate
@@ -3271,9 +3274,8 @@ noPromisedData:
 
 - (void)keyDown:(NSEvent *)event
 {
+    RetainPtr<WebHTMLView> selfProtector = self;
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
-
-    [self retain];
 
     BOOL callSuper = NO;
 
@@ -3294,8 +3296,6 @@ noPromisedData:
         [super keyDown:event];
     else
         [NSCursor setHiddenUntilMouseMoves:YES];
-
-    [self release];
 }
 
 - (void)keyUp:(NSEvent *)event
@@ -5136,6 +5136,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventWasHandled = false;
     parameters.shouldSaveCommand = shouldSave;
+    // If we're performing input composition assume that the IM has consumed the event, 
+    // and only change this assumption in one of the NSTextInput/Responder callbacks is used.
+    parameters.consumedByIM = [self hasMarkedText];
         
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
         NSEvent *macEvent = platformEvent->macEvent();
@@ -5159,7 +5162,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         }
         _private->interpretKeyEventsParameters = 0;
     }
-    return parameters.eventWasHandled;
+    return parameters.eventWasHandled || parameters.consumedByIM;
 }
 
 - (WebCore::CachedImage*)promisedDragTIFFDataSource 
@@ -5307,9 +5310,11 @@ BOOL isTextInput(Frame *coreFrame)
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
 
-    if (parameters)
+    if (parameters) {
         parameters->eventWasHandled = YES;
-
+        parameters->consumedByIM = NO;
+    }
+    
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->unmarkText();
 }
@@ -5360,9 +5365,11 @@ BOOL isTextInput(Frame *coreFrame)
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
 
-    if (parameters)
+    if (parameters) {
         parameters->eventWasHandled = YES;
-
+        parameters->consumedByIM = NO;
+    }
+    
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
@@ -5408,12 +5415,14 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (void)doCommandBySelector:(SEL)selector
 {
-    if (selector == @selector(noop:))
-        return;
-
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     // The same call to interpretKeyEvents can do more than one command.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    if (parameters)
+        parameters->consumedByIM = NO;
+
+    if (selector == @selector(noop:))
+        return;
 
     KeyboardEvent* event = parameters ? parameters->event : 0;
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
@@ -5460,6 +5469,8 @@ BOOL isTextInput(Frame *coreFrame)
     // don't handle a mix of doCommandBySelector: and insertText:. 
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
+    if (parameters)
+        parameters->consumedByIM = NO;
 
     // We don't support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
