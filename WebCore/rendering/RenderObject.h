@@ -678,8 +678,6 @@ public:
     void drawBorder(GraphicsContext*, int x1, int y1, int x2, int y2, BorderSide,
                     Color, const Color& textcolor, EBorderStyle, int adjbw1, int adjbw2);
 
-    virtual void setTable(RenderTable*) { }
-
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
     void repaint(bool immediate = false);
