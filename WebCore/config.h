@@ -115,3 +115,4 @@ typedef float CGFloat;
 #define CGFLOAT_DEFINED 1
 #endif
 #endif /* PLATFORM(CG) */
+
