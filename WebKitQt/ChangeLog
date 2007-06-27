@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        Check for QT_NO_IMAGE_TEXT and compile either way.
+
+        * Plugins/ICOHandler.cpp:
+        (ICOHandler::read):
+
+2007-06-27  Eli Fidler  <eli@staikos.net>
+
+        Reviewed by George Staikos.
+
         Remove QT3_SUPPORT dependency in the ICO plugin.
 
         * Plugins/ICOHandler.cpp:

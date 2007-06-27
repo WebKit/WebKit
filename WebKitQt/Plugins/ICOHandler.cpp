@@ -305,13 +305,14 @@ bool ICOHandler::read(QImage *outImage)
     QImage icon;
     if ( loadFromDIB( stream, *selected, icon ) )
     {
+#ifndef QT_NO_IMAGE_TEXT
         icon.setText( "X-Index", 0, QString::number( selected - icons.begin() ) );
         if ( header.type == IcoHeader::Cursor )
         {
             icon.setText( "X-HotspotX", 0, QString::number( selected->hotspotX ) );
             icon.setText( "X-HotspotY", 0, QString::number( selected->hotspotY ) );
         }
-
+#endif
         *outImage = icon;
         return true;
     }
