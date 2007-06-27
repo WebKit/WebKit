@@ -1,3 +1,21 @@
+2007-06-27  George Staikos  <staikos@kde.org>
+
+        Compile with various Qt configurations.
+
+        * Api/qwebnetworkinterface.cpp:
+        (WebCoreHttp::scheduleNextRequest):
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::dragEnterEvent):
+        (QWebPage::dragLeaveEvent):
+        (QWebPage::dragMoveEvent):
+        (QWebPage::dropEvent):
+        (QWebPage::chooseFile):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+
 2007-06-27  Eli Fidler  <eli@staikos.net>
 
         Reviewed by George Staikos.

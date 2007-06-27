@@ -236,10 +236,12 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result)
 {
     bool ok = false;
+#ifndef QT_NO_INPUTDIALOG
     QString x = QInputDialog::getText(frame, title(), msg, QLineEdit::Normal, defaultValue, &ok);
     if (ok && result) {
         *result = x;
     }
+#endif
     return ok;
 }
 
@@ -302,35 +304,43 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 
 void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
     ev->accept();
+#endif
 }
 
 void QWebPage::dragLeaveEvent(QDragLeaveEvent *ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
     d->page->dragController()->dragExited(&dragData);
     ev->accept();
+#endif
 }
 
 void QWebPage::dragMoveEvent(QDragMoveEvent *ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
     ev->accept();
+#endif
 }
 
 void QWebPage::dropEvent(QDropEvent *ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(d->page->dragController()->performDrag(&dragData));
     ev->accept();
+#endif
 }
 
 void QWebPage::setNetworkInterface(QWebNetworkInterface *interface)
@@ -446,9 +456,14 @@ QWebSettings QWebPage::settings() const
 
 QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& oldFile)
 {
+#ifndef QT_NO_FILEDIALOG
     return QFileDialog::getOpenFileName(parentFrame, QString::null, oldFile);
+#else
+    return QString::null;
+#endif
 }
 
+#ifndef QT_NO_NETWORKPROXY
 void QWebPage::setNetworkProxy(const QNetworkProxy& proxy)
 {
     d->networkProxy = proxy;
@@ -458,4 +473,5 @@ QNetworkProxy QWebPage::networkProxy() const
 {
     return d->networkProxy;
 }
+#endif
 

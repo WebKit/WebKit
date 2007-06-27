@@ -858,7 +858,9 @@ void WebCoreHttp::scheduleNextRequest()
     QHttp *http = connection[c].http;
 
     connection[c].current = job;
+#ifndef QT_NO_NETWORKPROXY
     http->setProxy(job->frame()->page()->networkProxy());
+#endif
     connection[c].proxyDone = false;
 
     QByteArray postData = job->postData();

@@ -63,7 +63,9 @@ public:
 
     bool insideOpenCall;
     QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request);
+#ifndef QT_NO_NETWORKPROXY
     QNetworkProxy networkProxy;
+#endif
 };
 
 #endif
