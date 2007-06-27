@@ -1911,7 +1911,7 @@ const ClassInfo Location::info = { "Location", 0, &LocationTable, 0 };
   port          Location::Port          DontDelete
   protocol      Location::Protocol      DontDelete
   search        Location::Search        DontDelete
-  toString      Location::ToString      DontDelete|Function 0
+  toString      Location::ToString      DontEnum|DontDelete|Function 0
   replace       Location::Replace       DontDelete|Function 1
   reload        Location::Reload        DontDelete|Function 0
 @end
@@ -2119,7 +2119,7 @@ const ClassInfo Selection::info = { "Selection", 0, &SelectionTable, 0 };
   isCollapsed               Selection::IsCollapsed              DontDelete|ReadOnly
   type                      Selection::_Type                    DontDelete|ReadOnly
   rangeCount                Selection::RangeCount               DontDelete|ReadOnly
-  toString                  Selection::ToString                 DontDelete|Function 0
+  toString                  Selection::ToString                 DontEnum|DontDelete|Function 0
   collapse                  Selection::Collapse                 DontDelete|Function 2
   collapseToEnd             Selection::CollapseToEnd            DontDelete|Function 0
   collapseToStart           Selection::CollapseToStart          DontDelete|Function 0

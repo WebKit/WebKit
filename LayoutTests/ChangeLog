@@ -1,5 +1,17 @@
 2007-06-26  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej.
+
+        Make sure not to enumerate the toString() function.
+        <rdar://problem/5297118>
+
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/toString-dontEnum-expected.txt: Added.
+        * fast/js/toString-dontEnum.html: Added.
+
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Update tests for http://bugs.webkit.org/show_bug.cgi?id=14111

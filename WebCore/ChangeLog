@@ -1,3 +1,14 @@
+2007-06-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Make sure not to enumerate the toString() function.
+        <rdar://problem/5297118>
+
+        * bindings/js/kjs_window.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm: Add support for [DontEnum].
+        * html/HTMLAnchorElement.idl:
+
 2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Mitz, landed by Anders.
