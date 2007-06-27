@@ -75,7 +75,7 @@ void FloatPoint3D::setZ(float z)
 
 void FloatPoint3D::normalize()
 {
-    float length = sqrt(m_x * m_x + m_y * m_y + m_z * m_z);
+    float length = sqrtf(m_x * m_x + m_y * m_y + m_z * m_z);
 
     m_x /= length;
     m_y /= length;

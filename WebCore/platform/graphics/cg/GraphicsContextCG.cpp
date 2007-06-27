@@ -167,12 +167,12 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (((int)width) % 2) {
         if (isVerticalLine) {
             // We're a vertical line.  Adjust our x.
-            p1.move(0.5, 0);
-            p2.move(0.5, 0);
+            p1.move(0.5f, 0.0f);
+            p2.move(0.5f, 0.0f);
         } else {
             // We're a horizontal line. Adjust our y.
-            p1.move(0, 0.5);
-            p2.move(0, 0.5);
+            p1.move(0.0f, 0.5f);
+            p2.move(0.0f, 0.5f);
         }
     }
     
@@ -214,10 +214,10 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         int coverage = distance - remainder;
         int numSegments = coverage / patWidth;
 
-        float patternOffset = 0;
+        float patternOffset = 0.0f;
         // Special case 1px dotted borders for speed.
         if (patWidth == 1)
-            patternOffset = 1.0;
+            patternOffset = 1.0f;
         else {
             bool evenNumberOfSegments = numSegments % 2 == 0;
             if (remainder)
@@ -299,8 +299,8 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     float vRadius = h / 2;
     float fa = startAngle;
     float falen =  fa + angleSpan;
-    float start = -fa * M_PI/180;
-    float end = -falen * M_PI/180;
+    float start = -fa * M_PI / 180.0f;
+    float end = -falen * M_PI / 180.0f;
     CGContextAddArc(context, x + hRadius, (y + vRadius) * reverseScaleFactor, hRadius, start, end, true);
 
     if (w != h)
@@ -337,10 +337,10 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         int coverage = distance - remainder;
         int numSegments = coverage / patWidth;
 
-        float patternOffset = 0;
+        float patternOffset = 0.0f;
         // Special case 1px dotted borders for speed.
         if (patWidth == 1)
-            patternOffset = 1.0;
+            patternOffset = 1.0f;
         else {
             bool evenNumberOfSegments = numSegments % 2 == 0;
             if (remainder)
@@ -348,12 +348,12 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
             if (evenNumberOfSegments) {
                 if (remainder) {
                     patternOffset += patWidth - remainder;
-                    patternOffset += remainder / 2;
+                    patternOffset += remainder / 2.0f;
                 } else
-                    patternOffset = patWidth / 2;
+                    patternOffset = patWidth / 2.0f;
             } else {
                 if (remainder)
-                    patternOffset = (patWidth - remainder) / 2;
+                    patternOffset = (patWidth - remainder) / 2.0f;
             }
         }
     

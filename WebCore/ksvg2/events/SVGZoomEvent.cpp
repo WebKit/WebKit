@@ -28,8 +28,8 @@
 namespace WebCore {
 
 SVGZoomEvent::SVGZoomEvent()
-    : m_newScale(0.0)
-    , m_previousScale(0.0)
+    : m_newScale(0.0f)
+    , m_previousScale(0.0f)
 {
 }
 

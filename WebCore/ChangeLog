@@ -1,3 +1,79 @@
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        First pass at fixing implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Add 'f' suffix where necessary.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:forParameter:]):
+        * css/csshelper.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::):
+        (WebCore::CSSStyleSelector::largerFontSize):
+        (WebCore::CSSStyleSelector::smallerFontSize):
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::createPattern):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/events/SVGZoomEvent.cpp:
+        (WebCore::SVGZoomEvent::SVGZoomEvent):
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::setValue):
+        (WebCore::SVGLength::valueAsPercentage):
+        (WebCore::SVGLength::PercentageOfViewport):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterX):
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterY):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::getComputedTextLength):
+        (WebCore::SVGTextContentElement::getSubStringLength):
+        (WebCore::SVGTextContentElement::getRotationOfChar):
+        * ksvg2/svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::distance):
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        * platform/graphics/FloatPoint3D.cpp:
+        (WebCore::FloatPoint3D::normalize):
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        (WebCore::Path::createRoundedRectangle):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerRadialGradient.cpp:
+        (WebCore::SVGPaintServerRadialGradient::SVGPaintServerRadialGradient):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::cgGradientCallback):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::webFallbackFontFamily):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setValueForPosition):
+        (WebCore::RenderSlider::setPositionFromValue):
+
 2007-06-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.

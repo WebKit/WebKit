@@ -133,7 +133,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
         // Adjust for fonts other than the system font.
         NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
         vertOffset += [font descender] - [defaultFont descender];
-        vertOffset = fmin(NSHeight(r), vertOffset);
+        vertOffset = fminf(NSHeight(r), vertOffset);
     
         location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
     } else

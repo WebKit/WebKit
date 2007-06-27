@@ -2328,7 +2328,7 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
     NSNumber*               number = nil;
     NSArray*                array = nil;
     WebCoreAXObject*        uiElement = nil;
-    NSPoint                 point = {0.0, 0.0};
+    NSPoint                 point = NSZeroPoint;
     bool                    pointSet = false;
     NSRange                 range = {0, 0};
     bool                    rangeSet = false;

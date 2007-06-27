@@ -1,3 +1,15 @@
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        First pass at fixing implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Add 'f' suffix where necessary.
+
+        * kjs/testkjs.cpp:
+        (StopWatch::getElapsedMS):
+
 2007-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

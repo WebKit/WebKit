@@ -127,13 +127,13 @@ FloatRect SVGSVGElement::viewport() const
 float SVGSVGElement::pixelUnitToMillimeterX() const
 {
     // FIXME: Implement me (see bug 11273)
-    return .28;
+    return .28f;
 }
 
 float SVGSVGElement::pixelUnitToMillimeterY() const
 {
     // FIXME: Implement me (see bug 11273)
-    return .28;
+    return .28f;
 }
 
 float SVGSVGElement::screenPixelToMillimeterX() const
@@ -352,8 +352,8 @@ AffineTransform SVGSVGElement::getScreenCTM() const
     // FIXME: This assumes that any <svg> element not immediately descending from another SVGElement 
     // has *no* svg ancestors
     document()->updateLayoutIgnorePendingStylesheets();
-    float rootX = 0.0;
-    float rootY = 0.0;
+    float rootX = 0.0f;
+    float rootY = 0.0f;
     
     if (RenderObject* renderer = this->renderer()) {
         renderer = renderer->parent();

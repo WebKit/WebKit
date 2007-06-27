@@ -87,7 +87,7 @@ static NSString *webFallbackFontFamily(void)
 {
     static RetainPtr<NSString> webFallbackFontFamily = nil;
     if (!webFallbackFontFamily)
-        webFallbackFontFamily = [[NSFont systemFontOfSize:16.0] familyName];
+        webFallbackFontFamily = [[NSFont systemFontOfSize:16.0f] familyName];
     return webFallbackFontFamily.get();
 }
 

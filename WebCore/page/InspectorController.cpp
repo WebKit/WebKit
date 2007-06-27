@@ -88,7 +88,7 @@ struct InspectorResource : public Shared<InspectorResource> {
         Other
     };
 
-    InspectorResource(unsigned long identifier, DocumentLoader* documentLoader, Frame* frame)
+    InspectorResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
         : identifier(identifier)
         , loader(documentLoader)
         , frame(frame)
@@ -160,7 +160,7 @@ struct InspectorResource : public Shared<InspectorResource> {
             JSValueProtect(context, newScriptObject);
     }
 
-    unsigned long identifier;
+    long long identifier;
     RefPtr<DocumentLoader> loader;
     RefPtr<Frame> frame;
     ResourceRequest request;

@@ -159,7 +159,7 @@ CGPatternRef CanvasPattern::createPattern(const CGAffineTransform& transform)
     // INT_MAX is almost correct, but there seems to be some number wrapping occuring making the fill
     // pattern is not filled correctly. 
     // So, just pick a really large number that works. 
-    float yStep = m_repeatY ? rect.size.height : (100000000.0);
+    float yStep = m_repeatY ? rect.size.height : (100000000.0f);
 
     const CGPatternCallbacks patternCallbacks = { 0, patternCallback, patternReleaseCallback };
     ref();

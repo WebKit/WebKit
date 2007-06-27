@@ -69,13 +69,13 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
          traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength) &&
         (traversalState.m_totalLength >= traversalState.m_desiredLength)) {
         FloatSize change = traversalState.m_current - traversalState.m_previous;
-        float slope = atan2(change.height(), change.width());
+        float slope = atan2f(change.height(), change.width());
 
         if (traversalState.m_action == PathTraversalState::TraversalPointAtLength) {
             float offset = traversalState.m_desiredLength - traversalState.m_totalLength;
-            traversalState.m_current.move(offset * cos(slope), offset * sin(slope));
+            traversalState.m_current.move(offset * cosf(slope), offset * sinf(slope));
         } else {
-            static float rad2deg = 180.0 / M_PI;
+            static const float rad2deg = 180.0f / M_PI;
             traversalState.m_normalAngle = slope * rad2deg;
         }
 
@@ -117,7 +117,7 @@ Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& r
     double height = rectangle.height();
     double rx = roundingRadii.width();
     double ry = roundingRadii.height();
-    if (width <= 0.0 || height <= 0.0)
+    if (width <= 0.0f || height <= 0.0f)
         return path;
 
     double dx = rx, dy = ry;

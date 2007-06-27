@@ -59,12 +59,12 @@ long SVGTextContentElement::getNumberOfChars() const
 
 float SVGTextContentElement::getComputedTextLength() const
 {
-    return 0.;
+    return 0.0f;
 }
 
 float SVGTextContentElement::getSubStringLength(unsigned long charnum, unsigned long nchars, ExceptionCode&) const
 {
-    return 0.;
+    return 0.0f;
 }
 
 FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned long charnum, ExceptionCode&) const
@@ -84,7 +84,7 @@ FloatRect SVGTextContentElement::getExtentOfChar(unsigned long charnum, Exceptio
 
 float SVGTextContentElement::getRotationOfChar(unsigned long charnum, ExceptionCode&) const
 {
-    return 0.;
+    return 0.0f;
 }
 
 long SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const

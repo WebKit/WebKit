@@ -87,7 +87,7 @@ void SVGPaintServerPattern::setPatternTransform(const AffineTransform& transform
 TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
 {
     // Gradients/patterns aren't setup, until they are used for painting. Work around that fact.
-    m_ownerElement->buildPattern(FloatRect(0.0, 0.0, 1.0, 1.0));
+    m_ownerElement->buildPattern(FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
 
     ts << "[type=PATTERN]"
         << " [bbox=" << patternBoundaries() << "]";

@@ -61,10 +61,10 @@ void CanvasGradient::addColorStop(float value, const String& color)
 {
     RGBA32 rgba = CSSParser::parseColor(color);
     m_stops.append(ColorStop(value,
-        ((rgba >> 16) & 0xFF) / 255.0,
-        ((rgba >> 8) & 0xFF) / 255.0,
-        (rgba & 0xFF) / 255.0,
-        ((rgba >> 24) & 0xFF) / 255.0));
+        ((rgba >> 16) & 0xFF) / 255.0f,
+        ((rgba >> 8) & 0xFF) / 255.0f,
+        (rgba & 0xFF) / 255.0f,
+        ((rgba >> 24) & 0xFF) / 255.0f));
 
     m_stopsSorted = false;
 

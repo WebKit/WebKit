@@ -95,7 +95,7 @@ long StopWatch::getElapsedMS()
     timeval elapsedTime;
     timersub(&m_stopTime, &m_startTime, &elapsedTime);
     
-    return elapsedTime.tv_sec * 1000 + lroundf(elapsedTime.tv_usec / 1000.0);
+    return elapsedTime.tv_sec * 1000 + lroundf(elapsedTime.tv_usec / 1000.0f);
 #endif
 }
 

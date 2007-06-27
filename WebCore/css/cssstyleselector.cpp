@@ -4780,7 +4780,7 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 
 // For values outside the range of the table, we use Todd Fahrner's suggested scale
 // factors for each keyword value.
-static const float fontSizeFactors[totalKeywords] = { 0.60, 0.75, 0.89, 1.0, 1.2, 1.5, 2.0, 3.0 };
+static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
 float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode, bool fixed) const
 {
@@ -4805,14 +4805,14 @@ float CSSStyleSelector::largerFontSize(float size, bool quirksMode) const
 {
     // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
     // the next size level.  
-    return size*1.2;
+    return size * 1.2f;
 }
 
 float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
 {
     // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
     // the next size level. 
-    return size/1.2;
+    return size / 1.2f;
 }
 
 // color mapping code
