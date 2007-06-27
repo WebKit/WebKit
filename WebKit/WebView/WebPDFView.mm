@@ -74,12 +74,16 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 - (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu;
 - (void)_applyPDFDefaults;
 - (BOOL)_canLookUpInDictionary;
+- (NSClipView *)_clipViewForPDFDocumentView;
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey;
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent;
+- (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection;
 - (void)_openWithFinder:(id)sender;
 - (NSString *)_path;
+- (void)_PDFDocumentViewMightHaveScrolled:(NSNotification *)notification;
 - (BOOL)_pointIsInSelection:(NSPoint)point;
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString;
+- (void)_setTextMatches:(NSArray *)array;
 - (NSString *)_temporaryPDFDirectoryPath;
 - (void)_trackFirstResponder;
 - (void)_updatePreferencesSoon;
@@ -181,6 +185,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [PDFSubview release];
     [path release];
     [PDFSubviewProxy release];
+    [textMatches release];
     [super dealloc];
 }
 
@@ -424,6 +429,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
                            selector:@selector(_scaleOrDisplayModeChanged:) 
                                name:_webkit_PDFViewDisplayModeChangedNotification
                              object:PDFSubview];
+    
+    [notificationCenter addObserver:self 
+                           selector:@selector(_PDFDocumentViewMightHaveScrolled:)
+                               name:NSViewBoundsDidChangeNotification 
+                             object:[self _clipViewForPDFDocumentView]];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -444,6 +454,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [notificationCenter removeObserver:self
                                   name:_webkit_PDFViewDisplayModeChangedNotification
                                 object:PDFSubview];
+    
+    [notificationCenter removeObserver:self
+                                  name:NSViewBoundsDidChangeNotification 
+                                object:[self _clipViewForPDFDocumentView]];
     
     [trackedFirstResponder release];
     trackedFirstResponder = nil;
@@ -564,55 +578,77 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {
-    if (![string length])
+    PDFSelection *selection = [self _nextMatchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag fromSelection:[PDFSubview currentSelection] startInSelection:startInSelection];
+    if (!selection)
         return NO;
 
-    // Our search algorithm, used in WebCore also, is to search in the selection first. If the found text is the
-    // entire selection, then we search again from just past the selection.
+    [PDFSubview setCurrentSelection:selection];
+    [PDFSubview scrollSelectionToVisible:nil];
+    return YES;
+}
 
-    int options = 0;
-    if (!forward)
-        options |= NSBackwardsSearch;
+#pragma mark WebMultipleTextMatches PROTOCOL IMPLEMENTATION
 
-    if (!caseFlag)
-        options |= NSCaseInsensitiveSearch;
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
+{
+    // This method is part of the WebMultipleTextMatches algorithm, but this class doesn't support
+    // highlighting text matches inline.
+#ifndef NDEBUG
+    if (newValue)
+        LOG_ERROR("[WebPDFView setMarkedTextMatchesAreHighlighted:] called with YES, which isn't supported");
+#endif
+}
 
-    PDFDocument *document = [PDFSubview document];
-    PDFSelection *oldSelection = [PDFSubview currentSelection];
+- (BOOL)markedTextMatchesAreHighlighted
+{
+    return NO;
+}
+
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit
+{
+    PDFSelection *previousMatch = nil;
+    PDFSelection *nextMatch = nil;
+    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:limit];
     
-    PDFSelection *selectionForInitialSearch = [oldSelection copy];
-    if (startInSelection) {
-        // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
-        // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
-        // FIXME 4182863: Ideally we'd use a zero-length selection at the edge of the current selection, but zero-length
-        // selections don't work in PDFDocument. So instead we make a one-length selection just before or after the
-        // current selection, which works for our purposes even when the current selection is at an edge of the
-        // document.
-        int oldSelectionLength = [[oldSelection string] length];
-        if (forward) {
-            [selectionForInitialSearch extendSelectionAtStart:1];
-            [selectionForInitialSearch extendSelectionAtEnd:-oldSelectionLength];
-        } else {
-            [selectionForInitialSearch extendSelectionAtEnd:1];
-            [selectionForInitialSearch extendSelectionAtStart:-oldSelectionLength];
+    for (;;) {
+        nextMatch = [self _nextMatchFor:string direction:YES caseSensitive:caseFlag wrap:NO fromSelection:previousMatch startInSelection:NO];
+        if (!nextMatch)
+            break;
+        
+        [matches addObject:nextMatch];
+        previousMatch = nextMatch;
+
+        if ([matches count] >= limit)
+            break;
+    }
+    
+    [self _setTextMatches:matches];
+    [matches release];
+    
+    return [matches count];
+}
+
+- (void)unmarkAllTextMatches
+{
+    [self _setTextMatches:nil];
+}
+
+- (NSArray *)rectsForTextMatches
+{
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:[textMatches count]];
+    NSEnumerator *matchEnumerator = [textMatches objectEnumerator];
+    PDFSelection *match;
+    
+    while ((match = [matchEnumerator nextObject]) != nil) {
+        NSEnumerator *pages = [[match pages] objectEnumerator];
+        PDFPage *page;
+        while ((page = [pages nextObject]) != nil) {
+            NSRect selectionOnPageInPDFViewCoordinates = [PDFSubview convertRect:[match boundsForPage:page] fromPage:page];
+            [result addObject:[NSValue valueWithRect:selectionOnPageInPDFViewCoordinates]];
         }
     }
-    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
-    [selectionForInitialSearch release];
-    
-    // If we first searched in the selection, and we found the selection, search again from just past the selection
-    if (startInSelection && _PDFSelectionsAreEqual(foundSelection, oldSelection))
-        foundSelection = [document findString:string fromSelection:oldSelection withOptions:options];
-    
-    if (!foundSelection && wrapFlag)
-        foundSelection = [document findString:string fromSelection:nil withOptions:options];
 
-    if (foundSelection) {
-        [PDFSubview setCurrentSelection:foundSelection];
-        [PDFSubview scrollSelectionToVisible:nil];
-        return YES;
-    }
-    return NO;
+    return result;
 }
 
 #pragma mark WebDocumentText PROTOCOL IMPLEMENTATION
@@ -995,6 +1031,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return [PDFSubview respondsToSelector:@selector(_searchInDictionary:)];
 }
 
+- (NSClipView *)_clipViewForPDFDocumentView
+{
+    NSClipView *clipView = (NSClipView *)[[PDFSubview documentView] _web_superviewOfClass:[NSClipView class]];
+    ASSERT(clipView);
+    return clipView;
+}
+
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey
 {
     // FIXME 4400480: when PDFView implements the standard scrolling selectors that this
@@ -1101,6 +1144,50 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return copiedItems;
 }
 
+- (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection
+{
+    if (![string length])
+        return nil;
+    
+    int options = 0;
+    if (!forward)
+        options |= NSBackwardsSearch;
+    
+    if (!caseFlag)
+        options |= NSCaseInsensitiveSearch;
+    
+    PDFDocument *document = [PDFSubview document];
+    
+    PDFSelection *selectionForInitialSearch = [initialSelection copy];
+    if (startInSelection) {
+        // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
+        // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
+        // FIXME 4182863: Ideally we'd use a zero-length selection at the edge of the current selection, but zero-length
+        // selections don't work in PDFDocument. So instead we make a one-length selection just before or after the
+        // current selection, which works for our purposes even when the current selection is at an edge of the
+        // document.
+        int initialSelectionLength = [[initialSelection string] length];
+        if (forward) {
+            [selectionForInitialSearch extendSelectionAtStart:1];
+            [selectionForInitialSearch extendSelectionAtEnd:-initialSelectionLength];
+        } else {
+            [selectionForInitialSearch extendSelectionAtEnd:1];
+            [selectionForInitialSearch extendSelectionAtStart:-initialSelectionLength];
+        }
+    }
+    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
+    [selectionForInitialSearch release];
+    
+    // If we first searched in the selection, and we found the selection, search again from just past the selection
+    if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))
+        foundSelection = [document findString:string fromSelection:initialSelection withOptions:options];
+    
+    if (!foundSelection && wrapFlag)
+        foundSelection = [document findString:string fromSelection:nil withOptions:options];
+    
+    return foundSelection;
+}
+
 - (void)_openWithFinder:(id)sender
 {
     // We don't want to write the file until we have a document to write (see 4892525).
@@ -1170,6 +1257,19 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return path;
 }
 
+- (void)_PDFDocumentViewMightHaveScrolled:(NSNotification *)notification
+{ 
+    NSClipView *clipView = [self _clipViewForPDFDocumentView];
+    ASSERT([notification object] == clipView);
+    
+    NSPoint scrollPosition = [clipView bounds].origin;
+    if (NSEqualPoints(scrollPosition, lastScrollPosition))
+        return;
+    
+    WebView *webView = [self _webView];
+    [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[[dataSource webFrame] frameView]];
+}
+
 - (PDFView *)_PDFSubview
 {
     return PDFSubview;
@@ -1224,6 +1324,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [result endEditing];
     
     return result;
+}
+
+- (void)_setTextMatches:(NSArray *)array
+{
+    [array retain];
+    [textMatches release];
+    textMatches = array;
 }
 
 - (NSString *)_temporaryPDFDirectoryPath

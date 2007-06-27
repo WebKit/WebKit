@@ -1,3 +1,44 @@
+2007-06-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - WebKit support for displaying multiple text matches in PDF views (<rdar://problem/4601967>)
+
+        * WebView/WebPDFView.h:
+        new ivars textMatches and lastScrollPosition; now conforms to WebMultipleTextMatches protocol
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView dealloc]):
+        release textMatches
+        (-[WebPDFView viewDidMoveToWindow]):
+        start observing bounds changes in the PDF document's enclosing clip view, so we can notice when
+        scrolling takes place
+        (-[WebPDFView viewWillMoveToWindow:]):
+        stop observing bounds changes in the PDF document's enclosing clip view
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        most of the code here has been moved into the new method _nextMatchFor::::, which this now calls
+        (-[WebPDFView setMarkedTextMatchesAreHighlighted:]):
+        implementation of WebMultipleTextMatches protocol method, does nothing useful here because we don't
+        support inline highlighting of matches in PDF documents
+        (-[WebPDFView markedTextMatchesAreHighlighted]):
+        implementation of WebMultipleTextMatches protocol method
+        (-[WebPDFView markAllMatchesForText:caseSensitive:limit:]):
+        implementation of WebMultipleTextMatches protocol method; calls _nextMatchFor:::: in a loop until
+        entire document is searched or limit is hit; records results by saving PDFSelections in textMatches ivar
+        (-[WebPDFView unmarkAllTextMatches]):
+        implementation of WebMultipleTextMatches protocol method; clears saved textMatches
+        (-[WebPDFView rectsForTextMatches]):
+        implementation of WebMultipleTextMatches protocol method; converts saved PDFSelections into NSValue 
+        objects that represent NSRects
+        (-[WebPDFView _clipViewForPDFDocumentView]):
+        new helper method to find the clip view whose bounds determine the current scroll position
+        (-[WebPDFView _nextMatchFor:direction:caseSensitive:wrap:fromSelection:startInSelection:]):
+        new helper method, extracted from searchFor:::::
+        (-[WebPDFView _PDFDocumentViewMightHaveScrolled:]):
+        new notification callback; tells webView's delegate when document has scrolled
+        (-[WebPDFView _setTextMatches:]):
+        new helper method, stores value in ivar
+
 2007-06-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
