@@ -1,5 +1,14 @@
 2007-06-27  Steve Falkenburg  <sfalken@apple.com>
 
+        Prefast: Fix misplaced parenthesis.
+        
+        Reviewed by Darin.
+
+        * WebView.cpp:
+        (core):
+
+2007-06-27  Steve Falkenburg  <sfalken@apple.com>
+
         Prefast: Add null check prior to writing into allocated BSTR.
         
         Reviewed by Darin.

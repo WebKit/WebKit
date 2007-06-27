@@ -3615,7 +3615,7 @@ Page* core(IWebView* iWebView)
     Page* page = 0;
 
     WebView* webView = 0;
-    if (SUCCEEDED(iWebView->QueryInterface(CLSID_WebView, (void**)&webView) && webView)) {
+    if (SUCCEEDED(iWebView->QueryInterface(CLSID_WebView, (void**)&webView)) && webView) {
         page = webView->page();
         webView->Release();
     }
