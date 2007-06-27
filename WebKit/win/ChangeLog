@@ -1,3 +1,15 @@
+2007-06-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Prefast: Add error handling for SysAllocStringLen where the string length is determined by website content.
+
+        Reviewed by Sam, Darin.
+                
+        Allocation failure will result in a null dereference in this case,
+        so it isn't exploitable.
+
+        * DefaultDownloadDelegate.cpp:
+        (DefaultDownloadDelegate::decideDestinationWithSuggestedFilename):
+
 2007-06-20  Adam Roben  <aroben@apple.com>
 
         Land the new Inspector.

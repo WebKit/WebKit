@@ -117,6 +117,9 @@ HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::decideDestinationWithSuggeste
 
     size_t fullLength = _tcslen(pathChars) + SysStringLen(filename) + 2;
     BSTR full = SysAllocStringLen(0, (UINT)fullLength);
+    if (!full)
+        return E_OUTOFMEMORY;
+
     _tcscpy_s(full, fullLength, pathChars);
     _tcscat_s(full, fullLength, _T("\\"));
     _tcscat_s(full, fullLength, filename);
