@@ -328,7 +328,7 @@ CollapsedBorderValue RenderTableCell::collapsedLeftBorder(bool rtl) const
             return result;
     }
     
-    // (5) Our column's left border.
+    // (5) Our column and column group's left borders.
     bool startColEdge;
     bool endColEdge;
     RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? colSpan() - 1 : 0), &startColEdge, &endColEdge);
@@ -336,6 +336,11 @@ CollapsedBorderValue RenderTableCell::collapsedLeftBorder(bool rtl) const
         result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
         if (!result.exists())
             return result;
+        if (colElt->parent()->isTableCol() && (!rtl ? !colElt->previousSibling() : !colElt->nextSibling())) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->parent()->style()->borderLeft(), BCOLGROUP));
+            if (!result.exists())
+                return result;
+        }
     }
     
     // (6) The right border of the column to the left.
@@ -391,7 +396,7 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder(bool rtl) const
             return result;
     }
     
-    // (5) Our column's right border.
+    // (5) Our column and column group's right borders.
     bool startColEdge;
     bool endColEdge;
     RenderTableCol* colElt = tableElt->colElement(col() + (rtl ? 0 : colSpan() - 1), &startColEdge, &endColEdge);
@@ -399,6 +404,11 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder(bool rtl) const
         result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
         if (!result.exists())
             return result;
+        if (colElt->parent()->isTableCol() && (!rtl ? !colElt->nextSibling() : !colElt->previousSibling())) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->parent()->style()->borderRight(), BCOLGROUP));
+            if (!result.exists())
+                return result;
+        }
     }
     
     // (6) The left border of the column to the right.
@@ -471,12 +481,17 @@ CollapsedBorderValue RenderTableCell::collapsedTopBorder() const
     }
     
     if (!currSection) {
-        // (8) Our column's top border.
+        // (8) Our column and column group's top borders.
         RenderTableCol* colElt = table()->colElement(col());
         if (colElt) {
             result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderTop(), BCOL));
             if (!result.exists())
                 return result;
+            if (colElt->parent()->isTableCol()) {
+                result = compareBorders(result, CollapsedBorderValue(&colElt->parent()->style()->borderTop(), BCOLGROUP));
+                if (!result.exists())
+                    return result;
+            }
         }
         
         // (9) The table's top border.
@@ -532,11 +547,16 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
     }
     
     if (!currSection) {
-        // (8) Our column's bottom border.
+        // (8) Our column and column group's bottom borders.
         RenderTableCol* colElt = table()->colElement(col());
         if (colElt) {
             result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderBottom(), BCOL));
             if (!result.exists()) return result;
+            if (colElt->parent()->isTableCol()) {
+                result = compareBorders(result, CollapsedBorderValue(&colElt->parent()->style()->borderBottom(), BCOLGROUP));
+                if (!result.exists())
+                    return result;
+            }
         }
         
         // (9) The table's bottom border.

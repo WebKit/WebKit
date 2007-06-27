@@ -1,5 +1,20 @@
 2007-06-26  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14406
+          <colgroup>'s borders are ignored when it has <col> children
+
+        Covered by existing tests.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder):
+        (WebCore::RenderTableCell::collapsedRightBorder):
+        (WebCore::RenderTableCell::collapsedTopBorder):
+        (WebCore::RenderTableCell::collapsedBottomBorder):
+
+2007-06-26  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Oliver.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14329

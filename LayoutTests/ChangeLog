@@ -1,5 +1,31 @@
 2007-06-26  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=14406
+          <colgroup>'s borders are ignored when it has <col> children
+
+        * tables/mozilla/core/table_rules-expected.checksum: Added.
+        * tables/mozilla/core/table_rules-expected.png: Added.
+        * tables/mozilla/core/table_rules-expected.txt: Added.
+        * tables/mozilla/core/table_rules.html: Copied from LayoutTests/tables/mozilla_expected_failures/core/table_rules.html.
+        * tables/mozilla/marvin/x_table_rules_groups-expected.checksum: Added.
+        * tables/mozilla/marvin/x_table_rules_groups-expected.png: Added.
+        * tables/mozilla/marvin/x_table_rules_groups-expected.txt: Added.
+        * tables/mozilla/marvin/x_table_rules_groups.xml: Copied from LayoutTests/tables/mozilla_expected_failures/marvin/x_table_rules_groups.xml.
+        * tables/mozilla_expected_failures/core/table_rules-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/core/table_rules-expected.png: Removed.
+        * tables/mozilla_expected_failures/core/table_rules-expected.txt: Removed.
+        * tables/mozilla_expected_failures/core/table_rules.html: Removed.
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/x_table_rules_groups-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_groups-expected.png: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_groups-expected.txt: Removed.
+        * tables/mozilla_expected_failures/marvin/x_table_rules_groups.xml: Removed.
+
+2007-06-26  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Oliver.
 
         - repaint test for http://bugs.webkit.org/show_bug.cgi?id=14329
