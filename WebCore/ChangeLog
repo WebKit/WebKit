@@ -1,3 +1,9 @@
+2007-06-27  George Staikos  <staikos@kde.org>
+
+        This was succeeding compile by luck.  Setup dependencies properly.
+
+        * WebCore.pro:
+
 2007-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

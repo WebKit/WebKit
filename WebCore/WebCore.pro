@@ -1296,7 +1296,7 @@ cssbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += cssbison
 #PRE_TARGETDEPS += tmp/CSSGrammar.cpp
 grammar_h_dep.target = tmp/cssparser.o
-grammar_h_dep.depends = tmp/CSSGrammar.cpp
+grammar_h_dep.depends = tmp/CSSGrammar.cpp tmp/HTMLNames.cpp
 QMAKE_EXTRA_TARGETS += grammar_h_dep
 
 # GENERATOR 5-A:
