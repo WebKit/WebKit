@@ -1,3 +1,14 @@
+2007-06-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14413
+        GIF animation throttling is different from MSIE
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        Change the cut-off value to 50ms to match MSIE.
+
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

@@ -177,9 +177,9 @@ float ImageSource::frameDurationAtIndex(size_t index)
     }
 
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
-    // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
-    // a duration of <= 10 ms. See gfxImageFrame::GetTimeout in Gecko or Radar 4051389 for more.
-    if (duration <= 0.010f)
+    // We follow WinIE's behavior and use a duration of 100 ms for any frames that specify
+    // a duration of <= 50 ms. See <http://bugs.webkit.org/show_bug.cgi?id=14413> or Radar 4051389 for more.
+    if (duration < 0.051f)
         return 0.100f;
     return duration;
 }
