@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * All rights reserved.
  *
@@ -33,6 +34,7 @@
 #include "DocumentLoader.h"
 #include "FrameGdk.h"
 #include "FrameLoader.h"
+#include "MimeTypeRegistry.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
@@ -183,7 +185,13 @@ Widget* FrameLoaderClientGdk::createJavaAppletWidget(const IntSize&, Element*, c
 
 ObjectContentType FrameLoaderClientGdk::objectContentType(const KURL& url, const String& mimeType)
 {
-    notImplemented();
+    if (!url.isValid())
+        return ObjectContentType();
+
+    // TODO: use more than just the extension to determine the content type?
+    String rtype = MimeTypeRegistry::getMIMETypeForPath(url.path());
+    if (!rtype.isEmpty())
+        return ObjectContentFrame;
     return ObjectContentType();
 }
 
@@ -281,7 +289,7 @@ bool FrameLoaderClientGdk::isArchiveLoadPending(ResourceLoader*) const { notImpl
 void FrameLoaderClientGdk::cancelPendingArchiveLoad(ResourceLoader*) { notImplemented(); }
 void FrameLoaderClientGdk::clearArchivedResources() { notImplemented(); }
 bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notImplemented(); return true; }
-bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplemented(); return false; }
+bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplemented(); return true; }
 bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
 String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
 void FrameLoaderClientGdk::provisionalLoadStarted() { notImplemented(); }

@@ -1,5 +1,18 @@
 2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
 
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14061
+        Implement more of FrameLoaderClientGdk
+
+        Make FrameLoaderClientGdk work properly when the MIME type is set.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::objectContentType):
+        (WebCore::FrameLoaderClientGdk::canShowMIMEType):
+
+2007-06-26  Alp Toker  <alp.toker@collabora.co.uk>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=14058
