@@ -220,8 +220,8 @@ void WebNotificationCenter::postNotificationInternal(IWebNotification* notificat
         Vector<IWebNotificationObserver*> list = it->second;
 
         Vector<IWebNotificationObserver*>::iterator end = list.end();
-        for (Vector<IWebNotificationObserver*>::iterator it = list.begin(); it != end; ++it) {
-            (*it)->onNotify(notification);
+        for (Vector<IWebNotificationObserver*>::iterator it2 = list.begin(); it2 != end; ++it2) {
+            (*it2)->onNotify(notification);
         }
     }
 }
@@ -298,9 +298,9 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::removeObserver(
     Vector<IWebNotificationObserver*>& observerList = it->second;
     Vector<IWebNotificationObserver*>::iterator end = observerList.end();
     int i=0;
-    for (Vector<IWebNotificationObserver*>::iterator it = observerList.begin(); it != end; ++it, i++) {
-        if (*it == anObserver) {
-            (*it)->Release();
+    for (Vector<IWebNotificationObserver*>::iterator it2 = observerList.begin(); it2 != end; ++it2, i++) {
+        if (*it2 == anObserver) {
+            (*it2)->Release();
             observerList.remove(i);
             break;
         }

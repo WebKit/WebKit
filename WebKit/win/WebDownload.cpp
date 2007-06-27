@@ -561,8 +561,8 @@ void WebDownload::didFinish()
             BString bundleBSTR(m_bundlePath);
             m_delegate->didCreateDestination(this, bundleBSTR);
         } else {
-            BString destinationBSTR = BString(m_destination);
-            m_delegate->didCreateDestination(this, destinationBSTR);
+            BString finalDestinationBSTR = BString(m_destination);
+            m_delegate->didCreateDestination(this, finalDestinationBSTR);
         }
     }
 

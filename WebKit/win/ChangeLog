@@ -1,3 +1,15 @@
+2007-06-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Prefast: Remove variable redefinitions in inner scopes.
+        
+        Reviewed by Ada.
+
+        * WebDownload.cpp:
+        (WebDownload::didFinish):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::postNotificationInternal):
+        (WebNotificationCenter::removeObserver):
+
 2007-06-27  Steve Falkenburg  <sfaken@apple.com>
 
         Remove SEH block from around history plist read, since the underlying bug has been fixed.
