@@ -61,6 +61,16 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     // But it doesn't seem to matter what file it is.
     // If we're called inside a Cocoa application which won't have a
     // CurApRefNum, we set it to point to the system resource file.
+
+    // Call CurResFile before testing the result of WebLMGetCurApRefNum.
+    // If we are called before the bundle resource map has been opened
+    // for a Carbon application (or a Cocoa app with Resource Manager
+    // resources) we *do not* want to set CurApRefNum to point at the
+    // system resource file. CurResFile triggers Resource Manager lazy
+    // initialization, and will open the bundle resource map as necessary.
+
+    CurResFile();
+
     if (WebLMGetCurApRefNum() == -1) {
         // To get the refNum for the system resource file, we have to do
         // UseResFile(kSystemResFile) and then look at CurResFile().

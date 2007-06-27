@@ -1,3 +1,16 @@
+2007-06-26  Jim Correia  <jim.correia@pobox.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14411
+        Bug 14411: WebNetscapePluginPackage overagressively sets CurApRefNum, which affects shipping versions of BBEdit.
+        <rdar://problem/5297268>
+
+        * Plugins/WebNetscapePluginPackage.m:
+        (+[WebNetscapePluginPackage initialize]): Force the Resource Manager to
+        lazy initialize, and only set CurApRefNum to the system file if
+        CurApRefNum is still -1 after that forced lazy initialization.
+
 2007-06-25  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
