@@ -1,3 +1,12 @@
+2007-06-28  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Implemented PasteboardQt::writeSelection to copy the selected text into the Clipboard as well as PasteboardQt::plainText to retrieve plain text from the clipboard for pasting for example into form fields.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2007-06-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

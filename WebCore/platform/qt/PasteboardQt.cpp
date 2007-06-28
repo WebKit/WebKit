@@ -32,6 +32,9 @@
 #include "NotImplemented.h"
 
 #include <qdebug.h>
+#include <qclipboard.h>
+#include <qmimedata.h>
+#include <qapplication.h>
 
 namespace WebCore {
 
@@ -48,7 +51,10 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    notImplemented();
+    QMimeData *md = new QMimeData;
+    md->setText(selectedRange->text());
+    md->setHtml(selectedRange->toHTML());
+    QApplication::clipboard()->setMimeData(md);
 }
 
 bool Pasteboard::canSmartReplace()
@@ -58,8 +64,7 @@ bool Pasteboard::canSmartReplace()
 
 String Pasteboard::plainText(Frame* frame)
 {
-    notImplemented();
-    return String();
+    return QApplication::clipboard()->text();
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
