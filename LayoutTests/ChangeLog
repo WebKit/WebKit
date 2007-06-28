@@ -1,3 +1,9 @@
+2007-06-28  Anders Carlsson  <andersca@apple.com>
+
+		Remove tests that don't need to be skipped anymore.
+
+        * win/Skipped:
+
 2007-06-28  Rob Buis  <buis@kde.org>
 
         Forgot committing this change in my previous commit.
