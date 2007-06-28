@@ -1,3 +1,16 @@
+2007-06-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14332
+        Bug 14332: REGRESSION (r21145): <td> width ignored
+        <rdar://problem/5290123>
+        
+        Cells in table with non-zero cellpadding are not considered empty.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+
 2007-06-28  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://problem/5300455> Prefast: typo in RenderBlock::paintObject

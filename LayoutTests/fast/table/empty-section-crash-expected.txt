@@ -23,4 +23,4 @@ layer at (8,-6) size 100x7 backgroundClip at (0,0) size 800x600 clip at (0,0) si
     RenderTableSection {TBODY} at (0,5) size 100x0
     RenderTableSection {TBODY} at (0,5) size 100x2
       RenderTableRow {TR} at (0,0) size 100x2
-        RenderTableCell {TD} at (0,0) size 2x2 [r=0 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (0,0) size 100x2 [r=0 c=0 rs=1 cs=1]

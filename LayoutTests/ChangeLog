@@ -1,3 +1,27 @@
+2007-06-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Test changes for http://bugs.webkit.org/show_bug.cgi?id=14332
+        Bug 14332: REGRESSION (r21145): <td> width ignored
+        <rdar://problem/5290123>
+        
+        - expand empty-cells.html to cover non-zero cellpadding case too
+        - update other related tests (none of these affect pixel results)
+
+        * fast/css/acid2-expected.txt:
+        * fast/css/acid2-pixel-expected.txt:
+        * fast/table/032-expected.txt:
+        * fast/table/empty-cells-expected.checksum:
+        * fast/table/empty-cells-expected.png:
+        * fast/table/empty-cells-expected.txt:
+        * fast/table/empty-cells.html:
+        * fast/table/empty-section-crash-expected.txt:
+        * http/tests/misc/acid2-expected.txt:
+        * http/tests/misc/acid2-pixel-expected.txt:
+        * tables/mozilla/bugs/bug222467-expected.txt:
+        * tables/mozilla/bugs/bug78162-expected.txt:
+
 2007-06-28  Adam Roben  <aroben@apple.com>
 
         New test for <rdar://problem/5300443> word-break and -webkit-user-modify allow any value
