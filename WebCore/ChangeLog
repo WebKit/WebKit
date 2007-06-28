@@ -1,5 +1,17 @@
 2007-06-28  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://problem/5300455> Prefast: typo in RenderBlock::paintObject
+
+        Reviewed by Hyatt.
+
+        No layout test possible, as this bug didn't have any effect since
+        "bool & bool" has the same value as "bool && bool"
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject): Changed & to &&.
+
+2007-06-28  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://problem/5300443> word-break and -webkit-user-modify allow any value
 
         The bug was caused by two typos found by prefast.

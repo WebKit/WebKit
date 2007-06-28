@@ -1588,7 +1588,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // 6. paint continuation outlines.
     if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
-        if (continuation() && continuation()->hasOutline() & continuation()->style()->visibility() == VISIBLE) {
+        if (continuation() && continuation()->hasOutline() && continuation()->style()->visibility() == VISIBLE) {
             RenderFlow* inlineFlow = static_cast<RenderFlow*>(continuation()->element()->renderer());
             if (!inlineFlow->hasLayer())
                 containingBlock()->addContinuationWithOutline(inlineFlow);
