@@ -1,3 +1,14 @@
+2007-06-28  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://problem/5300443> word-break and -webkit-user-modify allow any value
+
+        The bug was caused by two typos found by prefast.
+
+        Reviewed by Hyatt.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): Fixed typos.
+
 2007-06-20  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Adam.

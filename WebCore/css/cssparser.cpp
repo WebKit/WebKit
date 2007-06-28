@@ -906,7 +906,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_WORD_BREAK:          // normal | break-all | break-word (this is a custom extension)
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_ALL || CSS_VAL_BREAK_WORD)
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_ALL || id == CSS_VAL_BREAK_WORD)
             valid_primitive = true;
         break;
 
@@ -1226,7 +1226,7 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
     case CSS_PROP__WEBKIT_USER_MODIFY: // read-only | read-write
-        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE || CSS_VAL_READ_WRITE_PLAINTEXT_ONLY)
+        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE || id == CSS_VAL_READ_WRITE_PLAINTEXT_ONLY)
             valid_primitive = true;
         break;
     case CSS_PROP__WEBKIT_USER_SELECT: // auto | none | text
