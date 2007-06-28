@@ -662,9 +662,9 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
                 setSelectedIndex(listToOptionIndex(listIndex));
             handled = true;
         } else if (keyIdentifier == "Enter") {
-            // Save the selection so it can be compared to the new selection when we call onChange during setSetSelectedIndex.
-            saveLastSelection();
+            // listIndex should already be selected, but this will fire the onchange handler.
             setSelectedIndex(listToOptionIndex(listIndex), true, true);
+            handled = true;
         }
 #endif
         if (handled)

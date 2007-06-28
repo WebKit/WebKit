@@ -1,3 +1,15 @@
+2007-06-20  Matt Perry  <mpComplete@gmail.com>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14251:
+          onchange handler for select controls doesn't fire when changing via keyboard
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Got rid of
+        a call to saveLastSelection in the "Enter" key handler for select
+        controls that was preventing onchange from firing.
+
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
         Fix Gdk, Qt, and Win32 builds.
