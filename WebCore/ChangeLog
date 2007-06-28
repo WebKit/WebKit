@@ -1,3 +1,12 @@
+2007-06-28  Sam Weinig  <sam@webkit.org>
+
+        Rubberstamped by Adam Roben.
+
+        Roll out r23861.  It caused the buildbot to fail on intel.
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2007-06-26  Maxime Britto  <mbritto@pleyo.com>
 
         Reviewed by Geoff.
