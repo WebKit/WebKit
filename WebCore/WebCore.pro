@@ -261,6 +261,7 @@ IDL_BINDINGS += \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
     page/BarInfo.idl \
+    page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/History.idl \
     page/Screen.idl \
@@ -563,6 +564,7 @@ SOURCES += \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/ContextMenuController.cpp \
+    page/DOMSelection.cpp \
     page/DOMWindow.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \

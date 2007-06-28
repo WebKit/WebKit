@@ -562,6 +562,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMSelection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMSelection.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindow.cpp"
 				>
 			</File>
@@ -2394,6 +2402,14 @@
 			</File>
 			<File
 				RelativePath="..\page\ContextMenuController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DOMSelection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DOMSelection.h"
 				>
 			</File>
 			<File
