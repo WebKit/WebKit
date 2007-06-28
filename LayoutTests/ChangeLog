@@ -1,6 +1,6 @@
 2007-06-28  Anders Carlsson  <andersca@apple.com>
 
-		Remove tests that don't need to be skipped anymore.
+        Remove tests that don't need to be skipped anymore.
 
         * win/Skipped:
 
