@@ -1,5 +1,59 @@
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14319
+        Move the Selection object out of the JS bindings
+
+        - Renames JS Object Selection to DOMSelection to avoid a name
+          conflict.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::Window::mark):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Window::disconnectFrame):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * page/DOMSelection.cpp: Added.
+        (WebCore::DOMSelection::DOMSelection):
+        (WebCore::DOMSelection::frame):
+        (WebCore::DOMSelection::disconnectFrame):
+        (WebCore::DOMSelection::anchorNode):
+        (WebCore::DOMSelection::baseNode):
+        (WebCore::DOMSelection::anchorOffset):
+        (WebCore::DOMSelection::baseOffset):
+        (WebCore::DOMSelection::focusNode):
+        (WebCore::DOMSelection::extentNode):
+        (WebCore::DOMSelection::focusOffset):
+        (WebCore::DOMSelection::extentOffset):
+        (WebCore::DOMSelection::isCollapsed):
+        (WebCore::DOMSelection::type):
+        (WebCore::DOMSelection::rangeCount):
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::collapseToEnd):
+        (WebCore::DOMSelection::collapseToStart):
+        (WebCore::DOMSelection::empty):
+        (WebCore::DOMSelection::setBaseAndExtent):
+        (WebCore::DOMSelection::setPosition):
+        (WebCore::DOMSelection::modify):
+        (WebCore::DOMSelection::getRangeAt):
+        (WebCore::DOMSelection::removeAllRanges):
+        (WebCore::DOMSelection::addRange):
+        (WebCore::DOMSelection::toString):
+        * page/DOMSelection.h: Added.
+        * page/DOMSelection.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::disconnectFrame):
+        (WebCore::DOMWindow::getSelection):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej.
 
         2nd patch for http://bugs.webkit.org/show_bug.cgi?id=14111

@@ -55,7 +55,6 @@
 #include "PlatformScreen.h"
 #include "PlugInInfoStore.h"
 #include "RenderView.h"
-#include "SelectionController.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "htmlediting.h"
@@ -83,7 +82,6 @@ const double cMinimumTimerInterval = 0.010;
 struct WindowPrivate {
     WindowPrivate() 
         : loc(0)
-        , m_selection(0)
         , m_evt(0)
         , m_returnValueSlot(0)
     {
@@ -94,7 +92,6 @@ struct WindowPrivate {
     Window::UnprotectedListenersMap jsUnprotectedEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
     mutable Location* loc;
-    mutable Selection* m_selection;
     WebCore::Event *m_evt;
     JSValue **m_returnValueSlot;
     typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
@@ -201,7 +198,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   setTimeout    Window::SetTimeout      DontDelete|Function 2
   clearTimeout  Window::ClearTimeout    DontDelete|Function 1
   focus         Window::Focus           DontDelete|Function 0
-  getSelection  Window::GetSelection    DontDelete|Function 0
   blur          Window::Blur            DontDelete|Function 0
   close         Window::Close           DontDelete|Function 0
   setInterval   Window::SetInterval     DontDelete|Function 2
@@ -316,13 +312,6 @@ Location *Window::location() const
   return d->loc;
 }
 
-Selection *Window::selection() const
-{
-  if (!d->m_selection)
-    d->m_selection = new Selection(m_frame);
-  return d->m_selection;
-}
-
 bool Window::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
 {
     // FIXME (13016): Support wholeWord, searchInFrames and showDialog
@@ -335,8 +324,6 @@ void Window::mark()
   JSObject::mark();
   if (d->loc && !d->loc->marked())
     d->loc->mark();
-  if (d->m_selection && !d->m_selection->marked())
-    d->m_selection->mark();
 }
 
 static bool allowPopUp(ExecState *exec, Window *window)
@@ -1240,7 +1227,6 @@ JSUnprotectedEventListener *Window::findOrCreateJSUnprotectedEventListener(JSVal
 void Window::clearHelperObjectProperties()
 {
   d->loc = 0;
-  d->m_selection = 0;
   d->m_evt = 0;
 }
 
@@ -1637,10 +1623,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::Focus:
     frame->focusWindow();
     return jsUndefined();
-  case Window::GetSelection:
-    if (!window->isSafeScript(exec))
-        return jsUndefined();
-    return window->selection();
   case Window::Blur:
     frame->unfocusWindow();
     return jsUndefined();
@@ -1873,8 +1855,6 @@ void Window::disconnectFrame()
     m_frame = 0;
     if (d->loc)
         d->loc->m_frame = 0;
-    if (d->m_selection)
-        d->m_selection->m_frame = 0;
 }
 
 Window::ListenersMap& Window::jsEventListeners()
@@ -2101,135 +2081,6 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
     }
   }
   return jsUndefined();
-}
-
-////////////////////// Selection Object ////////////////////////
-
-const ClassInfo Selection::info = { "Selection", 0, &SelectionTable, 0 };
-/*
-@begin SelectionTable 19
-  anchorNode                Selection::AnchorNode               DontDelete|ReadOnly
-  anchorOffset              Selection::AnchorOffset             DontDelete|ReadOnly
-  focusNode                 Selection::FocusNode                DontDelete|ReadOnly
-  focusOffset               Selection::FocusOffset              DontDelete|ReadOnly
-  baseNode                  Selection::BaseNode                 DontDelete|ReadOnly
-  baseOffset                Selection::BaseOffset               DontDelete|ReadOnly
-  extentNode                Selection::ExtentNode               DontDelete|ReadOnly
-  extentOffset              Selection::ExtentOffset             DontDelete|ReadOnly
-  isCollapsed               Selection::IsCollapsed              DontDelete|ReadOnly
-  type                      Selection::_Type                    DontDelete|ReadOnly
-  rangeCount                Selection::RangeCount               DontDelete|ReadOnly
-  toString                  Selection::ToString                 DontEnum|DontDelete|Function 0
-  collapse                  Selection::Collapse                 DontDelete|Function 2
-  collapseToEnd             Selection::CollapseToEnd            DontDelete|Function 0
-  collapseToStart           Selection::CollapseToStart          DontDelete|Function 0
-  empty                     Selection::Empty                    DontDelete|Function 0
-  setBaseAndExtent          Selection::SetBaseAndExtent         DontDelete|Function 4
-  setPosition               Selection::SetPosition              DontDelete|Function 2
-  modify                    Selection::Modify                   DontDelete|Function 3
-  getRangeAt                Selection::GetRangeAt               DontDelete|Function 1
-  removeAllRanges           Selection::RemoveAllRanges          DontDelete|Function 0
-  addRange                  Selection::AddRange                 DontDelete|Function 1
-@end
-*/
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(SelectionFunc)
-Selection::Selection(Frame *p) : m_frame(p)
-{
-}
-
-JSValue *Selection::getValueProperty(ExecState *exec, int token) const
-{
-    SelectionController* s = m_frame->selectionController();
-    const Window* window = Window::retrieveWindow(m_frame);
-    if (!window)
-        return jsUndefined();
-        
-    switch (token) {
-    case AnchorNode:
-        return toJS(exec, s->anchorNode());
-    case BaseNode:
-        return toJS(exec, s->baseNode());
-    case AnchorOffset:
-        return jsNumber(s->anchorOffset());
-    case BaseOffset:
-        return jsNumber(s->baseOffset());
-    case FocusNode:
-        return toJS(exec, s->focusNode());
-    case ExtentNode:
-        return toJS(exec, s->extentNode());
-    case FocusOffset:
-        return jsNumber(s->focusOffset());
-    case ExtentOffset:
-        return jsNumber(s->extentOffset());
-    case IsCollapsed:
-        return jsBoolean(s->isCollapsed());
-    case _Type:
-        return jsString(s->type());
-    case RangeCount:
-        return jsNumber(s->rangeCount());
-    default:
-        ASSERT(0);
-        return jsUndefined();
-    }
-}
-
-bool Selection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  if (!m_frame)
-      return false;
-
-  return getStaticPropertySlot<SelectionFunc, Selection, JSObject>(exec, &SelectionTable, this, propertyName, slot);
-}
-
-JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-    if (!thisObj->inherits(&Selection::info))
-        return throwError(exec, TypeError);
-    Selection *selection = static_cast<Selection *>(thisObj);
-    Frame *frame = selection->frame();
-    if (frame) {
-        SelectionController* s = frame->selectionController();
-        ExceptionCode ec = 0;
-        switch (id) {
-            case Selection::Collapse:
-                s->collapse(toNode(args[0]), args[1]->toInt32(exec), ec);
-                break;
-            case Selection::CollapseToEnd:
-                s->collapseToEnd();
-                break;
-            case Selection::CollapseToStart:
-                s->collapseToStart();
-                break;
-            case Selection::Empty:
-                s->empty();
-                break;
-            case Selection::SetBaseAndExtent:
-                s->setBaseAndExtent(toNode(args[0]), args[1]->toInt32(exec), toNode(args[2]), args[3]->toInt32(exec), ec);
-                break;
-            case Selection::SetPosition:
-                s->setPosition(toNode(args[0]), args[1]->toInt32(exec), ec);
-                break;
-            case Selection::Modify:
-                s->modify(args[0]->toString(exec), args[1]->toString(exec), args[2]->toString(exec));
-                break;
-            case Selection::GetRangeAt: {
-                JSValue* val = toJS(exec, s->getRangeAt(args[0]->toInt32(exec), ec).get());
-                setDOMException(exec, ec);
-                return val;
-            }
-            case Selection::RemoveAllRanges:
-                s->removeAllRanges();
-                break;
-            case Selection::AddRange:
-                s->addRange(toRange(args[0]));
-                break;
-            case Selection::ToString:
-                return jsString(frame->selectionController()->toString());
-        }
-        setDOMException(exec, ec);
-    }
-
-    return jsUndefined();
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -323,6 +323,7 @@ all : \
     JSDOMExceptionConstructor.lut.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
+    JSDOMSelection.h \
     JSDOMWindow.h \
     JSDocument.h \
     JSDocumentFragment.h \

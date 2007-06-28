@@ -36,6 +36,8 @@ module window {
         readonly attribute BarInfo statusbar;
         readonly attribute BarInfo toolbar;
 
+        DOMSelection getSelection();
+
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 

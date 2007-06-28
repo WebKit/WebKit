@@ -30,6 +30,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "Chrome.h"
+#include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
@@ -61,6 +62,8 @@ void DOMWindow::disconnectFrame()
     m_frame = 0;
     if (m_screen)
         m_screen->disconnectFrame();
+    if (m_selection)
+        m_selection->disconnectFrame();
     if (m_history)
         m_history->disconnectFrame();
     if (m_locationbar)
@@ -131,6 +134,13 @@ BarInfo* DOMWindow::toolbar() const
     if (!m_toolbar)
         m_toolbar = new BarInfo(m_frame, BarInfo::Toolbar);
     return m_toolbar.get();
+}
+
+DOMSelection* DOMWindow::getSelection()
+{
+    if (!m_selection)
+        m_selection = new DOMSelection(m_frame);
+    return m_selection.get();
 }
 
 Document* DOMWindow::document() const

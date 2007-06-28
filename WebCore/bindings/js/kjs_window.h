@@ -41,7 +41,6 @@ namespace KJS {
     class Location;
     class PausedTimeout;
     class ScheduledAction;
-    class Selection;
     class Window;
     class WindowFunc;
 
@@ -114,7 +113,6 @@ namespace KJS {
     bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
     Location *location() const;
-    Selection *selection() const;
     bool find(const WebCore::String&, bool, bool, bool, bool, bool, bool) const;
 
     // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
@@ -154,7 +152,7 @@ namespace KJS {
            ScreenTop, ScreenLeft,
            ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
-           Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
+           Focus, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,
            XMLHttpRequest, XSLTProcessor_,
            Onabort, Onblur, Onchange, Onclick, Ondblclick, Onerror, 
@@ -214,22 +212,6 @@ namespace KJS {
   private:
     friend class Window;
     Location(WebCore::Frame*);
-    WebCore::Frame* m_frame;
-  };
-
-  class Selection : public DOMObject {
-  public:
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
-           IsCollapsed, _Type, RangeCount, Collapse, CollapseToEnd, CollapseToStart, Empty, ToString, 
-           SetBaseAndExtent, SetPosition, Modify, GetRangeAt, RemoveAllRanges, AddRange };
-    WebCore::Frame* frame() const { return m_frame; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    friend class Window;
-    Selection(WebCore::Frame*);
     WebCore::Frame* m_frame;
   };
 

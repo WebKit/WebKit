@@ -1,5 +1,16 @@
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff.
+
+        Update tests for http://bugs.webkit.org/show_bug.cgi?id=14319
+        Move the Selection object out of the JS bindings
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/toString-and-valueOf-override-expected.txt:
+        * http/tests/security/cross-frame-access-expected.txt:
+
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Tests for http://bugs.webkit.org/show_bug.cgi?id=12045
