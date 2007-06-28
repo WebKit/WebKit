@@ -1,5 +1,14 @@
 2007-06-28  Rob Buis  <buis@kde.org>
 
+        Forgot committing this change in my previous commit.
+
+        * svg/custom/invalid-fill-hex-expected.checksum:
+        * svg/custom/invalid-fill-hex-expected.png:
+        * svg/custom/invalid-fill-hex-expected.txt:
+        * svg/custom/invalid-fill-hex.svg:
+
+2007-06-28  Rob Buis  <buis@kde.org>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=14373
