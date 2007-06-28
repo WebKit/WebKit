@@ -531,11 +531,6 @@ SOURCES += \
     html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
-#    icon/IconDatabase.cpp \
-#    icon/SiteIcon.cpp \
-#    icon/SQLDatabase.cpp \
-#    icon/SQLStatement.cpp \
-#    icon/SQLTransaction.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedImage.cpp \
