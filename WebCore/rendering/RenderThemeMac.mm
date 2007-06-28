@@ -1030,6 +1030,8 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    ASSERT(o->parent()->isSlider());
+
     NSSliderCell* sliderThumbCell = o->style()->appearance() == SliderThumbVerticalAppearance
         ? sliderThumbVertical()
         : sliderThumbHorizontal();

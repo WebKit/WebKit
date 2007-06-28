@@ -1,3 +1,20 @@
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=12045
+        Crash under gmalloc at WTF::RefPtr<WebCore::HTMLSliderThumbElement>::operator->
+        <rdar://problem/5286670>
+
+        * fast/forms/thumbslider-crash-expected.checksum: Added.
+        * fast/forms/thumbslider-crash-expected.png: Added.
+        * fast/forms/thumbslider-crash-expected.txt: Added.
+        * fast/forms/thumbslider-crash.html: Added.
+        * fast/forms/thumbslider-no-parent-slider-expected.checksum: Added.
+        * fast/forms/thumbslider-no-parent-slider-expected.png: Added.
+        * fast/forms/thumbslider-no-parent-slider-expected.txt: Added.
+        * fast/forms/thumbslider-no-parent-slider.html: Added.
+
 2007-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

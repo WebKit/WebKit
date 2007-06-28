@@ -270,6 +270,7 @@ public:
     virtual bool isApplet() const { return false; }
     virtual bool isMenuList() const { return false; }
     virtual bool isListBox() const { return false; }
+    virtual bool isSlider() const { return false; }
 
     bool isRoot() const;
     bool isBody() const;

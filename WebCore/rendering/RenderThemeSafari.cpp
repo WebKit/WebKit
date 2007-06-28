@@ -873,6 +873,8 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    ASSERT(o->parent()->isSlider());
+
     bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
     ThemeControlState state = determineState(o->parent());
     state &= ~SafariTheme::PressedState;

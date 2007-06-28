@@ -123,7 +123,10 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintSliderTrack(o, paintInfo, r);
         case SliderThumbHorizontalAppearance:
         case SliderThumbVerticalAppearance:
-            return paintSliderThumb(o, paintInfo, r);
+            if (o->parent()->isSlider())
+                return paintSliderThumb(o, paintInfo, r);
+            // We don't support drawing a slider thumb without a parent slider
+            break;
         case MenulistButtonAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
