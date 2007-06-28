@@ -91,6 +91,10 @@ public:
     QNetworkProxy networkProxy() const;
 #endif
 
+    bool canCut() const;
+    bool canCopy() const;
+    bool canPaste() const;
+
 public slots:
     /**
      * Stops loading of the page, if loading.
@@ -102,6 +106,10 @@ public slots:
     void goToHistoryItem(const QWebHistoryItem &item);
 
     virtual void setWindowGeometry(const QRect& geom);
+
+    void cut();
+    void copy();
+    void paste();
 
 signals:
     /**
@@ -141,6 +149,8 @@ signals:
      * Signal is emitted when an icon ("favicon") is loaded from the site.
      */
     void iconLoaded();
+
+    void selectionChanged();
 
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);

@@ -44,6 +44,8 @@
 #include "KURL.h"
 #include "Image.h"
 #include "IconDatabase.h"
+#include "FocusController.h"
+#include "Editor.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -259,6 +261,36 @@ QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *fra
 void QWebPage::setWindowGeometry(const QRect& geom)
 {
     Q_UNUSED(geom)
+}
+
+bool QWebPage::canCut() const
+{
+    return d->page->focusController()->focusedOrMainFrame()->editor()->canCut();
+}
+
+bool QWebPage::canCopy() const
+{
+    return d->page->focusController()->focusedOrMainFrame()->editor()->canCopy();
+}
+
+bool QWebPage::canPaste() const
+{
+    return d->page->focusController()->focusedOrMainFrame()->editor()->canPaste();
+}
+
+void QWebPage::cut()
+{
+    d->page->focusController()->focusedOrMainFrame()->editor()->cut();
+}
+
+void QWebPage::copy()
+{
+    d->page->focusController()->focusedOrMainFrame()->editor()->copy();
+}
+
+void QWebPage::paste()
+{
+    d->page->focusController()->focusedOrMainFrame()->editor()->paste();
 }
 
 /*!
