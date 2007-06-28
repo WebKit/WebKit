@@ -2,6 +2,16 @@
 
         Reviewed by Zack.
 
+        Propagate mouse double click events from Qt to WebCore.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::mouseDoubleClickEvent):
+        * Api/qwebframe.h:
+
+2007-06-28  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
         Implemented clipboard functions in QWebPage, in particular can(Cut|Copy|Paste), cut/copy/paste as slot as well as a selectionChanged() signal.
 
         * Api/qwebpage.cpp:

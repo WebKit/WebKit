@@ -281,6 +281,15 @@ void QWebFrame::mousePressEvent(QMouseEvent *ev)
     setFocus();
 }
 
+void QWebFrame::mouseDoubleClickEvent(QMouseEvent *ev)
+{
+    if (!d->eventHandler)
+        return;
+
+    d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+    setFocus();
+}
+
 void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
 {
     if (!d->frameView)
