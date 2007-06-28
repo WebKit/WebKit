@@ -31,10 +31,10 @@
 #include "DOMSelection.h"
 
 #include "Frame.h"
-#include "SelectionController.h"
-#include "Range.h"
-#include "String.h"
 #include "Node.h"
+#include "PlatformString.h"
+#include "Range.h"
+#include "SelectionController.h"
 
 namespace WebCore {
 
