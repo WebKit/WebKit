@@ -31,14 +31,13 @@ namespace WebCore {
     class Frame;
     class FrameView;
     class JSDOMWindow;
+    class JSEventListener;
+    class JSUnprotectedEventListener;
     class Node;
 }
 
 namespace KJS {
 
-    class JSEventListener;
-    class JSLazyEventListener;
-    class JSUnprotectedEventListener;
     class Location;
     class PausedTimeout;
     class ScheduledAction;
@@ -119,16 +118,16 @@ namespace KJS {
     bool find(const WebCore::String&, bool, bool, bool, bool, bool, bool) const;
 
     // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
-    JSEventListener* findJSEventListener(JSValue*, bool html = false);
+    WebCore::JSEventListener* findJSEventListener(JSValue*, bool html = false);
 
     // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
-    JSEventListener *findOrCreateJSEventListener(JSValue*, bool html = false);
+    WebCore::JSEventListener *findOrCreateJSEventListener(JSValue*, bool html = false);
 
     // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-    JSUnprotectedEventListener* findJSUnprotectedEventListener(JSValue*, bool html = false);
+    WebCore::JSUnprotectedEventListener* findJSUnprotectedEventListener(JSValue*, bool html = false);
 
     // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-    JSUnprotectedEventListener *findOrCreateJSUnprotectedEventListener(JSValue*, bool html = false);
+    WebCore::JSUnprotectedEventListener *findOrCreateJSUnprotectedEventListener(JSValue*, bool html = false);
 
     void clear();
 
@@ -138,8 +137,8 @@ namespace KJS {
     // Set a place to put a dialog return value when the window is cleared.
     void setReturnValueSlot(JSValue **slot);
 
-    typedef HashMap<JSObject*, JSEventListener*> ListenersMap;
-    typedef HashMap<JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
+    typedef HashMap<JSObject*, WebCore::JSEventListener*> ListenersMap;
+    typedef HashMap<JSObject*, WebCore::JSUnprotectedEventListener*> UnprotectedListenersMap;
     
     ListenersMap& jsEventListeners();
     ListenersMap& jsHTMLEventListeners();

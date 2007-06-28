@@ -1,5 +1,45 @@
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej.
+
+        2nd patch for http://bugs.webkit.org/show_bug.cgi?id=14111
+        Autogenerate Event JS binding
+
+        - Cleanup kjs_events
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::JSAbstractEventListener):
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSAbstractEventListener::isHTMLEventListener):
+        (WebCore::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::listenerObj):
+        (WebCore::JSUnprotectedEventListener::windowObj):
+        (WebCore::JSUnprotectedEventListener::clearWindowObj):
+        (WebCore::JSUnprotectedEventListener::mark):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::listenerObj):
+        (WebCore::JSEventListener::windowObj):
+        (WebCore::JSEventListener::clearWindowObj):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::listenerObj):
+        (WebCore::JSLazyEventListener::parseCode):
+        (WebCore::getNodeEventListener):
+        (WebCore::JSClipboard::JSClipboard):
+        (WebCore::JSClipboard::getValueProperty):
+        (WebCore::JSClipboard::putValueProperty):
+        (WebCore::JSClipboardPrototypeFunction::callAsFunction):
+        (WebCore::toJS):
+        (WebCore::toClipboard):
+        * bindings/js/kjs_events.h:
+        (WebCore::JSClipboard::classInfo):
+        (WebCore::JSClipboard::impl):
+        * bindings/js/kjs_window.h:
+        * ksvg2/events/JSSVGLazyEventListener.h:
+
+2007-06-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=12045

@@ -34,34 +34,21 @@
 #include "HTMLNames.h"
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
-#include "JSKeyboardEvent.h"
-#include "JSMouseEvent.h"
-#include "JSMutationEvent.h"
-#include "JSOverflowEvent.h"
-#include "JSTextEvent.h"
-#include "JSWheelEvent.h"
 #include "KURL.h"
-#include "KeyboardEvent.h"
-#include "MouseEvent.h"
-#include "MutationEvent.h"
-#include "OverflowEvent.h"
 #include "Page.h"
-#include "TextEvent.h"
-#include "UIEvent.h"
-#include "WheelEvent.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 
 #include "kjs_events.lut.h"
 
-using namespace WebCore;
+namespace WebCore {
+
+using namespace KJS;
 using namespace EventNames;
 using namespace HTMLNames;
 
-namespace KJS {
-
-JSAbstractEventListener::JSAbstractEventListener(bool _html)
-    : html(_html)
+JSAbstractEventListener::JSAbstractEventListener(bool html)
+    : m_html(html)
 {
 }
 
@@ -72,7 +59,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         return;
 #endif
 
-    Event *event = ele;
+    Event* event = ele;
 
     JSObject* listener = listenerObj();
     if (!listener)
@@ -91,29 +78,29 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         return;
 
     JSLock lock;
-  
+
     ScriptInterpreter* interpreter = proxy->interpreter();
     ExecState* exec = interpreter->globalExec();
-  
+
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
-    if (handleEventFuncValue->isObject()) {      
+    if (handleEventFuncValue->isObject()) {
         handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
         if (!handleEventFunc->implementsCall())
             handleEventFunc = 0;
     }
-  
+
     if (handleEventFunc || listener->implementsCall()) {
         ref();
-      
+
         List args;
         args.append(toJS(exec, event));
-      
+
         // Set the event we're handling in the Window object
         window->setCurrentEvent(event);
         // ... and in the interpreter
         interpreter->setCurrentEvent(event);
-      
+
         JSValue* retval;
         if (handleEventFunc) {
             interpreter->startTimeoutCheck();
@@ -145,7 +132,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         } else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec));
-            if (html) {
+            if (m_html) {
                 bool retvalbool;
                 if (retval->getBoolean(retvalbool) && !retvalbool)
                     event->preventDefault();
@@ -159,51 +146,51 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
 
 bool JSAbstractEventListener::isHTMLEventListener() const
 {
-    return html;
+    return m_html;
 }
 
 // -------------------------------------------------------------------------
 
-JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* _listener, Window* _win, bool _html)
-  : JSAbstractEventListener(_html)
-  , listener(_listener)
-  , win(_win)
+JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, Window* win, bool html)
+    : JSAbstractEventListener(html)
+    , m_listener(listener)
+    , m_win(win)
 {
-    if (_listener) {
-        Window::UnprotectedListenersMap& listeners = _html 
-            ? _win->jsUnprotectedHTMLEventListeners() : _win->jsUnprotectedEventListeners();
-        listeners.set(_listener, this);
+    if (m_listener) {
+        Window::UnprotectedListenersMap& listeners = html
+            ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
+        listeners.set(m_listener, this);
     }
 }
 
 JSUnprotectedEventListener::~JSUnprotectedEventListener()
 {
-    if (listener && win) {
+    if (m_listener && m_win) {
         Window::UnprotectedListenersMap& listeners = isHTMLEventListener()
-            ? win->jsUnprotectedHTMLEventListeners() : win->jsUnprotectedEventListeners();
-        listeners.remove(listener);
+            ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
+        listeners.remove(m_listener);
     }
 }
 
 JSObject* JSUnprotectedEventListener::listenerObj() const
-{ 
-    return listener; 
+{
+    return m_listener;
 }
 
 Window* JSUnprotectedEventListener::windowObj() const
 {
-    return win;
+    return m_win;
 }
 
 void JSUnprotectedEventListener::clearWindowObj()
 {
-    win = 0;
+    m_win = 0;
 }
 
 void JSUnprotectedEventListener::mark()
 {
-    if (listener && !listener->marked())
-        listener->mark();
+    if (m_listener && !m_listener->marked())
+        m_listener->mark();
 }
 
 #ifndef NDEBUG
@@ -226,15 +213,15 @@ static EventListenerCounter eventListenerCounter;
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* _listener, Window* _win, bool _html)
-    : JSAbstractEventListener(_html)
-    , listener(_listener)
-    , win(_win)
+JSEventListener::JSEventListener(JSObject* listener, Window* win, bool html)
+    : JSAbstractEventListener(html)
+    , m_listener(listener)
+    , m_win(win)
 {
-    if (_listener) {
-        Window::ListenersMap& listeners = _html
-            ? _win->jsHTMLEventListeners() : _win->jsEventListeners();
-        listeners.set(_listener, this);
+    if (m_listener) {
+        Window::ListenersMap& listeners = html
+            ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
+        listeners.set(m_listener, this);
     }
 #ifndef NDEBUG
     ++eventListenerCounter.count;
@@ -243,10 +230,10 @@ JSEventListener::JSEventListener(JSObject* _listener, Window* _win, bool _html)
 
 JSEventListener::~JSEventListener()
 {
-    if (listener && win) {
+    if (m_listener && m_win) {
         Window::ListenersMap& listeners = isHTMLEventListener()
-            ? win->jsHTMLEventListeners() : win->jsEventListeners();
-        listeners.remove(listener);
+            ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
+        listeners.remove(m_listener);
     }
 #ifndef NDEBUG
     --eventListenerCounter.count;
@@ -254,29 +241,29 @@ JSEventListener::~JSEventListener()
 }
 
 JSObject* JSEventListener::listenerObj() const
-{ 
-    return listener; 
+{
+    return m_listener;
 }
 
 Window* JSEventListener::windowObj() const
 {
-    return win;
+    return m_win;
 }
 
 void JSEventListener::clearWindowObj()
 {
-    win = 0;
+    m_win = 0;
 }
 
 // -------------------------------------------------------------------------
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, Window* win, Node* node, int lineno)
-  : JSEventListener(0, win, true)
-  , m_functionName(functionName)
-  , code(code)
-  , parsed(false)
-  , lineNumber(lineno)
-  , originalNode(node)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, Window* win, Node* node, int lineNumber)
+    : JSEventListener(0, win, true)
+    , m_functionName(functionName)
+    , m_code(code)
+    , m_parsed(false)
+    , m_lineNumber(lineNumber)
+    , m_originalNode(node)
 {
     // We don't retain the original node because we assume it
     // will stay alive as long as this handler object is around
@@ -288,7 +275,7 @@ JSLazyEventListener::JSLazyEventListener(const String& functionName, const Strin
 JSObject* JSLazyEventListener::listenerObj() const
 {
     parseCode();
-    return listener;
+    return m_listener;
 }
 
 JSValue* JSLazyEventListener::eventParameterName() const
@@ -299,12 +286,12 @@ JSValue* JSLazyEventListener::eventParameterName() const
 
 void JSLazyEventListener::parseCode() const
 {
-    if (parsed)
+    if (m_parsed)
         return;
-    parsed = true;
+    m_parsed = true;
 
-    Frame *frame = windowObj()->frame();
-    KJSProxy *proxy = 0;
+    Frame* frame = windowObj()->frame();
+    KJSProxy* proxy = 0;
     if (frame)
         proxy = frame->scriptProxy();
 
@@ -318,22 +305,22 @@ void JSLazyEventListener::parseCode() const
 
         UString sourceURL(frame->loader()->url().url());
         args.append(eventParameterName());
-        args.append(jsString(code));
-        listener = constr->construct(exec, args, m_functionName, sourceURL, lineNumber); // ### is globalExec ok ?
+        args.append(jsString(m_code));
+        m_listener = constr->construct(exec, args, m_functionName, sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
 
-        FunctionImp* listenerAsFunction = static_cast<FunctionImp*>(listener.get());
+        FunctionImp* listenerAsFunction = static_cast<FunctionImp*>(m_listener.get());
 
         if (exec->hadException()) {
             exec->clearException();
 
             // failed to parse, so let's just make this listener a no-op
-            listener = 0;
-        } else if (originalNode) {
+            m_listener = 0;
+        } else if (m_originalNode) {
             // Add the event's home element to the scope
             // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
             ScopeChain scope = listenerAsFunction->scope();
 
-            JSValue* thisObj = toJS(exec, originalNode);
+            JSValue* thisObj = toJS(exec, m_originalNode);
             if (thisObj->isObject()) {
                 static_cast<JSEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
                 listenerAsFunction->setScope(scope);
@@ -343,20 +330,21 @@ void JSLazyEventListener::parseCode() const
 
     // no more need to keep the unparsed code around
     m_functionName = String();
-    code = String();
+    m_code = String();
 
-    if (listener) {
+    if (m_listener) {
         Window::ListenersMap& listeners = isHTMLEventListener()
             ? windowObj()->jsHTMLEventListeners() : windowObj()->jsEventListeners();
-        listeners.set(listener, const_cast<JSLazyEventListener*>(this));
+        listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }
 }
 
 JSValue* getNodeEventListener(EventTargetNode* n, const AtomicString& eventType)
 {
-    if (JSAbstractEventListener* listener = static_cast<JSAbstractEventListener*>(n->getHTMLEventListener(eventType)))
+    if (JSAbstractEventListener* listener = static_cast<JSAbstractEventListener*>(n->getHTMLEventListener(eventType))) {
         if (JSValue* obj = listener->listenerObj())
             return obj;
+    }
     return jsNull();
 }
 
@@ -366,15 +354,15 @@ const ClassInfo JSClipboard::info = { "Clipboard", 0, &JSClipboardTable, 0 };
 
 /* Source for JSClipboardTable. Use "make hashtables" to regenerate.
 @begin JSClipboardTable 3
-  dropEffect    JSClipboard::DropEffect   DontDelete
-  effectAllowed JSClipboard::EffectAllowed        DontDelete
-  types         JSClipboard::Types        DontDelete|ReadOnly
+  dropEffect    WebCore::JSClipboard::DropEffect   DontDelete
+  effectAllowed WebCore::JSClipboard::EffectAllowed        DontDelete
+  types         WebCore::JSClipboard::Types        DontDelete|ReadOnly
 @end
 @begin JSClipboardPrototypeTable 4
-  clearData     JSClipboard::ClearData    DontDelete|Function 0
-  getData       JSClipboard::GetData      DontDelete|Function 1
-  setData       JSClipboard::SetData      DontDelete|Function 2
-  setDragImage  JSClipboard::SetDragImage DontDelete|Function 3
+  clearData     WebCore::JSClipboard::ClearData    DontDelete|Function 0
+  getData       WebCore::JSClipboard::GetData      DontDelete|Function 1
+  setData       WebCore::JSClipboard::SetData      DontDelete|Function 2
+  setDragImage  WebCore::JSClipboard::SetDragImage DontDelete|Function 3
 @end
 */
 
@@ -382,8 +370,8 @@ KJS_DEFINE_PROTOTYPE(JSClipboardPrototype)
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSClipboardPrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("Clipboard", JSClipboardPrototype, JSClipboardPrototypeFunction)
 
-JSClipboard::JSClipboard(ExecState* exec, WebCore::Clipboard* cb)
-    : m_impl(cb)
+JSClipboard::JSClipboard(ExecState* exec, Clipboard* clipboard)
+    : m_impl(clipboard)
 {
     setPrototype(JSClipboardPrototype::self(exec));
 }
@@ -400,7 +388,7 @@ bool JSClipboard::getOwnPropertySlot(ExecState* exec, const Identifier& property
 
 JSValue* JSClipboard::getValueProperty(ExecState* exec, int token) const
 {
-    WebCore::Clipboard* clipboard = impl();
+    Clipboard* clipboard = impl();
     switch (token) {
         case DropEffect:
             ASSERT(clipboard->isForDragging() || clipboard->dropEffect().isNull());
@@ -433,7 +421,7 @@ void JSClipboard::put(ExecState* exec, const Identifier& propertyName, JSValue* 
 
 void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
 {
-    WebCore::Clipboard* clipboard = impl();
+    Clipboard* clipboard = impl();
     switch (token) {
         case DropEffect:
             // can never set this when not for dragging, thus getting always returns NULL string
@@ -453,7 +441,7 @@ JSValue* JSClipboardPrototypeFunction::callAsFunction(ExecState* exec, JSObject*
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
 
-    WebCore::Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
+    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
     switch (id) {
         case JSClipboard::ClearData:
             if (args.size() == 0) {
@@ -494,30 +482,30 @@ JSValue* JSClipboardPrototypeFunction::callAsFunction(ExecState* exec, JSObject*
             Node* node = toNode(args[0]);
             if (!node)
                 return throwError(exec, TypeError);
-            
+
             if (!node->isElementNode())
                 return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
 
-            if (static_cast<Element*>(node)->hasLocalName(imgTag) && 
+            if (static_cast<Element*>(node)->hasLocalName(imgTag) &&
                 !node->inDocument())
                 clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
             else
-                clipboard->setDragImageElement(node, IntPoint(x, y));                    
-                
+                clipboard->setDragImageElement(node, IntPoint(x, y));
+
             return jsUndefined();
         }
     }
     return jsUndefined();
 }
 
-JSValue* toJS(ExecState* exec, WebCore::Clipboard* obj)
+JSValue* toJS(ExecState* exec, Clipboard* obj)
 {
-    return cacheDOMObject<WebCore::Clipboard, JSClipboard>(exec, obj);
+    return cacheDOMObject<Clipboard, JSClipboard>(exec, obj);
 }
 
-WebCore::Clipboard* toClipboard(JSValue* val)
+Clipboard* toClipboard(JSValue* val)
 {
     return val->isObject(&JSClipboard::info) ? static_cast<JSClipboard*>(val)->impl() : 0;
 }
 
-}
+} // namespace WebCore
