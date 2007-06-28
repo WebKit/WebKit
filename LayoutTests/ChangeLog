@@ -1,3 +1,20 @@
+2007-06-28  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Geoff.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=13038
+        ASSERTION FAILED: item->target().isEmpty() || m_mainFrame->tree()->find(item->target()) == m_mainFrame
+
+        Although the test works with the script, it can't detect an eventually
+        error automatically since the first link must be opened in a new tab with
+        a _blank target to reproduce the crash. So it should be launched manually
+        following the steps decribed in there, then it's effective.
+
+         * http/tests/navigation/goBack-blank-tab-page-expected.txt: Added.
+         * http/tests/navigation/goBack-blank-tab-page.html: Added.
+         * http/tests/navigation/resources/before-go-back.html: Added.
+         * http/tests/navigation/resources/will-go-back.html: Added.
+
 2007-06-28  Anders Carlsson  <andersca@apple.com>
 
         Remove tests that don't need to be skipped anymore.

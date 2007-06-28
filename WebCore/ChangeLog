@@ -1,3 +1,16 @@
+2007-06-26  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Geoff.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13038
+        ASSERTION FAILED: item->target().isEmpty() || m_mainFrame->tree()->find(item->target()) == m_mainFrame
+
+        Modification of an ASSERT on goToItem related to go back/forward in
+        history.Don't need to check the frameset if the target is _blank.
+
+         * page/Page.cpp:
+         (WebCore::Page::goToItem):
+
 2007-06-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
