@@ -55,8 +55,9 @@
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4138; 4996; 4355; 4291;4068"
+				DisableSpecificWarnings="4138;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
+				EnablePREfast="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -126,8 +127,9 @@
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4138; 4996; 4355; 4291;4068"
+				DisableSpecificWarnings="4138;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
+				EnablePREfast="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -199,8 +201,9 @@
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4138; 4996; 4355; 4291;4068"
+				DisableSpecificWarnings="4138;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
+				EnablePREfast="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -2497,7 +2500,7 @@
 				RelativePath="..\page\InspectorController.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\page\MouseEventWithHitTestResults.cpp"
 				>
 			</File>
@@ -2960,6 +2963,30 @@
 			<File
 				RelativePath="..\platform\Font.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\platform\Font.h"
@@ -3074,6 +3101,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PlatformScreen.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\PlatformString.h"
 				>
 			</File>
@@ -3099,10 +3130,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\RegularExpression.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\PlatformScreen.h"
 				>
 			</File>
 			<File
@@ -3216,6 +3243,30 @@
 			<File
 				RelativePath="..\platform\TextCodecICU.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="/analyze:stacksize65536"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\platform\TextCodecICU.h"
@@ -3375,6 +3426,30 @@
 				<File
 					RelativePath="..\platform\win\FontWin.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\win\GDIObjectCounter.cpp"
@@ -3409,6 +3484,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\PlatformScreenWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\PlatformScrollBar.h"
 					>
 				</File>
@@ -3418,10 +3497,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\PopupMenuWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\PlatformScreenWin.cpp"
 					>
 				</File>
 				<File
@@ -7829,6 +7904,30 @@
 				<File
 					RelativePath="..\ksvg2\svg\SVGParserUtilities.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="/analyze:stacksize65536"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\ksvg2\svg\SVGParserUtilities.h"

@@ -1,3 +1,15 @@
+2007-06-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Turn on static code analysis (Windows only).
+
+        Affects only folks that have Visual Studio Team Suite installed,
+        or who have replaced their compiler with the version shipping in the
+        Vista SDK.
+        
+        Reviewed by Oliver.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-06-27  George Staikos  <staikos@kde.org>
 
         Remove old commented out files that no-longer exist.
