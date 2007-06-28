@@ -172,7 +172,8 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %right <string> IDENT
 
-%nonassoc <string> HASH
+%nonassoc <string> HEX_OR_IDENT
+%nonassoc <string> IDSEL
 %nonassoc ':'
 %nonassoc '.'
 %nonassoc '['
@@ -740,7 +741,16 @@ specifier_list:
 ;
 
 specifier:
-    HASH {
+    HEX_OR_IDENT {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingSelector();
+        $$->m_match = CSSSelector::Id;
+        if (!p->strict)
+            $1.lower();
+        $$->m_attr = idAttr;
+        $$->m_value = atomicString($1);
+    }
+  | IDSEL {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::Id;
@@ -1114,7 +1124,7 @@ function:
  * after the "#"; e.g., "#000" is OK, but "#abcd" is not.
  */
 hexcolor:
-  HASH maybe_space { $$ = $1; }
+  HEX_OR_IDENT maybe_space { $$ = $1; }
   ;
 
 

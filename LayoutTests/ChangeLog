@@ -1,3 +1,23 @@
+2007-06-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14373
+        CSS1: selectors (classes and IDs) cannot start with a dash or with a digit
+
+        These are improvements due to stricter id selector checking.
+
+        * css2.1/css1_forward_compatible_parsing-expected.checksum: Added.
+        * css2.1/css1_forward_compatible_parsing-expected.png: Added.
+        * css2.1/css1_forward_compatible_parsing-expected.txt: Added.
+        * css2.1/css1_forward_compatible_parsing.html: Added.
+        * css2.1/t040103-ident-08-c-expected.checksum:
+        * css2.1/t040103-ident-08-c-expected.png:
+        * css2.1/t040103-ident-08-c-expected.txt:
+        * css2.1/t0509-id-sel-syntax-01-f-expected.checksum:
+        * css2.1/t0509-id-sel-syntax-01-f-expected.png:
+        * css2.1/t0509-id-sel-syntax-01-f-expected.txt:
+
 2007-06-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
