@@ -1946,7 +1946,7 @@ for (;;)
 #ifdef SUPPORT_UCP
           int chartype;
           int othercase;
-          if (_pcre_ucp_findchar(fc, &chartype, &othercase) < 0 || dc != othercase)
+          if (_pcre_ucp_findchar(fc, &chartype, &othercase) != ucp_L || dc != othercase)
 #endif
             RRETURN(MATCH_NOMATCH);
           }
@@ -2008,7 +2008,7 @@ for (;;)
         {
         int othercase;
         int chartype;
-        if ((ims & PCRE_CASELESS) == 0 || _pcre_ucp_findchar(fc, &chartype, &othercase) < 0)
+        if ((ims & PCRE_CASELESS) == 0 || _pcre_ucp_findchar(fc, &chartype, &othercase) != ucp_L)
           othercase = -1; /* Guaranteed to not match any character */
 
         for (i = 1; i <= min; i++)
@@ -2123,7 +2123,7 @@ for (;;)
         int othercase;
         int chartype;
         if ((ims & PCRE_CASELESS) != 0 &&
-             _pcre_ucp_findchar(fc, &chartype, &othercase) >= 0 &&
+             _pcre_ucp_findchar(fc, &chartype, &othercase) == ucp_L &&
              othercase > 0)
           oclength = _pcre_ord2utf8(othercase, occhars);
 #endif  /* SUPPORT_UCP */

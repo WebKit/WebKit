@@ -1,3 +1,14 @@
+2007-06-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://problem/5271937> REGRESSION: Apparent WebKit JavaScript memory smasher when submitting comment to iWeb site (crashes in kjs_pcre_compile2)
+        - Correctly evaluate the return value of _pcre_ucp_findchar.
+
+        * fast/js/regexp-unicode-overflow-expected.txt: Added.
+        * fast/js/regexp-unicode-overflow.html: Added.
+        * fast/js/resources/regexp-unicode-overflow.js: Added.
+
 2007-06-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

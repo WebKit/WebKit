@@ -2192,7 +2192,7 @@ for (;; ptr++)
           {
           int chartype;
           int othercase;
-          if (_pcre_ucp_findchar(c, &chartype, &othercase) >= 0 &&
+          if (_pcre_ucp_findchar(c, &chartype, &othercase) == ucp_L &&
                othercase > 0)
             {
             *class_utf8data++ = XCL_SINGLE;
