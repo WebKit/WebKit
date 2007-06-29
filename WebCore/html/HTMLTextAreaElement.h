@@ -74,7 +74,9 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual void focus(bool restorePreviousSelection = true);
     virtual void updateFocusAppearance(bool restorePreviousSelection = true);
-
+    virtual bool canSelectAll() const { return true; }
+    virtual void selectAll() { select(); }
+    
     String value() const;
     void setValue(const String&);
     String defaultValue() const;

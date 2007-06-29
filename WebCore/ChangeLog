@@ -1,3 +1,22 @@
+2007-06-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Ada and Kevin McCullough.
+
+        Fix for <rdar://problem/5301322> REGRESSION: Select All selects the whole page when used in readonly textareas
+
+        Implemented canSelectAll and selectAll for text fields and textareas, since they're special cases even when they're not editable.
+
+        Tests:
+        fast/forms/input-readonly-select-all.html
+        fast/forms/textarea-readonly-select-all.html
+
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::canSelectAll):
+        (WebCore::HTMLInputElement::selectAll):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::canSelectAll):
+        (WebCore::HTMLTextAreaElement::selectAll):
+
 2007-06-29  Adam Roben  <aroben@apple.com>
 
         Build fix

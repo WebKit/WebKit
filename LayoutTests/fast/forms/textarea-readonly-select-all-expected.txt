@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 579x18
+        text run at (0,0) width 579: "This tests that select all works in a readonly textarea, without selecting the surrounding text. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {TEXTAREA} at (2,20) size 163x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (11,29) size 161x26
+  RenderBlock {DIV} at (1,1) size 161x26
+    RenderText {#text} at (3,0) size 152x13
+      text run at (3,0) width 152: "This text should be selected"
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 3 {TEXTAREA} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 28 of child 0 {#text} of child 0 {DIV} of child 3 {TEXTAREA} of child 1 {BODY} of child 0 {HTML} of document

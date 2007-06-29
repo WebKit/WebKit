@@ -1,3 +1,18 @@
+2007-06-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Ada and Kevin McCullough.
+
+        Test for <rdar://problem/5301322> REGRESSION: Select All selects the whole page when used in readonly textareas
+
+        * fast/forms/input-readonly-select-all-expected.checksum: Added.
+        * fast/forms/input-readonly-select-all-expected.png: Added.
+        * fast/forms/input-readonly-select-all-expected.txt: Added.
+        * fast/forms/input-readonly-select-all.html: Added.
+        * fast/forms/textarea-readonly-select-all-expected.checksum: Added.
+        * fast/forms/textarea-readonly-select-all-expected.png: Added.
+        * fast/forms/textarea-readonly-select-all-expected.txt: Added.
+        * fast/forms/textarea-readonly-select-all.html: Added.
+
 2007-06-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.
