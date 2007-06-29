@@ -1,3 +1,25 @@
+2007-06-28  Adam Roben  <aroben@apple.com>
+
+        Get WebCore compiling with /W2 on Windows
+
+        Reviewed by Steve.
+
+        No regression tests affected.
+
+        * WebCore.vcproj/WebCore.vcproj: Turn the warning level up to 2, and
+        disable two warnings: implicit int <=> float conversion, and class vs.
+        struct inconsistency.
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::deleteData): Cast to int before negating.
+        * loader/Cache.cpp:
+        (WebCore::Cache::remove): Ditto.
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction): Consistently use floats.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        * platform/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar): Ditto.
+
 2007-06-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

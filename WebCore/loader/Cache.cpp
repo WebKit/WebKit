@@ -264,9 +264,9 @@ void Cache::remove(CachedResource* resource)
             (*itr)->removeCachedResource(resource);
 
         // Subtract from our size totals.
-        int delta = -resource->size();
+        int delta = -static_cast<int>(resource->size());
         if (delta)
-            adjustSize(resource->referenced(), delta, -resource->decodedSize());
+            adjustSize(resource->referenced(), delta, -static_cast<int>(resource->decodedSize()));
     }
 
     if (resource->canDelete())

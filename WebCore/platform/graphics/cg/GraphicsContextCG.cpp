@@ -261,7 +261,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     CGContextRef context = platformContext();
     CGContextBeginPath(context);
     float r = (float)rect.width() / 2;
-    CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0, 2*M_PI, 0);
+    CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0, static_cast<float>(2*M_PI), 0);
     CGContextClosePath(context);
 
     if (fillColor().alpha()) {

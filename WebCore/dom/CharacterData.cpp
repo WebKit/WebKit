@@ -164,7 +164,7 @@ void CharacterData::deleteData( const unsigned offset, const unsigned count, Exc
 
     // update the markers for spell checking and grammar checking
     document()->removeMarkers(this, offset, count);
-    document()->shiftMarkers(this, offset + count, -count);
+    document()->shiftMarkers(this, offset + count, -static_cast<int>(count));
 }
 
 void CharacterData::replaceData( const unsigned offset, const unsigned count, const String &arg, ExceptionCode& ec)

@@ -75,7 +75,7 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
             float offset = traversalState.m_desiredLength - traversalState.m_totalLength;
             traversalState.m_current.move(offset * cosf(slope), offset * sinf(slope));
         } else {
-            static const float rad2deg = 180.0f / M_PI;
+            static const float rad2deg = 180.0f / static_cast<float>(M_PI);
             traversalState.m_normalAngle = slope * rad2deg;
         }
 
