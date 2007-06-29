@@ -1,3 +1,12 @@
+2007-06-29  Adam Treat  <adam@staikos.net>
+
+        Reviewed by george Staikos.
+
+        Support horizontal and vertical scroll, and set the right units.
+
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-06-28  Adam Roben  <aroben@apple.com>
 
         Get WebCore compiling with /W2 on Windows
