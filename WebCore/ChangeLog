@@ -1,3 +1,12 @@
+2007-06-29  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed a previous fix to a signed/unsigned mismatch.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::splitString):
+
 2007-06-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Ada and Kevin McCullough.

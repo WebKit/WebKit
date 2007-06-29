@@ -74,8 +74,7 @@ static Vector<String> splitString(const String& str, char delimiter, int padTo)
         pos = newPos + 1;
     } while (newPos != -1);
 
-    int size = result.size();
-    while (padTo != -1 && size < padTo)
+    while (padTo != -1 && static_cast<int>(result.size()) < padTo)
         result.append("");
 
     return result;
