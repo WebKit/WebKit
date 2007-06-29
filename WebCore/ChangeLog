@@ -1,3 +1,18 @@
+2007-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Anders Carlsson.
+        
+        Fixed <rdar://problem/5303567> REGRESSION: XMLHttpRequest.responseXML 
+        returns NULL if response MIME type is not XML -- breaks Wikipedia widget
+        
+        The spec says that responseXML must return null for any HTTP response
+        with a non-XML MIME type. Technically, that leaves non-HTTP responses
+        free to do whatever they want.
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Only return null for non-XML
+        MIME types if the response was HTTP.
+
 2007-06-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

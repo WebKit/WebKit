@@ -210,7 +210,10 @@ Document* XMLHttpRequest::getResponseXML() const
         return 0;
 
     if (!m_createdDocument) {
-        if (responseIsXML()) {
+        if (m_response.isHTTP() && !responseIsXML()) {
+            // The W3C spec requires this.
+            m_responseXML = 0;
+        } else {
             m_responseXML = m_doc->implementation()->createDocument(0);
             m_responseXML->open();
             m_responseXML->setURL(m_url.url());
