@@ -1,5 +1,32 @@
 2007-06-29  Adam Roben  <aroben@apple.com>
 
+        Fix more signed/unsigned mismatches uncovered by MSVC /W3
+
+        Reviewed by John.
+
+        No regression tests possible.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::filenameHasSaneExtension):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::containsCharacters):
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::parseVersionString):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::splitString):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::freeStringArray):
+        (WebCore::PluginViewWin::invalidateTimerFired):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Change PopupMenuClient::listSize to return an int to appease warnings from MSVC /W3
 
         Reviewed by John.

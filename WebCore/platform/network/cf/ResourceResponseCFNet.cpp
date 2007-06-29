@@ -78,7 +78,8 @@ static inline bool filenameHasSaneExtension(const String& filename)
     int dot = filename.find('.');
 
     // The dot can't be the first or last character in the filename.
-    return dot > 0 && dot < filename.length() - 1;
+    int length = filename.length();
+    return dot > 0 && dot < length - 1;
 }
 
 static inline String suggestedFilenameForResponse(const ResourceResponse& response, const HTTPHeaderMap& headers)

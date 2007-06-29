@@ -48,17 +48,17 @@ namespace WebCore {
 using namespace SafariTheme;
 
 // FIXME: We should get these numbers from SafariTheme
-static unsigned cHorizontalWidth[] = { 15, 11 };
-static unsigned cHorizontalHeight[] = { 15, 11 };
-static unsigned cVerticalWidth[] = { 15, 11 };
-static unsigned cVerticalHeight[] = { 15, 11 };
-static unsigned cRealButtonLength[] = { 28, 21 };
-static unsigned cButtonInset[] = { 14, 11 };
+static int cHorizontalWidth[] = { 15, 11 };
+static int cHorizontalHeight[] = { 15, 11 };
+static int cVerticalWidth[] = { 15, 11 };
+static int cVerticalHeight[] = { 15, 11 };
+static int cRealButtonLength[] = { 28, 21 };
+static int cButtonInset[] = { 14, 11 };
 // cRealButtonLength - cButtonInset
-static unsigned cButtonLength[] = { 14, 10 };
-static unsigned cThumbWidth[] = { 15, 11 };
-static unsigned cThumbHeight[] = { 15, 11 };
-static unsigned cThumbMinLength[] = { 26, 20 };
+static int cButtonLength[] = { 14, 10 };
+static int cThumbWidth[] = { 15, 11 };
+static int cThumbHeight[] = { 15, 11 };
+static int cThumbMinLength[] = { 26, 20 };
 
 static paintThemePartPtr paintThemePart;
 

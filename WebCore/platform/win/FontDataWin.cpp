@@ -154,7 +154,7 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
 
-    for (unsigned i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
         if (glyphBuffer[i] == 0xFFFFFFFF) {
             delete []glyphBuffer;
             return false;

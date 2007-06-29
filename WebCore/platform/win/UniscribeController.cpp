@@ -94,7 +94,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     // together (the complex code path will narrow the text because of kerning and ligatures and then
     // when bidi processing splits into multiple runs, the simple portions will get wider and cause us to
     // spill off the edge of a line).
-    if (offset > m_end)
+    if (static_cast<int>(offset) > m_end)
         offset = m_end;
 
     // Itemize the string.
@@ -189,7 +189,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
 {
     // Determine the string for this item.
     const UChar* str = cp + m_items[i].iCharPos;
-    unsigned len = m_items[i+1].iCharPos - m_items[i].iCharPos;
+    int len = m_items[i+1].iCharPos - m_items[i].iCharPos;
     SCRIPT_ITEM item = m_items[i];
 
     // Get our current FontData that we are using.
@@ -279,8 +279,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
     unsigned logicalSpaceWidth = fontData->m_spaceWidth * 32.0f;
     float roundedSpaceWidth = roundf(fontData->m_spaceWidth);
 
-    unsigned k;
-    for (k = 0; k < len; k++) {
+    for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
         if (Font::treatAsSpace(ch)) {
             // Substitute in the space glyph at the appropriate place in the glyphs
@@ -293,9 +292,10 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
         if (Font::isRoundingHackCharacter(ch))
             roundingHackCharacters[clusters[k]] = m_currentCharacter + k + m_items[i].iCharPos;
 
-        if (k + m_currentCharacter + m_items[i].iCharPos < m_run.length() &&
+        int boundary = k + m_currentCharacter + m_items[i].iCharPos;
+        if (boundary < m_run.length() &&
             Font::isRoundingHackCharacter(*(str + k + 1)))
-            roundingHackWordBoundaries[clusters[k]] = m_currentCharacter + k + m_items[i].iCharPos;
+            roundingHackWordBoundaries[clusters[k]] = boundary;
     }
 
     // Populate our glyph buffer with this information.
@@ -303,7 +303,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
     
     float leftEdge = m_runWidthSoFar;
 
-    for (k = 0; k < glyphs.size(); k++) {
+    for (unsigned k = 0; k < glyphs.size(); k++) {
         Glyph glyph = glyphs[k];
         float advance = advances[k] / 32.0f;
         float offsetX = offsets[k].du / 32.0f;
@@ -364,7 +364,8 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
 
         // Check to see if the next character is a "rounding hack character", if so, adjust the
         // width so that the total run width will be on an integer boundary.
-        bool lastGlyph = (k == glyphs.size() - 1) && (m_style.rtl() ? i == 0 : i == m_items.size() - 2) && (m_currentCharacter + len >= m_end);
+        int position = m_currentCharacter + len;
+        bool lastGlyph = (k == glyphs.size() - 1) && (m_style.rtl() ? i == 0 : i == m_items.size() - 2) && (position >= m_end);
         if ((m_style.applyWordRounding() && roundingHackWordBoundaries[k] != -1) ||
             (m_style.applyRunRounding() && lastGlyph)) { 
             float totalWidth = m_runWidthSoFar + advance;

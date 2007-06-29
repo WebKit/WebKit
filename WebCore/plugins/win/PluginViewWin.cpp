@@ -554,7 +554,7 @@ static void freeStringArray(char** stringArray, int length)
     if (!stringArray)
         return;
 
-    for (unsigned i = 0; i < length; i++)
+    for (int i = 0; i < length; i++)
         fastFree(stringArray[i]);
 
     fastFree(stringArray);
@@ -1069,7 +1069,7 @@ void PluginViewWin::invalidateTimerFired(Timer<PluginViewWin>* timer)
 {
     ASSERT(timer == &m_invalidateTimer);
 
-    for (int i = 0; i < m_invalidRects.size(); i++)
+    for (unsigned i = 0; i < m_invalidRects.size(); i++)
         Widget::invalidateRect(m_invalidRects[i]);
     m_invalidRects.clear();
 }

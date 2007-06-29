@@ -42,7 +42,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     font.drawText(&context, run, style, point);
 
     if (underlinedIndex >= 0) {
-        ASSERT(underlinedIndex < text.length());
+        ASSERT(underlinedIndex < static_cast<int>(text.length()));
 
         int beforeWidth;
         if (underlinedIndex > 0) {
