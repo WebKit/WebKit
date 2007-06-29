@@ -1,3 +1,17 @@
+2007-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5299513> REGRESSION: In Mail, a crash occurs when attempting to undo a newly created To Do
+        
+        Backing out a change made in r23787.
+
+        * editing/deleting/4845371-expected.txt:
+        * editing/deleting/4845371.html:
+        * editing/deleting/5126166-expected.txt:
+        * editing/deleting/5290534.html: Removed.
+        * editing/deleting/5290534.html-disabled: Added.
+
 2007-06-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Anders Carlsson.

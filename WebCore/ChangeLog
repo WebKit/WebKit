@@ -1,3 +1,14 @@
+2007-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5299513> REGRESSION: In Mail, a crash occurs when attempting to undo a newly created To Do
+        
+        Rolled out a change made in r23787.
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+
 2007-06-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Anders Carlsson.
