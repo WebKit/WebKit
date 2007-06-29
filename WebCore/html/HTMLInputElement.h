@@ -66,8 +66,7 @@ public:
     virtual void dispatchBlurEvent();
     virtual void updateFocusAppearance(bool restorePreviousSelection = false);
     virtual void aboutToUnload();
-    virtual bool canSelectAll() const { return isTextField(); }
-    virtual void selectAll() { select(); }
+
     virtual const AtomicString& name() const;
 
     bool autoComplete() const { return m_autocomplete; }
