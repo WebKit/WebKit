@@ -1,3 +1,22 @@
+2007-06-29  Adam Roben  <aroben@apple.com>
+
+        Fix two typos spotted by MSVC /W3
+
+        Both typos were a semicolon following the condition of an if. This
+        would cause the intended body of the if to always execute.
+
+        Unfortunately neither of these fixes are testable.
+        BackForwardList::goForward is only called from WebBackForwardList, and
+        the createDragImageFromImage bug would only manifest itself when
+        CreateCompatibleDC failed.
+
+        Reviewed by Mark.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::goForward):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageFromImage):
+
 2007-06-29  Adam Treat  <adam@staikos.net>
 
         Reviewed by george Staikos.

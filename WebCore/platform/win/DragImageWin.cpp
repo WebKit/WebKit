@@ -178,7 +178,7 @@ DragImageRef createDragImageFromImage(Image* img)
     CGContextRelease(drawContext);
 
 exit:
-    if (workingDC);
+    if (workingDC)
         DeleteDC(workingDC);
     ReleaseDC(0, dc);
     return hbmp;
