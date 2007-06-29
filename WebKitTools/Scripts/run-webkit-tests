@@ -102,6 +102,7 @@ my $useValgrind = 0;
 my $strictTesting = 0;
 my $generateNewResults = 1;
 my $stripEditingCallbacks = isCygwin();
+my $root;
 
 my $expectedTag = "expected";
 my $actualTag = "actual";
@@ -131,8 +132,10 @@ my $usage =
     "  -v|--verbose            More verbose output (overrides --quiet)\n" .
     "  --valgrind              Run DumpRenderTree inside valgrind (Qt/Linux only)\n" .
     "  --strict                Do a comparison with the output on Mac (Qt only)\n" .
+    "  --root                  Path to root tools build\n" .
     "  -c|--configuration config       Set DumpRenderTree build configuration\n" .
     "  --[no-]strip-editing-callbacks  Remove editing callbacks from expected results\n";
+
 
 my $getOptionsResult = GetOptions(
     'c|configuration=s' => \$configuration,
@@ -161,6 +164,7 @@ my $getOptionsResult = GetOptions(
     'valgrind' => \$useValgrind,
     'strict' => \$strictTesting,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
+    'root=s' => \$root,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -186,21 +190,24 @@ if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
 # Force --no-http for Qt/Linux, for now.
 $testHTTP = 0 if isQt();
 
+setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
 
 chdirWebKit();
 
-my $buildResult;
-if (isCygwin()) {
-    $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln");
-} else { 
-    $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
-}
+if(!defined($root)){
+    my $buildResult;
+    if (isCygwin()) {
+        $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln");
+    } else { 
+        $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
+    }
 
-if ($buildResult) {
-    print STDERR "Compiling DumpRenderTree failed!\n";
-    exit WEXITSTATUS($buildResult);
+    if ($buildResult) {
+        print STDERR "Compiling DumpRenderTree failed!\n";
+        exit WEXITSTATUS($buildResult);
+    }
 }
 
 my $dumpToolName = "DumpRenderTree";

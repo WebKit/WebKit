@@ -117,6 +117,11 @@ sub determineBaseProductDir
     }
 }
 
+sub setBaseProductDir($)
+{
+    ($baseProductDir) = @_;
+}
+
 sub determineConfiguration
 {
     return if defined $configuration;
@@ -145,6 +150,11 @@ sub determineConfigurationProductDir
         determineConfiguration();
         $configurationProductDir = "$baseProductDir/$configuration";
     }
+}
+
+sub setConfigurationProductDir($)
+{
+    ($configurationProductDir) = @_;
 }
 
 sub determineCurrentSVNRevision

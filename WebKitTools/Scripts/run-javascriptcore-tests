@@ -54,18 +54,26 @@ $configuration = configuration();
 
 my @jsArgs;
 my @xcodeArgs;
+my $root;
 
 # pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
+# special arguments
+#     --root=<path to webkit root> use pre-built root
+#     --gdk build gdk 
 foreach my $arg(@ARGV) {
     print $arg."\n";
-    if( $arg =~ /^--gdk$/i ){
-    } elsif( $arg =~ /^-/ ){
+    if( $arg =~ /root=(.*)/ ){
+        $root = $1;
+    } elsif( $arg =~ /^--gdk$/i ){
+    } elsif( $arg =~ /^-/ or !($arg =~/=/)){
         push( @jsArgs, $arg );
     } else {
         push( @xcodeArgs, $arg );
     }
 }
-        
+
+setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+
 # Find JavaScriptCore directory
 chdirWebKit();
 chdir("JavaScriptCore");
@@ -73,12 +81,14 @@ chdir("JavaScriptCore");
 #compile TestKJS
 my @options = XcodeOptions();
 my $result;
-if (isOSX()) {
-    $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @coverageSupportOption, @xcodeArgs;
-}elsif (isCygwin()) {
-    $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
+if (!defined($root)){
+    if (isOSX()) {
+        $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @coverageSupportOption, @xcodeArgs;
+    }elsif (isCygwin()) {
+        $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
+    }
+    exit WEXITSTATUS($result) if WEXITSTATUS($result);
 }
-exit WEXITSTATUS($result) if WEXITSTATUS($result);
 
 my $productDir = productDir();
 chdir "tests/mozilla" or die;

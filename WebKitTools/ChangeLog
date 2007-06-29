@@ -1,3 +1,13 @@
+2007-06-28  Stephanie  <slewis@apple.com>
+
+        Reviewed by Adam,
+
+        Allow tests to use pre-built roots instead of building the tests.
+
+        * Scripts/run-javascriptcore-tests: added --root option
+        * Scripts/run-webkit-tests: added --root option
+        * Scripts/webkitdirs.pm: added support for using a root
+
 2007-06-25  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14405: LayoutTestResults/qt should be in LayoutTests/qt
