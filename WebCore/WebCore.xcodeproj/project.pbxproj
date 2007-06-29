@@ -4654,7 +4654,7 @@
 		93309DD1099E64910056E581 /* VisiblePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisiblePosition.h; sourceTree = "<group>"; };
 		93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapContentsInDummySpanCommand.cpp; sourceTree = "<group>"; };
 		93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapContentsInDummySpanCommand.h; sourceTree = "<group>"; };
-		93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedTimerMac.cpp; sourceTree = "<group>"; };
+		93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SharedTimerMac.cpp; sourceTree = "<group>"; };
 		93309EA0099EB78C0056E581 /* SharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTimer.h; sourceTree = "<group>"; };
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIEventWithKeyState.cpp; sourceTree = "<group>"; };
@@ -11677,6 +11677,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SharedTimer.h"
 
-#include <CoreFoundation/CoreFoundation.h>
+#include <Foundation/Foundation.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -43,7 +43,10 @@ void setSharedTimerFiredFunction(void (*f)())
 
 static void timerFired(CFRunLoopTimerRef, void*)
 {
+    // FIXME: We can remove this global catch-all if we fix <rdar://problem/5299018>.
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     sharedTimerFiredFunction();
+    [pool drain];
 }
 
 void setSharedTimerFireTime(double fireTime)

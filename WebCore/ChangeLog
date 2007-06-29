@@ -1,3 +1,16 @@
+2007-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/5299005> DOM timers fire without a local autorelease 
+        pool => pathologically high high water mark
+        
+        I couldn't measure any performance problems with iBench HTML or PLT.
+
+        * WebCore.xcodeproj/project.pbxproj: Changed .cpp file to be ObjC++.
+        * platform/mac/SharedTimerMac.cpp:
+        (WebCore::timerFired): Added autorelease pool.
+
 2007-06-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Beth.
