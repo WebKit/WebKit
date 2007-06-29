@@ -52,10 +52,10 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
-				WarningLevel="2"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4099;4138;4244;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
+				DisableSpecificWarnings="4099;4138;4244;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
 				EnablePREfast="true"
 			/>
@@ -124,10 +124,10 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
-				WarningLevel="2"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4099;4138;4244;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
+				DisableSpecificWarnings="4099;4138;4244;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
 				EnablePREfast="true"
 			/>
@@ -198,10 +198,10 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
-				WarningLevel="2"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4099;4138;4244;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
+				DisableSpecificWarnings="4099;4138;4244;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
 				EnablePREfast="true"
 			/>
@@ -279,6 +279,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -288,6 +289,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -297,6 +299,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2342,6 +2345,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2351,6 +2355,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2360,6 +2365,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>

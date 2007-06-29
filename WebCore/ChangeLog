@@ -1,5 +1,15 @@
 2007-06-29  Adam Roben  <aroben@apple.com>
 
+        Start compiling WebCore with /W3 under MSVC
+
+        One warning was globally disabled: implicit conversion of int to bool.
+
+        Reviewed by Darin.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Turn DeprecatedStringData's copy constructor into a static method to appease MSVC /W3
 
         DeprecatedStringData now has no public copy constructor. The single
