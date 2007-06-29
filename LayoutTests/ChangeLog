@@ -1,3 +1,13 @@
+2007-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Layout tests for <rdar://problem/4962298> REGRESSION: Synchronous XHR for 
+        missing local file throws exception -- breaks Wikipedia widget
+
+        * fast/loader/xmlhttprequest-missing-file-exception-expected.txt: Added.
+        * fast/loader/xmlhttprequest-missing-file-exception.html: Added.
+
 2007-06-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Ada and Kevin McCullough.
