@@ -1,5 +1,17 @@
 2007-06-29  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        This is what happens when you test your patch on two OSs and then
+        commit from the wrong one.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::valueChanged):
+        (WebCore::RenderTextControl::itemText):
+        (WebCore::RenderTextControl::itemIsSeparator):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Start compiling WebCore with /W3 under MSVC
 
         One warning was globally disabled: implicit conversion of int to bool.

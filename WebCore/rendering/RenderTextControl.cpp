@@ -917,7 +917,7 @@ void RenderTextControl::valueChanged(unsigned listIndex, bool fireEvents)
 {
     ASSERT(static_cast<int>(listIndex) < listSize());
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    if (listIndex == (listSize() - 1)) {
+    if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
             const AtomicString& name = autosaveName();
@@ -946,7 +946,7 @@ String RenderTextControl::itemText(unsigned listIndex) const
         return searchMenuRecentSearchesText();
     if (itemIsSeparator(listIndex))
         return String();
-    if (listIndex == (size - 1))
+    if (static_cast<int>(listIndex) == (size - 1))
         return searchMenuClearRecentSearchesText();
     return m_recentSearches[listIndex - 1];
 }
@@ -1000,7 +1000,7 @@ int RenderTextControl::selectedIndex() const
 bool RenderTextControl::itemIsSeparator(unsigned listIndex) const
 {
    // The separator will be the second to last item in our list.
-   return listIndex == (listSize() - 2);
+   return static_cast<int>(listIndex) == (listSize() - 2);
 }
 
 bool RenderTextControl::itemIsLabel(unsigned listIndex) const
