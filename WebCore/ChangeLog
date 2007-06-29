@@ -1,3 +1,19 @@
+2007-06-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14118
+          ASSERTION FAILED: !needsLayout() seen again
+
+        Test: fast/dynamic/recursive-layout.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Removed the midLayout guards around
+        the calls to invalidateSelection() and updateWidgetPositions(). Those
+        calls may dirty the layout, but in that case they also update it, so
+        they should be allowed to do it. Added an ASSERT to make sure that when
+        they return, the root is not marked for layout.
+
 2007-06-28  Sam Weinig  <sam@webkit.org>
 
         Rubberstamped by Adam Roben.

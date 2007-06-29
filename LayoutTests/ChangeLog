@@ -1,3 +1,13 @@
+2007-06-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Beth.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14118
+          ASSERTION FAILED: !needsLayout() seen again
+
+        * fast/dynamic/recursive-layout-expected.txt: Added.
+        * fast/dynamic/recursive-layout.html: Added.
+
 2007-06-28  Sam Weinig  <sam@webkit.org>
 
         Rubberstamped by Adam Roben.

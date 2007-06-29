@@ -427,9 +427,7 @@ void FrameView::layout(bool allowSubtree)
         root->view()->popLayoutState();
     d->layoutRoot = 0;
 
-    d->midLayout = true;
     m_frame->invalidateSelection();
-    d->midLayout = false;
    
     d->layoutSchedulingEnabled=true;
 
@@ -440,11 +438,8 @@ void FrameView::layout(bool allowSubtree)
     layer->updateLayerPositions(d->doFullRepaint);
 
     // We update our widget positions right after doing a layout.
-    if (!subtree) {
-        d->midLayout = true;
+    if (!subtree)
         static_cast<RenderView*>(root)->updateWidgetPositions();
-        d->midLayout = false;
-    }
     
     // FIXME: Could optimize this and have objects removed from this list
     // if they ever do full repaints.
@@ -464,10 +459,8 @@ void FrameView::layout(bool allowSubtree)
     if (didFirstLayout)
         m_frame->loader()->didFirstLayout();
     
-    if (root->needsLayout()) {
-        scheduleRelayout();
-        return;
-    }
+    ASSERT(!root->needsLayout());
+
     setStaticBackground(useSlowRepaints());
 
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
