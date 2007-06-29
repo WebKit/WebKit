@@ -76,7 +76,7 @@ private:
     virtual Document* clientDocument() const;
     virtual int clientPaddingLeft() const;
     virtual int clientPaddingRight() const;
-    virtual unsigned listSize() const;
+    virtual int listSize() const;
     virtual int selectedIndex() const;
     virtual bool itemIsSeparator(unsigned listIndex) const;
     virtual bool itemIsLabel(unsigned listIndex) const;

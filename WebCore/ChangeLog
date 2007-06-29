@@ -1,5 +1,28 @@
 2007-06-29  Adam Roben  <aroben@apple.com>
 
+        Change PopupMenuClient::listSize to return an int to appease warnings from MSVC /W3
+
+        Reviewed by John.
+
+        No regression test possible.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * platform/PopupMenuClient.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupMenu::focusFirst):
+        (WebCore::PopupMenu::focusLast):
+        (WebCore::PopupMenu::down):
+        (WebCore::PopupMenu::up):
+        (WebCore::PopupMenu::paint):
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Fix two typos spotted by MSVC /W3
 
         Both typos were a semicolon following the condition of an if. This

@@ -168,7 +168,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
     rScreenCoords.setLocation(location);
 
     // First, determine the popup's height
-    size_t itemCount = client()->listSize();
+    int itemCount = client()->listSize();
     m_itemHeight = client()->clientStyle()->font().height() + optionSpacingMiddle;
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = min(maxPopupHeight, naturalHeight);
@@ -279,7 +279,7 @@ void PopupMenu::focusFirst()
     if (!client())
         return;
 
-    size_t size = client()->listSize();
+    int size = client()->listSize();
 
     for (int i = 0; i < size; ++i)
         if (client()->itemIsEnabled(i)) {
@@ -293,7 +293,7 @@ void PopupMenu::focusLast()
     if (!client())
         return;
 
-    size_t size = client()->listSize();
+    int size = client()->listSize();
 
     for (int i = size - 1; i > 0; --i)
         if (client()->itemIsEnabled(i)) {
@@ -307,7 +307,7 @@ bool PopupMenu::down(unsigned lines)
     if (!client())
         return false;
 
-    size_t size = client()->listSize();
+    int size = client()->listSize();
 
     int lastSelectableIndex, selectedListIndex;
     lastSelectableIndex = selectedListIndex = focusedIndex();
@@ -326,7 +326,7 @@ bool PopupMenu::up(unsigned lines)
     if (!client())
         return false;
 
-    size_t size = client()->listSize();
+    int size = client()->listSize();
 
     int lastSelectableIndex, selectedListIndex;
     lastSelectableIndex = selectedListIndex = focusedIndex();
@@ -452,7 +452,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
 
     GraphicsContext context(m_DC);
 
-    size_t itemCount = client()->listSize();
+    int itemCount = client()->listSize();
 
     // listRect is the damageRect translated into the coordinates of the entire menu list (which is itemCount * m_itemHeight pixels tall)
     IntRect listRect = damageRect;

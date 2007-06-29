@@ -39,7 +39,7 @@ public:
     virtual Document* clientDocument() const = 0;
     virtual int clientPaddingLeft() const = 0;
     virtual int clientPaddingRight() const = 0;
-    virtual unsigned listSize() const = 0;
+    virtual int listSize() const = 0;
     virtual int selectedIndex() const = 0;
     virtual void hidePopup() = 0;
     virtual bool itemIsSeparator(unsigned listIndex) const = 0;
