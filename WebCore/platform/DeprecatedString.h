@@ -210,7 +210,7 @@ struct DeprecatedStringData
     void initialize(const char *u, unsigned l);
 
     // Move from destination to source.
-    DeprecatedStringData(DeprecatedStringData &);
+    static DeprecatedStringData* createAndAdopt(DeprecatedStringData &);
 
     ~DeprecatedStringData();
 
@@ -249,6 +249,8 @@ struct DeprecatedStringData
     char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
     
 private:
+    void adopt(DeprecatedStringData&);
+
     DeprecatedStringData(const DeprecatedStringData &);
     DeprecatedStringData &operator=(const DeprecatedStringData &);
 };

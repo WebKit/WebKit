@@ -1,5 +1,23 @@
 2007-06-29  Adam Roben  <aroben@apple.com>
 
+        Turn DeprecatedStringData's copy constructor into a static method to appease MSVC /W3
+
+        DeprecatedStringData now has no public copy constructor. The single
+        call to the old one has been replaced with a call to the new
+        DeprecatedStringData::createAndAdopt static method.
+
+        Reviewed by Darin.
+
+        All regression tests pass.
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedStringData::createAndAdopt):
+        (WebCore::DeprecatedStringData::adopt):
+        (WebCore::DeprecatedString::detachIfInternal):
+        * platform/DeprecatedString.h:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Fix more signed/unsigned mismatches uncovered by MSVC /W3
 
         Reviewed by John.
