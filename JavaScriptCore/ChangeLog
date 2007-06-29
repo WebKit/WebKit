@@ -1,3 +1,17 @@
+2007-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Second pass at fixing implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Add a toFloat() method to JSValue for float conversion.
+
+        * JavaScriptCore.exp:
+        * kjs/value.cpp:
+        (KJS::JSValue::toFloat):
+        * kjs/value.h:
+
 2007-06-27  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

@@ -1361,7 +1361,8 @@ sub JSValueToNative
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "$value->toBoolean(exec)" if $type eq "boolean";
-    return "$value->toNumber(exec)" if $type eq "float" or $type eq "SVGNumber";
+    return "$value->toNumber(exec)" if $type eq "SVGNumber";
+    return "$value->toFloat(exec)" if $type eq "float";
     return "$value->toInt32(exec${maybeOkParam})" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
 
     return "static_cast<Range::CompareHow>($value->toInt32(exec))" if $type eq "CompareHow";

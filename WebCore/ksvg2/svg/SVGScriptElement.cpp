@@ -87,7 +87,7 @@ void SVGScriptElement::executeScript(Document *document, StringImpl *jsCode)
         if (exVal->isObject()) {
             KJS::JSValue *lineVal = static_cast<KJS::JSObject *>(exVal)->get(exec, "line");
             if(lineVal->type() == KJS::NumberType)
-                lineno = int(lineVal->toNumber(exec));
+                lineno = lineVal->toInt32(exec);
         }
 
         // Fire ERROR_EVENT upon errors...

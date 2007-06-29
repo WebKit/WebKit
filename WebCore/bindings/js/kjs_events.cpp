@@ -475,8 +475,8 @@ JSValue* JSClipboardPrototypeFunction::callAsFunction(ExecState* exec, JSObject*
             if (args.size() != 3)
                 return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
 
-            int x = static_cast<int>(args[1]->toNumber(exec));
-            int y = static_cast<int>(args[2]->toNumber(exec));
+            int x = args[1]->toInt32(exec);
+            int y = args[2]->toInt32(exec);
 
             // See if they passed us a node
             Node* node = toNode(args[0]);

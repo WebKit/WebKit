@@ -45,8 +45,8 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
 {
     AffineTransform& imp(*impl());
  
-    float x = args[0]->toNumber(exec);
-    float y = args[1]->toNumber(exec);
+    float x = args[0]->toFloat(exec);
+    float y = args[1]->toFloat(exec);
 
     KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapper<AffineTransform>(imp.rotateFromVector(x, y)));
 

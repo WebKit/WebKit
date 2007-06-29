@@ -42,7 +42,7 @@ JSValue* JSHTMLSelectElement::remove(ExecState* exec, const List& args)
     if (element && element->hasTagName(optionTag))
         select.remove(static_cast<HTMLOptionElement*>(element)->index());
     else
-        select.remove(static_cast<int>(args[0]->toNumber(exec)));
+        select.remove(args[0]->toInt32(exec));
 
     return jsUndefined();
 }

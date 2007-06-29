@@ -102,6 +102,9 @@ public:
     uint32_t toUInt32(ExecState*, bool& ok) const;
     uint16_t toUInt16(ExecState*) const;
 
+    // Floating point conversions.
+    float toFloat(ExecState*) const;
+
     // Garbage collection.
     void mark();
     bool marked() const;
