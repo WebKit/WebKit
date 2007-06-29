@@ -1,3 +1,16 @@
+2007-06-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5287569> WEBVIEW: Creating a webview in IB 3.0 (v2.0) NIB later crashes Interface Builder 2.5.4 on Tiger
+
+        Prevent encoding any of the WebView subviews. The subviews are ignored by -[WebView initWithCoder:] and will be recreated.
+        The Tiger 2.0 code crashed when the WebView released the subviews in initWithCoder:, so now there are no subviews to release.
+        This never happened before because the Tiger 2.0 code and IB wouldn't encode a WebView that has a WebHTMLView.
+
+        * WebView/WebView.mm:
+        (-[WebView encodeWithCoder:]):
+
 2007-06-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

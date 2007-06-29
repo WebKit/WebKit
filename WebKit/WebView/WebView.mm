@@ -1895,7 +1895,15 @@ NS_ENDHANDLER
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    // Set asside the subviews before we archive. We don't want to archive any subviews.
+    // The subviews will always be created in _commonInitializationFrameName:groupName:.
+    id originalSubviews = _subviews;
+    _subviews = nil;
+
     [super encodeWithCoder:encoder];
+
+    // Restore the subviews we set aside.
+    _subviews = originalSubviews;
 
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
