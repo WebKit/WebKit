@@ -1,3 +1,21 @@
+2007-06-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        - WebCore support for accessing the set of rectangles that encompass the selected text
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionTextRects):
+        new function, fills in a passed Vector with the line box rects that represent the selected range
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        fixed off-by-one bug involving use of the confusing function InlineTextBox::end()
+
+        * WebCore.exp:
+        exported symbol for this new function
+
 2007-06-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

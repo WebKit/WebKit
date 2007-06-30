@@ -1,3 +1,31 @@
+2007-06-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - WebKit support for accessing the set of rectangles that encompass the selected text
+
+        * WebView/WebDocumentPrivate.h:
+        added -selectionTextRects to WebDocumentSelection protocol; tweaked comments
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingRect]):
+        use selectionRect instead of selectionImageRect since they're the same and maybe we can get
+        rid of selectionImageRect someday
+        (-[WebHTMLView selectionTextRects]):
+        added implementation of new protocol method, which calls through to WebCore
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView selectionTextRects]):
+        added simple implementation of new protocol method, which just returns the single selection rect.
+        PDFKit doesn't support obtaining multiple rects to describe a multi-line selection.
+        (-[WebPDFView selectionImageForcingWhiteText:]):
+        use selectionRect instead of selectionImageRect since they're the same and maybe we can get
+        rid of selectionImageRect someday
+        
+        * Misc/WebSearchableTextView.m:
+        (-[WebSearchableTextView selectionTextRects]):
+        added no-op implementation of new protocol method to this obsolete class
+
 2007-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

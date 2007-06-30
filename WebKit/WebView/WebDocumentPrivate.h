@@ -45,16 +45,18 @@
 - (NSArray *)pasteboardTypesForSelection;
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 
-// Rect tightly enclosing the selection, in coordinates of selectionView. This includes portions of the
-// selection that are clipped out of view.
+// Array of rects that tightly enclose the selected text, in coordinates of selectinView.
+- (NSArray *)selectionTextRects;
+
+// Rect tightly enclosing the entire selected area, in coordinates of selectionView.
 - (NSRect)selectionRect;
 
 // NSImage of the portion of the selection that's in view. This does not draw backgrounds. 
 // The text is all white according to the parameter.
 - (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;
 
-// Rect tightly enclosing the selection, in coordinates of selectionView. This does not include portions of the
-// selection that are clipped out of view.
+// Rect tightly enclosing the entire selected area, in coordinates of selectionView.
+// NOTE: This method is equivalent to selectionRect and shouldn't be used; use selectionRect instead.
 - (NSRect)selectionImageRect;
 
 // View that draws the selection and can be made first responder. Often this is self but it could be

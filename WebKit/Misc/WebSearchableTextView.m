@@ -126,6 +126,13 @@
     return NSZeroRect;
 }
 
+- (NSArray *)selectionTextRects
+{
+    // This is here to complete the <WebDocumentSelection> protocol, but it was introduced after this
+    // class was deprecated so there's no implementation.
+    return nil;
+}
+
 - (NSView *)selectionView
 {
     return self;

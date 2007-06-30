@@ -1486,7 +1486,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (NSRect)_selectionDraggingRect
 {
     // Mail currently calls this method. We can eliminate it when Mail no longer calls it.
-    return [self selectionImageRect];
+    return [self selectionRect];
 }
 
 - (DOMNode *)_insertOrderedList
@@ -5841,6 +5841,22 @@ BOOL isTextInput(Frame *coreFrame)
     if ([self _hasSelection])
         return core([self _frame])->selectionRect();
     return NSZeroRect;
+}
+
+- (NSArray *)selectionTextRects
+{
+    if (![self _hasSelection])
+        return nil;
+    
+    Vector<FloatRect> list;
+    core([self _frame])->selectionTextRects(list);
+
+    unsigned size = list.size();
+    NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
+    for (unsigned i = 0; i < size; ++i)
+        [result addObject:[NSValue valueWithRect:list[i]]];
+    
+    return result;
 }
 
 - (NSView *)selectionView

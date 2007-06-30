@@ -829,6 +829,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return result;
 }
 
+- (NSArray *)selectionTextRects
+{
+    // FIXME: We'd need new PDFKit API/SPI to get multiple text rects for selections that intersect more than one line
+    return [NSArray arrayWithObject:[NSValue valueWithRect:[self selectionRect]]];
+}
+
 - (NSView *)selectionView
 {
     return [PDFSubview documentView];
@@ -851,7 +857,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:1.0f alpha:1.0f] range:wholeStringRange];
     [attributedString endEditing];
     
-    NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionImageRect].size] autorelease];
+    NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionRect].size] autorelease];
     
     [selectionImage lockFocus];
     [attributedString drawAtPoint:NSZeroPoint];
