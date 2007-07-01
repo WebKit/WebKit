@@ -1,5 +1,15 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Make an int -> UINT conversion explicit that MSVC /W4 complains about
+
+        Reviewed by John and Oliver.
+
+        No regression test possible.
+
+        * platform/win/SoundWin.cpp:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Remove unreachable code uncovered by MSVC /W4
 
         Reviewed by Oliver.

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void systemBeep() { MessageBeep(-1); }
+void systemBeep() { MessageBeep(static_cast<UINT>(-1)); }
 
 } // namespace WebCore
 
