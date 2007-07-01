@@ -32,6 +32,10 @@
             document.getElementById("result").firstChild.nodeValue = "SUCCESS";
         else
             document.getElementById("result").firstChild.nodeValue = "FAILURE: " + result.snapshotLength + " node(s) matched - should be 1";
+
+        // Remove this node from the document so it doesn't make the DumpRenderTree output
+        // different when SVG is enabled and disabled.
+        document.getElementById("r_00").parentNode.removeChild(document.getElementById("r_00"));
     </script>
 
 </body>

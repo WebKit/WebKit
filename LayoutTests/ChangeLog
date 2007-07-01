@@ -1,3 +1,10 @@
+2007-07-01  Darin Adler  <darin@apple.com>
+
+        Fixed a no-SVG test failure by removing a node that was affecting the test results differently
+        depending on whether SVG support was compiled in or not.
+
+        * fast/xpath/namespace-vs-predicate.xhtml: Remove the r_00 node at the end of the test.
+
 2007-07-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
