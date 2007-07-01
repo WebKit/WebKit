@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        m_usesPageCache was not initialized. As the b/f cache is only
+        implemented in the Mac port and WebView.mm is taking care of calling
+        Settings::setUsesPageCache I decided to make it false by default.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): m_usesPageCache was not initialized
+
+2007-07-01  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
         Inherited- and NonInheritedFlags is a bit field. But for comparsion
         the other part of the union _iflags/_niflags is used for comparions.
         This will compare 5 uninitialized bits of _iflags and 22 of _niflags.
