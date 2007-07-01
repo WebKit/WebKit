@@ -215,7 +215,8 @@ void Widget::invalidateRect(const IntRect& r)
         return;
 
     if (!parent()) {
-        ::InvalidateRect(containingWindow(), &RECT(r), false);
+        RECT rect = r;
+        ::InvalidateRect(containingWindow(), &rect, false);
         if (isFrameView())
             static_cast<FrameView*>(this)->addToDirtyRegion(r);
         return;
@@ -234,7 +235,8 @@ void Widget::invalidateRect(const IntRect& r)
     IntRect clipRect = windowClipRect();
     windowRect.intersect(clipRect);
 
-    ::InvalidateRect(containingWindow(), &RECT(windowRect), false);
+    RECT rect = windowRect;
+    ::InvalidateRect(containingWindow(), &rect, false);
     outermostView->addToDirtyRegion(windowRect);
 }
 

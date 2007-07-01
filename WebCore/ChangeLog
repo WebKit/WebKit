@@ -1,5 +1,24 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Don't take the address of temporary values to appease MSVC /W4
+
+        Reviewed by Oliver.
+
+        No regression test possible.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::invalidateItem):
+        (WebCore::PopupMenu::valueChanged):
+        (WebCore::PopupWndProc):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::invalidateRect):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Make an int -> UINT conversion explicit that MSVC /W4 complains about
 
         Reviewed by John and Oliver.

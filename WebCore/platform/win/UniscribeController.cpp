@@ -377,8 +377,10 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
         // FIXME: We need to take the GOFFSETS for combining glyphs and store them in the glyph buffer
         // as well, so that when the time comes to draw those glyphs, we can apply the appropriate
         // translation.
-        if (glyphBuffer)
-            glyphBuffer->add(glyph, fontData, advance, &FloatSize(offsetX, offsetY));
+        if (glyphBuffer) {
+            FloatSize size(offsetX, offsetY);
+            glyphBuffer->add(glyph, fontData, advance, &size);
+        }
 
         // Mutate the glyph array to contain our altered advances.
         if (m_computingOffsetPosition)
