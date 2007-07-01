@@ -309,8 +309,6 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
         default:
             return false;
     }
-
-    return false;
 }
 
 bool RenderTheme::supportsFocusRing(const RenderStyle* style) const

@@ -578,7 +578,6 @@ String HTMLElement::contentEditable() const
         default:
             return "inherit";
     }
-    return "inherit";
 }
 
 void HTMLElement::setContentEditable(MappedAttribute* attr) 

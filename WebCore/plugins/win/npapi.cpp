@@ -39,9 +39,7 @@ static PluginViewWin* pluginViewForInstance(NPP instance)
 {
     if (instance && instance->ndata)
         return static_cast<PluginViewWin*>(instance->ndata);
-    else
-        return PluginViewWin::currentPluginView();
-    return 0;
+    return PluginViewWin::currentPluginView();
 }
 
 void* NPN_MemAlloc(uint32 size)

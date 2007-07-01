@@ -1,3 +1,28 @@
+2007-06-30  Adam Roben  <aroben@apple.com>
+
+        Remove unreachable code uncovered by MSVC /W4
+
+        Reviewed by Oliver.
+
+        No regression test possible.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isLiveLink):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::contentEditable):
+        * platform/DeprecatedString.cpp:
+        (WebCore::allocateHandle):
+        (WebCore::freeHandle):
+        * plugins/win/npapi.cpp:
+        (pluginViewForInstance):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isWidthSpecified):
+        (WebCore::RenderImage::isHeightSpecified):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+
 2007-06-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Oliver Hunt.

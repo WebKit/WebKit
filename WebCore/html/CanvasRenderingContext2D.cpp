@@ -39,6 +39,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "NotImplemented.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
 #include "cssparser.h"
@@ -974,10 +975,10 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     PassRefPtr<CanvasPattern> pattern = new CanvasPattern(image, repeatX, repeatY);
     CGImageRelease(image);
     return pattern;
-#elif PLATFORM(QT)
-    fprintf(stderr, "FIXME: CanvasRenderingContext2D::createPattern patterns not implemented\n");
-#endif
+#else
+    notImplemented();
     return 0;
+#endif
 }
 
 void CanvasRenderingContext2D::willDraw(const FloatRect& r)
