@@ -558,7 +558,7 @@ void HTMLDocument::determineParseMode(const String& str)
             CString pubIDStr = lowerPubID.latin1();
            
             // Look up the entry in our gperf-generated table.
-            const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr, pubIDStr.length());
+            const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr.data(), pubIDStr.length());
             if (!doctypeEntry) {
                 // The DOCTYPE is not in the list.  Assume strict mode.
                 pMode = Strict;

@@ -232,7 +232,7 @@ xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const 
                 // with the URI argument.
                 CString importHref = import->href().utf8();
                 xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
-                xmlChar* childURI = xmlBuildURI((const xmlChar*)(const char*)importHref, base);
+                xmlChar* childURI = xmlBuildURI((const xmlChar*)importHref.data(), base);
                 bool equalURIs = xmlStrEqual(uri, childURI);
                 xmlFree(base);
                 xmlFree(childURI);

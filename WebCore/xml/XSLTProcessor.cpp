@@ -168,8 +168,8 @@ static const char **xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     XSLTProcessor::ParameterMap::iterator end = parameters.end();
     unsigned index = 0;
     for (XSLTProcessor::ParameterMap::iterator it = parameters.begin(); it != end; ++it) {
-        parameterArray[index++] = strdup(it->first.utf8());
-        parameterArray[index++] = strdup(it->second.utf8());
+        parameterArray[index++] = strdup(it->first.utf8().data());
+        parameterArray[index++] = strdup(it->second.utf8().data());
     }
     parameterArray[index] = 0;
 

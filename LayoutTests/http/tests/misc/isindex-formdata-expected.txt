@@ -1,0 +1,5 @@
+This page tests that we correctly put the value of an <isindex> element into the form data.
+
+This is a searchable index. Enter search keywords: 
+PASS
+

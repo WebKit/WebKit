@@ -421,7 +421,7 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
                     return false;
 
                 if (*pos == ';')
-                    setEncoding(TextEncoding(encodingName), EncodingFromCSSCharset);
+                    setEncoding(TextEncoding(encodingName.data()), EncodingFromCSSCharset);
             }
         }
         m_checkedForCSSCharset = true;

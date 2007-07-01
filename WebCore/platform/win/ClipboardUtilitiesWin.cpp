@@ -158,7 +158,7 @@ DeprecatedCString markupToCF_HTML(const String& markup, const String& srcURL)
 
     bool shouldFillSourceURL = !srcURL.isEmpty() && (srcURL != "about:blank");
     if (shouldFillSourceURL)
-        sourceURL.append(srcURL.utf8());
+        sourceURL.append(srcURL.utf8().data());
 
     DeprecatedCString startMarkup    ("\n<HTML>\n<BODY>\n<!--StartFragment-->\n");
     DeprecatedCString endMarkup      ("\n<!--EndFragment-->\n</BODY>\n</HTML>");

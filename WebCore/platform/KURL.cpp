@@ -1446,7 +1446,7 @@ static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel,
         CString decoded = pathEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()), s.length());
         int decodedLength = decoded.length();
         strBuffer = static_cast<char *>(fastMalloc(decodedLength + 1));
-        memcpy(strBuffer, decoded, decodedLength);
+        memcpy(strBuffer, decoded.data(), decodedLength);
         strBuffer[decodedLength] = 0;
     } else {
         int length = s.length();
@@ -1455,8 +1455,8 @@ static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel,
         int pathDecodedLength = pathDecoded.length();
         int otherDecodedLength = otherDecoded.length();
         strBuffer = static_cast<char *>(fastMalloc(pathDecodedLength + otherDecodedLength + 1));
-        memcpy(strBuffer, pathDecoded, pathDecodedLength);
-        memcpy(strBuffer + pathDecodedLength, otherDecoded, otherDecodedLength);
+        memcpy(strBuffer, pathDecoded.data(), pathDecodedLength);
+        memcpy(strBuffer + pathDecodedLength, otherDecoded.data(), otherDecodedLength);
         strBuffer[pathDecodedLength + otherDecodedLength] = 0;
     }
 

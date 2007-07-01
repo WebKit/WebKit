@@ -1,5 +1,60 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Give CString an equality operator to fix a bug in HTMLFormElement::formData
+
+        The bug was spotted by MSVC /W4. The problem was that we were comparing
+        a CString to a char* using ==, but CString had no equality operator.
+        The result was that the CString was being cast to a const char* and a
+        pointer comparison was being done, which would (essentially) always
+        return false.
+
+        There are two parts to the fix: get rid of CString's const char*
+        casting operator, and add an equality operator. Previous uses of the
+        casting operator have been changed to use CString::data().
+
+        Test: http/misc/isindex-formdata.html
+
+        Reviewed by Oliver.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::parseXMLDocumentFragment):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::determineParseMode):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForCSSCharset):
+        * platform/CString.cpp:
+        (WebCore::operator==):
+        * platform/CString.h:
+        * platform/KURL.cpp:
+        (WebCore::encodeRelativeString):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toDouble):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::setHTTPBody):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::markupToCF_HTML):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::splitString):
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::startStream):
+        (WebCore::PluginStreamWin::destroyStream):
+        (WebCore::PluginStreamWin::sendJavaScriptStream):
+        (WebCore::PluginStreamWin::didFinishLoading):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::start):
+        (WebCore::createUTF8String):
+        (WebCore::PluginViewWin::userAgent):
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::locateStylesheetSubResource):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Initialize two variables that MSVC /W4 isn't smart enough to realize always get initialized
 
         Reviewed by John.

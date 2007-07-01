@@ -469,7 +469,7 @@ bool PluginViewWin::start()
     PluginViewWin::setCurrentPluginView(this);
     {
         KJS::JSLock::DropAllLocks dropAllLocks;
-        npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)(const char*)m_mimeType, m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
+        npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
         LOG_NPERROR(npErr);
     }
     PluginViewWin::setCurrentPluginView(0);
@@ -534,7 +534,7 @@ static char* createUTF8String(const String& str)
     CString cstr = str.utf8();
     char* result = reinterpret_cast<char*>(fastMalloc(cstr.length() + 1));
 
-    strncpy(result, cstr, cstr.length() + 1);
+    strncpy(result, cstr.data(), cstr.length() + 1);
 
     return result;
 }
@@ -995,7 +995,7 @@ const char* PluginViewWin::userAgent()
 
     if (m_userAgent.isNull())
         m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
-    return m_userAgent;
+    return m_userAgent.data();
 }
 
 void PluginViewWin::status(const char* message)

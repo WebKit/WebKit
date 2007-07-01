@@ -137,7 +137,7 @@ void PluginStreamWin::startStream()
     // Protect the stream if destroystream is called from within the newstream handler
     RefPtr<PluginStreamWin> protect(this);
 
-    NPError npErr = m_pluginFuncs->newstream(m_instance, (NPMIMEType)(const char*)mimeTypeStr, &m_stream, false, &m_transferMode);
+    NPError npErr = m_pluginFuncs->newstream(m_instance, (NPMIMEType)mimeTypeStr.data(), &m_stream, false, &m_transferMode);
     
     // If the stream was destroyed in the call to newstream we return
     if (m_reason != WebReasonNone)
@@ -186,10 +186,10 @@ void PluginStreamWin::destroyStream()
 
     if (m_stream.ndata != 0) {
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
-            ASSERT(m_path != 0);
+            ASSERT(!m_path.isNull());
 
-            m_pluginFuncs->asfile(m_instance, &m_stream, m_path);
-            DeleteFileA(m_path);
+            m_pluginFuncs->asfile(m_instance, &m_stream, m_path.data());
+            DeleteFileA(m_path.data());
         }
 
         NPError npErr;
@@ -278,7 +278,7 @@ void PluginStreamWin::sendJavaScriptStream(const KURL& requestURL, const CString
     if (m_streamState == StreamStopped)
         return;
 
-    didReceiveData(0, resultString, resultString.length());
+    didReceiveData(0, resultString.data(), resultString.length());
     if (m_streamState == StreamStopped)
         return;
 
@@ -329,7 +329,7 @@ void PluginStreamWin::didFinishLoading(SubresourceLoader* loader)
 
     m_loader = 0;
 
-    if ((m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY) && !m_path) {
+    if ((m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY) && m_path.isNull()) {
         char tempPath[MAX_PATH];
 
         if (GetTempPathA(sizeof(tempPath), tempPath) == 0) {

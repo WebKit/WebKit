@@ -1,3 +1,12 @@
+2007-06-29  Adam Roben  <aroben@apple.com>
+
+        New test that makes sure we handle putting isindex into form data correctly.
+
+        Reviewed by Oliver.
+
+        * http/tests/misc/isindex-formdata-expected.txt: Added.
+        * http/tests/misc/isindex-formdata.html: Added.
+
 2007-06-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

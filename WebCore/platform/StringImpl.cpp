@@ -636,7 +636,7 @@ double StringImpl::toDouble(bool* ok) const
     }
     char *end;
     CString latin1String = Latin1Encoding().encode(characters(), length());
-    double val = kjs_strtod(latin1String, &end);
+    double val = kjs_strtod(latin1String.data(), &end);
     if (ok)
         *ok = end == 0 || *end == '\0';
     return val;

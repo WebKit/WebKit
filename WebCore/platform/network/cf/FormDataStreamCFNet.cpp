@@ -341,7 +341,7 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
             length += element.m_data.size();
         else {
             struct _stat64i32 sb;
-            int statResult = _stat(element.m_filename.utf8(), &sb);
+            int statResult = _stat(element.m_filename.utf8().data(), &sb);
             if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
                 length += sb.st_size;
             else

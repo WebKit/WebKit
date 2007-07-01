@@ -283,7 +283,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         hstr += "; filename=\"";
                         int start = path.reverseFind('/') + 1;
                         int length = path.length() - start;
-                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.characters() + start), length, true);
+                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.characters() + start), length, true).data();
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
@@ -301,7 +301,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     result->appendData(hstr.data(), hstr.length());
                     const FormDataListItem& item = lst.list()[j + 1];
                     if (size_t dataSize = item.m_data.length())
-                        result->appendData(item.m_data, dataSize);
+                        result->appendData(item.m_data.data(), dataSize);
                     else if (!item.m_path.isEmpty())
                         result->appendFile(item.m_path);
                     result->appendData("\r\n", 2);

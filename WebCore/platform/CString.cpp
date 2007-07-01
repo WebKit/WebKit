@@ -99,4 +99,13 @@ void CString::copyBufferIfNeeded()
     memcpy(m_buffer->data(), m_temp->data(), len);
 }
 
+bool operator==(const CString& a, const CString& b)
+{
+    if (a.isNull() != b.isNull())
+        return false;
+    if (a.length() != b.length())
+        return false;
+    return !strncmp(a.data(), b.data(), min(a.length(), b.length()));
+}
+
 }
