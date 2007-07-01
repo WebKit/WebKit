@@ -1,3 +1,16 @@
+2007-07-01  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        Inherited- and NonInheritedFlags is a bit field. But for comparsion
+        the other part of the union _iflags/_niflags is used for comparions.
+        This will compare 5 uninitialized bits of _iflags and 22 of _niflags.
+        Make sure the unused bits have a specified value.
+
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setBitDefaults): Make sure the unused bits
+        have a value as well.
+
 2007-06-30  Adam Roben  <aroben@apple.com>
 
         Compile WebCore with /W4 on Windows
