@@ -1,3 +1,10 @@
+2007-07-01  Darin Adler  <darin@apple.com>
+
+        Added a missing file for the test for <rdar://problem/5303567> REGRESSION: XMLHttpRequest.responseXML 
+
+        * fast/loader/resources/plist.app: Added. Just some random XML file I found somewhere; seems to make
+        the test succeed instead of failing every time!
+
 2007-07-01  Pamela Greene  <pamg.bugs@gmail.com>
 
         Reviewed by Darin.
