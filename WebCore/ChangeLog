@@ -1,5 +1,14 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Remove bogus cast found by MSVC /W4
+
+        Reviewed by John and Oliver.
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Remove unused local functions uncovered by MSVC /W4
 
         Reviewed by John and Oliver.

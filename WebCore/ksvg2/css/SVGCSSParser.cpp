@@ -51,7 +51,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     bool valid_primitive = false;
     CSSValue* parsedValue = 0;
 
-    switch (static_cast<CSSPropertyID>(propId)) {
+    switch (propId) {
     /* The comment to the right defines all valid value of these
      * properties as defined in SVG 1.1, Appendix N. Property index */
     case SVGCSS_PROP_ALIGNMENT_BASELINE:
