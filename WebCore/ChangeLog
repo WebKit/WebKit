@@ -1,5 +1,20 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Compile WebCore with /W4 on Windows
+
+        Some more warnings were disabled globally, including assignment within
+        a conditional, unused variable, and various warnings related to
+        inability to instantiate opaque structs.
+
+        In addition, the "unreachable code" warning was turned off for
+        CSSGrammar.cpp and XPathGrammar.cpp.
+
+        Reviewed by Oliver.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Give CString an equality operator to fix a bug in HTMLFormElement::formData
 
         The bug was spotted by MSVC /W4. The problem was that we were comparing
