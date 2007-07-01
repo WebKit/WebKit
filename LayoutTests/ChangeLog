@@ -1,3 +1,16 @@
+2007-07-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Regression test for:
+        http://bugs.webkit.org/show_bug.cgi?id=14453
+        REGRESSION: www.nzherald.co.nz almost all the formating is gone
+
+        * css2.1/hex-color-regression-expected.checksum: Added.
+        * css2.1/hex-color-regression-expected.png: Added.
+        * css2.1/hex-color-regression-expected.txt: Added.
+        * css2.1/hex-color-regression.html: Added.
+
 2007-07-01  Darin Adler  <darin@apple.com>
 
         Fixed a no-SVG test failure by removing a node that was affecting the test results differently

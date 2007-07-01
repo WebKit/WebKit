@@ -1,3 +1,12 @@
+2007-07-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14453
+        REGRESSION: www.nzherald.co.nz almost all the formating is gone
+ 
+        * css/tokenizer.flex: Allow hex colors with 2, 4, or 5 hex digits.
+
 2007-07-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
