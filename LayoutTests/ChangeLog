@@ -1,3 +1,19 @@
+2007-07-01  Pamela Greene  <pamg.bugs@gmail.com>
+
+        Reviewed by Darin.
+
+        Tests for <http://bugs.webkit.org/show_bug.cgi?id=14320>
+        Bug 14320: <canvas> gradient stops at identical offsets are applied in the wrong order
+        <rdar://problem/5290084>
+
+        Add tests for various combinations of stops, including multiple stops at
+        the same offsets, sorted and unsorted.  Update results accordingly.
+
+        * fast/canvas/fillrect_gradient-expected.checksum:
+        * fast/canvas/fillrect_gradient-expected.png:
+        * fast/canvas/fillrect_gradient-expected.txt:
+        * fast/canvas/fillrect_gradient.html:
+
 2007-07-01  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.

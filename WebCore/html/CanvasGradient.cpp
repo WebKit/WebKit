@@ -149,16 +149,9 @@ void CanvasGradient::getColor(float value, float* r, float* g, float* b, float* 
     *a = lastStop.alpha + (nextStop.alpha - lastStop.alpha) * stopFraction;
 }
 
-static int compareStops(const void* a, const void* b)
+static inline bool compareStops(const CanvasGradient::ColorStop &a, const CanvasGradient::ColorStop &b)
 {
-    float as = static_cast<const CanvasGradient::ColorStop*>(a)->stop;
-    float bs = static_cast<const CanvasGradient::ColorStop*>(b)->stop;
-
-    if (as > bs)
-        return 1;
-    if (as < bs)
-        return -1;
-    return 0;
+    return a.stop < b.stop;
 }
 
 int CanvasGradient::findStop(float value) const
@@ -167,7 +160,7 @@ int CanvasGradient::findStop(float value) const
         bool addZeroStop = true;
         bool addOneStop = true;
         if (m_stops.size()) {
-            qsort(m_stops.data(), m_stops.size(), sizeof(ColorStop), compareStops);
+            std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
             addZeroStop = m_stops.first().stop != 0;
             addOneStop = m_stops.last().stop != 1;
         }

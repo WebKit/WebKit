@@ -1,18 +1,84 @@
 <body>
-The canvas below should show a gradient, starting at green at the top and fading to white at the bottom of the rect.
-<canvas id="canvas" width="150" height="150"></canvas>
+<style type="text/css">
+canvas { border: 1px solid black; }
+</style>
+
+Each square canvas should contain a colored gradient bordered by a narrow white margin and a black line.
+The column on the left contains linear gradients, the column on the right radial gradients.<br>
+
 <script>
-    var ctx = document.getElementById('canvas').getContext('2d');
-
-    // Create gradient
-    var lingrad = ctx.createLinearGradient(0,0,0,150);
-    lingrad.addColorStop(0, '#0f0');
-    lingrad.addColorStop(1, '#fff');
-
-    // assign gradient to fill
-    ctx.fillStyle = lingrad;
+    var counter = 1;
+    function Test(description, gradient) {
+        // Create canvas elements
+        var lin = document.createElement('canvas');
+        lin.setAttribute('id', 'canvas' + counter + 'lin');
+        lin.setAttribute('height', 100);
+        lin.setAttribute('width', 100);
+        var rad = document.createElement('canvas');
+        rad.setAttribute('id', 'canvas' + counter + 'rad');
+        rad.setAttribute('height', 100);
+        rad.setAttribute('width', 100);
         
-    // draw shapes
-    ctx.fillRect(10,10,130,130);
+        document.body.appendChild(lin);
+        document.body.appendChild(rad);
+        document.body.appendChild(document.createTextNode(' ' + description));
+        document.body.appendChild(document.createElement('br'));
+
+        // Find canvas contexts
+        var linctx = lin.getContext('2d')
+        var radctx = rad.getContext('2d')
+
+        // Create linear and radial gradients from array
+        var lingrad = linctx.createLinearGradient(0, 0, 0, 100);
+        var radgrad = linctx.createRadialGradient(50, 50, 0, 50, 50, 50);
+        for (var i = 0; i < gradient.length - 1; i+=2) {
+            lingrad.addColorStop(gradient[i], gradient[i + 1]);
+            radgrad.addColorStop(gradient[i], gradient[i + 1]);
+        }
+
+        // Apply them
+        linctx.fillStyle = lingrad;
+        linctx.fillRect(5, 5, 90, 90);
+        radctx.fillStyle = radgrad;
+        radctx.fillRect(5, 5, 90, 90);
+
+        counter++;
+    }
+
+    // Simple gradient
+    Test('Green to white',
+         new Array(0, '#0f0',
+                   1, '#fff'));
+
+    // Multiple sections
+    Test('Green to white to red',
+         new Array(  0, '#0f0',
+                   0.5, '#fff',
+                   1,   '#f00'));
+
+    // Disjoint gradients (multiple stops at the same offset)
+    Test('Blue to white in the top (inner) half, red to yellow in the bottom (outer) half',
+         new Array(  0, '#00f',
+                   0.5, '#fff',
+                   0.5, '#f00',
+                   1,   '#ff0'));
+
+    // Ignored stops
+    Test('Blue to white, red to yellow (same as previous)',
+         new Array(0,   '#00f',
+                   0.5, '#fff',
+                   0.5, '#aaa',
+                   0.5, '#abc',
+                   0.5, '#f00',
+                   1,   '#ff0'));
+
+    // Unsorted stops
+    Test('Blue to white, red to yellow (same as previous)',
+         new Array(0.5, '#fff',
+                   0.5, '#aaa',
+                   1,   '#ff0',
+                   0.5, '#abc',
+                   0.5, '#f00',
+                   0,   '#00f'));
 </script>
 </body>

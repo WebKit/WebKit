@@ -1,3 +1,18 @@
+2007-07-01  Pamela Greene  <pamg.bugs@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix for <http://bugs.webkit.org/show_bug.cgi?id=14320>
+        Bug 14320: <canvas> gradient stops at identical offsets are applied in the wrong order
+        <rdar://problem/5290084>
+
+        Use std::stable_sort() instead of qsort() to sort gradient stops.
+        Adjust the comparison function accordingly.
+
+        * html/CanvasGradient.cpp:
+        (WebCore::compareStops):
+        (WebCore::CanvasGradient::findStop):
+
 2007-07-01  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.
