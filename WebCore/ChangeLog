@@ -1,5 +1,15 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Initialize two variables that MSVC /W4 isn't smart enough to realize always get initialized
+
+        Reviewed by John.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        * html/HTMLParser.cpp:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Fix some possibly unitialized variables found by MSVC /W4
 
         Reviewed by John.

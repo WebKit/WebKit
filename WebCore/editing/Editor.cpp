@@ -1972,7 +1972,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     String badGrammarPhrase;
 
 #ifndef BUILDING_ON_TIGER
-    int grammarPhraseOffset;
+    int grammarPhraseOffset = 0;
     GrammarDetail grammarDetail;
 
     // Search for bad grammar that occurs prior to the next misspelled word (if any)
