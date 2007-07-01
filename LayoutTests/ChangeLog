@@ -1,5 +1,14 @@
 2007-07-01  Darin Adler  <darin@apple.com>
 
+        Fixed a no-SVG test failure by moving a test that requires SVG into the svg directory.
+
+        * fast/dom/svg-element-attribute-js-null-expected.txt: Removed.
+        * fast/dom/svg-element-attribute-js-null.xhtml: Removed.
+        * svg/dom/svg-element-attribute-js-null-expected.txt: Copied from fast/dom/svg-element-attribute-js-null-expected.txt.
+        * svg/dom/svg-element-attribute-js-null.xhtml: Copied from fast/dom/svg-element-attribute-js-null.xhtml.
+
+2007-07-01  Darin Adler  <darin@apple.com>
+
         Added a missing file for the test for <rdar://problem/5303567> REGRESSION: XMLHttpRequest.responseXML 
 
         * fast/loader/resources/plist.app: Added. Just some random XML file I found somewhere; seems to make
