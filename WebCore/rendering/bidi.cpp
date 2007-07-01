@@ -1681,8 +1681,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         // if we determine that we're able to synchronize after handling all our dirty lines.
         BidiIterator cleanLineStart;
         BidiStatus cleanLineBidiStatus;
-        BidiContext* cleanLineBidiContext;
-        int endLineYPos;
+        BidiContext* cleanLineBidiContext = 0;
+        int endLineYPos = 0;
         RootInlineBox* endLine = (fullLayout || !startLine) ? 
                                  0 : determineEndPosition(startLine, cleanLineStart, cleanLineBidiStatus, cleanLineBidiContext, endLineYPos);
         if (endLine && cleanLineBidiContext)

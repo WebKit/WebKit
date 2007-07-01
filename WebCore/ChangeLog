@@ -1,5 +1,14 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Fix some possibly unitialized variables found by MSVC /W4
+
+        Reviewed by John.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Remove bogus cast found by MSVC /W4
 
         Reviewed by John and Oliver.
