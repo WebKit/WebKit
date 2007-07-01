@@ -1,6 +1,0 @@
-This test checks that the data property of an HTMLObjectElement returns an absolute URL. See bug 14448 for reference.
-
-If the test passes, you should see the text PASS below the Apple logo.
-
-
-PASS
