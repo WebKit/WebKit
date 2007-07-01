@@ -228,8 +228,8 @@ if (isQt()) {
     $expectedDirectory = "LayoutTests/qt/";
     $platformTestDirectory = $expectedDirectory;
 } elsif (isCygwin()) {
-    $expectedDirectory = "LayoutTests";
-    $platformTestDirectory = "LayoutTests/win/";
+    $expectedDirectory = $testDirectory;
+    $platformTestDirectory = File::Spec->rel2abs("LayoutTests/win/");
 }
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
@@ -1078,7 +1078,7 @@ sub openHTTPDIfNeeded()
     my $httpdPath = "/usr/sbin/httpd";
     my $httpdConfig;
     if (isCygwin()) {
-        my $windowsConfDirectory = "$FindBin::Bin/../../OpenSourceWin/LayoutTestsWin/http/conf/";
+        my $windowsConfDirectory = "$testDirectory/http/conf/";
         unless (-x "/usr/lib/apache/libphp4.dll") {
             copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
             chmod(0755, "/usr/lib/apache/libphp4.dll");

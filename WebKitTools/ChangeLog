@@ -1,3 +1,11 @@
+2007-07-01  Adam Roben  <aroben@apple.com>
+
+        Fix some paths to make http tests work again on Windows
+
+        Rubberstamped by Sam.
+
+        * Scripts/run-webkit-tests:
+
 2007-06-28  Stephanie  <slewis@apple.com>
 
         Reviewed by Adam,
