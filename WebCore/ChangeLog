@@ -1,5 +1,14 @@
 2007-06-30  Adam Roben  <aroben@apple.com>
 
+        Remove unused local functions uncovered by MSVC /W4
+
+        Reviewed by John and Oliver.
+
+        * platform/win/SearchPopupMenuWin.cpp:
+        * rendering/RenderText.cpp:
+
+2007-06-29  Adam Roben  <aroben@apple.com>
+
         Don't take the address of temporary values to appease MSVC /W4
 
         Reviewed by Oliver.

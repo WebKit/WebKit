@@ -30,11 +30,6 @@ SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
 {
 }
 
-static String autosaveKey(const String& name)
-{
-    return String();
-}
-
 bool SearchPopupMenu::enabled()
 {
     // FIXME: <rdar://problem/5057218> Reenable "recent searches" search field menu when menu is fully implemented

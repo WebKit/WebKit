@@ -273,32 +273,6 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     return VisiblePosition(element(), lastBoxAbove ? lastBoxAbove->m_start + lastBoxAbove->m_len : 0, DOWNSTREAM);
 }
 
-#if __GNUC__
-static RenderObject* firstRendererOnNextLine(InlineBox* box) __attribute__ ((unused));
-#endif
-static RenderObject* firstRendererOnNextLine(InlineBox* box)
-{
-    if (!box)
-        return 0;
-
-    RootInlineBox* root = box->root();
-    if (!root)
-        return 0;
-
-    if (root->endsWithBreak())
-        return 0;
-
-    RootInlineBox* nextRoot = root->nextRootBox();
-    if (!nextRoot)
-        return 0;
-
-    InlineBox* firstChild = nextRoot->firstChild();
-    if (!firstChild)
-        return 0;
-
-    return firstChild->object();
-}
-
 static RenderObject* lastRendererOnPrevLine(InlineBox* box)
 {
     if (!box)
