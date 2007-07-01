@@ -1,3 +1,14 @@
+2007-07-01  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14448
+        HTMLObjectElement::data should return an absolute URL
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isImageType):
+        (WebCore::HTMLObjectElement::data):
+
 2007-07-01  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin.

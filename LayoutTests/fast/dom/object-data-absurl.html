@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+function getBaseURL() {
+    var href = document.location.href;
+    var lastSlash = href.lastIndexOf("/");
+    return href.substring(0, lastSlash);
+}
+function test() {
+    var result;
+    var url = document.getElementsByTagName("object")[0].data;
+    if (url == "resources/apple.gif" || url.indexOf(getBaseURL()) != 0) {
+        result = "FAIL";
+    } else {
+        result = "PASS";
+    }
+    document.getElementById("console").appendChild(document.createTextNode(result));
+}
+</script>
+</head>
+<body onload="test()">
+<p>
+This test checks that the <tt>data</tt> property of an HTMLObjectElement returns an absolute URL.
+See <a href="http://bugs.webkit.org/show_bug.cgi?id=14448">bug 14448</a> for reference.
+</p>
+<p>
+If the test passes, you should see the text PASS below the Apple logo.
+</p>
+<object data="resources/apple.gif"></object>
+<div id="console"></div>
+</body>
+</html>

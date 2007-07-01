@@ -1,3 +1,13 @@
+2007-07-01  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=14448
+        HTMLObjectElement::data should return an absolute URL
+
+        * fast/dom/object-data-absurl-expected.txt: Added.
+        * fast/dom/object-data-absurl.html: Added.
+
 2007-06-29  Adam Roben  <aroben@apple.com>
 
         New test that makes sure we handle putting isindex into form data correctly.

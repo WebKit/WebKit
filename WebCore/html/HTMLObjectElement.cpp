@@ -287,7 +287,7 @@ bool HTMLObjectElement::isImageType()
         }
     }
     if (Frame* frame = document()->frame()) {
-        KURL completedURL(frame->loader()->completeURL(m_url));
+        KURL completedURL(document()->completeURL(m_url).deprecatedString());
         return frame->loader()->client()->objectContentType(completedURL, m_serviceType) == ObjectContentImage;
     }
 
@@ -392,7 +392,7 @@ void HTMLObjectElement::setCodeType(const String& value)
 
 String HTMLObjectElement::data() const
 {
-    return getAttribute(dataAttr);
+    return document()->completeURL(getAttribute(dataAttr));
 }
 
 void HTMLObjectElement::setData(const String& value)
