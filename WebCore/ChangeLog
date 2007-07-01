@@ -1,3 +1,45 @@
+2007-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Third round of implicit 64-32 bit conversion errors fixes.
+        <rdar://problem/5292262>
+
+        - Use new CSSPrimitiveValue::getDoubleValue() and CSSPrimitiveValue::getIntValue()
+          methods instead of CSSPrimitiveValue::getFloatValue() where appropriate.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        (WebCore::CSSPrimitiveValue::computeLengthFloat):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        (WebCore::CSSPrimitiveValue::getDoubleValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getDoubleValue):
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        (WebCore::CSSPrimitiveValue::getIntValue):
+        * css/Counter.h:
+        (WebCore::Counter::listStyleNumber):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::parseAspectRatio):
+        * css/cssparser.cpp:
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        * css/cssstyleselector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::applyCounterList):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundSize):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::cssPrimitiveToLength):
+        (WebCore::KSVGPainterFactory::dashArrayFromRenderingStyle):
+
 2007-07-01  Pamela Greene  <pamg.bugs@gmail.com>
 
         Reviewed by Darin.

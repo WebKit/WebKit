@@ -167,8 +167,8 @@ static bool parseAspectRatio(CSSValue* value, int& a, int& b)
                 && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
                 String str = static_cast<CSSPrimitiveValue*>(i1)->getStringValue();
                 if (!str.isNull() && str.length() == 1 && str[0] == DeprecatedChar('/')) {
-                    a = (int) static_cast<CSSPrimitiveValue*>(i0)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
-                    b = (int) static_cast<CSSPrimitiveValue*>(i2)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+                    a = static_cast<CSSPrimitiveValue*>(i0)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
+                    b = static_cast<CSSPrimitiveValue*>(i2)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
                     return true;
                 }
             }

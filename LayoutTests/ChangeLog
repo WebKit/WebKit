@@ -1,3 +1,18 @@
+2007-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Third round of implicit 64-32 bit conversion errors fixes.
+        <rdar://problem/5292262>
+
+        getFloatValue() used to return a double and now returns a float for a small
+        loss of precision.
+
+        * fast/css/getFloatValueForUnit-expected.checksum:
+        * fast/css/getFloatValueForUnit-expected.png:
+        * fast/css/getFloatValueForUnit-expected.txt:
+        * fast/css/getFloatValueForUnit.html:
+
 2007-07-01  Darin Adler  <darin@apple.com>
 
         Fixed a no-SVG test failure by moving a test that requires SVG into the svg directory.

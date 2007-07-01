@@ -197,7 +197,7 @@ void CSSPrimitiveValue::cleanup()
 
 int CSSPrimitiveValue::computeLengthInt(RenderStyle* style)
 {
-    double result = computeLengthFloat(style);
+    double result = computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -210,7 +210,7 @@ int CSSPrimitiveValue::computeLengthInt(RenderStyle* style)
 
 int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, double multiplier)
 {
-    double result = multiplier * computeLengthFloat(style);
+    double result = multiplier * computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -227,7 +227,7 @@ const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 // Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
 int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style)
 {
-    double result = computeLengthFloat(style);
+    double result = computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -241,7 +241,7 @@ int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style)
 // Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
 int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, double multiplier)
 {
-    double result = multiplier * computeLengthFloat(style);
+    double result = multiplier * computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -254,7 +254,7 @@ int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, double mult
 
 short CSSPrimitiveValue::computeLengthShort(RenderStyle* style)
 {
-    double result = computeLengthFloat(style);
+    double result = computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -267,7 +267,7 @@ short CSSPrimitiveValue::computeLengthShort(RenderStyle* style)
 
 short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, double multiplier)
 {
-    double result = multiplier * computeLengthFloat(style);
+    double result = multiplier * computeLengthDouble(style);
 
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -278,7 +278,12 @@ short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, double multiplie
     return static_cast<short>(result);
 }
 
-double CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, bool applyZoomFactor)
+float CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, bool applyZoomFactor)
+{
+    return static_cast<float>(computeLengthDouble(style, applyZoomFactor));
+}
+
+double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, bool applyZoomFactor)
 {
     unsigned short type = primitiveType();
 
@@ -315,7 +320,7 @@ double CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, bool applyZoomF
             return -1.0;
     }
 
-    return getFloatValue() * factor;
+    return getDoubleValue() * factor;
 }
 
 void CSSPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue, ExceptionCode& ec)
@@ -363,7 +368,7 @@ double scaleFactorForConversion(unsigned short unitType)
     return factor;
 }
 
-double CSSPrimitiveValue::getFloatValue(unsigned short unitType)
+double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
 {
     ASSERT(m_type <= CSS_DIMENSION);
     ASSERT(unitType <= CSS_DIMENSION);

@@ -103,13 +103,20 @@ public:
     int computeLengthIntForLength(RenderStyle*, double multiplier);
     short computeLengthShort(RenderStyle*);
     short computeLengthShort(RenderStyle*, double multiplier);
-    double computeLengthFloat(RenderStyle*, bool applyZoomFactor = true);
+    float computeLengthFloat(RenderStyle*, bool applyZoomFactor = true);
+    double computeLengthDouble(RenderStyle*, bool applyZoomFactor = true);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
+
+    double getDoubleValue(unsigned short unitType);
+    double getDoubleValue() const { return m_value.num; }
+
     void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
-    double getFloatValue(unsigned short unitType);
-    double getFloatValue() { return m_value.num; }
+    float getFloatValue(unsigned short unitType) { return static_cast<float>(getDoubleValue(unitType)); }
+    float getFloatValue() const { return static_cast<float>(m_value.num); }
+    int getIntValue(unsigned short unitType) { return static_cast<int>(getDoubleValue(unitType)); }
+    int getIntValue() const { return static_cast<int>(m_value.num); }
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue() const;

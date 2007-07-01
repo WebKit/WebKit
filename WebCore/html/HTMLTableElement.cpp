@@ -376,7 +376,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
             RefPtr<CSSValue> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
             if (val && val->isPrimitiveValue()) {
                 CSSPrimitiveValue* primVal = static_cast<CSSPrimitiveValue*>(val.get());
-                m_borderAttr = primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+                m_borderAttr = primVal->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER);
             }
         } else if (!attr->isNull()) {
             int border = 0;
