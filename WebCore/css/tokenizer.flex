@@ -12,7 +12,7 @@ nmstart         [_a-zA-Z]|{nonascii}|{escape}
 nmchar          [_a-zA-Z0-9-]|{nonascii}|{escape}
 string1         \"([\t !#$%&(-~]|\\{nl}|\'|{nonascii}|{escape})*\"
 string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
-hexcolor        {h}{2,6}
+hexcolor        {h}{3}|{h}{6}
 
 ident           -?{nmstart}{nmchar}*
 name            {nmchar}+

@@ -1,3 +1,8 @@
+2007-07-01  Darin Adler  <darin@apple.com>
+
+        * css/tokenizer.flex: Rolled out the fix for 14453.
+        The layout test wasn't passing. We'll try again.
+
 2007-07-01  Adam Roben  <aroben@apple.com>
 
         Fix a crash in ~PluginViewWin()
