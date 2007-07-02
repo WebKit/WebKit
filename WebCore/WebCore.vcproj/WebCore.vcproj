@@ -2978,6 +2978,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FloatConversion.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileChooser.cpp"
 				>
 			</File>

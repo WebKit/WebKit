@@ -1,5 +1,19 @@
 2007-07-02  Sam Weinig  <sam@webkit.org>
 
+        Rubberstamped by Darin.
+
+        Rename FloatConversionUtilities.h to FloatConversion.h.
+        Fix Win32 build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/DeprecatedString.cpp:
+        * platform/FloatConversion.h: Copied from platform/FloatConversionUtilities.h.
+        * platform/FloatConversionUtilities.h: Removed.
+        * platform/StringImpl.cpp:
+
+2007-07-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin.
 
         Fifth round of fixes for implicit 64-32 bit conversion errors.

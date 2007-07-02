@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FloatConversionUtilities_h
-#define FloatConversionUtilities_h
+#ifndef FloatConversion_h
+#define FloatConversion_h
 
 #include <wtf/Platform.h>
 
@@ -55,4 +55,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // FloatConversionUtilities_h
+#endif // FloatConversion_h

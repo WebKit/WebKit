@@ -27,7 +27,7 @@
 #include "DeprecatedString.h"
 
 #include "CString.h"
-#include "FloatConversionUtilities.h"
+#include "FloatConversion.h"
 #include "Logging.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
