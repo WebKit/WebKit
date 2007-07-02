@@ -139,6 +139,7 @@ public:
 
     int toInt(bool* ok = 0) const;
     double toDouble(bool* ok = 0) const;
+    float toFloat(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;
     Length* toCoordsArray(int& len) const;
     bool percentage(int &_percentage) const;

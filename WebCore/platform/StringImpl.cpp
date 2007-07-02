@@ -29,6 +29,7 @@
 #include "CString.h"
 #include "CharacterNames.h"
 #include "DeprecatedString.h"
+#include "FloatConversionUtilities.h"
 #include "Length.h"
 #include "StringHash.h"
 #include "TextBreakIterator.h"
@@ -640,6 +641,12 @@ double StringImpl::toDouble(bool* ok) const
     if (ok)
         *ok = end == 0 || *end == '\0';
     return val;
+}
+
+float StringImpl::toFloat(bool* ok) const
+{
+    // FIXME: this will return ok even when the string does not fit into a float
+    return narrowPrecisionToFloat(toDouble(ok));
 }
 
 static bool equal(const UChar* a, const char* b, int length)

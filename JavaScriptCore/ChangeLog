@@ -2,7 +2,7 @@
 
         Reviewed by Kevin McCullough.
 
-        Third round of fixes for implicit 64-32 bit conversion errors.
+        Fourth round of fixes for implicit 64-32 bit conversion errors.
         <rdar://problem/5292262>
 
         Add custom piDouble and piFloat constants to use instead of M_PI.

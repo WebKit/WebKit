@@ -27,6 +27,7 @@
 #include "DeprecatedString.h"
 
 #include "CString.h"
+#include "FloatConversionUtilities.h"
 #include "Logging.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
@@ -1485,6 +1486,12 @@ double DeprecatedString::toDouble(bool *ok) const
     if (ok)
         *ok = end == 0 || *end == '\0';
     return val;
+}
+
+float DeprecatedString::toFloat(bool* ok) const
+{
+    // FIXME: this will return ok even when the string does not fit into a float
+    return narrowPrecisionToFloat(toDouble(ok));
 }
 
 DeprecatedString DeprecatedString::left(unsigned len) const

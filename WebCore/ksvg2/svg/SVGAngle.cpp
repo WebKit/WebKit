@@ -88,7 +88,7 @@ void SVGAngle::setValueAsString(const String& s)
     m_valueAsString = s;
 
     bool bOK;
-    m_valueInSpecifiedUnits = m_valueAsString.toDouble(&bOK);
+    m_valueInSpecifiedUnits = m_valueAsString.toFloat(&bOK);
     m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
 
     if (!bOK) {

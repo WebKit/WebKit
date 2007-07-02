@@ -1,8 +1,37 @@
 2007-07-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin.
+
+        Fifth round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        Add toFloat() method to string classes and use it where appropriate.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::lex):
+        * ksvg2/svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::setValueAsString):
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::toFloat):
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::toFloat):
+        * platform/DeprecatedString.h:
+        * platform/FloatConversionUtilities.h: Added.
+        (WebCore::narrowPrecisionToFloat):
+        (WebCore::narrowPrecisionToCGFloat):
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::toFloat):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toFloat):
+        * platform/StringImpl.h:
+
+2007-07-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Kevin McCullough.
 
-        Third round of fixes for implicit 64-32 bit conversion errors.
+        Fourth round of fixes for implicit 64-32 bit conversion errors.
         <rdar://problem/5292262>
 
         Use new piDouble and piFloat constants instead of M_PI.

@@ -369,6 +369,16 @@ double String::toDouble(bool* ok) const
     return m_impl->toDouble(ok);
 }
 
+float String::toFloat(bool* ok) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0.0f;
+    }
+    return m_impl->toFloat(ok);
+}
+
 String String::copy() const
 {
     if (!m_impl)

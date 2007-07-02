@@ -3012,7 +3012,7 @@ int CSSParser::lex(void* yylvalWithoutType)
         length--;
     case FLOAT:
     case INTEGER:
-        yylval->val = DeprecatedString((DeprecatedChar *)t, length).toDouble();
+        yylval->val = DeprecatedString((DeprecatedChar*)t, length).toFloat();
         break;
 
     default:
