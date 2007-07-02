@@ -5475,9 +5475,19 @@ BOOL isTextInput(Frame *coreFrame)
 
     // We don't support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
-    if ([string isKindOfClass:[NSAttributedString class]])
+    bool isFromInputMethod = [self hasMarkedText];
+    if ([string isKindOfClass:[NSAttributedString class]]) {
         text = [string string];
-    else
+        // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
+        // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
+        // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
+        // NSAttributedString
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
+        if (rangeString) {
+            [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
+            isFromInputMethod = YES;
+        }
+    } else
         text = string;
 
     bool eventHandled = false;
@@ -5491,7 +5501,6 @@ BOOL isTextInput(Frame *coreFrame)
         // FIXME: In theory, this could be wrong for some input methods, so we should try to find
         // another way to determine if the call is from the input method
         bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
-        bool isFromInputMethod = [self hasMarkedText];
         if (event && shouldSaveCommand && !isFromInputMethod) {
             KeypressCommand command;
             command.text = text;

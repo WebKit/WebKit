@@ -1,3 +1,18 @@
+2007-07-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Justin.
+
+        Fix for 
+          <rdar://problem/5290113> WebKit does not correctly handle replacement ranges from the IM in -[WebHTMLView insertText:]
+          http://bugs.webkit.org/show_bug.cgi?id=13664
+
+        We replicate the logic of -[WebHTMLView setMarkedText:selectedRange:] to handle the Input Method 
+        feeding us a replacement string through insertText: so we can handle IMs that use insertText to
+        replace text.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
 2007-07-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey.
