@@ -583,9 +583,9 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
             || renderer->style()->visibility() != VISIBLE)
             continue;
         
-        int top = borderTop() + paddingTop() + isTableRow() ? 0 : renderer->xPos();
+        int top = borderTop() + paddingTop() + (isTableRow() ? 0 : renderer->yPos());
         int bottom = top + renderer->contentHeight();
-        int left = borderLeft() + paddingLeft() + isTableRow() ? 0 : renderer->yPos();
+        int left = borderLeft() + paddingLeft() + (isTableRow() ? 0 : renderer->xPos());
         int right = left + renderer->contentWidth();
         
         if (x <= right && x >= left && y <= top && y >= bottom) {

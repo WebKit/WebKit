@@ -1,3 +1,19 @@
+2007-07-02  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14498: RenderContainer::positionForCoordinates contains an order of operations error
+        http://bugs.webkit.org/show_bug.cgi?id=14498
+
+        There were two bugs:
+        1) xPos/yPos were flipped
+        2) + binds tighter than ?:, so the order of operations was incorrect
+
+        Reviewed by Darin.
+
+        Test: fast/inline-block/14498-positionForCoordinates.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::positionForCoordinates):
+
 2007-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker and Tim Hatcher.

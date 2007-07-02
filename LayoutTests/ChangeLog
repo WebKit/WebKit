@@ -1,3 +1,13 @@
+2007-07-02  Adam Roben  <aroben@apple.com>
+
+        Test for Bug 14498: RenderContainer::positionForCoordinates contains an order of operations error
+        http://bugs.webkit.org/show_bug.cgi?id=14498
+
+        Reviewed by Darin.
+
+        * fast/inline-block/14498-positionForCoordinates-expected.txt: Added.
+        * fast/inline-block/14498-positionForCoordinates.html: Added.
+
 2007-07-01  Darin Adler  <darin@apple.com>
 
         Fixed a no-SVG test failure by removing a node that was affecting the test results differently
