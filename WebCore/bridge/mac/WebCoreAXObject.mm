@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreAXObject.h"
 
 #import "DOMInternal.h"
@@ -60,6 +60,7 @@
 #import "TextIterator.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
+#import "WebCoreObjCExtras.h"
 #import "WebCoreViewFactory.h"
 #import "htmlediting.h"
 #import "kjs_html.h"
@@ -77,6 +78,13 @@ using namespace HTMLNames;
 @end
 
 @implementation WebCoreAXObject
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 -(id)initWithRenderer:(RenderObject*)renderer
 {
@@ -108,6 +116,12 @@ using namespace HTMLNames;
 {
     [self detach];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [self detach];
+    [super finalize];
 }
 
 -(id)data

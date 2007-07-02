@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 #import "Color.h"
 #import "DOMCSSPrimitiveValue.h"
 #import "DOMInternal.h"
+#import "WebCoreObjCExtras.h"
 #import <wtf/GetPtr.h>
 
 namespace WebCore {
@@ -64,6 +65,13 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 
 @implementation DOMRGBColor
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - (void)dealloc
 {

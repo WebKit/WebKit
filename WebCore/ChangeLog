@@ -1,3 +1,20 @@
+2007-07-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker and Tim Hatcher.
+
+        - fix <rdar://problem/5307906> some classes need finalize methods because
+          of non-trivial work done in dealloc methods
+
+        * bindings/objc/DOMRGBColor.mm:
+        (+[DOMRGBColor initialize]): Added. Tells finalizer to run on main thread,
+        which is needed because we are sharing a CFDictionary here with no locking.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (+[WebCoreAXObject initialize]): Added. Tells finalizer to run on main thread.
+        (-[WebCoreAXObject finalize]): Added. Calls detach.
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode do what it wants to do.
+
 2007-07-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
