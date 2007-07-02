@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,26 @@
 #include <float.h>
 #endif
 
+#endif
+
+#ifndef M_PI
+const double piDouble = 3.14159265358979323846;
+const float piFloat = 3.14159265358979323846f;
+#else
+const double piDouble = M_PI;
+const float piFloat = static_cast<float>(M_PI);
+#endif
+
+#ifndef M_PI_4
+const double piOverFourDouble = 0.785398163397448309616;
+const float piOverFourFloat = 0.785398163397448309616f;
+#else
+const double piOverFourDouble = M_PI_4;
+const float piOverFourFloat = static_cast<float>(M_PI_4);
+#endif
+
+#if COMPILER(MSVC)
+
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
 inline bool isnan(double num) { return !!_isnan(num); }
 inline long lround(double num) { return static_cast<long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
@@ -53,14 +73,6 @@ inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x +
 inline double copysign(double x, double y) { return _copysign(x, y); }
 inline int isfinite(double x) { return _finite(x); }
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif  //  M_PI
-
-#ifndef M_PI_4
-#define M_PI_4 0.785398163397448309616
-#endif  //  M_PI_4
-
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
 inline double wtf_atan2(double x, double y)
 {
@@ -70,13 +82,13 @@ inline double wtf_atan2(double x, double y)
     double result = KJS::NaN;
 
     if (x == posInf && y == posInf)
-        result = M_PI_4;
+        result = piOverFourDouble;
     else if (x == posInf && y == negInf)
-        result = 3 * M_PI_4;
+        result = 3 * piOverFourDouble;
     else if (x == negInf && y == posInf)
-        result = -M_PI_4;
+        result = -piOverFourDouble;
     else if (x == negInf && y == negInf)
-        result = -3 * M_PI_4;
+        result = -3 * piOverFourDouble;
     else
         result = ::atan2(x, y);
 

@@ -75,7 +75,7 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
             float offset = traversalState.m_desiredLength - traversalState.m_totalLength;
             traversalState.m_current.move(offset * cosf(slope), offset * sinf(slope));
         } else {
-            static const float rad2deg = 180.0f / static_cast<float>(M_PI);
+            static const float rad2deg = 180.0f / piFloat;
             traversalState.m_normalAngle = slope * rad2deg;
         }
 
@@ -239,7 +239,7 @@ Path Path::createEllipse(const FloatPoint& center, float rx, float ry)
             break;
         }
 
-        double angle = double(step) / double(num) * 2.0 * M_PI;
+        double angle = static_cast<double>(step) / static_cast<double>(num) * 2.0 * piDouble;
         x = cx + cos(angle) * rx;
         y = cy + sin(angle) * ry;
 

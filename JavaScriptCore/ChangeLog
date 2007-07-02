@@ -1,3 +1,17 @@
+2007-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Third round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        Add custom piDouble and piFloat constants to use instead of M_PI.
+
+        * kjs/math_object.cpp:
+        (MathObjectImp::getValueProperty):
+        * wtf/MathExtras.h:
+        (wtf_atan2):
+
 2007-06-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

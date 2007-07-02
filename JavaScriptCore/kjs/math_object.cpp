@@ -98,7 +98,7 @@ JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
     d = 1.0/log(10.0);
     break;
   case Pi:
-    d = M_PI;
+    d = piDouble;
     break;
   case Sqrt1_2:
     d = sqrt(0.5);

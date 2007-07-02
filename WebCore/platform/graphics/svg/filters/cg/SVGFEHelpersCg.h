@@ -20,11 +20,12 @@
 */
 
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 #include "BlockExceptions.h"
 #include "SVGFEDisplacementMap.h"
 #include "SVGResourceFilter.h"
-
 #include <QuartzCore/CoreImage.h>
+#include <wtf/MathExtras.h>
 
 class Color;
 class SVGLightSource;
@@ -70,6 +71,6 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
         filter = crop; \
     }
 
-#define deg2rad(d) ((d * (2.0 * M_PI)) / 360.0)
+#define deg2rad(d) ((d * (2.0 * piDouble)) / 360.0)
 
 #endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

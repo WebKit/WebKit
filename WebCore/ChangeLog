@@ -1,3 +1,28 @@
+2007-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Third round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        Use new piDouble and piFloat constants instead of M_PI.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::rotate):
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::calculateArc):
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        (WebCore::Path::createEllipse):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::drawMarkerWithData):
+
 2007-07-01  Adam Roben  <aroben@apple.com>
 
         Clarify/fix {Shadow,BorderImage}ParseContext's memory management

@@ -261,7 +261,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     CGContextRef context = platformContext();
     CGContextBeginPath(context);
     float r = (float)rect.width() / 2;
-    CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0, static_cast<float>(2*M_PI), 0);
+    CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0.0f, 2.0f * piFloat, 0);
     CGContextClosePath(context);
 
     if (fillColor().alpha()) {
@@ -299,8 +299,8 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     float vRadius = h / 2;
     float fa = startAngle;
     float falen =  fa + angleSpan;
-    float start = -fa * M_PI / 180.0f;
-    float end = -falen * M_PI / 180.0f;
+    float start = -fa * piFloat / 180.0f;
+    float end = -falen * piFloat / 180.0f;
     CGContextAddArc(context, x + hRadius, (y + vRadius) * reverseScaleFactor, hRadius, start, end, true);
 
     if (w != h)
@@ -329,9 +329,9 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         // will be 50 pixels.
         int distance;
         if (hRadius == vRadius)
-            distance = (int)(M_PI * hRadius) / 2;
+            distance = static_cast<int>((piFloat * hRadius) / 2.0f);
         else // We are elliptical and will have to estimate the distance
-            distance = (int)(M_PI * sqrt((hRadius * hRadius + vRadius * vRadius) / 2)) / 2;
+            distance = static_cast<int>((piFloat * sqrtf((hRadius * hRadius + vRadius * vRadius) / 2.0f)) / 2.0f);
         
         int remainder = distance % patWidth;
         int coverage = distance - remainder;

@@ -456,8 +456,8 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
     double th0, th1, th_arc;
     int i, n_segs;
 
-    sin_th = sin(angle * (M_PI / 180.0));
-    cos_th = cos(angle * (M_PI / 180.0));
+    sin_th = sin(angle * (piDouble / 180.0));
+    cos_th = cos(angle * (piDouble / 180.0));
 
     double dx;
 
@@ -532,11 +532,11 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
 
     th_arc = th1 - th0;
     if (th_arc < 0 && sweepFlag)
-        th_arc += 2 * M_PI;
+        th_arc += 2 * piDouble;
     else if (th_arc > 0 && !sweepFlag)
-        th_arc -= 2 * M_PI;
+        th_arc -= 2 * piDouble;
 
-    n_segs = (int) (int) ceil(fabs(th_arc / (M_PI * 0.5 + 0.001)));
+    n_segs = (int) (int) ceil(fabs(th_arc / (piDouble * 0.5 + 0.001)));
 
     for(i = 0; i < n_segs; i++) {
         double sin_th, cos_th;
@@ -548,8 +548,8 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
         double _th0 = th0 + i * th_arc / n_segs;
         double _th1 = th0 + (i + 1) * th_arc / n_segs;
 
-        sin_th = sin(angle * (M_PI / 180.0));
-        cos_th = cos(angle * (M_PI / 180.0));
+        sin_th = sin(angle * (piDouble / 180.0));
+        cos_th = cos(angle * (piDouble / 180.0));
 
         /* inverse transform compared with rsvg_path_arc */
         a00 = cos_th * r1;
