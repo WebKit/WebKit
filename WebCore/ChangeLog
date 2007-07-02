@@ -1,3 +1,45 @@
+2007-07-01  Adam Roben  <aroben@apple.com>
+
+        Clarify/fix {Shadow,BorderImage}ParseContext's memory management
+
+        Prefast emitted warnings that drew my attention to
+        {Shadow,BorderImage}ParseContext::failed().  It turned out that these
+        methods were actually correct, but rather confusing. "failed" really
+        meant "abort and clean up" rather than "did you fail?", which was
+        unclear. However, once I figured that out, the "and clean up" part was
+        still a bit confusing, because all failed() did was to set a flag that
+        would later cause the ParseContext's members to be deleted in the
+        destructor. To clear this up, I've gotten rid of the failed() method
+        altogether. It always returned false, so I've replaced all calls to
+        it with the value false.
+
+        I also noticed that the lifetime management of the ParseContexts'
+        members was in all cases confusing, and in some cases wrong. The
+        m_border{Top,Right,Bottom,Left} members of BorderImageParseContext
+        were leaked whenever a border-image property was successfully parsed.
+        I fixed that by holding these members in OwnPtrs. The
+        CSSPrimitiveValue members of {Shadow,BorderImage}ParseContext, which
+        inherit from Shared, were being explicitly deleted, which is not a
+        safe way to manage the lifetime of objects that inherit from Shared.
+        To fix this, I put those members inside RefPtrs. These two changes
+        allowed me to remove the destructors entirely.
+
+        Reviewed by Darin.
+
+        All regression tests pass.
+
+        * css/cssparser.cpp:
+        (WebCore::ShadowParseContext::commitValue): Use .release() to avoid
+        ref-count churn.
+        (WebCore::ShadowParseContext::commitLength): Use a RefPtr for the new
+        value to avoid a leak.
+        (WebCore::CSSParser::parseShadow): Use 'false' instead of
+        'context.failed()', and use .release() to avoid ref-count churn.
+        (WebCore::BorderImageParseContext::commitWidth): Updated to use
+        OwnPtr.
+        (WebCore::CSSParser::parseBorderImage): Use 'false' instead of
+        'context.failed'.
+
 2007-07-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
