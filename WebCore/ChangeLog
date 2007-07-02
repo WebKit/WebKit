@@ -1,3 +1,16 @@
+2007-07-01  Adam Roben  <aroben@apple.com>
+
+        Fix a crash in ~PluginViewWin()
+
+        This crash was introduced in r23827.
+
+        Reviewed by Anders.
+
+        Fixes dom/html/level2/html/HTMLAnchorElement01.html
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::~PluginViewWin): Allow m_plugin to be null.
+
 2007-07-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

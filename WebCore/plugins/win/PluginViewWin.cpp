@@ -1157,7 +1157,9 @@ PluginViewWin::~PluginViewWin()
         DestroyWindow(m_window);
 
     m_parentFrame->cleanupScriptObjectsForPlugin(this);
-    m_plugin->unload();
+
+    if (m_plugin)
+        m_plugin->unload();
 }
 
 void PluginViewWin::disconnectStream(PluginStreamWin* stream)
