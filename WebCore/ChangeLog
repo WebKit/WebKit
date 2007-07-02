@@ -1,3 +1,9 @@
+2007-07-02  John Sullivan  <sullivan@apple.com>
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        added a comment
+
 2007-07-02  Sam Weinig  <sam@webkit.org>
 
         Rubberstamped by Darin.

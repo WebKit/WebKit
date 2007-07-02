@@ -1390,6 +1390,9 @@ static NSCharacterSet *_getPostSmartSet(void)
         else
             data = nil;
         
+        // It's clearly a bug to pass a nil value for data here, and doing so is part of the problem in
+        // <rdar://problem/5268311>. However, fixing this in the obvious ways makes the symptom in 5268311
+        // worse, so don't just fix this without investigating that bug further.
         [d addObject:data];
         [data release];
         [r addObject:it->second->response().nsURLResponse()];
