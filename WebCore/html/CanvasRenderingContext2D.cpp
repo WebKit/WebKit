@@ -659,9 +659,9 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 #if PLATFORM(CG)
     RGBA32 rgba = CSSParser::parseColor(color);
     const CGFloat components[4] = {
-        ((rgba >> 16) & 0xFF) / 255.0,
-        ((rgba >> 8) & 0xFF) / 255.0,
-        (rgba & 0xFF) / 255.0,
+        ((rgba >> 16) & 0xFF) / 255.0f,
+        ((rgba >> 8) & 0xFF) / 255.0f,
+        (rgba & 0xFF) / 255.0f,
         alpha
     };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -749,10 +749,10 @@ void CanvasRenderingContext2D::applyShadow()
 #if PLATFORM(CG)
     RGBA32 rgba = state().m_shadowColor.isEmpty() ? 0 : CSSParser::parseColor(state().m_shadowColor);
     const CGFloat components[4] = {
-        ((rgba >> 16) & 0xFF) / 255.0,
-        ((rgba >> 8) & 0xFF) / 255.0,
-        (rgba & 0xFF) / 255.0,
-        ((rgba >> 24) & 0xFF) / 255.0
+        ((rgba >> 16) & 0xFF) / 255.0f,
+        ((rgba >> 8) & 0xFF) / 255.0f,
+        (rgba & 0xFF) / 255.0f,
+        ((rgba >> 24) & 0xFF) / 255.0f
     };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef color = CGColorCreate(colorSpace, components);

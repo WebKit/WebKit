@@ -27,6 +27,7 @@
 
 #include "AffineTransform.h"
 #include "Document.h"
+#include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PatternAttributes.h"
@@ -131,10 +132,10 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         return;
 
     // Determine specified pattern size
-    float xValue = attributes.x();
-    float yValue = attributes.y();
-    float widthValue = attributes.width();
-    float heightValue = attributes.height();
+    float xValue = narrowPrecisionToFloat(attributes.x());
+    float yValue = narrowPrecisionToFloat(attributes.y());
+    float widthValue = narrowPrecisionToFloat(attributes.width());
+    float heightValue = narrowPrecisionToFloat(attributes.height());
 
     if (attributes.boundingBoxMode()) {
         xValue *= targetRect.width();

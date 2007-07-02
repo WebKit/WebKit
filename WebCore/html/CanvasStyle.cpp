@@ -95,10 +95,10 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
             // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
             CGContextSetRGBStrokeColor(context->platformContext(),
-                ((color >> 16) & 0xFF) / 255.0,
-                ((color >> 8) & 0xFF) / 255.0,
-                (color & 0xFF) / 255.0,
-                ((color >> 24) & 0xFF) / 255.0);
+                ((color >> 16) & 0xFF) / 255.0f,
+                ((color >> 8) & 0xFF) / 255.0f,
+                (color & 0xFF) / 255.0f,
+                ((color >> 24) & 0xFF) / 255.0f);
 #elif PLATFORM(QT)
             p->setPen(QPen(QColor(QRgb(color))));
 #endif
@@ -109,9 +109,9 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
             // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
             CGContextSetRGBStrokeColor(context->platformContext(),
-                ((color >> 16) & 0xFF) / 255.0,
-                ((color >> 8) & 0xFF) / 255.0,
-                (color & 0xFF) / 255.0,
+                ((color >> 16) & 0xFF) / 255.0f,
+                ((color >> 8) & 0xFF) / 255.0f,
+                (color & 0xFF) / 255.0f,
                 m_alpha);
 #elif PLATFORM(QT)
             QColor clr = QColor(QRgb(color));
@@ -171,10 +171,10 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
             CGContextSetRGBFillColor(context->platformContext(),
-                ((color >> 16) & 0xFF) / 255.0,
-                ((color >> 8) & 0xFF) / 255.0,
-                (color & 0xFF) / 255.0,
-                ((color >> 24) & 0xFF) / 255.0);
+                ((color >> 16) & 0xFF) / 255.0f,
+                ((color >> 8) & 0xFF) / 255.0f,
+                (color & 0xFF) / 255.0f,
+                ((color >> 24) & 0xFF) / 255.0f);
 #elif PLATFORM(QT)
             p->setBrush(QColor(QRgb(color)));
 #endif
@@ -185,9 +185,9 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
             CGContextSetRGBFillColor(context->platformContext(),
-                ((color >> 16) & 0xFF) / 255.0,
-                ((color >> 8) & 0xFF) / 255.0,
-                (color & 0xFF) / 255.0,
+                ((color >> 16) & 0xFF) / 255.0f,
+                ((color >> 8) & 0xFF) / 255.0f,
+                (color & 0xFF) / 255.0f,
                 m_alpha);
 #elif PLATFORM(QT)
             QColor clr = QColor(QRgb(color));

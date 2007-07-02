@@ -1,3 +1,44 @@
+2007-07-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Sixth round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        Use new narrowPrecisionToFloat() and narrowPrecisionToCGFloat() where
+        appropriate.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * ksvg2/svg/SVGAngle.cpp:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseKeyNumbers):
+        (WebCore::parseKeySplines):
+        (WebCore::SVGAnimationElement::handleTimerEvent):
+        (WebCore::SVGAnimationElement::updateAnimatedValueForElapsedSeconds):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * platform/graphics/cg/AffineTransformCG.cpp:
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::setMatrix):
+        (WebCore::AffineTransform::map):
+        (WebCore::AffineTransform::setA):
+        (WebCore::AffineTransform::setB):
+        (WebCore::AffineTransform::setC):
+        (WebCore::AffineTransform::setD):
+        (WebCore::AffineTransform::setE):
+        (WebCore::AffineTransform::setF):
+        (WebCore::AffineTransform::scale):
+        (WebCore::AffineTransform::rotate):
+        (WebCore::AffineTransform::translate):
+        (WebCore::AffineTransform::shear):
+
 2007-07-02  John Sullivan  <sullivan@apple.com>
 
         * page/mac/WebCoreFrameBridge.mm:
