@@ -1,3 +1,16 @@
+2007-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey.
+
+        Fix for <rdar://problem/5306210> Some events are still passed to WebCore despite being handled by the IM
+        http://bugs.webkit.org/show_bug.cgi?id=14457
+
+        We have to assume that the IM will consume all events, so we remove the dependency
+        on -[WebHTMLView hasMarkedText].
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+
 2007-06-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -5136,9 +5136,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventWasHandled = false;
     parameters.shouldSaveCommand = shouldSave;
-    // If we're performing input composition assume that the IM has consumed the event, 
-    // and only change this assumption in one of the NSTextInput/Responder callbacks is used.
-    parameters.consumedByIM = [self hasMarkedText];
+    // If we're intercepting the initial IM call we assume that the IM has consumed the event, 
+    // and only change this assumption if one of the NSTextInput/Responder callbacks is used.
+    // We assume the IM will *not* consume hotkey sequences
+    parameters.consumedByIM = !event->metaKey() && shouldSave;
         
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
         NSEvent *macEvent = platformEvent->macEvent();
