@@ -1,3 +1,12 @@
+2007-07-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14482
+          Add information about the NeedsReduction and HasReduction keywords to quality/reduction.html
+
+        * quality/reduction.html:
+
 2007-07-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
