@@ -1,3 +1,25 @@
+2007-07-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker and Tim Hatcher.
+
+        - fix <rdar://problem/5307880> some classes need finalize methods
+          because of non-trivial work done in dealloc methods
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer dealloc]): Added a comment about how this probably won't
+        work under GC.
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight dealloc]): Ditto.
+
+        * WebView/WebDataSource.mm:
+        (+[WebDataSourcePrivate initialize]): Added. Makes finalize run on main thread.
+        (-[WebDataSourcePrivate finalize]): Added. Calls deref on the document loader.
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]): Added. Makes finalize run on main thread.
+        (-[WebHTMLViewPrivate finalize]): Added. Calls deref on promisedDragTIFFDataSource.
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode be Xcode.
+
 2007-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Justin.

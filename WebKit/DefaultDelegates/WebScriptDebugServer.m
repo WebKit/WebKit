@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,8 @@ static unsigned listenerCount = 0;
 
 - (void)dealloc
 {
+    // FIXME: Bad to do all this work in dealloc. What about under GC?
+
     ASSERT(listenerCount >= [listeners count]);
     listenerCount -= [listeners count];
     if (!listenerCount)

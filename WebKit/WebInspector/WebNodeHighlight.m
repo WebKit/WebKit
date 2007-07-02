@@ -93,6 +93,8 @@
 
 - (void)dealloc
 {
+    // FIXME: Bad to do all this work in dealloc. What about under GC?
+
     [self detachHighlight];
 
     ASSERT(!_highlightWindow);

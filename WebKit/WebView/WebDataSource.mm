@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
@@ -76,6 +77,13 @@ using namespace WebCore;
 
 @implementation WebDataSourcePrivate 
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - (void)dealloc
 {
     ASSERT(!loader->isLoading());
@@ -86,6 +94,15 @@ using namespace WebCore;
     [unarchivingState release];
 
     [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT(!loader->isLoading());
+
+    loader->deref();
+
+    [super finalize];
 }
 
 @end

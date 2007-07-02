@@ -308,6 +308,13 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 @implementation WebHTMLViewPrivate
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - (void)dealloc
 {
     ASSERT(autoscrollTimer == nil);
@@ -324,6 +331,16 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->deref(promisedDataClient());
     [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT_MAIN_THREAD();
+
+    if (promisedDragTIFFDataSource)
+        promisedDragTIFFDataSource->deref(promisedDataClient());
+
+    [super finalize];
 }
 
 - (void)clear
