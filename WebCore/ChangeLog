@@ -1,3 +1,18 @@
+2007-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5297146>
+        Crash in Mail at WebCore::Frame::setUserStyleSheetLocation (reproducible w/ particular message)
+        
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        Only insert the resource in the LRU list if the cache is enabled.
+        
+        (WebCore::Cache::insertInLRUList):
+        (WebCore::Cache::resourceAccessed):
+        Assert that the resource is in the cache.
+
 2007-07-01  Darin Adler  <darin@apple.com>
 
         * css/tokenizer.flex: Rolled out the fix for 14453.

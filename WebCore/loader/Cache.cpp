@@ -107,9 +107,12 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         resource = createResource(type, docLoader, url, charset, skipCanLoadCheck, sendResourceLoadCallbacks);
         ASSERT(resource);
         ASSERT(resource->inCache());
-        if (!disabled())
+        if (!disabled()) {
             m_resources.set(url.url(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
-        else {
+            
+            // This will move the resource to the front of its LRU list and increase its access count.
+            resourceAccessed(resource);
+        } else {
             // Kick the resource out of the cache, because the cache is disabled.
             resource->setInCache(false);
             if (resource->errorOccurred()) {
@@ -121,9 +124,6 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
             }
         }
     }
-
-    // This will move the resource to the front of its LRU list and increase its access count.
-    resourceAccessed(resource);
 
     if (resource->type() != type)
         return 0;
@@ -364,7 +364,8 @@ void Cache::insertInLRUList(CachedResource* resource)
 {
     // Make sure we aren't in some list already.
     ASSERT(!resource->m_nextInAllResourcesList && !resource->m_prevInAllResourcesList);
-
+    ASSERT(resource->inCache());
+    
     LRUList* list = lruListFor(resource);
 
     resource->m_nextInAllResourcesList = list->m_head;
@@ -392,6 +393,8 @@ void Cache::insertInLRUList(CachedResource* resource)
 
 void Cache::resourceAccessed(CachedResource* resource)
 {
+    ASSERT(resource->inCache());
+    
     // Need to make sure to remove before we increase the access count, since
     // the queue will possibly change.
     removeFromLRUList(resource);
