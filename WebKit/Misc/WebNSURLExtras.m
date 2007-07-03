@@ -62,7 +62,10 @@ static inline BOOL isLookalikeCharacter(int charCode)
 
 // This function treats the following as unsafe, lookalike characters:
 // any non-printable character, any character considered as whitespace that isn't already converted to a space by ICU, 
-// any ignorable character, and any character excluded in Mozilla's blacklist: http://kb.mozillazine.org/Network.IDN.blacklist_chars
+// and any ignorable character.
+
+// We also considered the characters in Mozilla's blacklist (http://kb.mozillazine.org/Network.IDN.blacklist_chars), 
+// and included all of these characters that ICU can encode.
 
     if (!u_isprint(charCode) || u_isUWhiteSpace(charCode) || u_hasBinaryProperty(charCode, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
         return YES;
