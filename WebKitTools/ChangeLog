@@ -1,3 +1,18 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Eleventh round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        Add functions to test long long and unsigned long long.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController objCLongLongRoundTrip:]):
+        (-[LayoutTestController objCUnsignedLongLongRoundTrip:]):
+
 2007-07-01  Adam Roben  <aroben@apple.com>
 
         Fix some paths to make http tests work again on Windows

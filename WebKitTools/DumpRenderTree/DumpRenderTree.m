@@ -976,7 +976,9 @@ void dump(void)
             || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
             || aSelector == @selector(setUseDashboardCompatibilityMode:)
             || aSelector == @selector(windowCount)
-            || aSelector == @selector(addFileToPasteboardOnDrag))
+            || aSelector == @selector(addFileToPasteboardOnDrag)
+            || aSelector == @selector(objCLongLongRoundTrip:)
+            || aSelector == @selector(objCUnsignedLongLongRoundTrip:))
         return NO;
     return YES;
 }
@@ -1021,6 +1023,10 @@ void dump(void)
         return @"setCloseRemainingWindowsWhenComplete";
     if (aSelector == @selector(setUseDashboardCompatibilityMode:))
         return @"setUseDashboardCompatiblityMode";
+    if (aSelector == @selector(objCLongLongRoundTrip:))
+        return @"objCLongLongRoundTrip";
+    if (aSelector == @selector(objCUnsignedLongLongRoundTrip:))
+        return @"objCUnsignedLongLongRoundTrip";
     
     return nil;
 }
@@ -1380,6 +1386,16 @@ void dump(void)
 - (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
 {
     return a == b;
+}
+
+- (long long)objCLongLongRoundTrip:(long long)num
+{
+    return num;
+}
+
+- (unsigned long long)objCUnsignedLongLongRoundTrip:(unsigned long long)num
+{
+    return num;
 }
 
 @end
