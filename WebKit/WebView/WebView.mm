@@ -463,7 +463,10 @@ static BOOL grammarCheckingEnabled;
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
+
     delete userAgent;
+    delete identifierMap;
+
     [super finalize];
 }
 

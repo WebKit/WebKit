@@ -1,3 +1,10 @@
+2007-07-03  Darin Adler  <darin@apple.com>
+
+        - forgot to check in one file in the fix for <rdar://problem/5307880>
+          some classes need finalize methods because of non-trivial work done in dealloc methods
+
+        * WebView/WebView.mm: (-[WebViewPrivate finalize]): Delete identifierMap so it doesn't leak.
+
 2007-07-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
