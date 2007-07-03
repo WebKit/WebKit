@@ -137,7 +137,7 @@ static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam
 {
     PluginViewWin* pluginView = reinterpret_cast<PluginViewWin*>(GetProp(hWnd, kWebPluginViewProperty));
 
-    if (pluginView && (pluginView->quirks() & PluginQuirksWantsAsciiWindowProc))
+    if (pluginView && (pluginView->quirks() & PluginQuirkWantsAsciiWindowProc))
         return DefWindowProcA(hWnd, message, wParam, lParam);
     else 
         return DefWindowProcW(hWnd, message, wParam, lParam);
@@ -312,7 +312,7 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
     npEvent.event = WM_PAINT;
     npEvent.wParam = reinterpret_cast<uint32>(hdc);
 
-    // This is supposed to be a pointer to the dirty rect, but it seems that the Flash plugin 
+    // This is supposed to be a pointer to the dirty rect, but it seems that the Flash plugin
     // ignores it so we just pass null.
     npEvent.lParam = 0;
 
@@ -535,16 +535,6 @@ static char* createUTF8String(const String& str)
     char* result = reinterpret_cast<char*>(fastMalloc(cstr.length() + 1));
 
     strncpy(result, cstr.data(), cstr.length() + 1);
-
-    return result;
-}
-
-static char** createUTF8StringArray(const Vector<String>& vector)
-{
-    char** result = reinterpret_cast<char**>(fastMalloc(sizeof(char*) * vector.size()));
-
-    for (unsigned i = 0; i < vector.size(); i++)
-        result[i] = createUTF8String(vector[i]);
 
     return result;
 }
@@ -1088,7 +1078,7 @@ void PluginViewWin::invalidateRect(NPRect* rect)
         RECT invalidRect(r);
         InvalidateRect(m_window, &invalidRect, FALSE);
     } else {
-        if (m_quirks & PluginQuirksThrottleInvalidate) {
+        if (m_quirks & PluginQuirkThrottleInvalidate) {
             m_invalidRects.append(r);
             if (!m_invalidateTimer.isActive())
                 m_invalidateTimer.startOneShot(0.0);
@@ -1174,13 +1164,18 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     // The flash plugin only requests windowless plugins if we return a mozilla user agent
     if (mimeType == "application/x-shockwave-flash") {
         m_quirks |= PluginQuirkWantsMozillaUserAgent;
-        m_quirks |= PluginQuirksThrottleInvalidate;
+        m_quirks |= PluginQuirkThrottleInvalidate;
     }
 
     // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so
     // call SetWindow when the plugin view has a correct size
-    if (m_plugin->name().contains("Microsoft") && m_plugin->name().contains("Windows Media"))
+    if (m_plugin->name().contains("Microsoft") && m_plugin->name().contains("Windows Media")) {
         m_quirks |= PluginQuirkDeferFirstSetWindowCall;
+
+        // Windowless mode does not work at all with the WMP plugin so just remove that parameter 
+        // and don't pass it to the plug-in.
+        m_quirks |= PluginQuirkRemoveWindowlessVideoParam;
+    }
 
     // Shockwave calls SetWindowLongA to set a new WNDPROC on its plugin window. The value returned from SetWindowLongA is the old WNDPROC.
     // If the previous WNDPROC was an Unicode WNDPROC, the address of the WNDPROC will not be returned. Instead, a special
@@ -1190,7 +1185,30 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     // WNDPROC on the plugin window so that the value returned to Shockwave will be a real function pointer.
     // For more info on this, see http://blogs.msdn.com/oldnewthing/archive/2003/12/01/55900.aspx
     if (mimeType == "application/x-director")
-        m_quirks |= PluginQuirksWantsAsciiWindowProc;
+        m_quirks |= PluginQuirkWantsAsciiWindowProc;
+}
+
+void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    ASSERT(paramNames.size() == paramValues.size());
+
+    unsigned size = paramNames.size();
+    unsigned paramCount = 0;
+
+    m_paramNames = reinterpret_cast<char**>(fastMalloc(sizeof(char*) * size));
+    m_paramValues = reinterpret_cast<char**>(fastMalloc(sizeof(char*) * size));
+
+    for (unsigned i = 0; i < size; i++) {
+        if ((m_quirks & PluginQuirkRemoveWindowlessVideoParam) && equalIgnoringCase(paramNames[i], "windowlessvideo"))
+            continue;
+
+        m_paramNames[paramCount] = createUTF8String(paramNames[i]);
+        m_paramValues[paramCount] = createUTF8String(paramValues[i]);
+
+        paramCount++;
+    }
+
+    m_paramCount = paramCount;
 }
 
 PluginViewWin::PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
@@ -1221,14 +1239,12 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Eleme
     m_instance->ndata = this;
 
     m_mimeType = mimeType.utf8();
+    determineQuirks(mimeType);
 
-    m_paramCount = paramNames.size();
-    m_paramNames = createUTF8StringArray(paramNames);
-    m_paramValues = createUTF8StringArray(paramValues);
+    setParameters(paramNames, paramValues);
 
     m_mode = element->document()->isPluginDocument() ? NP_FULL : NP_EMBED;
 
-    determineQuirks(mimeType);
 }
 
 void PluginViewWin::init()
@@ -1263,7 +1279,7 @@ void PluginViewWin::init()
         m_window = CreateWindowEx(0, kWebPluginViewWindowClassName, 0, flags,
                                   0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
 
-        if (m_quirks & PluginQuirksWantsAsciiWindowProc)
+        if (m_quirks & PluginQuirkWantsAsciiWindowProc)
             ::SetWindowLongPtrA(m_window, GWL_WNDPROC, (LONG)PluginViewWndProc);
 
         SetProp(m_window, kWebPluginViewProperty, this);

@@ -62,8 +62,9 @@ namespace WebCore {
     enum PluginQuirks {
         PluginQuirkWantsMozillaUserAgent = 1 << 0,
         PluginQuirkDeferFirstSetWindowCall = 1 << 1,
-        PluginQuirksThrottleInvalidate = 1 << 2, 
-        PluginQuirksWantsAsciiWindowProc = 1 << 3
+        PluginQuirkThrottleInvalidate = 1 << 2, 
+        PluginQuirkWantsAsciiWindowProc = 1 << 3,
+        PluginQuirkRemoveWindowlessVideoParam = 1 << 4,
     };
 
     enum PluginStatus {
@@ -126,6 +127,7 @@ namespace WebCore {
 
         int quirks() const { return m_quirks; }
     private:
+        void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         void init();
         bool start();
         void stop();

@@ -1,3 +1,26 @@
+2007-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5261523>
+        Crash playing MP11 on cnbc.com
+        
+        The WMP Netscape plugin still creates a window even when windowless mode is turned on. Work around this by
+        always removing the "windowlessvideo" parameter before passing it to the plugin.
+        According to http://msdn2.microsoft.com/en-us/library/bb249373.aspx, "The windowlessVideo property is not 
+        supported for Netscape Navigator. Setting a value for this property in Navigator may yield unexpected results."
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWndProc):
+        (WebCore::PluginViewWin::paint):
+        (WebCore::PluginViewWin::invalidateRect):
+        (WebCore::PluginViewWin::determineQuirks):
+        (WebCore::PluginViewWin::setParameters):
+        (WebCore::PluginViewWin::PluginViewWin):
+        (WebCore::PluginViewWin::init):
+        * plugins/win/PluginViewWin.h:
+        (WebCore::):
+
 2007-07-03  Qing Zhao  <qing@staikos.net>
 
         Reviewed by George Staikos.
