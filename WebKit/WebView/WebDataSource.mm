@@ -61,18 +61,15 @@
 
 using namespace WebCore;
 
-@interface WebDataSourcePrivate : NSObject
-{
-    @public
-    
-    WebDocumentLoaderMac *loader;
+@interface WebDataSourcePrivate : NSObject {
+@public
+    WebDocumentLoaderMac* loader;
    
     id <WebDocumentRepresentation> representation;
     
     WebUnarchivingState *unarchivingState;
     BOOL representationFinishedLoading;
 }
-
 @end
 
 @implementation WebDataSourcePrivate 
@@ -87,7 +84,7 @@ using namespace WebCore;
 - (void)dealloc
 {
     ASSERT(!loader->isLoading());
-
+    loader->detachDataSource();
     loader->deref();
     
     [representation release];
@@ -98,8 +95,10 @@ using namespace WebCore;
 
 - (void)finalize
 {
-    ASSERT(!loader->isLoading());
+    ASSERT_MAIN_THREAD();
 
+    ASSERT(!loader->isLoading());
+    loader->detachDataSource();
     loader->deref();
 
     [super finalize];

@@ -1,5 +1,43 @@
 2007-07-03  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5310848> WebDataSource lifetime problem -- may be cause of the leaks seen on the buildbot
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSourcePrivate dealloc]): Added a call to the new detachDataSource function.
+        (-[WebDataSourcePrivate finalize]): Ditto.
+
+        * WebView/WebDocumentLoaderMac.h: Added detachDataSource function to be used when the
+        WebDataSource is deallocated. Added retain/releaseDataSource helper functions to be
+        used to retain and release the data source object. Replaced the m_hasEverBeenDetached
+        boolean with a more primitive and hence easier to understand m_isDataSourceRetained boolean.
+
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac): Initialize m_isDataSourceRetained to false.
+        (WebDocumentLoaderMac::setDataSource): Call retainDataSource instead of calling HardRetain
+        on the dataSource parameter. Also updated a comment.
+        (WebDocumentLoaderMac::attachToFrame): Call retainDataSource unconditionally rather than
+        trying to use m_hasEverBeenDetached to decide if a retain is needed. Also got rid of an
+        assertion that m_loadingResources is empty -- not important any more.
+        (WebDocumentLoaderMac::detachFromFrame): Call releaseDataSource instead of using
+        HardRelease, but only if m_loadingResources is empty. If it's non-empty, then we'll
+        do the releaseDataSource later in decreaseLoadCount.
+        (WebDocumentLoaderMac::increaseLoadCount): Call retainDataSource unconditionally
+        rather than calling HardRetain only if the old set of resources was empty.
+        (WebDocumentLoaderMac::decreaseLoadCount): Call releaseDataSource if m_loadingResources
+        is empty and we're not attached to a frame. If we are attached to a frame, then
+        we'll do the releaseDataSource later in detachFromFrame.
+        (WebDocumentLoaderMac::retainDataSource): Added. Calls CFRetain, but only if the data
+        source is not already retained (according to the boolean).
+        (WebDocumentLoaderMac::releaseDataSource): Added. Calls CFRelease, but only if the data
+        source is currently retained (according to the boolean).
+        (WebDocumentLoaderMac::detachDataSource): Added. Sets m_dataSource to nil. Since this
+        is only called from WebDataSource's dealloc and finalize methods, it won't ever be called
+        when the m_isDataSourceRetained boolean is true.
+
+2007-07-03  Darin Adler  <darin@apple.com>
+
         - forgot to check in one file in the fix for <rdar://problem/5307880>
           some classes need finalize methods because of non-trivial work done in dealloc methods
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,6 @@
 
 #import "WebDocumentLoaderMac.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebCore/SubstituteData.h>
-#import <WebCore/FoundationExtras.h>
-
 #import "WebView.h"
 
 using namespace WebCore;
@@ -39,7 +35,7 @@ using namespace WebCore;
 WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
     , m_dataSource(nil)
-    , m_hasEverBeenDetached(false)
+    , m_isDataSourceRetained(false)
 {
 }
 
@@ -60,13 +56,17 @@ static inline bool needsAppKitWorkaround(WebView *webView)
 void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *webView)
 {
     ASSERT(!m_dataSource);
-    HardRetain(dataSource);
+    ASSERT(!m_isDataSourceRetained);
+
     m_dataSource = dataSource;
-    
+    retainDataSource();
+
     m_resourceLoadDelegate = [webView resourceLoadDelegate];
     m_downloadDelegate = [webView downloadDelegate];
     
-    // Possibly work around a bug in Tiger AppKit where timers do not fire sometimes
+    // Work around a bug in Tiger AppKit's use of WebKit. The particular idiom used
+    // won't allow the timer to run, so deferring the main resource load with a timer
+    // causes a delay until something else wakes the run loop.
     // See <rdar://problem/5266289>
     if (needsAppKitWorkaround(webView))
         m_deferMainResourceDataLoad = false;
@@ -80,42 +80,64 @@ WebDataSource *WebDocumentLoaderMac::dataSource() const
 void WebDocumentLoaderMac::attachToFrame()
 {
     DocumentLoader::attachToFrame();
-    ASSERT(m_loadingResources.isEmpty());
 
-    if (m_hasEverBeenDetached)
-        HardRetain(m_dataSource);
+    retainDataSource();
 }
 
 void WebDocumentLoaderMac::detachFromFrame()
 {
     DocumentLoader::detachFromFrame();
-  
-    m_hasEverBeenDetached = true;
-    HardRelease(m_dataSource);
+
+    if (m_loadingResources.isEmpty())
+        releaseDataSource();
+
+    // FIXME: What prevents the data source from getting deallocated while the
+    // frame is not attached?
 }
 
 void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
 {
     ASSERT(m_dataSource);
-    
+
     if (m_loadingResources.contains(identifier))
         return;
-
-    if (m_loadingResources.isEmpty())
-        HardRetain(m_dataSource);
-
     m_loadingResources.add(identifier);
+
+    retainDataSource();
 }
 
 void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
 {
     ASSERT(m_loadingResources.contains(identifier));
-    
     m_loadingResources.remove(identifier);
     
     if (m_loadingResources.isEmpty()) {
         m_resourceLoadDelegate = 0;
         m_downloadDelegate = 0;
-        HardRelease(m_dataSource);
+        if (!frame())
+            releaseDataSource();
     }
+}
+
+void WebDocumentLoaderMac::retainDataSource()
+{
+    if (m_isDataSourceRetained || !m_dataSource)
+        return;
+    m_isDataSourceRetained = true;
+    CFRetain(m_dataSource);
+}
+
+void WebDocumentLoaderMac::releaseDataSource()
+{
+    if (!m_isDataSourceRetained)
+        return;
+    ASSERT(m_dataSource);
+    m_isDataSourceRetained = false;
+    CFRelease(m_dataSource);
+}
+
+void WebDocumentLoaderMac::detachDataSource()
+{
+    ASSERT(!m_isDataSourceRetained);
+    m_dataSource = nil;
 }

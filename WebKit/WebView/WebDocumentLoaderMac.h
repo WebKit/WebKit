@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,12 +37,12 @@ namespace WebCore {
     class ResourceRequest;
 }
 
-class WebDocumentLoaderMac : public WebCore::DocumentLoader
-{
+class WebDocumentLoaderMac : public WebCore::DocumentLoader {
 public:
     WebDocumentLoaderMac(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     void setDataSource(WebDataSource *, WebView*);
+    void detachDataSource();
     WebDataSource *dataSource() const;
 
     virtual void attachToFrame();
@@ -50,10 +50,14 @@ public:
 
     void increaseLoadCount(unsigned long identifier);
     void decreaseLoadCount(unsigned long identifier);
+
 private:
+    void retainDataSource();
+    void releaseDataSource();
+
     WebDataSource *m_dataSource;
+    bool m_isDataSourceRetained;
     RetainPtr<id> m_resourceLoadDelegate;
     RetainPtr<id> m_downloadDelegate;
-    bool m_hasEverBeenDetached;
     HashSet<unsigned long> m_loadingResources;
 };
