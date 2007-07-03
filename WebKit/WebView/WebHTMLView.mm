@@ -6015,7 +6015,7 @@ BOOL isTextInput(Frame *coreFrame)
     return nil;
 }
 
-- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
+- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit
 {
     return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
 }

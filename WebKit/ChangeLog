@@ -1,3 +1,12 @@
+2007-07-04  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed 64-bit build fixes.
+
+        * WebCoreSupport/WebInspectorClient.mm: Let the compiler know that WebFrameView is a subclass of NSView.
+        * WebView/WebDocumentInternal.h: Remove our preprocessor macro once we're done with it.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]): Fix argument types.
+
 2007-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker and Tim Hatcher.
