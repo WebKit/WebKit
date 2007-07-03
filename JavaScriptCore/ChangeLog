@@ -1,5 +1,18 @@
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin.
+
+        Eleventh round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Fixes a real bug where where we were setting long long and unsigned long long
+          values to a long field.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         Tenth round of fixes for implicit 64-32 bit conversion errors.

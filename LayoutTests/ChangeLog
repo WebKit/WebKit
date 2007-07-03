@@ -1,3 +1,14 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Eleventh round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        * fast/objc: Added.
+        * fast/objc/longlongTest-expected.txt: Added.
+        * fast/objc/longlongTest.html: Added.
+
 2007-07-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

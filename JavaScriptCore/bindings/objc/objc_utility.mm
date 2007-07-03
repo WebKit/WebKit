@@ -172,7 +172,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             break;
         case ObjcLongLongType:
         case ObjcUnsignedLongLongType:
-            result.longValue = (long long)d;
+            result.longLongValue = (long long)d;
             break;
         case ObjcFloatType:
             result.floatValue = (float)d;
