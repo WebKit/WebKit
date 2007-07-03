@@ -1,3 +1,25 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Twelfth round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Add casts and accompanying FIXMEs to avoid remaining compiler errors.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse):
+
 2007-07-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

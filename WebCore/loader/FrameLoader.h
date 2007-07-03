@@ -258,7 +258,7 @@ namespace WebCore {
 
         bool isQuickRedirectComing() const;
 
-        void sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse&, unsigned length, const ResourceError&);
+        void sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
         void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
         void loadedResourceFromMemoryCache(const ResourceRequest&, const ResourceResponse&, int length);
 

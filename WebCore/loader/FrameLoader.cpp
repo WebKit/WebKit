@@ -3279,7 +3279,10 @@ void FrameLoader::opened()
             unsigned long identifier;
             ResourceRequest request(response.url());
             requestFromDelegate(request, identifier, error);
-            sendRemainingDelegateMessages(identifier, response, response.expectedContentLength(), error);
+            // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
+            // However, with today's computers and networking speeds, this won't happen in practice.
+            // Could be an issue with a giant local file.
+            sendRemainingDelegateMessages(identifier, response, static_cast<int>(response.expectedContentLength()), error);
         }
         
         pageCache()->remove(m_currentHistoryItem.get());
@@ -3472,7 +3475,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
-void FrameLoader::sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse& response, unsigned length, const ResourceError& error)
+void FrameLoader::sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse& response, int length, const ResourceError& error)
 {    
     if (!response.isNull())
         dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);

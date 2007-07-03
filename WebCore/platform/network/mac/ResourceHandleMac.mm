@@ -347,8 +347,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     if (!m_handle)
         return;
+    // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
+    // However, with today's computers and networking speeds, this won't happen in practice.
+    // Could be an issue with a giant local file.
     ++inNSURLConnectionCallback;
-    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], lengthReceived);
+    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], static_cast<int>(lengthReceived));
     --inNSURLConnectionCallback;
 }
 
@@ -356,8 +359,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     if (!m_handle)
         return;
+    // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
+    // However, with today's computers and networking speeds, this won't happen in practice.
+    // Could be an issue with a giant local file.
     ++inNSURLConnectionCallback;
-    m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], [data length]);
+    m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<int>([data length]));
     --inNSURLConnectionCallback;
 }
 

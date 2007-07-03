@@ -211,8 +211,11 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
     RefPtr<ResourceLoader> protector(this);
 
     addData(data, length, allAtOnce);
+    // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
+    // However, with today's computers and networking speeds, this won't happen in practice.
+    // Could be an issue with a giant local file.
     if (m_sendResourceLoadCallbacks && m_frame)
-        frameLoader()->didReceiveData(this, data, length, lengthReceived);
+        frameLoader()->didReceiveData(this, data, length, static_cast<int>(lengthReceived));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
