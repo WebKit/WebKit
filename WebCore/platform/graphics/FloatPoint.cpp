@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #include "FloatPoint.h"
 
 #include "AffineTransform.h"
+#include "FloatConversion.h"
 #include "IntPoint.h"
 
 namespace WebCore {
@@ -39,8 +40,13 @@ FloatPoint::FloatPoint(const IntPoint& p) : m_x(p.x()), m_y(p.y())
 FloatPoint FloatPoint::matrixTransform(const AffineTransform& transform) const
 {
     double newX, newY;
-    transform.map((double)m_x, (double)m_y, &newX, &newY);
-    return FloatPoint(newX, newY);
+    transform.map(static_cast<double>(m_x), static_cast<double>(m_y), &newX, &newY);
+    return narrowPrecision(newX, newY);
+}
+
+FloatPoint FloatPoint::narrowPrecision(double x, double y)
+{
+    return FloatPoint(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y));
 }
 
 }

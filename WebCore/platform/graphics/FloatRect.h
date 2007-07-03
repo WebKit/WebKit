@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,8 @@ public:
     FloatRect(float x, float y, float width, float height)
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
     FloatRect(const IntRect&);
+
+    static FloatRect narrowPrecision(double x, double y, double width, double height);
 
     FloatPoint location() const { return m_location; }
     FloatSize size() const { return m_size; }

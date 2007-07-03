@@ -66,7 +66,7 @@ void Icon::paint(GraphicsContext* context, const IntRect& rect)
 
     [m_nsImage.get() drawInRect:rect
         fromRect:NSMakeRect(0, 0, [m_nsImage.get() size].width, [m_nsImage.get() size].height)
-        operation:NSCompositeSourceOver fraction:1.0];
+        operation:NSCompositeSourceOver fraction:1.0f];
 }
 
 }

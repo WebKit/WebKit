@@ -68,15 +68,15 @@ NSColor* nsColor(const Color& color)
                     return cachedColors[i].get();
 
 #ifdef COLORMATCH_EVERYTHING
-            NSColor* result = [NSColor colorWithCalibratedRed:color.red() / 255.0
-                                                        green:color.green() / 255.0
-                                                         blue:color.blue() / 255.0
-                                                        alpha:color.alpha() /255.0];
+            NSColor* result = [NSColor colorWithCalibratedRed:color.red() / 255.0f
+                                                        green:color.green() / 255.0f
+                                                         blue:color.blue() / 255.0f
+                                                        alpha:color.alpha() /255.0f];
 #else
-            NSColor* result = [NSColor colorWithDeviceRed:color.red() / 255.0
-                                                    green:color.green() / 255.0
-                                                     blue:color.blue() / 255.0
-                                                    alpha:color.alpha() /255.0];
+            NSColor* result = [NSColor colorWithDeviceRed:color.red() / 255.0f
+                                                    green:color.green() / 255.0f
+                                                     blue:color.blue() / 255.0f
+                                                    alpha:color.alpha() /255.0f];
 #endif
 
             static int cursor;

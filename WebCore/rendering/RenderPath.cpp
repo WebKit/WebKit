@@ -28,15 +28,16 @@
 
 #include <math.h>
 
+#include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
-#include "RenderSVGContainer.h"
 #include "PointerEventsHitRules.h"
+#include "RenderSVGContainer.h"
 #include "SVGPaintServer.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
-#include "SVGResourceMasker.h"
 #include "SVGResourceMarker.h"
+#include "SVGResourceMasker.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 
@@ -72,7 +73,7 @@ FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
     double localX;
     double localY;
     absoluteTransform().inverse().map(point.x(), point.y(), &localX, &localY);
-    return FloatPoint(localX, localY);
+    return FloatPoint::narrowPrecision(localX, localY);
 }
 
 bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const

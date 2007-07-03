@@ -30,11 +30,12 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include "CgSupport.h"
 
+#include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
 #include "RenderStyle.h"
-#include <wtf/Assertions.h>
 #include "SVGRenderStyle.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const RenderObject* object)
 {
     /* Shouldn't all these be in the stroke painter? */
-    CGContextSetLineWidth(context, KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
+    CGContextSetLineWidth(context, narrowPrecisionToCGFloat(KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0)));
 
     CGContextSetLineCap(context, CGLineCapFromKC(style->svgStyle()->capStyle()));
     CGContextSetLineJoin(context, CGLineJoinFromKC(style->svgStyle()->joinStyle()));
@@ -63,7 +64,7 @@ void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const R
     const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
     double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
 
-    CGContextSetLineDash(context, dashOffset, dashes.data(), dashes.size());
+    CGContextSetLineDash(context, narrowPrecisionToCGFloat(dashOffset), dashes.data(), dashes.size());
 }
 
 CGContextRef scratchContext()

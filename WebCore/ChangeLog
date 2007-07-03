@@ -1,3 +1,54 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Seventh round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Adds more narrowPrecision functions to FloatPoint, FloatSize and FloatRect.
+        - Changes over more implicit conversions to use new functions.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::matrixTransform):
+        (WebCore::FloatPoint::narrowPrecision):
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::narrowPrecision):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::narrowPrecision):
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::createRoundedRectangle):
+        (WebCore::Path::createRectangle):
+        (WebCore::Path::createEllipse):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::paint):
+        * platform/graphics/svg/cg/CgSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+        (WebCore::SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation):
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::applyLuminanceToAlphaFilter):
+        (WebCore::applyExpandAlphatoGrayscaleFilter):
+        (WebCore::transformImageIntoGrayscaleMask):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::mapAbsolutePointToLocal):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::calcViewport):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::relativeBBox):
+
 2007-07-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

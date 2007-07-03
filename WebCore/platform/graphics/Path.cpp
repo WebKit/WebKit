@@ -35,7 +35,7 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 
-const double QUARTER = 0.552; // approximation of control point positions on a bezier
+const float QUARTER = 0.552f; // approximation of control point positions on a bezier
                               // to simulate a quarter of a circle.
 namespace WebCore {
 
@@ -111,29 +111,29 @@ float Path::normalAngleAtLength(float length, bool& ok)
 Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& roundingRadii)
 {
     Path path;
-    double x = rectangle.x();
-    double y = rectangle.y();
-    double width = rectangle.width();
-    double height = rectangle.height();
-    double rx = roundingRadii.width();
-    double ry = roundingRadii.height();
+    float x = rectangle.x();
+    float y = rectangle.y();
+    float width = rectangle.width();
+    float height = rectangle.height();
+    float rx = roundingRadii.width();
+    float ry = roundingRadii.height();
     if (width <= 0.0f || height <= 0.0f)
         return path;
 
-    double dx = rx, dy = ry;
+    float dx = rx, dy = ry;
     // If rx is greater than half of the width of the rectangle
     // then set rx to half of the width (required in SVG spec)
-    if (dx > width * 0.5)
-        dx = width * 0.5;
+    if (dx > width * 0.5f)
+        dx = width * 0.5f;
 
     // If ry is greater than half of the height of the rectangle
     // then set ry to half of the height (required in SVG spec)
-    if (dy > height * 0.5)
-        dy = height * 0.5;
+    if (dy > height * 0.5f)
+        dy = height * 0.5f;
 
     path.moveTo(FloatPoint(x + dx, y));
 
-    if (dx < width * 0.5)
+    if (dx < width * 0.5f)
         path.addLineTo(FloatPoint(x + width - rx, y));
 
     path.addBezierCurveTo(FloatPoint(x + width - dx * (1 - QUARTER), y), FloatPoint(x + width, y + dy * (1 - QUARTER)), FloatPoint(x + width, y + dy));
@@ -203,11 +203,11 @@ Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& t
 Path Path::createRectangle(const FloatRect& rectangle)
 {
     Path path;
-    double x = rectangle.x();
-    double y = rectangle.y();
-    double width = rectangle.width();
-    double height = rectangle.height();
-    if (width <= 0.0 || height <= 0.0)
+    float x = rectangle.x();
+    float y = rectangle.y();
+    float width = rectangle.width();
+    float height = rectangle.height();
+    if (width <= 0.0f || height <= 0.0f)
         return path;
     
     path.moveTo(FloatPoint(x, y));
@@ -221,13 +221,14 @@ Path Path::createRectangle(const FloatRect& rectangle)
 
 Path Path::createEllipse(const FloatPoint& center, float rx, float ry)
 {
-    double cx = center.x();
-    double cy = center.y();
+    float cx = center.x();
+    float cy = center.y();
     Path path;
-    if (rx <= 0.0 || ry <= 0.0)
+    if (rx <= 0.0f || ry <= 0.0f)
         return path;
 
-    double x = cx, y = cy;
+    float x = cx;
+    float y = cy;
 
     unsigned step = 0, num = 100;
     bool running = true;
@@ -239,9 +240,9 @@ Path Path::createEllipse(const FloatPoint& center, float rx, float ry)
             break;
         }
 
-        double angle = static_cast<double>(step) / static_cast<double>(num) * 2.0 * piDouble;
-        x = cx + cos(angle) * rx;
-        y = cy + sin(angle) * ry;
+        float angle = static_cast<float>(step) / static_cast<float>(num) * 2.0f * piFloat;
+        x = cx + cosf(angle) * rx;
+        y = cy + sinf(angle) * ry;
 
         step++;
         if (step == 1)

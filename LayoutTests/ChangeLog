@@ -1,3 +1,30 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Seventh round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Change from double -> float caused some slight changes.
+
+        * svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt:
+
 2007-07-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

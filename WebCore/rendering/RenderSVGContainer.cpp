@@ -265,23 +265,23 @@ void RenderSVGContainer::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        double x = 0.;
-        double y = 0.;
+        float x = 0.0f;
+        float y = 0.0f;
         if (parent()->isSVGContainer()) {
             x = svg->x().value();
             y = svg->y().value();
         }
-        double w = svg->width().value();
-        double h = svg->height().value();
+        float w = svg->width().value();
+        float h = svg->height().value();
         m_viewport = FloatRect(x, y, w, h);
     } else if (svgelem->hasTagName(SVGNames::markerTag)) {
         if (!selfNeedsLayout())
             return;
 
         SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(element());
-        double w = svg->markerWidth().value();
-        double h = svg->markerHeight().value();
-        m_viewport = FloatRect(0, 0, w, h);
+        float w = svg->markerWidth().value();
+        float h = svg->markerHeight().value();
+        m_viewport = FloatRect(0.0f, 0.0f, w, h);
     }
 }
 

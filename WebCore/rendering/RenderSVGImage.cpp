@@ -27,15 +27,16 @@
 #include "RenderSVGImage.h"
 
 #include "Attr.h"
+#include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
+#include "SVGImageElement.h"
+#include "SVGImageElement.h"
+#include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
-#include "SVGLength.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGImageElement.h"
-#include "SVGImageElement.h"
 
 namespace WebCore {
 
@@ -215,7 +216,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         translationForAttributes().inverse().map(localX, localY, &localX, &localY);
 
         if (hitRules.canHitFill) {
-            if (FloatRect(0, 0, m_width, m_height).contains(localX, localY)) {
+            if (FloatRect(0.0f, 0.0f, m_width, m_height).contains(narrowPrecisionToFloat(localX), narrowPrecisionToFloat(localY))) {
                 updateHitTestResult(result, IntPoint(_x, _y));
                 return true;
             }

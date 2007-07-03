@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FloatRect.h"
 
+#include "FloatConversion.h"
 #include "IntRect.h"
 #include <algorithm>
 
@@ -37,6 +38,11 @@ namespace WebCore {
 
 FloatRect::FloatRect(const IntRect& r) : m_location(r.location()), m_size(r.size())
 {
+}
+
+FloatRect FloatRect::narrowPrecision(double x, double y, double width, double height)
+{
+    return FloatRect(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y), narrowPrecisionToFloat(width), narrowPrecisionToFloat(height));
 }
 
 bool FloatRect::intersects(const FloatRect& other) const

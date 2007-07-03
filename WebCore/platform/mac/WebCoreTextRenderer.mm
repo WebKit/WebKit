@@ -43,7 +43,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     // Safari doesn't flip the NSGraphicsContext before calling WebKit, yet WebCore requires a flipped graphics context.
     BOOL flipped = [nsContext isFlipped];
     if (!flipped)
-        CGContextScaleCTM(cgContext, 1.0, -1.0);
+        CGContextScaleCTM(cgContext, 1.0f, -1.0f);
     
     FontPlatformData f(font);
     Font renderer(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
@@ -55,7 +55,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     graphicsContext.setFillColor(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
     renderer.drawText(&graphicsContext, run, style, FloatPoint(point.x, (flipped ? point.y : (-1.0f * point.y))));
     if (!flipped)
-        CGContextScaleCTM(cgContext, 1.0, -1.0);
+        CGContextScaleCTM(cgContext, 1.0f, -1.0f);
 }
 
 float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* font)

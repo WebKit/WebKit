@@ -1533,7 +1533,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::MoveBy:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
-      r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      r.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (screenRect(page->mainFrame()->view()).contains(r))
         page->chrome()->setWindowRect(r);
@@ -1544,7 +1544,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       FloatRect r = page->chrome()->windowRect();
       FloatRect sr = screenRect(page->mainFrame()->view());
       r.setLocation(sr.location());
-      r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      r.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (sr.contains(r))
         page->chrome()->setWindowRect(r);
@@ -1553,7 +1553,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::ResizeBy:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
-      FloatSize dest = r.size() + FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      FloatSize dest = r.size() + FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
       FloatRect sg = screenRect(page->mainFrame()->view());
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
@@ -1564,7 +1564,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::ResizeTo:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
-      FloatSize dest = FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      FloatSize dest = FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
       FloatRect sg = screenRect(page->mainFrame()->view());
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&

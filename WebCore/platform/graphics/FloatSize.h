@@ -50,7 +50,9 @@ public:
     FloatSize() : m_width(0), m_height(0) { }
     FloatSize(float width, float height) : m_width(width), m_height(height) { }
     FloatSize(const IntSize&);
-    
+
+    static FloatSize narrowPrecision(double width, double height);
+
     float width() const { return m_width; }
     float height() const { return m_height; }
 
