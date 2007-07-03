@@ -1,3 +1,15 @@
+2007-07-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for REGRESSION: misplaced selection ring remains after link is no longer focused.
+        <rdar://problem/5205580>
+
+        * fast/repaint/focus-layers-expected.checksum: Added.
+        * fast/repaint/focus-layers-expected.png: Added.
+        * fast/repaint/focus-layers-expected.txt: Added.
+        * fast/repaint/focus-layers.html: Added.
+
 2007-07-02  Adam Roben  <aroben@apple.com>
 
         Update the Windows Skipped list.

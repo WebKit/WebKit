@@ -2274,9 +2274,11 @@ void RenderObject::setStyle(RenderStyle* style)
             && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
 
         // reset style flags
-        m_floating = false;
-        m_positioned = false;
-        m_relPositioned = false;
+        if (d == RenderStyle::Layout) {
+            m_floating = false;
+            m_positioned = false;
+            m_relPositioned = false;
+        }
         m_paintBackground = false;
         m_hasOverflowClip = false;
     }

@@ -689,8 +689,17 @@ void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int
             graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
 
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-            if (!curr->isText() && !curr->isListMarker())
-                curr->addFocusRingRects(graphicsContext, tx + curr->xPos(), ty + curr->yPos());
+            if (!curr->isText() && !curr->isListMarker()) {
+                int x = 0;
+                int y = 0;
+                if (curr->layer()) 
+                    curr->absolutePosition(x, y);
+                else {
+                    x = tx + curr->xPos();
+                    y = ty + curr->yPos();
+                }
+                curr->addFocusRingRects(graphicsContext, x, y);
+            }
     }
 
     if (continuation()) {

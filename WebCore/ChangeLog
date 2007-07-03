@@ -1,6 +1,22 @@
 2007-07-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
+        
+        REGRESSION: misplaced selection ring remains after link is no longer focused.
+        <rdar://problem/5205580>
+        
+        Fix placement of selection ring when part of the ring is in a different layer.
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::addFocusRingRects): Get coordinates right when moving to a different layer.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): 
+        Don't reset state variables when not necessary.  When repaint() was called at the end of setSyle() it would
+        get repaint rects wrong in some cases.
+
+2007-07-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
 
         Blind fix for CrashTracer: [USER] 25 crashes in Safari at com.apple.WebCore: WebCore::Frame::document const + 6
         <rdar://problem/5263939>
