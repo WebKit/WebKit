@@ -91,10 +91,10 @@ namespace WebCore {
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
-        double getEndTime() const;
-        double getStartTime() const;
-        double getCurrentTime() const;
-        double getSimpleDuration(ExceptionCode&) const;
+        float getEndTime() const;
+        float getStartTime() const;
+        float getCurrentTime() const;
+        float getSimpleDuration(ExceptionCode&) const;
     
         virtual void parseMappedAttribute(MappedAttribute* attr);
 

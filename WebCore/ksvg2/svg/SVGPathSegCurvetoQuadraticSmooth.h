@@ -27,48 +27,46 @@
 
 #include "SVGPathSeg.h"
 
-namespace WebCore
-{
-    class SVGPathSegCurvetoQuadraticSmoothAbs : public SVGPathSeg
-    { 
+namespace WebCore {
+
+    class SVGPathSegCurvetoQuadraticSmoothAbs : public SVGPathSeg {
     public:
-        SVGPathSegCurvetoQuadraticSmoothAbs(double x, double y);
+        SVGPathSegCurvetoQuadraticSmoothAbs(float x, float y);
         virtual ~SVGPathSegCurvetoQuadraticSmoothAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS; }
         virtual String pathSegTypeAsLetter() const { return "T"; }
         virtual String toString() const { return String::format("T %.6lg %.6lg", m_x, m_y); }
 
-        void setX(double);
-        double x() const;
+        void setX(float);
+        float x() const;
 
-        void setY(double);
-        double y() const;
+        void setY(float);
+        float y() const;
 
     private:
-        double m_x;
-        double m_y;
+        float m_x;
+        float m_y;
     };
 
-    class SVGPathSegCurvetoQuadraticSmoothRel : public SVGPathSeg 
-    { 
+    class SVGPathSegCurvetoQuadraticSmoothRel : public SVGPathSeg {
     public:
-        SVGPathSegCurvetoQuadraticSmoothRel(double x, double y);
+        SVGPathSegCurvetoQuadraticSmoothRel(float x, float y);
         virtual ~SVGPathSegCurvetoQuadraticSmoothRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
         virtual String pathSegTypeAsLetter() const { return "t"; }
         virtual String toString() const { return String::format("t %.6lg %.6lg", m_x, m_y); }
 
-        void setX(double);
-        double x() const;
+        void setX(float);
+        float x() const;
 
-        void setY(double);
-        double y() const;
+        void setY(float);
+        float y() const;
 
     private:
-        double m_x;
-        double m_y;
+        float m_x;
+        float m_y;
     };
 
 } // namespace WebCore

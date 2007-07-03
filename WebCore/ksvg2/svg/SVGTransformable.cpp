@@ -24,8 +24,9 @@
 #if ENABLE(SVG)
 #include "SVGTransformable.h"
 
-#include "RegularExpression.h"
 #include "AffineTransform.h"
+#include "FloatConversion.h"
+#include "RegularExpression.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
@@ -166,28 +167,28 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
 
         switch (type) {
             case SVGTransform::SVG_TRANSFORM_SKEWX:
-               t.setSkewX(x[0]);
+               t.setSkewX(narrowPrecisionToFloat(x[0]));
                 break;
             case SVGTransform::SVG_TRANSFORM_SKEWY:
-               t.setSkewY(x[0]);
+               t.setSkewY(narrowPrecisionToFloat(x[0]));
                 break;
             case SVGTransform::SVG_TRANSFORM_SCALE:
                   if (nr == 1) // Spec: if only one param given, assume uniform scaling
-                      t.setScale(x[0], x[0]);
+                      t.setScale(narrowPrecisionToFloat(x[0]), narrowPrecisionToFloat(x[0]));
                   else
-                      t.setScale(x[0], x[1]);
+                      t.setScale(narrowPrecisionToFloat(x[0]), narrowPrecisionToFloat(x[1]));
                 break;
             case SVGTransform::SVG_TRANSFORM_TRANSLATE:
                   if (nr == 1) // Spec: if only one param given, assume 2nd param to be 0
-                      t.setTranslate(x[0], 0);
+                      t.setTranslate(narrowPrecisionToFloat(x[0]), 0);
                   else
-                      t.setTranslate(x[0], x[1]);
+                      t.setTranslate(narrowPrecisionToFloat(x[0]), narrowPrecisionToFloat(x[1]));
                 break;
             case SVGTransform::SVG_TRANSFORM_ROTATE:
                   if (nr == 1)
-                      t.setRotate(x[0], 0, 0);
+                      t.setRotate(narrowPrecisionToFloat(x[0]), 0, 0);
                   else
-                      t.setRotate(x[0], x[1], x[2]);
+                      t.setRotate(narrowPrecisionToFloat(x[0]), narrowPrecisionToFloat(x[1]), narrowPrecisionToFloat(x[2]));
                 break;
             case SVGTransform::SVG_TRANSFORM_MATRIX:
                 t.setMatrix(AffineTransform(x[0], x[1], x[2], x[3], x[4], x[5]));

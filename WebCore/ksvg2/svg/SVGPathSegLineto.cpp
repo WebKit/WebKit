@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(double x, double y)
+SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(float x, float y)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -40,27 +40,27 @@ SVGPathSegLinetoAbs::~SVGPathSegLinetoAbs()
 {
 }
 
-void SVGPathSegLinetoAbs::setX(double x)
+void SVGPathSegLinetoAbs::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegLinetoAbs::x() const
+float SVGPathSegLinetoAbs::x() const
 {
     return m_x;
 }
 
-void SVGPathSegLinetoAbs::setY(double y)
+void SVGPathSegLinetoAbs::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegLinetoAbs::y() const
+float SVGPathSegLinetoAbs::y() const
 {
     return m_y;
 }
 
-SVGPathSegLinetoRel::SVGPathSegLinetoRel(double x, double y)
+SVGPathSegLinetoRel::SVGPathSegLinetoRel(float x, float y)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -71,22 +71,22 @@ SVGPathSegLinetoRel::~SVGPathSegLinetoRel()
 {
 }
 
-void SVGPathSegLinetoRel::setX(double x)
+void SVGPathSegLinetoRel::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegLinetoRel::x() const
+float SVGPathSegLinetoRel::x() const
 {
     return m_x;
 }
 
-void SVGPathSegLinetoRel::setY(double y)
+void SVGPathSegLinetoRel::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegLinetoRel::y() const
+float SVGPathSegLinetoRel::y() const
 {
     return m_y;
 }

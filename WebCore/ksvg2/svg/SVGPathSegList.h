@@ -27,20 +27,19 @@
 #include "SVGList.h"
 #include "SVGPathSeg.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class Path;
     class SVGElement;
  
-    class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> >
-    {
+    class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
     public:
         SVGPathSegList(const SVGElement* context);
         virtual ~SVGPathSegList();
 
         const SVGElement* context() const;
-        
-        unsigned getPathSegAtLength(double);
+
+        unsigned getPathSegAtLength(float);
         Path toPathData();
 
     private:

@@ -71,7 +71,7 @@ void SVGFitToViewBox::parseViewBox(const String& str)
         if (c < end) // nothing should come after the last, fourth number
             doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
         else
-            setViewBoxBaseValue(FloatRect(x, y, w, h));
+            setViewBoxBaseValue(FloatRect::narrowPrecision(x, y, w, h));
     }
 }
 

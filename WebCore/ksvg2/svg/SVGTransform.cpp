@@ -23,9 +23,11 @@
 #include "config.h"
 #if ENABLE(SVG)
 
+#include "FloatPoint.h"
+#include "FloatSize.h"
 #include "SVGAngle.h"
-#include "SVGTransform.h"
 #include "SVGSVGElement.h"
+#include "SVGTransform.h"
 
 #include <math.h>
 
@@ -100,7 +102,7 @@ void SVGTransform::setTranslate(float tx, float ty)
 
 FloatPoint SVGTransform::translate() const
 {
-    return FloatPoint(m_matrix.e(), m_matrix.f());
+    return FloatPoint::narrowPrecision(m_matrix.e(), m_matrix.f());
 }
 
 void SVGTransform::setScale(float sx, float sy)
@@ -115,7 +117,7 @@ void SVGTransform::setScale(float sx, float sy)
 
 FloatSize SVGTransform::scale() const
 {
-    return FloatSize(m_matrix.a(), m_matrix.d());
+    return FloatSize::narrowPrecision(m_matrix.a(), m_matrix.d());
 }
 
 void SVGTransform::setRotate(float angle, float cx, float cy)

@@ -27,40 +27,38 @@
 
 #include "SVGPathSeg.h"
 
-namespace WebCore
-{
-    class SVGPathSegLinetoHorizontalAbs : public SVGPathSeg
-    {
+namespace WebCore {
+
+    class SVGPathSegLinetoHorizontalAbs : public SVGPathSeg {
     public:
-        SVGPathSegLinetoHorizontalAbs(double x);
+        SVGPathSegLinetoHorizontalAbs(float x);
         virtual ~SVGPathSegLinetoHorizontalAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
         virtual String pathSegTypeAsLetter() const { return "H"; }
         virtual String toString() const { return String::format("H %.6lg", m_x); }
 
-        void setX(double);
-        double x() const;
+        void setX(float);
+        float x() const;
 
     private:
-        double m_x;
+        float m_x;
     };
 
-    class SVGPathSegLinetoHorizontalRel : public SVGPathSeg
-    {
+    class SVGPathSegLinetoHorizontalRel : public SVGPathSeg {
     public:
-        SVGPathSegLinetoHorizontalRel(double x);
+        SVGPathSegLinetoHorizontalRel(float x);
         virtual ~SVGPathSegLinetoHorizontalRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
         virtual String pathSegTypeAsLetter() const { return "h"; }
         virtual String toString() const { return String::format("h %.6lg", m_x); }
 
-        void setX(double);
-        double x() const;
+        void setX(float);
+        float x() const;
 
     private:
-        double m_x;
+        float m_x;
     };
 
 } // namespace WebCore

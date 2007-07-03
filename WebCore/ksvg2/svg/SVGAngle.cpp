@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-const float deg2rad = 0.017453292519943295769; // pi/180
-const float deg2grad = 400.0 / 360.0;
+const float deg2rad = 0.017453292519943295769f; // pi/180
+const float deg2grad = 400.0f / 360.0f;
 
 #define rad2grad deg2grad / deg2rad
 

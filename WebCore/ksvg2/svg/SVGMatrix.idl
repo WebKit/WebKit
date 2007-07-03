@@ -24,27 +24,29 @@
 
 module svg {
 
-    interface [Conditional=SVG, PODType=AffineTransform] SVGMatrix { 
-        attribute float a;
-        attribute float b;
-        attribute float c;
-        attribute float d;
-        attribute float e;
-        attribute float f;
+    interface [Conditional=SVG, PODType=AffineTransform] SVGMatrix {
+        // FIXME: these attributes should all be floats but since we implement
+        // AffineTransform with doubles setting these as doubles makes more sense.
+        attribute double a;
+        attribute double b;
+        attribute double c;
+        attribute double d;
+        attribute double e;
+        attribute double f;
 
         SVGMatrix multiply(in SVGMatrix secondMatrix);
         [Custom] SVGMatrix inverse()
             raises(SVGException);
-        SVGMatrix translate(in float x, in float y);
-        SVGMatrix scale(in float scaleFactor);
-        SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
-        SVGMatrix rotate(in float angle);
-        [Custom] SVGMatrix rotateFromVector(in float x, in float y)
+        SVGMatrix translate(in double x, in double y);
+        SVGMatrix scale(in double scaleFactor);
+        SVGMatrix scaleNonUniform(in double scaleFactorX, in double scaleFactorY);
+        SVGMatrix rotate(in double angle);
+        [Custom] SVGMatrix rotateFromVector(in double x, in double y)
             raises(SVGException);
         SVGMatrix flipX();
         SVGMatrix flipY();
-        SVGMatrix skewX(in float angle);
-        SVGMatrix skewY(in float angle);
+        SVGMatrix skewX(in double angle);
+        SVGMatrix skewY(in double angle);
     };
 
 }

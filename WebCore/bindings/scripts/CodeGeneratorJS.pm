@@ -1286,7 +1286,7 @@ sub GetNativeType
     my $type = shift;
 
     return "unsigned" if $type eq "unsigned long";
-    return $type if $type eq "unsigned short" or $type eq "float" or $type eq "AtomicString";
+    return $type if $type eq "unsigned short" or $type eq "float" or $type eq "double" or $type eq "AtomicString";
     return "bool" if $type eq "boolean";
     return "int" if $type eq "long";
     return "String" if $type eq "DOMString";
@@ -1314,6 +1314,7 @@ sub TypeCanFailConversion
 
     return 0 if $type eq "boolean" or
                 $type eq "float" or
+                $type eq "double" or
                 $type eq "AtomicString" or
                 $type eq "DOMString" or
                 $type eq "Node" or
@@ -1361,7 +1362,7 @@ sub JSValueToNative
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "$value->toBoolean(exec)" if $type eq "boolean";
-    return "$value->toNumber(exec)" if $type eq "SVGNumber";
+    return "$value->toNumber(exec)" if $type eq "double" or $type eq "SVGNumber";
     return "$value->toFloat(exec)" if $type eq "float";
     return "$value->toInt32(exec${maybeOkParam})" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
 

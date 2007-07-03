@@ -26,6 +26,7 @@
 #include "SVGPolyElement.h"
 
 #include "Document.h"
+#include "FloatPoint.h"
 #include "SVGNames.h"
 #include "SVGPointList.h"
 
@@ -84,7 +85,7 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
 void SVGPolyElement::svgPolyTo(double x1, double y1, int) const
 {
     ExceptionCode ec = 0;
-    points()->appendItem(FloatPoint(x1, y1), ec);
+    points()->appendItem(FloatPoint::narrowPrecision(x1, y1), ec);
 }
 
 void SVGPolyElement::notifyAttributeChange() const

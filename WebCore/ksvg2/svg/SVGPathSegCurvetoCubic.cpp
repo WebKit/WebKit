@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs(double x, double y, double x1, double y1, double x2, double y2)
+SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs(float x, float y, float x1, float y1, float x2, float y2)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -44,62 +44,62 @@ SVGPathSegCurvetoCubicAbs::~SVGPathSegCurvetoCubicAbs()
 {
 }
 
-void SVGPathSegCurvetoCubicAbs::setX(double x)
+void SVGPathSegCurvetoCubicAbs::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegCurvetoCubicAbs::x() const
+float SVGPathSegCurvetoCubicAbs::x() const
 {
     return m_x;
 }
 
-void SVGPathSegCurvetoCubicAbs::setY(double y)
+void SVGPathSegCurvetoCubicAbs::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegCurvetoCubicAbs::y() const
+float SVGPathSegCurvetoCubicAbs::y() const
 {
     return m_y;
 }
 
-void SVGPathSegCurvetoCubicAbs::setX1(double x1)
+void SVGPathSegCurvetoCubicAbs::setX1(float x1)
 {
     m_x1 = x1;
 }
 
-double SVGPathSegCurvetoCubicAbs::x1() const
+float SVGPathSegCurvetoCubicAbs::x1() const
 {
     return m_x1;
 }
 
-void SVGPathSegCurvetoCubicAbs::setY1(double y1)
+void SVGPathSegCurvetoCubicAbs::setY1(float y1)
 {
     m_y1 = y1;
 }
 
-double SVGPathSegCurvetoCubicAbs::y1() const
+float SVGPathSegCurvetoCubicAbs::y1() const
 {
     return m_y1;
 }
 
-void SVGPathSegCurvetoCubicAbs::setX2(double x2)
+void SVGPathSegCurvetoCubicAbs::setX2(float x2)
 {
     m_x2 = x2;
 }
 
-double SVGPathSegCurvetoCubicAbs::x2() const
+float SVGPathSegCurvetoCubicAbs::x2() const
 {
     return m_x2;
 }
 
-void SVGPathSegCurvetoCubicAbs::setY2(double y2)
+void SVGPathSegCurvetoCubicAbs::setY2(float y2)
 {
     m_y2 = y2;
 }
 
-double SVGPathSegCurvetoCubicAbs::y2() const
+float SVGPathSegCurvetoCubicAbs::y2() const
 {
     return m_y2;
 }
@@ -107,7 +107,7 @@ double SVGPathSegCurvetoCubicAbs::y2() const
 
 
 
-SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel(double x, double y, double x1, double y1, double x2, double y2)
+SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel(float x, float y, float x1, float y1, float x2, float y2)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -122,62 +122,62 @@ SVGPathSegCurvetoCubicRel::~SVGPathSegCurvetoCubicRel()
 {
 }
 
-void SVGPathSegCurvetoCubicRel::setX(double x)
+void SVGPathSegCurvetoCubicRel::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegCurvetoCubicRel::x() const
+float SVGPathSegCurvetoCubicRel::x() const
 {
     return m_x;
 }
 
-void SVGPathSegCurvetoCubicRel::setY(double y)
+void SVGPathSegCurvetoCubicRel::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegCurvetoCubicRel::y() const
+float SVGPathSegCurvetoCubicRel::y() const
 {
     return m_y;
 }
 
-void SVGPathSegCurvetoCubicRel::setX1(double x1)
+void SVGPathSegCurvetoCubicRel::setX1(float x1)
 {
     m_x1 = x1;
 }
 
-double SVGPathSegCurvetoCubicRel::x1() const
+float SVGPathSegCurvetoCubicRel::x1() const
 {
     return m_x1;
 }
 
-void SVGPathSegCurvetoCubicRel::setY1(double y1)
+void SVGPathSegCurvetoCubicRel::setY1(float y1)
 {
     m_y1 = y1;
 }
 
-double SVGPathSegCurvetoCubicRel::y1() const
+float SVGPathSegCurvetoCubicRel::y1() const
 {
     return m_y1;
 }
 
-void SVGPathSegCurvetoCubicRel::setX2(double x2)
+void SVGPathSegCurvetoCubicRel::setX2(float x2)
 {
     m_x2 = x2;
 }
 
-double SVGPathSegCurvetoCubicRel::x2() const
+float SVGPathSegCurvetoCubicRel::x2() const
 {
     return m_x2;
 }
 
-void SVGPathSegCurvetoCubicRel::setY2(double y2)
+void SVGPathSegCurvetoCubicRel::setY2(float y2)
 {
     m_y2 = y2;
 }
 
-double SVGPathSegCurvetoCubicRel::y2() const
+float SVGPathSegCurvetoCubicRel::y2() const
 {
     return m_y2;
 }

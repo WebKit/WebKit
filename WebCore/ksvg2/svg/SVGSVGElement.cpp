@@ -31,6 +31,8 @@
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FloatConversion.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderSVGContainer.h"
@@ -116,12 +118,14 @@ FloatRect SVGSVGElement::viewport() const
         _x = x().value();
         _y = y().value();
     }
-    double w = width().value();
-    double h = height().value();
+    float w = width().value();
+    float h = height().value();
     AffineTransform viewBox = viewBoxToViewTransform(w, h);
+    double wDouble = w;
+    double hDouble = h;
     viewBox.map(_x, _y, &_x, &_y);
-    viewBox.map(w, h, &w, &h);
-    return FloatRect(_x, _y, w, h);
+    viewBox.map(w, h, &wDouble, &hDouble);
+    return FloatRect::narrowPrecision(_x, _y, wDouble, hDouble);
 }
 
 float SVGSVGElement::pixelUnitToMillimeterX() const
@@ -423,7 +427,7 @@ bool SVGSVGElement::animationsPaused() const
 
 float SVGSVGElement::getCurrentTime() const
 {
-    return m_timeScheduler->elapsed();
+    return narrowPrecisionToFloat(m_timeScheduler->elapsed());
 }
 
 void SVGSVGElement::setCurrentTime(float /* seconds */)

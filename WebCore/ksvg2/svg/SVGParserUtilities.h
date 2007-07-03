@@ -105,15 +105,15 @@ namespace WebCore
         bool parseSVG(const String& d, bool process = false);
 
     protected:
-        virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true) = 0;
-        virtual void svgLineTo(double x1, double y1, bool abs = true) = 0;
-        virtual void svgLineToHorizontal(double x, bool abs = true);
-        virtual void svgLineToVertical(double y, bool abs = true);
-        virtual void svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs = true) = 0;
-        virtual void svgCurveToCubicSmooth(double x, double y, double x2, double y2, bool abs = true);
-        virtual void svgCurveToQuadratic(double x, double y, double x1, double y1, bool abs = true);
-        virtual void svgCurveToQuadraticSmooth(double x, double y, bool abs = true);
-        virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs = true);
+        virtual void svgMoveTo(float x1, float y1, bool closed, bool abs = true) = 0;
+        virtual void svgLineTo(float x1, float y1, bool abs = true) = 0;
+        virtual void svgLineToHorizontal(float x, bool abs = true);
+        virtual void svgLineToVertical(float y, bool abs = true);
+        virtual void svgCurveToCubic(float x1, float y1, float x2, float y2, float x, float y, bool abs = true) = 0;
+        virtual void svgCurveToCubicSmooth(float x, float y, float x2, float y2, bool abs = true);
+        virtual void svgCurveToQuadratic(float x, float y, float x1, float y1, bool abs = true);
+        virtual void svgCurveToQuadraticSmooth(float x, float y, bool abs = true);
+        virtual void svgArcTo(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, bool abs = true);
         virtual void svgClosePath() = 0;
     private:
         void calculateArc(bool relative, double& curx, double& cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag);

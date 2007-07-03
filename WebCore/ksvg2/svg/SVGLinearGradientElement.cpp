@@ -25,10 +25,11 @@
 #if ENABLE(SVG)
 #include "SVGLinearGradientElement.h"
 
+#include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
-#include "SVGPaintServerLinearGradient.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include "SVGPaintServerLinearGradient.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
@@ -83,8 +84,8 @@ void SVGLinearGradientElement::buildGradient() const
     linearGradient->setBoundingBoxMode(attributes.boundingBoxMode());
     linearGradient->setGradientSpreadMethod(attributes.spreadMethod());
     linearGradient->setGradientTransform(attributes.gradientTransform());
-    linearGradient->setGradientStart(FloatPoint(attributes.x1(), attributes.y1()));
-    linearGradient->setGradientEnd(FloatPoint(attributes.x2(), attributes.y2()));
+    linearGradient->setGradientStart(FloatPoint::narrowPrecision(attributes.x1(), attributes.y1()));
+    linearGradient->setGradientEnd(FloatPoint::narrowPrecision(attributes.x2(), attributes.y2()));
 }
 
 LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() const

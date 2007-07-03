@@ -50,7 +50,7 @@ const SVGElement* SVGPathSegList::context() const
     return m_context;
 }
 
-unsigned SVGPathSegList::getPathSegAtLength(double)
+unsigned SVGPathSegList::getPathSegAtLength(float)
 {
     // FIXME : to be useful this will need to support non-normalized SVGPathSegLists
     ExceptionCode ec = 0;

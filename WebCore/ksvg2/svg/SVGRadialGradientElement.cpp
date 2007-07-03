@@ -26,6 +26,7 @@
 #include "SVGRadialGradientElement.h"
 
 #include "FloatConversion.h"
+#include "FloatPoint.h"
 #include "RadialGradientAttributes.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -94,8 +95,8 @@ void SVGRadialGradientElement::buildGradient() const
     radialGradient->setBoundingBoxMode(attributes.boundingBoxMode());
     radialGradient->setGradientSpreadMethod(attributes.spreadMethod()); 
     radialGradient->setGradientTransform(attributes.gradientTransform());
-    radialGradient->setGradientCenter(FloatPoint(attributes.cx(), attributes.cy()));
-    radialGradient->setGradientFocal(FloatPoint(attributes.fx(), attributes.fy()));
+    radialGradient->setGradientCenter(FloatPoint::narrowPrecision(attributes.cx(), attributes.cy()));
+    radialGradient->setGradientFocal(FloatPoint::narrowPrecision(attributes.fx(), attributes.fy()));
     radialGradient->setGradientRadius(narrowPrecisionToFloat(attributes.r()));
 }
 

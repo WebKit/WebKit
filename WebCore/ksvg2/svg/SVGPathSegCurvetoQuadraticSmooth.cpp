@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(double x, double y)
+SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(float x, float y)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -40,29 +40,29 @@ SVGPathSegCurvetoQuadraticSmoothAbs::~SVGPathSegCurvetoQuadraticSmoothAbs()
 {
 }
 
-void SVGPathSegCurvetoQuadraticSmoothAbs::setX(double x)
+void SVGPathSegCurvetoQuadraticSmoothAbs::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegCurvetoQuadraticSmoothAbs::x() const
+float SVGPathSegCurvetoQuadraticSmoothAbs::x() const
 {
     return m_x;
 }
 
-void SVGPathSegCurvetoQuadraticSmoothAbs::setY(double y)
+void SVGPathSegCurvetoQuadraticSmoothAbs::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegCurvetoQuadraticSmoothAbs::y() const
+float SVGPathSegCurvetoQuadraticSmoothAbs::y() const
 {
     return m_y;
 }
 
 
 
-SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(double x, double y)
+SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(float x, float y)
     : SVGPathSeg()
     , m_x(x)
     , m_y(y)
@@ -73,22 +73,22 @@ SVGPathSegCurvetoQuadraticSmoothRel::~SVGPathSegCurvetoQuadraticSmoothRel()
 {
 }
 
-void SVGPathSegCurvetoQuadraticSmoothRel::setX(double x)
+void SVGPathSegCurvetoQuadraticSmoothRel::setX(float x)
 {
     m_x = x;
 }
 
-double SVGPathSegCurvetoQuadraticSmoothRel::x() const
+float SVGPathSegCurvetoQuadraticSmoothRel::x() const
 {
     return m_x;
 }
 
-void SVGPathSegCurvetoQuadraticSmoothRel::setY(double y)
+void SVGPathSegCurvetoQuadraticSmoothRel::setY(float y)
 {
     m_y = y;
 }
 
-double SVGPathSegCurvetoQuadraticSmoothRel::y() const
+float SVGPathSegCurvetoQuadraticSmoothRel::y() const
 {
     return m_y;
 }

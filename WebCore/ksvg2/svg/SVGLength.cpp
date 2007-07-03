@@ -27,12 +27,13 @@
 #include "SVGLength.h"
 
 #include "DeprecatedString.h"
+#include "FloatConversion.h"
 #include "FrameView.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
-#include "SVGParserUtilities.h"
 #include "csshelper.h"
 
 #include <math.h>
@@ -245,7 +246,7 @@ void SVGLength::setValueAsString(const String& s)
     parseNumber(ptr, end, convertedNumber, false);
 
     m_unit = storeUnit(extractMode(m_unit), stringToLengthType(s));
-    m_valueInSpecifiedUnits = convertedNumber;
+    m_valueInSpecifiedUnits = narrowPrecisionToFloat(convertedNumber);
 }
 
 String SVGLength::valueAsString() const

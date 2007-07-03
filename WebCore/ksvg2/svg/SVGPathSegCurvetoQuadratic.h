@@ -27,64 +27,62 @@
 
 #include "SVGPathSeg.h"
 
-namespace WebCore
-{
-    class SVGPathSegCurvetoQuadraticAbs : public SVGPathSeg
-    { 
+namespace WebCore {
+
+    class SVGPathSegCurvetoQuadraticAbs : public SVGPathSeg { 
     public:
-        SVGPathSegCurvetoQuadraticAbs(double x, double y, double x1, double y1);
+        SVGPathSegCurvetoQuadraticAbs(float x, float y, float x1, float y1);
         virtual ~SVGPathSegCurvetoQuadraticAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
         virtual String pathSegTypeAsLetter() const { return "Q"; }
         virtual String toString() const { return String::format("Q %.6lg %.6lg %.6lg %.6lg", m_x1, m_y1, m_x, m_y); }
 
-        void setX(double);
-        double x() const;
+        void setX(float);
+        float x() const;
 
-        void setY(double);
-        double y() const;
+        void setY(float);
+        float y() const;
 
-        void setX1(double);
-        double x1() const;
+        void setX1(float);
+        float x1() const;
 
-        void setY1(double);
-        double y1() const;
+        void setY1(float);
+        float y1() const;
 
     private:
-        double m_x;
-        double m_y;
-        double m_x1;
-        double m_y1;
+        float m_x;
+        float m_y;
+        float m_x1;
+        float m_y1;
     };
 
-    class SVGPathSegCurvetoQuadraticRel : public SVGPathSeg 
-    { 
+    class SVGPathSegCurvetoQuadraticRel : public SVGPathSeg {
     public:
-        SVGPathSegCurvetoQuadraticRel(double x, double y, double x1, double y1);
+        SVGPathSegCurvetoQuadraticRel(float x, float y, float x1, float y1);
         virtual ~SVGPathSegCurvetoQuadraticRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }
         virtual String pathSegTypeAsLetter() const { return "q"; }
         virtual String toString() const { return String::format("q %.6lg %.6lg %.6lg %.6lg", m_x1, m_y1, m_x, m_y); }
- 
-        void setX(double);
-        double x() const;
 
-        void setY(double);
-        double y() const;
+        void setX(float);
+        float x() const;
 
-        void setX1(double);
-        double x1() const;
+        void setY(float);
+        float y() const;
 
-        void setY1(double);
-        double y1() const;
+        void setX1(float);
+        float x1() const;
+
+        void setY1(float);
+        float y1() const;
 
     private:
-        double m_x;
-        double m_y;
-        double m_x1;
-        double m_y1;
+        float m_x;
+        float m_y;
+        float m_x1;
+        float m_y1;
     };
 
 } // namespace WebCore
