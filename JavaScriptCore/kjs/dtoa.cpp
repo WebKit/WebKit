@@ -595,7 +595,7 @@ multadd
 #ifdef ULLong
 		y = *x * (ULLong)m + carry;
 		carry = y >> 32;
-		*x++ = y & FFFFFFFF;
+		*x++ = (ULong)y & FFFFFFFF;
 #else
 #ifdef Pack_32
 		xi = *x;
@@ -618,7 +618,7 @@ multadd
 			Bfree(b);
 			b = b1;
 			}
-		b->x[wds++] = carry;
+		b->x[wds++] = (ULong)carry;
 		b->wds = wds;
 		}
 	return b;
@@ -809,10 +809,10 @@ mult
 			do {
 				z = *x++ * (ULLong)y + *xc + carry;
 				carry = z >> 32;
-				*xc++ = z & FFFFFFFF;
+				*xc++ = (ULong)z & FFFFFFFF;
 				}
 				while(x < xae);
-			*xc = carry;
+			*xc = (ULong)carry;
 			}
 		}
 #else
@@ -1072,13 +1072,13 @@ diff
 	do {
 		y = (ULLong)*xa++ - *xb++ - borrow;
 		borrow = y >> 32 & (ULong)1;
-		*xc++ = y & FFFFFFFF;
+		*xc++ = (ULong)y & FFFFFFFF;
 		}
 		while(xb < xbe);
 	while(xa < xae) {
 		y = *xa++ - borrow;
 		borrow = y >> 32 & (ULong)1;
-		*xc++ = y & FFFFFFFF;
+		*xc++ = (ULong)y & FFFFFFFF;
 		}
 #else
 #ifdef Pack_32
@@ -2469,7 +2469,7 @@ quorem
 			carry = ys >> 32;
 			y = *bx - (ys & FFFFFFFF) - borrow;
 			borrow = y >> 32 & (ULong)1;
-			*bx++ = y & FFFFFFFF;
+			*bx++ = (ULong)y & FFFFFFFF;
 #else
 #ifdef Pack_32
 			si = *sx++;
@@ -2510,7 +2510,7 @@ quorem
 			carry = ys >> 32;
 			y = *bx - (ys & FFFFFFFF) - borrow;
 			borrow = y >> 32 & (ULong)1;
-			*bx++ = y & FFFFFFFF;
+			*bx++ = (ULong)y & FFFFFFFF;
 #else
 #ifdef Pack_32
 			si = *sx++;

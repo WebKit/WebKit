@@ -1,3 +1,15 @@
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Tenth round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Add explicit casts.
+
+        * kjs/dtoa.cpp:
+        (Bigint::):
+
 2007-07-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kevin McCullough.
