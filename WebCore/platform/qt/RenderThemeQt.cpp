@@ -430,10 +430,28 @@ EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
 
     EAppearance result = o->style()->appearance();
 
-    if (isPressed(o))
-        option.state |= QStyle::State_Sunken;
-    else if (result == PushButtonAppearance)
-        option.state |= QStyle::State_Raised;
+    switch (result) {
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+        case ButtonBevelAppearance:
+        case ListItemAppearance:
+        case MenulistButtonAppearance:
+        case ScrollbarButtonLeftAppearance:
+        case ScrollbarButtonRightAppearance:
+        case ScrollbarTrackHorizontalAppearance:
+        case ScrollbarTrackVerticalAppearance:
+        case ScrollbarThumbHorizontalAppearance:
+        case ScrollbarThumbVerticalAppearance:
+        case SearchFieldResultsButtonAppearance:
+        case SearchFieldCancelButtonAppearance: {
+            if (isPressed(o))
+                option.state |= QStyle::State_Sunken;
+            else if (result == PushButtonAppearance)
+                option.state |= QStyle::State_Raised;
+            break;
+        }
+    }
 
     if(result == RadioAppearance || result == CheckboxAppearance)
         option.state |= (isChecked(o) ? QStyle::State_On : QStyle::State_Off);

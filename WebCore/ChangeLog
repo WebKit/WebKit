@@ -1,3 +1,13 @@
+2007-07-03  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Only draw sunken state for appropriate widgets. Not, for example, for
+        lineedits.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::applyTheme):
+
 2007-07-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
