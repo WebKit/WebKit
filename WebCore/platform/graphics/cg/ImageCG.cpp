@@ -63,10 +63,10 @@ void BitmapImage::checkForSolidColor()
         
         // Currently we only check for solid color in the important special case of a 1x1 image.
         if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-            CGFloat pixel[4]; // RGBA
+            unsigned char pixel[4]; // RGBA
             CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-            CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
-                kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
+            CGContextRef bmap = CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), space,
+                kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
             if (bmap) {
                 GraphicsContext(bmap).setCompositeOperation(CompositeCopy);
                 CGRect dst = { {0, 0}, {1, 1} };
@@ -74,7 +74,7 @@ void BitmapImage::checkForSolidColor()
                 if (pixel[3] == 0)
                     m_solidColor = Color(0, 0, 0, 0);
                 else
-                    m_solidColor = Color(int(pixel[0] / pixel[3] * 255), int(pixel[1] / pixel[3] * 255), int(pixel[2] / pixel[3] * 255), int(pixel[3] * 255));
+                    m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
                 m_isSolidColor = true;
                 CFRelease(bmap);
             } 

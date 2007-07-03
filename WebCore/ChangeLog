@@ -1,3 +1,16 @@
+2007-07-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5098378> single-pixel image optimization needs to be rewritten to not depend on floating point bitmap
+        Tested by fast/replaced/image-solid-color-with-alpha.html
+
+        Switch from float to byte based bitmap when pulling the color from 1x1 pixel images so
+        that we can use the single pixel image optimisation in WebKit/win.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+
 2007-07-02  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14498: RenderContainer::positionForCoordinates contains an order of operations error
