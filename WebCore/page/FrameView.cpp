@@ -709,6 +709,8 @@ bool FrameView::needsLayout() const
 {
     // It is possible that our document will not have a body yet. If this is the case, 
     // then we are not allowed to schedule layouts yet, so we won't be pending layout.
+    if (!m_frame)
+        return false;
     RenderView* root = static_cast<RenderView*>(m_frame->renderer());
     return layoutPending() || (root && root->needsLayout()) || d->layoutRoot;
 }

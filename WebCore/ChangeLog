@@ -1,3 +1,16 @@
+2007-07-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+
+        Blind fix for CrashTracer: [USER] 25 crashes in Safari at com.apple.WebCore: WebCore::Frame::document const + 6
+        <rdar://problem/5263939>
+        
+        No one has managed to reproduce this but it looks like null check is needed here. There are plausible ways
+        m_frame could be null for a live FrameView object.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsLayout):
+
 2007-07-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
