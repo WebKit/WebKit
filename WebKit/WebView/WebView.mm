@@ -2240,7 +2240,13 @@ NS_ENDHANDLER
         if (returnStringRange.length != 0 && returnStringRange.location == 0)
             script = [script substringFromIndex: returnStringRange.location + returnStringRange.length];
     }
-    return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
+    
+    NSString *result = [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
+    // The only way stringByEvaluatingJavaScriptFromString can return nil is if the frame was removed by the script
+    // Since there's no way to get rid of the main frame, result will never ever be nil here.
+    ASSERT(result);
+    
+    return result;
 }
 
 - (WebScriptObject *)windowScriptObject

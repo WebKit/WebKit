@@ -1,3 +1,21 @@
+2007-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5289718>
+        http://bugs.webkit.org/show_bug.cgi?id=14437
+        CrashTracer: [REGRESSION] 76 crashes in Safari at com.apple.WebCore: WebCore::Frame::settings const + 6 (14437)
+        
+        Based on a patch from Maxime Britto.
+        
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        If the script caused the frame to go away, return nil. This can only happen if a plugin in a subframe destroys
+        its frame.
+
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]):
+        ASSERT that this is only called on the main frame.
+
 2007-07-03  John Sullivan  <sullivan@apple.com>
 
         Written by Darin, reviewed by me

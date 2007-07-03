@@ -101,6 +101,7 @@ using KJS::BooleanType;
 using KJS::DateInstance;
 using KJS::ExecState;
 using KJS::GetterSetterType;
+using KJS::JSImmediate;
 using KJS::JSLock;
 using KJS::JSObject;
 using KJS::JSValue;
@@ -684,6 +685,20 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     ASSERT(m_frame->document());
     JSValue* result = m_frame->loader()->executeScript(0, string, forceUserGesture);
 
+    // If the value returned isn't an object, we don't need an ExecState to convert it
+    if (result && !result->isObject()) {
+        JSLock lock;
+
+        if (JSImmediate::isImmediate(result))
+            return String(JSImmediate::toString(result));
+
+        return String(result->getString());
+    }
+    
+    // Return nil if the frame was destroyed by the script
+    if (!m_frame)
+        return nil;
+    
     JSLock lock;
     return String(result ? result->toString(m_frame->scriptProxy()->interpreter()->globalExec()) : "");
 }
@@ -691,6 +706,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
 {
     ASSERT(m_frame->document());
+    ASSERT(m_frame == m_frame->page()->mainFrame());
     JSValue* result = m_frame->loader()->executeScript(0, string, true);
     if (!result) // FIXME: pass errors
         return 0;

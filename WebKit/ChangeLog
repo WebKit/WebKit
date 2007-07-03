@@ -1,3 +1,11 @@
+2007-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        * WebView/WebView.mm:
+        (-[WebView stringByEvaluatingJavaScriptFromString:]):
+        ASSERT that the value returned isn't nil. It can't be nil when invoked on the main frame.
+
 2007-07-04  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed 64-bit build fixes.
