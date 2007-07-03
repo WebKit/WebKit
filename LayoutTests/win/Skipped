@@ -68,6 +68,7 @@ fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
 fast/events/standalone-image-drag-to-editable.html
 fast/forms/select-visual-hebrew.html
+fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
 fast/lists/drag-into-marker.html
 fast/lists/w3-list-styles.html
@@ -254,6 +255,7 @@ fast/history/history_reload.html
 # DRT is not fully implemented in boomer <rdar://problem/5128261>
 fast/dom/Window/setting-properties-on-closed-window.html
 fast/events/objc-event-api.html
+fast/loader/user-style-sheet-resource-load-callbacks.html
 http/tests/misc/window-dot-stop.html
 http/tests/security/local-user-CSS-from-remote.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
@@ -428,6 +430,7 @@ tables/mozilla/bugs/bug50695-2.html
 
 # execCommand("Paste") fails? <rdar://problem/5230263>
 editing/pasteboard/4242293-1.html
+editing/pasteboard/5247341.html
 editing/style/non-inheritable-styles.html
 
 # <rdar://problem/5225119> support smart pasting on boomer
@@ -476,6 +479,12 @@ http/tests/loading/simple-subframe.html
 # <rdar://problem/5233929> frame-loading-via-document-write.html is failing
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
+
+# <rdar://problem/5309081> "plugin.logDestroy = true" not working on Windows
+plugins/netscape-destroy-plugin-script-objects.html
+
+# <rdar://problem/5309090> Output from http/tests/security/local-iFrame-from-remote.html shows a console message from the previous test
+http/tests/security/local-iFrame-from-remote.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

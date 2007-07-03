@@ -1,5 +1,11 @@
 2007-07-02  Adam Roben  <aroben@apple.com>
 
+        Update the Windows Skipped list.
+
+        * win/Skipped:
+
+2007-07-02  Adam Roben  <aroben@apple.com>
+
         Update results after r23938.
 
         * fast/inline-block/14498-positionForCoordinates-expected.txt:
