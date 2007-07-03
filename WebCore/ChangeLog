@@ -1,5 +1,18 @@
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Brady Eidson.
+
+        Ninth round of fixes for implicit 64-32 bit conversion errors.
+        <rdar://problem/5292262>
+
+        - Fix function signature to use unsigned long instead of unsigned long long.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::completeProgress):
+        * loader/ProgressTracker.h:
+
+2007-07-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver.
 
         Eighth round of fixes for implicit 64-32 bit conversion errors.

@@ -50,7 +50,7 @@ public:
     
     void incrementProgress(unsigned long identifier, const ResourceResponse&);
     void incrementProgress(unsigned long identifier, const char*, int);
-    void completeProgress(unsigned long long identifier);
+    void completeProgress(unsigned long identifier);
 
 private:
     void reset();

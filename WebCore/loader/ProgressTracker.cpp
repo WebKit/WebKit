@@ -224,7 +224,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     m_originatingProgressFrame->loader()->client()->didChangeEstimatedProgress();
 }
 
-void ProgressTracker::completeProgress(unsigned long long identifier)
+void ProgressTracker::completeProgress(unsigned long identifier)
 {
     ProgressItem* item = m_progressItems.get(identifier);
     
