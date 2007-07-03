@@ -178,7 +178,7 @@ NSURL *canonicalURL(NSURL *url)
 {
     if (!url)
         return nil;
-
+    
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
     Class concreteClass = wkNSURLProtocolClassForReqest(request);
     if (!concreteClass) {
@@ -186,13 +186,13 @@ NSURL *canonicalURL(NSURL *url)
         return url;
     }
     
-    NSURL *result = nil;
+    // Get NSURLProtocol's idea of canonical URL
     NSURLRequest *newRequest = [concreteClass canonicalRequestForRequest:request];
-    NSURL *newURL = [newRequest URL];
-    result = [[newURL retain] autorelease];
+    KURL newURL = [newRequest URL];
     [request release];
     
-    return result;
+    // pass through KURL to get KURL's idea of canonical URL
+    return newURL.getNSURL();
 }
 
 static bool vectorContainsString(Vector<String> vector, String string)

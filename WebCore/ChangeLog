@@ -1,3 +1,15 @@
+2007-07-03  John Sullivan  <sullivan@apple.com>
+
+        Written by Darin, reviewed by me
+        
+        - fixed <rdar://problem/5249730> REGRESSION (Leopard, around 9A464): Safari opens the same local 
+          documents more than once due to canonicalization change
+
+        * loader/mac/LoaderNSURLExtras.m:
+        (canonicalURL):
+        pass URL through KURL so we get KURL's version of canonicalization as well as
+        NSURLProtocol's version of canonicalization
+
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
