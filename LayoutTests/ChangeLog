@@ -1,5 +1,15 @@
 2007-07-02  Adam Roben  <aroben@apple.com>
 
+        Update results after r23938.
+
+        * fast/inline-block/14498-positionForCoordinates-expected.txt:
+        * fast/table/click-near-anonymous-table-expected.txt:
+        * svg/custom/pointer-events-image-expected.txt:
+        * svg/custom/pointer-events-path-expected.txt:
+        * svg/custom/text-hit-test-expected.txt:
+
+2007-07-02  Adam Roben  <aroben@apple.com>
+
         Test for Bug 14498: RenderContainer::positionForCoordinates contains an order of operations error
         http://bugs.webkit.org/show_bug.cgi?id=14498
 
