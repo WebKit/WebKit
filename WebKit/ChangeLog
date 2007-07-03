@@ -1,3 +1,15 @@
+2007-07-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for: <rdar://problem/5292988> domain names shouldn't contain ignorable characters
+
+        * Misc/WebNSURLExtras.m:
+        (isLookalikeCharacter): Renamed.  Also excludes any non-printable character, 
+         any character considered as whitespace that isn't already converted to a space by ICU, any ignorable character,
+         and any character excluded in Mozilla's blacklist: http://kb.mozillazine.org/Network.IDN.blacklist_chars
+        (allCharactersInIDNScriptWhiteList):
+
 2007-07-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

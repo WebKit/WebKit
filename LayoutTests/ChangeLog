@@ -1,3 +1,13 @@
+2007-07-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for: <rdar://problem/5292988> domain names shouldn't contain ignorable characters
+
+        * fast/encoding/idn-security-expected.txt: Added.
+        * fast/encoding/idn-security.html: Added.
+        * win/Skipped: Blocked by <rdar://problem/5301954>.
+
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

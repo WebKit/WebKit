@@ -936,49 +936,53 @@ void dump(void)
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
-    if (aSelector == @selector(waitUntilDone)
-            || aSelector == @selector(notifyDone)
+    if (0
+            || aSelector == @selector(accessStoredWebScriptObject)
+            || aSelector == @selector(addDisallowedURL:)    
+            || aSelector == @selector(addFileToPasteboardOnDrag)
+            || aSelector == @selector(clearBackForwardList)
+            || aSelector == @selector(decodeHostName:)
+            || aSelector == @selector(display)
             || aSelector == @selector(dumpAsText)
-            || aSelector == @selector(dumpDOMAsWebArchive)
-            || aSelector == @selector(dumpSourceAsWebArchive)
-            || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
+            || aSelector == @selector(dumpDOMAsWebArchive)
             || aSelector == @selector(dumpEditingCallbacks)
-            || aSelector == @selector(dumpResourceLoadCallbacks)
             || aSelector == @selector(dumpFrameLoadCallbacks)
-            || aSelector == @selector(setWindowIsKey:)
-            || aSelector == @selector(setMainFrameIsFirstResponder:)
+            || aSelector == @selector(dumpResourceLoadCallbacks)
             || aSelector == @selector(dumpSelectionRect)
-            || aSelector == @selector(display)
-            || aSelector == @selector(testRepaint)
-            || aSelector == @selector(repaintSweepHorizontally)
+            || aSelector == @selector(dumpSourceAsWebArchive)
+            || aSelector == @selector(dumpTitleChanges)
+            || aSelector == @selector(encodeHostName:)
+            || aSelector == @selector(keepWebHistory)
+            || aSelector == @selector(notifyDone)
+            || aSelector == @selector(objCClassNameOf:)
+            || aSelector == @selector(objCIdentityIsEqual::)
+            || aSelector == @selector(objCObjectOfClass:)
+            || aSelector == @selector(objCLongLongRoundTrip:)
+            || aSelector == @selector(objCUnsignedLongLongRoundTrip:)
             || aSelector == @selector(queueBackNavigation:)
             || aSelector == @selector(queueForwardNavigation:)
+            || aSelector == @selector(queueLoad:target:)
             || aSelector == @selector(queueReload)
             || aSelector == @selector(queueScript:)
-            || aSelector == @selector(queueLoad:target:)
-            || aSelector == @selector(clearBackForwardList)
-            || aSelector == @selector(keepWebHistory)
+            || aSelector == @selector(repaintSweepHorizontally)
             || aSelector == @selector(setAcceptsEditing:)
-            || aSelector == @selector(setTabKeyCyclesThroughElements:)
-            || aSelector == @selector(storeWebScriptObject:)
-            || aSelector == @selector(accessStoredWebScriptObject)
-            || aSelector == @selector(testWrapperRoundTripping:)
-            || aSelector == @selector(setUserStyleSheetLocation:)
-            || aSelector == @selector(setUserStyleSheetEnabled:)
-            || aSelector == @selector(objCClassNameOf:)
-            || aSelector == @selector(objCObjectOfClass:)
-            || aSelector == @selector(objCIdentityIsEqual::)
-            || aSelector == @selector(addDisallowedURL:)    
-            || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCallCloseOnWebViews:)
+            || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
+            || aSelector == @selector(setMainFrameIsFirstResponder:)
+            || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(setUseDashboardCompatibilityMode:)
+            || aSelector == @selector(setUserStyleSheetEnabled:)
+            || aSelector == @selector(setUserStyleSheetLocation:)
+            || aSelector == @selector(setWindowIsKey:)
+            || aSelector == @selector(storeWebScriptObject:)
+            || aSelector == @selector(testRepaint)
+            || aSelector == @selector(testWrapperRoundTripping:)
+            || aSelector == @selector(waitUntilDone)
             || aSelector == @selector(windowCount)
-            || aSelector == @selector(addFileToPasteboardOnDrag)
-            || aSelector == @selector(objCLongLongRoundTrip:)
-            || aSelector == @selector(objCUnsignedLongLongRoundTrip:))
+        )
         return NO;
     return YES;
 }
@@ -1023,6 +1027,10 @@ void dump(void)
         return @"setCloseRemainingWindowsWhenComplete";
     if (aSelector == @selector(setUseDashboardCompatibilityMode:))
         return @"setUseDashboardCompatiblityMode";
+    if (aSelector == @selector(encodeHostName:))
+        return @"encodeHostName";
+    if (aSelector == @selector(decodeHostName:))
+        return @"decodeHostName";    
     if (aSelector == @selector(objCLongLongRoundTrip:))
         return @"objCLongLongRoundTrip";
     if (aSelector == @selector(objCUnsignedLongLongRoundTrip:))
@@ -1386,6 +1394,16 @@ void dump(void)
 - (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
 {
     return a == b;
+}
+
+- (NSString*)decodeHostName:(NSString*)name
+{
+    return [name _web_decodeHostName];
+}
+
+- (NSString*)encodeHostName:(NSString*)name
+{
+    return [name _web_encodeHostName];
 }
 
 - (long long)objCLongLongRoundTrip:(long long)num

@@ -1,3 +1,15 @@
+2007-07-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Extended DumpRenderTree to test encoding and decoding host names.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Added cases for encodeHostName and decodeHostName.
+        (+[LayoutTestController webScriptNameForSelector:]): ditto.
+        (-[LayoutTestController decodeHostName:]): Added.
+        (-[LayoutTestController encodeHostName:]): Added.
+
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

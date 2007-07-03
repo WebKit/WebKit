@@ -647,3 +647,6 @@ fast/table/giantCellspacing.html
 
 # Crash in CMM8Bit3ChanNoConvEncoder::InnerDoEncode
 fast/css/contentDivWithChildren.html
+
+# Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
+fast/encoding/idn-security.html
