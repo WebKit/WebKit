@@ -1177,6 +1177,11 @@ void PluginViewWin::determineQuirks(const String& mimeType)
         m_quirks |= PluginQuirkRemoveWindowlessVideoParam;
     }
 
+    // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
+    // call SetWindow when the plugin view has a correct size
+    if (mimeType == "video/divx")
+        m_quirks |= PluginQuirkDeferFirstSetWindowCall;
+
     // Shockwave calls SetWindowLongA to set a new WNDPROC on its plugin window. The value returned from SetWindowLongA is the old WNDPROC.
     // If the previous WNDPROC was an Unicode WNDPROC, the address of the WNDPROC will not be returned. Instead, a special
     // value that indicates that the messages coming to the WNDPROC need to be translated to Unicode. If CallWndProc is used to 

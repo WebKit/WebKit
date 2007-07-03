@@ -1,3 +1,15 @@
+2007-07-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5093862>
+        Nothing shown in plugin area when trying to play content using the DivX plugin
+        
+        Defer calling SetWindow for the DivX plugin, just like we do with the WMP plugin.
+                
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::determineQuirks):
+
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
