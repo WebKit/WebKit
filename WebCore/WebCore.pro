@@ -73,7 +73,8 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 	platform/graphics/qt ../WeKitQt/Api ../WebKitQt/WebCoreSupport
 }
 
-gdk-port:INCLUDEPATH += \
+gdk-port {
+    INCLUDEPATH += \
     $$PWD/platform/graphics/svg/cairo \
     $$PWD/platform/image-decoders/bmp \
     $$PWD/platform/image-decoders/gif \
@@ -81,6 +82,15 @@ gdk-port:INCLUDEPATH += \
     $$PWD/platform/image-decoders/jpeg \
     $$PWD/platform/image-decoders/png \
     $$PWD/platform/image-decoders/xbm
+
+    DEPENDPATH += platform/graphics/gdk       \
+                  platform/gdk                \
+                  loader/gdk                  \
+                  page/gdk                    \
+                  platform/graphics/cairo     \
+                  platform/graphics/svg/cairo \
+                  platform/network/curl
+}
 
 INCLUDEPATH +=  $$PWD \
                 $$PWD/ForwardingHeaders \
