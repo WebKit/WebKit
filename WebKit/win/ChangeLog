@@ -1,3 +1,12 @@
+2007-07-03  Adam Roben  <aroben@apple.com>
+
+        Merge the Windows and Mac localized strings and exceptions files
+
+        Reviewed by Darin and Anders.
+
+        * English.lproj/Localizable.strings: Added Mac strings.
+        * English.lproj/StringsNotToBeLocalized.txt: Removed.
+
 2007-06-27  Steve Falkenburg  <sfalken@apple.com>
 
         Turn on static code analysis.

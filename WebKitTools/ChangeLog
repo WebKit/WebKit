@@ -1,3 +1,18 @@
+2007-07-03  Adam Roben  <aroben@apple.com>
+
+        Modify scripts to keep Mac/Windows localized strings in sync
+
+        extract-webkit-localizable-strings now handles extracting strings from
+        both the Mac and Windows WebKit ports and updating their respective
+        Localizable.strings files. extract-localizable-strings is now really a
+        piece of plumbing rather than a top-level tool.
+
+        Reviewed by Darin and Anders.
+
+        * Scripts/extract-localizable-strings: Changed to handle multiple
+        directories.
+        * Scripts/extract-webkit-localizable-strings: Added.
+
 2007-07-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,11 +44,20 @@
 
 use strict;
 
-my $exceptionsFile = "English.lproj/StringsNotToBeLocalized.txt";
 my $stringsFile = "English.lproj/Localizable.strings";
 my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL_ERROR => 1, FATAL => 1, LOG => 1, dprintf => 1, NSException => 1, NSLog => 1, printf => 1 );
 
-die "usage: extract-localizable-strings\n" if @ARGV != 0;
+@ARGV >= 1 or die "Usage: extract-localizable-strings <exceptions file> [ directory... ]\nDid you mean to run extract-webkit-localizable-strings instead?\n";
+
+my $exceptionsFile = $ARGV[0];
+-f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n";
+
+my @directories;
+if (@ARGV < 2) {
+    push(@directories, ".");
+} else {
+    push(@directories, @ARGV[1 .. $#ARGV]);
+}
 
 my $sawError = 0;
 
@@ -77,13 +86,13 @@ if (open EXCEPTIONS, $exceptionsFile) {
     close EXCEPTIONS;
 }
 
-my @files = ( split "\n", `find . -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.cpp"` );
+my $quotedDirectoriesString = '"' . join('" "', @directories) . '"';
+
+my @files = ( split "\n", `find $quotedDirectoriesString -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.cpp"` );
 
 for my $file (sort @files) {
-
     next if $file =~ /\/WebLocalizableStrings\.h$/;
     next if $file =~ /\/icu\//;
-    next if $file =~ /\/COM\//;
 
     $file =~ s-^./--;
 
@@ -317,7 +326,10 @@ for my $key (sort keys %commentByKey) {
 }
 
 # Write out the strings file in UTF-16 with a BOM.
-open STRINGS, ">", $stringsFile or die;
 utf8::decode($localizedStrings) if $^V ge chr(5).chr(8);
-print STRINGS pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
-close STRINGS;
+my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
+foreach my $directory (@directories) {
+    open STRINGS, ">", "$directory/$stringsFile" or die;
+    print STRINGS $output;
+    close STRINGS;
+}
