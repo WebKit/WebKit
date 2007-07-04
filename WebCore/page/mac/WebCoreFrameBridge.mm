@@ -69,6 +69,7 @@
 #import "ResourceRequest.h"
 #import "PlatformScreen.h"
 #import "SelectionController.h"
+#import "SmartReplace.h"
 #import "SystemTime.h"
 #import "TextEncoding.h"
 #import "TextIterator.h"
@@ -1033,12 +1034,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace)
         if (UChar previousChar = startVisiblePos.previous().characterAfter())
-            addLeadingSpace = !m_frame->isCharacterSmartReplaceExempt(previousChar, true);
+            addLeadingSpace = !isCharacterSmartReplaceExempt(previousChar, true);
     
     bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace)
         if (UChar thisChar = endVisiblePos.characterAfter())
-            addTrailingSpace = !m_frame->isCharacterSmartReplaceExempt(thisChar, false);
+            addTrailingSpace = !isCharacterSmartReplaceExempt(thisChar, false);
     
     // inspect source
     bool hasWhitespaceAtStart = false;
@@ -1303,62 +1304,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return nil;
 
     return [DOMRange _wrapRange:makeRange(previous, next).get()];
-}
-
-// FIXME: The following 2 functions are copied from AppKit. It would be best to share code.
-
-// MF:!!! For now we will use static character sets for the computation, but we should eventually probably make these keys in the language dictionaries.
-// MF:!!! The following characters (listed with their nextstep encoding values) were in the preSmartTable in the old text objet, but aren't yet in the new text object: NS_FIGSPACE (0x80), exclamdown (0xa1), sterling (0xa3), yen (0xa5), florin (0xa6) section (0xa7), currency (0xa8), quotesingle (0xa9), quotedblleft (0xaa), guillemotleft (0xab), guilsinglleft (0xac), endash (0xb1), quotesinglbase (0xb8), quotedblbase (0xb9), questiondown (0xbf), emdash (0xd0), plusminus (0xd1).
-// MF:!!! The following characters (listed with their nextstep encoding values) were in the postSmartTable in the old text objet, but aren't yet in the new text object: NS_FIGSPACE (0x80), cent (0xa2), guilsinglright (0xad), registered (0xb0), dagger (0xa2), daggerdbl (0xa3), endash (0xb1), quotedblright (0xba), guillemotright (0xbb), perthousand (0xbd), onesuperior (0xc0), twosuperior (0xc9), threesuperior (0xcc), emdash (0xd0), ordfeminine (0xe3), ordmasculine (0xeb).
-// MF:!!! Another difference in both of these sets from the old text object is we include all the whitespace in whitespaceAndNewlineCharacterSet.
-#define _preSmartString @"([\"\'#$/-`{"
-#define _postSmartString @")].,;:?\'!\"%*-/}"
-
-static NSCharacterSet *_getPreSmartSet(void)
-{
-    static RetainPtr<NSMutableCharacterSet> _preSmartSet = nil;
-    if (!_preSmartSet) {
-        _preSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_preSmartString] retain];
-        [_preSmartSet.get() formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        // Adding CJK ranges
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x1100, 256)]; // Hangul Jamo (0x1100 - 0x11FF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x2E80, 352)]; // CJK & Kangxi Radicals (0x2E80 - 0x2FDF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x2FF0, 464)]; // Ideograph Descriptions, CJK Symbols, Hiragana, Katakana, Bopomofo, Hangul Compatibility Jamo, Kanbun, & Bopomofo Ext (0x2FF0 - 0x31BF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x3200, 29392)]; // Enclosed CJK, CJK Ideographs (Uni Han & Ext A), & Yi (0x3200 - 0xA4CF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0xAC00, 11183)]; // Hangul Syllables (0xAC00 - 0xD7AF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0xF900, 352)]; // CJK Compatibility Ideographs (0xF900 - 0xFA5F)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0xFE30, 32)]; // CJK Compatibility From (0xFE30 - 0xFE4F)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0xFF00, 240)]; // Half/Full Width Form (0xFF00 - 0xFFEF)
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x20000, 0xA6D7)]; // CJK Ideograph Exntension B
-        [_preSmartSet.get() addCharactersInRange:NSMakeRange(0x2F800, 0x021E)]; // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
-    }
-    return _preSmartSet.get();
-}
-
-static NSCharacterSet *_getPostSmartSet(void)
-{
-    static RetainPtr<NSMutableCharacterSet> _postSmartSet = nil;
-    if (!_postSmartSet) {
-        _postSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_postSmartString] retain];
-        [_postSmartSet.get() formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x1100, 256)]; // Hangul Jamo (0x1100 - 0x11FF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x2E80, 352)]; // CJK & Kangxi Radicals (0x2E80 - 0x2FDF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x2FF0, 464)]; // Ideograph Descriptions, CJK Symbols, Hiragana, Katakana, Bopomofo, Hangul Compatibility Jamo, Kanbun, & Bopomofo Ext (0x2FF0 - 0x31BF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x3200, 29392)]; // Enclosed CJK, CJK Ideographs (Uni Han & Ext A), & Yi (0x3200 - 0xA4CF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0xAC00, 11183)]; // Hangul Syllables (0xAC00 - 0xD7AF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0xF900, 352)]; // CJK Compatibility Ideographs (0xF900 - 0xFA5F)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0xFE30, 32)]; // CJK Compatibility From (0xFE30 - 0xFE4F)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0xFF00, 240)]; // Half/Full Width Form (0xFF00 - 0xFFEF)
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x20000, 0xA6D7)]; // CJK Ideograph Exntension B
-        [_postSmartSet.get() addCharactersInRange:NSMakeRange(0x2F800, 0x021E)]; // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)        
-        [_postSmartSet.get() formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
-    }
-    return _postSmartSet.get();
-}
-
-- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter
-{
-    return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
 }
 
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL

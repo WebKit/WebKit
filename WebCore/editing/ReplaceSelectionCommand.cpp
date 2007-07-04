@@ -41,6 +41,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "SelectionController.h"
+#include "SmartReplace.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -675,7 +676,7 @@ void ReplaceSelectionCommand::doApply()
     }
     if (m_smartReplace) {
         bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) &&
-                                  !frame->isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);
+                                  !isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);
         if (needsTrailingSpace) {
             RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();
@@ -690,7 +691,7 @@ void ReplaceSelectionCommand::doApply()
         }
     
         bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) &&
-                                 !frame->isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
+                                 !isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
         if (needsLeadingSpace) {
             RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();

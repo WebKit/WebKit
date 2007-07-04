@@ -636,11 +636,6 @@ void Frame::willPopupMenu(NSMenu * menu)
     [d->m_bridge willPopupMenu:menu];
 }
 
-bool Frame::isCharacterSmartReplaceExempt(UChar c, bool isPreviousChar)
-{
-    return [d->m_bridge isCharacterSmartReplaceExempt:c isPreviousCharacter:isPreviousChar];
-}
-
 void Frame::setNeedsReapplyStyles()
 {
     [d->m_bridge setNeedsReapplyStyles];

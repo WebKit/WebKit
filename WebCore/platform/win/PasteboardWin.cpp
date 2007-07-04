@@ -47,6 +47,7 @@ namespace WebCore {
 
 static UINT HTMLClipboardFormat = 0;
 static UINT BookmarkClipboardFormat = 0;
+static UINT WebSmartPasteFormat = 0;
 
 static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -97,6 +98,7 @@ Pasteboard::Pasteboard()
 
     HTMLClipboardFormat = ::RegisterClipboardFormat(L"HTML Format");
     BookmarkClipboardFormat = ::RegisterClipboardFormat(L"UniformResourceLocatorW");
+    WebSmartPasteFormat = ::RegisterClipboardFormat(L"WebKit Smart Paste Format");
 }
 
 void Pasteboard::clear()
@@ -129,6 +131,15 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
         if (!::SetClipboardData(CF_UNICODETEXT, cbData))
             ::GlobalFree(cbData);
         ::CloseClipboard();
+    }
+
+    // enable smart-replacing later on by putting dummy data on the pasteboard
+    if (canSmartCopyOrDelete) {
+        if (::OpenClipboard(m_owner)) {
+            ::SetClipboardData(WebSmartPasteFormat, NULL);
+            ::CloseClipboard();
+        }
+        
     }
 }
 
@@ -220,8 +231,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 
 bool Pasteboard::canSmartReplace()
 { 
-    // WebSmartPastePboardType is unavailable
-    return false; 
+    return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
 }
 
 String Pasteboard::plainText(Frame* frame)

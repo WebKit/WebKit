@@ -6324,6 +6324,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\SmartReplace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\SmartReplace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\SmartReplaceCF.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\SplitElementCommand.cpp"
 				>
 			</File>

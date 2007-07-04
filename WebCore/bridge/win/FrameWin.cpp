@@ -179,12 +179,6 @@ HBITMAP imageFromSelection(Frame* frame, bool forceWhiteText)
     return hbmp;
 }
 
-bool Frame::isCharacterSmartReplaceExempt(UChar, bool)
-{
-    // no smart replace
-    return true;
-}
-
 DragImageRef Frame::dragImageForSelection()
 {    
     if (selectionController()->isRange())

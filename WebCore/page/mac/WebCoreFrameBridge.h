@@ -233,8 +233,6 @@ typedef enum ObjectElementType {
 - (void)dragSourceMovedTo:(NSPoint)windowLoc;
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
 
-- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
-
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL;
 - (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses;
 

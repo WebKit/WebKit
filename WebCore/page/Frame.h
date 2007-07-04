@@ -335,13 +335,6 @@ private:
     void caretBlinkTimerFired(Timer<Frame>*);
     void setUseSecureKeyboardEntry(bool);
 
-// === to be moved into the Platform directory
-
-public:
-    bool isCharacterSmartReplaceExempt(UChar, bool);
-
-// === to be deleted
-
 public:
     SelectionController* dragCaretController() const;
 

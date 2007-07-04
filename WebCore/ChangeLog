@@ -1,3 +1,44 @@
+2007-07-03  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://problem/5225119> support smart pasting on Windows
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            Added new files
+        * editing/SmartReplace.cpp: Added.
+        (WebCore::isCharacterSmartReplaceExempt):
+            Added non-CF implementation placeholder
+        * editing/SmartReplace.h: Added.
+        * editing/SmartReplaceCF.cpp: Added.
+        (WebCore::getSmartSet):
+        (WebCore::isCharacterSmartReplaceExempt):
+            Added new implementation
+
+        * bridge/win/FrameWin.cpp:
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+            Removed old declaration and implementation
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+            Changed to call the new function instead of old
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+            Removed old declaration and implementation
+        (-[WebCoreFrameBridge smartInsertForString:replacingRange:beforeString:afterString:]):
+            Changed to call the new function instead of old
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+            Register new clipboard format
+        (WebCore::Pasteboard::writeSelection):
+            Set data for smartpaste format on clipboard
+        (WebCore::Pasteboard::canSmartReplace):
+            Added non-stub implementation
+
 2007-07-04  Qing Zhao  <qing@staikos.net>
 
         Reviewed by George Staikos.
