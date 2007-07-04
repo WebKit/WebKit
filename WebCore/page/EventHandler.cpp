@@ -636,12 +636,11 @@ static bool nodeIsNotBeingEdited(Node* node, Frame* frame)
     return frame->selectionController()->rootEditableElement() != node->rootEditableElement();
 }
 
-// FIXME: We should consider making this a member function now that we're passing in more info about the object.
-static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed, PlatformScrollbar* scrollbar, bool capturingMouseEvents)
+Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, PlatformScrollbar* scrollbar)
 {
     // During selection, use an I-beam no matter what we're over.
     // If you're capturing mouse events for a particular node, don't treat this as a selection.
-    if (mousePressed && frame->selectionController()->isCaretOrRange() && !capturingMouseEvents)
+    if (m_mousePressed && m_mouseDownMayStartSelect && m_frame->selectionController()->isCaretOrRange() && !m_capturingMouseEventsNode)
         return iBeamCursor();
 
     Node* node = event.targetNode();
@@ -679,8 +678,8 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
 
             // If the link is editable, then we need to check the settings to see whether or not the link should be followed
             if (editable) {
-                ASSERT(frame->settings());
-                switch(frame->settings()->editableLinkBehavior()) {
+                ASSERT(m_frame->settings());
+                switch(m_frame->settings()->editableLinkBehavior()) {
                     default:
                     case EditableLinkDefaultBehavior:
                     case EditableLinkAlwaysLive:
@@ -692,7 +691,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
                         break;
 
                     case EditableLinkLiveWhenNotFocused:
-                        editableLinkEnabled = nodeIsNotBeingEdited(node, frame) || event.event().shiftKey();
+                        editableLinkEnabled = nodeIsNotBeingEdited(node, m_frame) || event.event().shiftKey();
                         break;
                     
                     case EditableLinkOnlyLiveWithShiftKey:
@@ -705,7 +704,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
                 return handCursor();
             RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
             bool inResizer = false;
-            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->windowToContents(event.event().pos())))
+            if (m_frame->view() && layer && layer->isPointInResizeControl(m_frame->view()->windowToContents(event.event().pos())))
                 inResizer = true;
             if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer && !scrollbar)
                 return iBeamCursor();
@@ -962,7 +961,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && m_frame->view())
-            m_frame->view()->setCursor(selectCursor(mev, m_frame, m_mousePressed, scrollbar, m_capturingMouseEventsNode));
+            m_frame->view()->setCursor(selectCursor(mev, scrollbar));
     }
     
     m_lastMouseMoveEventSubframe = newSubframe;

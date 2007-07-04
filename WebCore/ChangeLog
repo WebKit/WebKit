@@ -1,3 +1,20 @@
+2007-07-04  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14495
+          REGRESSION: Wrong cursor is displayed during drag and drop when text is selected
+          <rdar://problem/5312384>
+
+        No test possible because DumpRenderTree cannot query the current cursor.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor): Changed into a member function and
+        added that if the last mouse down event could not have started a
+        selection, then the cursor should not change to an I-beam unconditionally.
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+
 2007-07-04  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Rob Buis.

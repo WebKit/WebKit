@@ -48,6 +48,7 @@ namespace WebCore {
 
 class AtomicString;
 class Clipboard;
+class Cursor;
 class EventTargetNode;
 class Event;
 class FloatPoint;
@@ -186,6 +187,8 @@ private:
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&);
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
+
+    Cursor selectCursor(const MouseEventWithHitTestResults&, PlatformScrollbar*);
 
     void hoverTimerFired(Timer<EventHandler>*);
 
