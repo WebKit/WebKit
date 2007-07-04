@@ -330,10 +330,8 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         ? collectRangesThatNeedEncoding
         : collectRangesThatNeedDecoding;
     applyHostNameFunctionToURLString(string, f, &hostNameRanges);
-    if (hostNameRanges == nil) {
-        printf("failed to apply host name function.  idn encoding will not occur\n");
+    if (hostNameRanges == nil)
         return string;
-    }
 
     // Do the mapping.
     NSMutableString *mutableCopy = [string mutableCopy];

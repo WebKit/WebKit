@@ -1,5 +1,11 @@
 2007-07-03  Adele Peterson  <adele@apple.com>
 
+        Removed printf I accidently left in.
+
+        * Misc/WebNSURLExtras.m: (mapHostNames):
+
+2007-07-03  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         Fix for: <rdar://problem/5292988> domain names shouldn't contain ignorable characters
