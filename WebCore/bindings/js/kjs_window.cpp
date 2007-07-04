@@ -874,20 +874,8 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)
+void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
-  if (!m_frame)
-    return;
-    
-  // Called by an internal KJS call.
-  // If yes, save time and jump directly to JSObject.
-  if ((attr != None && attr != DontDelete)
-       // Same thing if we have a local override (e.g. "var location")
-       || (JSObject::getDirect(propertyName) && isSafeScript(exec))) {
-    JSObject::put( exec, propertyName, value, attr );
-    return;
-  }
-
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
   if (entry) {
     switch(entry->value) {

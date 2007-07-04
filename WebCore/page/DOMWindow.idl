@@ -25,7 +25,7 @@
 
 module window {
 
-    interface [LegacyParent=KJS::Window, DoNotCache, CheckDomainSecurity, GenerateNativeConverter, CustomGetOwnPropertySlot] DOMWindow {
+    interface [LegacyParent=KJS::Window, DoNotCache, CheckDomainSecurity, GenerateNativeConverter, CustomGetOwnPropertySlot, CustomPutFunction] DOMWindow {
         // DOM Level 0
         readonly attribute Screen screen;
         readonly attribute [DoNotCheckDomainSecurity] History history;

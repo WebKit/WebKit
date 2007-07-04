@@ -1,3 +1,13 @@
+2007-07-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14504
+        REGRESSION (r23573): Amazon Book Excerpt can not be viewed in recent nightly
+
+        * fast/dom/Window/window-property-shadowing-expected.txt: Added.
+        * fast/dom/Window/window-property-shadowing.html: Added.
+
 2007-07-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

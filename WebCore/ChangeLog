@@ -1,3 +1,21 @@
+2007-07-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14504
+        REGRESSION (r23573): Amazon Book Excerpt can not be viewed in recent nightly
+
+        - Made it possible (again) to shadow window properties with local variable names.
+
+        Test: fast/dom/Window/window-property-shadowing.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customPut):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.idl:
+
 2007-07-03  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

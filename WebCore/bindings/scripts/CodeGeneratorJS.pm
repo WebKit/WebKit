@@ -984,8 +984,7 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
             if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
-                push(@implContent, "    bool didPut = customPut(exec, propertyName, value, attr);\n");
-                push(@implContent, "    if (didPut)\n");
+                push(@implContent, "    if (customPut(exec, propertyName, value, attr))\n");
                 push(@implContent, "        return;\n");
             }
 

@@ -29,4 +29,19 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
     return getOverridePropertySlot(exec, propertyName, slot);
 }
 
+bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, int attr)
+{
+    if (!frame())
+        return true;
+
+    // Called by an internal KJS call or if we have a local override (e.g. "var location")
+    // If yes, save time and jump directly to JSObject.
+    if ((attr != KJS::None && attr != KJS::DontDelete) || (KJS::JSObject::getDirect(propertyName) && isSafeScript(exec))) {
+        JSObject::put(exec, propertyName, value, attr);
+        return true;
+    }
+
+    return false;
+}
+
 } // namespace WebCore
