@@ -1,5 +1,18 @@
 2007-07-03  Adam Roben  <aroben@apple.com>
 
+        Fixed update-webkit-localizable-strings to work with new extract-localizable-strings
+
+        Got rid of extract-webkit-localizable-strings because it was trying to
+        do update-webkit-localizable-strings' job.
+
+        Rubberstamped by Darin.
+
+        * Scripts/extract-webkit-localizable-strings: Removed.
+        * Scripts/update-webkit-localizable-strings: Renamed from
+        extract-localizable-strings.
+
+2007-07-03  Adam Roben  <aroben@apple.com>
+
         Modify scripts to keep Mac/Windows localized strings in sync
 
         extract-webkit-localizable-strings now handles extracting strings from
