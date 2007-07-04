@@ -55,6 +55,8 @@
 
 // Some things would have to be made public if someone wanted to subclass this so as to support more menu item commands.  M.P. Warning - 9/19/00
 
+#ifndef __LP64__
+
 #import "CarbonWindowAdapter.h"
 
 #import "CarbonWindowFrame.h"
@@ -1040,3 +1042,5 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 }
 
 @end // implementation CarbonWindowAdapter
+
+#endif

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
+
 #include "HIWebView.h"
 
 #include "CarbonWindowAdapter.h"
@@ -333,7 +335,6 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 	HIRect				hiRect;
 	bool				createdContext = false;
 
-#ifndef __LP64__
     if (!inView->fIsComposited)
     {
         GrafPtr port;
@@ -347,7 +348,6 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
         CGContextScaleCTM( inContext, 1, -1 );
         createdContext = true;
     }
-#endif
 
 	HIViewGetBounds( inView->fViewRef, &bounds );
 
@@ -812,7 +812,6 @@ SyncFrame( HIWebView* inView )
             [inView->fWebView setFrameOrigin: origin];
             [inView->fWebView setFrameSize: *(NSSize*)&frame.size];
         }
-#ifndef __LP64__
         else
         {
             GrafPtr			port = GetWindowPort( GetControlOwner( inView->fViewRef ) );
@@ -845,7 +844,6 @@ SyncFrame( HIWebView* inView )
             [inView->fWebView setFrameOrigin: *(NSPoint*)&frame.origin];
             [inView->fWebView setFrameSize: *(NSSize*)&frame.size];
         }
-#endif
     }
 }
 
@@ -1499,10 +1497,6 @@ MissingParameter:
 }
 
 
-#ifdef __LP64__
-static void StartUpdateObserver(HIWebView* view) {};
-static void StopUpdateObserver(HIWebView* view) {};
-#else
 static void UpdateObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info);
 
 static void
@@ -1628,4 +1622,5 @@ UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void 
         DisposeRgn( region );
     }
 }
+
 #endif

@@ -26,8 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
+
 #import "CarbonWindowContentView.h"
 
 @implementation CarbonWindowContentView
 
 @end
+
+#endif

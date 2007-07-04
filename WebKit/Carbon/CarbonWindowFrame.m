@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
+
 #import "CarbonWindowFrame.h"
 #import "CarbonWindowAdapter.h"
 #import "CarbonWindowContentView.h"
@@ -282,3 +284,5 @@
 
 
 @end // implementation NSCarbonWindowFrame
+
+#endif

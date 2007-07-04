@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
+
 #include "CarbonUtils.h"
 #import <WebKitSystemInterface.h>
 
@@ -127,3 +129,4 @@ WebConvertNSImageToCGImageRef(
 	return image;
 }
 
+#endif

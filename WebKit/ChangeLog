@@ -1,3 +1,32 @@
+2007-07-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Remove HIWebView in 64-bit.
+
+        Also disable a few calls that are now gone in 64-bit and filed these bugs:
+
+        <rdar://problem/5311653> WebKit needs to adopt HIGetMousePosition where we used GetGlobalMouse before
+        <rdar://problem/5311648> WebKit needs to move off of CopyEvent in WebBaseNetscapePluginView
+        <rdar://problem/5311640> WebKit needs a new solution for HISearchWindowShow on 64-bit
+
+        * Carbon/CarbonUtils.m:
+        * Carbon/CarbonWindowAdapter.m:
+        * Carbon/CarbonWindowContentView.m:
+        * Carbon/CarbonWindowFrame.m:
+        * Carbon/HIViewAdapter.m:
+        (SetViewNeedsDisplay):
+        * Carbon/HIWebView.m:
+        (Draw):
+        (SyncFrame):
+        * Configurations/WebKit.xcconfig:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (+[WebBaseNetscapePluginView getCarbonEvent:]):
+        (TSMEventHandler):
+        * WebKit.LP64.exp: Added.
+        * WebView/WebView.mm:
+        (-[WebView _searchWithSpotlightFromMenu:]):
+
 2007-07-03  Adam Roben  <aroben@apple.com>
 
         Merge the Windows and Mac localized strings and exceptions files
