@@ -538,7 +538,10 @@ void RenderThemeQt::setPopupPadding(RenderStyle* style) const
 {
     const int padding = 8;
     style->setPaddingLeft(Length(padding, Fixed));
-    style->setPaddingRight(Length(padding, Fixed));
+    QStyleOptionComboBox opt;
+    int w = QApplication::style()->pixelMetric(QStyle::PM_ButtonIconSize, &opt, 0);
+    style->setPaddingRight(Length(padding + w, Fixed));
+
     style->setPaddingTop(Length(1, Fixed));
     style->setPaddingBottom(Length(0, Fixed));
 }
