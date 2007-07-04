@@ -1,3 +1,13 @@
+2007-07-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by John.
+        
+        Test for Repro crash due to infinite recursion in HTMLParser::handleError @ youos.com
+        <rdar://problem/5237811>
+
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt: Added.
+        * fast/table/incomplete-table-in-fragment-hang.html: Added.
+
 2007-07-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

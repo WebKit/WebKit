@@ -1,3 +1,24 @@
+2007-07-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by John.
+        
+        Fix Repro crash due to infinite recursion in HTMLParser::handleError @ youos.com
+        <rdar://problem/5237811>
+        
+        It is possible to add table parts (thead etc) without table ancestor to a document fragment. If a new table element
+        was added to such a part, as in
+        
+        div.innerHTML = '<tbody><table>';
+        
+        the parser error handling code would try to pop the previous table as normal. However since
+        the table does not actually exist nothing would happen and parser would go to infinite recursion.
+        
+        Solution here is to pop table parts one by one when handling the error inside a fragment instead of trying to pop
+        the table straight away (as it might not exist).
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+
 2007-07-04  Qing Zhao  <qing@staikos.net>
 
         Reviewed by George Staikos.
