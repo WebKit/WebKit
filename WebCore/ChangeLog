@@ -1,3 +1,14 @@
+2007-07-04  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Similar to the PlatformScrollbar fixes, adjust the painter to make the
+        styler draw all subcontrols, and in this case the focus rect, in the
+        proper location
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMenuList):
+
 2007-07-04  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
