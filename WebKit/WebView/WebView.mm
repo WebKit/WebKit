@@ -3667,10 +3667,7 @@ static WebFrameView *containingFrameView(NSView *view)
         return;
     }
 
-#ifndef __LP64__
-    // FIXME: we need a new function that works in 64-bit <rdar://problem/5311640>
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
-#endif
 }
 
 // Slightly funky method that lets us have one copy of the logic for finding docViews that can do

@@ -512,10 +512,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
     if (enable == IsSecureEventInputEnabled())
         return;
     if (enable) {
-#ifndef __LP64__
-        // FIXME: we need a new call on 64-bit <rdar://problem/5311690>
         EnableSecureEventInput();
-#endif
 #ifdef BUILDING_ON_TIGER
         KeyScript(enableRomanKeyboardsOnly);
 #else
@@ -524,10 +521,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
         CFRelease(inputSources);
 #endif
     } else {
-#ifndef __LP64__
-        // FIXME: we need a new call on 64-bit <rdar://problem/5311690>
         DisableSecureEventInput();
-#endif
 #ifdef BUILDING_ON_TIGER
         KeyScript(smKeyEnableKybds);
 #else
