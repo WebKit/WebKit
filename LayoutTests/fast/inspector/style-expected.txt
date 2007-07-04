@@ -49,6 +49,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,216) size 75x18
           text run at (0,216) width 75: "color: white"
         RenderBR {BR} at (75,230) size 0x0
-        RenderText {#text} at (0,234) size 356x18
-          text run at (0,234) width 356: "font: normal normal normal 24px/normal Lucida Grande"
-        RenderBR {BR} at (356,248) size 0x0
+        RenderText {#text} at (0,234) size 362x18
+          text run at (0,234) width 362: "font: normal normal normal 24px/normal 'Lucida Grande'"
+        RenderBR {BR} at (362,248) size 0x0

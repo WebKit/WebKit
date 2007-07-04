@@ -1,3 +1,24 @@
+2007-07-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5221297> Font family name in the cssText for a DOMCSSStyleDeclaration needs quotes
+
+        Test: editing/style/font-family-with-space.html
+
+        * css/FontFamilyValue.cpp:
+        (WebCore::isValidCSSIdentifier): Added. Implements the same rule that the CSS lexer does.
+        (WebCore::quoteStringIfNeeded): Changed to call isValidCSSIdentifier instead of just
+        checking for a leading "#" character.
+        * editing/markup.cpp:
+        (WebCore::escapeTextForMarkup): Changed to take a String parameter for better efficiency.
+        (WebCore::renderedText): Changed to return a String for better efficiency.
+        (WebCore::addNamespace): Updated to pass String to escapeTextForMarkup.
+        (WebCore::startMarkup): Updated to pass String to escapeTextForMarkup. Added missing call
+        to escapeTextForMarkup in the special case for the style property.
+        (WebCore::createMarkup): Changed from single quotes to double quotes and also added missing
+        call to escapeTextForMarkup in two special cases for the style property.
+
 2007-07-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

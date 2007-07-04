@@ -1,3 +1,14 @@
+2007-07-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - tests for <rdar://problem/5221297> Font family name in the cssText for a DOMCSSStyleDeclaration needs quotes
+
+        * editing/style/font-family-with-space-expected.txt: Added.
+        * editing/style/font-family-with-space.html: Added.
+
+        * fast/inspector/style-expected.txt: Updated expected results to expect "Lucida Grande" in quote marks.
+
 2007-07-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
