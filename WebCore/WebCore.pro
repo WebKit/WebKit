@@ -449,6 +449,7 @@ SOURCES += \
     editing/SelectionController.cpp \
     editing/Selection.cpp \
     editing/SetNodeAttributeCommand.cpp \
+    editing/SmartReplace.cpp \
     editing/SplitElementCommand.cpp \
     editing/SplitTextNodeCommand.cpp \
     editing/SplitTextNodeContainingElementCommand.cpp \

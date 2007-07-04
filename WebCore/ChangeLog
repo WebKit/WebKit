@@ -1,3 +1,10 @@
+2007-07-04  George Staikos  <staikos@kde.org>
+
+        Compile
+
+        * page/qt/FrameQt.cpp:
+        * WebCore.pro:
+
 2007-07-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
