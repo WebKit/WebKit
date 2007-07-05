@@ -1,5 +1,11 @@
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Warn about tests in the Skipped file that succeeded
+
+        * Scripts/run-webkit-tests:
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Removed unused install-win-extras script
 
         Rubberstamped by Mark.

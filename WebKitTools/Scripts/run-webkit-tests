@@ -763,6 +763,13 @@ if ($report10Slowest) {
 
 print "\n";
 
+if ($skippedOnly && $counts{"match"}) {
+    print "The following tests are in the Skipped file (" . File::Spec->abs2rel("$platformTestDirectory/Skipped", $testDirectory) . "), but succeeded:\n";
+    foreach my $test (@{$tests{"match"}}) {
+        print "  $test\n";
+    }
+}
+
 if ($resetResults || ($counts{match} && $counts{match} == $count)) {
     print "all $count test cases succeeded\n";
     unlink $testResults;
