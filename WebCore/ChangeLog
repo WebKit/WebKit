@@ -1,3 +1,26 @@
+2007-07-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Add focus, blur and close functions to DOMWindow implementation class
+        and move bindings from Window to JSDOMWindow.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::WindowFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm: Move prototype function declaration from
+        the implementation to the header.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::blur):
+        (WebCore::DOMWindow::close):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2007-07-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

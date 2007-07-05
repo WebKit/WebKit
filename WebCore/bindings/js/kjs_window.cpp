@@ -197,9 +197,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   print         Window::Print           DontDelete|Function 2
   setTimeout    Window::SetTimeout      DontDelete|Function 2
   clearTimeout  Window::ClearTimeout    DontDelete|Function 1
-  focus         Window::Focus           DontDelete|Function 0
-  blur          Window::Blur            DontDelete|Function 0
-  close         Window::Close           DontDelete|Function 0
   setInterval   Window::SetInterval     DontDelete|Function 2
   clearInterval Window::ClearInterval   DontDelete|Function 1
   captureEvents Window::CaptureEvents   DontDelete|Function 0
@@ -784,11 +781,6 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   if (entry) {
     if (entry->attr & Function) {
       switch (entry->value) {
-      case Focus:
-      case Blur:
-      case Close:
-        slot.setStaticEntry(this, entry, staticFunctionGetter<WindowFunc>);
-        break;
       case ShowModalDialog:
         if (!canShowModalDialog(this))
           return false;
@@ -1567,17 +1559,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if (!window->isSafeScript(exec))
         return jsUndefined();
     (const_cast<Window*>(window))->clearTimeout(v->toInt32(exec));
-    return jsUndefined();
-  case Window::Focus:
-    frame->focusWindow();
-    return jsUndefined();
-  case Window::Blur:
-    frame->unfocusWindow();
-    return jsUndefined();
-  case Window::Close:
-    // Do not close windows that have history unless they were opened by JavaScript.
-    if (frame->loader()->openedByDOM() || frame->loader()->getHistoryLength() <= 1)
-      const_cast<Window*>(window)->scheduleClose();
     return jsUndefined();
   case Window::CaptureEvents:
   case Window::ReleaseEvents:

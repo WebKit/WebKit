@@ -529,7 +529,12 @@ sub GenerateHeader
     }
 
     push(@headerContent, "};\n\n");
-    push(@headerContent, "}\n\n");
+
+    if ($numFunctions > 0) {
+        push(@headerContent, prototypeFunctionFor($className));
+    }
+
+    push(@headerContent, "} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
     push(@headerContent, "#endif\n");
 }
@@ -705,10 +710,6 @@ sub GenerateImplementation
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
-
-    if ($numFunctions > 0) {
-        push(@implContent, prototypeFunctionFor($className));
-    }
 
     push(@implContent, "const ClassInfo ${className}Prototype::info = { \"${interfaceName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
@@ -1477,9 +1478,6 @@ sub NativeToJSValue
         $implIncludes{"EventTargetNode.h"} = 1;
         $implIncludes{"JSEventTargetNode.h"} = 1;
         $implIncludes{"kjs_dom.h"} = 1;
-    } elsif ($type eq "HTMLCanvasElement") {
-        $implIncludes{"kjs_dom.h"} = 1;
-        $implIncludes{"HTMLCanvasElement.h"} = 1;
     } elsif ($type eq "DOMWindow") {
         $implIncludes{"kjs_window.h"} = 1;
     } elsif ($type eq "DOMObject") {
@@ -1756,15 +1754,16 @@ sub prototypeFunctionFor
     my $className = shift;
 
 my $implContent = << "EOF";
-class ${className}PrototypeFunction : public InternalFunctionImp {
+class ${className}PrototypeFunction : public KJS::InternalFunctionImp {
 public:
-    ${className}PrototypeFunction(ExecState* exec, int i, int len, const Identifier& name)
-        : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+    ${className}PrototypeFunction(KJS::ExecState* exec, int i, int len, const KJS::Identifier& name)
+        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
         , id(i)
     {
-        put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum);
+        put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete|KJS::ReadOnly|KJS::DontEnum);
     }
-    virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+
 private:
     int id;
 };

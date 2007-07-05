@@ -143,6 +143,29 @@ DOMSelection* DOMWindow::getSelection()
     return m_selection.get();
 }
 
+void DOMWindow::focus()
+{
+    if (!m_frame)
+        return;
+    m_frame->focusWindow();
+}
+
+void DOMWindow::blur()
+{
+    if (!m_frame)
+        return;
+    m_frame->unfocusWindow();
+}
+
+void DOMWindow::close()
+{
+    if (!m_frame)
+        return;
+
+    if (m_frame->loader()->openedByDOM() || m_frame->loader()->getHistoryLength() <= 1)
+        m_frame->scheduleClose();
+}
+
 Document* DOMWindow::document() const
 {
     if (!m_frame)

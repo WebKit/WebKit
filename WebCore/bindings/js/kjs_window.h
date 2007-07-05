@@ -151,7 +151,7 @@ namespace KJS {
            ScreenTop, ScreenLeft,
            ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
-           Focus, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
+           SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,
            XMLHttpRequest, XSLTProcessor_,
            Onabort, Onblur, Onchange, Onclick, Ondblclick, Onerror, 

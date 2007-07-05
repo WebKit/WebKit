@@ -38,6 +38,10 @@ module window {
 
         DOMSelection getSelection();
 
+        [DoNotCheckDomainSecurity] void focus();
+        [DoNotCheckDomainSecurity] void blur();
+        [DoNotCheckDomainSecurity] void close();
+
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 
