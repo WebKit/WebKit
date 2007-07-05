@@ -238,7 +238,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   stop          Window::Stop            DontDelete|Function 0
 @end
 */
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(WindowFunc)
 
 Window::Window(DOMWindow* window)
   : m_frame(window->frame())
@@ -769,43 +768,6 @@ JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, cons
   return toJS(exec, collection.get());
 }
 
-bool Window::getOverridePropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  // we don't want any properties other than "closed" on a closed window
-  if (!m_frame) {
-    if (propertyName == "closed") {
-      slot.setStaticEntry(this, Lookup::findEntry(&WindowTable, "closed"), staticValueGetter<Window>);
-      return true;
-    }
-    if (propertyName == "close") {
-      const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
-      slot.setStaticEntry(this, entry, staticFunctionGetter<WindowFunc>);
-      return true;
-    }
-
-    slot.setUndefined(this);
-    return true;
-  }
-
-  // Look for overrides first
-  JSValue **val = getDirectLocation(propertyName);
-  if (val) {
-    if (!isSafeScript(exec)) {
-      slot.setUndefined(this);
-      return true;
-    }
-    
-    // FIXME: Come up with a way of having JavaScriptCore handle getters/setters in this case
-    if (_prop.hasGetterSetterProperties() && val[0]->type() == GetterSetterType)
-      fillGetterPropertySlot(slot, val);
-    else
-      slot.setValueSlot(this, val);
-    return true;
-  }
-  
-  return false;
-}
-
 bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   // Check for child frames by name before built-in properties to
@@ -813,12 +775,11 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   // naming frames things that conflict with window properties that
   // are in Moz but not IE. Since we have some of these, we have to do
   // it the Moz way.
-  AtomicString atomicPropertyName = propertyName;
-  if (m_frame->tree()->child(atomicPropertyName)) {
+  if (frame()->tree()->child(propertyName)) {
     slot.setCustom(this, childFrameGetter);
     return true;
   }
-  
+
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
   if (entry) {
     if (entry->attr & Function) {

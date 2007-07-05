@@ -1,3 +1,16 @@
+2007-07-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Move JSDOMWindow overriding getOwnPropertySlot logic from KJS::Window
+        up into JSDOMWindow.  No change in functionality so no testcase required. 
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot):
+        * bindings/js/kjs_window.h:
+
 2007-07-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed and Landed by Sam.
