@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebChromeClient.h"
 
+#include "WebElementPropertyBag.h"
 #include "WebFrame.h"
 #include "WebMutableURLRequest.h"
 #include "WebView.h"
@@ -425,3 +426,14 @@ void WebChromeClient::updateBackingStore()
     m_webView->updateBackingStore(core(m_webView->topLevelFrame())->view(), 0, false);
 }
 
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (FAILED(m_webView->uiDelegate(&uiDelegate)))
+        return;
+
+    COMPtr<WebElementPropertyBag> element;
+    element.adoptRef(WebElementPropertyBag::createInstance(result));
+
+    uiDelegate->mouseDidMoveOverElement(m_webView, element.get(), modifierFlags);
+}

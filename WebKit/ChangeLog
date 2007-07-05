@@ -1,3 +1,14 @@
+2007-07-04  Adam Roben  <aroben@apple.com>
+
+        Add WebChromeClient::mouseDidMoveOverElement
+
+        This is not called yet.
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+
 2007-07-03  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated for recent changes.

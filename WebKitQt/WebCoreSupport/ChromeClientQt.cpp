@@ -294,6 +294,11 @@ void ChromeClientQt::updateBackingStore()
 {
 }
 
+void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult&, unsigned /*modifierFlags*/)
+{
+    notImplemented();
+}
+
 }
 
 

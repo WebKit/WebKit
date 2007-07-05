@@ -1,3 +1,15 @@
+2007-07-04  Adam Roben  <aroben@apple.com>
+
+        Add WebChromeClient::mouseDidMoveOverElement
+
+        This is not called yet.
+
+        Reviewed by Sam.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::mouseDidMoveOverElement):
+        * WebChromeClient.h:
+
 2007-07-03  Adam Roben  <aroben@apple.com>
 
         Merge the Windows and Mac localized strings and exceptions files

@@ -30,6 +30,7 @@
 #import "WebChromeClient.h"
 
 #import "WebDefaultUIDelegate.h"
+#import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLView.h"
@@ -41,6 +42,7 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/HitTestResult.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
@@ -366,4 +368,11 @@ void WebChromeClient::scrollBackingStore(int, int, const IntRect&, const IntRect
 
 void WebChromeClient::updateBackingStore()
 {
+}
+
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+{
+    WebElementDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:result];
+    [m_webView _mouseDidMoveOverElement:element modifierFlags:modifierFlags];
+    [element release];
 }

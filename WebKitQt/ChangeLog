@@ -1,3 +1,13 @@
+2007-07-04  Adam Roben  <aroben@apple.com>
+
+        Added a stub for ChromeClientQt::mouseDidMoveOverElement
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2007-06-28  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

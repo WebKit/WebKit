@@ -87,6 +87,9 @@ public:
     virtual void addToDirtyRegion(const WebCore::IntRect&);
     virtual void scrollBackingStore(int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
     virtual void updateBackingStore();
+
+    virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
+
 private:
     WebView* m_webView;
 };

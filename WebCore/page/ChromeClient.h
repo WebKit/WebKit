@@ -27,6 +27,7 @@ namespace WebCore {
 
     class FloatRect;
     class Frame;
+    class HitTestResult;
     class IntRect;
     class Page;
     class String;
@@ -95,6 +96,8 @@ namespace WebCore {
         virtual void addToDirtyRegion(const IntRect&) = 0;
         virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) = 0;
         virtual void updateBackingStore() = 0;
+
+        virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 };
 
 }

@@ -168,6 +168,11 @@ void ChromeClientGdk::updateBackingStore()
     notImplemented();
 }
 
+void ChromeClientGdk::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
+{
+    notImplemented();
+}
+
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

@@ -109,6 +109,8 @@ public:
     virtual void addToDirtyRegion(const IntRect&) { }
     virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) { }
     virtual void updateBackingStore() { }
+
+    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) { }
     
 };
 

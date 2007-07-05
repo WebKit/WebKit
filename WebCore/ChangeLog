@@ -1,5 +1,24 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Add Chrome::mouseDidMoveOverElement
+
+        This does the work of calling up to the ChromeClient (which will call
+        the UI delegate).
+
+        Reviewed by Sam.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement): Added.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h: Updated for change to
+        ChromeClient.
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (ChromeClientGdk::mouseDidMoveOverElement):
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Changed PlatformMouseEvent to store the modifier flags of the event
 
         Reviewed by Sam.
