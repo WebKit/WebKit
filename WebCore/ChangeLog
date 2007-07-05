@@ -1,3 +1,15 @@
+2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14513
+        Cairo animated GIF support is broken
+
+        Implement ImageSource::frameIsCompleteAtIndex() to enable animated GIFs.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+
 2007-07-04  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Adam.

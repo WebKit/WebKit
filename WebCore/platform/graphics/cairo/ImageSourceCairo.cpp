@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,10 +164,13 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
                                                size().width()*4);
 }
 
-bool ImageSource::frameIsCompleteAtIndex(size_t)
+bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
-    // FIXME: write me. Returning false makes the animation not run
-    return false;
+    if (!m_decoder)
+        return false;
+
+    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
+    return buffer && buffer->status() == RGBA32Buffer::FrameComplete;
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
