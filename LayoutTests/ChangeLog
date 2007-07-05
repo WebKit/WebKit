@@ -1,3 +1,16 @@
+2007-07-05  Darin Adler  <darin@apple.com>
+
+        - tweaked IDN test and checked in both Tiger results and Leopard
+
+        * fast/encoding/idn-security.html: Changed test to only test lowercase "a" since the behavior for
+        uppercase letters has changed in the new ICU. Also added code to detect the older ICU and expect
+        different results.
+
+        * fast/encoding/idn-security-expected.txt: Regenerated results.
+
+        * mac/leopard/fast/encoding/idn-security-expected.txt: Copied from fast/encoding/idn-security-expected.txt.
+        The modified.
+
 2007-07-05  Adam Roben  <aroben@apple.com>
 
         Add a Skipped file for Leopard.

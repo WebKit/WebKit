@@ -112,12 +112,14 @@ function testDoesNotEncodeIDNCharacter(charCode)
     shouldBe("testIDNEncodeTripFirstCharacter(0x" + charCode.toString(16) + ")", "'" + expected + "'");
 }
 
+var isOlderICU = testIDNEncode(0x3002) == ".";
+
 /* Allowed Characters - dot and slash */
 testIDNCharacter(".".charCodeAt(0), "allowed");
 testIDNCharacter("/".charCodeAt(0), "allowed");
 
 /* Allowed Characters - one character for each script in the default IDN whitelist*/
-testIDNCharacter(0x0041, "allowed");
+testIDNCharacter(0x0061, "allowed");
 testIDNCharacter(0x0633, "allowed");
 testIDNCharacter(0x0561, "allowed");
 testIDNCharacter(0x3105, "allowed");
@@ -242,11 +244,19 @@ testIDNCharacter(0x0702, "disallowed", "does not encode");
 /* ICU won't encode these characters if they're the first character in the host name.  
    If the character does get encoded as the first character, then ICU converts it to another allowed character */
 
-testIDNCharacter(0x200B, "does not encode", "");
-testIDNCharacter(0x3002, "does not encode", ".");
-testIDNCharacter(0xFF0E, "does not encode", ".");
-testIDNCharacter(0xFF61, "does not encode", ".");
-testIDNCharacter(0xFEFF, "does not encode", "");
+if (isOlderICU) {
+    testIDNCharacter(0x200B, "");
+    testIDNCharacter(0x3002, ".");
+    testIDNCharacter(0xFF0E, ".");
+    testIDNCharacter(0xFF61, ".");
+    testIDNCharacter(0xFEFF, "");
+} else {
+    testIDNCharacter(0x200B, "does not encode", "");
+    testIDNCharacter(0x3002, "does not encode", ".");
+    testIDNCharacter(0xFF0E, "does not encode", ".");
+    testIDNCharacter(0xFF61, "does not encode", ".");
+    testIDNCharacter(0xFEFF, "does not encode", "");
+}
 
 successfullyParsed = true;
 
