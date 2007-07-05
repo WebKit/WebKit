@@ -1,5 +1,23 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Move tooltip logic down into WebCore so that it can be shared cross-platform
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setToolTip): Added.
+        * WebView/WebHTMLView.mm: Removed _resetCachedWebPreferences.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Removed tooltip code.
+        (-[WebHTMLView initWithFrame:]): Removed call to
+        _resetCachedWebPreferences.
+        (-[WebHTMLView setDataSource:]): Ditto.
+        * WebView/WebHTMLViewInternal.h: Removed showsURLsInToolTips ivar.
+        * WebView/WebHTMLViewPrivate.h: Added declaration for _setTooltip so
+        that WebChromeClient can call it.
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Initialize Settings::showsURLsInToolTips
 
         Reviewed by Sam.

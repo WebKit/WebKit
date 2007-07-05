@@ -173,6 +173,11 @@ void ChromeClientGdk::mouseDidMoveOverElement(const HitTestResult&, unsigned mod
     notImplemented();
 }
 
+void ChromeClientGdk::setToolTip(const String&)
+{
+    notImplemented();
+}
+
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

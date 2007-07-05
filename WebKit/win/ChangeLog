@@ -1,5 +1,14 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Added a stub for WebChromeClient::setToolTip
+
+        Reviewed by Sam.
+
+        * WebChromeClient.cpp:
+        * WebChromeClient.h:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Initialize Settings::showsURLsInToolTips
 
         Reviewed by Sam.

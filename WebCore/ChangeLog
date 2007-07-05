@@ -1,5 +1,25 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Move tooltip logic down into WebCore so that it can be shared cross-platform
+
+        Reviewed by Sam.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip): Added.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved): Call Chrome::setToolTip.
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+
+        Added stubs for Gdk:
+
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (ChromeClientGdk::setToolTip):
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Add Settings::showsURLsInToolTips
 
         Reviewed by Sam.

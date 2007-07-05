@@ -34,6 +34,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLView.h"
+#import "WebHTMLViewPrivate.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -375,4 +376,9 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
     WebElementDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:result];
     [m_webView _mouseDidMoveOverElement:element modifierFlags:modifierFlags];
     [element release];
+}
+
+void WebChromeClient::setToolTip(const String& toolTip)
+{
+    [(WebHTMLView *)[[[m_webView mainFrame] frameView] documentView] _setToolTip:toolTip];
 }

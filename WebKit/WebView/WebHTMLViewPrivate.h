@@ -95,6 +95,8 @@
 - (BOOL)_transparentBackground;
 - (void)_setTransparentBackground:(BOOL)f;
 
+- (void)_setToolTip:(NSString *)string;
+
 // SPI's for Mail.
 - (NSImage *)_selectionDraggingImage;
 - (NSRect)_selectionDraggingRect;

@@ -104,6 +104,8 @@ namespace WebCore {
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
+        virtual void setToolTip(const String&);
+
         QWebPage* m_webPage;
     };
 }

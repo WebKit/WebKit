@@ -1185,35 +1185,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         if (Frame* coreFrame = core([view _frame]))
             coreFrame->eventHandler()->mouseMoved(event);
 
-        NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        NSDictionary *element = [view elementAtPoint:point];
-
-        // Set a tool tip; it won't show up right away but will if the user pauses.
-
-        // First priority is a potential toolTip representing a spelling or grammar error
-        NSString *newToolTip = [element objectForKey:WebElementSpellingToolTipKey];
-        
-        // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
-        if ([newToolTip length] == 0 && _private->showsURLsInToolTips) {
-            DOMHTMLElement *domElement = [element objectForKey:WebElementDOMNodeKey];
-            
-            // Get tooltip representing form action, if relevant
-            if ([domElement isKindOfClass:[DOMHTMLInputElement class]]) {
-                if ([[(DOMHTMLInputElement *)domElement type] isEqualToString:@"submit"])
-                    newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
-            }
-            
-            // Get tooltip representing link's URL
-            if ([newToolTip length] == 0)
-                newToolTip = [[element objectForKey:WebElementLinkURLKey] _web_userVisibleString];
-        }
-        
-        // Lastly we'll consider a tooltip for element with "title" attribute
-        if ([newToolTip length] == 0)
-            newToolTip = [element objectForKey:WebElementTitleKey];
-        
-        [view _setToolTip:newToolTip];
-
         [view release];
     }
 }
@@ -1848,16 +1819,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #endif
 }
 
-- (void)_resetCachedWebPreferences:(NSNotification *)ignored
-{
-    WebPreferences *preferences = [[self _webView] preferences];
-    // Check for nil because we might not yet have an associated webView when this is called
-    if (preferences == nil)
-        preferences = [WebPreferences standardPreferences];
-
-    _private->showsURLsInToolTips = [preferences showsURLsInToolTips];
-}
-
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
@@ -1873,10 +1834,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     _private->pluginController = [[WebPluginController alloc] initWithDocumentView:self];
     _private->needsLayout = YES;
-    [self _resetCachedWebPreferences:nil];
-    [[NSNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_resetCachedWebPreferences:) 
-                   name:WebPreferencesChangedNotification object:nil];
     
     return self;
 }
@@ -3053,7 +3010,6 @@ noPromisedData:
         [_private->pluginController setDataSource:dataSource];
         [self addMouseMovedObserver];
     }
-    [self _resetCachedWebPreferences:nil];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource

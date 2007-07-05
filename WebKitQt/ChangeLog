@@ -1,5 +1,15 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Added a stub for ChromeClientQt::setToolTip
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+        * WebCoreSupport/ChromeClientQt.h:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Added a stub for ChromeClientQt::mouseDidMoveOverElement
 
         Reviewed by Sam.

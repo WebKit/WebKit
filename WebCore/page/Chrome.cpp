@@ -25,14 +25,20 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "InspectorController.h"
 #include "Page.h"
 #include "ResourceHandle.h"
+#include "Settings.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 class PageGroupLoadDeferrer : Noncopyable {
 public:
@@ -296,6 +302,36 @@ void Chrome::updateBackingStore()
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     m_client->mouseDidMoveOverElement(result, modifierFlags);
+}
+
+void Chrome::setToolTip(const HitTestResult& result)
+{
+    // First priority is a potential toolTip representing a spelling or grammar error
+    String toolTip = result.spellingToolTip();
+
+    // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
+    if (toolTip.isEmpty() && m_page->settings()->showsURLsInToolTips()) {
+        if (Node* node = result.innerNonSharedNode()) {
+            // Get tooltip representing form action, if relevant
+            if (node->hasTagName(inputTag)) {
+                HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+                if (input->inputType() == HTMLInputElement::SUBMIT)
+                    if (HTMLFormElement* form = input->form())
+                        toolTip = form->action();
+            }
+        }
+
+        // Get tooltip representing link's URL
+        if (toolTip.isEmpty())
+            // FIXME: Need to pass this URL through userVisibleString once that's in WebCore
+            toolTip = result.absoluteLinkURL().url();
+    }
+
+    // Lastly we'll consider a tooltip for element with "title" attribute
+    if (toolTip.isEmpty())
+        toolTip = result.title();
+
+    m_client->setToolTip(toolTip);
 }
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)

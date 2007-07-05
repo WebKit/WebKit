@@ -98,6 +98,8 @@ namespace WebCore {
         virtual void updateBackingStore() = 0;
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
+
+        virtual void setToolTip(const String&) = 0;
 };
 
 }
