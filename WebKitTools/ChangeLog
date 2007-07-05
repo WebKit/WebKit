@@ -1,3 +1,12 @@
+2007-07-04  Adam Roben  <aroben@apple.com>
+
+        Enable a Leopard-specific Skipped list.
+
+        Reviewed by Mark.
+
+        * Scripts/run-webkit-tests: Check for Leopard.
+        * Scripts/webkitdirs.pm: Added isTiger/isLeopard.
+
 2007-07-03  Adam Roben  <aroben@apple.com>
 
         Fixed update-webkit-localizable-strings to work with new extract-localizable-strings

@@ -48,6 +48,7 @@ my $configuration;
 my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
+my $osXVersion;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -396,6 +397,41 @@ sub isCygwin()
 sub isOSX()
 {
     return ($^O eq "darwin");
+}
+
+sub determineOSXVersion()
+{
+    return if $osXVersion;
+
+    if (!isOSX()) {
+        $osXVersion = -1;
+        return;
+    }
+
+    my $version = `sw_vers -productVersion`;
+    my @splitVersion = split(/\./, $version);
+    @splitVersion >= 2 or die "Invalid version $version";
+    $osXVersion = {
+            "major" => $splitVersion[0],
+            "minor" => $splitVersion[1],
+            "subminor" => (defined($splitVersion[2]) ? $splitVersion[2] : 0),
+    };
+}
+
+sub osXVersion()
+{
+    determineOSXVersion();
+    return $osXVersion;
+}
+
+sub isTiger()
+{
+    return isOSX() && osXVersion()->{"minor"} == 4;
+}
+
+sub isLeopard()
+{
+    return isOSX() && osXVersion()->{"minor"} == 5;
 }
 
 sub checkRequiredSystemConfig
