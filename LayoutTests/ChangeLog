@@ -1,3 +1,11 @@
+2007-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Forgot to add this file for the test for <rdar://problem/5303567> REGRESSION: 
+        XMLHttpRequest.responseXML. Darin added a dummy file before -- here's the
+        real one.
+
+        * fast/loader/resources/plist.app:
+
 2007-07-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
