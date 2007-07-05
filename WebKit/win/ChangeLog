@@ -1,5 +1,14 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Removed call to mouseDidMoveOverElement now that WebCore handles it
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebView::handleMouseEvent):
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Add WebChromeClient::mouseDidMoveOverElement
 
         This is not called yet.

@@ -1,5 +1,26 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Move logic for calling mouseDidMoveOverElement into WebCore
+
+        Reviewed by Sam.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved): Added. Calls Chrome::mouseDidMoveOverElement.
+        (WebCore::EventHandler::handleMouseMoveEvent): Now takes an optional
+        HitTestResult* parameter which is used to communicate to the caller the
+        node the mouse is over.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseMoved): Changed to call the overloaded
+        mouseMoved().
+        (WebCore::EventHandler::passMouseMoveEventToSubframe): Pass hoveredNode
+        through to the subframe so we can get the deepest node hovered, not
+        just the node's parent frame.
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passMouseMoveEventToSubframe): Ditto.
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Add Chrome::mouseDidMoveOverElement
 
         This does the work of calling up to the ChromeClient (which will call

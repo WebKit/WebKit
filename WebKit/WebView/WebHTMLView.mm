@@ -1188,9 +1188,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
         NSDictionary *element = [view elementAtPoint:point];
 
-        // Have the web view send a message to the delegate so it can do status bar display.
-        [[view _webView] _mouseDidMoveOverElement:element modifierFlags:[event modifierFlags]];
-
         // Set a tool tip; it won't show up right away but will if the user pauses.
 
         // First priority is a potential toolTip representing a spelling or grammar error

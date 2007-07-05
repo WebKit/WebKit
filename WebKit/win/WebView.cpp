@@ -797,14 +797,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->handleMouseMoveEvent(mouseEvent);
-
-        if (m_uiDelegate) {
-            COMPtr<IPropertyBag> props;
-            POINT contentsPoint = m_page->mainFrame()->view()->windowToContents(mouseEvent.pos());
-            if (SUCCEEDED(elementAtPoint(&contentsPoint, &props)))
-                m_uiDelegate->mouseDidMoveOverElement((IWebView*)this, props.get(), (UINT)wParam);
-        }
+        handled = m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
     }
     setMouseActivated(false);
     return handled;

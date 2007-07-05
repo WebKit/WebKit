@@ -882,7 +882,21 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
 
-bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
+bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
+{
+    HitTestResult hoveredNode = HitTestResult(IntPoint());
+    bool result = handleMouseMoveEvent(event, &hoveredNode);
+
+    Page* page = m_frame->page();
+    if (!page)
+        return result;
+
+    hoveredNode.setToNonShadowAncestor();
+    page->chrome()->mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
+    return result;
+}
+
+bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, HitTestResult* hoveredNode)
 {
     // in Radar 3703768 we saw frequent crashes apparently due to the
     // part being null here, which seems impossible, so check for nil
@@ -894,7 +908,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 
     RefPtr<FrameView> protector(m_frame->view());
     m_currentMousePosition = mouseEvent.pos();
-   
+
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
 
@@ -917,6 +931,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
     HitTestRequest request(m_mousePressed && m_mouseDownMayStartSelect, m_mousePressed, true);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
+    if (hoveredNode)
+        *hoveredNode = mev.hitTestResult();
 
     PlatformScrollbar* scrollbar = 0;
 
@@ -948,7 +964,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     if (newSubframe) {
         // Update over/out state before passing the event to the subframe.
         updateMouseEventTargetNode(mev.targetNode(), mouseEvent, true);
-        swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get());
+        swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get(), hoveredNode);
     } else {
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
