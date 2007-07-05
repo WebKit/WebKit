@@ -2,6 +2,59 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/show_bug.cgi?id=14445
+        GraphicsContextCairo code style cleanup
+
+        Follow the cr naming convention for cairo_t*.
+        Remove trailing whitespace.
+        Replace C casts with C++ casts.
+        Avoid needless casts.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::adjustLineToPixelBoundaries):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc): Save/restore the graphics state.
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::origin):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformFont):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cairo/ImageCairo.cpp: Avoid the confusing ctxt/context naming scheme.
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+
+2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mark Rowe.
+
         http://bugs.webkit.org/show_bug.cgi?id=14531
         Cairo SVGImage::nativeImageForCurrentFrame() has no return
 

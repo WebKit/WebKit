@@ -48,13 +48,13 @@ auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool)
 ImageBuffer::ImageBuffer(_cairo_surface* surface)
     : m_surface(surface)
 {
-    cairo_t* context = cairo_create(m_surface);
-    m_context.set(new GraphicsContext(context));
+    cairo_t* cr = cairo_create(m_surface);
+    m_context.set(new GraphicsContext(cr));
 
     /*
      * The context is now owned by the GraphicsContext
      */
-    cairo_destroy(context);
+    cairo_destroy(cr);
 }
 
 ImageBuffer::~ImageBuffer()
