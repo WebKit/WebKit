@@ -1,5 +1,14 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Initialize Settings::showsURLsInToolTips
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Removed call to mouseDidMoveOverElement now that WebCore handles it
 
         Reviewed by Sam.

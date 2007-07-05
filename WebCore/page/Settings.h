@@ -124,6 +124,9 @@ namespace WebCore {
 
         void setShrinksStandaloneImagesToFit(bool);
         bool shrinksStandaloneImagesToFit() const { return m_shrinksStandaloneImagesToFit; }
+
+        void setShowsURLsInToolTips(bool);
+        bool showsURLsInToolTips() const { return m_showsURLsInToolTips; }
         
     private:
         Page* m_page;
@@ -154,6 +157,7 @@ namespace WebCore {
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;
+        bool m_showsURLsInToolTips : 1;
     };
 
 } // namespace WebCore

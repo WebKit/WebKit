@@ -878,6 +878,7 @@ static bool debugWidget = true;
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
+    settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

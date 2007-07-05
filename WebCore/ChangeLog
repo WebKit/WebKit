@@ -1,5 +1,16 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Add Settings::showsURLsInToolTips
+
+        Reviewed by Sam.
+
+        * WebCore.exp:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Move logic for calling mouseDidMoveOverElement into WebCore
 
         Reviewed by Sam.

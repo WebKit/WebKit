@@ -60,6 +60,7 @@ Settings::Settings(Page* page)
     , m_isDOMPasteAllowed(false)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
+    , m_showsURLsInToolTips(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -253,6 +254,11 @@ void Settings::setUsesPageCache(bool usesPageCache)
 void Settings::setShrinksStandaloneImagesToFit(bool shrinksStandaloneImagesToFit)
 {
     m_shrinksStandaloneImagesToFit = shrinksStandaloneImagesToFit;
+}
+
+void Settings::setShowsURLsInToolTips(bool showsURLsInToolTips)
+{
+    m_showsURLsInToolTips = showsURLsInToolTips;
 }
 
 } // namespace WebCore

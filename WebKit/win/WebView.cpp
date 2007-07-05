@@ -1460,6 +1460,8 @@ HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferenc
 
     ResourceHandle::setCookieStorageAcceptPolicy(acceptPolicy);
 
+    settings->setShowsURLsInToolTips(false);
+
     m_mainFrame->invalidate(); // FIXME
 
     return S_OK;
