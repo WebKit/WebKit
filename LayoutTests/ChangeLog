@@ -1,3 +1,14 @@
+2007-07-04  Darin Adler  <darin@apple.com>
+
+        - take out infinity tests from the test for bug 5292262 (see below) for now since they
+          give different results on PowerPC and Intel and are not an important part of the intent
+          of this test anyway; the bug was about normal numbers, not edge cases like infinity
+
+        If we want to test the infinity behavior, we should make a separate test later.
+
+        * fast/objc/longlongTest-expected.txt: Removed results from infinity tests.
+        * fast/objc/longlongTest.html: Removed infinity tests.
+
 2007-07-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by John.

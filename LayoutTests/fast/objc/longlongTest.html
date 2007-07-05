@@ -39,16 +39,12 @@
                 testLongLong(-1, -1);
                 testLongLong(9223372036854776001, -9223372036854776000);
                 testLongLong(-9223372036854776001, -9223372036854776000);
-                testLongLong(Number.POSITIVE_INFINITY, -9223372036854776000);
-                testLongLong(Number.NEGATIVE_INFINITY, -9223372036854776000);
 
                 testUnsignedLongLong(0, 0);
                 testUnsignedLongLong(1, 1);
                 testUnsignedLongLong(-1, 18446744073709552000);
                 testUnsignedLongLong(9223372036854776001, 9223372036854776000);
                 testUnsignedLongLong(-9223372036854776001, 9223372036854776000);
-                testUnsignedLongLong(Number.POSITIVE_INFINITY, 9223372036854776000);
-                testUnsignedLongLong(Number.NEGATIVE_INFINITY, 9223372036854776000);
 
             }
         </script>
