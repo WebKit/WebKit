@@ -1,5 +1,17 @@
 2007-07-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        <rdar://problem/5315284> REGRESSION: Leopard Launch Time - plugins are being accessed at startup.
+
+        Set a response that has a MIME type of "text/html" on the document loader so WebKit won't refresh the 
+        plugin database looking for a plug-in that can handle the document's MIME type (which will be null anyway).
+                 
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+
+2007-07-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Oliver.
 
         <rdar://problem/5106788>
