@@ -82,6 +82,7 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
     , m_activatedWebView(activatedWebView)
     , m_eventType(messageToEventType(message))
+    , m_modifierFlags(wParam)
 {
     m_timestamp = ::GetTickCount()*0.001; // GetTickCount returns milliseconds
 

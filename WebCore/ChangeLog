@@ -1,5 +1,18 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Changed PlatformMouseEvent to store the modifier flags of the event
+
+        Reviewed by Sam.
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Add HitTestResult::setToNonShadowAncestor
 
         Reviewed by Sam.

@@ -73,6 +73,7 @@ namespace WebCore {
             , m_altKey(false)
             , m_metaKey(false)
             , m_timestamp(0)
+            , m_modifierFlags(0)
         {
         }
 
@@ -86,6 +87,7 @@ namespace WebCore {
             , m_altKey(alt)
             , m_metaKey(meta)
             , m_timestamp(timestamp)
+            , m_modifierFlags(0)
         {
         }
 
@@ -101,6 +103,7 @@ namespace WebCore {
         bool ctrlKey() const { return m_ctrlKey; }
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
+        unsigned modifierFlags() const { return m_modifierFlags; }
         
         //time in seconds
         double timestamp() const { return m_timestamp; }
@@ -132,6 +135,7 @@ namespace WebCore {
         bool m_altKey;
         bool m_metaKey;
         double m_timestamp; // unit: seconds
+        unsigned m_modifierFlags;
 #if PLATFORM(MAC)
         int m_eventNumber;
 #endif
