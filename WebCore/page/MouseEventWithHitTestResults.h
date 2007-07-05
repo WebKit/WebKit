@@ -21,7 +21,7 @@
 #ifndef MouseEventWithHitTestResults_h
 #define MouseEventWithHitTestResults_h
 
-#include "Element.h"
+#include "HitTestResult.h"
 #include "PlatformMouseEvent.h"
 
 namespace WebCore {
@@ -31,21 +31,18 @@ class PlatformScrollbar;
 // FIXME: Why doesn't this class just cache a HitTestResult instead of copying all of HitTestResult's fields over?
 class MouseEventWithHitTestResults {
 public:
-    MouseEventWithHitTestResults(const PlatformMouseEvent&, PassRefPtr<Node>, const IntPoint& localPoint, PlatformScrollbar*, bool isOverLink);
+    MouseEventWithHitTestResults(const PlatformMouseEvent&, const HitTestResult&);
 
     const PlatformMouseEvent& event() const { return m_event; }
+    const HitTestResult& hitTestResult() const { return m_hitTestResult; }
     Node* targetNode() const;
-    const IntPoint& localPoint() const { return m_localPoint; }
-    PlatformScrollbar* scrollbar() const { return m_scrollbar; }
-    bool isOverLink() const { return m_isOverLink; }
+    const IntPoint localPoint() const;
+    PlatformScrollbar* scrollbar() const;
+    bool isOverLink() const;
 
 private:
     PlatformMouseEvent m_event;
-    RefPtr<Node> m_targetNode;
-    RefPtr<Element> m_targetElement;
-    IntPoint m_localPoint;
-    PlatformScrollbar* m_scrollbar;
-    bool m_isOverLink;
+    HitTestResult m_hitTestResult;
 };
 
 }
