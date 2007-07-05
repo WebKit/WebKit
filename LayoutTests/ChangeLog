@@ -1,3 +1,11 @@
+2007-07-05  Adam Roben  <aroben@apple.com>
+
+        Add a Skipped file for Leopard.
+
+        Reviewed by Mark.
+
+        * mac/leopard/Skipped: Added.
+
 2007-07-04  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Adam.

@@ -1,0 +1,84 @@
+# <rdar://problem/5313520> editing/pasteboard/4076267-2.html fails on Leopard
+editing/pasteboard/4076267-2.html
+
+# <rdar://problem/5313523> http/tests/incremental/slow-utf8-text.pl fails on Leopard
+http/tests/incremental/slow-utf8-text.pl
+
+# <rdar://problem/5313527> security/block-test.html fails on Leopard
+security/block-test.html
+
+# <rdar://problem/5313514> Many SVG tests fail on Leopard
+svg/W3C-SVG-1.1/animate-elem-06-t.svg
+svg/W3C-SVG-1.1/animate-elem-07-t.svg
+svg/W3C-SVG-1.1/metadata-example-01-b.svg
+svg/W3C-SVG-1.1/paths-data-01-t.svg
+svg/W3C-SVG-1.1/text-path-01-b.svg
+svg/custom/control-points-for-S-and-T.svg
+svg/hixie/perf/001.xml
+svg/hixie/perf/002.xml
+svg/hixie/text/003.html
+svg/hixie/text/003a.xml
+svg/hixie/viewbox/preserveAspectRatio/002.xml
+
+# <rdar://problem/5313518> fast/events/iframe-object-onload.html shows events out of order on Leopard
+fast/events/iframe-object-onload.html
+
+# <rdar://problem/5313504> Some http/tests/navigation tests are missing back items on Leopard
+http/tests/navigation/document-location-click-timeout.html
+http/tests/navigation/document-location-click.html
+http/tests/navigation/document-location-mouseover.html
+http/tests/navigation/document-location-onload.html
+
+# <rdar://problem/5313506> Some attributed string layout tests have an extra space character on Leopard
+fast/forms/attributed-strings.html
+fast/text/attributed-substring-from-range-001.html
+
+# <rdar://problem/5313502> Many webarchive tests fail due to different plist DOCTYPE on Leopard
+webarchive/archive-empty-frame-dom.html
+webarchive/archive-empty-frame-source.html
+webarchive/archive-with-unencoded-url.html
+webarchive/test-body-background.html
+webarchive/test-duplicate-resources.html
+webarchive/test-frameset.html
+webarchive/test-img-src.html
+webarchive/test-input-src.html
+webarchive/test-link-href.html
+webarchive/test-object-data.html
+webarchive/test-script-src.html
+webarchive/test-table-background.html
+webarchive/test-td-background.html
+
+# <rdar://problem/5313497> Some international characters in layout tests have different metrics on Leopard vs. Tiger
+css2.1/t1202-counter-09-b.html
+css2.1/t1202-counters-09-b.html
+editing/deleting/5144139-2.html
+editing/execCommand/5119244.html
+fast/lists/w3-list-styles.html
+fast/table/absolute-table-at-bottom.html
+fast/text/atsui-multiple-renderers.html
+fast/text/international/thai-line-breaks.html
+
+# <rdar://problem/5313508> http/tests/xmlhttprequest/basic-auth.html hangs on Leopard
+http/tests/xmlhttprequest/basic-auth.html
+
+# <rdar://problem/5313512> fast/frames/frame-set-same-location.html sometimes hangs on Leopard
+fast/frames/frame-set-same-location.html
+
+# <rdar://problem/5313531> editing/pasteboard/copy-in-password-field.html sometimes fails on Leopard
+editing/pasteboard/copy-in-password-field.html
+
+# <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
+dom/html/level2/html/HTMLDocument12.html
+
+# <rdar://problem/5313537> fast/encoding/char-encoding.html sometimes fails on Leopard
+fast/encoding/char-encoding.html
+
+# <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
+fast/dom/frame-loading-via-document-write.html
+http/tests/security/frame-loading-via-document-write.html
+
+# <rdar://problem/5313534> Some fast/xsl tests sometimes fail on Leopard
+fast/xsl/transformToFragment-XML-declaration.html
+fast/xsl/default-html.html
+fast/xsl/xslt-processor.html
+fast/xsl/xslt-string-parameters.html
