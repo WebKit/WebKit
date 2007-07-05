@@ -1,5 +1,7 @@
 2007-07-04  Matt Perry  <mpComplete@gmail.com>
 
+        Reviewed by Adam.
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=13400
         Bug 13400: REGRESSION (r20809-20814): No back entry created for navigations created by assigning to document.location
         <rdar://problem/5153025>
