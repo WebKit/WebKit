@@ -811,7 +811,7 @@ if ($counts{mismatch}) {
         my $expectedDir = expectedDirectoryForTest($base);
         copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
         print HTML "<tr>\n";            
-        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         if (-s "$testResultsDirectory/$base-$diffsTag.txt") {
             print HTML "<td><a href=\"$base-$expectedTag.txt\">expected</a></td>\n";
             print HTML "<td><a href=\"$base-$actualTag.txt\">actual</a></td>\n";

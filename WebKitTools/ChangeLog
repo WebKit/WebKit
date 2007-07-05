@@ -1,5 +1,11 @@
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Show the test's extension in the results page
+
+        * Scripts/run-webkit-tests:
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Add more options for controlling the interpretation of the Skipped file
 
         Reviewed by Mark.
