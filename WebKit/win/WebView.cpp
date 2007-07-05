@@ -101,6 +101,8 @@ const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 const int WM_XP_THEMECHANGED = 0x031A;
 const int WM_VISTA_MOUSEHWHEEL = 0x020E;
 
+static const int maxToolTipWidth = 250;
+
 static ATOM registerWebView();
 static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -132,6 +134,7 @@ WebView::WebView()
 , m_hasSpellCheckerDocumentTag(false)
 , m_smartInsertDeleteEnabled(false)
 , m_didClose(false)
+, m_toolTipHwnd(0)
 {
     KJS::Collector::registerAsMainThread();
 
@@ -1733,6 +1736,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     ShowWindow(m_viewWindow, SW_SHOW);
 
     initializeCacheSizesIfNecessary();
+    initializeToolTipWindow();
 
     // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
     // or from the standard preferences, depending on whether this method was called from initWithCoder:
@@ -1761,6 +1765,62 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     return hr;
 }
 
+static bool initCommonControls()
+{
+    static bool haveInitialized = false;
+    if (haveInitialized)
+        return true;
+
+    INITCOMMONCONTROLSEX init;
+    init.dwSize = sizeof(init);
+    init.dwICC = ICC_TREEVIEW_CLASSES;
+    haveInitialized = !!::InitCommonControlsEx(&init);
+    return haveInitialized;
+}
+
+void WebView::initializeToolTipWindow()
+{
+    if (!initCommonControls())
+        return;
+
+    m_toolTipHwnd = CreateWindowEx(0, TOOLTIPS_CLASS, 0, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+                                   CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                                   m_viewWindow, 0, 0, 0);
+    if (!m_toolTipHwnd)
+        return;
+
+    TOOLINFO info = {0};
+    info.cbSize = sizeof(info);
+    info.uFlags = TTF_IDISHWND | TTF_SUBCLASS ;
+    info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
+
+    ::SendMessage(m_toolTipHwnd, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&info));
+    ::SendMessage(m_toolTipHwnd, TTM_SETMAXTIPWIDTH, 0, maxToolTipWidth);
+
+    ::SetWindowPos(m_toolTipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+}
+
+void WebView::setToolTip(const String& toolTip)
+{
+    if (!m_toolTipHwnd)
+        return;
+
+    if (toolTip == m_toolTip)
+        return;
+
+    m_toolTip = toolTip;
+
+    if (!m_toolTip.isEmpty()) {
+        TOOLINFO info = {0};
+        info.cbSize = sizeof(info);
+        info.uFlags = TTF_IDISHWND;
+        info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
+        info.lpszText = _wcsdup(m_toolTip.charactersWithNullTermination());
+        ::SendMessage(m_toolTipHwnd, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
+    }
+
+    ::SendMessage(m_toolTipHwnd, TTM_ACTIVATE, !m_toolTip.isEmpty(), 0);
+}
 
 HRESULT STDMETHODCALLTYPE WebView::setUIDelegate( 
     /* [in] */ IWebUIDelegate* d)

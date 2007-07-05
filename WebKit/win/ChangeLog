@@ -1,3 +1,22 @@
+2007-07-05  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14143: Tooltips not displayed on Windows
+        http://bugs.webkit.org/show_bug.cgi?id=14143
+        <rdar://problem/4719799>
+
+        Reviewed by Oliver.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::setToolTip): Call up to WebView.
+        * WebView.cpp:
+        (WebView::WebView): Initialize m_toolTipHwnd member.
+        (WebView::initWithFrame): Set up the tool tip window.
+        (initCommonControls): Added.
+        (WebView::initializeToolTipWindow): Added.
+        (WebView::setToolTip): Set the tool tip text and enable/disable the
+        tool tip.
+        * WebView.h: Added/updated declarations.
+
 2007-07-04  Adam Roben  <aroben@apple.com>
 
         Added a stub for WebChromeClient::setToolTip
