@@ -573,7 +573,7 @@ void TextIterator::exitNode()
     // case it is a block, because the run should start where the 
     // emitted character is positioned visually.
     Node* baseNode = m_node->lastChild() ? m_node->lastChild() : m_node;
-    if (m_lastTextNode && shouldEmitNewlineAfterNode(m_node)) {
+    if (shouldEmitNewlineAfterNode(m_node)) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
         

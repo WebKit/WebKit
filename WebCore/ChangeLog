@@ -1,3 +1,13 @@
+2007-07-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5279521> REGRESSION: In Mail, a crash occurs at WebCore::Range::startPosition() when attempting to apply alignment to selected image/text in message body
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::exitNode): Previously emitted content shouldn't have
+        to come from a text node in order to emit a '\n' as we exit block containers.
+
 2007-07-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

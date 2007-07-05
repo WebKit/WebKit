@@ -1,3 +1,19 @@
+2007-07-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5279521> REGRESSION: In Mail, a crash occurs at WebCore::Range::startPosition() when attempting to apply alignment to selected image/text in message body
+        
+        Demonstrates bug:
+        * editing/style/5279521-expected.checksum: Added.
+        * editing/style/5279521-expected.png: Added.
+        * editing/style/5279521-expected.txt: Added.
+        * editing/style/5279521.html: Added.
+        
+        Fixed:
+        * fast/forms/radio-check-click-and-drag-expected.txt:
+        * fast/forms/textarea-type-spaces-expected.txt:
+
 2007-07-05  Darin Adler  <darin@apple.com>
 
         - tweaked IDN test and checked in both Tiger results and Leopard
