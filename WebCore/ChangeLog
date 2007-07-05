@@ -2,6 +2,21 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/show_bug.cgi?id=14531
+        Cairo SVGImage::nativeImageForCurrentFrame() has no return
+
+        Return the Cairo surface from the frame cache.
+
+        Also add a fall-through else macro with notImplemented() so that future
+        ports do not make the same mistake.
+
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+
+2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Mark Rowe.
+
         http://bugs.webkit.org/show_bug.cgi?id=14513
         Cairo animated GIF support is broken
 
