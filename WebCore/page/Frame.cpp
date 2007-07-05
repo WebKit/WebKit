@@ -91,22 +91,27 @@ const double caretBlinkFrequency = 0.5;
 
 class UserStyleSheetLoader : public CachedResourceClient {
 public:
-    UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* docLoader)
-        : m_frame(frame)
-        , m_cachedSheet(docLoader->requestUserCSSStyleSheet(url, ""))
+    UserStyleSheetLoader(PassRefPtr<Document> document, const String& url)
+        : m_document(document)
+        , m_cachedSheet(m_document->docLoader()->requestUserCSSStyleSheet(url, ""))
     {
+        m_document->addPendingSheet();
         m_cachedSheet->ref(this);
     }
     ~UserStyleSheetLoader()
     {
+        if (!m_cachedSheet->isLoaded())
+            m_document->stylesheetLoaded();        
         m_cachedSheet->deref(this);
     }
 private:
     virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& sheet)
     {
-        m_frame->setUserStyleSheet(sheet);
+        m_document->stylesheetLoaded();
+        if (Frame* frame = m_document->frame())
+            frame->setUserStyleSheet(sheet);
     }
-    Frame* m_frame;
+    RefPtr<Document> m_document;
     CachedCSSStyleSheet* m_cachedSheet;
 };
 
@@ -286,7 +291,7 @@ void Frame::setUserStyleSheetLocation(const KURL& url)
     delete d->m_userStyleSheetLoader;
     d->m_userStyleSheetLoader = 0;
     if (d->m_doc && d->m_doc->docLoader())
-        d->m_userStyleSheetLoader = new UserStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
+        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.url());
 }
 
 void Frame::setUserStyleSheet(const String& styleSheet)

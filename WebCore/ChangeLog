@@ -1,3 +1,19 @@
+2007-07-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5106788>
+        WebKit loads user style sheets too late as seen in Mail (breaks DataDetectors; Mail flashes wrong font)
+
+        Let the document know when the user style sheet is loading so that it try not to display anything
+        until the user style sheet has finished loading.
+        
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader):
+        (WebCore::UserStyleSheetLoader::~UserStyleSheetLoader):
+        (WebCore::UserStyleSheetLoader::setCSSStyleSheet):
+        (WebCore::Frame::setUserStyleSheetLocation):
+
 2007-07-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
