@@ -92,7 +92,7 @@ my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $showHelp = 0;
-my $skippedOnly = 0;
+my $treatSkipped = "default";
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
 my $testOnlySVGs = '';
@@ -132,7 +132,10 @@ Usage: $programName [options] [testdir|testpath ...]
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
   --root                          Path to root tools build
   -1|--singly                     Isolate each test case run (implies --verbose)
-  --skipped-only                  Run only those tests listed in the Skipped file
+  --skipped=[default|ignore|only] Specifies how to treat the Skipped file
+                                     default: Tests/directories listed in the Skipped file are not tested
+                                     ignore:  The Skipped file is ignored
+                                     only:    Only those tests/directories listed in the Skipped file will be run
   --slowest                       Report the 10 slowest tests
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
@@ -162,7 +165,7 @@ my $getOptionsResult = GetOptions(
     'results-directory|o=s' => \$testResultsDirectory,
     'singly|1' => sub { $testsPerDumpTool = 1; },
     'nthly=i' => \$testsPerDumpTool,
-    'skipped-only' => \$skippedOnly,
+    'skipped=s' => \$treatSkipped,
     'slowest' => \$report10Slowest,
     'svg' => \$testOnlySVGs, 
     'threaded|t' => \$threaded,
@@ -173,12 +176,15 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
 );
 
-if (!$getOptionsResult || $showHelp) {
+if (!$getOptionsResult || $showHelp || ($treatSkipped ne "default" && $treatSkipped ne "ignore" && $treatSkipped ne "only")) {
     print STDERR $usage;
     exit 1;
 }
 
-!$skippedOnly || @ARGV == 0 or die "--skipped-only cannot be used when tests are specified on the command line.";
+my $ignoreSkipped = $treatSkipped eq "ignore";
+my $skippedOnly = $treatSkipped eq "only";
+
+!$skippedOnly || @ARGV == 0 or die "--skipped=only cannot be used when tests are specified on the command line.";
 
 setConfiguration($configuration);
 
@@ -281,7 +287,7 @@ if ($ignoreTests) {
     processIgnoreTests($ignoreTests);
 }
 
-if (open SKIPPED, "<", "$platformTestDirectory/Skipped") {
+if (!$ignoreSkipped && open SKIPPED, "<", "$platformTestDirectory/Skipped") {
     if ($verbose && !$skippedOnly) {
         print "Skipped tests:\n";
     }
