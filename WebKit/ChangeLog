@@ -1,3 +1,15 @@
+2007-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5314993> Shiira 2.1 throws an exception open a new window: -[WebInspector window]: unrecognized selector
+
+        Add an empty implementation of this method to prevent Shiira from throwing an exception.
+        Also log that this method is obsolete and the class will be removed.
+
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector window]):
+
 2007-07-04  Adam Roben  <aroben@apple.com>
 
         Move tooltip logic down into WebCore so that it can be shared cross-platform

@@ -62,6 +62,18 @@ using namespace WebCore;
     _webView = [[frame webView] retain];
 }
 
+- (NSWindow *)window
+{
+    // Shiira calls this internal method, return nil since we can't easily return the window
+    static BOOL logged = NO;
+    if (!logged) {
+        NSLog(@"-[WebInspector window]: this method is obsolete and now returns nil. The WebInspector class will be removed in a future release.");
+        logged = YES;
+    }
+
+    return nil;
+}
+
 - (void)showWindow:(id)sender
 {
     if (Page* page = core(_webView))
