@@ -1,5 +1,12 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Fix the Qt/Gdk builds.
+
+        * page/gdk/EventHandlerGdk.cpp:
+        * page/qt/EventHandlerQt.cpp:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Move tooltip logic down into WebCore so that it can be shared cross-platform
 
         Reviewed by Sam.
