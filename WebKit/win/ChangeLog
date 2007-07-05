@@ -1,5 +1,14 @@
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Fix a leak in WebView::setToolTip
+
+        Reviewed by Beth.
+
+        * WebView.cpp:
+        (WebView::setToolTip):
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Fix Bug 14143: Tooltips not displayed on Windows
         http://bugs.webkit.org/show_bug.cgi?id=14143
         <rdar://problem/4719799>
