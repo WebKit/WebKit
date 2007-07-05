@@ -1,3 +1,22 @@
+2007-07-04  Matt Perry  <mpComplete@gmail.com>
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13400
+        Bug 13400: REGRESSION (r20809-20814): No back entry created for navigations created by assigning to document.location
+        <rdar://problem/5153025>
+
+        Test that assigning to document.location in various ways adds an
+        item to the back/forward list.
+
+        * http/tests/navigation/document-location-click-expected.txt: Added.
+        * http/tests/navigation/document-location-click-timeout-expected.txt: Added.
+        * http/tests/navigation/document-location-click-timeout.html: Added.
+        * http/tests/navigation/document-location-click.html: Added.
+        * http/tests/navigation/document-location-mouseover-expected.txt: Added.
+        * http/tests/navigation/document-location-mouseover.html: Added.
+        * http/tests/navigation/document-location-onload-expected.txt: Added.
+        * http/tests/navigation/document-location-onload.html: Added.
+        * http/tests/navigation/resources/document-location.js: Added.
+
 2007-07-04  Darin Adler  <darin@apple.com>
 
         - take out infinity tests from the test for bug 5292262 (see below) for now since they
