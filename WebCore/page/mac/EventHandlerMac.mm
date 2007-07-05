@@ -369,13 +369,16 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe, HitTestResult* hoveredNode)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     switch ([currentEvent().get() type]) {
         case NSMouseMoved:
-            subframe->eventHandler()->mouseMoved(currentEvent().get());
+            // Since we're passing in currentEvent() here, we can call
+            // handleMouseMoveEvent() directly, since the save/restore of
+            // currentEvent() that mouseMoved() does would have no effect.
+            subframe->eventHandler()->handleMouseMoveEvent(currentEvent().get(), hoveredNode);
             return true;
         
         case NSLeftMouseDown: {

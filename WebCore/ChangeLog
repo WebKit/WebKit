@@ -1,5 +1,15 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Mac, Qt, and Gdk build fixes.
+
+        * page/EventHandler.h:
+        * page/gdk/EventHandlerGdk.cpp:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/qt/EventHandlerQt.cpp:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Fix the Qt/Gdk builds.
 
         * page/gdk/EventHandlerGdk.cpp:

@@ -228,7 +228,7 @@ private:
     bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = 0);
     bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
 
-    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
+    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = 0);
 
     bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, PlatformScrollbar*);
 
