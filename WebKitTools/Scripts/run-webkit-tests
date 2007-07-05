@@ -92,6 +92,7 @@ my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $showHelp = 0;
+my $skippedOnly = 0;
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
 my $testOnlySVGs = '';
@@ -131,6 +132,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
   --root                          Path to root tools build
   -1|--singly                     Isolate each test case run (implies --verbose)
+  --skipped-only                  Run only those tests listed in the Skipped file
   --slowest                       Report the 10 slowest tests
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
@@ -160,6 +162,7 @@ my $getOptionsResult = GetOptions(
     'results-directory|o=s' => \$testResultsDirectory,
     'singly|1' => sub { $testsPerDumpTool = 1; },
     'nthly=i' => \$testsPerDumpTool,
+    'skipped-only' => \$skippedOnly,
     'slowest' => \$report10Slowest,
     'svg' => \$testOnlySVGs, 
     'threaded|t' => \$threaded,
@@ -174,6 +177,8 @@ if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
     exit 1;
 }
+
+!$skippedOnly || @ARGV == 0 or die "--skipped-only cannot be used when tests are specified on the command line.";
 
 setConfiguration($configuration);
 
@@ -277,7 +282,7 @@ if ($ignoreTests) {
 }
 
 if (open SKIPPED, "<", "$platformTestDirectory/Skipped") {
-    if ($verbose) {
+    if ($verbose && !$skippedOnly) {
         print "Skipped tests:\n";
     }
     while (<SKIPPED>) {
@@ -286,10 +291,14 @@ if (open SKIPPED, "<", "$platformTestDirectory/Skipped") {
         $skipped =~ s/^ +//;
         $skipped =~ s/ +$//;
         if ($skipped && $skipped !~ /^#/) {
-            if($verbose) {
-                print "    $skipped\n";
+            if ($skippedOnly) {
+                push(@ARGV, $skipped);
+            } else {
+                if ($verbose) {
+                    print "    $skipped\n";
+                }
+                processIgnoreTests($skipped);
             }
-            processIgnoreTests($skipped);
         }
     }
     close SKIPPED;

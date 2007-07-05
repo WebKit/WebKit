@@ -1,5 +1,16 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Add --skipped-only option to run-webkit-tests
+
+        When this option is specified, only those tests listed in the Skipped
+        file are run.
+
+        Reviewed by Mark.
+
+        * Scripts/run-webkit-tests:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Clean up/alphabetize the run-webkit-tests help message
 
         * Scripts/run-webkit-tests:
