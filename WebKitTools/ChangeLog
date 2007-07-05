@@ -1,5 +1,13 @@
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Removed unused install-win-extras script
+
+        Rubberstamped by Mark.
+
+        * Scripts/install-win-extras: Removed.
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Show the test's extension in the results page
 
         * Scripts/run-webkit-tests:
