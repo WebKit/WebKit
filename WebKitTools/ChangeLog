@@ -1,5 +1,11 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Clean up/alphabetize the run-webkit-tests help message
+
+        * Scripts/run-webkit-tests:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Enable a Leopard-specific Skipped list.
 
         Reviewed by Mark.

@@ -108,34 +108,37 @@ my $expectedTag = "expected";
 my $actualTag = "actual";
 my $diffsTag = "diffs";
 
-my $usage =
-    "Usage: " . basename($0) . " [options] [testdir|testpath ...]\n" .
-    "  -g|--guard-malloc       Enable malloc guard\n" .
-    "  --help                  Show this help message\n" .
-    "  -h|--horizontal-sweep   Change repaint to sweep horizontally instead of vertically (implies --repaint-tests)\n" .
-    "  --[no-]http             Run (or do not run) http tests (default: " . ($testHTTP ? "run" : "do not run") . ")\n" .
-    "  -i|--ignore-tests       Comma-separated list of directories or tests to ignore\n" .
-    "  --[no-]launch-safari    Launch (or do not launch) Safari to display test results (default: "
-        . ($launchSafari ? "launch" : "do not launch") . ")\n" .
-    "  -l|--leaks              Enable leaks checking\n" .
-    "  -p|--pixel-tests        Enable pixel tests\n" .
-    "  --port                  Web server port to use with http tests\n" .
-    "  -q|--quiet              Less verbose output\n" .
-    "  -r|--repaint-tests      Run repaint tests (implies --pixel-tests)\n" .
-    "  --reset-results         Reset ALL results (including pixel tests if --pixel-tests is set)\n" .
-    "  --[no-]new-test-results Generate results for new tests\n" .
-    "  -o|--results-directory  Output results directory (default: " . $testResultsDirectory . ")\n" .
-    "  -1|--singly             Isolate each test case run (implies --verbose)\n" .
-    "  --slowest               Report the 10 slowest tests\n" .
-    "  --svg                   Run only SVG tests (implies --pixel-tests)\n" .
-    "  -t|--threaded           Run a concurrent JavaScript thead with each test\n" .
-    "  -v|--verbose            More verbose output (overrides --quiet)\n" .
-    "  --valgrind              Run DumpRenderTree inside valgrind (Qt/Linux only)\n" .
-    "  --strict                Do a comparison with the output on Mac (Qt only)\n" .
-    "  --root                  Path to root tools build\n" .
-    "  -c|--configuration config       Set DumpRenderTree build configuration\n" .
-    "  --[no-]strip-editing-callbacks  Remove editing callbacks from expected results\n";
+my $programName = basename($0);
+my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
+my $httpDefault = $testHTTP ? "run" : "do not run";
 
+my $usage = <<EOF;
+Usage: $programName [options] [testdir|testpath ...]
+  -c|--configuration config       Set DumpRenderTree build configuration
+  -g|--guard-malloc               Enable malloc guard
+  --help                          Show this help message
+  -h|--horizontal-sweep           Change repaint to sweep horizontally instead of vertically (implies --repaint-tests)
+  --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
+  -i|--ignore-tests               Comma-separated list of directories or tests to ignore
+  --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
+  -l|--leaks                      Enable leaks checking
+  --[no-]new-test-results         Generate results for new tests
+  -p|--pixel-tests                Enable pixel tests
+  --port                          Web server port to use with http tests
+  -q|--quiet                      Less verbose output
+  -r|--repaint-tests              Run repaint tests (implies --pixel-tests)
+  --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
+  -o|--results-directory          Output results directory (default: $testResultsDirectory)
+  --root                          Path to root tools build
+  -1|--singly                     Isolate each test case run (implies --verbose)
+  --slowest                       Report the 10 slowest tests
+  --strict                        Do a comparison with the output on Mac (Qt only)
+  --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
+  --svg                           Run only SVG tests (implies --pixel-tests)
+  -t|--threaded                   Run a concurrent JavaScript thead with each test
+  --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
+  -v|--verbose                    More verbose output (overrides --quiet)
+EOF
 
 my $getOptionsResult = GetOptions(
     'c|configuration=s' => \$configuration,
