@@ -1,3 +1,13 @@
+2007-07-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed and Landed by Sam.
+
+        - fix bug 14465 for window.showModalDialog
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::parseModalDialogFeatures):
+        (KJS::showModalDialog):
+
 2007-07-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

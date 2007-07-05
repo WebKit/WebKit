@@ -340,7 +340,7 @@ static HashMap<String, String> parseModalDialogFeatures(ExecState *exec, JSValue
 {
     HashMap<String, String> map;
 
-    Vector<String> features = String(featuresArg->toString(exec)).split(';');
+    Vector<String> features = valueToStringWithUndefinedOrNullCheck(exec, featuresArg).split(';');
     Vector<String>::const_iterator end = features.end();
     for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
         String s = *it;
@@ -459,11 +459,9 @@ static bool canShowModalDialogNow(const Window *window)
 
 static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const List& args)
 {
-    UString URL = args[0]->toString(exec);
-
     if (!canShowModalDialogNow(openerWindow) || !allowPopUp(exec, openerWindow))
         return jsUndefined();
-    
+
     const HashMap<String, String> features = parseModalDialogFeatures(exec, args[2]);
 
     bool trusted = false;
@@ -510,7 +508,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
     
-    Frame* dialogFrame = createWindow(exec, openerWindow->frame(), URL, "", wargs, args[1], true);
+    Frame* dialogFrame = createWindow(exec, openerWindow->frame(), valueToStringWithUndefinedOrNullCheck(exec, args[0]), "", wargs, args[1], true);
     if (!dialogFrame)
         return jsUndefined();
 
