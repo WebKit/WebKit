@@ -45,7 +45,7 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
         
 Node* MouseEventWithHitTestResults::targetNode() const
 {
-    Node* node = m_hitTestResult.innerNonSharedNode();
+    Node* node = m_hitTestResult.innerNode();
     if (node && node->inDocument())
         return node;
 

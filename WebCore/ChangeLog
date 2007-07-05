@@ -1,5 +1,17 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Restore MouseEventWithHitTestResults::targetNode's old behavior
+
+        Reviewed by Mark.
+
+        Fixes fast/images/imagemap-case and fast/replace/image-map.
+
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::targetNode): Use the inner
+        node, not the inner non-shared node.
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Mac, Qt, and Gdk build fixes.
 
         * page/EventHandler.h:
