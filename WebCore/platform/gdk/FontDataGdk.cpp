@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,12 +57,22 @@ void FontData::platformInit()
     m_xHeight = text_extents.height;
     cairo_scaled_font_text_extents(m_font.m_scaledFont, " ", &text_extents);
     m_spaceWidth =  static_cast<int>(text_extents.x_advance);
-    assert(m_spaceWidth != 0);
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
 }
 
 void FontData::platformDestroy()
 {
+    if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern))
+        FcPatternDestroy(m_font.m_pattern);
+
+    if (m_font.m_fontMatrix)
+        free(m_font.m_fontMatrix);
+    if (m_font.m_fontFace)
+        cairo_font_face_destroy(m_font.m_fontFace);
+    if (m_font.m_scaledFont)
+        cairo_scaled_font_destroy(m_font.m_scaledFont);
+    if (m_font.m_options)
+        cairo_font_options_destroy(m_font.m_options);
     delete m_smallCapsFontData;
 }
 
@@ -102,18 +113,21 @@ void FontData::determinePitch()
 
 float FontData::platformWidthForGlyph(Glyph glyph) const
 {
-    cairo_glyph_t cglyph;
-    cglyph.index = glyph;
+    ASSERT(m_font.m_scaledFont);
+
+    cairo_glyph_t cglyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;
     cairo_scaled_font_glyph_extents(m_font.m_scaledFont, &cglyph, 1, &extents);
-    float w = extents.x_advance;
-    if (w == 0)
-        w = m_spaceWidth;
+
+    float w = (float)m_spaceWidth;
+    if (cairo_scaled_font_status(m_font.m_scaledFont) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
+        w = (float)extents.x_advance;
     return w;
 }
 
 void FontData::setFont(cairo_t* cr) const
 {
+    ASSERT(cr);
     m_font.setFont(cr);
 }
 

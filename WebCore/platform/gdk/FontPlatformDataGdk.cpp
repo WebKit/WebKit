@@ -5,6 +5,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -27,8 +28,8 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "CString.h"
 #include "PlatformString.h"
-#include "DeprecatedString.h"
 #include "FontDescription.h"
 #include "cairo-ft.h"
 #include "cairo.h"
@@ -38,11 +39,17 @@
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
-    : m_fontDescription(fontDescription)
+    : m_pattern(0)
+    , m_fontDescription(fontDescription)
+    , m_fontMatrix(0)
+    , m_fontFace(0)
+    , m_options(0)
+    , m_scaledFont(0)
 {
-    init();
+    FontPlatformData::init();
 
-    const char* fcfamily = familyName.deprecatedString().ascii();
+    CString familyNameString = familyName.domString().utf8();
+    const char* fcfamily = familyNameString.data();
     int fcslant = FC_SLANT_ROMAN;
     int fcweight = FC_WEIGHT_NORMAL;
     float fcsize = fontDescription.computedSize();
@@ -92,7 +99,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     if (!m_pattern)
         goto freePattern;
     m_fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
-    m_fontMatrix = (cairo_matrix_t*)malloc(sizeof(cairo_matrix_t));
+    m_fontMatrix = reinterpret_cast<cairo_matrix_t*>(malloc(sizeof(cairo_matrix_t)));
     cairo_matrix_t ctm;
     cairo_matrix_init_scale(m_fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
     cairo_matrix_init_identity(&ctm);
@@ -118,12 +125,6 @@ bool FontPlatformData::init()
 
 FontPlatformData::~FontPlatformData()
 {
-    if (m_pattern && ((FcPattern*)-1 != m_pattern))
-        FcPatternDestroy(m_pattern);
-    free(m_fontMatrix);
-    cairo_font_face_destroy(m_fontFace);
-    cairo_scaled_font_destroy(m_scaledFont);
-    cairo_font_options_destroy(m_options);
 }
 
 bool FontPlatformData::isFixedPitch()
@@ -153,7 +154,7 @@ cairo_font_face_t** FontPlatformData::list(FontDescription& fontDescription, con
         FcPatternDestroy (pattern);
     if (os)
         FcObjectSetDestroy (os);
-    cairo_font_face_t** result = (cairo_font_face_t**)malloc((fs->nfont + 1) * sizeof(cairo_font_face_t*));
+    cairo_font_face_t** result = reinterpret_cast<cairo_font_face_t**>(malloc((fs->nfont + 1) * sizeof(cairo_font_face_t*)));
     for (int i = 0; i < fs->nfont; i++) {
         FcChar8* font = FcNameUnparse(fs->fonts[i]);
         printf("%s\n", font);
@@ -165,6 +166,10 @@ cairo_font_face_t** FontPlatformData::list(FontDescription& fontDescription, con
 
 void FontPlatformData::setFont(cairo_t* cr) const
 {
+    ASSERT(m_fontFace);
+    ASSERT(m_fontMatrix);
+    ASSERT(m_options);
+
     cairo_set_font_face(cr, m_fontFace);
     cairo_set_font_matrix(cr, m_fontMatrix);
     cairo_set_font_options(cr, m_options);
@@ -174,8 +179,8 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
     if (m_pattern == other.m_pattern)
         return true;
-    if (m_pattern == 0 || m_pattern == (FcPattern*)-1
-            || other.m_pattern == 0 || other.m_pattern == (FcPattern*)-1)
+    if (m_pattern == 0 || m_pattern == reinterpret_cast<FcPattern*>(-1)
+            || other.m_pattern == 0 || other.m_pattern == reinterpret_cast<FcPattern*>(-1))
         return false;
     return FcPatternEqual(m_pattern, other.m_pattern);
 }

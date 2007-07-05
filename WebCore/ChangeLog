@@ -1,3 +1,41 @@
+2007-07-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Rob Buis.
+
+        Rework FontData and FontPlatformData for the Gdk work to make valgrind
+        happy.
+
+        Move destroying of FontConfig and Cairo objects held in FontPlatformData
+        to FontData::platformDestroy. The ownership of these objects is held by
+        FontData. This is following the Mac and Qt port at least.
+
+        Currently it is possible that FontPlatformData will not create cairo resources
+        in this case at least make sure the variables are initialized to 0.
+        Initialize x,y of the cairo_glyph_t with zero to avoid extents.x_advance depending
+        on subtracing with not defined values.
+
+        FontPlatformData::hash. Using FontDescription is a bad idea as we don't have a clue
+        about how it is packed, if holes are present, etc. The FcPattern and the m_fontMatrix
+        should be good enough to describe the Font. All other objects are created using these
+        variables
+
+        Replace C-style casts with C++ casts, in this case reinterpret_cast.
+
+        * platform/gdk/FontDataGdk.cpp:
+        (WebCore::FontData::platformInit): Don't assert
+        (WebCore::FontData::platformDestroy): Take over ownership
+        (WebCore::FontData::platformWidthForGlyph): initialize
+        (WebCore::FontData::setFont): be paranoid and assert
+        * platform/gdk/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize everything
+        (WebCore::FontPlatformData::hash): make valgrind happy and don't use m_fontDescription
+        * platform/gdk/FontPlatformDataGdk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData): FontData::platformDestroy will do this
+        (WebCore::FontPlatformData::list): Don't use C-style casts.
+        (WebCore::FontPlatformData::setFont): m_fontFace, m_fontMatrix, m_options might not be initialized
+        (WebCore::FontPlatformData::operator==): Don't use C-style casts.
+
 2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Mark Rowe.
