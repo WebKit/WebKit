@@ -76,6 +76,18 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     return *this;
 }
 
+void HitTestResult::setToNonShadowAncestor()
+{
+    Node* node = innerNode();
+    if (node)
+        node = node->shadowAncestorNode();
+    setInnerNode(node);
+    node = innerNonSharedNode();
+    if (node)
+        node = node->shadowAncestorNode();
+    setInnerNonSharedNode(node);
+}
+
 void HitTestResult::setInnerNode(Node* n)
 {
     m_innerNode = n;

@@ -541,16 +541,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         result = widgetHitTestResult;
     }
 
-    if (!allowShadowContent) {
-        Node* node = result.innerNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        result.setInnerNode(node);
-        node = result.innerNonSharedNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        result.setInnerNonSharedNode(node); 
-    }
+    if (!allowShadowContent)
+        result.setToNonShadowAncestor();
 
     return result;
 }

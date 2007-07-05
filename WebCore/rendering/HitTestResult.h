@@ -50,6 +50,8 @@ public:
     Element* URLElement() const { return m_innerURLElement.get(); }
     PlatformScrollbar* scrollbar() const { return m_scrollbar.get(); }
 
+    void setToNonShadowAncestor();
+
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
     void setPoint(const IntPoint& p) { m_point = p; }

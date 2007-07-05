@@ -1,5 +1,18 @@
 2007-07-04  Adam Roben  <aroben@apple.com>
 
+        Add HitTestResult::setToNonShadowAncestor
+
+        Reviewed by Sam.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint): Moved logic into
+        HitTestResult::setToNonShadowAncestor.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setToNonShadowAncestor):
+        * rendering/HitTestResult.h:
+
+2007-07-04  Adam Roben  <aroben@apple.com>
+
         Change MouseEventWithHitTestResults to hold onto a HitTestResult
 
         Reviewed by Sam.
