@@ -1,3 +1,14 @@
+2007-07-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14465
+        window.open() uses the literal "undefined" as the URL
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction): add checks for undefined and null values when setting the url.
+        * manual-tests/open-url-undefined.html: Added.
+
 2007-07-05  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Rob Buis.
