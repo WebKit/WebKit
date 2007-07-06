@@ -1,3 +1,13 @@
+2007-07-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix layout test failures.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        Don't make a representation if we're creating the initial document.
+
 2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
 
         Fix Bug 14388: Input in text fields limited to 1024 characters

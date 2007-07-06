@@ -2355,7 +2355,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
     
-    if (!cachedPage)
+    if (!cachedPage && !m_creatingInitialEmptyDocument)
         m_client->makeRepresentation(pdl.get());
     
     transitionToCommitted(cachedPage);
