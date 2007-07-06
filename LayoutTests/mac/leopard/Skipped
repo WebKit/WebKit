@@ -20,9 +20,6 @@ svg/hixie/text/003.html
 svg/hixie/text/003a.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
 
-# <rdar://problem/5313518> fast/events/iframe-object-onload.html shows events out of order on Leopard
-fast/events/iframe-object-onload.html
-
 # <rdar://problem/5313504> Some http/tests/navigation tests are missing back items on Leopard
 http/tests/navigation/document-location-click-timeout.html
 http/tests/navigation/document-location-click.html

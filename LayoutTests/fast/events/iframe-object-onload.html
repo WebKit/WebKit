@@ -13,16 +13,26 @@ if (window.layoutTestController)
 
 function log(s)
 {
-    document.getElementById("console").innerHTML += s + "<br>";
+    currentLogEntry += s + "<br>";    
 }
 
 var innerEvent = null;
+var logArray = [];
+var currentLogEntry = '';
 
 function logOuter(msg, event)
 {
     log(msg);
     log('Outer event same as inner: ' + (innerEvent == event));
     log('------');
+
+    logArray.push(currentLogEntry);
+    currentLogEntry = '';
+    
+    if (logArray.length == 6) {
+        logArray.sort();
+        document.getElementById("console").innerHTML = logArray.join('');
+    }
 }
 
 function logInner(tag, event)

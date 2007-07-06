@@ -2,6 +2,19 @@
 
         Reviewed by Alexey.
 
+        <rdar://problem/5313518> fast/events/iframe-object-onload.html shows events out of order on Leopard
+        
+        Fix test so that it doesn't matter in what order the frames/objects are loaded. This is done by keeping
+        the load logs in an array and sort it before dumping it.
+        
+        * fast/events/iframe-object-onload-expected.txt:
+        * fast/events/iframe-object-onload.html:
+        * mac/leopard/Skipped:
+
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey.
+
         <rdar://problem/5313512> fast/frames/frame-set-same-{location,src}.html sometimes hang on Leopard
         
         Make these tests more robust against frames loading in a different order. Also, turn the tests 
