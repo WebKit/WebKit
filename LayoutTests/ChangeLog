@@ -1,3 +1,16 @@
+2007-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5313506> Some attributed string layout tests have an extra space character on Leopard
+
+        Don't dump the attributed string's description, this isn't helpfull for the test. Just log 
+        the attribute names at index 0, which we expect to be nothing, to make sure the string
+        has no attributes.
+
+        * fast/forms/attributed-strings-expected.txt:
+        * fast/forms/attributed-strings.html:
+
 2007-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Kilzer.

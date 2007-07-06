@@ -1,3 +1,13 @@
+2007-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver.
+
+        Initlize the NSMutableAttributedString directly instead of creating
+        a NSAttributedString first.
+
+        * DumpRenderTree/TextInputController.m:
+        (-[TextInputController attributedStringWithString:]):
+
 2007-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Kilzer.

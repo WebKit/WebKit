@@ -29,7 +29,7 @@ body { margin: 0; padding: 0 }
 //            log(substr); -- attributedSubstringFromRange is not implemented in WebKit yet
     
             var attrString = textInputController.makeAttributedString("test");
-            log(attrString);
+            log(attrString.getAttributeNamesAtIndex(0));
             log(attrString.length());
             log(attrString.string());
 

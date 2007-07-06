@@ -327,9 +327,7 @@
 
 - (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
 {
-    NSMutableAttributedString *ret = [[[NSMutableAttributedString alloc] init] autorelease];
-    [ret setAttributedString:[[[NSAttributedString alloc] initWithString:aString] autorelease]];
-    return ret;
+    return [[[NSMutableAttributedString alloc] initWithString:aString] autorelease];
 }
 
 @end
