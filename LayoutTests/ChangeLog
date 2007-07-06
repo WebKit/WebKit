@@ -37,6 +37,14 @@
 
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Add another hanging test to the Leopard Skipped file
+
+        Rubberstamped by Adele.
+
+        * mac/leopard/Skipped:
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Add a Skipped file for Leopard.
 
         Reviewed by Mark.

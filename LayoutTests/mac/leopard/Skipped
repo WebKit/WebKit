@@ -61,8 +61,9 @@ fast/text/international/thai-line-breaks.html
 # <rdar://problem/5313508> http/tests/xmlhttprequest/basic-auth.html hangs on Leopard
 http/tests/xmlhttprequest/basic-auth.html
 
-# <rdar://problem/5313512> fast/frames/frame-set-same-location.html sometimes hangs on Leopard
+# <rdar://problem/5313512> fast/frames/frame-set-same-{location,src}.html sometimes hangs on Leopard
 fast/frames/frame-set-same-location.html
+fast/frames/frame-set-same-src.html
 
 # <rdar://problem/5313531> editing/pasteboard/copy-in-password-field.html sometimes fails on Leopard
 editing/pasteboard/copy-in-password-field.html
