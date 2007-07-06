@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +27,9 @@
 #define RenderThemeGdk_h
 
 #include "RenderTheme.h"
+#include "GraphicsContext.h"
+
+#include <gtk/gtk.h>
 
 namespace WebCore {
 
@@ -38,7 +42,7 @@ struct ThemeData {
 
 class RenderThemeGdk : public RenderTheme {
 public:
-    RenderThemeGdk() : RenderTheme() { }
+    RenderThemeGdk();
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
@@ -69,6 +73,34 @@ private:
     bool supportsFocus(EAppearance);
 
     ThemeData getThemeData(RenderObject*);
+
+
+    /*
+     * hold the state
+     */
+    GtkWidget* gtkButton() const;
+    GtkWidget* gtkCheckbox() const;
+    GtkWidget* gtkRadioButton() const;
+    GtkWidget* gtkEntry() const;
+    GtkWidget* gtkEditable() const;
+
+    /*
+     * unmapped GdkWindow having a container. This is holding all
+     * our fake widgets
+     */
+    GtkWidget* gtkWindowContainer() const;
+
+    void copyToContext(GdkPixmap *src, PlatformGraphicsContext*, const IntRect&);
+
+private:
+    mutable GtkWidget *m_gtkButton;
+    mutable GtkWidget *m_gtkCheckbox;
+    mutable GtkWidget *m_gtkRadioButton;
+    mutable GtkWidget *m_gtkEntry;
+    mutable GtkWidget *m_gtkEditable;
+
+    mutable GtkWidget *m_unmappedWindow;
+    mutable GtkWidget *m_container;
 };
 
 }

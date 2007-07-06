@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,9 +26,10 @@
 #include "config.h"
 #include "RenderThemeGdk.h"
 
-#include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "RenderObject.h"
+
+#include <gdk/gdk.h>
 
 #define THEME_COLOR 204
 #define THEME_FONT  210
@@ -48,12 +50,42 @@
 #define TFP_TEXTFIELD 1
 #define TFS_READONLY  6
 
+/*
+ * Approach to theming:
+ *  a) keep one copy of each to be drawn widget, GtkEntry, GtkButton, Gtk...
+ *     + the button will look like the native control
+ *     + we don't need to worry about style updates and loading the right GtkStyle
+ *     - resources are wasted. The native windows will not be used, we might have issues
+ *       with
+ *
+ *  b) Use GtkStyle directly and copy and paste Gtk+ code
+ *
+ *
+ * We will mix a and b
+ *
+ * - Create GtkWidgets to hold the state (disabled/enabled), selected, not selected.
+ * - Use a GdkPixmap to make the GtkStyle draw to and then try to convert set it the
+ *   source of the current operation.
+ *
+ */
+
 namespace WebCore {
 
 RenderTheme* theme()
 {
     static RenderThemeGdk gdkTheme;
     return &gdkTheme;
+}
+
+RenderThemeGdk::RenderThemeGdk()
+    : m_gtkButton(0)
+    , m_gtkCheckbox(0)
+    , m_gtkRadioButton(0)
+    , m_gtkEntry(0)
+    , m_gtkEditable(0)
+    , m_unmappedWindow(0)
+    , m_container(0)
+{
 }
 
 void RenderThemeGdk::close()
@@ -146,32 +178,70 @@ ThemeData RenderThemeGdk::getThemeData(RenderObject* o)
     return result;
 }
 
-void RenderThemeGdk::setCheckboxSize(RenderStyle*) const 
+void RenderThemeGdk::setCheckboxSize(RenderStyle* style) const 
 { 
-    notImplemented(); 
+    setRadioSize(style);
 }
 
-bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     // FIXME: is it the right thing to do?
-    return paintButton(o, i, r); 
+    GtkWidget *checkbox = gtkCheckbox();
+    GdkPixmap *pixmap = gdk_pixmap_new(GDK_DRAWABLE(checkbox->window), rect.width(), rect.height(), -1);
+    gtk_paint_box(checkbox->style, GDK_DRAWABLE(pixmap),
+                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                  NULL, checkbox, "checkbutton",
+                  0, 0, rect.width(), rect.height());
+    copyToContext(pixmap, i.context->platformContext(), rect);
+
+    return false;
 }
 
-void RenderThemeGdk::setRadioSize(RenderStyle*) const 
+void RenderThemeGdk::setRadioSize(RenderStyle* style) const 
 { 
     notImplemented(); 
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+        return;
+
+
+    // FIXME:  A hard-coded size of 13 is used.  This is wrong but necessary for now.  It matches Firefox.
+    // At different DPI settings on Windows, querying the theme gives you a larger size that accounts for
+    // the higher DPI.  Until our entire engine honors a DPI setting other than 96, we can't rely on the theme's
+    // metrics.
+    const int ff = 13;
+    if (style->width().isIntrinsicOrAuto())
+        style->setWidth(Length(ff, Fixed));
+
+    if (style->height().isAuto())
+        style->setHeight(Length(ff, Fixed));
 }
 
-bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 { 
     // FIXME: is it the right thing to do?
-    return paintButton(o, i, r); 
+    GtkWidget *radio = gtkRadioButton();
+    GdkPixmap *pixmap = gdk_pixmap_new(GDK_DRAWABLE(radio->window), rect.width(), rect.height(), -1);
+    gtk_paint_box(radio->style, GDK_DRAWABLE(pixmap),
+                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                  NULL, radio, "radiobutton",
+                  0, 0, rect.width(), rect.height());
+    copyToContext(pixmap, i.context->platformContext(), rect);
+
+    return false;
 }
 
-bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) 
+bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo& i, const IntRect& rect) 
 { 
-    // FIXME: should use theme-aware drawing
-    return true;
+    // FIXME: should use theme-aware drawing. This should honor the state as well
+    GtkWidget *button = gtkButton();
+    GdkPixmap *pixmap = gdk_pixmap_new(GDK_DRAWABLE(button->window), rect.width(), rect.height(), -1);
+    gtk_paint_box(button->style, GDK_DRAWABLE(pixmap),
+                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                  NULL, button, "button",
+                  0, 0, rect.width(), rect.height());
+    copyToContext(pixmap, i.context->platformContext(), rect);
+    return false;
 }
 
 void RenderThemeGdk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const 
@@ -199,4 +269,60 @@ void RenderThemeGdk::systemFont(int propId, FontDescription&) const
 {
 }
 
+/*
+ * copy the src surface to the current context at position (rect.x,rect.y) and invalidate
+ * GdkPixmap
+ */
+void RenderThemeGdk::copyToContext(GdkPixmap *src, cairo_t* cr, const IntRect& rect)
+{
+    gdk_cairo_set_source_pixmap(cr, src, rect.x(), rect.y());
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_paint(cr);
+    g_object_unref(src);
+}
+
+GtkWidget* RenderThemeGdk::gtkButton() const
+{
+    if (!m_gtkButton) {
+        m_gtkButton = gtk_button_new_with_label("WebKit rocks");
+        gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkButton);
+        gtk_widget_realize(m_gtkButton);
+    }
+
+    return m_gtkButton;
+}
+
+GtkWidget* RenderThemeGdk::gtkCheckbox() const
+{
+    if (!m_gtkCheckbox) {
+        m_gtkCheckbox = gtk_check_button_new_with_label("WebKit rocks"); 
+        gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkCheckbox);
+        gtk_widget_realize(m_gtkCheckbox);
+    }
+
+    return m_gtkCheckbox;
+}
+
+GtkWidget* RenderThemeGdk::gtkRadioButton() const
+{
+    if (!m_gtkRadioButton) {
+        m_gtkRadioButton = gtk_radio_button_new_with_label(NULL, "WebKit rocks");
+        gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkRadioButton);
+        gtk_widget_realize(m_gtkRadioButton);
+    }
+
+    return m_gtkRadioButton;
+}
+
+GtkWidget* RenderThemeGdk::gtkWindowContainer() const
+{
+    if (!m_container) {
+        m_unmappedWindow = gtk_window_new(GTK_WINDOW_POPUP);
+        m_container = gtk_fixed_new();
+        gtk_container_add(GTK_CONTAINER(m_unmappedWindow), m_container);
+        gtk_widget_realize(m_unmappedWindow);
+    }
+
+    return m_container;
+}
 }

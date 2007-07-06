@@ -1,3 +1,35 @@
+2007-07-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Start implementening RenderThemeGdk/Gtk using GtkStyle. The approach is
+        to allocate one native control for each widget type. And use margins, spacing,
+        style properties from the Widget. And for drawing use GtkStyle on the rect supplied.
+
+        This should allow nice integration and be relative resource friendly. Mozilla is using
+        a similiar approach. They seem to share the GdkPixmap among several operations and this
+        will be an obvious candidate for improvements. Create a normally big enough GdkPixmap and
+        use that for drawing and then set clip regions for cairo to make sure to not go beyond the
+        width and height.
+
+        The next steps will be to introduce states for the widgets, add more widgets, handle focus,
+        and various other style attributes, honor the size and margin and use that to propagate this
+        back to RenderStyle*.
+
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::RenderThemeGdk):
+        (WebCore::RenderThemeGdk::setCheckboxSize):
+        (WebCore::RenderThemeGdk::paintCheckbox):
+        (WebCore::RenderThemeGdk::setRadioSize):
+        (WebCore::RenderThemeGdk::paintRadio):
+        (WebCore::RenderThemeGdk::paintButton):
+        (WebCore::RenderThemeGdk::copyToContext):
+        (WebCore::RenderThemeGdk::gtkButton):
+        (WebCore::RenderThemeGdk::gtkCheckbox):
+        (WebCore::RenderThemeGdk::gtkRadioButton):
+        (WebCore::RenderThemeGdk::gtkWindowContainer):
+        * platform/gdk/RenderThemeGdk.h:
+
 2007-07-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Adam.
