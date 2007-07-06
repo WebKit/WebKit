@@ -967,18 +967,18 @@ void FrameLoader::write(const String& str)
 void FrameLoader::end()
 {
     m_isLoadingMainResource = false;
-    endIfNotLoading();
+    endIfNotLoadingMainResource();
 }
 
-void FrameLoader::endIfNotLoading()
+void FrameLoader::endIfNotLoadingMainResource()
 {
+    if (m_isLoadingMainResource)
+        return;
+
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
     // so we'll add a protective refcount
     RefPtr<Frame> protector(m_frame);
-
-    if (m_isLoadingMainResource)
-        return;
 
     // make sure nothing's left in there
     if (m_frame->document()) {
@@ -1669,11 +1669,6 @@ void FrameLoader::scrollToAnchor(const KURL& URL)
 bool FrameLoader::isComplete() const
 {
     return m_isComplete;
-}
-
-bool FrameLoader::isLoadingMainResource() const
-{
-    return m_isLoadingMainResource;
 }
 
 KURL FrameLoader::url() const

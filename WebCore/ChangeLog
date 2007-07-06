@@ -1,3 +1,18 @@
+2007-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        A little FrameLoader cleanup while working on <rdar://problem/5126396>.
+        
+        Renamed endIfNotLoading() to endIfNotLoadingMainResource() because "loading"
+        and "loadingMainResource" have distinct meanings and this function
+        honors the latter.
+
+        (WebCore::FrameLoader::endIfNotLoadingMainResource): Protect after the
+        early return to avoid ref count churn.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::isLoadingMainResource): Inlined this function.
+
 2007-07-06  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.
