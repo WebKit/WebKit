@@ -208,7 +208,7 @@ void HTMLGenericFormElement::restoreState(const String&)
 void HTMLGenericFormElement::closeRenderer()
 {
     Document* doc = document();
-    if (doc->hasStateForNewFormElements()) {
+    if (doc->isFormElementRegistered(this) && doc->hasStateForNewFormElements()) {
         String state;
         if (doc->takeStateForFormElement(name().impl(), type().impl(), state))
             restoreState(state);

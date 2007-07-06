@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14400
+          Assertion failure (SHOULD NEVER BE REACHED) going back on YouTube
+
+        * fast/forms/button-state-restore-expected.txt: Added.
+        * fast/forms/button-state-restore.html: Added.
+
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
         - repaint test for http://bugs.webkit.org/show_bug.cgi?id=14487
           Incomplete repaint of background and border of boxes with -webkit-border-fit:lines
 

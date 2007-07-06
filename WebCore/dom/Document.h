@@ -295,6 +295,7 @@ public:
     // Machinery for saving and restoring state when you leave and then go back to a page.
     void registerFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.add(e); }
     void unregisterFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.remove(e); }
+    bool isFormElementRegistered(HTMLGenericFormElement* e) { return m_formElementsWithState.contains(e); }
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;

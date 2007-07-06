@@ -2,6 +2,22 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14400
+          Assertion failure (SHOULD NEVER BE REACHED) going back on YouTube
+
+        Test: fast/forms/button-state-restore.html
+
+        * dom/Document.h:
+        (WebCore::Document::isFormElementRegistered): Added.
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::closeRenderer): Restore saved form
+        element state only if the element is registered with the document to
+        have its state saved.
+
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=14487
           Incomplete repaint of background and border of boxes with -webkit-border-fit:lines
 
