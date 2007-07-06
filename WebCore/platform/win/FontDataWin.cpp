@@ -144,15 +144,8 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    HDC dc = GetDC(0);
-    SaveDC(dc);
-    SelectObject(dc, m_font.hfont());
-
-    WORD* glyphBuffer = new WORD[length];
-    GetGlyphIndices(dc, characters, length, glyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
-    
-    RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
+    Vector<CGGlyph> glyphBuffer(length);
+    wkGetGlyphs(m_font.cgFont(), characters, glyphBuffer.data(), length);
 
     for (int i = 0; i < length; i++) {
         if (glyphBuffer[i] == 0xFFFFFFFF) {

@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "FontData.h"
-#include <windows.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore
 {
@@ -36,23 +36,14 @@ namespace WebCore
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
     // bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
-    // GetGlyphIndices doesn't support this so ScriptGetCMap should be used instead. It seems that supporting this
-    // would require modifying the registry (see http://www.i18nguy.com/surrogates.html) so we won't support this for now.
+    // We won't support this for now.
     if (bufferLength > GlyphPage::size)
         return false;
 
-    HDC dc = GetDC((HWND)0);
-    SaveDC(dc);
-    SelectObject(dc, fontData->m_font.hfont());
-
-    TEXTMETRIC tm;
-    GetTextMetrics(dc, &tm);
-    WORD localGlyphBuffer[GlyphPage::size];
-    GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    CGGlyph localGlyphBuffer[GlyphPage::size];
+    wkGetGlyphs(fontData->platformData().cgFont(), buffer, localGlyphBuffer, bufferLength);
     for (unsigned i = 0; i < GlyphPage::size; i++)
         setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
-    RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
     return true;
 }
 
