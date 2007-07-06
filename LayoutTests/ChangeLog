@@ -1,3 +1,12 @@
+2007-07-06  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed.  Update test results.
+
+        * fast/encoding/utf-32-big-endian-bom-expected.txt:
+        * fast/encoding/utf-32-big-endian-nobom-expected.txt:
+        * fast/encoding/utf-32-little-endian-bom-expected.txt:
+        * fast/encoding/utf-32-little-endian-nobom-expected.txt:
+
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
