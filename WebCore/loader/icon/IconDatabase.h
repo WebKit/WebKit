@@ -50,8 +50,10 @@ class SQLTransaction;
 class IconDatabase : Noncopyable {
 public:
     bool open(const String& path);
-    bool isOpen();
+    bool isOpen() const;
     void close();
+    
+    String databasePath() const;
     
     void removeAllIcons();
     

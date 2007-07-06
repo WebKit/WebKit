@@ -1,3 +1,33 @@
+2007-07-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady
+        
+        - WebCore part of fix for: 
+          <rdar://problem/5310739> Time Machine shouldn't back up WebKit's icon database files
+        
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::isOpen): 
+        made this method const (necessary to make IconDatabase::databasePath const)
+        (WebCore::IconDatabase::databasePath): 
+        new method, returns SQLDatabase's path if open, otherwise empty string
+        
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::open):
+        don't append a null character to the m_path ivar. The appended null character was making the path()
+        method return a String with a trailing null, which is bad. However, there were no callers to the
+        path() method until now. Instead of appending a null character to the ivar, use charactersWithNullTermination()
+        instead of characters() when opening the database.
+        
+        * loader/icon/SQLDatabase.h:
+        (WebCore::SQLDatabase::isOpen):
+        made this method const (necessary to make IconDatabase::databasePath const)
+        (WebCore::SQLDatabase::path):
+        made this method const (not required for these changes, but seemed worth doing at the same time)
+
+        * WebCore.exp:
+        added symbol for IconDatabase::databasePath
+
 2007-07-06  George Staikos  <staikos@kde.org>
 
         No real functional change - just move the localizations out and

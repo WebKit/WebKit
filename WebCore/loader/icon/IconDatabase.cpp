@@ -200,7 +200,7 @@ bool IconDatabase::open(const String& databasePath)
     return isOpen();
 }
 
-bool IconDatabase::isOpen()
+bool IconDatabase::isOpen() const
 {
     return m_mainDB.isOpen() && m_privateBrowsingDB.isOpen();
 }
@@ -215,6 +215,11 @@ void IconDatabase::close()
     m_privateBrowsingDB.close();
 }
 
+String IconDatabase::databasePath() const
+{
+    return m_mainDB.isOpen() ? m_mainDB.path() : String();
+}
+    
 void IconDatabase::removeAllIcons()
 {
     if (!isOpen())

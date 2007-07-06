@@ -1,3 +1,14 @@
+2007-07-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady
+
+        - WebKit part of fix for: 
+          <rdar://problem/5310739> Time Machine shouldn't back up WebKit's icon database files
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        Use CSBackupSetItemExcluded to tell Time Machine not to back up the icon database file
+
 2007-07-07  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Update WebDynamicScrollBarsView.h to include methods added and used in r24060.

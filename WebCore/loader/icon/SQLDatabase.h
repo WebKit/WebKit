@@ -49,8 +49,8 @@ public:
     SQLDatabase();
 
     bool open(const String& filename);
-    bool isOpen() { return m_db; }
-    String path(){ return m_path; }
+    bool isOpen() const { return m_db; }
+    String path() const { return m_path; }
     void close();
 
     bool executeCommand(const String&);

@@ -124,9 +124,20 @@ NSSize WebIconLargeSize = {128, 128};
     // Open the WebCore icon database and import the old WebKit icon database
     if (!iconDatabase()->open(databaseDirectory))
         LOG_ERROR("Unable to open icon database");
-    else
+    else {
         if ([self _isEnabled])
             [self _importToWebCoreFormat];
+        
+#ifndef BUILDING_ON_TIGER
+        // Tell backup software (i.e., Time Machine) to never back up the icon database, because 
+        // it's a large file that changes frequently, and it's unlikely that many users would be 
+        // upset about it not being backed up. We could make this configurable on a per-client basis
+        // someday if that seemed useful. See <rdar://problem/5310739>. 
+        NSURL *iconDatabaseFileURL = [[NSURL alloc] initFileURLWithPath:iconDatabase()->databasePath() isDirectory:NO];
+        CSBackupSetItemExcluded((CFURLRef)iconDatabaseFileURL, true, true);
+        [iconDatabaseFileURL release];
+#endif
+    }
 
     iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
     
