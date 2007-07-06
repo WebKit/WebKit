@@ -210,7 +210,6 @@ namespace WebCore {
         bool isStopping() const;
 
         void finishedLoading();
-        KURL URL() const;
 
         ResourceError cancelledError(const ResourceRequest&) const;
         ResourceError fileDoesNotExistError(const ResourceResponse&) const;
@@ -359,7 +358,9 @@ namespace WebCore {
 
         void frameDetached();
 
+        // FIXME: Which one of these URL methods is right?
         KURL url() const;
+        KURL URL() const;
 
         void updateBaseURLForEmptyDocument();
 

@@ -1671,11 +1671,6 @@ bool FrameLoader::isComplete() const
     return m_isComplete;
 }
 
-KURL FrameLoader::url() const
-{
-    return m_URL;
-}
-
 void FrameLoader::scheduleRedirection(ScheduledRedirection* redirection)
 {
     stopRedirectionTimer();
@@ -2603,6 +2598,13 @@ void FrameLoader::finishedLoading()
     dl->setPrimaryLoadComplete(true);
     m_client->dispatchDidLoadMainResource(dl.get());
     checkLoadComplete();
+}
+
+// FIXME: Which one of these URL methods is right?
+
+KURL FrameLoader::url() const
+{
+    return m_URL;
 }
 
 KURL FrameLoader::URL() const

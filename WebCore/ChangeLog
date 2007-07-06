@@ -2,6 +2,18 @@
 
         Reviewed by Anders Carlsson.
 
+        A little more FrameLoader cleanup while working on <rdar://problem/5126396>.
+        
+        Moved url() and URL() methods next to each other to highlight their subtlety.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::url):
+        * loader/FrameLoader.h:
+
+2007-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         A little FrameLoader cleanup while working on <rdar://problem/5126396>.
         
         Renamed endIfNotLoading() to endIfNotLoadingMainResource() because "loading"
