@@ -18,7 +18,7 @@
 
         Reviewed by Oliver.
 
-        Initlize the NSMutableAttributedString directly instead of creating
+        Initialize the NSMutableAttributedString directly instead of creating
         a NSAttributedString first.
 
         * DumpRenderTree/TextInputController.m:
