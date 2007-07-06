@@ -1,3 +1,32 @@
+2007-07-06  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Convert QWebFrame to a QFrame from a scroll area.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::parentFrame):
+        (QWebFramePrivate::horizontalScrollBar):
+        (QWebFramePrivate::verticalScrollBar):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::resizeEvent):
+        (QWebFrame::suppressScrollbars):
+        (QWebFrame::paintEvent):
+        (QWebFrame::mouseMoveEvent):
+        (QWebFrame::mousePressEvent):
+        (QWebFrame::mouseDoubleClickEvent):
+        (QWebFrame::mouseReleaseEvent):
+        (QWebFrame::wheelEvent):
+        (QWebFrame::keyPressEvent):
+        (QWebFrame::focusInEvent):
+        (QWebFrame::focusOutEvent):
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::pluginParentWidget):
+
 2007-07-04  Adam Roben  <aroben@apple.com>
 
         Added a stub for ChromeClientQt::setToolTip

@@ -110,17 +110,42 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe, HitTestResult*)
 {
-    notImplemented();
-    return false;
+    Q_ASSERT(subframe);
+    PlatformMouseEvent ev = event.event();
+
+    QWidget *frame = subframe->view()->qwidget();
+
+    IntPoint mappedPos(frame->mapFromParent(ev.pos()));
+    IntPoint globalPos(ev.globalX(), ev.globalY());
+
+    PlatformMouseEvent mapped(mappedPos, globalPos, ev.button(), ev.eventType(),
+                              ev.clickCount(), ev.shiftKey(), ev.ctrlKey(),
+                              ev.altKey(), ev.metaKey(), ev.timestamp());
+
+    switch(ev.eventType()) {
+    case MouseEventMoved:
+        return subframe->eventHandler()->handleMouseMoveEvent(mapped);
+    case MouseEventPressed:
+        return subframe->eventHandler()->handleMousePressEvent(mapped);
+    case MouseEventReleased:
+        return subframe->eventHandler()->handleMouseReleaseEvent(mapped);
+    case MouseEventScroll:
+        return subframe->eventHandler()->handleMouseMoveEvent(mapped);
+    default:
+      return false;
+    }
 }
 
 bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
 {
-    notImplemented();
-    return false;
+    Q_ASSERT(widget);
+    if (!widget->isFrameView())
+        return false;
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(event);
 }
-    
-Clipboard* EventHandler::createDraggingClipboard() const 
+
+Clipboard* EventHandler::createDraggingClipboard() const
 {
     return new ClipboardQt(ClipboardWritable, true);
 }
@@ -142,6 +167,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 
 bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& event, PlatformScrollbar* scrollbar)
 {
+    Q_ASSERT(scrollbar);
     return scrollbar->handleMousePressEvent(event.event());
 }
 

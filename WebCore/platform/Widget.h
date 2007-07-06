@@ -147,6 +147,8 @@ namespace WebCore {
         void setQWidget(QWidget*);
         void setParent(ScrollView*);
         ScrollView* parent() const;
+        IntRect originalGeometry() const;
+        virtual void geometryChanged() const;
 #endif
 
 #if PLATFORM(MAC)

@@ -36,7 +36,7 @@ namespace WebCore {
 }
 class QWebFrameData;
 
-class QWEBKIT_EXPORT QWebFrame : public QAbstractScrollArea
+class QWEBKIT_EXPORT QWebFrame : public QFrame
 {
     Q_OBJECT
 protected:
@@ -56,6 +56,8 @@ public:
 
     QList<QWebFrame*> childFrames() const;
 
+    void suppressScrollbars(bool suppress);
+
 public Q_SLOTS:
     QString evaluateJavaScript(const QString& scriptSource);
 
@@ -66,7 +68,7 @@ signals:
     void hoveringOverLink(const QString &link, const QString &title);
 
 protected:
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent*);
     virtual void paintEvent(QPaintEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
     virtual void mousePressEvent(QMouseEvent*);
@@ -75,17 +77,14 @@ protected:
     virtual void wheelEvent(QWheelEvent*);
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
-    virtual void scrollContentsBy(int dx, int dy);
-    virtual void focusInEvent(QFocusEvent *e);
-    virtual void focusOutEvent(QFocusEvent *e);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
     virtual bool focusNextPrevChild(bool next);
-    
+
 private:
     friend class QWebPage;
     friend class WebCore::FrameLoaderClientQt;
     QWebFramePrivate *d;
 };
-
-
 
 #endif

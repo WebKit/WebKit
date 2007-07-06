@@ -38,10 +38,10 @@
 #include "ScrollView.h"
 #include "Widget.h"
 #include "WidgetClient.h"
+#include "PlatformScrollBar.h"
 #include "NotImplemented.h"
 
-#include <QAbstractScrollArea>
-#include <QScrollBar>
+#include <QFrame>
 #include <QWidget>
 
 namespace WebCore {
@@ -52,39 +52,32 @@ struct WidgetPrivate
     ~WidgetPrivate() { delete m_widget; }
 
     QWidget* canvas() const {
-        return m_scrollArea ? m_scrollArea->viewport() : m_widget;
-    }
-
-    QAbstractScrollArea* parentScroll() const {
-        QObject *parent = m_widget->parent();
-        while (parent && !qobject_cast<QAbstractScrollArea*>(parent)) {
-            parent = parent->parent();
-        }
-        if (parent)
-            return static_cast<QAbstractScrollArea*>(parent);
-        return 0;
+        return m_widget;
     }
     void setGeometry(const QRect &rect) {
-        QAbstractScrollArea *mapper = parentScroll();
+        ScrollView *mapper = m_parentScrollView;
         QRect r = rect;
-        if (mapper)
-            r = r.translated(-mapper->horizontalScrollBar()->value(),
-                             -mapper->verticalScrollBar()->value());
+        if (mapper) {
+            int h = -mapper->contentsX();
+            int v = -mapper->contentsY();
+            r = r.translated(h, v);
+        }
         m_widget->setGeometry(r);
+
+        //Store the actual rect that webcore gives us
+        //this is used for drawing subframes on the main
+        //frame canvas.
+        m_originalGeometry = rect;
     }
     QRect geometry() const {
-        QAbstractScrollArea *mapper = parentScroll();
-        QRect r = m_widget->geometry();
-        if (mapper)
-            r = r.translated(-mapper->horizontalScrollBar()->value(),
-                             -mapper->verticalScrollBar()->value());
-        return r;
+        return m_widget->geometry();
     }
 
     WidgetClient* m_client;
 
+    QRect m_originalGeometry;
     QWidget* m_widget;
-    QAbstractScrollArea* m_scrollArea;
+    QFrame* m_scrollArea;
     ScrollView *m_parentScrollView;
 };
 
@@ -145,7 +138,7 @@ void Widget::hide()
 void Widget::setQWidget(QWidget* child)
 {
     data->m_widget = child;
-    data->m_scrollArea = qobject_cast<QAbstractScrollArea*>(child);
+    data->m_scrollArea = qobject_cast<QFrame*>(child);
 }
 
 QWidget* Widget::qwidget() const
@@ -167,7 +160,6 @@ void Widget::setFrameGeometry(const IntRect& r)
 
 void Widget::paint(GraphicsContext *, const IntRect &rect)
 {
-    notImplemented();
 }
 
 bool Widget::isEnabled() const
@@ -222,6 +214,27 @@ void Widget::setParent(ScrollView* sv)
 ScrollView* Widget::parent() const
 {
     return data->m_parentScrollView;
+}
+
+IntRect Widget::originalGeometry() const
+{
+    if (!data->m_widget)
+        return IntRect();
+
+    if (data->m_originalGeometry.isValid())
+        return data->m_originalGeometry;
+
+    return data->geometry();
+}
+
+void Widget::geometryChanged() const
+{
+    //Re-maps to the parent scroll content.
+    //Useful for when the parent scrolls the
+    //content before webcore explicitly sets
+    //the childrens geometry.
+    if (data->m_originalGeometry.isValid())
+        data->setGeometry(data->m_originalGeometry);
 }
 
 }

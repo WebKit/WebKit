@@ -32,7 +32,7 @@
 #include <wtf/HashSet.h>
 
 #if PLATFORM(QT)
-class QAbstractScrollArea;
+class QRegion;
 #endif
 
 #if PLATFORM(GDK)
@@ -170,14 +170,31 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
-        void setScrollArea(QAbstractScrollArea*);
-        void setAllowsScrolling(bool);
+        void setScrollArea(QWidget*);
+
+        virtual void paint(GraphicsContext*, const IntRect&);
+
+        virtual void geometryChanged() const;
+        virtual void setFrameGeometry(const IntRect&);
+
+        IntRect windowResizerRect();
+        bool resizerOverlapsContent() const;
+        void adjustOverlappingScrollbarCount(int overlapDelta);
+
+        virtual void setParent(ScrollView*);
+
+        void addToDirtyRegion(const IntRect&);
+        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+        void updateBackingStore();
+
+        PlatformScrollbar *horizontalScrollBar() const;
+        PlatformScrollbar *verticalScrollBar() const;
 
     private:
-        QAbstractScrollArea* m_area;
-        bool m_allowsScrolling;
-        int  m_width;
-        int  m_height;
+        void updateScrollbars(const IntSize& desiredOffset);
+        IntSize maximumScroll() const;
+        class ScrollViewPrivate;
+        ScrollViewPrivate* m_data;
 #endif
     };
 

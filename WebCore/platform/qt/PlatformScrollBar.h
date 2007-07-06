@@ -44,6 +44,10 @@ public:
     virtual int width() const;
     virtual int height() const;
     virtual void setRect(const IntRect&);
+
+    virtual IntRect frameGeometry() const;
+    virtual void setFrameGeometry(const IntRect& r);
+
     virtual void setEnabled(bool);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 

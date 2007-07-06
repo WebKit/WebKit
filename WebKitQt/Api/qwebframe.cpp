@@ -38,6 +38,7 @@
 #include "PlatformWheelEvent.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+#include "PlatformScrollBar.h"
 
 #include "markup.h"
 #include "RenderTreeAsText.h"
@@ -71,8 +72,8 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     q->setFrameShape(QFrame::NoFrame);
     q->setMouseTracking(true);
     q->setFocusPolicy(Qt::ClickFocus);
-    q->verticalScrollBar()->setSingleStep(20);
-    q->horizontalScrollBar()->setSingleStep(20);
+//     q->verticalScrollBar()->setSingleStep(20);
+//     q->horizontalScrollBar()->setSingleStep(20);
 
     frameLoaderClient = new FrameLoaderClientQt();
     frame = new Frame(page, frameData->ownerElement, frameLoaderClient);
@@ -81,29 +82,32 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     frameView = new FrameView(frame.get());
     frameView->deref();
     frameView->setScrollArea(qframe);
-    frameView->setAllowsScrolling(frameData->allowsScrolling);
+    if (!frameData->allowsScrolling)
+        frameView->suppressScrollbars(true);
     frame->setView(frameView.get());
     frame->init();
     eventHandler = frame->eventHandler();
 }
 
-void QWebFramePrivate::_q_adjustScrollbars()
+QWebFrame *QWebFramePrivate::parentFrame()
 {
-    QAbstractSlider *hbar = q->horizontalScrollBar();
-    QAbstractSlider *vbar = q->verticalScrollBar();
+    return qobject_cast<QWebFrame*>(q->parentWidget());
+}
 
-    const QSize viewportSize = q->viewport()->size();
-    QSize docSize = QSize(frameView->contentsWidth(), frameView->contentsHeight());
+WebCore::PlatformScrollbar *QWebFramePrivate::horizontalScrollBar() const
+{
+    Q_ASSERT(frameView);
+    return frameView->horizontalScrollBar();
+}
 
-    hbar->setRange(0, docSize.width() - viewportSize.width());
-    hbar->setPageStep(viewportSize.width());
-
-    vbar->setRange(0, docSize.height() - viewportSize.height());
-    vbar->setPageStep(viewportSize.height());
+WebCore::PlatformScrollbar *QWebFramePrivate::verticalScrollBar() const
+{
+    Q_ASSERT(frameView);
+    return frameView->verticalScrollBar();
 }
 
 QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
-    : QAbstractScrollArea(parent)
+    : QFrame(parent)
     , d(new QWebFramePrivate)
 {
     d->page = parent;
@@ -115,9 +119,8 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     }
 }
 
-
 QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
-    : QAbstractScrollArea(parent->viewport())
+    : QFrame(parent)
     , d(new QWebFramePrivate)
 {
     QPalette pal = palette();
@@ -197,12 +200,11 @@ QString QWebFrame::selectedText() const
 
 void QWebFrame::resizeEvent(QResizeEvent *e)
 {
-    QAbstractScrollArea::resizeEvent(e);
+    QFrame::resizeEvent(e);
     if (d->frame && d->frameView) {
         d->frame->forceLayout();
         d->frame->view()->adjustViewSize();
     }
-    d->_q_adjustScrollbars();
 }
 
 QList<QWebFrame*> QWebFrame::childFrames() const
@@ -221,6 +223,11 @@ QList<QWebFrame*> QWebFrame::childFrames() const
     return rc;
 }
 
+void QWebFrame::suppressScrollbars(bool suppress)
+{
+    d->frameView->suppressScrollbars(suppress);
+}
+
 void QWebFrame::paintEvent(QPaintEvent *ev)
 {
     if (!d->frameView || !d->frame->renderer())
@@ -230,21 +237,17 @@ void QWebFrame::paintEvent(QPaintEvent *ev)
     QTime time;
     time.start();
 #endif
+
     QRect clip = ev->rect();
 
     if (d->frameView->needsLayout()) {
         d->frameView->layout();
     }
-    QPainter p(viewport());
+
+    QPainter p(this);
+
     GraphicsContext ctx(&p);
-
-    const int xOffset = horizontalScrollBar()->value();
-    const int yOffset = verticalScrollBar()->value();
-
-    ctx.translate(-xOffset, -yOffset);
-    clip.translate(xOffset, yOffset);
-
-    d->frame->paint(&ctx, clip);
+    d->frameView->paint(&ctx, clip);
     p.end();
 
 #ifdef    QWEBKIT_TIME_RENDERING
@@ -258,9 +261,15 @@ void QWebFrame::mouseMoveEvent(QMouseEvent *ev)
     if (!d->frameView)
         return;
 
+    //WebCore expects all mouse events routed through mainFrame()
+    if (this != d->page->mainFrame()) {
+        ev->ignore();
+        return;
+    }
+
     d->eventHandler->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
-    const int xOffset = horizontalScrollBar()->value();
-    const int yOffset = verticalScrollBar()->value();
+    const int xOffset = d->horizontalScrollBar() ? d->horizontalScrollBar()->value() : 0;
+    const int yOffset = d->verticalScrollBar() ? d->verticalScrollBar()->value() : 0;
     IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
     WebCore::HitTestResult result = d->eventHandler->hitTestResultAtPoint(pt, false);
     WebCore::Element *link = result.URLElement();
@@ -275,16 +284,29 @@ void QWebFrame::mousePressEvent(QMouseEvent *ev)
     if (!d->eventHandler)
         return;
 
+    //WebCore expects all mouse events routed through mainFrame()
+    if (this != d->page->mainFrame()) {
+        ev->ignore();
+        return;
+    }
+
     if (ev->button() == Qt::RightButton)
         d->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
-    else d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    else
+        d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
     setFocus();
 }
 
 void QWebFrame::mouseDoubleClickEvent(QMouseEvent *ev)
 {
+    //WebCore expects all mouse events routed through mainFrame()
     if (!d->eventHandler)
         return;
+
+    if (this != d->page->mainFrame()) {
+        ev->ignore();
+        return;
+    }
 
     d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
     setFocus();
@@ -292,23 +314,35 @@ void QWebFrame::mouseDoubleClickEvent(QMouseEvent *ev)
 
 void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
 {
+    //WebCore expects all mouse events routed through mainFrame()
     if (!d->frameView)
         return;
+
+    if (this != d->page->mainFrame()) {
+        ev->ignore();
+        return;
+    }
 
     d->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
     setFocus();
 }
 
-void QWebFrame::wheelEvent(QWheelEvent *e)
+void QWebFrame::wheelEvent(QWheelEvent *ev)
 {
-    PlatformWheelEvent wkEvent(e);
+    //WebCore expects all mouse events routed through mainFrame()
+    if (this != d->page->mainFrame()) {
+        ev->ignore();
+        return;
+    }
+
+    PlatformWheelEvent wkEvent(ev);
     bool accepted = false;
     if (d->eventHandler)
         accepted = d->eventHandler->handleWheelEvent(wkEvent);
 
-    e->setAccepted(accepted);
+    ev->setAccepted(accepted);
     if (!accepted)
-        QAbstractScrollArea::wheelEvent(e);
+        QFrame::wheelEvent(ev);
     setFocus();
 }
 
@@ -323,40 +357,43 @@ void QWebFrame::keyPressEvent(QKeyEvent *ev)
     if (handled) {
     } else {
         handled = true;
-        QScrollBar *h, *v;
-        h = horizontalScrollBar();
-        v = verticalScrollBar();
+        PlatformScrollbar *h, *v;
+        h = d->horizontalScrollBar();
+        v = d->verticalScrollBar();
+        if (!h || !v)
+          return;
+
         switch (ev->key()) {
             case Qt::Key_Up:
                 v->setValue(v->value() - 10);
-                viewport()->update();
+                update();
                 break;
             case Qt::Key_Down:
                 v->setValue(v->value() + 10);
-                viewport()->update();
+                update();
                 break;
             case Qt::Key_Left:
                 h->setValue(h->value() - 10);
-                viewport()->update();
+                update();
                 break;
             case Qt::Key_Right:
                 h->setValue(h->value() + 10);
-                viewport()->update();
+                update();
                 break;
             case Qt::Key_PageUp:
-                v->setValue(v->value() - viewport()->height());
-                viewport()->update();
+                v->setValue(v->value() - height());
+                update();
                 break;
             case Qt::Key_PageDown:
-                v->setValue(v->value() + viewport()->height());
-                viewport()->update();
+                v->setValue(v->value() + height());
+                update();
                 break;
             default:
                 handled = false;
                 break;
         }
     }
-   
+
     ev->setAccepted(handled);
 }
 
@@ -376,19 +413,19 @@ void QWebFrame::keyReleaseEvent(QKeyEvent *ev)
     ev->setAccepted(handled);
 }
 
-void QWebFrame::focusInEvent(QFocusEvent *e)
+void QWebFrame::focusInEvent(QFocusEvent *ev)
 {
-    if (e->reason() != Qt::PopupFocusReason) {
+    if (ev->reason() != Qt::PopupFocusReason) {
         d->frame->page()->focusController()->setFocusedFrame(d->frame);
         d->frame->setIsActive(true);
     }
-    QAbstractScrollArea::focusInEvent(e);
+    QFrame::focusInEvent(ev);
 }
 
-void QWebFrame::focusOutEvent(QFocusEvent *e)
+void QWebFrame::focusOutEvent(QFocusEvent *ev)
 {
-    QAbstractScrollArea::focusOutEvent(e);
-    if (e->reason() != Qt::PopupFocusReason) {
+    QFrame::focusOutEvent(ev);
+    if (ev->reason() != Qt::PopupFocusReason) {
         d->frame->selectionController()->clear();
         d->frame->setIsActive(false);
     }
@@ -412,11 +449,3 @@ QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
     }
     return rc;
 }
-
-/*!\reimp
-*/
-void QWebFrame::scrollContentsBy(int dx, int dy)
-{
-    viewport()->scroll(dx, dy);
-}
-

@@ -43,7 +43,7 @@ QWebFrame *QWebObjectPluginConnector::frame() const
 
 QWidget *QWebObjectPluginConnector::pluginParentWidget() const
 {
-    return d->frame->viewport();
+    return d->frame;
 }
 
 QWebNetworkJob *QWebObjectPluginConnector::requestUrl(const QWebNetworkRequest &request, Target target)

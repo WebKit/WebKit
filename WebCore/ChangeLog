@@ -1,3 +1,87 @@
+2007-07-06  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Convert QWebFrame to a QFrame from a scroll area.
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::createDraggingClipboard):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::setRect):
+        (WebCore::PlatformScrollbar::frameGeometry):
+        (WebCore::PlatformScrollbar::setFrameGeometry):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::~ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::ScrollViewPrivate::windowClipRect):
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::setScrollArea):
+        (WebCore::ScrollView::horizontalScrollBar):
+        (WebCore::ScrollView::verticalScrollBar):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::hScrollbarMode):
+        (WebCore::ScrollView::vScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::setStaticBackground):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::scroll):
+        (WebCore::ScrollView::windowResizerRect):
+        (WebCore::ScrollView::resizerOverlapsContent):
+        (WebCore::ScrollView::adjustOverlappingScrollbarCount):
+        (WebCore::ScrollView::setParent):
+        (WebCore::ScrollView::addToDirtyRegion):
+        (WebCore::ScrollView::scrollBackingStore):
+        (WebCore::ScrollView::updateBackingStore):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::canvas):
+        (WebCore::WidgetPrivate::setGeometry):
+        (WebCore::WidgetPrivate::geometry):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::originalGeometry):
+        (WebCore::Widget::geometryChanged):
+
 2007-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

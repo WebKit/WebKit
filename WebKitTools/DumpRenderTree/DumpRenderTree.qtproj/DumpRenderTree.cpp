@@ -70,8 +70,7 @@ DumpRenderTree::DumpRenderTree()
     page = new WebPage(0);
     page->resize(maxViewWidth, maxViewHeight);
     frame = page->mainFrame();
-    frame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    frame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    frame->suppressScrollbars(true);
     frame->setFrameShape(QFrame::NoFrame);
 
     // hack to force the right size on the frame

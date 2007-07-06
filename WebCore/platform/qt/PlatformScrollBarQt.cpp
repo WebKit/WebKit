@@ -99,6 +99,16 @@ int PlatformScrollbar::height() const
 
 void PlatformScrollbar::setRect(const IntRect& rect)
 {
+    setFrameGeometry(rect);
+}
+
+IntRect PlatformScrollbar::frameGeometry() const
+{
+    return m_opt.rect;
+}
+
+void PlatformScrollbar::setFrameGeometry(const IntRect& rect)
+{
     m_opt.rect = rect;
 }
 
@@ -185,6 +195,7 @@ int PlatformScrollbar::trackLength() const
 
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
+    //qDebug() << "PlatformScrollbar::handleMouseMoveEvent" << m_opt.rect << evt.pos() << endl;
     m_opt.state |= QStyle::State_MouseOver;
     const QPoint ctlPt = m_opt.rect.topLeft();
     m_opt.rect.moveTo(0, 0);
@@ -259,6 +270,7 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
 {
+    //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << evt.pos() << endl;
     const QPoint ctlPt = m_opt.rect.topLeft();
     m_opt.rect.moveTo(0, 0);
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, QPoint(evt.pos()) - ctlPt, 0);
@@ -285,6 +297,7 @@ bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
 {
+    //qDebug() << "PlatformScrollbar::handleMouseReleaseEvent" << m_opt.rect << evt.pos() << endl;
     m_opt.state &= ~QStyle::State_Sunken;
     m_pressedPart = QStyle::SC_None;
     m_pressedPos = 0;

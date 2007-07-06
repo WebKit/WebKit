@@ -39,6 +39,7 @@ namespace WebCore
     class Frame;
     class FrameView;
     class HTMLFrameOwnerElement;
+    class PlatformScrollbar;
 }
 class QWebPage;
 
@@ -71,7 +72,9 @@ public:
     void init(QWebFrame *qframe, WebCore::Page *page,
               QWebFrameData *frameData);
 
-    void _q_adjustScrollbars();
+    QWebFrame *parentFrame();
+    WebCore::PlatformScrollbar *horizontalScrollBar() const;
+    WebCore::PlatformScrollbar *verticalScrollBar() const;
 
     QWebFrame *q;
     WebCore::FrameLoaderClientQt *frameLoaderClient;

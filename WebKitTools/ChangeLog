@@ -1,3 +1,12 @@
+2007-07-06  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Adjust for conversion of QWebFrame to a QFrame from a scroll area.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2007-07-06  George Staikos  <staikos@kde.org>
 
         Reviewed by Anders.
