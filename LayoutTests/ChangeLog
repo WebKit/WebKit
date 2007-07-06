@@ -1,3 +1,14 @@
+2007-07-06  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14516
+        Bug 14516: crash loading multipart/x-mixed-replace data on windows safari
+
+        * http/tests/multipart/resources/multipart-nodashes.php: Added.
+        * http/tests/multipart/win-boundary-crash-expected.txt: Added.
+        * http/tests/multipart/win-boundary-crash.html: Added.
+
 2007-07-06  Jungshik Shin <jungshik.shin@gmail.com>
 
         Reviewed by Alexey.

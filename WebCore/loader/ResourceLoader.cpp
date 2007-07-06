@@ -161,7 +161,8 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 
 void ResourceLoader::clearResourceData()
 {
-    m_resourceData->clear();
+    if (m_resourceData)
+        m_resourceData->clear();
 }
 
 void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)

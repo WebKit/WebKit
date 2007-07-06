@@ -1,3 +1,15 @@
+2007-07-06  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14516
+        Bug 14516: crash loading multipart/x-mixed-replace data on windows safari
+
+        NULL check m_resourceData to prevent a crash in Safari on Windows.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::clearResourceData):
+
 2007-07-06  Jungshik Shin  <jungshik.shin@gmail.com>
 
         Reviewed by Alexey.
