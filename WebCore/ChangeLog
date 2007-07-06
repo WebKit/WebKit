@@ -1,3 +1,10 @@
+2007-07-06  Matt Lilek  <pewtermoose@gmail.com>
+
+        Not reviewed - Windows build fix.
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::imageFromSelection):
+
 2007-07-06  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.
