@@ -375,6 +375,13 @@ sub checkWebCoreSVGSupport
 
 sub isQt()
 {
+    # Allow override in case QTDIR is not set.
+    for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--qt/i ) {
+            return 1;
+        }
+    }
     return defined($ENV{'QTDIR'})
 }
 
@@ -515,6 +522,14 @@ sub buildQMakeProject($$)
 {
     my ($project, $colorize) = @_;
 
+    my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
+    for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--qmake=(.*)/i ) {
+            $qmakebin = $1;
+        }
+    }
+
     if ($project ne "WebKit") {
         die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
     }
@@ -527,15 +542,15 @@ sub buildQMakeProject($$)
     push @buildArgs, "CONFIG+=qt-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
 
-    print "Calling 'qmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
+    print "Calling '$qmakebin @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
 
     system "mkdir -p " . baseProductDir() . "/$config";
     chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
 
-    my $result = system "qmake", @buildArgs;
+    my $result = system $qmakebin, @buildArgs;
     if($result ne 0) {
-       die "Failed to setup build environment using qmake!\n";
+       die "Failed to setup build environment using $qmakebin!\n";
     }
 
     my $clean = $ENV{"WEBKIT_FULLBUILD"};

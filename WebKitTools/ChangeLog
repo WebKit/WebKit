@@ -1,3 +1,12 @@
+2007-07-05  George Staikos  <staikos@kde.org>
+
+        Reviewed by Maciej.
+
+        Add --qt and --qmake= to force Qt even when QTDIR isn't present and to
+        give a path to a specific qmake binary.  Both are optional.
+
+        * Scripts/webkitdirs.pm:
+
 2007-07-05  Adam Roben  <aroben@apple.com>
 
         Warn about tests in the Skipped file that succeeded
