@@ -36,6 +36,7 @@ plugins/pluginDocumentView-deallocated-dataSource.html
 http/tests/misc/willCacheResponse-delegate-callback.html
 fast/dom/wrapper-identity.html
 fast/dom/wrapper-round-tripping.html
+fast/objc/longlongTest.html
 
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html
@@ -123,6 +124,7 @@ svg/custom/marker-changes.svg
 svg/custom/marker-viewBox-changes.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/custom/use-referencing-nonexisting-symbol.svg
+svg/custom/width-full-percentage.svg
 tables/mozilla/core/bloomberg.html
 tables/mozilla/bugs/bug8381.html
 tables/mozilla/bugs/bug10633.html
@@ -223,10 +225,6 @@ editing/selection/selection-actions.html
 
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
-
-# Something is wrong with selection.modify or execCommand("Paste") <rdar://problem/5132016>
-editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
 
 # Missing two containing divs on the pasted content <rdar://problem/5132021>
 editing/inserting/insert-3907422-fix.html
@@ -429,9 +427,12 @@ dom/xhtml/level2/html/frame.xhtml
 tables/mozilla/bugs/bug50695-2.html
 
 # execCommand("Paste") fails? <rdar://problem/5230263>
+editing/execCommand/paste-1.html
+editing/execCommand/paste-2.html
 editing/pasteboard/4242293-1.html
 editing/pasteboard/5247341.html
 editing/style/non-inheritable-styles.html
+editing/style/font-family-with-space
 
 # <rdar://problem/5225119> support smart pasting on boomer
 editing/pasteboard/paste-line-endings-002.html
