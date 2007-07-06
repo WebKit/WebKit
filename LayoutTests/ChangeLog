@@ -1,3 +1,18 @@
+2007-07-06  Jungshik Shin <jungshik.shin@gmail.com>
+
+        Reviewed by Alexey.
+
+       - test for http://bugs.webkit.org/show_bug.cgi?id=13415
+
+        * fast/encoding/utf-32-big-endian-bom-expected.txt: Added.
+        * fast/encoding/utf-32-big-endian-bom.html: Added.
+        * fast/encoding/utf-32-big-endian-nobom-expected.txt: Added.
+        * fast/encoding/utf-32-big-endian-nobom.xml: Added.
+        * fast/encoding/utf-32-little-endian-bom-expected.txt: Added.
+        * fast/encoding/utf-32-little-endian-bom.html: Added.
+        * fast/encoding/utf-32-little-endian-nobom-expected.txt: Added.
+        * fast/encoding/utf-32-little-endian-nobom.xml: Added.
+
 2007-07-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Adam.

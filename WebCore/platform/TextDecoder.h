@@ -56,7 +56,7 @@ namespace WebCore {
 
         bool m_checkedForBOM;
         unsigned char m_numBufferedBytes;
-        unsigned char m_bufferedBytes[2];
+        unsigned char m_bufferedBytes[3];
     };
 
 } // namespace WebCore

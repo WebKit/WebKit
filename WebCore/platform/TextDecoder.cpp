@@ -57,16 +57,28 @@ String TextDecoder::checkForBOM(const char* data, size_t length, bool flush)
     const unsigned char* buf2 = reinterpret_cast<const unsigned char*>(data);
     unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c3 = buf2Len ? (--buf2Len, *buf2++) : 0;
+    unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
+    unsigned char c4 = buf2Len ? (--buf2Len, *buf2++) : 0;
 
     const TextEncoding* encodingConsideringBOM = &m_encoding;
-    if (c1 == 0xFF && c2 == 0xFE)
-        encodingConsideringBOM = &UTF16LittleEndianEncoding();
-    else if (c1 == 0xFE && c2 == 0xFF)
-        encodingConsideringBOM = &UTF16BigEndianEncoding();
+    bool foundBOM = true;
+    if (c1 == 0xFF && c2 == 0xFE) {
+        if (c3 != 0 || c4 != 0) 
+            encodingConsideringBOM = &UTF16LittleEndianEncoding();
+        else if (numBufferedBytes + length > sizeof(m_bufferedBytes))
+            encodingConsideringBOM = &UTF32LittleEndianEncoding();
+        else
+            foundBOM = false;
+    }
     else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF)
         encodingConsideringBOM = &UTF8Encoding();
-    else if (numBufferedBytes + length <= sizeof(m_bufferedBytes) && !flush) {
+    else if (c1 == 0xFE && c2 == 0xFF)
+        encodingConsideringBOM = &UTF16BigEndianEncoding();
+    else if (c1 == 0 && c2 == 0 && c3 == 0xFE && c4 == 0xFF)
+        encodingConsideringBOM = &UTF32BigEndianEncoding();
+    else
+        foundBOM = false;
+    if (!foundBOM && numBufferedBytes + length <= sizeof(m_bufferedBytes) && !flush) {
         // Continue to look for the BOM.
         memcpy(&m_bufferedBytes[numBufferedBytes], data, length);
         m_numBufferedBytes += length;

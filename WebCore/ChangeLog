@@ -1,3 +1,27 @@
+2007-07-06  Jungshik Shin  <jungshik.shin@gmail.com>
+
+        Reviewed by Alexey.
+
+        - Add UTF-32 encoding support 
+          http://bugs.webkit.org/show_bug.cgi?id=13415
+
+        Test:
+         - fast/encoding/utf-32-big-endian-bom.html
+         - fast/encoding/utf-32-big-endian-nobom.xml
+         - fast/encoding/utf-32-little-endian-bom.html
+         - fast/encoding/utf-32-little-endian-nobom.xml
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForBOM):
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        * platform/TextDecoder.cpp:
+        (WebCore::TextDecoder::checkForBOM):
+        * platform/TextDecoder.h:
+        * platform/TextEncoding.cpp:
+        (WebCore::UTF32BigEndianEncoding):
+        (WebCore::UTF32LittleEndianEncoding):
+        * platform/TextEncoding.h:
+
 2007-07-06  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej.

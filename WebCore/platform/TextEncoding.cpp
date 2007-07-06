@@ -185,6 +185,19 @@ const TextEncoding& UTF16LittleEndianEncoding()
     return globalUTF16LittleEndianEncoding;
 }
 
+const TextEncoding& UTF32BigEndianEncoding()
+{
+    static TextEncoding globalUTF32BigEndianEncoding("UTF-32BE");
+    return globalUTF32BigEndianEncoding;
+}
+
+const TextEncoding& UTF32LittleEndianEncoding()
+{
+    static TextEncoding globalUTF32LittleEndianEncoding("UTF-32LE");
+    return globalUTF32LittleEndianEncoding;
+}
+
+
 const TextEncoding& UTF8Encoding()
 {
     static TextEncoding globalUTF8Encoding("UTF-8");
