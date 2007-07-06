@@ -1,3 +1,14 @@
+2007-07-06  Bernhard Rosenkraenzer  <bero@arklinux.org>
+
+        Reviewed by Sam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13985
+        Bug 13985: WebCore/rendering/RenderTable.cpp fails to compile with gcc 4.2.x
+
+        * rendering/RenderTable.cpp:
+        (WebKit::RenderTable::calcBorderLeft)
+        (WebKit::RenderTable::calcBorderRight)
+
 2007-07-06  Maxime Britto  <mbritto@pleyo.com>
 
         Reviewed by Maciej.
