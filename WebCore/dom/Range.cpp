@@ -1551,7 +1551,7 @@ IntRect Range::boundingBox()
     return result;
 }
 
-void Range::addLineBoxRects(Vector<IntRect>& rects)
+void Range::addLineBoxRects(Vector<IntRect>& rects, bool useSelectionHeight)
 {
     if (!m_startContainer || !m_endContainer)
         return;
@@ -1567,7 +1567,7 @@ void Range::addLineBoxRects(Vector<IntRect>& rects)
         if (!r->firstChild()) {
             int startOffset = r == start ? m_startOffset : 0;
             int endOffset = r == end ? m_endOffset : UINT_MAX;
-            r->addLineBoxRects(rects, startOffset, endOffset);
+            r->addLineBoxRects(rects, startOffset, endOffset, useSelectionHeight);
         }
     }
 }

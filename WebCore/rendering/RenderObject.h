@@ -83,7 +83,7 @@ enum PaintPhase {
 enum PaintRestriction {
     PaintRestrictionNone,
     PaintRestrictionSelectionOnly,
-    PaintRestrictionSelectionOnlyWhiteText
+    PaintRestrictionSelectionOnlyBlackText
 };
 
 enum HitTestFilter {
@@ -421,12 +421,12 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
-        PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceWhiteText,
+        PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceBlackText,
                   RenderObject* newPaintingRoot, RenderFlowSequencedSet* newOutlineObjects)
             : context(newContext)
             , rect(newRect)
             , phase(newPhase)
-            , forceWhiteText(newForceWhiteText)
+            , forceBlackText(newForceBlackText)
             , paintingRoot(newPaintingRoot)
             , outlineObjects(newOutlineObjects)
         {
@@ -435,7 +435,7 @@ public:
         GraphicsContext* context;
         IntRect rect;
         PaintPhase phase;
-        bool forceWhiteText;
+        bool forceBlackText;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
         RenderFlowSequencedSet* outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
@@ -645,7 +645,7 @@ public:
     virtual int borderLeft() const { return style()->borderLeftWidth(); }
     virtual int borderRight() const { return style()->borderRightWidth(); }
 
-    virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX);
+    virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     IntRect absoluteBoundingBoxRect();

@@ -1,3 +1,31 @@
+2007-07-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam
+        
+        - WebKit part of fix for <rdar://problem/5315033>
+
+        * WebView/WebDocumentPrivate.h:
+        new selectionImageForcingBlackText: method. selectionImageForcingWhiteText: is no longer used and was never
+        in an official release of WebKit, so it could be removed, except that doing so would cause trouble for people
+        using nightly WebKit with Safari 3.0 beta. So I left it in, but made it just force black text instead of
+        white text, which will look different for those nightly WebKit/Safari 3.0 beta people but not break anything.
+        
+        * Misc/WebSearchableTextView.m:
+        (-[WebSearchableTextView selectionImageForcingBlackText:]):
+        new unimplemented protocol method for this obsolete class
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView selectionImageForcingBlackText:]):
+        calls through to WebCore the way selectionImageForcingWhiteText: used to
+        (-[WebHTMLView selectionImageForcingWhiteText:]):
+        now just calls selectionImageForcingBlackText:, thus not working as you would expect from the name
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView selectionImageForcingBlackText:]):
+        guts of old selectionImageForcingWhiteText:, but with black substituted for white
+        (-[WebPDFView selectionImageForcingWhiteText:]):
+        now just calls selectionImageForcingBlackText:, thus not working as you would expect from the name
+
 2007-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

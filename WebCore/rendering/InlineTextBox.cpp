@@ -328,9 +328,9 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     Color textStrokeColor;
     float textStrokeWidth = styleToUse->textStrokeWidth();
 
-    if (paintInfo.forceWhiteText) {
-        textFillColor = Color::white;
-        textStrokeColor = Color::white;
+    if (paintInfo.forceBlackText) {
+        textFillColor = Color::black;
+        textStrokeColor = Color::black;
     } else {
         textFillColor = styleToUse->textFillColor();
         if (!textFillColor.isValid())

@@ -175,7 +175,7 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
         rects.append(IntRect(tx + box->xPos(), ty + box->yPos(), box->width(), box->height()));
 }
 
-void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end)
+void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)
 {
     int x, y;
     absolutePositionForContent(x, y);
@@ -187,9 +187,11 @@ void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigne
             unsigned realEnd = min(box->end() + 1, end); // box->end() points at the last char, not after it
             IntRect r = box->selectionRect(x, y, start, realEnd);
             if (!r.isEmpty()) {
-                // change the height and y position because selectionRect uses selection-specific values
-                r.setHeight(box->height());
-                r.setY(y + box->yPos());
+                if (!useSelectionHeight) {
+                    // change the height and y position because selectionRect uses selection-specific values
+                    r.setHeight(box->height());
+                    r.setY(y + box->yPos());
+                }
                 rects.append(r);
             }
         }

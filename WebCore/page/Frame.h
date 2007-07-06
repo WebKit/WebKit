@@ -355,7 +355,7 @@ public:
 
     void willPopupMenu(NSMenu*);
 
-    NSImage* selectionImage(bool forceWhiteText = false) const;
+    NSImage* selectionImage(bool forceBlackText = false) const;
     NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
 
 private:    

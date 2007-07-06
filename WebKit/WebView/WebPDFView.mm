@@ -840,7 +840,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return [PDFSubview documentView];
 }
 
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+- (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText
 {
     // Convert the selection to an attributed string, and draw that.
     // FIXME 4621154: this doesn't handle italics (and maybe other styles)
@@ -848,13 +848,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSMutableAttributedString *attributedString = [[self selectedAttributedString] mutableCopy];
     NSRange wholeStringRange = NSMakeRange(0, [attributedString length]);
     
-    // Modify the styles in the attributed string to draw white text, no background, and no underline. We draw 
+    // Modify the styles in the attributed string to draw black text, no background, and no underline. We draw 
     // no underline because it would look ugly.
     [attributedString beginEditing];
     [attributedString removeAttribute:NSBackgroundColorAttributeName range:wholeStringRange];
     [attributedString removeAttribute:NSUnderlineStyleAttributeName range:wholeStringRange];
-    if (forceWhiteText)
-        [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:1.0f alpha:1.0f] range:wholeStringRange];
+    if (forceBlackText)
+        [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:0.0f alpha:1.0f] range:wholeStringRange];
     [attributedString endEditing];
     
     NSImage* selectionImage = [[[NSImage alloc] initWithSize:[self selectionRect].size] autorelease];
@@ -866,6 +866,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [attributedString release];
 
     return selectionImage;
+}
+
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    // NOTE: this method is obsolete and doesn't behave as its name suggests.
+    // See comment in WebDocumentPrivate.h.
+    return [self selectionImageForcingBlackText:forceWhiteText];
 }
 
 - (NSRect)selectionImageRect

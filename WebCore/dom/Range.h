@@ -114,7 +114,7 @@ public:
     Position editingStartPosition() const;
 
     IntRect boundingBox();
-    void addLineBoxRects(Vector<IntRect>&);
+    void addLineBoxRects(Vector<IntRect>&, bool useSelectionHeight = false);
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;

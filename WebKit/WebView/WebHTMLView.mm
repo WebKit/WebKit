@@ -5844,11 +5844,18 @@ BOOL isTextInput(Frame *coreFrame)
     return self;
 }
 
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+- (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText
 {
     if ([self _hasSelection])
-        return core([self _frame])->selectionImage(forceWhiteText);
+        return core([self _frame])->selectionImage(forceBlackText);
     return nil;
+}
+
+- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
+{
+    // NOTE: this method is obsolete and doesn't behave as its name suggests.
+    // See comment in WebDocumentPrivate.h.
+    return [self selectionImageForcingBlackText:forceWhiteText];
 }
 
 - (NSRect)selectionImageRect

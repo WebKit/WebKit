@@ -1,3 +1,57 @@
+2007-07-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam
+
+        - WebCore part of fix for <rdar://problem/5315033>
+
+        * rendering/RenderObject.h:
+        replaced PaintRestrictionSelectionOnlyWhiteText with PaintRestrictionSelectionOnlyBlackText
+        (WebCore::RenderObject::PaintInfo::PaintInfo):
+        replaced forceWhiteText with forceBlackText
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addLineBoxRects):
+        added a useSelectionHeight parameter, which defaults to false; this method is unimplemented
+        at this level so this has no effect.
+
+        * rendering/RenderText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        added a useSelectionHeight parameter, which defaults to false. If true, use the vertical position
+        and height returned by selectionRect rather than replacing it with the more tight-fitting position
+        and height of the line box.
+
+        * dom/Range.h:
+        * dom/Range.cpp:
+        (WebCore::Range::addLineBoxRects):
+        added a useSelectionHeight parameter, which defaults to false. Passes this along to RenderObject.        
+
+        * page/Frame.h:
+        renamed parameter to selectionImage
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionTextRects):
+        pass true for addLineBoxRects new useSelectionHeight parameter, so the rects returned by this new
+        method will match the height that the selection would be painted here
+        (WebCore::Frame::paint):
+        updated for white->black name changes
+        
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::selectionImage):
+        updated for white->black name changes
+        
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        updated for white->black name changes
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        updated for white->black name changes
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        updated for white->black name changes, and actually use black instead of white. This was the goal
+        of all the name changes.
+
 2007-07-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

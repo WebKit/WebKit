@@ -1597,7 +1597,7 @@ void RenderObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int 
     context->restore();
 }
 
-void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsigned endOffset)
+void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsigned endOffset, bool useSelectionHeight)
 {
 }
 
