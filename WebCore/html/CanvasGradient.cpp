@@ -163,7 +163,7 @@ int CanvasGradient::findStop(float value) const
 {
     ASSERT(value >= 0);
     ASSERT(value <= 1);
-    ASSERT(m_stopsSorted)
+    ASSERT(m_stopsSorted);
 
     int numStops = m_stops.size();
     ASSERT(numStops >= 2);
