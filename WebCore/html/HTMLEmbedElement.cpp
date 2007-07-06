@@ -68,8 +68,15 @@ KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
     RenderObject *r = renderer();
     if (!r) {
         Node *p = parentNode();
-        if (p && p->hasTagName(objectTag))
-            r = p->renderer();
+        
+        while (p) {
+            if (p->hasTagName(objectTag)) {
+                r = p->renderer();
+                break;
+            }
+            
+            p = p->parentNode();
+        }
     }
 
     if (r && r->isWidget()) {

@@ -1,3 +1,15 @@
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5280532> 
+        REGRESSION: Can't access nested embed by document.name if object is not immediate parent
+        
+        Traverse up the tree looking for an object element.
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::getInstance):
+
 2007-07-06  George Staikos  <staikos@kde.org>
 
         Qt build fix: Don't clobber qmake variables that are already set.

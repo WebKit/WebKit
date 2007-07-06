@@ -1,3 +1,13 @@
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5280532>
+        REGRESSION: Can't access nested embed by document.name if object is not immediate parent
+        
+        * plugins/embed-inside-object-expected.txt: Added.
+        * plugins/embed-inside-object.html: Added.
+
 2007-07-06  Adam Roben  <aroben@apple.com>
 
         Add another Leopard failure
