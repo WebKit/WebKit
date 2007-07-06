@@ -201,6 +201,8 @@
 #define USE_SYSTEM_MALLOC 1
 #endif
 
-#define WTF_USE_ICONDATABASE 1
+#if !defined(ENABLE_ICONDATABASE)
+#define ENABLE_ICONDATABASE 1
+#endif
 
 #endif /* WTF_Platform_h */

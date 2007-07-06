@@ -36,6 +36,7 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 DEFINES += BUILD_WEBKIT
 
 # Optional components (look for defs in config.h and included files!)
+DEFINES += ENABLE_ICONDATABASE=1
 DEFINES += ENABLE_XPATH=1
 DEFINES += ENABLE_XSLT=1
 #DEFINES += ENABLE_XBL=1
@@ -59,7 +60,6 @@ LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
 LIBS += -lqtwebico
 
 INCLUDEPATH += \
-                $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/ \
                 $$PWD/platform/qt \
                 $$PWD/platform/network/qt \
                 $$PWD/platform/graphics/qt \
@@ -117,8 +117,6 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/image-decoders \
                 $$PWD/../WebKitQt/WebCoreSupport
 QT += network
-LIBS += -lsqlite3
-
 
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT
 
@@ -554,12 +552,7 @@ SOURCES += \
     loader/DocumentLoader.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
-    loader/icon/IconDatabase.cpp \
-    loader/icon/IconDataCache.cpp \
     loader/icon/IconLoader.cpp \
-    loader/icon/SQLDatabase.cpp \
-    loader/icon/SQLStatement.cpp \
-    loader/icon/SQLTransaction.cpp \
     loader/ImageDocument.cpp \
     loader/loader.cpp \
     loader/MainResourceLoader.cpp \
@@ -869,6 +862,19 @@ gdk-port:SOURCES += \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp
  
+contains(DEFINES, ENABLE_ICONDATABASE=1) {
+    qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+    LIBS += -lsqlite3
+    SOURCES += \
+        loader/icon/IconDatabase.cpp \
+        loader/icon/IconDataCache.cpp \
+        loader/icon/SQLDatabase.cpp \
+        loader/icon/SQLStatement.cpp \
+        loader/icon/SQLTransaction.cpp
+} else {
+    SOURCES += \
+        loader/icon/IconDatabaseNone.cpp
+}
 
 contains(DEFINES, ENABLE_XPATH=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XPATH

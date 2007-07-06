@@ -26,7 +26,7 @@
 #ifndef IconDatabase_h
 #define IconDatabase_h
 
-#if USE(ICONDATABASE)
+#if ENABLE(ICONDATABASE)
 #include "SQLDatabase.h"
 #endif
 
@@ -43,7 +43,7 @@ class IntSize;
 class IconDataCache;
 class SharedBuffer;
 
-#if USE(ICONDATABASE)
+#if ENABLE(ICONDATABASE)
 class SQLTransaction;
 #endif
 
@@ -91,7 +91,7 @@ private:
     ~IconDatabase();
     friend IconDatabase* iconDatabase();
 
-#if USE(ICONDATABASE)
+#if ENABLE(ICONDATABASE)
     // This tries to get the iconID for the IconURL and, if it doesn't exist and createIfNecessary is true,
     // it will create the entry and return the new iconID
     int64_t establishIconIDForIconURL(SQLDatabase&, const String&, bool createIfNecessary = true);
