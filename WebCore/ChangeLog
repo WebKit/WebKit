@@ -1,3 +1,16 @@
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14487
+          Incomplete repaint of background and border of boxes with -webkit-border-fit:lines
+
+        Test: fast/repaint/border-fit-lines.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): Do a full repaint if
+        -webkit-border-fit:lines was specified.
+
 2007-07-06  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by Maciej.

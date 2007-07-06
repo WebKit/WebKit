@@ -1,3 +1,15 @@
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=14487
+          Incomplete repaint of background and border of boxes with -webkit-border-fit:lines
+
+        * fast/repaint/border-fit-lines-expected.checksum: Added.
+        * fast/repaint/border-fit-lines-expected.png: Added.
+        * fast/repaint/border-fit-lines-expected.txt: Added.
+        * fast/repaint/border-fit-lines.html: Added.
+
 2007-07-06  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by Maciej.

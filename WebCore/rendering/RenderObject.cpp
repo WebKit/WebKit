@@ -1782,11 +1782,12 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     IntRect newOutlineBox;
 
     bool fullRepaint = selfNeedsLayout();
+    // Presumably a background or a border exists if border-fit:lines was specified.
+    if (!fullRepaint && style()->borderFit() == BorderFitLines)
+        fullRepaint = true;
     if (!fullRepaint) {
         newOutlineBox = absoluteOutlineBox();
-        if (newOutlineBox.location() != oldOutlineBox.location())
-            fullRepaint = true;
-        else if (mustRepaintBackgroundOrBorder() && (newBounds != oldBounds || newOutlineBox != oldOutlineBox))
+        if (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder() && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)))
             fullRepaint = true;
     }
     if (fullRepaint) {
