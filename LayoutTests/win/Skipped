@@ -432,7 +432,7 @@ editing/execCommand/paste-2.html
 editing/pasteboard/4242293-1.html
 editing/pasteboard/5247341.html
 editing/style/non-inheritable-styles.html
-editing/style/font-family-with-space
+editing/style/font-family-with-space.html
 
 # <rdar://problem/5225119> support smart pasting on boomer
 editing/pasteboard/paste-line-endings-002.html
