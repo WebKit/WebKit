@@ -1,3 +1,19 @@
+2007-07-06  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Maciej.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13038
+        Bug 13038: ASSERTION FAILED: item->target().isEmpty() || m_mainFrame->tree()->find(item->target()) == m_mainFrame
+
+        Modify an ASSERT in goToItem related to going back/forward in history.  We don't need to check the frameset if the target is _blank.
+        The attached test case is a manual one since it relies on having pages opened in tabs in Safari.
+
+        * manual-tests/goBack-blank-tab-page.html: Added.
+        * manual-tests/resources/before-go-back.html: Added.
+        * manual-tests/resources/will-go-back.html: Added.
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
