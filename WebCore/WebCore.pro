@@ -773,6 +773,7 @@ qt-port:SOURCES += \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FontQt.cpp \
     platform/qt/GlyphPageTreeNodeQt.cpp \
+    platform/qt/Localizations.cpp \
     platform/qt/MimeTypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
