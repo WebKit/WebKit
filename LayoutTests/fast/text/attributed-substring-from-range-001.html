@@ -12,7 +12,15 @@ body { margin: 10; padding: 0 }
     function log(message)
     {
         var item = document.createElement("li");
-        item.appendChild(document.createTextNode(String(message).replace(/0x[0-9a-fA-F]{8}/g, "0xXXXXXXXX")));
+        var resultMessage = String(message);
+
+        // remove any memory addresses to make the test reproducable
+        resultMessage = resultMessage.replace(/0x[0-9a-fA-F]{8}/g, "0xXXXXXXXX");
+
+        // Leopard serializes empty attribute dictionaries as "{ }", turn these into "{}" to match Tiger
+        resultMessage = resultMessage.replace(/\{\s\}/g, "{}");
+
+        item.appendChild(document.createTextNode(resultMessage));
         console_messages.appendChild(item);
     }
     

@@ -26,10 +26,6 @@ http/tests/navigation/document-location-click.html
 http/tests/navigation/document-location-mouseover.html
 http/tests/navigation/document-location-onload.html
 
-# <rdar://problem/5313506> Some attributed string layout tests have an extra space character on Leopard
-fast/forms/attributed-strings.html
-fast/text/attributed-substring-from-range-001.html
-
 # <rdar://problem/5313497> Some international characters in layout tests have different metrics on Leopard vs. Tiger
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
