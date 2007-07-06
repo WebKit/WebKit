@@ -1416,8 +1416,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setVerticalScrollingMode:WebCoreScrollbarAlwaysOn];
-        [scrollview setVerticalScrollingModeLocked:YES];
+        [scrollview setVerticalScrollingMode:WebCoreScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setVerticalScrollingModeLocked:NO];
         [scrollview setVerticalScrollingMode:WebCoreScrollbarAuto];
@@ -1434,8 +1433,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 {
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAlwaysOn];
-        [scrollview setHorizontalScrollingModeLocked:YES];
+        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setHorizontalScrollingModeLocked:NO];
         [scrollview setHorizontalScrollingMode:WebCoreScrollbarAuto];

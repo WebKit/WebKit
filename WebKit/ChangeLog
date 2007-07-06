@@ -1,3 +1,26 @@
+2007-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5236277> REGRESSION-9A458: SPI for setting scroll bar behavior doesn't work
+
+        Calling setHorizontalScrollingMode: calls updateScrollers before returning, this will cause
+        WebCore to reset the scrolling mode based on the CSS overflow rules. So the setAlwaysShowHorizontalScroller:
+        and setAlwaysShowVerticalScroller: methods needed a way to lock the scrolling mode before
+        calling updateScrollers.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:andLock:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:andLock:]):
+        (-[WebDynamicScrollBarsView setScrollingMode:]):
+        (-[WebDynamicScrollBarsView setScrollingMode:andLock:]):
+        * WebView/WebView.mm:
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

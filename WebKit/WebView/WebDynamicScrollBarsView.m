@@ -69,9 +69,7 @@
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
 
-        if (!suppressLayout && !suppressScrollers &&
-            (hScroll == WebCoreScrollbarAuto || vScroll == WebCoreScrollbarAuto))
-        {
+        if (!suppressLayout && !suppressScrollers && (hScroll == WebCoreScrollbarAuto || vScroll == WebCoreScrollbarAuto)) {
             // Do a layout if pending, before checking if scrollbars are needed.
             // This fixes 2969367, although may introduce a slowdown in live resize performance.
             NSView *documentView = [self documentView];
@@ -80,10 +78,10 @@
                 [(id <WebDocumentView>)documentView setNeedsLayout: YES];
                 [(id <WebDocumentView>)documentView layout];
             }
-            
+
             NSSize documentSize = [documentView frame].size;
             NSSize frameSize = [self frame].size;
-            
+
             scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
                 (vScroll == WebCoreScrollbarAuto && documentSize.height > frameSize.height);
             if (scrollsVertically)
@@ -96,12 +94,11 @@
                     scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
                         (vScroll == WebCoreScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
             }
-        }
-        else {
+        } else {
             scrollsHorizontally = (hScroll == WebCoreScrollbarAuto) ? hasHorizontalScroller : (hScroll == WebCoreScrollbarAlwaysOn);
             scrollsVertically = (vScroll == WebCoreScrollbarAuto) ? hasVerticalScroller : (vScroll == WebCoreScrollbarAlwaysOn);
         }
-        
+
         if (hasVerticalScroller != scrollsVertically) {
             [self setHasVerticalScroller:scrollsVertically];
             hasVerticalScroller = scrollsVertically;
@@ -117,7 +114,7 @@
         [[self verticalScroller] setNeedsDisplay: NO];
         [[self horizontalScroller] setNeedsDisplay: NO];
     }
-    
+
     inUpdateScrollers = false;
 }
 
@@ -211,21 +208,46 @@
 
 - (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode
 {
+    [self setHorizontalScrollingMode:mode andLock:NO];
+}
+
+- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
+{
     if (mode == hScroll || hScrollModeLocked)
         return;
+
     hScroll = mode;
+
+    if (lock)
+        [self setHorizontalScrollingModeLocked:YES];
+
     [self updateScrollers];
 }
 
 - (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode
 {
+    [self setVerticalScrollingMode:mode andLock:NO];
+}
+
+- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
+{
     if (mode == vScroll || vScrollModeLocked)
         return;
+
     vScroll = mode;
+
+    if (lock)
+        [self setVerticalScrollingModeLocked:YES];
+
     [self updateScrollers];
 }
 
 - (void)setScrollingMode:(WebCoreScrollbarMode)mode
+{
+    [self setScrollingMode:mode andLock:NO];
+}
+
+- (void)setScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
 {
     if ((mode == vScroll && mode == hScroll) || (vScrollModeLocked && hScrollModeLocked))
         return;
@@ -240,6 +262,9 @@
         hScroll = mode;
         update = YES;
     }
+
+    if (lock)
+        [self setScrollingModesLocked:YES];
 
     if (update)
         [self updateScrollers];
