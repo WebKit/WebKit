@@ -76,3 +76,6 @@ fast/xsl/transformToFragment-XML-declaration.html
 fast/xsl/default-html.html
 fast/xsl/xslt-processor.html
 fast/xsl/xslt-string-parameters.html
+
+# <rdar://problem/5317692> http/tests/multipart/invalid-image-data failing on Leopard
+http/tests/multipart/invalid-image-data.html
