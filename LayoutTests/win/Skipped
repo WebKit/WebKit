@@ -487,6 +487,13 @@ plugins/netscape-destroy-plugin-script-objects.html
 # <rdar://problem/5309090> Output from http/tests/security/local-iFrame-from-remote.html shows a console message from the previous test
 http/tests/security/local-iFrame-from-remote.html
 
+# <rdar://problem/5317287> Crash in CMM8Bit3ChanNoConvDecoder::InnerDoDecode
+fast/css/contentDivWithChildren.html
+fast/css/contentImage.html
+
+# Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
+fast/encoding/idn-security.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
@@ -645,9 +652,3 @@ fast/dom/Window/window-onFocus.html
 fast/forms/searchfield-heights.html
 fast/table/frame-and-rules.html
 fast/table/giantCellspacing.html
-
-# Crash in CMM8Bit3ChanNoConvEncoder::InnerDoEncode
-fast/css/contentDivWithChildren.html
-
-# Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
-fast/encoding/idn-security.html
