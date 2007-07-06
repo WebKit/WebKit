@@ -2,6 +2,8 @@
 
         Reviewed by Adam Roben.
 
+        Add info about VC++ Express forgetting SDK paths.
+
         * building/build.html:
 
 2007-07-02  Mitz Pettel  <mitz@webkit.org>
