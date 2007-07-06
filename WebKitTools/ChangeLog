@@ -1,3 +1,11 @@
+2007-07-06  George Staikos  <staikos@kde.org>
+
+        Reviewed by Anders.
+
+        Allow passing of additional arguments to qmake with --qmakearg=
+
+        * Scripts/webkitdirs.pm:
+
 2007-07-05  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

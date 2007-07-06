@@ -522,11 +522,15 @@ sub buildQMakeProject($$)
 {
     my ($project, $colorize) = @_;
 
+    my @buildArgs = ("-r");
+
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--qmake=(.*)/i ) {
             $qmakebin = $1;
+        } elsif ($opt =~ /^--qmakearg=(.*)/i ) {
+            push @buildArgs, $1;
         }
     }
 
@@ -537,7 +541,6 @@ sub buildQMakeProject($$)
     my $config = configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
 
-    my @buildArgs = ("-r");
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, "CONFIG+=qt-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
