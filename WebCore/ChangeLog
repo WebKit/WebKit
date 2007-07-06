@@ -1,3 +1,18 @@
+2007-07-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14442
+        Adding a stop with value 1.0 to a gradient that has already been used has no effect
+
+        Implement start and end stop handling differently so they are not
+        in the color stop array.
+
+        * html/CanvasGradient.cpp:
+        (WebCore::compareStops):
+        (WebCore::CanvasGradient::getColor):
+        (WebCore::CanvasGradient::findStop):
+
 2007-07-06  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://problem/5301994> Garbled text still showing on some sites

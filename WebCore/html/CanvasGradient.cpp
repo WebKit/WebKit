@@ -111,6 +111,11 @@ CGShadingRef CanvasGradient::platformShading()
 
 #endif
 
+static inline bool compareStops(const CanvasGradient::ColorStop &a, const CanvasGradient::ColorStop &b)
+{
+    return a.stop < b.stop;
+}
+
 void CanvasGradient::getColor(float value, float* r, float* g, float* b, float* a)
 {
     ASSERT(value >= 0);
@@ -123,14 +128,19 @@ void CanvasGradient::getColor(float value, float* r, float* g, float* b, float* 
         *a = 0;
         return;
     }
-    if (value <= 0) {
+    if (!m_stopsSorted) {
+        if (m_stops.size())
+            std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
+        m_stopsSorted = true;
+    }
+    if (value <= 0 || value <= m_stops.first().stop) {
         *r = m_stops.first().red;
         *g = m_stops.first().green;
         *b = m_stops.first().blue;
         *a = m_stops.first().alpha;
         return;
     }
-    if (value >= 1) {
+    if (value >= 1 || value >= m_stops.last().stop) {
         *r = m_stops.last().red;
         *g = m_stops.last().green;
         *b = m_stops.last().blue;
@@ -149,30 +159,11 @@ void CanvasGradient::getColor(float value, float* r, float* g, float* b, float* 
     *a = lastStop.alpha + (nextStop.alpha - lastStop.alpha) * stopFraction;
 }
 
-static inline bool compareStops(const CanvasGradient::ColorStop &a, const CanvasGradient::ColorStop &b)
-{
-    return a.stop < b.stop;
-}
-
 int CanvasGradient::findStop(float value) const
 {
-    if (!m_stopsSorted) {
-        bool addZeroStop = true;
-        bool addOneStop = true;
-        if (m_stops.size()) {
-            std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
-            addZeroStop = m_stops.first().stop != 0;
-            addOneStop = m_stops.last().stop != 1;
-        }
-        if (addZeroStop)
-            m_stops.insert(0, ColorStop(0, 0, 0, 0, 1));
-        if (addOneStop)
-            m_stops.append(ColorStop(1, 0, 0, 0, 1));
-        m_stopsSorted = true;
-    }
-
     ASSERT(value >= 0);
     ASSERT(value <= 1);
+    ASSERT(m_stopsSorted)
 
     int numStops = m_stops.size();
     ASSERT(numStops >= 2);

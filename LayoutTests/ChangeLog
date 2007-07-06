@@ -1,3 +1,16 @@
+2007-07-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adam.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14442
+        Adding a stop with value 1.0 to a gradient that has already been used has no effect
+
+        * fast/canvas/gradient-add-second-start-end-stop-expected.checksum: Added.
+        * fast/canvas/gradient-add-second-start-end-stop-expected.png: Added.
+        * fast/canvas/gradient-add-second-start-end-stop-expected.txt: Added.
+        * fast/canvas/gradient-add-second-start-end-stop.html: Added.
+
 2007-07-05  Adam Roben  <aroben@apple.com>
 
         Updated the Windows Skipped file
