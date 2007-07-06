@@ -676,7 +676,7 @@ template <> class MapSelector<32> {
 
 class TCMalloc_PageHeap {
  public:
-  TCMalloc_PageHeap();
+  void init();
 
   // Allocate a run of "n" pages.  Returns zero if out of memory.
   Span* New(Length n);
@@ -757,9 +757,12 @@ class TCMalloc_PageHeap {
   }
 };
 
-TCMalloc_PageHeap::TCMalloc_PageHeap() : pagemap_(MetaDataAlloc),
-                                         free_pages_(0),
-                                         system_bytes_(0) {
+void TCMalloc_PageHeap::init()
+{
+  pagemap_.init(MetaDataAlloc);
+  free_pages_ = 0;
+  system_bytes_ = 0;
+  
   DLL_Init(&large_);
   for (size_t i = 0; i < kMaxPages; i++) {
     DLL_Init(&free_[i]);
@@ -1173,7 +1176,18 @@ static bool phinited = false;
 
 // Avoid extra level of indirection by making "pageheap" be just an alias
 // of pageheap_memory.
-#define pageheap ((TCMalloc_PageHeap*) pageheap_memory)
+
+typedef union {
+    void* m_memory;
+    TCMalloc_PageHeap m_pageHeap;
+} PageHeapUnion;
+
+static inline TCMalloc_PageHeap* getPageHeap()
+{
+    return &reinterpret_cast<PageHeapUnion*>(&pageheap_memory[0])->m_pageHeap;
+}
+
+#define pageheap getPageHeap()
 
 // Thread-specific key.  Initialization here is somewhat tricky
 // because some Linux startup code invokes malloc() before it
@@ -1543,7 +1557,7 @@ void TCMalloc_ThreadCache::InitModule() {
     for (size_t i = 0; i < kNumClasses; ++i) {
       central_cache[i].Init(i);
     }
-    new ((void*)pageheap_memory) TCMalloc_PageHeap;
+    pageheap->init();
     phinited = 1;
   }
 }

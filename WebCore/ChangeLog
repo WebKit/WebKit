@@ -1,3 +1,12 @@
+2007-07-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti.
+
+        - <rdar://problem/5311093> JavaScriptCore fails to build with strict-aliasing warnings
+
+        * platform/StringHash.h:
+        (WTF::): Adapt to newer way to do storage types.
+
 2007-07-06  Bernhard Rosenkraenzer  <bero@arklinux.org>
 
         Reviewed by Sam.

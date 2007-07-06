@@ -85,14 +85,17 @@ JavaVM *getJavaVM()
     return jvm;
 }
 
-JNIEnv *getJNIEnv()
+JNIEnv* getJNIEnv()
 {
-    JNIEnv *env;
+    union {
+        JNIEnv* env;
+        void* dummy;
+    } u;
     jint jniError = 0;
 
-    jniError = (getJavaVM())->AttachCurrentThread((void**)&env, (void *)NULL);
-    if ( jniError == JNI_OK )
-        return env;
+    jniError = (getJavaVM())->AttachCurrentThread(&u.dummy, NULL);
+    if (jniError == JNI_OK)
+        return u.env;
     else
         fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, (long)jniError);
     return NULL;

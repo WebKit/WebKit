@@ -1,3 +1,41 @@
+2007-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti.
+
+        - <rdar://problem/5311093> JavaScriptCore fails to build with strict-aliasing warnings
+        
+        * Configurations/Base.xcconfig: Re-enable -Wstrict-aliasing
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJNIEnv): Type-pun via a union instead of a pointer cast.
+        * wtf/HashMap.h:
+        (WTF::): Instead of doing type-punned assignments via pointer cast, do one of three things:
+        (1) assign directly w/o cast if storage type matches real type; (2) assign using cast
+        via union if type does not need reffing; (3) copy with memcpy and ref/deref manually if type
+        needs reffing. This is ok peref-wise because memcpy of a constant length gets optomized.
+        HashTraits are now expected to make ref()/deref() take the storage type, not the true type.
+        * wtf/HashSet.h:
+        (WTF::): Same basic idea.
+        * wtf/HashTable.h:
+        (WTF::): Added Assigner template for use by HashMap/HashSet. Change RefCounter to call ref()
+        and deref() via storage type, avoiding the need to
+        type-pun.
+        (WTF::RefCounter::ref): ditto
+        (WTF::RefCounter::deref): ditto
+        * wtf/HashTraits.h:
+        (WTF::): Change ref() and deref() for RefPtr HashTraits to take the storage type; cast
+        via union to pointer type.
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::init): Changed from constructor to init function so this can go in a union.
+        (WTF::): redefine pageheap macro in terms of getPageHeap().
+        (WTF::getPageHeap): new inline function, helper for pageheap macro. This hides the cast in a union.
+        (WTF::TCMalloc_ThreadCache::InitModule): Call init() instead of using placement new to initialize page
+        heap.
+        * wtf/TCPageMap.h:
+        (TCMalloc_PageMap1::init): Changed from constructor to init function.
+        (TCMalloc_PageMap2::init): ditto
+        (TCMalloc_PageMap3::init): ditto
+
+
 2007-07-06  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

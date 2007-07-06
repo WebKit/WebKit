@@ -68,7 +68,7 @@ class TCMalloc_PageMap1 {
  public:
   typedef uintptr_t Number;
 
-  explicit TCMalloc_PageMap1(void* (*allocator)(size_t)) {
+  void init(void* (*allocator)(size_t)) {
     array_ = reinterpret_cast<void**>((*allocator)(sizeof(void*) << BITS));
     memset(array_, 0, sizeof(void*) << BITS);
   }
@@ -120,7 +120,7 @@ class TCMalloc_PageMap2 {
  public:
   typedef uintptr_t Number;
 
-  explicit TCMalloc_PageMap2(void* (*allocator)(size_t)) {
+  void init(void* (*allocator)(size_t)) {
     allocator_ = allocator;
     memset(root_, 0, sizeof(root_));
   }
@@ -194,7 +194,7 @@ class TCMalloc_PageMap3 {
  public:
   typedef uintptr_t Number;
 
-  explicit TCMalloc_PageMap3(void* (*allocator)(size_t)) {
+  void init(void* (*allocator)(size_t)) {
     allocator_ = allocator;
     root_ = NewNode();
   }

@@ -216,10 +216,20 @@ namespace WTF {
 
     template<> struct HashTraits<WebCore::String> : GenericHashTraits<WebCore::String> {
         typedef HashTraits<WebCore::StringImpl*>::StorageTraits StorageTraits;
+        typedef StorageTraits::TraitType StorageType;
         static const bool emptyValueIsZero = true;
         static const bool needsRef = true;
-        static void ref(const WebCore::String& s) { if (s.impl()) s.impl()->ref(); }
-        static void deref(const WebCore::String& s) { if (s.impl()) s.impl()->deref(); }
+        
+        typedef union { 
+            WebCore::StringImpl* m_p; 
+            StorageType m_s; 
+        } UnionType;
+
+        static void ref(const StorageType& s) { ref(reinterpret_cast<const UnionType*>(&s)->m_p); }
+        static void deref(const StorageType& s) { deref(reinterpret_cast<const UnionType*>(&s)->m_p); }
+        
+        static void ref(const WebCore::StringImpl* str) { if (str) const_cast<WebCore::StringImpl*>(str)->ref(); }
+        static void deref(const WebCore::StringImpl* str) { if (str) const_cast<WebCore::StringImpl*>(str)->deref(); }
     };
 
     // share code between StringImpl*, RefPtr<StringImpl>, and String
