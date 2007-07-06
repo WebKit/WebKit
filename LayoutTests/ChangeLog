@@ -1,3 +1,22 @@
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey.
+
+        <rdar://problem/5313512> fast/frames/frame-set-same-{location,src}.html sometimes hang on Leopard
+        
+        Make these tests more robust against frames loading in a different order. Also, turn the tests 
+        into text tests and remove them from the Leopard skipped list.
+        
+        * fast/frames/frame-set-same-location-expected.checksum: Removed.
+        * fast/frames/frame-set-same-location-expected.png: Removed.
+        * fast/frames/frame-set-same-location-expected.txt:
+        * fast/frames/frame-set-same-location.html:
+        * fast/frames/frame-set-same-src-expected.checksum: Removed.
+        * fast/frames/frame-set-same-src-expected.png: Removed.
+        * fast/frames/frame-set-same-src-expected.txt:
+        * fast/frames/frame-set-same-src.html:
+        * mac/leopard/Skipped:
+
 2007-07-06  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed.  Update test results.

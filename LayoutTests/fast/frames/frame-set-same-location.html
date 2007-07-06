@@ -7,22 +7,40 @@
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
 
-    function reportSuccess() {
-		console = document.getElementById("left_frame").contentWindow.document.getElementById("console");
-		if (console.firstChild.nodeValue == "FAILURE") {
-            console.firstChild.nodeValue = "PROCESSING...";
-            document.getElementById("right_frame").contentWindow.location.href = "resources/purple.html";
-        } else {
+    function rightFrameLoaded() {
+        rightFrameLoadCount++;
+        if (rightFrameLoadCount == 2) {
+            // Console is set by runTest
             console.firstChild.nodeValue = "SUCCESS";
-            if (window.layoutTestController)
+            
+            if (window.layoutTestController) {
+                // Put the test result in the main document so we can dump as text
+                var text = console.ownerDocument.documentElement.innerHTML;
+                document.open();
+                document.write(text);
+                document.close();
+                
+                layoutTestController.dumpAsText();
                 layoutTestController.notifyDone();
+            }
         }
     }
     
+    function runTest() {
+        console = document.getElementById("left_frame").contentWindow.document.getElementById("console");
+        if (console.firstChild.nodeValue == "FAILURE") {
+            console.firstChild.nodeValue = "PROCESSING...";
+            document.getElementById("right_frame").contentWindow.location.href = "resources/purple.html";
+        } else {
+            alert('TEST FAILURE: Unexpected onload call')
+        }
+    }
+    
+    rightFrameLoadCount = 0;
 </script>
 </head>
-<frameset cols="50%,*">
+<frameset onload="runTest()" cols="50%,*">
 <frame id="left_frame" src="data:text/html,<body><p>Test for <a href='http://bugzilla.opendarwin.org/show_bug.cgi?id=3400'>bug 3400</a>: setting the .src of an iframe to the same value does not reload page.</p><p>Testing that setting contentWindow.location.href of a frame to the same value works</p><p id=console>FAILURE</p></body>">
-<frame id="right_frame" onload="javascript:reportSuccess()" src="resources/purple.html"></iframe>
+<frame id="right_frame" onload="javascript:rightFrameLoaded()" src="resources/purple.html"></frame>
 </frameset>
 </html>

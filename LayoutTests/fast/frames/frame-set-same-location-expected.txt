@@ -1,33 +1,5 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderFrameSet {FRAMESET} at (0,0) size 800x600
-      RenderFrame {FRAME} at (0,0) size 397x600
-        layer at (0,0) size 397x600
-          RenderView at (0,0) size 397x600
-        layer at (0,0) size 397x600
-          RenderBlock {HTML} at (0,0) size 397x600
-            RenderBody {BODY} at (8,8) size 381x576
-              RenderBlock {P} at (0,0) size 381x36
-                RenderText {#text} at (0,0) size 53x18
-                  text run at (0,0) width 53: "Test for "
-                RenderInline {A} at (0,0) size 60x18 [color=#0000EE]
-                  RenderText {#text} at (53,0) size 60x18
-                    text run at (53,0) width 60: "bug 3400"
-                RenderText {#text} at (113,0) size 366x36
-                  text run at (113,0) width 253: ": setting the .src of an iframe to the same"
-                  text run at (0,18) width 172: "value does not reload page."
-              RenderBlock {P} at (0,52) size 381x36
-                RenderText {#text} at (0,0) size 375x36
-                  text run at (0,0) width 375: "Testing that setting contentWindow.location.href of a frame"
-                  text run at (0,18) width 152: "to the same value works"
-              RenderBlock {P} at (0,104) size 381x18
-                RenderText {#text} at (0,0) size 71x18
-                  text run at (0,0) width 71: "SUCCESS"
-      RenderFrame {FRAME} at (403,0) size 397x600
-        layer at (0,0) size 397x600
-          RenderView at (0,0) size 397x600
-        layer at (0,0) size 397x600
-          RenderBlock {HTML} at (0,0) size 397x600
-            RenderBody {BODY} at (8,8) size 381x584 [bgcolor=#800080]
+Test for bug 3400: setting the .src of an iframe to the same value does not reload page.
+
+Testing that setting contentWindow.location.href of a frame to the same value works
+
+SUCCESS
