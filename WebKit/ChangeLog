@@ -1,3 +1,15 @@
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10267
+          Can't scroll page downwards with scroll wheel, when pointer is on top of non-scrolling iframe
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView scrollWheel:]): Override the superclass
+        implementation to forward the wheel event to the next responder if this view
+        does not allow scrolling in the event's direction.
+
 2007-07-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam

@@ -29,6 +29,7 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 
 #import <WebKit/WebDocument.h>
+#import <WebKitSystemInterface.h>
 
 @implementation WebDynamicScrollBarsView
 
@@ -272,6 +273,26 @@
 - (BOOL)autoforwardsScrollWheelEvents
 {
     return YES;
+}
+
+- (void)scrollWheel:(NSEvent *)event
+{
+    float deltaX;
+    float deltaY;
+    BOOL isContinuous;
+    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
+
+    if (fabsf(deltaY) > fabsf(deltaX)) {
+        if (![self allowsVerticalScrolling]) {
+            [[self nextResponder] scrollWheel:event];
+            return;
+        }
+    } else if (![self allowsHorizontalScrolling]) {
+        [[self nextResponder] scrollWheel:event];
+        return;
+    }
+
+    [super scrollWheel:event];
 }
 
 @end
