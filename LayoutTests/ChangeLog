@@ -1,5 +1,25 @@
 2007-07-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by David Kilzer.
+
+        Update tests.
+        
+        * webarchive/archive-empty-frame-dom-expected.txt:
+        * webarchive/archive-empty-frame-source-expected.txt:
+        * webarchive/archive-with-unencoded-url-expected.txt:
+        * webarchive/test-body-background-expected.txt:
+        * webarchive/test-duplicate-resources-expected.txt:
+        * webarchive/test-frameset-expected.txt:
+        * webarchive/test-img-src-expected.txt:
+        * webarchive/test-input-src-expected.txt:
+        * webarchive/test-link-href-expected.txt:
+        * webarchive/test-object-data-expected.txt:
+        * webarchive/test-script-src-expected.txt:
+        * webarchive/test-table-background-expected.txt:
+        * webarchive/test-td-background-expected.txt:
+
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         <rdar://problem/5280532>

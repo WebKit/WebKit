@@ -747,7 +747,14 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
     if (!xmlData)
         return errorString;
 
-    return [[[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding] autorelease];
+    NSMutableString *string = [[[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding] autorelease];
+
+    // Replace "Apple Computer" with "Apple" in the DTD declaration.
+    NSRange range = [string rangeOfString:@"-//Apple Computer//"];
+    if (range.location != NSNotFound)
+        [string replaceCharactersInRange:range withString:@"-//Apple//"];
+    
+    return string;
 }
 
 static void dumpBackForwardListForWebView(WebView *view)
