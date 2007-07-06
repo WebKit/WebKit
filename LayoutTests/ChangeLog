@@ -37,6 +37,24 @@
 
 2007-07-05  Adam Roben  <aroben@apple.com>
 
+        Added two tests for Bug 14388: Input in text fields limited to 1024 characters
+
+        fast/forms/input-maxlength-2.html is obsoleted by
+        fast/forms/input-maxlength.html.
+
+        Reviewed by Adele.
+
+        * fast/forms/input-implicit-length-limit-expected.txt: Added.
+        * fast/forms/input-implicit-length-limit.html: Added.
+        * fast/forms/input-maxlength-2-expected.checksum: Removed.
+        * fast/forms/input-maxlength-2-expected.png: Removed.
+        * fast/forms/input-maxlength-2-expected.txt: Removed.
+        * fast/forms/input-maxlength-2.html: Removed.
+        * fast/forms/input-maxlength-expected.txt: Added.
+        * fast/forms/input-maxlength.html: Added.
+
+2007-07-05  Adam Roben  <aroben@apple.com>
+
         Add another hanging test to the Leopard Skipped file
 
         Rubberstamped by Adele.

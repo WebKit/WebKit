@@ -63,6 +63,12 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
+// FIXME: According to HTML4, the length attribute's value can be arbitrarily
+// large. However, due to http://bugs.webkit.org/show_bugs.cgi?id=14536 things
+// get rather sluggish when a text field has a larger number of characters than
+// this, even when just clicking in the text field.
+static const int cMaxLen = 524288;
+
 static int numGraphemeClusters(const StringImpl* s)
 {
     if (!s)
@@ -107,7 +113,7 @@ void HTMLInputElement::init()
 {
     m_imageLoader = 0;
     m_type = TEXT;
-    m_maxLen = 1024;
+    m_maxLen = cMaxLen;
     m_size = 20;
     m_checked = false;
     m_defaultChecked = false;
@@ -609,9 +615,9 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         }
     } else if (attr->name() == maxlengthAttr) {
         int oldMaxLen = m_maxLen;
-        m_maxLen = !attr->isNull() ? attr->value().toInt() : 1024;
-        if (m_maxLen <= 0 || m_maxLen > 1024)
-            m_maxLen = 1024;
+        m_maxLen = !attr->isNull() ? attr->value().toInt() : cMaxLen;
+        if (m_maxLen <= 0 || m_maxLen > cMaxLen)
+            m_maxLen = cMaxLen;
         if (oldMaxLen != m_maxLen)
             recheckValue();
         setChanged();

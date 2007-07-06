@@ -1,3 +1,20 @@
+2007-07-05  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Fix Bug 14388: Input in text fields limited to 1024 characters
+        http://bugs.webkit.org/show_bug.cgi?id=14388
+
+        Slightly modified by Adam Roben.
+
+        Reviewed by Adele.
+
+        Tests: fast/forms/input-implicit-length-limit.html
+               fast/forms/input-maxlength.html
+
+        * html/HTMLInputElement.cpp: Bump limit to 524288.
+        (WebCore::HTMLInputElement::init):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLInputElement.h:
+
 2007-07-05  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
