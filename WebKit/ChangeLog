@@ -1,3 +1,9 @@
+2007-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Update WebDynamicScrollBarsView.h to include methods added and used in r24060.
+
+        * WebView/WebDynamicScrollBarsView.h:
+
 2007-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

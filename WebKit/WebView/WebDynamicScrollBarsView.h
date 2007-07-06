@@ -49,6 +49,10 @@
 - (void)setAllowsVerticalScrolling:(BOOL)flag;
 - (BOOL)allowsVerticalScrolling;
 
+- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock;
+- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock;
+- (void)setScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock;
+
 - (void)setHorizontalScrollingModeLocked:(BOOL)locked;
 - (void)setVerticalScrollingModeLocked:(BOOL)locked;
 - (void)setScrollingModesLocked:(BOOL)mode;
