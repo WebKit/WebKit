@@ -72,20 +72,14 @@
 					<key>WebResourceMIMEType</key>
 					<string>text/css</string>
 					<key>WebResourceResponse</key>
-					<data>
-					YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVy
-					WCR2ZXJzaW9uVCR0b3BYJG9iamVjdHNfEA9O
-					U0tleWVkQXJjaGl2ZXISAAGGoNEICV8QE1dl
-					YlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRu
-					dWxs1w0ODxAREhMUFRYXGBkVUiQyUiQzUiQ0
-					UiQwViRjbGFzc1IkNVIkMYACgAAQPxAHgAMj
-					f+////////+AAFh0ZXh0L2Nzc9IdHh8gWCRj
-					bGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
-					ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJk
-					aW9+gYSHipGUl5mbnZ+hqqy1usPO0d8AAAAA
-					AAABAQAAAAAAAAAiAAAAAAAAAAAAAAAAAAAA
-					6A==
-					</data>
+					<dict>
+						<key>MIMEType</key>
+						<string>text/css</string>
+						<key>URL</key>
+						<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+						<key>expectedContentLength</key>
+						<integer>63</integer>
+					</dict>
 					<key>WebResourceURL</key>
 					<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
 				</dict>
@@ -151,20 +145,14 @@
 					<key>WebResourceMIMEType</key>
 					<string>image/gif</string>
 					<key>WebResourceResponse</key>
-					<data>
-					YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVy
-					WCR2ZXJzaW9uVCR0b3BYJG9iamVjdHNfEA9O
-					U0tleWVkQXJjaGl2ZXISAAGGoNEICV8QE1dl
-					YlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRu
-					dWxs1w0ODxAREhMUFRYXGBkVUiQyUiQzUiQ0
-					UiQwViRjbGFzc1IkNVIkMYACgAARBcQQB4AD
-					I3/v////////gABZaW1hZ2UvZ2lm0h0eHyBY
-					JGNsYXNzZXNaJGNsYXNzbmFtZaIgIV1OU1VS
-					TFJlc3BvbnNlWE5TT2JqZWN0CBEbJCkyRElM
-					YmRpb36BhIeKkZSXmZueoKKrrbe8xdDT4QAA
-					AAAAAAEBAAAAAAAAACIAAAAAAAAAAAAAAAAA
-					AADq
-					</data>
+					<dict>
+						<key>MIMEType</key>
+						<string>image/gif</string>
+						<key>URL</key>
+						<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+						<key>expectedContentLength</key>
+						<integer>1476</integer>
+					</dict>
 					<key>WebResourceURL</key>
 					<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
 				</dict>
@@ -179,19 +167,16 @@
     layoutTestController.dumpDOMAsWebArchive();
 </string>
 			<key>WebResourceMIMEType</key>
-			<string>application/x-javascript</string>
+			<string>text/javascript</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
-			URAHgAMjf+////////+AAF8QGGFwcGxpY2F0aW9uL3gtamF2YXNj
-			cmlwdNIdHh8gWCRjbGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
-			ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJkaW9+gYSHipGUl5mb
-			nZ+hqqzHzNXg4/EAAAAAAAABAQAAAAAAAAAiAAAAAAAAAAAAAAAA
-			AAAA+g==
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/javascript</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+				<key>expectedContentLength</key>
+				<integer>81</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
 		</dict>
@@ -202,16 +187,14 @@
 			<key>WebResourceMIMEType</key>
 			<string>text/css</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
-			PxAHgAMjf+////////+AAFh0ZXh0L2Nzc9IdHh8gWCRjbGFzc2Vz
-			WiRjbGFzc25hbWWiICFdTlNVUkxSZXNwb25zZVhOU09iamVjdAgR
-			GyQpMkRJTGJkaW9+gYSHipGUl5mbnZ+hqqy1usPO0d8AAAAAAAAB
-			AQAAAAAAAAAiAAAAAAAAAAAAAAAAAAAA6A==
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
 		</dict>
@@ -260,16 +243,14 @@
 			<key>WebResourceMIMEType</key>
 			<string>image/gif</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAR
-			BcQQB4ADI3/v////////gABZaW1hZ2UvZ2lm0h0eHyBYJGNsYXNz
-			ZXNaJGNsYXNzbmFtZaIgIV1OU1VSTFJlc3BvbnNlWE5TT2JqZWN0
-			CBEbJCkyRElMYmRpb36BhIeKkZSXmZueoKKrrbe8xdDT4QAAAAAA
-			AAEBAAAAAAAAACIAAAAAAAAAAAAAAAAAAADq
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
 		</dict>

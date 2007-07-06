@@ -653,10 +653,18 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
+static void convertMIMEType(NSMutableString *mimeType)
+{
+    if ([mimeType isEqualToString:@"application/x-javascript"])
+        [mimeType setString:@"text/javascript"];
+}
+
 static void convertWebResourceDataToString(NSMutableDictionary *resource)
 {
-    NSString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
-    if ([mimeType hasPrefix:@"text/"] || [mimeType isEqualToString:@"application/x-javascript"]) {
+    NSMutableString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
+    convertMIMEType(mimeType);
+    
+    if ([mimeType hasPrefix:@"text/"]) {
         NSData *data = [resource objectForKey:@"WebResourceData"];
         NSString *dataAsString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
         [resource setObject:dataAsString forKey:@"WebResourceData"];
@@ -671,7 +679,7 @@ static void normalizeWebResourceURL(NSMutableString *webResourceURL, NSString *o
                                          range:NSMakeRange(0, [webResourceURL length])];
 }
 
-static void normalizeWebResourceResponse(NSMutableDictionary *propertyList, NSString *oldURLBase)
+static void convertWebResourceResponseToDictionary(NSMutableDictionary *propertyList, NSString *oldURLBase)
 {
     NSURLResponse *response = nil;
     NSData *responseData = [propertyList objectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
@@ -681,25 +689,31 @@ static void normalizeWebResourceResponse(NSMutableDictionary *propertyList, NSSt
         response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
         [unarchiver finishDecoding];
         [unarchiver release];
-
-        // Create replacement NSURLReponse
-        NSMutableString *URL = [[[NSMutableString alloc] initWithContentsOfURL:[response URL]] autorelease];
-        normalizeWebResourceURL(URL, oldURLBase);
-        NSURLResponse *newResponse = [[NSURLResponse alloc] initWithURL:[[[NSURL alloc] initWithString:URL] autorelease]
-                                                               MIMEType:[response MIMEType]
-                                                  expectedContentLength:[response expectedContentLength]
-                                                       textEncodingName:[response textEncodingName]];
-        [newResponse autorelease];
-
-        // Encode replacement NSURLResponse
-        NSMutableData *newResponseData = [[NSMutableData alloc] init];
-        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:newResponseData];
-        [archiver encodeObject:newResponse forKey:@"WebResourceResponse"];
-        [archiver finishEncoding];
-        [archiver release];
-        [propertyList setObject:newResponseData forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-        [newResponseData release];
+    }        
+    
+    NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] init];
+    
+    NSMutableString *urlString = [[[response URL] description] mutableCopy];
+    normalizeWebResourceURL(urlString, oldURLBase);
+    [responseDictionary setObject:urlString forKey:@"URL"];
+    
+    NSMutableString *mimeTypeString = [[response MIMEType] mutableCopy];
+    convertMIMEType(mimeTypeString);
+    [responseDictionary setObject:mimeTypeString forKey:@"MIMEType"];
+    NSString *textEncodingName = [response textEncodingName];
+    if (textEncodingName)
+        [responseDictionary setObject:textEncodingName forKey:@"textEncodingName"];
+    [responseDictionary setObject:[NSNumber numberWithLongLong:[response expectedContentLength]] forKey:@"expectedContentLength"];
+    
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        
+        [responseDictionary setObject:[httpResponse allHeaderFields] forKey:@"allHeaderFields"];
+        [responseDictionary setObject:[NSNumber numberWithInt:[httpResponse statusCode]] forKey:@"statusCode"];
     }
+    
+    [propertyList setObject:responseDictionary forKey:@"WebResourceResponse"];
+    [responseDictionary release];
 }
 
 static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
@@ -714,7 +728,7 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
 
     // Normalize WebResourceResponse and WebResourceURL values in plist for testing
     NSString *cwdURL = [@"file://" stringByAppendingString:[[[NSFileManager defaultManager] currentDirectoryPath] stringByExpandingTildeInPath]];
-
+    
     NSMutableArray *resources = [NSMutableArray arrayWithCapacity:1];
     [resources addObject:propertyList];
 
@@ -736,7 +750,7 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
         NSMutableDictionary *subresourcePropertyList;
         while ((subresourcePropertyList = [enumerator nextObject])) {
             normalizeWebResourceURL([subresourcePropertyList objectForKey:@"WebResourceURL"], cwdURL);
-            normalizeWebResourceResponse(subresourcePropertyList, cwdURL);
+            convertWebResourceResponseToDictionary(subresourcePropertyList, cwdURL);
             convertWebResourceDataToString(subresourcePropertyList);
         }
     }

@@ -61,20 +61,14 @@
 					<key>WebResourceMIMEType</key>
 					<string>text/css</string>
 					<key>WebResourceResponse</key>
-					<data>
-					YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVy
-					WCR2ZXJzaW9uVCR0b3BYJG9iamVjdHNfEA9O
-					U0tleWVkQXJjaGl2ZXISAAGGoNEICV8QE1dl
-					YlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRu
-					dWxs1w0ODxAREhMUFRYXGBkVUiQyUiQzUiQ0
-					UiQwViRjbGFzc1IkNVIkMYACgAAQPxAHgAMj
-					f+////////+AAFh0ZXh0L2Nzc9IdHh8gWCRj
-					bGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
-					ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJk
-					aW9+gYSHipGUl5mbnZ+hqqy1usPO0d8AAAAA
-					AAABAQAAAAAAAAAiAAAAAAAAAAAAAAAAAAAA
-					6A==
-					</data>
+					<dict>
+						<key>MIMEType</key>
+						<string>text/css</string>
+						<key>URL</key>
+						<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+						<key>expectedContentLength</key>
+						<integer>63</integer>
+					</dict>
 					<key>WebResourceURL</key>
 					<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
 				</dict>
@@ -140,20 +134,14 @@
 					<key>WebResourceMIMEType</key>
 					<string>image/gif</string>
 					<key>WebResourceResponse</key>
-					<data>
-					YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVy
-					WCR2ZXJzaW9uVCR0b3BYJG9iamVjdHNfEA9O
-					U0tleWVkQXJjaGl2ZXISAAGGoNEICV8QE1dl
-					YlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRu
-					dWxs1w0ODxAREhMUFRYXGBkVUiQyUiQzUiQ0
-					UiQwViRjbGFzc1IkNVIkMYACgAARBcQQB4AD
-					I3/v////////gABZaW1hZ2UvZ2lm0h0eHyBY
-					JGNsYXNzZXNaJGNsYXNzbmFtZaIgIV1OU1VS
-					TFJlc3BvbnNlWE5TT2JqZWN0CBEbJCkyRElM
-					YmRpb36BhIeKkZSXmZueoKKrrbe8xdDT4QAA
-					AAAAAAEBAAAAAAAAACIAAAAAAAAAAAAAAAAA
-					AADq
-					</data>
+					<dict>
+						<key>MIMEType</key>
+						<string>image/gif</string>
+						<key>URL</key>
+						<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+						<key>expectedContentLength</key>
+						<integer>1476</integer>
+					</dict>
 					<key>WebResourceURL</key>
 					<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
 				</dict>

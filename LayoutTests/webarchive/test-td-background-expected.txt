@@ -77,16 +77,14 @@
 			<key>WebResourceMIMEType</key>
 			<string>image/gif</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAR
-			BcQQB4ADI3/v////////gABZaW1hZ2UvZ2lm0h0eHyBYJGNsYXNz
-			ZXNaJGNsYXNzbmFtZaIgIV1OU1VSTFJlc3BvbnNlWE5TT2JqZWN0
-			CBEbJCkyRElMYmRpb36BhIeKkZSXmZueoKKrrbe8xdDT4QAAAAAA
-			AAEBAAAAAAAAACIAAAAAAAAAAAAAAAAAAADq
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
 		</dict>

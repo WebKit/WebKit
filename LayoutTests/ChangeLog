@@ -1,3 +1,23 @@
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Kilzer.
+
+        <rdar://problem/5313502>
+        Many webarchive tests fail due to different NSURLResponse serialization on Leopard
+        
+        * mac/leopard/Skipped:
+        * webarchive/archive-with-unencoded-url-expected.txt:
+        * webarchive/test-body-background-expected.txt:
+        * webarchive/test-duplicate-resources-expected.txt:
+        * webarchive/test-frameset-expected.txt:
+        * webarchive/test-img-src-expected.txt:
+        * webarchive/test-input-src-expected.txt:
+        * webarchive/test-link-href-expected.txt:
+        * webarchive/test-object-data-expected.txt:
+        * webarchive/test-script-src-expected.txt:
+        * webarchive/test-table-background-expected.txt:
+        * webarchive/test-td-background-expected.txt:
+
 2007-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver.

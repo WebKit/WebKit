@@ -30,21 +30,6 @@ http/tests/navigation/document-location-onload.html
 fast/forms/attributed-strings.html
 fast/text/attributed-substring-from-range-001.html
 
-# <rdar://problem/5313502> Many webarchive tests fail due to different plist DOCTYPE on Leopard
-webarchive/archive-empty-frame-dom.html
-webarchive/archive-empty-frame-source.html
-webarchive/archive-with-unencoded-url.html
-webarchive/test-body-background.html
-webarchive/test-duplicate-resources.html
-webarchive/test-frameset.html
-webarchive/test-img-src.html
-webarchive/test-input-src.html
-webarchive/test-link-href.html
-webarchive/test-object-data.html
-webarchive/test-script-src.html
-webarchive/test-table-background.html
-webarchive/test-td-background.html
-
 # <rdar://problem/5313497> Some international characters in layout tests have different metrics on Leopard vs. Tiger
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html

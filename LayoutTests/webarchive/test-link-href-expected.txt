@@ -36,16 +36,14 @@ This text should be red sans-serif.
 			<key>WebResourceMIMEType</key>
 			<string>text/css</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
-			PxAHgAMjf+////////+AAFh0ZXh0L2Nzc9IdHh8gWCRjbGFzc2Vz
-			WiRjbGFzc25hbWWiICFdTlNVUkxSZXNwb25zZVhOU09iamVjdAgR
-			GyQpMkRJTGJkaW9+gYSHipGUl5mbnZ+hqqy1usPO0d8AAAAAAAAB
-			AQAAAAAAAAAiAAAAAAAAAAAAAAAAAAAA6A==
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
 		</dict>

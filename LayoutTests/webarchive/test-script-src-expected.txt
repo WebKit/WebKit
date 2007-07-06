@@ -28,19 +28,16 @@
     layoutTestController.dumpDOMAsWebArchive();
 </string>
 			<key>WebResourceMIMEType</key>
-			<string>application/x-javascript</string>
+			<string>text/javascript</string>
 			<key>WebResourceResponse</key>
-			<data>
-			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
-			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
-			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
-			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
-			URAHgAMjf+////////+AAF8QGGFwcGxpY2F0aW9uL3gtamF2YXNj
-			cmlwdNIdHh8gWCRjbGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
-			ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJkaW9+gYSHipGUl5mb
-			nZ+hqqzHzNXg4/EAAAAAAAABAQAAAAAAAAAiAAAAAAAAAAAAAAAA
-			AAAA+g==
-			</data>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/javascript</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+				<key>expectedContentLength</key>
+				<integer>81</integer>
+			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
 		</dict>

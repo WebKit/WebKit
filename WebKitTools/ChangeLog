@@ -1,3 +1,19 @@
+2007-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Kilzer.
+
+        <rdar://problem/5313502>
+        Many webarchive tests fail due to different NSURLResponse serialization on Leopard
+
+        Don't dump the serialized form of NSURLResponse. Instead, create a dictionary with the
+        response's attributes. Also change the JavaScript MIME type to be "text/javascript".
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (convertMIMEType):
+        (convertWebResourceDataToString):
+        (convertWebResourceResponseToDictionary):
+        (serializeWebArchiveToXML):
+
 2007-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver.
