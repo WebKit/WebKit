@@ -1,5 +1,11 @@
 2007-07-07  Alexey Proskuryakov  <ap@webkit.org>
 
+        Fixed a mismatch between test output and expected results (a typo that was only fixed in the former).
+
+        * fast/loader/early-load-cancel-expected.txt:
+
+2007-07-07  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=14525
