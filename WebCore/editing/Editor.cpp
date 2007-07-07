@@ -1702,6 +1702,23 @@ void Editor::unmarkText()
 }
 #endif
 
+void Editor::replaceMarkedText(const String& text)
+{
+    if (m_frame->selectionController()->isNone())
+        return;
+    
+    int exception = 0;
+    
+    Range *markedTextRange = m_frame->markedTextRange();
+    if (markedTextRange && !markedTextRange->collapsed(exception))
+        TypingCommand::deleteKeyPressed(m_frame->document(), false);
+    
+    if (!text.isEmpty())
+        TypingCommand::insertText(m_frame->document(), text, true);
+    
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+}
+
 void Editor::ignoreSpelling()
 {
     if (!client())

@@ -1,3 +1,18 @@
+2007-07-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5318756> Need to refactor IM/Marked text code to share logic with windows.
+
+        Moved a number of methods from WebHTMLView into WebCore.
+        Replaced bridge methods with calls directly into WebCore objects.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+          Now calls WebCore object methods directly, rather than calling 
+          via the bridge.
+
 2007-07-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady

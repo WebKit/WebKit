@@ -560,31 +560,19 @@ static void convertAttributesToUnderlines(Vector<MarkedTextUnderline>& result, c
     }
 }
 
-void Frame::setMarkedTextRange(const Range* range, NSArray* attributes, NSArray* ranges)
+void Frame::setMarkedTextRange(Range* range, NSArray* attributes, NSArray* ranges)
 {
-    int exception = 0;
+    int exception;
+    exception = 0;
 
     ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
     ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
 
-    d->m_markedTextUnderlines.clear();
-    if (attributes == nil)
-        d->m_markedTextUsesUnderlines = false;
-    else {
-        d->m_markedTextUsesUnderlines = true;
-        convertAttributesToUnderlines(d->m_markedTextUnderlines, range, attributes, ranges);
-    }
-
-    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
-        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();
-
-    if (range && range->collapsed(exception))
-        d->m_markedTextRange = 0;
-    else
-        d->m_markedTextRange = const_cast<Range*>(range);
-
-    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
-        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();
+    Vector<MarkedTextUnderline> decorations;
+    if (attributes)
+        convertAttributesToUnderlines(decorations, range, attributes, ranges);
+    
+    setMarkedTextRange(range, decorations);
 }
 
 NSMutableDictionary* Frame::dashboardRegionsDictionary()

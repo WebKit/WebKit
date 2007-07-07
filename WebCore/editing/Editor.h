@@ -197,6 +197,7 @@ public:
     void selectMarkedText();
     void unmarkText();
     void discardMarkedText();
+    void replaceMarkedText(const String&);
 
     bool ignoreMarkedTextSelectionChange() const { return m_ignoreMarkedTextSelectionChange; }
     void setIgnoreMarkedTextSelectionChange(bool ignore) { m_ignoreMarkedTextSelectionChange = ignore; }

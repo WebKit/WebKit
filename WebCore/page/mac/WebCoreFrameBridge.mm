@@ -958,23 +958,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [self convertToNSRange:m_frame->markedTextRange()];
 }
 
-- (void)replaceMarkedTextWithText:(NSString *)text
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-    
-    int exception = 0;
-
-    Range *markedTextRange = m_frame->markedTextRange();
-    if (markedTextRange && !markedTextRange->collapsed(exception))
-        TypingCommand::deleteKeyPressed(m_frame->document(), NO);
-    
-    if ([text length] > 0)
-        TypingCommand::insertText(m_frame->document(), text, YES);
-    
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
 // be deleted along with the proposed range in order to preserve proper spacing and punctuation of
 // the text surrounding the deletion.

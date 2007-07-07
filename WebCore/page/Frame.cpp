@@ -312,6 +312,53 @@ Range* Frame::markedTextRange() const
     return d->m_markedTextRange.get();
 }
 
+void Frame::setMarkedTextRange(Range* range, Vector<MarkedTextUnderline>& markedRangeDecorations)
+{
+    int exception = 0;
+    
+    ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
+    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
+    
+    d->m_markedTextUnderlines.clear();
+    if (markedRangeDecorations.size()) {
+        d->m_markedTextUsesUnderlines = true;
+        d->m_markedTextUnderlines = markedRangeDecorations;
+    } else 
+        d->m_markedTextUsesUnderlines = false;
+    
+    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
+        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();
+    
+    if (range && range->collapsed(exception))
+        d->m_markedTextRange = 0;
+    else
+        d->m_markedTextRange = range;
+    
+    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
+        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();    
+}
+
+void Frame::selectRangeInMarkedText(unsigned selOffset, unsigned selLength)
+{
+    ExceptionCode ec = 0;
+    
+    RefPtr<Range> selectedRange = document()->createRange();
+    Range* markedTextRange = this->markedTextRange();
+    
+    ASSERT(markedTextRange->startContainer(ec) == markedTextRange->endContainer(ec));
+    ASSERT(!ec);
+    unsigned selectionStart = markedTextRange->startOffset(ec) + selOffset;
+    unsigned selectionEnd = selectionStart + selLength;
+    ASSERT(!ec);
+    
+    selectedRange->setStart(markedTextRange->startContainer(ec), selectionStart, ec);
+    ASSERT(!ec);
+    selectedRange->setEnd(markedTextRange->startContainer(ec), selectionEnd, ec);
+    ASSERT(!ec);
+    
+    selectionController()->setSelectedRange(selectedRange.get(), DOWNSTREAM, false, ec);
+}
+
 SelectionController* Frame::selectionController() const
 {
     return &d->m_selectionController;

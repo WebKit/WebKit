@@ -1,3 +1,30 @@
+2007-07-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Pulled a number of methods from WebKit and WebCoreFrameBridge into 
+        C++ objects.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceMarkedText):
+            From -[WebCoreFrameBridge replaceMarkedTextWithText:]
+        * editing/Editor.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setMarkedTextRange):
+            Pulled platform independent logic from Mac specific implementation
+        (WebCore::Frame::selectRangeInMarkedText):
+            Converted from -[WebHTMLView _selectRangeInMarkedText:]
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::setMarkedTextRange):
+            Now only does Mac specific logic when manipulating initial
+            NSAttributedString
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+            Removed -[WebCoreFrameBridge replaceMarkedTextWithText:]
+
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

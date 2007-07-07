@@ -270,6 +270,7 @@ public:
     void removeEditingStyleFromElement(Element*) const;
 
     Range* markedTextRange() const;
+    
 #if PLATFORM(MAC)
     void issuePasteCommand();
 #endif
@@ -281,6 +282,8 @@ public:
 
     const Vector<MarkedTextUnderline>& markedTextUnderlines() const;  
     bool markedTextUsesUnderlines() const;
+    void setMarkedTextRange(Range* , Vector<MarkedTextUnderline>&);
+    void selectRangeInMarkedText(unsigned selOffset, unsigned selLength);
   
     unsigned markAllMatchesForText(const String&, bool caseFlag, unsigned limit);
     bool markedTextMatchesAreHighlighted() const;
@@ -373,7 +376,7 @@ public:
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
-    void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
+    void setMarkedTextRange(Range* , NSArray* attributes, NSArray* ranges);
 
 #endif
 

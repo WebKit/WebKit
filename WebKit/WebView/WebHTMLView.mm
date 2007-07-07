@@ -5290,29 +5290,6 @@ BOOL isTextInput(Frame *coreFrame)
         coreFrame->editor()->unmarkText();
 }
 
-- (void)_selectRangeInMarkedText:(NSRange)range
-{
-    ASSERT([self hasMarkedText]);
-
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *selectedRange = [[[self _frame] DOMDocument] createRange];
-    DOMRange *markedTextRange = [bridge markedTextDOMRange];
-    
-    ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
-
-    unsigned selectionStart = [markedTextRange startOffset] + range.location;
-    unsigned selectionEnd = selectionStart + range.length;
-
-    [selectedRange setStart:[markedTextRange startContainer] offset:selectionStart];
-    [selectedRange setEnd:[markedTextRange startContainer] offset:selectionEnd];
-
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame) {
-        ExceptionCode ec = 0;
-        coreFrame->selectionController()->setSelectedRange(core(selectedRange), DOWNSTREAM, false, ec);
-    }
-}
-
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
 {
     int length = [[string string] length];
@@ -5376,10 +5353,10 @@ BOOL isTextInput(Frame *coreFrame)
         [self _extractAttributes:&attributes ranges:&ranges fromAttributedString:string];
     }
 
-    [bridge replaceMarkedTextWithText:text];
+    coreFrame->editor()->replaceMarkedText(text);
     [bridge setMarkedTextDOMRange:[self _selectedRange] customAttributes:attributes ranges:ranges];
     if ([self hasMarkedText])
-        [self _selectRangeInMarkedText:newSelRange];
+        coreFrame->selectRangeInMarkedText(newSelRange.location, newSelRange.length);
 
     coreFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
 }

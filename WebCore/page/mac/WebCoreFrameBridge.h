@@ -174,7 +174,6 @@ typedef enum ObjectElementType {
 // international text input "marked text"
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges;
 - (DOMRange *)markedTextDOMRange;
-- (void)replaceMarkedTextWithText:(NSString *)text;
 
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
 - (NSWritingDirection)baseWritingDirectionForSelectionStart;
