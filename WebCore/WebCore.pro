@@ -716,6 +716,7 @@ SOURCES += \
     xml/XPathVariableReference.cpp \
     xml/XSLImportRule.cpp \
     xml/XSLStyleSheet.cpp \
+    xml/XSLTExtensions.cpp \
     xml/XSLTProcessor.cpp
 
 gdk-port {

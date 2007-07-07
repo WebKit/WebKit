@@ -516,6 +516,7 @@
         xml/XPathVariableReference.cpp
         xml/XSLImportRule.cpp
         xml/XSLStyleSheet.cpp
+        xml/XSLTExtensions.cpp
         xml/XSLTProcessor.cpp
         xml/xmlhttprequest.cpp
     </set>

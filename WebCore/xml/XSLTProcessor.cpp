@@ -42,6 +42,7 @@
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "XMLTokenizer.h"
+#include "XSLTExtensions.h"
 #include "loader.h"
 #include "markup.h"
 #include <libxslt/imports.h>
@@ -324,6 +325,7 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
         sheet->omitXmlDeclaration = true;
 
         xsltTransformContextPtr transformContext = xsltNewTransformContext(sheet, sourceDoc);
+        registerXSLTExtensions(transformContext);
 
         // This is a workaround for a bug in libxslt. 
         // The bug has been fixed in version 1.1.13, so once we ship that this can be removed.

@@ -1,3 +1,29 @@
+2007-07-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14525
+        Support exslt:node-set()
+
+        Test: fast/xsl/exslt-node-set.xml
+
+        * xml/XSLTExtensions.cpp: Added.
+        (WebCore::exsltNodeSetFunction): A copy of exslt:node-set() implementation
+        from libexslt 1.1.11 (shipped with Tiger).
+        (WebCore::registerXSLTExtensions): This function registers any WebCore-provided
+        extensions on a context. Currently, the only extension is exslt:node-set().
+        * xml/XSLTExtensions.h: Added.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToString):
+        Register extensions when creating a context.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Add XSLTExtensions.{h,cpp} to projects.
+
 2007-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

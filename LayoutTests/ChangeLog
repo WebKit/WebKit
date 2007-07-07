@@ -1,3 +1,14 @@
+2007-07-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14525
+        Support exslt:node-set()
+
+        * fast/xsl/exslt-node-set-expected.txt: Added.
+        * fast/xsl/exslt-node-set.xml: Added.
+        * fast/xsl/exslt-node-set.xsl: Added.
+
 2007-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

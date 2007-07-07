@@ -5480,6 +5480,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XSLTExtensions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XSLTExtensions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XSLTProcessor.cpp"
 				>
 			</File>
