@@ -1,3 +1,10 @@
+2007-07-06  Brady Eidson  <beidson@apple.com>
+
+        Fix builds that use IconDatabaseNone.cpp
+
+        * loader/icon/IconDatabaseNone.cpp:
+        (WebCore::IconDatabase::databasePath): 
+
 2007-07-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady

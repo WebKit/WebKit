@@ -75,6 +75,11 @@ void IconDatabase::close()
 {
 }
 
+String IconDatabase::databasePath() const
+{
+    return String();
+}
+
 void IconDatabase::removeAllIcons()
 {
 }
