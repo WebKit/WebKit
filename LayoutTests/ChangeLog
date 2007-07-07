@@ -1,3 +1,13 @@
+2007-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - test case for <rdar://problem/5133420> ASSERT in WebDocumentLoaderMac::decreaseLoadCount() un-discarding Gmail message
+        
+        * fast/loader/early-load-cancel-expected.txt: Added.
+        * fast/loader/early-load-cancel.html: Added.
+        * fast/loader/resources/early-load-cancel-inner.html: Added.
+
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,15 @@
+2007-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - fixed <rdar://problem/5133420> ASSERT in WebDocumentLoaderMac::decreaseLoadCount() un-discarding Gmail message
+        
+        test case: fast/loader/early-load-cancel.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didCancel): Don't send cancel-related client callbacks
+        if we never even sent willSendRequest because we were deferred.
+
 2007-07-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
