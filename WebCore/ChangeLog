@@ -1,5 +1,12 @@
 2007-07-06  Brady Eidson  <beidson@apple.com>
 
+        Fix builds that use IconDatabaseNone.cpp - better, this time
+
+        * loader/icon/IconDatabaseNone.cpp:
+        (WebCore::IconDatabase::isOpen):
+
+2007-07-06  Brady Eidson  <beidson@apple.com>
+
         Fix builds that use IconDatabaseNone.cpp
 
         * loader/icon/IconDatabaseNone.cpp:
