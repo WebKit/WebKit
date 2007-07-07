@@ -696,10 +696,13 @@ static void convertWebResourceResponseToDictionary(NSMutableDictionary *property
     NSMutableString *urlString = [[[response URL] description] mutableCopy];
     normalizeWebResourceURL(urlString, oldURLBase);
     [responseDictionary setObject:urlString forKey:@"URL"];
+    [urlString release];
     
     NSMutableString *mimeTypeString = [[response MIMEType] mutableCopy];
     convertMIMEType(mimeTypeString);
     [responseDictionary setObject:mimeTypeString forKey:@"MIMEType"];
+    [mimeTypeString release];
+
     NSString *textEncodingName = [response textEncodingName];
     if (textEncodingName)
         [responseDictionary setObject:textEncodingName forKey:@"textEncodingName"];
