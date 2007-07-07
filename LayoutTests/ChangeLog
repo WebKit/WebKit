@@ -1,3 +1,12 @@
+2007-07-07  Darin Adler  <darin@apple.com>
+
+        - test for <rdar://problem/5292364> REGRESSION: ZX Spectrum 3.0 widget - graphic anomalies in widget window frame
+
+        * fast/canvas/fill-stroke-clip-reset-path-expected.checksum: Added.
+        * fast/canvas/fill-stroke-clip-reset-path-expected.png: Added.
+        * fast/canvas/fill-stroke-clip-reset-path-expected.txt: Added.
+        * fast/canvas/fill-stroke-clip-reset-path.html: Added.
+
 2007-07-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

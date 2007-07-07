@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -198,6 +198,8 @@ namespace WebCore {
 
         void applyStrokePattern();
         void applyFillPattern();
+
+        void clearPathForDashboardBackwardCompatibilityMode();
 
         HTMLCanvasElement* m_canvas;
         Vector<State, 1> m_stateStack;

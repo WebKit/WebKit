@@ -1,3 +1,20 @@
+2007-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/5292364> REGRESSION: ZX Spectrum 3.0 widget - graphic anomalies in widget window frame
+
+        Updated Dashboard quirk so it affects fill, stroke, and clip, rather than just stroke.
+
+        Test: fast/canvas/fill-stroke-clip-reset-path.html
+
+        * html/CanvasRenderingContext2D.h: Added clearPathForDashboardBackwardCompatibilityMode.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode): Added.
+        (WebCore::CanvasRenderingContext2D::fill): Call the new function.
+        (WebCore::CanvasRenderingContext2D::stroke): Replaced in-line code with a call to the new function.
+        (WebCore::CanvasRenderingContext2D::clip): Call the new function.
+
 2007-07-07  Rob Buis  <buis@kde.org>
 
         Reviewed and tweaked by Darin.

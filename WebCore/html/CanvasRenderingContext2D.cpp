@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -430,6 +430,14 @@ void CanvasRenderingContext2D::rect(float x, float y, float width, float height,
     state().m_path.addRect(FloatRect(x, y, width, height));
 }
 
+void CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode()
+{
+    if (m_canvas)
+        if (Settings* settings = m_canvas->document()->settings())
+            if (settings->usesDashboardBackwardCompatibilityMode())
+                state().m_path.clear();
+}
+
 void CanvasRenderingContext2D::fill()
 {
     GraphicsContext* c = drawingContext();
@@ -467,6 +475,8 @@ void CanvasRenderingContext2D::fill()
         p->fillPath(*path, p->brush());
     }
 #endif
+
+    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2D::stroke()
@@ -512,9 +522,7 @@ void CanvasRenderingContext2D::stroke()
     }
 #endif
 
-    Settings* settings = m_canvas ? m_canvas->document()->settings() : 0;
-    if (settings && settings->usesDashboardBackwardCompatibilityMode())
-        state().m_path.clear();
+    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2D::clip()
@@ -523,6 +531,7 @@ void CanvasRenderingContext2D::clip()
     if (!c)
         return;
     c->clip(state().m_path);
+    clearPathForDashboardBackwardCompatibilityMode();
 }
 
 void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height, ExceptionCode& ec)
