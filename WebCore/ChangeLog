@@ -1,3 +1,16 @@
+2007-07-07  Rob Buis  <buis@kde.org>
+
+        Reviewed and tweaked by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=8994
+        Canvas doesn't reset on resize
+
+        Also reset the rendering context when resetting the canvas.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::drawingContext):
+
 2007-07-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

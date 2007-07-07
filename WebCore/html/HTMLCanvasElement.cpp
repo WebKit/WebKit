@@ -38,27 +38,25 @@
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
+#include <math.h>
 
 #if PLATFORM(QT)
 #include <QPainter>
 #include <QPixmap>
 #endif
 
-#include <math.h>
-
-
 namespace WebCore {
 
 using namespace HTMLNames;
 
 // These values come from the WhatWG spec.
-const int defaultWidth = 300;
-const int defaultHeight = 150;
+static const int defaultWidth = 300;
+static const int defaultHeight = 150;
 
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it 
-// reaches that limit we limit by area instead, giving us larger max dimensions, in exchange 
-// for reduce maximum canvas size.
-const float maxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
+// reaches that limit. We limit by area instead, giving us larger maximum dimensions,
+// in exchange for a smaller maximum canvas size.
+static const float maxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
 
 HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     : HTMLElement(canvasTag, doc)
@@ -177,6 +175,8 @@ void HTMLCanvasElement::reset()
     m_data = 0;
     delete m_drawingContext;
     m_drawingContext = 0;
+    if (m_2DContext)
+        m_2DContext->reset();
 
     if (RenderObject* ro = renderer())
         if (m_rendererIsCanvas) {
@@ -217,24 +217,20 @@ void HTMLCanvasElement::createDrawingContext() const
     float pageScaleFactor = document()->frame() ? document()->frame()->page()->chrome()->scaleFactor() : 1.0f;
     float wf = ceilf(unscaledWidth * pageScaleFactor);
     float hf = ceilf(unscaledHeight * pageScaleFactor);
-    
+
     if (!(wf >= 1 && hf >= 1 && wf * hf <= maxCanvasArea))
         return;
-        
+
     unsigned w = static_cast<unsigned>(wf);
     unsigned h = static_cast<unsigned>(hf);
-    
+
+#if PLATFORM(CG)
     size_t bytesPerRow = w * 4;
     if (bytesPerRow / 4 != w) // check for overflow
         return;
-#if PLATFORM(CG)
     m_data = fastCalloc(h, bytesPerRow);
-#elif PLATFORM(QT)
-    m_data = new QPixmap(w, h);
-#endif
     if (!m_data)
         return;
-#if PLATFORM(CG)
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, h, 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     CGContextScaleCTM(bitmapContext, w / unscaledWidth, h / unscaledHeight);
@@ -242,6 +238,9 @@ void HTMLCanvasElement::createDrawingContext() const
     m_drawingContext = new GraphicsContext(bitmapContext);
     CGContextRelease(bitmapContext);
 #elif PLATFORM(QT)
+    m_data = new QPixmap(w, h);
+    if (!m_data)
+        return;
     m_data->fill(Qt::white);
     m_painter = new QPainter(m_data);
     m_drawingContext = new GraphicsContext(m_painter);
@@ -262,16 +261,18 @@ CGImageRef HTMLCanvasElement::createPlatformImage() const
     GraphicsContext* context = drawingContext();
     if (!context)
         return 0;
-    
+
     CGContextRef contextRef = context->platformContext();
     if (!contextRef)
         return 0;
-    
+
     CGContextFlush(contextRef);
-    
+
     return CGBitmapContextCreateImage(contextRef);
 }
+
 #elif PLATFORM(QT)
+
 QPixmap HTMLCanvasElement::createPlatformImage() const
 {
     if (m_data)
