@@ -1,3 +1,20 @@
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14536
+          Unnecessary layout done when mousing down in text field
+
+        No test possible because there is no change in functionality.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setStyle): Reset the height and the width in
+        the old style to avoid getting a layout hint as a result of having mutated
+        the old style during layout.
+        (WebCore::RenderTextControl::layout): Update children's layout if an inner
+        block's dimensions should change. This need for layout was previously masked
+        by the bug.
+
 2007-07-06  Brady Eidson  <beidson@apple.com>
 
         Fix builds that use IconDatabaseNone.cpp - better, this time
