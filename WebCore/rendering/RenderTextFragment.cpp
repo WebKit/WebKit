@@ -72,4 +72,16 @@ void RenderTextFragment::setTextInternal(PassRefPtr<StringImpl> text)
     }
 }
 
+UChar RenderTextFragment::previousCharacter()
+{
+    if (start()) {
+        Node* e = element();
+        StringImpl*  original = (e ? static_cast<Text*>(e)->string() : contentString());
+        if (original)
+            return (*original)[start() - 1];
+    }
+
+    return RenderText::previousCharacter();
+}
+
 } // namespace WebCore

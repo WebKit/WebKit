@@ -129,6 +129,7 @@ public:
 protected:
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void calcPrefWidths(int leadWidth);
+    virtual UChar previousCharacter();
 
 private:
     // Make length() private so that callers that have a RenderText*

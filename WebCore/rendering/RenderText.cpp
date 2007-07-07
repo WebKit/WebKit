@@ -794,6 +794,20 @@ static inline bool isInlineFlowOrEmptyText(RenderObject* o)
     return !text->length();
 }
 
+UChar RenderText::previousCharacter()
+{
+    // find previous text renderer if one exists
+    RenderObject* previousText = this;
+    while ((previousText = previousText->previousInPreOrder()))
+        if (!isInlineFlowOrEmptyText(previousText))
+            break;
+    UChar prev = ' ';
+    if (previousText && previousText->isText())
+        if (StringImpl* previousString = static_cast<RenderText*>(previousText)->text())
+            prev = (*previousString)[previousString->length() - 1];
+    return prev;
+}
+
 void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 {
     m_text = text;
@@ -836,16 +850,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
             case TTNONE:
                 break;
             case CAPITALIZE: {
-                // find previous text renderer if one exists
-                RenderObject* previousText = this;
-                while ((previousText = previousText->previousInPreOrder()))
-                    if (!isInlineFlowOrEmptyText(previousText))
-                        break;
-                UChar previousCharacter = ' ';
-                if (previousText && previousText->isText())
-                    if (StringImpl* previousString = static_cast<RenderText*>(previousText)->text())
-                        previousCharacter = (*previousString)[previousString->length() - 1];
-                m_text = m_text->capitalize(previousCharacter);
+                m_text = m_text->capitalize(previousCharacter());
                 break;
             }
             case UPPERCASE:

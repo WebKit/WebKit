@@ -1,5 +1,27 @@
 2007-07-06  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14545
+          REGRESSION (r21854-r21869): Repro crash in RenderBlock::updateFirstLetter @ nola.com/rose/
+
+        Test: fast/css/first-letter-capitalized.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Moved the call to setFirstLetter
+        further down so that the first letter is not destroyed if a text transform
+        is applied to the remaining text fragment when it is add to the render tree.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousCharacter): Factored out of setTextInternal.
+        (WebCore::RenderText::setTextInternal): Changed to call previousCharacter().
+        * rendering/RenderText.h:
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::previousCharacter): Override to return the
+        character in the original string before the start of the fragment. 
+        * rendering/RenderTextFragment.h:
+
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Beth.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14536

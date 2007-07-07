@@ -1,3 +1,15 @@
+2007-07-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14545
+          REGRESSION (r21854-r21869): Repro crash in RenderBlock::updateFirstLetter @ nola.com/rose/
+
+        * fast/css/first-letter-capitalized-expected.checksum: Added.
+        * fast/css/first-letter-capitalized-expected.png: Added.
+        * fast/css/first-letter-capitalized-expected.txt: Added.
+        * fast/css/first-letter-capitalized.html: Added.
+
 2007-07-06  Darin Adler  <darin@apple.com>
 
         * mac/leopard/Skipped: Updated bug numbers for some bugs that were duplicates.
