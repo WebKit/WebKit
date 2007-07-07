@@ -16,9 +16,9 @@ layer at (0,0) size 800x600
         RenderHTMLCanvas {CANVAS} at (48,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,74) size 784x36
-        RenderText {#text} at (0,0) size 742x36
-          text run at (0,0) width 742: "All three of these small canvases should be green, not red, too, but these test the Dashboard quirks mode so they work"
-          text run at (0,18) width 248: "properly only under DumpRenderTree."
+        RenderText {#text} at (0,0) size 748x36
+          text run at (0,0) width 748: "All three of these small canvases should be green, not red, too, but these test the Dashboard compatibility mode so they"
+          text run at (0,18) width 285: "work properly only under DumpRenderTree."
       RenderBlock (anonymous) at (0,126) size 784x24
         RenderHTMLCanvas {CANVAS} at (0,0) size 20x20
         RenderText {#text} at (20,6) size 4x18

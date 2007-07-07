@@ -1,5 +1,13 @@
 2007-07-07  Darin Adler  <darin@apple.com>
 
+        - updated results (I changed the test at the last minute, but didn't regenerate results)
+
+        * fast/canvas/fill-stroke-clip-reset-path-expected.checksum: Updated.
+        * fast/canvas/fill-stroke-clip-reset-path-expected.png: Updated.
+        * fast/canvas/fill-stroke-clip-reset-path-expected.txt: Updated.
+
+2007-07-07  Darin Adler  <darin@apple.com>
+
         - test for <rdar://problem/5292364> REGRESSION: ZX Spectrum 3.0 widget - graphic anomalies in widget window frame
 
         * fast/canvas/fill-stroke-clip-reset-path-expected.checksum: Added.
