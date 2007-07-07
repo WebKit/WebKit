@@ -4,18 +4,22 @@ editing/pasteboard/4076267-2.html
 # <rdar://problem/5313523> http/tests/incremental/slow-utf8-text.pl fails on Leopard
 http/tests/incremental/slow-utf8-text.pl
 
-# <rdar://problem/5313527> security/block-test.html fails on Leopard
+# <rdar://problem/5228256> Leopard regression test failures: security/block-test
 security/block-test.html
 
-# <rdar://problem/5313514> Many SVG tests fail on Leopard
+# <rdar://problem/5228259> Leopard regression test failures: svg/W3C-SVG-1.1/animate-elem...
 svg/W3C-SVG-1.1/animate-elem-06-t.svg
 svg/W3C-SVG-1.1/animate-elem-07-t.svg
+
+# <rdar://problem/5228278> Leopard SVG regression test failures due to different path dimensions
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/paths-data-01-t.svg
 svg/W3C-SVG-1.1/text-path-01-b.svg
 svg/custom/control-points-for-S-and-T.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
+
+# <rdar://problem/5228270> Leopard SVG regression test failures due to different metrics for scaled text blocks
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
@@ -26,13 +30,21 @@ http/tests/navigation/document-location-click.html
 http/tests/navigation/document-location-mouseover.html
 http/tests/navigation/document-location-onload.html
 
-# <rdar://problem/5313497> Some international characters in layout tests have different metrics on Leopard vs. Tiger
+# <rdar://problem/5228138> Leopard regression test failures: tests that test Georgian numbering (due to font changes)
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
-editing/deleting/5144139-2.html
-editing/execCommand/5119244.html
 fast/lists/w3-list-styles.html
+
+# <rdar://problem/5228164> Leopard regression test failures: editing/deleting/5144139-2
+editing/deleting/5144139-2.html
+
+# <rdar://problem/5228167> Leopard regression test failures: editing/execCommand/5119244.html
+editing/execCommand/5119244.html
+
+# <rdar://problem/5228233> Leopard regression test failures: fast/table/absolute-table-at-bottom
 fast/table/absolute-table-at-bottom.html
+
+# <rdar://problem/5229705> REGRESSION: Thai characters render differently between leopard and tiger
 fast/text/atsui-multiple-renderers.html
 fast/text/international/thai-line-breaks.html
 
