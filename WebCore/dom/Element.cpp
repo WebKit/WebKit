@@ -107,7 +107,6 @@ Element::~Element()
         ElementRareDataMap& dataMap = rareDataMap();
         ElementRareDataMap::iterator it = dataMap.find(this);
         ASSERT(it != dataMap.end());
-        it->second->resetComputedStyle(this);
         delete it->second;
         dataMap.remove(it);
     }
@@ -670,6 +669,8 @@ void Element::attach()
 void Element::detach()
 {
     stopUpdateFocusAppearanceTimer();
+    if (ElementRareData* rd = rareData())
+        rd->resetComputedStyle(this);
     ContainerNode::detach();
 }
 
@@ -1089,11 +1090,14 @@ RenderStyle* Element::computedStyle()
     if (RenderStyle* usedStyle = renderStyle())
         return usedStyle;
 
+    if (!attached())
+        // FIXME: Try to do better than this. Ensure that styleForElement() works for elements that are not in the
+        // document tree and figure out when to destroy the computed style for such elements.
+        return 0;
+
     ElementRareData* rd = createRareData();
-    if (!rd->m_computedStyle) {
+    if (!rd->m_computedStyle)
         rd->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
-        rd->m_computedStyle->ref();
-    }
     return rd->m_computedStyle;
 }
 

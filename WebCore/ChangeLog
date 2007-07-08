@@ -1,5 +1,19 @@
 2007-07-08  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - fix leaks introduced in r24099
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element): Do not delete the cached computed style here.
+        (WebCore::Element::detach): Delete the computed style here instead.
+        (WebCore::Element::computedStyle): Removed a redundant ref() which was
+        causing the leak. Changed to return 0 if the element is not attached,
+        because in that case there is currently no way to tell when to delete the computed
+        style.
+
+2007-07-08  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12384
