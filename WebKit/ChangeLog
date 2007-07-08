@@ -1,3 +1,10 @@
+2007-07-08  John Sullivan  <sullivan@apple.com>
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        Removed the code to exclude the icon database from backups. We still want to do this, but in a way
+        that only runs once ever, instead of once per launch, due to performance concerns.
+
 2007-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
