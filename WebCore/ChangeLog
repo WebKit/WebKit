@@ -1,3 +1,19 @@
+2007-07-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14221
+          Repro crash (ASSERTION FAILED: oldText in RenderBlock::updateFirstLetter() during relayout of :before content with first-letter style)
+
+        Test: fast/css-generated-content/before-with-first-letter.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer): If a child
+        of the existing 'before' container is not text, do not assume that it is an
+        image, since it can also be an inline wrapping a first-letter. In that case,
+        do not update its style (so in particular, keep it a FIRST_LETTER type style)
+        and leave it to updateFirstLetter() to take care of.
+
 2007-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

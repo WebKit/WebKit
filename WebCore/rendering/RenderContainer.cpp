@@ -307,12 +307,14 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
                 if (genChild->isText())
                     // Generated text content is a child whose style also needs to be set to the pseudo-element style.
                     genChild->setStyle(pseudoElementStyle);
-                else {
+                else if (genChild->isImage()) {
                     // Images get an empty style that inherits from the pseudo.
                     RenderStyle* style = new (renderArena()) RenderStyle;
                     style->inheritFrom(pseudoElementStyle);
                     genChild->setStyle(style);
-                }
+                } else
+                    // Must be a first-letter container. updateFirstLetter() will take care of it.
+                    ASSERT(genChild->style()->styleType() == RenderStyle::FIRST_LETTER);
             }
         }
         return; // We've updated the generated content. That's all we needed to do.
