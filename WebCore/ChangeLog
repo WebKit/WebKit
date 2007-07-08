@@ -1,3 +1,14 @@
+2007-07-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14544
+          Scroll wheel events are ignored when the cursor is over an iframe's border
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWheelEventToWidget): Changed to return false if
+        the event coordinates are not inside the widget's NSView hierarchy.
+
 2007-07-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

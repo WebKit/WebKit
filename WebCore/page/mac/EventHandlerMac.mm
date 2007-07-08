@@ -441,7 +441,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent().get() locationInWindow] fromView:nil]];
     if (!view)
         // We probably hit the border of a RenderWidget
-        return true;
+        return false;
 
     m_sendingEventToSubview = true;
     [view scrollWheel:currentEvent().get()];
