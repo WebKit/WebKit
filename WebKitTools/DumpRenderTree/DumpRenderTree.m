@@ -1468,6 +1468,7 @@ static void runTest(const char *pathOrURL)
     }
 
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
+    [[mainFrame webView] makeTextStandardSize:nil];
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
     done = NO;
     topLoadingFrame = nil;

@@ -92,6 +92,8 @@ BOOL replayingSavedEvents;
         @"selectstart",
         @"submit", 
         @"textInput", 
+        @"textzoomin",
+        @"textzoomout",
         @"unload",
         @"zoom",
         nil];
@@ -107,7 +109,9 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(keyDown:withModifiers:)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
-            || aSelector == @selector(clearKillRing))
+            || aSelector == @selector(clearKillRing)
+            || aSelector == @selector(textZoomIn)
+            || aSelector == @selector(textZoomOut))
         return NO;
     return YES;
 }
@@ -197,6 +201,16 @@ BOOL replayingSavedEvents;
         [subView mouseDown:event];
         down = YES;
     }
+}
+
+- (void)textZoomIn
+{
+    [[mainFrame webView] makeTextLarger:self];
+}
+
+- (void)textZoomOut
+{
+    [[mainFrame webView] makeTextSmaller:self];
 }
 
 - (void)mouseUp

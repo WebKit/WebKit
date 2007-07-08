@@ -63,6 +63,7 @@ editing/style/5091898.html
 fast/block/positioning/047.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/font_property_normal.html
+fast/css/ignore-text-zoom
 fast/css/rtl-ordering.html
 fast/css/text-security.html
 fast/encoding/denormalised-voiced-japanese-chars.html

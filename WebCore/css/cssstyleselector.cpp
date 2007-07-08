@@ -3147,7 +3147,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             double multiplier = 1.0;
             // Scale for the font zoom factor only for types other than "em" and "ex", since those are
             // already based on the font size.
-            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && m_document->frame()) {
+            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && style->textSizeAdjust() && m_document->frame()) {
                 multiplier = m_document->frame()->zoomFactor() / 100.0;
             }
             lineHeight = Length(primitiveValue->computeLengthIntForLength(style, multiplier), Fixed);

@@ -52,6 +52,7 @@ fast/block/float/float-in-float-hit-testing.html
 
 fast/css/acid2-pixel.html
 fast/css/acid2.html
+fast/css/ignore-text-zoom
 fast/css/resize-corner-tracking.html
 
 fast/dom/css-cached-import-rule.html

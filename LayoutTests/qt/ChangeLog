@@ -1,3 +1,12 @@
+2007-07-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        To pass fast/css/ignore-text-zoom textZoomIn/textZoomOut
+        must be implemented in the qt DumpRenderTree version.
+
+        * Skipped:
+
 2007-06-21  Lars Knoll <lars@trolltech.com>
 
         Update test results after my font refactoring.

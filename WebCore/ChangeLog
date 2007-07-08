@@ -1,3 +1,18 @@
+2007-07-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10752
+        The inspector should not respond to Make Text Smaller/Bigger commands
+
+        Use the -webkit-text-size-adjust property to ignore text sizing        
+        and do not take the zoom factor into account for line height when
+        -webkit-text-size-adjust is set to none.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/inspector/inspector.css:
+
 2007-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

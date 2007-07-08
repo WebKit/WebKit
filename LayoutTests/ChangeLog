@@ -1,3 +1,19 @@
+2007-07-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14209
+        DRT should be able to deal with text zoom
+        http://bugs.webkit.org/show_bug.cgi?id=10752
+        The inspector should not respond to Make Text Smaller/Bigger commands
+
+        * fast/css/ignore-text-zoom-expected.checksum: Added.
+        * fast/css/ignore-text-zoom-expected.png: Added.
+        * fast/css/ignore-text-zoom-expected.txt: Added.
+        * fast/css/ignore-text-zoom.html: Added.
+        * win/Skipped:
+
 2007-07-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
