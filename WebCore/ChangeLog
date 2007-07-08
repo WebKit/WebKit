@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - fix <rdar://problem/5318994> Integer overflow in WebCore's Base64.cpp:base64Encode
+
+        * platform/Base64.cpp:
+        (WebCore::base64Encode): Check against a maximum size.
+        (WebCore::base64Decode): Ditto.
+
+2007-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix <rdar://problem/5124665> WebCore secondary-thread assertion should use linked-on-or-after check instead of building on Tiger check
 
         * platform/ThreadCheck.h: Renamed _WebCoreThreadViolationCheck to reportThreadViolation
