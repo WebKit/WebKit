@@ -361,12 +361,8 @@ static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
     return list.release();
 }
 
-static PassRefPtr<CSSValue> getPositionOffsetValue(RenderObject* renderer, int propertyID)
+static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID)
 {
-    if (!renderer)
-        return 0;
-
-    RenderStyle* style = renderer->style();
     if (!style)
         return 0;
 
@@ -388,10 +384,10 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderObject* renderer, int p
             return 0;
     }
 
-    if (renderer->isPositioned())
+    if (style->position() == AbsolutePosition || style->position() == FixedPosition)
         return valueForLength(l);
 
-    if (renderer->isRelPositioned())
+    if (style->position() == RelativePosition)
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
         // In other words if left is auto and right is not auto, then left's computed value is negative right.
         // So we should get the opposite length unit and see if it is auto.
@@ -478,17 +474,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (updateLayout)
         node->document()->updateLayout();
 
-    // FIXME: This should work even if we do not have a renderer for all properties.
     RenderObject* renderer = node->renderer();
-    if (!renderer) {
-        // Handle display:none at the very least.  By definition if we don't have a renderer
-        // we are considered to have no display.
-        if (propertyID == CSS_PROP_DISPLAY)
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        return 0;
-    }
 
-    RenderStyle* style = renderer->style();
+    RenderStyle* style = node->computedStyle();
     if (!style)
         return 0;
 
@@ -574,14 +562,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             Length length(style->backgroundXPosition());
             if (length.isPercent())
                 string = numberAsString(length.percent()) + "%";
-            else
+            else if (renderer)
                 string = numberAsString(length.calcMinValue(renderer->contentWidth()));
+            else
+                string = numberAsString(length.value());
             string += " ";
             length = style->backgroundYPosition();
             if (length.isPercent())
                 string += numberAsString(length.percent()) + "%";
-            else
+            else if (renderer)
                 string += numberAsString(length.calcMinValue(renderer->contentWidth()));
+            else
+                string += numberAsString(length.value());
             return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
         }
         case CSS_PROP_BACKGROUND_POSITION_X:
@@ -624,7 +616,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP_BORDER_LEFT_WIDTH:
             return new CSSPrimitiveValue(style->borderLeftWidth(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP_BOTTOM:
-            return getPositionOffsetValue(renderer, CSS_PROP_BOTTOM);
+            return getPositionOffsetValue(style, CSS_PROP_BOTTOM);
         case CSS_PROP__WEBKIT_BOX_ALIGN:
             switch (style->boxAlign()) {
                 case BSTRETCH:
@@ -986,7 +978,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSS_VAL_BOLD);
             return new CSSPrimitiveValue(CSS_VAL_NORMAL);
         case CSS_PROP_HEIGHT:
-            return new CSSPrimitiveValue(renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->height());
         case CSS_PROP__WEBKIT_HIGHLIGHT:
             if (style->highlight() == nullAtom)
                 return new CSSPrimitiveValue(CSS_VAL_NONE);
@@ -996,7 +990,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSS_VAL_BORDER);
             return new CSSPrimitiveValue(CSS_VAL_LINES);
         case CSS_PROP_LEFT:
-            return getPositionOffsetValue(renderer, CSS_PROP_LEFT);
+            return getPositionOffsetValue(style, CSS_PROP_LEFT);
         case CSS_PROP_LETTER_SPACING:
             if (!style->letterSpacing())
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
@@ -1078,17 +1072,25 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             ASSERT_NOT_REACHED();
             return 0;
         case CSS_PROP_MARGIN_TOP:
-            // FIXME: Supposed to return the percentage if percentage was specified.
-            return new CSSPrimitiveValue(renderer->marginTop(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                // FIXME: Supposed to return the percentage if percentage was specified.
+                return new CSSPrimitiveValue(renderer->marginTop(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->marginTop());
         case CSS_PROP_MARGIN_RIGHT:
-            // FIXME: Supposed to return the percentage if percentage was specified.
-            return new CSSPrimitiveValue(renderer->marginRight(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                // FIXME: Supposed to return the percentage if percentage was specified.
+                return new CSSPrimitiveValue(renderer->marginRight(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->marginRight());
         case CSS_PROP_MARGIN_BOTTOM:
-            // FIXME: Supposed to return the percentage if percentage was specified.
-            return new CSSPrimitiveValue(renderer->marginBottom(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                // FIXME: Supposed to return the percentage if percentage was specified.
+                return new CSSPrimitiveValue(renderer->marginBottom(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->marginBottom());
         case CSS_PROP_MARGIN_LEFT:
-            // FIXME: Supposed to return the percentage if percentage was specified.
-            return new CSSPrimitiveValue(renderer->marginLeft(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                // FIXME: Supposed to return the percentage if percentage was specified.
+                return new CSSPrimitiveValue(renderer->marginLeft(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->marginLeft());
         case CSS_PROP__WEBKIT_MARQUEE_DIRECTION:
             switch (style->marqueeDirection()) {
                 case MFORWARD:
@@ -1190,13 +1192,21 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return 0;
         }
         case CSS_PROP_PADDING_TOP:
-            return new CSSPrimitiveValue(renderer->paddingTop(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->paddingTop(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->paddingTop());
         case CSS_PROP_PADDING_RIGHT:
-            return new CSSPrimitiveValue(renderer->paddingRight(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->paddingRight(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->paddingRight());
         case CSS_PROP_PADDING_BOTTOM:
-            return new CSSPrimitiveValue(renderer->paddingBottom(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->paddingBottom(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->paddingBottom());
         case CSS_PROP_PADDING_LEFT:
-            return new CSSPrimitiveValue(renderer->paddingLeft(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->paddingLeft(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->paddingLeft());
         case CSS_PROP_PAGE_BREAK_AFTER:
             switch (style->pageBreakAfter()) {
                 case PBAUTO:
@@ -1244,7 +1254,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             ASSERT_NOT_REACHED();
             return 0;
         case CSS_PROP_RIGHT:
-            return getPositionOffsetValue(renderer, CSS_PROP_RIGHT);
+            return getPositionOffsetValue(style, CSS_PROP_RIGHT);
         case CSS_PROP_TABLE_LAYOUT:
             switch (style->tableLayout()) {
                 case TAUTO:
@@ -1343,7 +1353,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             ASSERT_NOT_REACHED();
             return 0;
         case CSS_PROP_TOP:
-            return getPositionOffsetValue(renderer, CSS_PROP_TOP);
+            return getPositionOffsetValue(style, CSS_PROP_TOP);
         case CSS_PROP_UNICODE_BIDI:
             switch (style->unicodeBidi()) {
                 case UBNormal:
@@ -1411,7 +1421,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP_WIDOWS:
             return new CSSPrimitiveValue(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
         case CSS_PROP_WIDTH:
-            return new CSSPrimitiveValue(renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
+            if (renderer)
+                return new CSSPrimitiveValue(renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
+            return valueForLength(style->width());
         case CSS_PROP_WORD_BREAK:
             switch (style->wordBreak()) {
                 case NormalWordBreak:
@@ -1644,11 +1656,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!node)
         return 0;
 
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return 0;
-
-    RenderStyle* style = renderer->style();
+    RenderStyle* style = node->computedStyle();
     if (!style)
         return 0;
 
@@ -1702,14 +1710,14 @@ void CSSComputedStyleDeclaration::removeComputedInheritablePropertiesFrom(CSSMut
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInheritableProperties() const
 {
     RefPtr<CSSMutableStyleDeclaration> style = copyPropertiesInSet(inheritableProperties, numInheritableProperties);
-    if (style && m_node && m_node->renderer()) {
+    if (style && m_node && m_node->computedStyle()) {
         // If a node's text fill color is invalid, then its children use 
         // their font-color as their text fill color (they don't
         // inherit it).  Likewise for stroke color.
         ExceptionCode ec = 0;
-        if (!m_node->renderer()->style()->textFillColor().isValid())
+        if (!m_node->computedStyle()->textFillColor().isValid())
             style->removeProperty(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, ec);
-        if (!m_node->renderer()->style()->textStrokeColor().isValid())
+        if (!m_node->computedStyle()->textStrokeColor().isValid())
             style->removeProperty(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, ec);
         ASSERT(ec == 0);
     }

@@ -1,3 +1,13 @@
+2007-07-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12384
+          getComputedStyle with td.style.display='none' reports '' for all properties except display
+
+        * fast/css/computed-style-without-renderer-expected.txt: Added.
+        * fast/css/computed-style-without-renderer.html: Added.
+
 2007-07-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

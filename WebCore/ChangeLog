@@ -2,6 +2,47 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12384
+          getComputedStyle with td.style.display='none' reports '' for all properties except display
+
+        Test: fast/css/computed-style-without-renderer.html
+
+        Implement rich computed style for elements that do not have a renderer.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getPositionOffsetValue): Changed to take a RenderStyle instead of
+        a RenderObject.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Changed to
+        use the computed style returned by the node instead of going through the
+        renderer. Changed properties that compute by measuring the renderer to
+        fall back on returning the length from the RenderStyle if a renderer does
+        not exist.
+        (WebCore::CSSComputedStyleDeclaration::length): Changed to return the number
+        of properties we can compute even if the element has no renderer.
+        (WebCore::CSSComputedStyleDeclaration::copyInheritableProperties): Changed
+        to use the computed style returned by the node instead of going through the
+        renderer.
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ElementRareData): Added a computed style member,
+        used to cache computed style for elements that do not have a renderer.
+        (WebCore::ElementRareData::resetComputedStyle): Added.
+        (WebCore::Element::~Element): Delete the cached computed style.
+        (WebCore::Element::recalcStyle): Added code to delete the cached computed
+        style when necessary.
+        (WebCore::Element::computedStyle): Added. Returns the style used in rendering
+        the element, if available. Otherwise uses the style selector to compute style
+        for the element.
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::computedStyle): Added. This method returns either the style
+        used in rendering the node, or the style that would be used if the node
+        had a renderer.
+        * dom/Node.h:
+
+2007-07-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=14544
           Scroll wheel events are ignored when the cursor is over an iframe's border
 

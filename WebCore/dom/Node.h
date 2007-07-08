@@ -394,6 +394,8 @@ public:
     virtual RenderStyle* renderStyle() const;
     virtual void setRenderStyle(RenderStyle*);
 
+    virtual RenderStyle* computedStyle();
+
     // -----------------------------------------------------------------------------
     // Notification of document structure changes
 

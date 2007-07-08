@@ -1052,6 +1052,11 @@ void Node::setRenderStyle(RenderStyle* s)
         m_renderer->setStyle(s); 
 }
 
+RenderStyle* Node::computedStyle()
+{
+    return parent() ? parent()->computedStyle() : 0;
+}
+
 int Node::maxOffset() const
 {
     return 1;

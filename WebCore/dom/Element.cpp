@@ -50,7 +50,10 @@ using namespace XMLNames;
 class ElementRareData {
 public:
     ElementRareData(Element*);
+    void resetComputedStyle(Element*);
+
     IntSize m_minimumSizeForResizing;
+    RenderStyle* m_computedStyle;
 };
 
 typedef HashMap<const Element*, ElementRareData*> ElementRareDataMap;
@@ -73,7 +76,16 @@ static inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData(Element* element)
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+    , m_computedStyle(0)
 {
+}
+
+void ElementRareData::resetComputedStyle(Element* element)
+{
+    if (!m_computedStyle)
+        return;
+    m_computedStyle->deref(element->document()->renderArena());
+    m_computedStyle = 0;
 }
 
 Element::Element(const QualifiedName& qName, Document *doc)
@@ -95,6 +107,7 @@ Element::~Element()
         ElementRareDataMap& dataMap = rareDataMap();
         ElementRareDataMap::iterator it = dataMap.find(this);
         ASSERT(it != dataMap.end());
+        it->second->resetComputedStyle(this);
         delete it->second;
         dataMap.remove(it);
     }
@@ -671,6 +684,10 @@ void Element::recalcStyle(StyleChange change)
         hasParentStyle = true;
 #endif
 
+    if ((change > NoChange || changed())) {
+        if (ElementRareData* rd = rareData())
+            rd->resetComputedStyle(this);
+    }
     if (hasParentStyle && (change >= Inherit || changed())) {
         RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
         StyleChange ch = diff(_style, newStyle);
@@ -1065,6 +1082,19 @@ void Element::setMinimumSizeForResizing(const IntSize& size)
     if (size == defaultMinimumSizeForResizing() && !rareData())
         return;
     createRareData()->m_minimumSizeForResizing = size;
+}
+
+RenderStyle* Element::computedStyle()
+{
+    if (RenderStyle* usedStyle = renderStyle())
+        return usedStyle;
+
+    ElementRareData* rd = createRareData();
+    if (!rd->m_computedStyle) {
+        rd->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
+        rd->m_computedStyle->ref();
+    }
+    return rd->m_computedStyle;
 }
 
 }
