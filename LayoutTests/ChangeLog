@@ -1,3 +1,12 @@
+2007-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        - update results after removing extraneous calls to isSafeScript for 
+          readonly attributes.
+
+        * http/tests/security/cross-frame-access-expected.txt:
+
 2007-07-07  Darin Adler  <darin@apple.com>
 
         - updated results (I changed the test at the last minute, but didn't regenerate results)

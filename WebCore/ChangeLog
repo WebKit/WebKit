@@ -1,3 +1,13 @@
+2007-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Bailout early in Window::put() if attribute is readonly to avoid
+        extra calls to isSafeScript().
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+
 2007-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
