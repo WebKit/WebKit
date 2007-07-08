@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,51 +22,78 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import "config.h"
 #import "ThreadCheck.h"
 
+#import "StringHash.h"
+#import <JavaScriptCore/HashSet.h>
+
 namespace WebCore {
 
-void _WebCoreThreadViolationCheck(const char* function)
-{
-    static bool fetchDefault = true;
-    static bool performThreadCheck = true;
-#ifdef BUILDING_ON_TIGER
-    static bool threadViolationIsException = false;
-#else
-    static bool threadViolationIsException = true;
-#endif
+static ThreadViolationBehavior defaultThreadViolationBehavior = RaiseExceptionOnThreadViolation;
 
-    if (fetchDefault) {
-        NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebCoreThreadCheck"];
-        if ([threadCheckLevel isEqualToString:@"None"])
-            performThreadCheck = false;
-        else if ([threadCheckLevel isEqualToString:@"Exception"]) {
-            performThreadCheck = true;
-            threadViolationIsException = true;
-        } else if ([threadCheckLevel isEqualToString:@"Log"]) {
-            performThreadCheck = true;
-            threadViolationIsException = false;
-        }
-        fetchDefault = false;
+static bool didReadThreadViolationBehaviorFromUserDefaults = false;
+static bool threadViolationBehaviorIsDefault;
+static ThreadViolationBehavior threadViolationBehavior;
+
+static void readThreadViolationBehaviorFromUserDefaults()
+{
+    NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreThreadCheck"];
+    if ([threadCheckLevel isEqualToString:@"None"])
+        threadViolationBehavior = NoThreadCheck;
+    else if ([threadCheckLevel isEqualToString:@"Exception"])
+        threadViolationBehavior = RaiseExceptionOnThreadViolation;
+    else if ([threadCheckLevel isEqualToString:@"Log"])
+        threadViolationBehavior = LogOnThreadViolation;
+    else if ([threadCheckLevel isEqualToString:@"LogOnce"])
+        threadViolationBehavior = LogOnFirstThreadViolation;
+    else {
+        threadViolationBehavior = defaultThreadViolationBehavior;
+        threadViolationBehaviorIsDefault = true;
     }
-    
-    if (!performThreadCheck)
+    didReadThreadViolationBehaviorFromUserDefaults = true;
+}
+
+void setDefaultThreadViolationBehavior(ThreadViolationBehavior behavior)
+{
+    defaultThreadViolationBehavior = behavior;
+    if (threadViolationBehaviorIsDefault)
+        threadViolationBehavior = behavior;
+}
+
+void reportThreadViolation(const char* function)
+{
+    if (!didReadThreadViolationBehaviorFromUserDefaults)
+        readThreadViolationBehaviorFromUserDefaults();    
+    if (threadViolationBehavior == NoThreadCheck)
         return;
-        
     if (pthread_main_np())
         return;
-        
-    WebCoreReportThreadViolation(function, threadViolationIsException);
+    WebCoreReportThreadViolation(function);
 }
 
 } // namespace WebCore
 
 // Split out the actual reporting of the thread violation to make it easier to set a breakpoint
-void WebCoreReportThreadViolation(const char* function, bool threadViolationIsException)
+void WebCoreReportThreadViolation(const char* function)
 {
-    if (threadViolationIsException)
-        [NSException raise:@"WebKitThreadingException" format:@"%s was called from a secondary thread", function];
-    else
-        NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
+    using namespace WebCore;
+    static HashSet<String> loggedFunctions;
+    switch (threadViolationBehavior) {
+        case NoThreadCheck:
+            break;
+        case LogOnFirstThreadViolation:
+            if (loggedFunctions.add(function).second) {
+                NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
+                NSLog(@"Additional threading violations for this function will not be logged.");
+            }
+            break;
+        case LogOnThreadViolation:
+            NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
+            break;
+        case RaiseExceptionOnThreadViolation:
+            [NSException raise:@"WebKitThreadingException" format:@"%s was called from a secondary thread", function];
+            break;
+    }
 }

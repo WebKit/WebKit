@@ -1,3 +1,32 @@
+2007-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5124665> WebCore secondary-thread assertion should use linked-on-or-after check instead of building on Tiger check
+
+        * platform/ThreadCheck.h: Renamed _WebCoreThreadViolationCheck to reportThreadViolation
+        since it's in the WebCore namespace and also we shouldn't use leading underscores since
+        those are reserved for the compiler and standard library. Added a new function named
+        setDefaultThreadViolationBehavior and an enum for the parameter. Removed the
+        threadViolationIsException parameter from WebCoreReportThreadViolation since we use
+        a global variable for it now. Got rid of the unnecessary use of do while (0) in the
+        WebCoreThreadViolationCheck macro -- since it's only a single function call it's already
+        a statement and doesn't need to be turned into one with the do while (0) trick.
+
+        * platform/mac/ThreadCheck.mm:
+        (WebCore::readThreadViolationBehaviorFromUserDefaults): Moved the code to read from
+        NSUserDefaults into this helper function. Changed it to use stringForKey instead of
+        objectForKey so we don't get a "method not found" if someone puts something other than
+        a string in there. Updated to use the new globals.
+        (WebCore::setDefaultThreadViolationBehavior): Added.
+        (WebCore::reportThreadViolation): Simplified, now that most of the work is in the
+        readThreadViolationBehaviorFromUserDefaults function.
+        (WebCoreReportThreadViolation): Changed to use a global variable instead of parameter
+        to determine how to report a violation. Added LogOnFirstThreadViolation, which will
+        log only once for each function that violates.
+
+        * WebCore.exp: Updated for above changes.
+
 2007-07-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

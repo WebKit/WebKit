@@ -1,3 +1,17 @@
+2007-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5124665> WebCore secondary-thread assertion should use linked-on-or-after check instead of building on Tiger check
+
+        * Misc/WebKitVersionChecks.h: Added WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS.
+
+        * WebView/WebFrameView.mm: (-[WebFrameView initWithFrame:]): In first-time initialization block,
+        check for binaries linked against older versions of WebKit, and set the default thread violation
+        behavior to LogOnFirstThreadViolation.
+
+        * WebView/WebView.mm: (+[WebView initialize]): Improved comments.
+
 2007-07-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

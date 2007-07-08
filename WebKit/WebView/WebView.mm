@@ -1597,17 +1597,17 @@ NSMutableDictionary *countInvocations;
 @end
 
 @implementation WebView
+
 + (void)initialize
 {
     static BOOL tooLate = NO;
     if (!tooLate) {
 #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
-        // this prevents open source users from crashing when using the Show DOM Tree menu item in Safari
-        // FIXME: remove this when it is no longer needed to prevent Safari from crashing
+        // this prevents open source users from crashing when using the Show DOM Tree menu item in Safari 2
+        // FIXME: remove this when we no longer need to support Safari 2
         if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"])
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_finishedLaunching) name:NSApplicationDidFinishLaunchingNotification object:NSApp];
 #endif
-
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
         tooLate = YES;
     }

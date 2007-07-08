@@ -42,6 +42,7 @@
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSPasteboardExtras.h"
@@ -60,9 +61,12 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKitSystemInterface.h>
+
+using namespace WebCore;
 
 @interface NSClipView (AppKitSecretsIKnow)
 - (BOOL)_scrollTo:(const NSPoint *)newOrigin; // need the boolean result from this method
@@ -77,8 +81,7 @@ enum {
 - (WebCoreFrameBridge *) webCoreBridge;
 @end
 
-@interface WebFrameViewPrivate : NSObject
-{
+@interface WebFrameViewPrivate : NSObject {
 @public
     WebFrame *webFrame;
     WebDynamicScrollBarsView *frameScrollView;
@@ -307,6 +310,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         // default.
         if (![defaults boolForKey:WebKitEnableDeferredUpdatesPreferenceKey])
             WKDisableCGDeferredUpdates();
+
+        if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS))
+            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation);
     }
     
     _private = [[WebFrameViewPrivate alloc] init];
