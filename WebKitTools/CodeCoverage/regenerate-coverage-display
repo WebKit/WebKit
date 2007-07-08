@@ -87,7 +87,7 @@ def create_page(dest_dir, name):
     return index
 
 def generate_header(file, last_time, total_lines, total_executed, path, image):
-    product = "WebKit/Qt"
+    product = "WebKit"
     date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(last_time))
     covered_lines = sumcov((total_lines, total_executed))
 
