@@ -30,6 +30,8 @@
 #include <qfile.h>
 #include <qnetworkproxy.h>
 #include <qurl.h>
+#include <QAuthenticator>
+#include <QSslError>
 
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
@@ -394,7 +396,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
         qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.httpHeader.toString()));
     }
 
-    DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
+    //DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
 
     interface->addJob(job);
 
@@ -423,8 +425,8 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         return;
     }
 
-    DEBUG() << "ResourceHandleManager::receivedResponse:";
-    DEBUG() << job->d->response.toString();
+    //DEBUG() << "ResourceHandleManager::receivedResponse:";
+    //DEBUG() << job->d->response.toString();
 
     QStringList cookies = job->d->response.allValues("Set-Cookie");
     KURL url(job->url().toString());
@@ -509,7 +511,7 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
     if (job->d->redirected)
         return; // don't emit the "Document has moved here" type of HTML
 
-    DEBUG() << "receivedData" << job->d->request.url.path();
+    //DEBUG() << "receivedData" << job->d->request.url.path();
     if (client)
         client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
     if (job->d->connector)
@@ -801,7 +803,6 @@ WebCoreHttp::WebCoreHttp(QObject* parent, const HostInfo &hi)
 {
     for (int i = 0; i < 2; ++i) {
         connection[i].http = new QHttp(info.host, (hi.protocol == QLatin1String("https")) ? QHttp::ConnectionModeHttps : QHttp::ConnectionModeHttp, info.port);
-        connection[i].current = 0;
         connect(connection[i].http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
                 this, SLOT(onResponseHeaderReceived(const QHttpResponseHeader&)));
         connect(connection[i].http, SIGNAL(readyRead(const QHttpResponseHeader&)),
@@ -823,14 +824,14 @@ WebCoreHttp::WebCoreHttp(QObject* parent, const HostInfo &hi)
 
 WebCoreHttp::~WebCoreHttp()
 {
+    // Crashes presently  FIXME
+    //delete connection[0].http;
+    //delete connection[1].http;
 }
 
 void WebCoreHttp::request(QWebNetworkJob *job)
 {
-    DEBUG() << ">>>>>>>>>>>>>> WebCoreHttp::request";
-    DEBUG() << job->httpHeader().toString() << "\n";
     m_pendingRequests.append(job);
-
     scheduleNextRequest();
 }
 
@@ -858,18 +859,19 @@ void WebCoreHttp::scheduleNextRequest()
     QHttp *http = connection[c].http;
 
     connection[c].current = job;
+    connection[c].id = -1;
 #ifndef QT_NO_NETWORKPROXY
-    http->setProxy(job->frame()->page()->networkProxy());
+    int proxyId = http->setProxy(job->frame()->page()->networkProxy());
 #endif
-    connection[c].proxyDone = false;
 
     QByteArray postData = job->postData();
     if (!postData.isEmpty())
-        http->request(job->httpHeader(), postData);
+        connection[c].id = http->request(job->httpHeader(), postData);
     else
-        http->request(job->httpHeader());
+        connection[c].id = http->request(job->httpHeader());
 
     DEBUG() << "WebCoreHttp::scheduleNextRequest: using connection" << c;
+    DEBUG() << job->httpHeader().toString();
 //     DEBUG() << job->request.toString();
 }
 
@@ -883,15 +885,21 @@ int WebCoreHttp::getConnection()
         Q_ASSERT(o == connection[1].http);
         c = 1;
     }
-    //Q_ASSERT(connection[c].current);
+    Q_ASSERT(connection[c].current);
     return c;
 }
 
 void WebCoreHttp::onResponseHeaderReceived(const QHttpResponseHeader &resp)
 {
+    QHttp *http = qobject_cast<QHttp*>(sender());
+    if (http->currentId() == 0) {
+        qDebug() << "ERROR!  Invalid job id.  Why?"; // foxnews.com triggers this
+        return;
+    }
     int c = getConnection();
     QWebNetworkJob *job = connection[c].current;
     DEBUG() << "WebCoreHttp::slotResponseHeaderReceived connection=" << c;
+    DEBUG() << resp.toString();
 
     job->setResponse(resp);
 
@@ -900,10 +908,15 @@ void WebCoreHttp::onResponseHeaderReceived(const QHttpResponseHeader &resp)
 
 void WebCoreHttp::onReadyRead()
 {
+    QHttp *http = qobject_cast<QHttp*>(sender());
+    if (http->currentId() == 0) {
+        qDebug() << "ERROR!  Invalid job id.  Why?"; // foxnews.com triggers this
+        return;
+    }
     int c = getConnection();
     QWebNetworkJob *req = connection[c].current;
-    QHttp *http = connection[c].http;
-    DEBUG() << "WebCoreHttp::slotReadyRead connection=" << c;
+    Q_ASSERT(http == connection[c].http);
+    //DEBUG() << "WebCoreHttp::slotReadyRead connection=" << c;
 
     QByteArray data;
     data.resize(http->bytesAvailable());
@@ -914,10 +927,10 @@ void WebCoreHttp::onReadyRead()
 void WebCoreHttp::onRequestFinished(int id, bool error)
 {
     int c = getConnection();
-    if (!connection[c].proxyDone) {
-        connection[c].proxyDone = true;
+    if (connection[c].id != id) {
         return;
     }
+
     QWebNetworkJob *req = connection[c].current;
     if (!req) {
         scheduleNextRequest();
@@ -936,29 +949,19 @@ void WebCoreHttp::onRequestFinished(int id, bool error)
         emit req->networkInterface()->data(req, data);
     }
     emit req->networkInterface()->finished(req, error ? 1 : 0);
+    connection[c].current = 0;
+    connection[c].id = -1;
+    scheduleNextRequest();
 }
 
 void WebCoreHttp::onDone(bool error)
 {
-    int c = getConnection();
-    QWebNetworkJob *req = connection[c].current;
-    if (!req) {
-        scheduleNextRequest();
-        return;
-    }
-
-    DEBUG() << "WebCoreHttp::DONE connection=" << c << error << req;
-    QHttp *http = connection[c].http;
-
-    if (error)
-        DEBUG() << "   error: " << http->errorString();
-
-    connection[c].current = 0;
-    scheduleNextRequest();
+    DEBUG() << "WebCoreHttp::onDone" << error;
 }
 
 void WebCoreHttp::onStateChanged(int state)
 {
+    DEBUG() << "State changed to" << state << "and connections are" << connection[0].current << connection[1].current;
     if (state == QHttp::Closing || state == QHttp::Unconnected) {
         if (!m_inCancel && m_pendingRequests.isEmpty()
             && !connection[0].current && !connection[1].current)
@@ -992,28 +995,36 @@ void WebCoreHttp::onSslErrors(const QList<QSslError>& errors)
 {
     int c = getConnection();
     QWebNetworkJob *req = connection[c].current;
-    if (!req) {
-        return;
+    if (req) {
+        bool continueAnyway = false;
+        emit req->networkInterface()->sslErrors(req->frame(), req->url(), errors, &continueAnyway);
+#ifndef QT_NO_OPENSSL
+        if (continueAnyway) 
+            connection[c].http->ignoreSslErrors();
+#endif
     }
-
-    qDebug() << "SSL ERRORS";
-    //emit req->frame()->page()->sslErrors(req->frame(), errors);
 }
 
 void WebCoreHttp::onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator *auth)
 {
     int c = getConnection();
     QWebNetworkJob *req = connection[c].current;
-    if (!req) {
-        return;
+    if (req) {
+        emit req->networkInterface()->authenticate(req->frame(), req->url(), hostname, port, auth);
+        if (auth->isNull())
+            connection[c].http->abort();
     }
-
-    qDebug() << "AUTH REQUIRED" << hostname << port << auth;
-    //emit req->frame()->page()->authenticate(req->frame(), hostname, port, auth);
 }
 
 void WebCoreHttp::onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator *auth)
 {
+    int c = getConnection();
+    QWebNetworkJob *req = connection[c].current;
+    if (req) {
+        emit req->networkInterface()->authenticateProxy(req->frame(), req->url(), proxy, auth);
+        if (auth->isNull())
+            connection[c].http->abort();
+    }
 }
 
 HostInfo::HostInfo(const QUrl& url)

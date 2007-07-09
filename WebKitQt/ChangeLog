@@ -1,3 +1,32 @@
+2007-07-09  George Staikos  <staikos@kde.org>
+
+        Reviewed by Simon.
+
+        Rework much of the HTTP stuff to make it more stable, and add SSL and
+        proxy support.  Major memory leak also discovered but it needs more
+        research as the obvious fix causes crashes.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (WebCoreHttp::WebCoreHttp):
+        (WebCoreHttp::~WebCoreHttp):
+        (WebCoreHttp::request):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::getConnection):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::onDone):
+        (WebCoreHttp::onStateChanged):
+        (WebCoreHttp::onSslErrors):
+        (WebCoreHttp::onAuthenticationRequired):
+        (WebCoreHttp::onProxyAuthenticationRequired):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        (WebCore::WebCoreHttp::HttpConnection::HttpConnection):
+
 2007-07-06  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.

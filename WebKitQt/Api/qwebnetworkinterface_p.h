@@ -144,9 +144,10 @@ namespace WebCore {
     private:
         QList<QWebNetworkJob *> m_pendingRequests;
         struct HttpConnection {
+            HttpConnection() : http(0), current(0), id(-1) {}
             QHttp *http;
             QWebNetworkJob *current;
-            bool proxyDone;
+            int id; // the QHttp id
         };
         HttpConnection connection[2];
         bool m_inCancel;
