@@ -1,5 +1,16 @@
 2007-07-09  Justin Garcia  <justin.garcia@apple.com>
 
+        Rolling the fix for 5310404 back in now that 5310404 has been fixed in Mail.
+
+        * editing/deleting/4845371-expected.checksum:
+        * editing/deleting/4845371-expected.txt:
+        * editing/deleting/4845371.html:
+        * editing/deleting/5126166-expected.txt:
+        * editing/deleting/5290534.html: Added.
+        * editing/deleting/5290534.html-disabled: Removed.
+
+2007-07-09  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by John.
         
         <rdar://problem/5156801> REGRESSION: Crash when deleting table content in Leopard Mail
