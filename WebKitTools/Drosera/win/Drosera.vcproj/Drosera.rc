@@ -1,0 +1,187 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_DROSERA             ICON                    "Drosera.ico"
+IDI_SMALL               ICON                    "small.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_DROSERA MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Attach",                      ID_FILE_ATTACH
+        MENUITEM SEPARATOR
+        MENUITEM "Close Current File",          ID_FILE_CLOSECURRENTFILE
+        MENUITEM "Exit",                        ID_FILE_EXIT
+    END
+    POPUP "Edit"
+    BEGIN
+        MENUITEM "Undo",                        ID_EDIT_UNDO
+        MENUITEM "Redo",                        ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cut",                         ID_EDIT_CUT
+        MENUITEM "Copy",                        ID_EDIT_COPY
+        MENUITEM "Paste",                       ID_EDIT_PASTE
+        MENUITEM "Select All",                  ID_EDIT_SELECTALL
+        MENUITEM SEPARATOR
+        POPUP "Find"
+        BEGIN
+            MENUITEM "Find",                        ID_FIND_FIND
+            MENUITEM "Find Next",                   ID_FIND_FINDNEXT
+            MENUITEM "Find Previous",               ID_FIND_FINDPREVIOUS
+            MENUITEM "Use Selection for Find",      ID_FIND_USESELECTIONFORFIND
+            MENUITEM "Jump to Selection",           ID_FIND_JUMPTOSELECTION
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Special Characters",          ID_EDIT_SPECIALCHARACTERS
+    END
+    POPUP "Debug"
+    BEGIN
+        MENUITEM "Show Console",                ID_DEBUG_SHOWCONSOLE
+        MENUITEM SEPARATOR
+        MENUITEM "Continue",                    ID_DEBUG_CONTINUE
+        MENUITEM "Pause",                       ID_DEBUG_PAUSE
+        MENUITEM "Step Into",                   ID_DEBUG_STEPINTO
+        MENUITEM "Step Over",                   ID_DEBUG_STEPOVER
+        MENUITEM "Step Out",                    ID_DEBUG_STEPOUT
+    END
+    MENUITEM "Window",                      ID_WINDOW
+    POPUP "Help"
+    BEGIN
+        MENUITEM "About",                       ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 146, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "System", 0, 0, 0x0
+BEGIN
+    ICON            IDI_DROSERA,IDC_MYICON,64,10,20,20
+    CTEXT           "Drosera Version 1.0",IDC_STATIC,0,37,146,8,SS_NOPREFIX
+END
+
+IDD_ATTACH DIALOGEX 0, 0, 194, 132
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Attach",IDAttach,136,111,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,85,111,50,14
+    LISTBOX         IDC_LIST1,7,7,179,98,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ATTACH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 186
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 125
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "Drosera"
+    IDC_DROSERA             "DROSERA"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

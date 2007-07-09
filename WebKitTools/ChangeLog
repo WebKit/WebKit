@@ -1,3 +1,129 @@
+2007-07-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam, Sam, and Ada.
+
+        - Inital checkin of Drosera for Win.  This isn't pretty and doesn't connect to Safari but debug builds and runs.
+
+        * Drosera/Images/Drosera.ico: Added.
+        * Drosera/Images/small.ico: Added.
+        * Drosera/win: Added.
+        * Drosera/win/BaseDelegate.h: Added.
+        (BaseDelegate::QueryInterface):
+        (BaseDelegate::didFinishLoadForFrame):
+        (BaseDelegate::windowScriptObjectAvailable):
+        (BaseDelegate::didStartProvisionalLoadForFrame):
+        (BaseDelegate::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (BaseDelegate::didFailProvisionalLoadWithError):
+        (BaseDelegate::didCommitLoadForFrame):
+        (BaseDelegate::didReceiveTitle):
+        (BaseDelegate::didReceiveIcon):
+        (BaseDelegate::didFailLoadWithError):
+        (BaseDelegate::didChangeLocationWithinPageForFrame):
+        (BaseDelegate::willPerformClientRedirectToURL):
+        (BaseDelegate::didCancelClientRedirectForFrame):
+        (BaseDelegate::willCloseFrame):
+        (BaseDelegate::createWebViewWithRequest):
+        (BaseDelegate::webViewShow):
+        (BaseDelegate::webViewClose):
+        (BaseDelegate::webViewFocus):
+        (BaseDelegate::webViewUnfocus):
+        (BaseDelegate::webViewFirstResponder):
+        (BaseDelegate::makeFirstResponder):
+        (BaseDelegate::setStatusText):
+        (BaseDelegate::webViewStatusText):
+        (BaseDelegate::webViewAreToolbarsVisible):
+        (BaseDelegate::setToolbarsVisible):
+        (BaseDelegate::webViewIsStatusBarVisible):
+        (BaseDelegate::setStatusBarVisible):
+        (BaseDelegate::webViewIsResizable):
+        (BaseDelegate::setResizable):
+        (BaseDelegate::setFrame):
+        (BaseDelegate::webViewFrame):
+        (BaseDelegate::setContentRect):
+        (BaseDelegate::webViewContentRect):
+        (BaseDelegate::runJavaScriptAlertPanelWithMessage):
+        (BaseDelegate::runJavaScriptConfirmPanelWithMessage):
+        (BaseDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (BaseDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (BaseDelegate::runOpenPanelForFileButtonWithResultListener):
+        (BaseDelegate::mouseDidMoveOverElement):
+        (BaseDelegate::contextMenuItemsForElement):
+        (BaseDelegate::validateUserInterfaceItem):
+        (BaseDelegate::shouldPerformAction):
+        (BaseDelegate::dragDestinationActionMaskForDraggingInfo):
+        (BaseDelegate::willPerformDragDestinationAction):
+        (BaseDelegate::dragSourceActionMaskForPoint):
+        (BaseDelegate::willPerformDragSourceAction):
+        (BaseDelegate::contextMenuItemSelected):
+        (BaseDelegate::hasCustomMenuImplementation):
+        (BaseDelegate::trackCustomPopupMenu):
+        (BaseDelegate::measureCustomMenuItem):
+        (BaseDelegate::drawCustomMenuItem):
+        (BaseDelegate::addCustomMenuDrawingData):
+        (BaseDelegate::cleanUpCustomMenuDrawingData):
+        (BaseDelegate::canTakeFocus):
+        (BaseDelegate::takeFocus):
+        (BaseDelegate::registerUndoWithTarget):
+        (BaseDelegate::removeAllActionsWithTarget):
+        (BaseDelegate::setActionTitle):
+        (BaseDelegate::undo):
+        (BaseDelegate::redo):
+        (BaseDelegate::canUndo):
+        (BaseDelegate::canRedo):
+        * Drosera/win/DebuggerApplication.cpp: Added.
+        (DebuggerApplication::serverLoaded):
+        (DebuggerApplication::serverUnloaded):
+        (DebuggerApplication::attach):
+        (DebuggerApplication::numberOfRowsInTableView):
+        (DebuggerApplication::tableView):
+        * Drosera/win/DebuggerApplication.h: Added.
+        (DebuggerApplication::DebuggerApplication):
+        (DebuggerApplication::knownServers):
+        * Drosera/win/DebuggerObjectCallbacks.cpp: Added.
+        (breakpointEditorHTMLCallback):
+        (currentFunctionStackCallback):
+        (doubleClickMillisecondsCallback):
+        (evaluateScript_inCallFrame_Callback):
+        (isPausedCallback):
+        (localScopeVariableNamesForCallFrame_Callback):
+        (pauseCallback):
+        (resumeCallback):
+        (stepIntoCallback):
+        (valueForScopeVariableNamed_inCallFrame_Callback):
+        (staticFunctions):
+        * Drosera/win/DebuggerObjectCallbacks.h: Added.
+        * Drosera/win/Drosera.cpp: Added.
+        (_tWinMain):
+        (RegisterDroseraClass):
+        (DroseraWndProc):
+        (About):
+        (Attach):
+        (Drosera::Drosera):
+        (Drosera::initUI):
+        (Drosera::QueryInterface):
+        (Drosera::AddRef):
+        (Drosera::Release):
+        (Drosera::didFinishLoadForFrame):
+        (getDroseraJSClass):
+        (Drosera::windowScriptObjectAvailable):
+        (Drosera::webViewClose):
+        (Drosera::validateUserInterfaceItem):
+        (Drosera::runJavaScriptAlertPanelWithMessage):
+        (Drosera::onSize):
+        * Drosera/win/Drosera.h: Added.
+        (Drosera::webViewLoaded):
+        * Drosera/win/Drosera.vcproj: Added.
+        * Drosera/win/Drosera.vcproj/Drosera.rc: Added.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Added.
+        * Drosera/win/Drosera.vcproj/debug.vsprops: Added.
+        * Drosera/win/Drosera.vcproj/release.vsprops: Added.
+        * Drosera/win/HelperFunctions.h: Added.
+        (CFStringToBSTR):
+        * Drosera/win/Info.plist: Added.
+        * Drosera/win/resource.h: Added.
+        * Drosera/win/stdafx.cpp: Added.
+        * Drosera/win/stdafx.h: Added.
+
 2007-07-09  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.
