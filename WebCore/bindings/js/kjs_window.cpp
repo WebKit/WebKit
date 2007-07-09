@@ -391,7 +391,7 @@ static float floatFeature(const HashMap<String, String> &features, const char *k
 }
 
 static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& url,
-    const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs, bool immediate)
+    const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs)
 {
     Frame* activeFrame = Window::retrieveActive(exec)->frame();
     
@@ -420,19 +420,17 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     if (dialogArgs)
         newWindow->putDirect("dialogArguments", dialogArgs);
 
-    if (created)
-        if (Document* oldDoc = openerFrame->document()) {
-            newFrame->document()->setDomain(oldDoc->domain(), true);
-            newFrame->document()->setBaseURL(oldDoc->baseURL());
-        }
-        
-    if (!url.isEmpty() && (!url.startsWith("javascript:", false) || newWindow->isSafeScript(exec))) {
-        String completedURL = activeFrame->document()->completeURL(url);
+    if (!url.startsWith("javascript:", false) || newWindow->isSafeScript(exec)) {
+        String completedURL = url.isEmpty() ? url : activeFrame->document()->completeURL(url);
         bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
         
-        if (immediate)
-            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
-        else
+        if (created) {
+            newFrame->loader()->changeLocation(KURL(completedURL.deprecatedString()), activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            if (Document* oldDoc = openerFrame->document()) {
+                newFrame->document()->setDomain(oldDoc->domain(), true);
+                newFrame->document()->setBaseURL(oldDoc->baseURL());
+            }
+        } else if (!url.isEmpty())
             newFrame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
     }
     
@@ -504,7 +502,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
     
-    Frame* dialogFrame = createWindow(exec, openerWindow->frame(), valueToStringWithUndefinedOrNullCheck(exec, args[0]), "", wargs, args[1], true);
+    Frame* dialogFrame = createWindow(exec, openerWindow->frame(), valueToStringWithUndefinedOrNullCheck(exec, args[0]), "", wargs, args[1]);
     if (!dialogFrame)
         return jsUndefined();
 
@@ -1453,7 +1451,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       parseWindowFeatures(features, windowFeatures);
       constrainToVisible(screenRect(page->mainFrame()->view()), windowFeatures);
 
-      frame = createWindow(exec, frame, urlString, frameName, windowFeatures, 0, false);
+      frame = createWindow(exec, frame, urlString, frameName, windowFeatures, 0);
 
       if (!frame)
           return jsUndefined();

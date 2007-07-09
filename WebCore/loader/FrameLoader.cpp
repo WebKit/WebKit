@@ -346,8 +346,13 @@ bool FrameLoader::canHandleRequest(const ResourceRequest& request)
 
 void FrameLoader::changeLocation(const String& URL, const String& referrer, bool lockHistory, bool userGesture)
 {
-    if (URL.find("javascript:", 0, false) == 0) {
-        String script = KURL::decode_string(URL.substring(strlen("javascript:")).deprecatedString());
+    changeLocation(completeURL(URL), referrer, lockHistory, userGesture);
+}
+
+void FrameLoader::changeLocation(const KURL& URL, const String& referrer, bool lockHistory, bool userGesture)
+{
+    if (URL.url().find("javascript:", 0, false) == 0) {
+        String script = KURL::decode_string(URL.url().mid(strlen("javascript:")));
         JSValue* result = executeScript(0, script, userGesture);
         String scriptResult;
         if (getString(result, scriptResult)) {
@@ -360,7 +365,7 @@ void FrameLoader::changeLocation(const String& URL, const String& referrer, bool
 
     ResourceRequestCachePolicy policy = (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
         ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
-    ResourceRequest request(completeURL(URL), referrer, policy);
+    ResourceRequest request(URL, referrer, policy);
     
     urlSelected(request, "_self", 0, lockHistory, userGesture);
 }
@@ -377,7 +382,7 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
         return;
     }
 
-    if (!url.isValid())
+    if (!url.isValid() && !url.isEmpty())
         return;
 
     FrameLoadRequest frameRequest(request, target);

@@ -273,6 +273,7 @@ namespace WebCore {
         void setDefersLoading(bool);
 
         void changeLocation(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void changeLocation(const KURL& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
         void urlSelected(const FrameLoadRequest&, Event*, bool userGesture);
       

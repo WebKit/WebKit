@@ -1550,6 +1550,9 @@ bool Document::shouldBeAllowedToLoadLocalResources() const
     DocumentLoader* documentLoader = frame->loader()->documentLoader();
     if (!documentLoader)
         return false;
+
+    if (m_url == "about:blank" && frame->loader()->opener() && frame->loader()->opener()->document()->isAllowedToLoadLocalResources())
+        return true;
     
     return documentLoader->substituteData().isValid();
 }

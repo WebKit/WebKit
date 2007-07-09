@@ -1,3 +1,29 @@
+2007-07-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - fixed <rdar://problem/5220706> REGRESSION (TOT): repro crash in -[WebView(WebViewInternal) _addObject:forIdentifier:] [14425]
+        http://bugs.webkit.org/show_bug.cgi?id=14425
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow): No longer take an immediate argument - always do immediate loads
+        on a newly created Window. Also, do a load of "" to make sure that the right info makes
+        it to the app.
+        (KJS::showModalDialog): Updated for above.
+        (KJS::WindowFunc::callAsFunction): Updated for above.
+        * dom/Document.cpp:
+        (WebCore::Document::shouldBeAllowedToLoadLocalResources): If our URL is about:blank,
+        we're allowed if our opener is (since the opener must have written the contents).
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation): Add a variant which takes a KURL, which it
+        expects to be pre-completed. This is to avoid completing "" to the opener URL.
+        (WebCore::FrameLoader::urlSelected): Allow loading empty URLs.
+        * loader/FrameLoader.h:
+        
+        Test case is manual only, since it takes particular app behavior to reproduce:
+        
+        * manual-tests/new-window-subresource-crash.html: Added.
+
 2007-07-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
