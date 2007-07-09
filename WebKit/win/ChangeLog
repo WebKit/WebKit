@@ -1,3 +1,10 @@
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
 2007-07-05  Adam Roben  <aroben@apple.com>
 
         Fix a leak in WebView::setToolTip
