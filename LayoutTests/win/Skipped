@@ -428,7 +428,7 @@ dom/xhtml/level2/html/frame.xhtml
 tables/mozilla/bugs/bug50695-2.html
 
 # execCommand("Paste") fails? <rdar://problem/5230263>
-editing/execCommand/paste-1.html
+#editing/execCommand/paste-1.html
 editing/execCommand/paste-2.html
 editing/pasteboard/4242293-1.html
 editing/pasteboard/5247341.html

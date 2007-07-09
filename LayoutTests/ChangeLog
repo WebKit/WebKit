@@ -1,3 +1,9 @@
+2007-07-09  Alice Liu  <alice.liu@apple.com>
+
+        * win/Skipped:
+        removed one test from skipped list to see whether it will pass with the new
+        DOM Paste API change that is being added simultaneously. 
+
 2007-07-09  Justin Garcia  <justin.garcia@apple.com>
 
         Rolling the fix for 5310404 back in now that 5310404 has been fixed in Mail.

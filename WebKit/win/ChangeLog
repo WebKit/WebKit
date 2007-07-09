@@ -1,3 +1,19 @@
+2007-07-09  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Adding DOM Paste Allowed preference, setters and getters
+        for the purpose of layout tests.
+
+        * Interfaces/IWebPreferences.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::isDOMPasteAllowed):
+        (WebPreferences::setDOMPasteAllowed):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

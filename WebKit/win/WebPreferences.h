@@ -265,6 +265,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAllowContinuousSpellChecking( 
         /* [in] */ BOOL enabled);
 
+    virtual HRESULT STDMETHODCALLTYPE isDOMPasteAllowed( 
+        /* [retval][out] */ BOOL *enabled);
+    
+    virtual HRESULT STDMETHODCALLTYPE setDOMPasteAllowed( 
+        /* [in] */ BOOL enabled);
+
     // WebPreferences
     static BSTR webPreferencesChangedNotification();
     static void setInstance(WebPreferences* instance, BSTR identifier);

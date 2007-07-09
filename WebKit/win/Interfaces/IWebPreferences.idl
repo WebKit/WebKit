@@ -501,6 +501,9 @@ interface IWebPreferences : IUnknown
     HRESULT allowContinuousSpellChecking([out, retval] BOOL *allowed);
     HRESULT setAllowContinuousSpellChecking([in] BOOL allowed);
 
+    HRESULT isDOMPasteAllowed([out, retval] BOOL *allowed);
+    HRESULT setDOMPasteAllowed([in] BOOL allowed);
+
     /*
         - (BOOL)usesPageCache;
     */

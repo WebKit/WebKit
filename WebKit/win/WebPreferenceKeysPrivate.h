@@ -91,3 +91,5 @@
 #define WebGrammarCheckingEnabledPreferenceKey "WebGrammarCheckingEnabled" // default: false
 
 #define AllowContinuousSpellCheckingPreferenceKey "AllowContinuousSpellCheckingPreferenceKey" // default: true
+
+#define WebKitDOMPasteAllowedPreferenceKey "WebKitDOMPasteAllowedPreferenceKey" // default: false

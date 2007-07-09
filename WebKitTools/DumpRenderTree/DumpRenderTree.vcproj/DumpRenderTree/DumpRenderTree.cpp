@@ -588,6 +588,7 @@ static void initializePreferences(IWebPreferences* preferences)
     preferences->setAutosaves(FALSE);
     preferences->setJavaEnabled(FALSE);
     preferences->setPlugInsEnabled(TRUE);
+    preferences->setDOMPasteAllowed(TRUE);
 
     SysFreeString(standardFamily);
     SysFreeString(fixedFamily);
