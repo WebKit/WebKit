@@ -320,8 +320,8 @@ namespace WebCore {
         void setEncoding(const String& encoding, bool userChosen);
         String encoding() const;
 
-        KJS::JSValue* executeScript(const String& URL, int baseLine, Node*, const String& script);
-        KJS::JSValue* executeScript(Node*, const String& script, bool forceUserGesture = false);
+        KJS::JSValue* executeScript(const String& URL, int baseLine, const String& script);
+        KJS::JSValue* executeScript(const String& script, bool forceUserGesture = false);
 
         bool gotoAnchor(const String& name); // returns true if the anchor was found
         void scrollToAnchor(const KURL&);

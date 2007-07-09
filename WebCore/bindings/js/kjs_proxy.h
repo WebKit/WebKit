@@ -41,7 +41,7 @@ public:
     KJSProxy(Frame*);
     ~KJSProxy();
 
-    KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code, Node*);
+    KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
     void clear();
     EventListener* createHTMLEventHandler(const String& functionName, const String& code, Node*);
 #if ENABLE(SVG)

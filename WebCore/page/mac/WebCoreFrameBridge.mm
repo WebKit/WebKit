@@ -684,7 +684,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     ASSERT(m_frame->document());
-    JSValue* result = m_frame->loader()->executeScript(0, string, forceUserGesture);
+    JSValue* result = m_frame->loader()->executeScript(string, forceUserGesture);
 
     // If the value returned isn't an object, we don't need an ExecState to convert it
     if (result && !result->isObject()) {
@@ -708,7 +708,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     ASSERT(m_frame->document());
     ASSERT(m_frame == m_frame->page()->mainFrame());
-    JSValue* result = m_frame->loader()->executeScript(0, string, true);
+    JSValue* result = m_frame->loader()->executeScript(string, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;

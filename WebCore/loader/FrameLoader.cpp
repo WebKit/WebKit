@@ -353,7 +353,7 @@ void FrameLoader::changeLocation(const KURL& URL, const String& referrer, bool l
 {
     if (URL.url().find("javascript:", 0, false) == 0) {
         String script = KURL::decode_string(URL.url().mid(strlen("javascript:")));
-        JSValue* result = executeScript(0, script, userGesture);
+        JSValue* result = executeScript(script, userGesture);
         String scriptResult;
         if (getString(result, scriptResult)) {
             begin(m_URL);
@@ -378,7 +378,7 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
 
     const KURL& url = request.url();
     if (url.url().startsWith("javascript:", false)) {
-        executeScript(0, KURL::decode_string(url.url().mid(strlen("javascript:"))), true);
+        executeScript(KURL::decode_string(url.url().mid(strlen("javascript:"))), true);
         return;
     }
 
@@ -496,7 +496,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     DeprecatedString urlString = u.url();
     if (urlString.startsWith("javascript:", false)) {
         m_isExecutingJavaScriptFormAction = true;
-        executeScript(0, KURL::decode_string(urlString.mid(strlen("javascript:"))));
+        executeScript(KURL::decode_string(urlString.mid(strlen("javascript:"))));
         m_isExecutingJavaScriptFormAction = false;
         return;
     }
@@ -715,7 +715,7 @@ void FrameLoader::didExplicitOpen()
 
 void FrameLoader::replaceContentsWithScriptResult(const KURL& url)
 {
-    JSValue* result = executeScript(0, KURL::decode_string(url.url().mid(strlen("javascript:"))));
+    JSValue* result = executeScript(KURL::decode_string(url.url().mid(strlen("javascript:"))));
     String scriptResult;
     if (!getString(result, scriptResult))
         return;
@@ -724,12 +724,12 @@ void FrameLoader::replaceContentsWithScriptResult(const KURL& url)
     end();
 }
 
-JSValue* FrameLoader::executeScript(Node* node, const String& script, bool forceUserGesture)
+JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
 {
-    return executeScript(forceUserGesture ? String() : String(m_URL.url()), 0, node, script);
+    return executeScript(forceUserGesture ? String() : String(m_URL.url()), 0, script);
 }
 
-JSValue* FrameLoader::executeScript(const String& URL, int baseLine, Node* node, const String& script)
+JSValue* FrameLoader::executeScript(const String& URL, int baseLine, const String& script)
 {
     KJSProxy* proxy = m_frame->scriptProxy();
     if (!proxy)
@@ -738,7 +738,7 @@ JSValue* FrameLoader::executeScript(const String& URL, int baseLine, Node* node,
     bool wasRunningScript = m_isRunningScript;
     m_isRunningScript = true;
 
-    JSValue* result = proxy->evaluate(URL, baseLine, script, node);
+    JSValue* result = proxy->evaluate(URL, baseLine, script);
 
     if (!wasRunningScript) {
         m_isRunningScript = false;

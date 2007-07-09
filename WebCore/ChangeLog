@@ -1,3 +1,32 @@
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Get rid of the node argument in our various script execution functions.
+        
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        * bindings/js/kjs_proxy.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::ScheduledAction::execute):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::evaluateScript):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::replaceContentsWithScriptResult):
+        (WebCore::FrameLoader::executeScript):
+        * loader/FrameLoader.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]):
+
 2007-07-09  Justin Garcia  <justin.garcia@apple.com>
 
         Rolling the fix for 5290534 back in now that 5310404 has been fixed in Mail.
