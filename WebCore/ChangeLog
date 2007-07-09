@@ -1,3 +1,19 @@
+2007-07-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        A little more FrameLoader cleanup while working on <rdar://problem/5126396>.
+        
+        Rename: "checkEmitLoadEvent" => "checkCallImplicitClose" because the function
+        doesn't emit the load event; it just calls implicitClose.
+        
+        Rename: "m_wasLoadEventEmitted" => "m_didCallImplicitClose" because the variable
+        tracks whether implicitClose was called.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Turned 12 lines of code into 6, adding ASSERT.
+        * loader/FrameLoader.h: Removed bogus declaration of non-existent emitLoadEvent().
+
 2007-07-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

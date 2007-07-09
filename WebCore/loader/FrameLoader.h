@@ -354,7 +354,7 @@ namespace WebCore {
 
         bool canCachePage();
 
-        void checkEmitLoadEvent();
+        void checkCallImplicitClose();
         bool didOpenURL(const KURL&);
 
         void frameDetached();
@@ -470,8 +470,6 @@ namespace WebCore {
         
         bool loadProvisionalItemFromCachedPage();
         void cachePageForHistoryItem(HistoryItem*);
-
-        void emitLoadEvent();
 
         void receivedFirstData();
 
@@ -595,7 +593,7 @@ namespace WebCore {
 
         String m_responseMIMEType;
 
-        bool m_wasLoadEventEmitted;
+        bool m_didCallImplicitClose;
         bool m_wasUnloadEventEmitted;
         bool m_isComplete;
         bool m_isLoadingMainResource;
