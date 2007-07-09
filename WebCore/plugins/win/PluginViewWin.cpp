@@ -587,7 +587,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to the parent frame.
     RefPtr<Frame> parentFrame =  m_parentFrame;
-    JSValue* result = m_parentFrame->loader()->executeScript(0, jsString.deprecatedString(), true);
+    JSValue* result = m_parentFrame->loader()->executeScript(jsString.deprecatedString(), true);
     String resultString;
 
     if (!getString(parentFrame->scriptProxy(), result, resultString))

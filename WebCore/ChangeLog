@@ -1,5 +1,12 @@
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         Get rid of the node argument in our various script execution functions.
