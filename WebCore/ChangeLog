@@ -1,3 +1,9 @@
+2007-07-09  John Sullivan  <sullivan@apple.com>
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        exported String::createCFString, needed for <rdar://problem/5320208>
+
 2007-07-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
