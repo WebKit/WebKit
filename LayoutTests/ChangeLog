@@ -1,3 +1,16 @@
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/4954319> 
+        Acrobat 7 / Safari crash: CrashTracer: 99 crashes in Safari at 
+        com.apple.WebCore: WebCore::NetscapePlugInStreamLoader::isDone const + 0
+        
+        Add tests.
+        
+        * plugins/return-error-from-new-stream-callback-in-full-frame-plugin-expected.txt: Added.
+        * plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html: Added.
+
 2007-07-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -80,6 +80,9 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         for (uint i = 0; i < argc; i++) {
             if (strcasecmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
                 obj->onStreamLoad = strdup(argv[i]);
+            else if (strcasecmp(argn[i], "src") == 0 &&
+                     strcasecmp(argv[i], "data:application/x-webkit-test-netscape,returnerrorfromnewstream") == 0)
+                obj->returnErrorFromNewStream = TRUE;
         }
         
         instance->pdata = obj;
@@ -114,7 +117,10 @@ NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool se
     obj->stream = stream;
     *stype = NP_ASFILEONLY;
 
-    if (obj && (browser->version >= NPVERS_HAS_RESPONSE_HEADERS))
+    if (obj->returnErrorFromNewStream)
+        return NPERR_GENERIC_ERROR;
+    
+    if (browser->version >= NPVERS_HAS_RESPONSE_HEADERS)
         notifyStream(obj, stream->url, stream->headers);
 
     if (obj->onStreamLoad) {

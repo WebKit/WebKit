@@ -1,3 +1,26 @@
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/4954319> 
+        Acrobat 7 / Safari crash: CrashTracer: 99 crashes in Safari at 
+        com.apple.WebCore: WebCore::NetscapePlugInStreamLoader::isDone const + 0
+
+        Add a new initWithFrameLoader: method to WebNetscapePluginStream which is to be used when
+        the stream is a "fake" stream for full frame plug-ins.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginView:receivedResponse:]):
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream initWithFrameLoader:]):
+        (-[WebNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream cancelLoadWithError:]):
+        (-[WebNetscapePluginStream stop]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):
+
 2007-07-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

@@ -1948,7 +1948,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(_loadManually);
     ASSERT(!_manualStream);
     
-    _manualStream = [[WebNetscapePluginStream alloc] init];
+    _manualStream = [[WebNetscapePluginStream alloc] initWithFrameLoader:core([self webFrame])->loader()];
 }
 
 - (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data

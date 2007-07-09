@@ -1,3 +1,21 @@
+2007-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/4954319> 
+        Acrobat 7 / Safari crash: CrashTracer: 99 crashes in Safari at 
+        com.apple.WebCore: WebCore::NetscapePlugInStreamLoader::isDone const + 0
+        
+        If the src url is "data:application/x-webkit-test-netscape,returnerrorfromnewstream", 
+        return an error from NPP_NewStream.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_New):
+        (NPP_NewStream):
+
 2007-07-08  Mark Rowe  <mrowe@apple.com>
 
         Change name from WebKit/Qt to WebKit.
