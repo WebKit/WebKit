@@ -1,3 +1,15 @@
+2007-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5295734> Repro crash closing tab/window @ maps.google.com in WTF::HashSet<KJS::RuntimeObjectImp*, WTF::PtrHash<KJS::RuntimeObjectImp*>, WTF::HashTraits<KJS::RuntimeObjectImp*> >::add + 11
+        
+        Automated test case is not possible. Did not bother with manual test this time.
+
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::getRuntimeObject): Check that runtime root isn't null, as well as instance;
+        this should cover the case where the plugin is already shut down and onunload time.
+
 2007-07-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.

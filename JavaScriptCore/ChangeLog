@@ -1,3 +1,11 @@
+2007-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - JavaScriptCore part of fix for: <rdar://problem/5295734> Repro crash closing tab/window @ maps.google.com in WTF::HashSet<KJS::RuntimeObjectImp*, WTF::PtrHash<KJS::RuntimeObjectImp*>, WTF::HashTraits<KJS::RuntimeObjectImp*> >::add + 11
+        
+        * JavaScriptCore.exp: Added needed export.
+
 2007-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti.

@@ -103,7 +103,7 @@ JSValue* getRuntimeObject(ExecState* exec, Node* n)
 #if USE(JAVASCRIPTCORE_BINDINGS)
     if (n->hasTagName(objectTag) || n->hasTagName(embedTag) || n->hasTagName(appletTag)) {
         HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(n);
-        if (plugInElement->getInstance())
+        if (plugInElement->getInstance() && plugInElement->getInstance()->rootObject())
             // The instance is owned by the PlugIn element.
             return new RuntimeObjectImp(plugInElement->getInstance());
     }
