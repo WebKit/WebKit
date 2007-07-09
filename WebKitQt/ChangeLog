@@ -1,5 +1,14 @@
 2007-07-09  George Staikos  <staikos@kde.org>
 
+        Fix a minor memory leak in the loader.
+
+        * Api/qwebnetworkinterface.cpp:
+        (gCleanupInterface):
+        (QWebNetworkInterface::setDefaultInterface):
+        (QWebNetworkInterface::defaultInterface):
+
+2007-07-09  George Staikos  <staikos@kde.org>
+
         Fix a massive memory leak in the loader.
 
         * Api/qwebnetworkinterface.cpp:

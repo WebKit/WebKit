@@ -31,6 +31,7 @@
 #include <qnetworkproxy.h>
 #include <qurl.h>
 #include <QAuthenticator>
+#include <QCoreApplication>
 #include <QSslError>
 
 #include "ResourceHandle.h"
@@ -669,6 +670,14 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
   
 */
 
+static bool gRoutineAdded = false;
+
+static void gCleanupInterface()
+{
+    delete default_interface;
+    default_interface = 0;
+}
+
 /*!
   Sets a new default interface that will be used by all of WebKit
   for downloading data from the internet.
@@ -680,6 +689,10 @@ void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInte
     if (default_interface)
         delete default_interface;
     default_interface = defaultInterface;
+    if (!gRoutineAdded) {
+        qAddPostRoutine(gCleanupInterface);
+        gRoutineAdded = true;
+    }
 }
 
 /*!
@@ -689,8 +702,9 @@ void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInte
 */
 QWebNetworkInterface *QWebNetworkInterface::defaultInterface()
 {
-    if (!default_interface)
+    if (!default_interface) {
         setDefaultInterface(new QWebNetworkInterface);
+    }
     return default_interface;
 }
 
