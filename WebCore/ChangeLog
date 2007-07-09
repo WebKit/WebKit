@@ -1,3 +1,16 @@
+2007-07-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        REGRESSION: Crash when deleting table content in Leopard Mail
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Use a RefPtr
+        for the next node to delete, in case it is destroyed when the
+        current node is deleted.  In the crash reported in the radar, we
+        crash because the next node is the div that holds the delete button
+        and it's destroyed when the node that contains the selection is removed.
+
 2007-07-09  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.

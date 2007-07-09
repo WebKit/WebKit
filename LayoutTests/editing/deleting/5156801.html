@@ -1,0 +1,11 @@
+<p>This tests for a bug where delete would crash if a node just after the selection to delete is removed in a DOMNodeRemoved event handler for the last node in the selection to delete.</p>
+<div contenteditable="true">foo<span id="foo">x</span><span id="removeme">y</span></div>
+
+<script>
+function removeHandler() {
+    var removeme = document.getElementById("removeme");
+    removeme.parentNode.removeChild(removeme);
+}
+
+document.getElementById("foo").addEventListener("DOMNodeRemoved", removeHandler);
+</script>

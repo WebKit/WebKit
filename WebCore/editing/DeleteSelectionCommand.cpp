@@ -390,7 +390,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 // traverseNextSibling just blew past the end position, so stop deleting
                 node = 0;
             } else if (!m_downstreamEnd.node()->isDescendantOf(node)) {
-                Node *nextNode = node->traverseNextSibling();
+                RefPtr<Node> nextNode = node->traverseNextSibling();
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
                 if (node->parentNode() == m_downstreamEnd.node()) {
@@ -398,7 +398,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     m_downstreamEnd = Position(m_downstreamEnd.node(), m_downstreamEnd.offset() - 1);
                 }
                 removeNode(node);
-                node = nextNode;
+                node = nextNode.get();
             } else {
                 Node* n = node->lastDescendant();
                 if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= n->caretMaxOffset()) {

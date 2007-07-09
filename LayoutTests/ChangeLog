@@ -1,3 +1,14 @@
+2007-07-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5156801> REGRESSION: Crash when deleting table content in Leopard Mail
+
+        * editing/deleting/5156801-expected.checksum: Added.
+        * editing/deleting/5156801-expected.png: Added.
+        * editing/deleting/5156801-expected.txt: Added.
+        * editing/deleting/5156801.html: Added.
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
