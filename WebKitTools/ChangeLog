@@ -1,3 +1,7 @@
+2007-07-09  Darin Adler  <darin@apple.com>
+
+        * Scripts/run-webkit-tests: Moved leaks from Tiger that are marked as fixed in Leopard to a Tiger-only section.
+
 2007-07-09  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam Roben.

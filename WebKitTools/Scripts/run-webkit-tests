@@ -898,25 +898,34 @@ sub countAndPrintLeaks($$$)
 
     my @typesToExclude = (
         "THRD", # bug in 'leaks', Radar 3387783
-        "DRHT" #ditto (endian little hate i)
+        "DRHT" # ditto (endian little hate i)
     );
 
     my @callStacksToExclude = (
-        "_CFPreferencesDomainDeepCopyDictionary", # leak apparently in CFPreferences, Radar 4220786
-        "FOGetCoveredUnicodeChars", # leak apparently in ATS, Radar 3943604
-        "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
-        "Flash_EnforceLocalSecurity", # leaks in Flash plug-in code, Radar 4449747
-        "ICCFPrefWrapper::GetPrefDictionary", # leaks in QuickTime plug-in code, Radar 4449794
-        "GetLineDirectionPreference", "InitUnicodeUtilities", # leak apparently in CFNotificationCenterAddObserver, Radar 4964790
-        "CFRunLoopRunSpecific \\| malloc_zone_malloc", # leak in CFRunLoopRunSpecific, Radar 4670839
-        "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # ditto
-        "_objc_msgForward", # leak apparently in NSSpellChecker, Radar 4965278
-        "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
-        "WebCore::SubresourceLoader::create", # bug in 'leaks', Radar 4985806
-        "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
-        "CGImageSourceGetPropertiesAtIndex", # leak apparently in CG, Radar 4628809
-        "gldGetString" # leak apparently in OpenGL, Radar 5013699
+        "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, Radar 4449747
     );
+
+    if (isTiger()) {
+        push @callStacksToExclude, (
+            "CFRunLoopRunSpecific \\| malloc_zone_malloc", "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # leak in CFRunLoopRunSpecific, Radar 4670839
+            "CGImageSourceGetPropertiesAtIndex", # leak in ImageIO, Radar 4628809
+            "FOGetCoveredUnicodeChars", # leak in ATS, Radar 3943604
+            "GetLineDirectionPreference", "InitUnicodeUtilities", # leaks tool falsely reporting leak in CFNotificationCenterAddObserver, Radar 4964790
+            "ICCFPrefWrapper::GetPrefDictionary", # leaks in Internet Config. code, Radar 4449794
+            "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
+            "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
+            "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
+            "WebCore::SubresourceLoader::create", # bug in 'leaks', Radar 4985806
+            "_CFPreferencesDomainDeepCopyDictionary", # leak in CFPreferences, Radar 4220786
+            "_objc_msgForward", # leak in NSSpellChecker, Radar 4965278
+            "gldGetString" # leak in OpenGL, Radar 5013699
+        );
+    }
+
+    if (isLeopard()) {
+        push @callStacksToExclude, (
+        );
+    }
 
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "' " .
