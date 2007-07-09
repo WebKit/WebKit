@@ -71,10 +71,6 @@ DumpRenderTree::DumpRenderTree()
     page->resize(maxViewWidth, maxViewHeight);
     frame = page->mainFrame();
     frame->suppressScrollbars(true);
-    frame->setFrameShape(QFrame::NoFrame);
-
-    // hack to force the right size on the frame
-    page->layout()->activate();
 
     
     m_controller = new LayoutTestController();

@@ -46,6 +46,8 @@
 #include "IconDatabase.h"
 #include "FocusController.h"
 #include "Editor.h"
+#include "PlatformScrollBar.h"
+#include "PlatformKeyboardEvent.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -59,13 +61,14 @@
 #include <QNetworkProxy>
 #include <QUndoStack>
 #include <QUrl>
-#include <QVBoxLayout>
+#include <QPainter>
 
 using namespace WebCore;
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq), modified(false)
 {
+    q->setMouseTracking(true);
     q->setFocusPolicy(Qt::ClickFocus);
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
@@ -102,7 +105,7 @@ void QWebPagePrivate::createMainFrame()
         frameData.marginWidth = 0;
         frameData.marginHeight = 0;
         mainFrame = q->createFrame(0, &frameData);
-        layout->addWidget(mainFrame);
+        mainFrame->d->frameView->setFrameGeometry(q->geometry());
     }
 }
 
@@ -112,9 +115,9 @@ QWebPage::QWebPage(QWidget *parent)
     , d(new QWebPagePrivate(this))
 {
     setSettings(QWebSettings::global());
-    d->layout = new QVBoxLayout(this);
-    d->layout->setMargin(0);
-    d->layout->setSpacing(0);
+    QPalette pal = palette();
+    pal.setBrush(QPalette::Background, Qt::white);
+    setPalette(pal);
     setAcceptDrops(true);
 }
 
@@ -227,19 +230,22 @@ void QWebPage::javaScriptConsoleMessage(const QString& message, unsigned int lin
 
 void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
-    QMessageBox::information(frame, title(), msg, QMessageBox::Ok);
+    //FIXME frame pos...
+    QMessageBox::information(this, title(), msg, QMessageBox::Ok);
 }
 
 bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
-    return 0 == QMessageBox::information(frame, title(), msg, QMessageBox::Yes, QMessageBox::No);
+    //FIXME frame pos...
+    return 0 == QMessageBox::information(this, title(), msg, QMessageBox::Yes, QMessageBox::No);
 }
 
 bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result)
 {
+    //FIXME frame pos...
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
-    QString x = QInputDialog::getText(frame, title(), msg, QLineEdit::Normal, defaultValue, &ok);
+    QString x = QInputDialog::getText(this, title(), msg, QLineEdit::Normal, defaultValue, &ok);
     if (ok && result) {
         *result = x;
     }
@@ -332,6 +338,153 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     else if (actions & DragOperationLink)
         result = Qt::LinkAction;
     return result;    
+}
+
+void QWebPage::resizeEvent(QResizeEvent *e)
+{
+    QWidget::resizeEvent(e);
+    if (mainFrame()->d->frame && mainFrame()->d->frameView) {
+        mainFrame()->d->frameView->setFrameGeometry(rect());
+        mainFrame()->d->frame->forceLayout();
+        mainFrame()->d->frame->view()->adjustViewSize();
+    }
+}
+
+void QWebPage::paintEvent(QPaintEvent *ev)
+{
+#ifdef QWEBKIT_TIME_RENDERING
+    QTime time;
+    time.start();
+#endif
+
+    QRect clip = ev->rect();
+
+    QPainter p(this);
+
+    mainFrame()->render(&p, clip);
+
+#ifdef    QWEBKIT_TIME_RENDERING
+    int elapsed = time.elapsed();
+    qDebug()<<"paint event on "<<clip<<", took to render =  "<<elapsed;
+#endif
+}
+
+void QWebPage::mouseMoveEvent(QMouseEvent *ev)
+{
+    mainFrame()->mouseMoveEvent(ev);
+}
+
+void QWebPage::mousePressEvent(QMouseEvent *ev)
+{
+    mainFrame()->mousePressEvent(ev);
+}
+
+void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
+{
+    mainFrame()->mouseDoubleClickEvent(ev);
+}
+
+void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
+{
+    mainFrame()->mouseReleaseEvent(ev);
+}
+
+void QWebPage::wheelEvent(QWheelEvent *ev)
+{
+    mainFrame()->wheelEvent(ev);
+    if (!ev->isAccepted())
+        QWidget::wheelEvent(ev);
+}
+
+void QWebPage::keyPressEvent(QKeyEvent *ev)
+{
+    PlatformKeyboardEvent kevent(ev, false);
+
+    if (!mainFrame()->d->eventHandler)
+        return;
+
+    bool handled = mainFrame()->d->eventHandler->keyEvent(kevent);
+    if (handled) {
+    } else {
+        handled = true;
+        PlatformScrollbar *h, *v;
+        h = mainFrame()->d->horizontalScrollBar();
+        v = mainFrame()->d->verticalScrollBar();
+        if (!h || !v)
+          return;
+
+        switch (ev->key()) {
+            case Qt::Key_Up:
+                v->setValue(v->value() - 10);
+                update();
+                break;
+            case Qt::Key_Down:
+                v->setValue(v->value() + 10);
+                update();
+                break;
+            case Qt::Key_Left:
+                h->setValue(h->value() - 10);
+                update();
+                break;
+            case Qt::Key_Right:
+                h->setValue(h->value() + 10);
+                update();
+                break;
+            case Qt::Key_PageUp:
+                v->setValue(v->value() - height());
+                update();
+                break;
+            case Qt::Key_PageDown:
+                v->setValue(v->value() + height());
+                update();
+                break;
+            default:
+                handled = false;
+                break;
+        }
+    }
+
+    ev->setAccepted(handled);
+}
+
+void QWebPage::keyReleaseEvent(QKeyEvent *ev)
+{
+    if (ev->isAutoRepeat()) {
+        ev->setAccepted(true);
+        return;
+    }
+
+    PlatformKeyboardEvent kevent(ev, true);
+
+    if (!mainFrame()->d->eventHandler)
+        return;
+
+    bool handled = mainFrame()->d->eventHandler->keyEvent(kevent);
+    ev->setAccepted(handled);
+}
+
+void QWebPage::focusInEvent(QFocusEvent *ev)
+{
+    if (ev->reason() != Qt::PopupFocusReason) {
+        mainFrame()->d->frame->page()->focusController()->setFocusedFrame(mainFrame()->d->frame);
+        mainFrame()->d->frame->setIsActive(true);
+    }
+    QWidget::focusInEvent(ev);
+}
+
+void QWebPage::focusOutEvent(QFocusEvent *ev)
+{
+    QWidget::focusOutEvent(ev);
+    if (ev->reason() != Qt::PopupFocusReason) {
+        mainFrame()->d->frame->selectionController()->clear();
+        mainFrame()->d->frame->setIsActive(false);
+    }
+}
+
+bool QWebPage::focusNextPrevChild(bool next)
+{
+    Q_UNUSED(next)
+    return false;
 }
 
 void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
@@ -488,8 +641,9 @@ QWebSettings QWebPage::settings() const
 
 QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& oldFile)
 {
+    //FIXME frame pos...
 #ifndef QT_NO_FILEDIALOG
-    return QFileDialog::getOpenFileName(parentFrame, QString::null, oldFile);
+    return QFileDialog::getOpenFileName(this, QString::null, oldFile);
 #else
     return QString::null;
 #endif

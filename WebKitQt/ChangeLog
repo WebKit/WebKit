@@ -1,3 +1,51 @@
+2007-07-09  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Convert QWebFrame from a QFrame to a pure QObject to eliminate all
+        traces of widgets.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::parentFrame):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::render):
+        (QWebFrame::pos):
+        (QWebFrame::geometry):
+        (QWebFrame::evaluateJavaScript):
+        (QWebFrame::mouseMoveEvent):
+        (QWebFrame::mousePressEvent):
+        (QWebFrame::mouseDoubleClickEvent):
+        (QWebFrame::mouseReleaseEvent):
+        (QWebFrame::wheelEvent):
+        * Api/qwebframe.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        (QWebObjectPluginConnector::pluginParentWidget):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::QWebPage):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::resizeEvent):
+        (QWebPage::paintEvent):
+        (QWebPage::mouseMoveEvent):
+        (QWebPage::mousePressEvent):
+        (QWebPage::mouseDoubleClickEvent):
+        (QWebPage::mouseReleaseEvent):
+        (QWebPage::wheelEvent):
+        (QWebPage::keyPressEvent):
+        (QWebPage::keyReleaseEvent):
+        (QWebPage::focusInEvent):
+        (QWebPage::focusOutEvent):
+        (QWebPage::focusNextPrevChild):
+        (QWebPage::chooseFile):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::addToDirtyRegion):
+
 2007-07-09  George Staikos  <staikos@kde.org>
 
         Fix a minor memory leak in the loader.

@@ -31,10 +31,6 @@
 #include "Widget.h"
 #include <wtf/HashSet.h>
 
-#if PLATFORM(QT)
-class QRegion;
-#endif
-
 #if PLATFORM(GDK)
 typedef struct _GtkLayout GtkLayout;
 #endif
@@ -170,9 +166,10 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
-        void setScrollArea(QWidget*);
-
         virtual void paint(GraphicsContext*, const IntRect&);
+
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 
         virtual void geometryChanged() const;
         virtual void setFrameGeometry(const IntRect&);

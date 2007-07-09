@@ -24,19 +24,26 @@
 #ifndef QWEBFRAME_H
 #define QWEBFRAME_H
 
-#include <qabstractscrollarea.h>
+#include <qobject.h>
 
 #include <qwebkitglobal.h>
+
+class QRect;
+class QPoint;
+class QPainter;
+class QMouseEvent;
+class QWheelEvent;
 
 class QWebFramePrivate;
 class QWebPage;
 
 namespace WebCore {
+    class WidgetPrivate;
     class FrameLoaderClientQt;
 }
 class QWebFrameData;
 
-class QWEBKIT_EXPORT QWebFrame : public QFrame
+class QWEBKIT_EXPORT QWebFrame : public QObject
 {
     Q_OBJECT
 protected:
@@ -58,6 +65,11 @@ public:
 
     void suppressScrollbars(bool suppress);
 
+    void render(QPainter *painter, const QRect &source);
+
+    QPoint pos() const;
+    QRect geometry() const;
+
 public Q_SLOTS:
     QString evaluateJavaScript(const QString& scriptSource);
 
@@ -68,21 +80,17 @@ signals:
     void hoveringOverLink(const QString &link, const QString &title);
 
 protected:
-    virtual void resizeEvent(QResizeEvent*);
-    virtual void paintEvent(QPaintEvent*);
+    //for dumprendertree
     virtual void mouseMoveEvent(QMouseEvent*);
     virtual void mousePressEvent(QMouseEvent*);
     virtual void mouseDoubleClickEvent(QMouseEvent*);
     virtual void mouseReleaseEvent(QMouseEvent*);
     virtual void wheelEvent(QWheelEvent*);
-    virtual void keyPressEvent(QKeyEvent*);
-    virtual void keyReleaseEvent(QKeyEvent*);
-    virtual void focusInEvent(QFocusEvent*);
-    virtual void focusOutEvent(QFocusEvent*);
-    virtual bool focusNextPrevChild(bool next);
 
 private:
     friend class QWebPage;
+    friend class QWebPagePrivate;
+    friend class WebCore::WidgetPrivate;
     friend class WebCore::FrameLoaderClientQt;
     QWebFramePrivate *d;
 };

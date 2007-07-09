@@ -112,25 +112,15 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 {
     Q_ASSERT(subframe);
     PlatformMouseEvent ev = event.event();
-
-    QWidget *frame = subframe->view()->qwidget();
-
-    IntPoint mappedPos(frame->mapFromParent(ev.pos()));
-    IntPoint globalPos(ev.globalX(), ev.globalY());
-
-    PlatformMouseEvent mapped(mappedPos, globalPos, ev.button(), ev.eventType(),
-                              ev.clickCount(), ev.shiftKey(), ev.ctrlKey(),
-                              ev.altKey(), ev.metaKey(), ev.timestamp());
-
     switch(ev.eventType()) {
     case MouseEventMoved:
-        return subframe->eventHandler()->handleMouseMoveEvent(mapped);
+        return subframe->eventHandler()->handleMouseMoveEvent(ev);
     case MouseEventPressed:
-        return subframe->eventHandler()->handleMousePressEvent(mapped);
+        return subframe->eventHandler()->handleMousePressEvent(ev);
     case MouseEventReleased:
-        return subframe->eventHandler()->handleMouseReleaseEvent(mapped);
+        return subframe->eventHandler()->handleMouseReleaseEvent(ev);
     case MouseEventScroll:
-        return subframe->eventHandler()->handleMouseMoveEvent(mapped);
+        return subframe->eventHandler()->handleMouseMoveEvent(ev);
     default:
       return false;
     }

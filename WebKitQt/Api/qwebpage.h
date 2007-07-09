@@ -163,6 +163,19 @@ protected:
     virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
 
+    virtual void resizeEvent(QResizeEvent*);
+    virtual void paintEvent(QPaintEvent*);
+    virtual void mouseMoveEvent(QMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void mouseReleaseEvent(QMouseEvent*);
+    virtual void wheelEvent(QWheelEvent*);
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void keyReleaseEvent(QKeyEvent*);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
+    virtual bool focusNextPrevChild(bool next);
+
     virtual void dragEnterEvent(QDragEnterEvent *);
     virtual void dragLeaveEvent(QDragLeaveEvent *);
     virtual void dragMoveEvent(QDragMoveEvent *);

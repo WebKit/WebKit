@@ -47,6 +47,7 @@ typedef struct _GtkWidget GtkWidget;
 
 #if PLATFORM(QT)
 class QWidget;
+class QWebFrame;
 #endif
 
 namespace WebCore {
@@ -143,12 +144,21 @@ namespace WebCore {
 
 #if PLATFORM(QT)
         QWidget* qwidget() const;
-        QWidget* canvas() const;
-        void setQWidget(QWidget*);
+        void setQWidget(QWidget *widget);
+        QWidget* containingWindow() const;
+
+        QWebFrame* qwebframe() const;
+        void setQWebFrame(QWebFrame *webFrame);
         void setParent(ScrollView*);
         ScrollView* parent() const;
-        IntRect originalGeometry() const;
         virtual void geometryChanged() const;
+
+        IntRect convertToContainingWindow(const IntRect&) const;
+        IntPoint convertToContainingWindow(const IntPoint&) const;
+        IntPoint convertFromContainingWindow(const IntPoint&) const;
+
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 #endif
 
 #if PLATFORM(MAC)

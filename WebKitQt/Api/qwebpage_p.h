@@ -36,7 +36,6 @@ namespace WebCore
     class Page;
 }
 
-class QVBoxLayout;
 class QUndoStack;
 
 class QWebPagePrivate
@@ -52,7 +51,6 @@ public:
     WebCore::Page *page;
 
     QPointer<QWebFrame> mainFrame;
-    QVBoxLayout *layout;
 
     QWebPage *q;
     QUndoStack *undoStack;

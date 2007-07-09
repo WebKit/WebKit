@@ -90,8 +90,12 @@ void PopupMenu::populate(const IntRect& r)
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate(r);
-    m_popup->setGeometry(QRect(v->canvas()->mapToGlobal(QPoint(r.x(), r.y())),
-                               QSize(r.width(), m_popup->sizeHint().height())));
+    QRect rect = r;
+    rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
+    QRect global(v->containingWindow()->mapToGlobal(QPoint(rect.x(), rect.y())),
+                               QSize(rect.width(), m_popup->sizeHint().height()));
+
+    m_popup->setGeometry(global);
     m_popup->setCurrentIndex(index);
     m_popup->exec();
 }

@@ -1,3 +1,13 @@
+2007-07-09  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Convert QWebFrame from a QFrame to a pure QObject to eliminate all
+        traces of widgets.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

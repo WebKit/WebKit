@@ -41,43 +41,35 @@
 #include "PlatformScrollBar.h"
 #include "NotImplemented.h"
 
-#include <QFrame>
-#include <QWidget>
+#include "qwebframe.h"
+#include "qwebpage.h"
+
+#include <QDebug>
 
 namespace WebCore {
 
 struct WidgetPrivate
 {
-    WidgetPrivate() : m_client(0), m_widget(0), m_scrollArea(0), m_parentScrollView(0) { }
-    ~WidgetPrivate() { delete m_widget; }
+    WidgetPrivate() : m_client(0), m_widget(0), m_webFrame(0), m_parentScrollView(0) { }
+    ~WidgetPrivate() { delete m_webFrame; }
 
-    QWidget* canvas() const {
-        return m_widget;
-    }
     void setGeometry(const QRect &rect) {
-        ScrollView *mapper = m_parentScrollView;
-        QRect r = rect;
-        if (mapper) {
-            int h = -mapper->contentsX();
-            int v = -mapper->contentsY();
-            r = r.translated(h, v);
-        }
-        m_widget->setGeometry(r);
-
-        //Store the actual rect that webcore gives us
-        //this is used for drawing subframes on the main
-        //frame canvas.
-        m_originalGeometry = rect;
+        if (m_widget)
+            m_widget->setGeometry(rect);
+        m_geometry = rect;
     }
     QRect geometry() const {
-        return m_widget->geometry();
+        if (m_widget)
+            m_widget->geometry();
+        return m_geometry;
     }
 
     WidgetClient* m_client;
 
-    QRect m_originalGeometry;
-    QWidget* m_widget;
-    QFrame* m_scrollArea;
+    bool enabled;
+    QRect m_geometry;
+    QWidget *m_widget; //for plugins
+    QWebFrame *m_webFrame;
     ScrollView *m_parentScrollView;
 };
 
@@ -104,22 +96,18 @@ WidgetClient* Widget::client() const
 
 IntRect Widget::frameGeometry() const
 {
-    if (!data->m_widget)
-        return IntRect();
     return data->geometry();
 }
 
 void Widget::setFocus()
 {
-    if (data->canvas())
-        data->canvas()->setFocus();
 }
 
 void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
-    if (data->m_widget)
-        data->m_widget->setCursor(cursor.impl());
+    if (qwidget())
+        qwidget()->setCursor(cursor.impl());
 #endif
 }
 
@@ -127,34 +115,46 @@ void Widget::show()
 {
     if (data->m_widget)
         data->m_widget->show();
+    else
+        notImplemented();
 }
 
 void Widget::hide()
 {
     if (data->m_widget)
         data->m_widget->hide();
+    else
+        notImplemented();
 }
 
-void Widget::setQWidget(QWidget* child)
+QWebFrame* Widget::qwebframe() const
 {
-    data->m_widget = child;
-    data->m_scrollArea = qobject_cast<QFrame*>(child);
+    return data->m_webFrame;
+}
+
+void Widget::setQWebFrame(QWebFrame* webFrame)
+{
+    data->m_webFrame = webFrame;
 }
 
 QWidget* Widget::qwidget() const
 {
-    return data->m_widget;
+    if (data->m_widget)
+        return data->m_widget;
+
+    if (data->m_webFrame)
+        return data->m_webFrame->page();
+
+    return 0;
 }
 
-QWidget* Widget::canvas() const
+void Widget::setQWidget(QWidget *widget)
 {
-    return data->canvas();
+    data->m_widget = widget;
 }
 
 void Widget::setFrameGeometry(const IntRect& r)
 {
-    if (!data->m_widget)
-        return;
     data->setGeometry(r);
 }
 
@@ -164,10 +164,20 @@ void Widget::paint(GraphicsContext *, const IntRect &rect)
 
 bool Widget::isEnabled() const
 {
-    if (!data->m_widget)
-        return false;
+    if (data->m_widget)
+        return data->m_widget->isEnabled();
+    return data->enabled;
+}
 
-    return data->m_widget->isEnabled();
+void Widget::setEnabled(bool e)
+{
+    if (data->m_widget)
+        data->m_widget->setEnabled(e);
+
+    if (e != data->enabled) {
+        data->enabled = e;
+        invalidate();
+    }
 }
 
 void Widget::setIsSelected(bool)
@@ -175,35 +185,41 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-void Widget::setEnabled(bool en)
-{
-    if (data->m_widget)
-        data->m_widget->setEnabled(en);
-}
-
 void Widget::invalidate()
 {
-    if (data->m_widget)
-        data->m_widget->update();
-    else if (canvas())
-        canvas()->update();
-    else if (parent())
-        parent()->update();
+    invalidateRect(IntRect(0, 0, width(), height()));
 }
 
 void Widget::invalidateRect(const IntRect& r)
 {
     if (data->m_widget)
-        data->m_widget->update(r);
-    else if (canvas())
-        canvas()->update(r);
+        return data->m_widget->update(r);
+
+    // Get the root widget.
+    ScrollView* outermostView = parent();
+    while (outermostView && outermostView->parent())
+        outermostView = outermostView->parent();
+    if (!outermostView)
+        return;
+
+    IntRect windowRect = convertToContainingWindow(r);
+
+    // Get our clip rect and intersect with it to ensure we don't invalidate too much.
+    IntRect clipRect = windowClipRect();
+    windowRect.intersect(clipRect);
+
+    if (qwidget())
+        qwidget()->update(r);
     else if (parent())
         parent()->updateContents(r);
+
+    outermostView->addToDirtyRegion(windowRect);
 }
 
 void Widget::removeFromParent()
 {
-    notImplemented();
+    if (parent())
+        parent()->removeChild(this);
 }
 
 void Widget::setParent(ScrollView* sv)
@@ -216,25 +232,50 @@ ScrollView* Widget::parent() const
     return data->m_parentScrollView;
 }
 
-IntRect Widget::originalGeometry() const
-{
-    if (!data->m_widget)
-        return IntRect();
-
-    if (data->m_originalGeometry.isValid())
-        return data->m_originalGeometry;
-
-    return data->geometry();
-}
-
 void Widget::geometryChanged() const
 {
-    //Re-maps to the parent scroll content.
-    //Useful for when the parent scrolls the
-    //content before webcore explicitly sets
-    //the childrens geometry.
-    if (data->m_originalGeometry.isValid())
-        data->setGeometry(data->m_originalGeometry);
+}
+
+IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
+{
+    IntPoint windowPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        windowPoint = parentWidget->convertChildToSelf(childWidget, windowPoint);
+    return windowPoint;
+}
+
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
+{
+    IntPoint widgetPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        widgetPoint = parentWidget->convertSelfToChild(childWidget, widgetPoint);
+    return widgetPoint;
+}
+
+IntRect Widget::convertToContainingWindow(const IntRect& rect) const
+{
+    IntRect convertedRect = rect;
+    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
+    return convertedRect;
+}
+
+IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() + child->x(), point.y() + child->y());
+}
+
+IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() - child->x(), point.y() - child->y());
+}
+
+QWidget *Widget::containingWindow() const
+{
+    return qwidget();
 }
 
 }

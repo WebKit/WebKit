@@ -1,3 +1,62 @@
+2007-07-09  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Convert QWebFrame from a QFrame to a pure QObject to eliminate all
+        traces of widgets.
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::ScrollViewPrivate::windowClipRect):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::paint):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::WidgetPrivate::setGeometry):
+        (WebCore::WidgetPrivate::geometry):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::qwebframe):
+        (WebCore::Widget::setQWebFrame):
+        (WebCore::Widget::qwidget):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::removeFromParent):
+        (WebCore::Widget::geometryChanged):
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+        (WebCore::Widget::convertChildToSelf):
+        (WebCore::Widget::convertSelfToChild):
+        (WebCore::Widget::containingWindow):
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
