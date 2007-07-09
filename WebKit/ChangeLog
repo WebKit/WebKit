@@ -1,3 +1,17 @@
+2007-07-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/5320208> WebKit should prevent Time Machine from backing up WebKit clients' icon databases
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        Re-added the code to exclude the icon database from backups. We now do this at the same time we (try to) import
+        the old icon database format, which happens only once per icon database's lifetime.
+        (-[WebIconDatabase _importToWebCoreFormat]):
+        Assert that we haven't imported yet rather than bailing out. It's now the caller's responsibility to check
+        whether we've imported yet.
+
 2007-07-08  John Sullivan  <sullivan@apple.com>
 
         * Misc/WebIconDatabase.mm:

@@ -124,9 +124,22 @@ NSSize WebIconLargeSize = {128, 128};
     // Open the WebCore icon database and import the old WebKit icon database
     if (!iconDatabase()->open(databaseDirectory))
         LOG_ERROR("Unable to open icon database");
-    else {
-        if ([self _isEnabled])
-            [self _importToWebCoreFormat];
+    else if ([self _isEnabled] && !iconDatabase()->imported()) {
+        [self _importToWebCoreFormat];
+        
+#ifndef BUILDING_ON_TIGER 
+        // Tell backup software (i.e., Time Machine) to never back up the icon database, because  
+        // it's a large file that changes frequently, thus using a lot of backup disk space, and 
+        // it's unlikely that many users would be upset about it not being backed up. We do this 
+        // here because this code is only executed once for each icon database instance. We could 
+        // make this configurable on a per-client basis someday if that seemed useful. 
+        // See <rdar://problem/5320208>.
+        CFStringRef databasePath = iconDatabase()->databasePath().createCFString();
+        CFURLRef databasePathURL = CFURLCreateWithFileSystemPath(0, databasePath, kCFURLPOSIXPathStyle, FALSE); 
+        CFRelease(databasePath);
+        CSBackupSetItemExcluded(databasePathURL, true, true); 
+        CFRelease(databasePathURL);
+#endif 
     }
 
     iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
@@ -496,11 +509,10 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 
 - (void)_importToWebCoreFormat
 {
-    ASSERT(_private);    
-    
-    // If we've already performed the import once we shouldn't try to do it again
-    if (iconDatabase()->imported())
-        return;
+    ASSERT(_private);
+
+    // If we've already performed the import once we shouldn't be trying to do it again
+    ASSERT(!iconDatabase()->imported());
 
     // Get the directory the old icon database *should* be in
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
