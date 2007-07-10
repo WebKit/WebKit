@@ -1326,9 +1326,18 @@ HTMLHeadElement* Document::head()
 
 void Document::close()
 {
-    if (frame())
-        frame()->loader()->endIfNotLoadingMainResource();
-    implicitClose();
+    Frame* frame = this->frame();
+    if (frame) {
+        // This code calls implicitClose() if all loading has completed.
+        FrameLoader* frameLoader = frame->loader();
+        frameLoader->endIfNotLoadingMainResource();
+        frameLoader->checkCompleted();
+    } else {
+        // Because we have no frame, we don't know if all loading has completed,
+        // so we just call implicitClose() immediately. FIXME: This might fire
+        // the load event prematurely <http://bugs.webkit.org/show_bug.cgi?id=14568>.
+        implicitClose();
+    }
 }
 
 void Document::implicitClose()

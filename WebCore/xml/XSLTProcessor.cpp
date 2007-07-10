@@ -227,11 +227,8 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString&
     
     result->write(documentSource);
     result->finishParsing();
-    if (frame)
-        frame->loader()->checkCompleted();
-    else
-        result->close(); // FIXME: Even viewless docs can load subresources. onload will fire too early.
-                         // This is probably a bug in XMLHttpRequestObjects as well.
+    result->close();
+
     return result;
 }
 

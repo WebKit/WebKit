@@ -1,3 +1,21 @@
+2007-07-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=13241 | <rdar://problem/5126396>
+        onload fires before content is finished loading (woot.com)
+        
+        * dom/Document.cpp:
+        (WebCore::Document::close): Try to go through the normal "Am I done loading?"
+        machinery before dispatching the load event. As the comment indicates, 
+        we can't do this in all cases, so the fix isn't perfect. However, a perfect 
+        solution would require much riskier sweeping changes to the loader, which 
+        are best left for later, I think.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Removed a slightly
+        worse solution to the same problem.
+
 2007-07-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

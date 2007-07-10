@@ -1,3 +1,13 @@
+2007-07-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        * fast/events/onload-after-document-close-no-subresource-expected.txt: Added.
+        * fast/events/onload-after-document-close-no-subresource.html: Added.
+        * fast/events/onload-after-document-close-with-subresource-expected.txt: Added.
+        * fast/events/onload-after-document-close-with-subresource.html: Added.
+        * fast/events/resources/onload-image.png: Added.
+
 2007-07-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
