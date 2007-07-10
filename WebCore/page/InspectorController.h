@@ -110,9 +110,8 @@ private:
     void removeScriptResource(InspectorResource*);
 
     JSObjectRef addAndUpdateScriptResource(InspectorResource*);
-    void updateScriptResource(InspectorResource*, const ResourceRequest&);
-    void updateScriptResource(InspectorResource*, const ResourceResponse&, bool redirect = false);
-    void updateScriptResource(InspectorResource*, const ResourceError&);
+    void updateScriptResourceRequest(InspectorResource*);
+    void updateScriptResourceResponse(InspectorResource*);
     void updateScriptResource(InspectorResource*, int length);
     void updateScriptResource(InspectorResource*, bool finished, bool failed = false);
     void updateScriptResource(InspectorResource*, double startTime, double responseReceivedTime, double endTime);

@@ -1,3 +1,39 @@
+2007-07-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5326126> InspectorResource holds onto more data than it needs
+
+        Reduces the fixed size of InspectorResource from 630 bytes to 224 bytes. Now
+        selectively pick out parts of the ResourceRequest and ResourceResponse objects
+        for the info needed and store that directly in InspectorResource.
+
+        The ResourceRequest and ResourceResponse objects hold a reference to the original
+        NSURL object, so almost double the data was being kept around. So the struct size
+        reduction is just the tip of the ice burg on what this really saves.
+
+        In a test of 100,000 XMLHTTPRequests using a 85 byte long data URL, I see ~21 MB less
+        RSIZE compared to Safari running without this change.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorResource::type):
+        (WebCore::addSourceToFrame):
+        (WebCore::scriptObjectForRequest):
+        (WebCore::scriptObjectForResponse):
+        (WebCore::InspectorController::addScriptResource):
+        (WebCore::InspectorController::addAndUpdateScriptResource):
+        (WebCore::updateResourceRequest):
+        (WebCore::updateResourceResponse):
+        (WebCore::InspectorController::updateScriptResourceRequest):
+        (WebCore::InspectorController::updateScriptResourceResponse):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didFailLoading):
+        * page/InspectorController.h:
+
 2007-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
