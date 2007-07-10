@@ -1,3 +1,12 @@
+2007-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Ignore Page.o in debug builds because it now has a static PageCounter
+        object.
+
+        * Scripts/check-for-global-initializers:
+
 2007-07-09  Darin Adler  <darin@apple.com>
 
         * Scripts/run-webkit-tests: Moved leaks from Tiger that are marked as fixed in Leopard to a Tiger-only section.

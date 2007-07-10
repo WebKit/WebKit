@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
+#include "Logging.h"
 #include "ProgressTracker.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
@@ -50,6 +51,21 @@ namespace WebCore {
 
 static HashSet<Page*>* allPages;
 static HashMap<String, HashSet<Page*>*>* frameNamespaces;
+
+#ifndef NDEBUG
+WTFLogChannel LogWebCorePageLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+struct PageCounter { 
+    static int count; 
+    ~PageCounter() 
+    { 
+        if (count)
+            LOG(WebCorePageLeaks, "LEAK: %d Page\n", count);
+    }
+};
+int PageCounter::count = 0;
+static PageCounter pageCounter;
+#endif
 
 Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient)
     : m_chrome(new Chrome(this, chromeClient))
@@ -73,6 +89,10 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 
     ASSERT(!allPages->contains(this));
     allPages->add(this);
+
+#ifndef NDEBUG
+    ++PageCounter::count;
+#endif
 }
 
 Page::~Page()
@@ -90,6 +110,8 @@ Page::~Page()
     m_backForwardList->close();
 
 #ifndef NDEBUG
+    --PageCounter::count;
+
     // Cancel keepAlive timers, to ensure we release all Frames before exiting.
     // It's safe to do this because we prohibit closing a Page while JavaScript
     // is executing.

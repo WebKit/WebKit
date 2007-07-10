@@ -1,3 +1,18 @@
+2007-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Added a Page counter. This helped me while investigating 
+        <rdar://problem/5314463> 40MB of WebKit memory still allocated after 
+        closing large email in Mail
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::):
+        (WebCore::PageCounter::~PageCounter):
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+
 2007-07-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.
