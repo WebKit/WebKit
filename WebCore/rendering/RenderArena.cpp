@@ -67,8 +67,7 @@ RenderArena::RenderArena(unsigned arenaSize)
 
 RenderArena::~RenderArena()
 {
-    // Free the arena in the pool and finish using it
-    FreeArenaPool(&m_pool);
+    FinishArenaPool(&m_pool);
 }
 
 void* RenderArena::allocate(size_t size)

@@ -1,3 +1,21 @@
+2007-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Disabled Arena recycling in RenderArena. PLT shows no regression 
+        (possibly a small speedup), and this can reduce allocated memory in 
+        WebKit clients by about 120K (4K per Arena * 30 Arenas).
+        
+        I happened upon this optimization while investigating 
+        <rdar://problem/5314463> WebKit hangs on to 40MB RAM after closing 
+        large email in Mail (appears to be render tree arena allocator), 
+        although I don't think it will come close to fixing that bug 
+        completely.
+
+        * rendering/RenderArena.cpp:
+        (WebCore::RenderArena::~RenderArena): Use FinishArenaPool, which frees
+        the ArenaPool's Arenas immediately.
+
 2007-07-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
