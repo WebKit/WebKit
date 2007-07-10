@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,9 +55,9 @@
 #include "kjs_dom.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSStringRef.h>
 
 namespace WebCore {
 
@@ -584,7 +584,8 @@ void InspectorController::detachWindow()
 
 void InspectorController::windowScriptObjectAvailable()
 {
-    ASSERT(m_page);
+    if (!m_page)
+        return;
 
     m_scriptContext = toRef(m_page->mainFrame()->scriptProxy()->interpreter()->globalExec());
 
@@ -651,7 +652,8 @@ void InspectorController::scriptObjectReady()
 void InspectorController::windowUnloading()
 {
     m_client->closeWindow();
-    m_page->setParentInspectorController(0);
+    if (m_page)
+        m_page->setParentInspectorController(0);
 
     ASSERT(m_scriptContext && m_scriptObject);
     JSValueUnprotect(m_scriptContext, m_scriptObject);

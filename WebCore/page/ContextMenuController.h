@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,20 @@
 #ifndef ContextMenuController_h
 #define ContextMenuController_h
 
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
-
-#include "ContextMenu.h"
 
 namespace WebCore {
+
+    class ContextMenu;
     class ContextMenuClient;
+    class ContextMenuItem;
     class Event;
-    class Node;
     class Page;
 
-    class ContextMenuController : Noncopyable
-    {
+    class ContextMenuController : Noncopyable {
     public:
-        ContextMenuController(Page*, ContextMenuClient*);
+        ContextMenuController(ContextMenuClient*);
         ~ContextMenuController();
 
         ContextMenuClient* client() { return m_client; }

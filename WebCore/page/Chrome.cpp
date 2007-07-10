@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "InspectorController.h"
 #include "Page.h"
 #include "ResourceHandle.h"
@@ -359,4 +360,3 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 }
 
 } // namespace WebCore
-

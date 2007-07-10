@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,19 @@
 #include "config.h"
 #include "DragController.h"
 
+#include "CSSStyleDeclaration.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
-#include "CSSStyleDeclaration.h"
+#include "DocLoader.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "DocLoader.h"
 #include "DragActions.h"
+#include "DragClient.h"
+#include "DragData.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
 #include "EventHandler.h"
-#include "DragClient.h"
-#include "DragData.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -46,8 +46,8 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "Image.h"
-#include "markup.h"
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"
@@ -60,6 +60,7 @@
 #include "Settings.h"
 #include "SystemTime.h"
 #include "Text.h"
+#include "markup.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

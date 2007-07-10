@@ -290,7 +290,8 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
         if (Frame* frame = m_frame->tree()->find(request.frameName())) {
             if (!request.resourceRequest().url().isEmpty())
                 frame->loader()->load(request, true, 0, 0, HashMap<String, String>());
-            frame->page()->chrome()->focus();
+            if (Page* page = frame->page())
+                page->chrome()->focus();
             created = false;
             return frame;
         }
@@ -299,11 +300,13 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
     FrameLoadRequest requestWithReferrer = request;
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
     
-    Page* page;
-    if (features.dialog)
-        page = m_frame->page()->chrome()->createModalDialog(m_frame, requestWithReferrer);
-    else
-        page = m_frame->page()->chrome()->createWindow(m_frame, requestWithReferrer);
+    Page* page = m_frame->page();
+    if (page) {
+        if (features.dialog)
+            page = page->chrome()->createModalDialog(m_frame, requestWithReferrer);
+        else
+            page = page->chrome()->createWindow(m_frame, requestWithReferrer);
+    }
     if (!page)
         return 0;
 
@@ -440,7 +443,7 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     }
 
     if (!canLoad(url, referrer)) {
-        FrameLoader::reportLocalLoadFailed(frame()->page(), url.url());
+        FrameLoader::reportLocalLoadFailed(m_frame->page(), url.url());
         return 0;
     }
 
@@ -1487,7 +1490,7 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
             pluginElement = static_cast<Element*>(renderer->node());
 
         if (!canLoad(url, frame()->document())) {
-            FrameLoader::reportLocalLoadFailed(frame()->page(), url.url());
+            FrameLoader::reportLocalLoadFailed(m_frame->page(), url.url());
             return false;
         }
 
@@ -1753,8 +1756,8 @@ bool FrameLoader::containsPlugins() const
 
 void FrameLoader::prepareForLoadStart()
 {
-    if (m_frame->page())
-        m_frame->page()->progress()->progressStarted(m_frame);
+    if (Page* page = m_frame->page())
+        page->progress()->progressStarted(m_frame);
     m_client->dispatchDidStartProvisionalLoad();
 }
 
@@ -1796,7 +1799,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
     ASSERT(frame()->document());
     if (!canLoad(url, frame()->document()) &&
         !canLoad(url, referrer)) {
-        FrameLoader::reportLocalLoadFailed(frame()->page(), url.url());
+        FrameLoader::reportLocalLoadFailed(m_frame->page(), url.url());
         return;
     }
 
@@ -1827,7 +1830,8 @@ void FrameLoader::load(const FrameLoadRequest& request, bool userGesture, Event*
             request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), event, submitForm, formValues);
 
     if (targetFrame && targetFrame != m_frame)
-        targetFrame->page()->chrome()->focus();
+        if (Page* page = targetFrame->page())
+            page->chrome()->focus();
 }
 
 void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType newLoadType,
@@ -2014,7 +2018,7 @@ bool FrameLoader::canLoad(const CachedResource& resource, const Document* doc)
 void FrameLoader::reportLocalLoadFailed(const Page* page, const String& url)
 {
     ASSERT(!url.isEmpty());
-    if(page)
+    if (page)
         page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Not allowed to load local resource: " + url, 0, String());
 }
 
@@ -2165,31 +2169,32 @@ void FrameLoader::reload()
 
 bool FrameLoader::canTarget(Frame* target) const
 {
-    // This method prevents this exploit:
+    // This function prevents this exploit:
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
 
+    // Allow if there is no specific target.
     if (!target)
         return true;
 
-    // Allow with navigation within the same page/frameset.
+    // Allow navigation within the same page/frameset.
     if (m_frame->page() == target->page())
         return true;
 
+    // Allow if the request is made from a local file.
     ASSERT(m_frame->document());
     String domain = m_frame->document()->domain();
-    // Allow if the request is made from a local file.
     if (domain.isEmpty())
         return true;
     
+    // Allow if target is an entire window (top level frame of a window).
     Frame* parent = target->tree()->parent();
-    // Allow if target is an entire window.
     if (!parent)
         return true;
     
+    // Allow if the domain of the parent of the targeted frame equals this domain.
     String parentDomain;
     if (Document* parentDocument = parent->document())
         domain = parentDocument->domain();
-    // Allow if the domain of the parent of the targeted frame equals this domain.
     return equalIgnoringCase(parentDomain, domain);
 }
 
@@ -2332,8 +2337,8 @@ void FrameLoader::setState(FrameState newState)
 void FrameLoader::clearProvisionalLoad()
 {
     setProvisionalDocumentLoader(0);
-    if (m_frame->page())
-        m_frame->page()->progress()->progressCompleted(m_frame);
+    if (Page* page = m_frame->page())
+        page->progress()->progressCompleted(m_frame);
     setState(FrameStateComplete);
 }
 
@@ -2417,15 +2422,16 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         case FrameLoadTypeForward:
         case FrameLoadTypeBack:
         case FrameLoadTypeIndexedBackForward:
-            if (m_frame->page()->backForwardList()) {
-                updateHistoryForBackForwardNavigation();
+            if (Page* page = m_frame->page())
+                if (page->backForwardList()) {
+                    updateHistoryForBackForwardNavigation();
 
-                // Create a document view for this document, or used the cached view.
-                if (cachedPage)
-                    m_client->setDocumentViewFromCachedPage(cachedPage.get());
-                else
-                    m_client->makeDocumentView();
-            }
+                    // Create a document view for this document, or used the cached view.
+                    if (cachedPage)
+                        m_client->setDocumentViewFromCachedPage(cachedPage.get());
+                    else
+                        m_client->makeDocumentView();
+                }
             break;
 
         case FrameLoadTypeReload:
@@ -2531,6 +2537,7 @@ void FrameLoader::closeOldDataSources()
 
 void FrameLoader::open(CachedPage& cachedPage)
 {
+    ASSERT(m_frame->page());
     ASSERT(m_frame->page()->mainFrame() == m_frame);
 
     cancelRedirection();
@@ -2733,8 +2740,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             // Check all children first.
             RefPtr<HistoryItem> item;
-            if (isBackForwardLoadType(loadType()) && m_frame == m_frame->page()->mainFrame())
-                item = m_currentHistoryItem;
+            if (Page* page = m_frame->page())
+                if (isBackForwardLoadType(loadType()) && m_frame == page->mainFrame())
+                    item = m_currentHistoryItem;
                 
             bool shouldReset = true;
             if (!pdl->isLoadingInAPISense()) {
@@ -2758,9 +2766,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                         shouldReset = false;
                 }
             }
-            if (shouldReset && item && m_frame->page())
-                 m_frame->page()->backForwardList()->goToItem(item.get());
-
+            if (shouldReset && item)
+                if (Page* page = m_frame->page())
+                    page->backForwardList()->goToItem(item.get());
             return;
         }
         
@@ -2778,9 +2786,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             m_client->forceLayoutForNonHTML();
              
             // If the user had a scroll point, scroll to it, overriding the anchor point if any.
-            if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload)
-                    && m_frame->page() && m_frame->page()->backForwardList())
-                restoreScrollPositionAndViewState();
+            if (Page* page = m_frame->page())
+                if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload) && page->backForwardList())
+                    restoreScrollPositionAndViewState();
 
             if (m_creatingInitialEmptyDocument || !m_committedFirstRealDocumentLoad)
                 return;
@@ -2791,8 +2799,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             else
                 m_client->dispatchDidFinishLoad();
 
-            if (m_frame->page())
-                m_frame->page()->progress()->progressCompleted(m_frame);
+            if (Page* page = m_frame->page())
+                page->progress()->progressCompleted(m_frame);
             return;
         }
         
@@ -2826,8 +2834,12 @@ void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
 
     m_provisionalDocumentLoader->setLoadingFromCachedPage(false);
 
-    unsigned long identifier = m_frame->page()->progress()->createUniqueIdentifier();
-    dispatchAssignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
+    unsigned long identifier = 0;
+
+    if (Page* page = m_frame->page()) {
+        identifier = page->progress()->createUniqueIdentifier();
+        dispatchAssignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
+    }
 
     if (!m_provisionalDocumentLoader->startLoadingMainResource(identifier))
         m_provisionalDocumentLoader->updateLoading();
@@ -2835,8 +2847,9 @@ void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
 
 void FrameLoader::didFirstLayout()
 {
-    if (isBackForwardLoadType(m_loadType) && m_frame->page() && m_frame->page()->backForwardList())
-        restoreScrollPositionAndViewState();
+    if (Page* page = m_frame->page())
+        if (isBackForwardLoadType(m_loadType) && page->backForwardList())
+            restoreScrollPositionAndViewState();
 
     m_firstLayoutDone = true;
     m_client->dispatchDidFirstLayout();
@@ -2990,10 +3003,9 @@ void FrameLoader::detachFromParent()
     saveScrollPositionAndViewStateToItem(currentHistoryItem());
     detachChildren();
 
-    if (m_frame->page()) {
-        if (InspectorController* inspector = m_frame->page()->inspectorController())
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
             inspector->frameDetachedFromParent(m_frame);
-    }
 
     m_client->detachedFromParent2();
     setDocumentLoader(0);
@@ -3047,8 +3059,8 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainRes
     if (request.mainDocumentURL().isEmpty()) {
         if (mainResource && (isLoadingMainFrame() || alwaysFromRequest))
             request.setMainDocumentURL(request.url());
-        else
-            request.setMainDocumentURL(m_frame->page()->mainFrame()->loader()->url());
+        else if (Page* page = m_frame->page())
+            request.setMainDocumentURL(page->mainFrame()->loader()->url());
     }
     
     if (mainResource)
@@ -3122,10 +3134,11 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     
     if (!referrer.isEmpty())
         initialRequest.setHTTPReferrer(referrer);
-    
-    initialRequest.setMainDocumentURL(m_frame->page()->mainFrame()->loader()->documentLoader()->request().url());
+
+    if (Page* page = m_frame->page())
+        initialRequest.setMainDocumentURL(page->mainFrame()->loader()->documentLoader()->request().url());
     initialRequest.setHTTPUserAgent(client()->userAgent(request.url()));
-    
+
     unsigned long identifier = 0;    
     ResourceRequest newRequest(initialRequest);
     requestFromDelegate(newRequest, identifier, error);
@@ -3154,22 +3167,22 @@ void FrameLoader::didReceiveResponse(ResourceLoader* loader, const ResourceRespo
 {
     activeDocumentLoader()->addResponse(r);
     
-    if (m_frame->page())
-        m_frame->page()->progress()->incrementProgress(loader->identifier(), r);
+    if (Page* page = m_frame->page())
+        page->progress()->incrementProgress(loader->identifier(), r);
     dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
 }
 
 void FrameLoader::didReceiveData(ResourceLoader* loader, const char* data, int length, int lengthReceived)
 {
-    if (m_frame->page())
-        m_frame->page()->progress()->incrementProgress(loader->identifier(), data, length);
+    if (Page* page = m_frame->page())
+        page->progress()->incrementProgress(loader->identifier(), data, length);
     dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), lengthReceived);
 }
 
 void FrameLoader::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
 {
-    if (m_frame->page())
-        m_frame->page()->progress()->completeProgress(loader->identifier());
+    if (Page* page = m_frame->page())
+        page->progress()->completeProgress(loader->identifier());
     if (!error.isNull())
         m_client->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
 }
@@ -3425,11 +3438,12 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(m_policyLoadType) && m_frame->page()) {
-            Frame* mainFrame = m_frame->page()->mainFrame();
-            if (HistoryItem* resetItem = mainFrame->loader()->m_currentHistoryItem.get())
-                m_frame->page()->backForwardList()->goToItem(resetItem);
-        }
+        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(m_policyLoadType))
+            if (Page* page = m_frame->page()) {
+                Frame* mainFrame = page->mainFrame();
+                if (HistoryItem* resetItem = mainFrame->loader()->m_currentHistoryItem.get())
+                    page->backForwardList()->goToItem(resetItem);
+            }
         return;
     }
 
@@ -3496,8 +3510,11 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
 {
     ASSERT(!request.isNull());
 
-    identifier = m_frame->page()->progress()->createUniqueIdentifier();
-    dispatchAssignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
+    identifier = 0;
+    if (Page* page = m_frame->page()) {
+        identifier = page->progress()->createUniqueIdentifier();
+        dispatchAssignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
+    }
 
     ResourceRequest newRequest(request);
     dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
@@ -3531,38 +3548,43 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
 
 bool FrameLoader::canGoBackOrForward(int distance) const
 {
-    if (distance == 0)
-        return true;
-    if (distance > 0 && distance <= m_frame->page()->backForwardList()->forwardListCount())
-        return true;
-    if (distance < 0 && -distance <= m_frame->page()->backForwardList()->backListCount())
-        return true;
+    if (Page* page = m_frame->page()) {
+        if (distance == 0)
+            return true;
+        if (distance > 0 && distance <= page->backForwardList()->forwardListCount())
+            return true;
+        if (distance < 0 && -distance <= page->backForwardList()->backListCount())
+            return true;
+    }
     return false;
 }
 
 int FrameLoader::getHistoryLength()
 {
-    return m_frame->page()->backForwardList()->backListCount() + 1;
+    if (Page* page = m_frame->page())
+        return page->backForwardList()->backListCount() + 1;
+    return 0;
 }
 
 KURL FrameLoader::historyURL(int distance)
 {
-    BackForwardList *list = m_frame->page()->backForwardList();
-    HistoryItem* item = list->itemAtIndex(distance);
-    if (!item) {
-        if (distance > 0) {
-            int forwardListCount = list->forwardListCount();
-            if (forwardListCount > 0)
-                item = list->itemAtIndex(forwardListCount);
-        } else {
-            int backListCount = list->backListCount();
-            if (backListCount > 0)
-                item = list->itemAtIndex(-backListCount);
+    if (Page* page = m_frame->page()) {
+        BackForwardList* list = page->backForwardList();
+        HistoryItem* item = list->itemAtIndex(distance);
+        if (!item) {
+            if (distance > 0) {
+                int forwardListCount = list->forwardListCount();
+                if (forwardListCount > 0)
+                    item = list->itemAtIndex(forwardListCount);
+            } else {
+                int backListCount = list->backListCount();
+                if (backListCount > 0)
+                    item = list->itemAtIndex(-backListCount);
+            }
         }
+        if (item)
+            return item->url();
     }
-    if (item)
-        return item->url();
-
     return KURL();
 }
 
@@ -3582,12 +3604,14 @@ bool FrameLoader::loadProvisionalItemFromCachedPage()
 
 void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
 {
-    RefPtr<CachedPage> cachedPage = CachedPage::create(m_frame->page());
-    cachedPage->setTimeStampToNow();
-    cachedPage->setDocumentLoader(documentLoader());
-    m_client->saveDocumentViewToCachedPage(cachedPage.get());
+    if (Page* page = m_frame->page()) {
+        RefPtr<CachedPage> cachedPage = CachedPage::create(page);
+        cachedPage->setTimeStampToNow();
+        cachedPage->setDocumentLoader(documentLoader());
+        m_client->saveDocumentViewToCachedPage(cachedPage.get());
 
-    pageCache()->add(item, cachedPage.get());
+        pageCache()->add(item, cachedPage.release());
+    }
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& URL) const
@@ -3649,14 +3673,14 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
 
 void FrameLoader::addBackForwardItemClippedAtTarget(bool doClip)
 {
-    if (!documentLoader()->urlForHistory().isEmpty()) {
-        Frame* mainFrame = m_frame->page()->mainFrame();
-        ASSERT(mainFrame);
-        RefPtr<HistoryItem> item = mainFrame->loader()->createHistoryItemTree(m_frame, doClip);
-        LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->URL().url().ascii());
-        ASSERT(m_frame->page());
-        m_frame->page()->backForwardList()->addItem(item);
-    }
+    if (Page* page = m_frame->page())
+        if (!documentLoader()->urlForHistory().isEmpty()) {
+            Frame* mainFrame = page->mainFrame();
+            ASSERT(mainFrame);
+            RefPtr<HistoryItem> item = mainFrame->loader()->createHistoryItemTree(m_frame, doClip);
+            LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->URL().url().ascii());
+            page->backForwardList()->addItem(item);
+        }
 }
 
 PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, bool clipAtTarget)
@@ -3925,16 +3949,17 @@ void FrameLoader::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
-    if (shouldGoToHistoryItem(targetItem)) {
-        BackForwardList* bfList = m_frame->page()->backForwardList();
-        HistoryItem* currentItem = bfList->currentItem();
-        
-        // Set the BF cursor before commit, which lets the user quickly click back/forward again.
-        // - plus, it only makes sense for the top level of the operation through the frametree,
-        // as opposed to happening for some/one of the page commits that might happen soon
-        bfList->goToItem(targetItem);
-        recursiveGoToItem(targetItem, currentItem, type);
-    }
+    if (Page* page = m_frame->page())
+        if (shouldGoToHistoryItem(targetItem)) {
+            BackForwardList* bfList = page->backForwardList();
+            HistoryItem* currentItem = bfList->currentItem();
+            
+            // Set the BF cursor before commit, which lets the user quickly click back/forward again.
+            // - plus, it only makes sense for the top level of the operation through the frametree,
+            // as opposed to happening for some/one of the page commits that might happen soon
+            bfList->goToItem(targetItem);
+            recursiveGoToItem(targetItem, currentItem, type);
+        }
 }
 
 // The general idea here is to traverse the frame tree and the item tree in parallel,
@@ -4212,8 +4237,8 @@ ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& respons
 
 void FrameLoader::didFinishLoad(ResourceLoader* loader)
 {    
-    if (m_frame->page())
-        m_frame->page()->progress()->completeProgress(loader->identifier());
+    if (Page* page = m_frame->page())
+        page->progress()->completeProgress(loader->identifier());
     dispatchDidFinishLoading(loader->documentLoader(), loader->identifier());
 }
 
@@ -4332,13 +4357,13 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchWindowObjectAvailable()
 {
-    Settings* settings = m_frame->settings();
-    if (settings && settings->isJavaScriptEnabled()) {
-        m_client->windowObjectCleared();
-
-        if (InspectorController* inspector = m_frame->page()->parentInspectorController())
-            inspector->windowScriptObjectAvailable();
-    }
+    if (Settings* settings = m_frame->settings())
+        if (settings->isJavaScriptEnabled()) {
+            m_client->windowObjectCleared();
+            if (Page* page = m_frame->page())
+                if (InspectorController* inspector = page->parentInspectorController())
+                    inspector->windowScriptObjectAvailable();
+        }
 }
 
 Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)
@@ -4427,56 +4452,63 @@ void FrameLoader::dispatchDidCommitLoad()
 {
     m_client->dispatchDidCommitLoad();
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->didCommitLoad(m_documentLoader.get());
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->didCommitLoad(m_documentLoader.get());
 }
 
 void FrameLoader::dispatchAssignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     m_client->assignIdentifierToInitialRequest(identifier, loader, request);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->identifierForInitialRequest(identifier, loader, request);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->identifierForInitialRequest(identifier, loader, request);
 }
 
 void FrameLoader::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     m_client->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->willSendRequest(loader, identifier, request, redirectResponse);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->willSendRequest(loader, identifier, request, redirectResponse);
 }
 
 void FrameLoader::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
 {
     m_client->dispatchDidReceiveResponse(loader, identifier, r);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->didReceiveResponse(loader, identifier, r);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->didReceiveResponse(loader, identifier, r);
 }
 
 void FrameLoader::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
 {
     m_client->dispatchDidReceiveContentLength(loader, identifier, length);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->didReceiveContentLength(loader, identifier, length);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->didReceiveContentLength(loader, identifier, length);
 }
 
 void FrameLoader::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {
     m_client->dispatchDidFinishLoading(loader, identifier);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->didFinishLoading(loader, identifier);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->didFinishLoading(loader, identifier);
 }
 
 bool FrameLoader::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
     bool result = m_client->dispatchDidLoadResourceFromMemoryCache(loader, request, response, length);
 
-    if (InspectorController* inspector = m_frame->page()->inspectorController())
-        inspector->didLoadResourceFromMemoryCache(loader, request, response, length);
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->didLoadResourceFromMemoryCache(loader, request, response, length);
 
     return result;
 }

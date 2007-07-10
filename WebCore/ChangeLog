@@ -1,3 +1,62 @@
+2007-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix <rdar://problem/5318732> REGRESSION: In Mail, a crash occurs when attempting to send
+          a HTML based message (nytimes.com, washingtonpost.com, latimes.com)
+
+        Did an audit of calls to get the inspector and most other uses of Page* and added null
+        checks since Frame* can outlast its Page*.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow): Added null check.
+        (WebCore::FrameLoader::loadSubframe): Ditto.
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::transitionToCommitted): Ditto.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm): Ditto.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Ditto.
+        (WebCore::FrameLoader::loadResourceSynchronously): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Ditto.
+        (WebCore::FrameLoader::requestFromDelegate): Ditto.
+        (WebCore::FrameLoader::canGoBackOrForward): Ditto.
+        (WebCore::FrameLoader::getHistoryLength): Ditto.
+        (WebCore::FrameLoader::historyURL): Ditto.
+        (WebCore::FrameLoader::cachePageForHistoryItem): Ditto.
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget): Ditto.
+        (WebCore::FrameLoader::goToItem): Ditto.
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable): Ditto.
+        (WebCore::FrameLoader::dispatchDidCommitLoad): Ditto.
+        (WebCore::FrameLoader::dispatchAssignIdentifierToInitialRequest): Ditto.
+        (WebCore::FrameLoader::dispatchWillSendRequest): Ditto.
+        (WebCore::FrameLoader::dispatchDidReceiveResponse): Ditto.
+        (WebCore::FrameLoader::dispatchDidReceiveContentLength): Ditto.
+        (WebCore::FrameLoader::dispatchDidFinishLoading): Ditto.
+        (WebCore::FrameLoader::dispatchDidLoadResourceFromMemoryCache): Ditto.
+
+        * page/ContextMenuController.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController): Removed unneeded and
+        unused Page* parameter.
+        (WebCore::openNewWindow): Added null check.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+
+        * page/InspectorController.h:
+        (WebCore::InspectorController::pageDestroyed): Added. Since this object is
+        owned by the Page and has a back-pointer to it, it needs an explicit disconnect.
+        There's already a higher-level one, but this is more reliable than that.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable): Added null check.
+        (WebCore::InspectorController::windowUnloading): Ditto.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Updated for change in parameters of ContextMenuController 
+        constructor.
+        (WebCore::Page::~Page): Added call to InspectorController pageDestroyed().
+
+        * page/Chrome.cpp: Updated includes.
+        * page/DragController.cpp: Ditto.
+
 2007-07-10  Adam Treat  <adam@staikos.net>
 
         Reviewed by George Staikos.
@@ -234,7 +293,9 @@
 
         Reviewed by Oliver.
 
-        <rdar://problem/5295734> Repro crash closing tab/window @ maps.google.com in WTF::HashSet<KJS::RuntimeObjectImp*, WTF::PtrHash<KJS::RuntimeObjectImp*>, WTF::HashTraits<KJS::RuntimeObjectImp*> >::add + 11
+        <rdar://problem/5295734> Repro crash closing tab/window @ maps.google.com in
+        WTF::HashSet<KJS::RuntimeObjectImp*, WTF::PtrHash<KJS::RuntimeObjectImp*>,
+        WTF::HashTraits<KJS::RuntimeObjectImp*> >::add + 11
         
         Automated test case is not possible. Did not bother with manual test this time.
 
