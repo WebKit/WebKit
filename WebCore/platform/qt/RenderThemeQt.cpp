@@ -63,7 +63,7 @@ bool RenderThemeQt::supportsHover(const RenderStyle*) const
 
 bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
 {
-    return true;
+    return supportsFocus(style->appearance());
 }
 
 short RenderThemeQt::baselinePosition(const RenderObject* o) const
@@ -400,6 +400,8 @@ bool RenderThemeQt::supportsFocus(EAppearance appearance) const
         case ButtonAppearance:
         case TextFieldAppearance:
         case MenulistAppearance:
+        case RadioAppearance:
+        case CheckboxAppearance:
             return true;
         default: // No for all others...
             return false;

@@ -1,3 +1,16 @@
+2007-07-10  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Draw focus rings for nodes that are not rendered by QStyle.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::focusRingColor):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::supportsFocusRing):
+        (WebCore::RenderThemeQt::supportsFocus):
+
 2007-07-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Geoff.

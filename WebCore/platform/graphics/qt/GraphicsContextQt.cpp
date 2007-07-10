@@ -45,6 +45,7 @@
 #include <QPolygonF>
 #include <QPainterPath>
 #include <QPaintDevice>
+#include <QDebug>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -533,25 +534,36 @@ void GraphicsContext::clip(const IntRect& rect)
  * need it.
  */
 void setFocusRingColorChangeFunction(void (*)()) { }
-Color focusRingColor() { return 0x00000000; }
+Color focusRingColor() { return Color(0, 0, 0); }
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    return;
-
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
 
-    QVector<QRect> qrects(rectCount);
-    for (int i = 0; i < rectCount; ++i)
-        qrects[i] = rects[i];
-    m_data->p().save();
-    m_data->p().setClipRect(m_data->focusRingClip);
-    m_data->p().setPen(color);
-    m_data->p().drawRects(qrects);
-    m_data->p().restore();
+    if (rects.size() > 1)
+    {
+        QPainterPath path;
+        for (int i = 0; i < rectCount; ++i)
+            path.addRect(QRectF(rects[i]));
+        m_data->p().save();
+        QPen nPen = m_data->p().pen();
+        nPen.setColor(color);
+        m_data->p().setBrush(Qt::NoBrush);
+        nPen.setStyle(Qt::DotLine);
+        m_data->p().setPen(nPen);
+#if 0
+        // FIXME How do we do a bounding outline with Qt?
+        QPainterPathStroker stroker;
+        QPainterPath newPath = stroker.createStroke(path);
+        m_data->p().strokePath(newPath, nPen);
+#else
+        m_data->p().drawRect(path.boundingRect());
+#endif
+        m_data->p().restore();
+    }
 }
 
 void GraphicsContext::setFocusRingClip(const IntRect& rect)
