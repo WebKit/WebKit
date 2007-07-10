@@ -1,3 +1,37 @@
+2007-07-09  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Add qt context menu support.
+
+        * WebCore.pro:
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        (WebCore::PlatformMenuItemDescriptionType::PlatformMenuItemDescriptionType):
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::ContextMenuItem::enabled):
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::platformDescription):
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

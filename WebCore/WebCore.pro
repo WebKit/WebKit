@@ -731,6 +731,7 @@ gdk-port {
 
 qt-port:HEADERS += \
     $$PWD/platform/qt/QWebPopup.h \
+    $$PWD/platform/qt/MenuEventProxy.h \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKitQt/Api/qwebframe.h \
     $$PWD/../WebKitQt/Api/qwebpage.h \

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +26,121 @@
 
 #include "config.h"
 #include "ContextMenu.h"
+#include "MenuEventProxy.h"
 
 #include <wtf/Assertions.h>
 
-#include <QMenu>
 #include <QAction>
+
+#include <qwebframe.h>
+#include <qwebpage.h>
+#include <FrameLoaderClientQt.h>
+#include <Document.h>
+#include <Frame.h>
+#include <FrameLoader.h>
+#include <FrameLoaderClient.h>
 
 namespace WebCore {
 
 ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result), m_menu(0)
+    : m_hitTestResult(result)
 {
+#ifndef QT_NO_MENU
+    m_menu = new QMenu;
+    //qDebug("Create menu(%p) %p", this, (QMenu*)m_menu);
+    m_proxy = new MenuEventProxy(this);
+#endif
 }
 
 ContextMenu::~ContextMenu()
 {
+#ifndef QT_NO_MENU
+    //qDebug("Destroy menu(%p) %p", this, (QMenu*)m_menu);
+    delete m_menu;
+    m_menu = 0;
+    delete m_proxy;
+    m_proxy = 0;
+#endif
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    if (!m_menu)
-        m_menu = new QMenu();
-
-    QAction* action  = m_menu->addAction(item.title());
+    insertItem(999999, item); // yuck!  Fix this API!!
 }
 
 unsigned ContextMenu::itemCount() const
 {
-    // FIXME: This method is silly
-    return 1;
+#ifndef QT_NO_MENU
+    return m_menu->actions().count();
+#else
+    return 0;
+#endif
 }
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    // FIXME: Another silly method
-    appendItem(item);
+#ifndef QT_NO_MENU
+    int id;
+    QAction *action;
+    QAction *before = 0;
+    int p = position;
+    if (p == 999999)
+        p = -1;
+    if (p >= 0)
+        before = m_menu->actions()[p];
+
+    switch (item.type()) {
+        case ActionType:
+            if (!item.title().isEmpty()) {
+                action = m_menu->addAction((QString)item.title());
+                m_menu->removeAction(action);
+                m_menu->insertAction(before, action);
+                QObject::connect(m_menu, SIGNAL(triggered(QAction *)), m_proxy, SLOT(trigger(QAction *)));
+            }
+            break;
+        case SeparatorType:
+            action = m_menu->insertSeparator(before);
+            break;
+        case SubmenuType:
+            if (!item.title().isEmpty()) {
+                QMenu *m = item.platformSubMenu();
+                if (!m)
+                    return;
+                action = m_menu->insertMenu(before, m);
+                action->setText(item.title());
+            }
+            break;
+        default:
+            return;
+    }
+    if (action) {
+        m_proxy->map(action, item.action());
+        item.releasePlatformDescription()->qaction = action;
+    }
+#endif
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
-    delete m_menu;
-    m_menu = static_cast<QMenu*>(menu);
+#ifndef QT_NO_MENU
+    //qDebug("Switch menu(%p) %p to %p", this, (QMenu*)m_menu, menu);
+    if (menu == 0) {
+        FrameLoaderClient *f = m_hitTestResult.innerNode()->document()->frame()->loader()->client();
+        QWidget *page = static_cast<FrameLoaderClientQt*>(f)->webFrame()->page();
+        m_menu->exec(page->mapToGlobal(m_hitTestResult.point()));
+    }
+    if (menu != m_menu) {
+        delete m_menu;
+        m_menu = menu;
+    }
+#endif
 }
 
+PlatformMenuDescription ContextMenu::platformDescription() const
+{
+    return m_menu;
 }
+
+
+}
+// vim: ts=4 sw=4 et

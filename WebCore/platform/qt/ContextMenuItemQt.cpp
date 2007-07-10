@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,77 +26,107 @@
 
 #include "config.h"
 #include "ContextMenuItem.h"
-
 #include "ContextMenu.h"
 
 namespace WebCore {
 
 ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
 {
+    m_platformDescription = new PlatformMenuItemDescriptionType;
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action,
                                  const String& title, ContextMenu* subMenu)
 {
+    m_platformDescription = new PlatformMenuItemDescriptionType;
+    m_platformDescription->type = type;
+    m_platformDescription->action = action;
+    m_platformDescription->title = title;
 }
 
 ContextMenuItem::~ContextMenuItem()
 {
+    delete m_platformDescription;
 }
 
 PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
 {
-    return PlatformMenuItemDescription();
+    return m_platformDescription;
 }
 
 ContextMenuItemType ContextMenuItem::type() const
 {
-    return ActionType;
+    return m_platformDescription->type;
 }
 
-void ContextMenuItem::setType(ContextMenuItemType)
+void ContextMenuItem::setType(ContextMenuItemType type)
 {
+    m_platformDescription->type = type;
 }
 
 ContextMenuAction ContextMenuItem::action() const
 { 
-    return ContextMenuAction();
+    return m_platformDescription->action;
 }
 
 void ContextMenuItem::setAction(ContextMenuAction action)
 {
+    m_platformDescription->action = action;
 }
 
 String ContextMenuItem::title() const 
 {
-    return String();
+    return m_platformDescription->title;
 }
 
 void ContextMenuItem::setTitle(const String& title)
 {
+#ifndef QT_NO_MENU
+    m_platformDescription->title = title;
+    if (m_platformDescription->qaction)
+        m_platformDescription->qaction->setText(title);
+#endif
 }
 
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    return PlatformMenuDescription();
+    return m_platformDescription->subMenu;
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
+#ifndef QT_NO_MENU
+    m_platformDescription->subMenu = menu->platformDescription();
+#endif
 }
 
-void ContextMenuItem::setChecked(bool)
+void ContextMenuItem::setChecked(bool on)
 {
+#ifndef QT_NO_MENU
+    if (m_platformDescription->qaction) {
+        m_platformDescription->qaction->setCheckable(true);
+        m_platformDescription->qaction->setChecked(on);
+    }
+#endif
 }
 
-void ContextMenuItem::setEnabled(bool)
+void ContextMenuItem::setEnabled(bool on)
 {
+#ifndef QT_NO_MENU
+    if (m_platformDescription->qaction)
+        m_platformDescription->qaction->setEnabled(on);
+#endif
 }
 
 bool ContextMenuItem::enabled() const
 {
-    return true;
+#ifndef QT_NO_MENU
+    if (m_platformDescription->qaction)
+        return m_platformDescription->qaction->isEnabled();
+#endif
+    return false;
 }
 
 }
+// vim: ts=4 sw=4 et
