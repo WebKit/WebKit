@@ -138,6 +138,8 @@ public:
     Vector<String> split(UChar separator, bool allowEmptyEntries = false) const;
 
     int toInt(bool* ok = 0) const;
+    int64_t toInt64(bool* ok = 0) const;
+    uint64_t toUInt64(bool* ok = 0) const;
     double toDouble(bool* ok = 0) const;
     float toFloat(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;

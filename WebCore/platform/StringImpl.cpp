@@ -628,6 +628,44 @@ int StringImpl::toInt(bool* ok) const
     return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt(ok);
 }
 
+int64_t StringImpl::toInt64(bool* ok) const
+{
+    unsigned i = 0;
+
+    // Allow leading spaces.
+    for (; i != m_length; ++i)
+        if (!isSpace(m_data[i]))
+            break;
+    
+    // Allow sign.
+    if (i != m_length && (m_data[i] == '+' || m_data[i] == '-'))
+        ++i;
+    
+    // Allow digits.
+    for (; i != m_length; ++i)
+        if (!Unicode::isDigit(m_data[i]))
+            break;
+    
+    return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt64(ok);
+}
+
+uint64_t StringImpl::toUInt64(bool* ok) const
+{
+    unsigned i = 0;
+
+    // Allow leading spaces.
+    for (; i != m_length; ++i)
+        if (!isSpace(m_data[i]))
+            break;
+
+    // Allow digits.
+    for (; i != m_length; ++i)
+        if (!Unicode::isDigit(m_data[i]))
+            break;
+    
+    return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toUInt64(ok);
+}
+
 double StringImpl::toDouble(bool* ok) const
 {
     if (!m_length) {

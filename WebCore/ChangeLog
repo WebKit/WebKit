@@ -1,3 +1,24 @@
+2007-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Add 64-bit integer converters to our string classes for future work
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::toInt64):
+        (WebCore::DeprecatedString::toUInt64):
+        * platform/DeprecatedString.h:
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::toInt64):
+        (WebCore::String::toUInt64):
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toInt64):
+        (WebCore::StringImpl::toUInt64):
+        * platform/StringImpl.h:
+
 2007-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

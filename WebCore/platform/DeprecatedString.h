@@ -349,7 +349,10 @@ public:
     short toShort(bool *ok = 0, int base = 10) const;
     unsigned short toUShort(bool *ok = 0, int base = 10) const;
     int toInt(bool *ok = 0, int base = 10) const;
+    int64_t toInt64(bool *ok = 0, int base = 10) const;
     unsigned toUInt(bool *ok = 0, int base = 10) const;
+    uint64_t toUInt64(bool *ok = 0, int base = 10) const;
+
     double toDouble(bool *ok = 0) const;
     float toFloat(bool* ok = 0) const;
 

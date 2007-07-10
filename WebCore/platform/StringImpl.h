@@ -100,6 +100,8 @@ public:
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
 
     int toInt(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
+    int64_t toInt64(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
+    uint64_t toUInt64(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
     double toDouble(bool* ok = 0) const;
     float toFloat(bool* ok = 0) const;
 
