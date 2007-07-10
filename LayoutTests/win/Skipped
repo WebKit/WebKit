@@ -427,24 +427,6 @@ webarchive
 dom/xhtml/level2/html/frame.xhtml
 tables/mozilla/bugs/bug50695-2.html
 
-# execCommand("Paste") fails? <rdar://problem/5230263>
-#editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
-editing/pasteboard/4242293-1.html
-editing/pasteboard/5247341.html
-editing/style/non-inheritable-styles.html
-editing/style/font-family-with-space.html
-
-# <rdar://problem/5225119> support smart pasting on boomer
-editing/pasteboard/paste-line-endings-002.html
-editing/pasteboard/paste-line-endings-003.html
-editing/pasteboard/paste-line-endings-004.html
-editing/pasteboard/paste-line-endings-005.html
-editing/pasteboard/paste-line-endings-007.html
-editing/pasteboard/paste-line-endings-008.html
-editing/pasteboard/paste-line-endings-009.html
-editing/pasteboard/paste-line-endings-010.html
-
 # Some text tests are missing a trailing newline <rdar://problem/5230362>
 fast/dom/early-frame-url.html
 fast/dom/title-text-property-2.html
@@ -495,18 +477,17 @@ fast/css/contentImage.html
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html
 
-################################################################################
-####################### No bugs filed about the below yet#######################
-################################################################################
-
-# emacs key bindings
+# emacs key bindings <rdar://problem/4883609> Support for kill rings
 editing/input/emacs-ctrl-o.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/emacs-cntl-y-001.html
 
+################################################################################
+####################### No bugs filed about the below yet#######################
+################################################################################
+
 # Text, caret
-editing/pasteboard/4944770-2.html
 editing/pasteboard/5028447.html
 editing/pasteboard/block-wrappers-necessary.html
 editing/pasteboard/copy-paste-bidi.html
@@ -514,10 +495,10 @@ editing/pasteboard/copy-paste-bidi.html
 # Text, RenderText, caret
 editing/deleting/delete-to-end-of-paragraph.html
 
-# Text, renderText, selection
+# Text, renderText, selection, drag&drop
 editing/pasteboard/4861080.html
 
-# Text, renderText
+# Text, renderText, drag&drop
 editing/pasteboard/4947130.html
 
 
