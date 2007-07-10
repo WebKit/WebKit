@@ -237,7 +237,7 @@ QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
     KJSProxy *proxy = d->frame->scriptProxy();
     QString rc;
     if (proxy) {
-        KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource, d->frame->document());
+        KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource);
         if (v) {
             rc = String(v->toString(proxy->interpreter()->globalExec()));
         }
