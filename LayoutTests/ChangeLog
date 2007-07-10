@@ -1,3 +1,15 @@
+2007-07-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14449
+          REGRESSION (r14345-r14375): Absolutely positioned image does not scale to containing element's height
+
+        * fast/replaced/absolute-position-percentage-height-expected.checksum: Added.
+        * fast/replaced/absolute-position-percentage-height-expected.png: Added.
+        * fast/replaced/absolute-position-percentage-height-expected.txt: Added.
+        * fast/replaced/absolute-position-percentage-height.html: Added.
+
 2007-07-10  Alice Liu  <alice.liu@apple.com>
 
         * win/Skipped:

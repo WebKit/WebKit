@@ -1,3 +1,16 @@
+2007-07-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14449
+          REGRESSION (r14345-r14375): Absolutely positioned image does not scale to containing element's height
+
+        Test: fast/replaced/absolute-position-percentage-height.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedHeightUsing): For positioned elements, evaluate
+        the percentage with respect to the container's final height.
+
 2007-07-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe
