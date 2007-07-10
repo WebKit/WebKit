@@ -40,11 +40,11 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
     , m_isContinuous(false)
 {
     if (e->orientation() == Qt::Horizontal) {
-        m_deltaX = (e->delta() / 8);
+        m_deltaX = (e->delta() / 120);
         m_deltaY = 0;
     } else {
         m_deltaX = 0;
-        m_deltaY = (e->delta() / 8);
+        m_deltaY = (e->delta() / 120);
     }
 }
 

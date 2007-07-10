@@ -1,3 +1,12 @@
+2007-07-10  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Bring scroll wheel out of Ludicrous Speed.
+
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-07-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
