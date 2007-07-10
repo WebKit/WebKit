@@ -74,6 +74,7 @@
 #import <dlfcn.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
+#import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>

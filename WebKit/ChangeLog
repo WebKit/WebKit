@@ -1,5 +1,11 @@
 2007-07-10  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * WebView/WebHTMLView.mm: Add include of ContextMenu.h.
+
+2007-07-10  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - <rdar://problem/5321953> remove workaround for fixed AppKit mouse moved bug
