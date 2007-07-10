@@ -1639,6 +1639,7 @@ sub GenerateHashValue
         $hash   = (leftShift($hash, 16)% $EXP2_32) ^ $tmp;
         $s += 2;
         $hash += $hash >> 11;
+        $hash %= $EXP2_32;
     }
 
     # Handle end case

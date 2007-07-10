@@ -1,3 +1,14 @@
+2007-07-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Geoff.
+
+        Fix 'unsigned int' overflow in CodeGeneratorJS.pm.
+        This fixes hashing of "SVG_FEBLEND_MODE_NORMAL". Its hashvalue exceeded 2^32, which
+        is no problem in perl but in the cpp code. Emulate C/C++ behaviour by using "% 2^32" in
+        the perl code. Testcase available in feature-branch soon (js-svg-constructors.svg).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
