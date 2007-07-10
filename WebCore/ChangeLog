@@ -1,3 +1,12 @@
+2007-07-10  Andrea Cavalli  <amc82@cam.ac.uk>
+
+        Reviewed by George Staikos.
+
+        Fixed render theme for text field.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+
 2007-07-10  Qing Zhao  <qing@staikos.net>
 
         Reviewed by George Staikos.

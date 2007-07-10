@@ -258,8 +258,12 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
         return true;
 
     QStyleOptionFrameV2 panel;
+    
     panel.initFrom(widget);
     panel.rect = r;
+    panel.state |= QStyle::State_Sunken;
+    panel.features = QStyleOptionFrameV2::None;
+
     // Get the correct theme data for a button
     EAppearance appearance = applyTheme(panel, o);
     Q_ASSERT(appearance == TextFieldAppearance);
@@ -267,7 +271,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     // Now paint the text field.
     style->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, painter, widget);
     style->drawPrimitive(QStyle::PE_FrameLineEdit, &panel, painter, widget);
-
+      
     return false;
 }
 
