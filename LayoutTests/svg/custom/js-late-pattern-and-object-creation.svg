@@ -9,7 +9,7 @@
 	function createPatterns()
 	{
 		// Setup "fillPattern"	
-		var pattern1 = document.createElement("pattern");
+		var pattern1 = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
 		pattern1.setAttribute("id", "fillPattern");
 		pattern1.setAttribute("patternUnits", "userSpaceOnUse");
 		pattern1.setAttribute("x", "0");
@@ -17,14 +17,14 @@
 		pattern1.setAttribute("width", "20");
 		pattern1.setAttribute("height", "20");
 
-		var rect11 = document.createElement("rect");
+		var rect11 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect11.setAttribute("x", "5");
 		rect11.setAttribute("y", "5");
 		rect11.setAttribute("width", "10");
 		rect11.setAttribute("height", "10");
 		rect11.setAttribute("fill", "red");
 
-		var rect21 = document.createElement("rect");
+		var rect21 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect21.setAttribute("x", "10");
 		rect21.setAttribute("y", "10");
 		rect21.setAttribute("width", "10");
@@ -37,7 +37,7 @@
 		content.appendChild(pattern1);
 
 		// Setup "strokePattern"	
-		var pattern2 = document.createElement("pattern");
+		var pattern2 = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
 		pattern2.setAttribute("id", "strokePattern");
 		pattern2.setAttribute("patternUnits", "userSpaceOnUse");
 		pattern2.setAttribute("x", "0");
@@ -45,14 +45,14 @@
 		pattern2.setAttribute("width", "20");
 		pattern2.setAttribute("height", "20");
 
-		var rect12 = document.createElement("rect");
+		var rect12 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect12.setAttribute("x", "5");
 		rect12.setAttribute("y", "5");
 		rect12.setAttribute("width", "10");
 		rect12.setAttribute("height", "10");
 		rect12.setAttribute("fill", "yellow");
 
-		var rect22 = document.createElement("rect");
+		var rect22 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect22.setAttribute("x", "10");
 		rect22.setAttribute("y", "10");
 		rect22.setAttribute("width", "10");
@@ -69,7 +69,7 @@
 
 	function setupPatternUsers()
 	{
-		var text1 = document.createElement("text");
+		var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text1.setAttribute("font-size", "68");
 		text1.setAttribute("x", "-150");
 		text1.setAttribute("y", "70")
@@ -79,7 +79,7 @@
 
 		content.appendChild(text1);
 
-		var text2 = document.createElement("text");
+		var text2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text2.setAttribute("font-size", "68");
 		text2.setAttribute("x", "-150");
 		text2.setAttribute("y", "140")
@@ -89,7 +89,7 @@
 
 		content.appendChild(text2);
 
-		var text3 = document.createElement("text");
+		var text3 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text3.setAttribute("font-size", "68");
 		text3.setAttribute("x", "-150");
 		text3.setAttribute("y", "210")

@@ -9,7 +9,7 @@
 
 	function createPattern()
 	{
-		var pattern = document.createElement("pattern");
+		var pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
 		pattern.setAttribute("id", "dynPattern");
 		pattern.setAttribute("patternUnits", "userSpaceOnUse");
 		pattern.setAttribute("x", "0");
@@ -17,14 +17,14 @@
 		pattern.setAttribute("width", "20");
 		pattern.setAttribute("height", "20");
 
-		var rect1 = document.createElement("rect");
+		var rect1 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect1.setAttribute("x", "5");
 		rect1.setAttribute("y", "5");
 		rect1.setAttribute("width", "10");
 		rect1.setAttribute("height", "10");
 		rect1.setAttribute("fill", "red");
 
-		var rect2 = document.createElement("rect");
+		var rect2 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		rect2.setAttribute("x", "10");
 		rect2.setAttribute("y", "10");
 		rect2.setAttribute("width", "10");

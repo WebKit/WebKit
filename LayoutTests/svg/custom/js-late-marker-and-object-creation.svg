@@ -18,7 +18,7 @@
 
     function createObject()
     {
-        var path = document.createElement("path");
+        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("fill", "none");
         path.setAttribute("stroke", "black");
         path.setAttribute("stroke-width", "8");
@@ -34,7 +34,7 @@
     {
         createObject();
 
-        var marker = document.createElement("marker");
+        var marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
         marker.setAttribute("id", "markerMiddle");
         marker.setAttribute("viewBox", "0 0 10 10");
         marker.setAttribute("markerWidth", "2");
@@ -43,7 +43,7 @@
         marker.setAttribute("refY", "5");
         marker.setAttribute("markerUnits", "strokeWidth");
 
-        var circle = document.createElement("circle");
+        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", "5");
         circle.setAttribute("cy", "5");
         circle.setAttribute("r", "5");

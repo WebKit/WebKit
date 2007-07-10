@@ -9,7 +9,7 @@ var logOffset = 40;
 var logOffsetIncrement = 40
 function log(message)
 {
-    var t = document.createElement("text");
+    var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
     t.appendChild(document.createTextNode(message));
     t.setAttribute('y', logOffset);
     t.setAttribute('x', 0);
@@ -28,7 +28,7 @@ function expect(expected, actual)
 
 function createTitleElement(title)
 {
-    var t = document.createElement('title');
+    var t = document.createElementNS("http://www.w3.org/2000/svg", 'title');
     t.appendChild(document.createTextNode(title));
     return t;
 }

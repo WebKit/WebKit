@@ -17,17 +17,17 @@
     var midPoint = path.getPointAtLength(0.5 * totalLength);
     var lastPoint = path.getPointAtLength(1.0 * totalLength);
 
-    var text1 = document.createElement("text");
+    var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text1.appendChild(document.createTextNode("A"));
     text1.setAttribute("x", firstPoint.x);
     text1.setAttribute("y", firstPoint.y);
 
-    var text2 = document.createElement("text");
+    var text2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text2.appendChild(document.createTextNode("B"));
     text2.setAttribute("x", midPoint.x);
     text2.setAttribute("y", midPoint.y);
 
-    var text3 = document.createElement("text");
+    var text3 = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text3.appendChild(document.createTextNode("C"));
     text3.setAttribute("x", lastPoint.x);
     text3.setAttribute("y", lastPoint.y);

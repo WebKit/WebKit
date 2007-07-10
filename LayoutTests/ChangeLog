@@ -1,3 +1,44 @@
+2007-07-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=8007
+        createElement() and XHTML (A dynamically created table not rendered as such)
+
+        SVG tests are changed to use createElementNS instead of createElement.
+        Other test results match FF2 results, except replace-child.html and 
+        nodeisdefaultnamespace09.xhtml.
+
+        * dom/xhtml/level1/core/hc_documentcreateelementcasesensitive-expected.txt:
+        * dom/xhtml/level2/html/HTMLSelectElement18-expected.txt:
+        * dom/xhtml/level2/html/HTMLSelectElement19-expected.txt:
+        * dom/xhtml/level2/html/HTMLSelectElement20-expected.txt:
+        * dom/xhtml/level2/html/HTMLTableElement31-expected.txt:
+        * dom/xhtml/level3/core/nodeisdefaultnamespace09-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix10-expected.txt:
+        * fast/css/create_element_align-expected.checksum: Added.
+        * fast/css/create_element_align-expected.png: Added.
+        * fast/css/create_element_align-expected.txt: Added.
+        * fast/css/create_element_align.xhtml: Added.
+        * fast/dom/Document/replace-child-expected.txt:
+        * fast/dom/createElement-expected.txt: Added.
+        * fast/dom/createElement.html: Added.
+        * svg/custom/createelement-expected.txt:
+        * svg/custom/createelement.svg:
+        * svg/custom/js-late-clipPath-and-object-creation.svg:
+        * svg/custom/js-late-clipPath-creation.svg:
+        * svg/custom/js-late-gradient-and-object-creation.svg:
+        * svg/custom/js-late-gradient-creation.svg:
+        * svg/custom/js-late-marker-and-object-creation.svg:
+        * svg/custom/js-late-marker-creation.svg:
+        * svg/custom/js-late-mask-and-object-creation.svg:
+        * svg/custom/js-late-mask-creation.svg:
+        * svg/custom/js-late-pattern-and-object-creation.svg:
+        * svg/custom/js-late-pattern-creation.svg:
+        * svg/custom/multiple-title-elements.svg:
+        * svg/custom/path-textPath-simulation.svg:
+
 2007-07-09  Alice Liu  <alice.liu@apple.com>
 
         * win/Skipped:

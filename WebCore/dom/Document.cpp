@@ -465,7 +465,12 @@ Element* Document::documentElement() const
 
 PassRefPtr<Element> Document::createElement(const String &name, ExceptionCode& ec)
 {
-    return createElementNS(nullAtom, name, ec);
+    String lowerName(name.lower());
+    if (!isValidName(lowerName)) {
+        ec = INVALID_CHARACTER_ERR;
+        return 0;
+    }
+    return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
 }
 
 PassRefPtr<DocumentFragment> Document::createDocumentFragment()

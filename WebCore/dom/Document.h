@@ -160,7 +160,7 @@ public:
     DOMImplementation* implementation() const;
     virtual void childrenChanged();
     Element* documentElement() const;
-    virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
+    PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment ();
     PassRefPtr<Text> createTextNode(const String& data);
     PassRefPtr<Comment> createComment(const String& data);

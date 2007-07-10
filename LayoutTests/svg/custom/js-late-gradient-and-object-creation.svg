@@ -9,16 +9,16 @@
 	function createGradients()
 	{
 		// Setup "fillLinearGradient"
-		var gradient1 = document.createElement("linearGradient");
+		var gradient1 = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
 		gradient1.setAttribute("id", "fillLinearGradient");
 		gradient1.setAttribute("x1", "0");
 		gradient1.setAttribute("x2", "1");
 
-		var stop11 = document.createElement("stop");
+		var stop11 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
 		stop11.setAttribute("stop-color", "blue");
 		stop11.setAttribute("offset", "0");
 
-		var stop21 = document.createElement("stop");
+		var stop21 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
 		stop21.setAttribute("stop-color", "red");
 		stop21.setAttribute("offset", "1");
 
@@ -28,16 +28,16 @@
 		content.appendChild(gradient1);
 
 		// Setup "strokeLinearGradient"
-		var gradient2 = document.createElement("linearGradient");
+		var gradient2 = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
 		gradient2.setAttribute("id", "strokeLinearGradient");
 		gradient2.setAttribute("x1", "0");
 		gradient2.setAttribute("x2", "1");
 
-		var stop22 = document.createElement("stop");
+		var stop22 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
 		stop22.setAttribute("stop-color", "yellow");
 		stop22.setAttribute("offset", "0");
 
-		var stop22 = document.createElement("stop");
+		var stop22 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
 		stop22.setAttribute("stop-color", "green");
 		stop22.setAttribute("offset", "1");
 
@@ -51,7 +51,7 @@
 
 	function setupGradientUsers()
 	{
-		var text1 = document.createElement("text");
+		var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text1.setAttribute("font-size", "68");
 		text1.setAttribute("x", "-150");
 		text1.setAttribute("y", "70")
@@ -61,7 +61,7 @@
 
 		content.appendChild(text1);
 
-		var text2 = document.createElement("text");
+		var text2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text2.setAttribute("font-size", "68");
 		text2.setAttribute("x", "-150");
 		text2.setAttribute("y", "140")
@@ -71,7 +71,7 @@
 
 		content.appendChild(text2);
 
-		var text3 = document.createElement("text");
+		var text3 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text3.setAttribute("font-size", "68");
 		text3.setAttribute("x", "-150");
 		text3.setAttribute("y", "210")

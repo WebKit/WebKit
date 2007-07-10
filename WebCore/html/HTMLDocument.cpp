@@ -64,7 +64,6 @@
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
-#include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include "InspectorController.h"
@@ -300,16 +299,6 @@ Tokenizer *HTMLDocument::createTokenizer()
 bool HTMLDocument::childAllowed( Node *newChild )
 {
     return newChild->hasTagName(htmlTag);
-}
-
-PassRefPtr<Element> HTMLDocument::createElement(const String &name, ExceptionCode& ec)
-{
-    String lowerName(name.lower());
-    if (!isValidName(lowerName)) {
-        ec = INVALID_CHARACTER_ERR;
-        return 0;
-    }
-    return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
 }
 
 static void addItemToMap(HTMLDocument::NameCountMap& map, const String& name)

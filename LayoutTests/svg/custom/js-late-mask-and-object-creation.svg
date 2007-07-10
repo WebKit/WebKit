@@ -9,7 +9,7 @@
 
     function createObject()
     {
-        var rect = document.createElement("rect");
+        var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("width", "800");
         rect.setAttribute("height", "100");
         rect.setAttribute("y", "100");
@@ -23,7 +23,7 @@
     {
         createObject();
 
-        var mask = document.createElement("mask");
+        var mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
         mask.setAttribute("id", "dynMask");
         mask.setAttribute("maskUnits", "userSpaceOnUse");
         mask.setAttribute("x", "0");
@@ -31,7 +31,7 @@
         mask.setAttribute("width", "800");
         mask.setAttribute("height", "300");
 
-        var rect = document.createElement("rect");
+        var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("width", "800");
         rect.setAttribute("height", "300");
         rect.setAttribute("fill", "red");

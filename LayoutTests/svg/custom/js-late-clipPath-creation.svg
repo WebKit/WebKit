@@ -9,11 +9,11 @@
 
     function createClipPath()
     {
-        var clipPath = document.createElement("clipPath");
+        var clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
         clipPath.setAttribute("id", "dynClip");
         clipPath.setAttribute("clipPathUnits", "userSpaceOnUse");
 
-        var path = document.createElement("path");
+        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", "M 0 0 l 200 0 l 0 200 l -200 0 Z");
 
         clipPath.appendChild(path);
