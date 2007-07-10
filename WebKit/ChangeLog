@@ -1,3 +1,12 @@
+2007-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - <rdar://problem/5321953> remove workaround for fixed AppKit mouse moved bug
+
+        * WebView/WebHTMLView.mm: Put the workaround for bug 3429631 inside an
+        ifdef BUILDING_ON_TIGER.
+
 2007-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

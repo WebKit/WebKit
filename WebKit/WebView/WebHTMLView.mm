@@ -1782,6 +1782,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 @end
 
+#ifdef BUILDING_ON_TIGER
+
 // The following is a workaround for
 // <rdar://problem/3429631> window stops getting mouse moved events after first tooltip appears
 // The trick is to define a category on NSToolTipPanel that implements setAcceptsMouseMovedEvents:.
@@ -1802,6 +1804,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 }
 
 @end
+
+#endif
 
 @interface NSArray (WebHTMLView)
 - (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object;
