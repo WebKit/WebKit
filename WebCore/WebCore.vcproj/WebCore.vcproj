@@ -26,7 +26,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -58,7 +58,7 @@
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="true"
+				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -102,7 +102,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -131,7 +131,7 @@
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="true"
+				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -174,7 +174,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -206,7 +206,7 @@
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="true"
+				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -2978,15 +2978,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\FloatConversion.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\FileChooser.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\FileChooser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\FloatConversion.h"
 				>
 			</File>
 			<File
@@ -2997,7 +2997,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3005,7 +3005,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3013,7 +3013,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -3277,7 +3277,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3285,7 +3285,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -3293,7 +3293,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalOptions="/analyze:stacksize65536"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -3460,7 +3460,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -3468,7 +3468,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -3476,7 +3476,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 				</File>
@@ -7958,7 +7958,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -7966,7 +7966,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -7974,7 +7974,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							AdditionalOptions="/analyze:stacksize65536"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
 				</File>

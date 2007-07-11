@@ -1,3 +1,14 @@
+2007-07-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Static analysis build fix.
+        
+        Only specify /analyze (PREfast) if it is available.
+        Prevents entire project from rebuilding each time.        
+
+        Reviewed by Hyatt.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-07-11  George Staikos  <staikos@kde.org>
 
         Reviewed by Olliej.
