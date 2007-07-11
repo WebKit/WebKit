@@ -199,7 +199,7 @@ std::auto_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
 
 const char* atomicCanonicalTextEncodingName(const char* name)
 {
-    if (!name)
+    if (!name || !name[0])
         return 0;
     if (!textEncodingNameMap)
         buildBaseTextCodecMaps();

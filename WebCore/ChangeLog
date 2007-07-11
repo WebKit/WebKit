@@ -1,3 +1,14 @@
+2007-07-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5315265> REGRESSION: Leopard launch time -
+          there are about 190 stats of icudt36b files during launch
+
+        * platform/TextEncodingRegistry.cpp: (WebCore::atomicCanonicalTextEncodingName):
+        Add a special case for the empty string so we don't load the extended text
+        encodings just so we can return 0 for that case.
+
 2007-07-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
