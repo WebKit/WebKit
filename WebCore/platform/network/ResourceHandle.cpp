@@ -68,26 +68,6 @@ void ResourceHandle::fireBlockedFailure(Timer<ResourceHandle>* timer)
     delete timer;
 }
 
-const HTTPHeaderMap& ResourceHandle::requestHeaders() const
-{
-    return d->m_request.httpHeaderFields();
-}
-
-const KURL& ResourceHandle::url() const
-{
-    return d->m_request.url();
-}
-
-PassRefPtr<FormData> ResourceHandle::postData() const
-{
-    return d->m_request.httpBody();
-}
-
-const String& ResourceHandle::method() const
-{
-    return d->m_request.httpMethod();
-}
-
 ResourceHandleClient* ResourceHandle::client() const
 {
     return d->m_client;

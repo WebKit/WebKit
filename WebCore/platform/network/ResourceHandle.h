@@ -152,10 +152,6 @@ public:
     ResourceHandleClient* client() const;
     void setDefersLoading(bool);
       
-    const HTTPHeaderMap& requestHeaders() const;
-    const KURL& url() const;
-    const String& method() const;
-    PassRefPtr<FormData> postData() const;
     const ResourceRequest& request() const;
 
     void fireBlockedFailure(Timer<ResourceHandle>*);
