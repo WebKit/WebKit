@@ -49,8 +49,11 @@ void QWebPopup::hideEvent(QHideEvent* e)
 
 void QWebPopup::activeChanged(int index)
 {
-    if (m_client)
-        m_client->valueChanged(index);
+    if (m_client) {
+        if (index >= 0)
+            m_client->valueChanged(index);
+        m_client->hidePopup();
+    }
 }
 
 }

@@ -107,6 +107,7 @@ void PopupMenu::hide()
 
 void PopupMenu::updateFromElement()
 {
+    client()->setTextFromItem(m_popupClient->selectedIndex());
 }
 
 bool PopupMenu::itemWritingDirectionIsNatural()

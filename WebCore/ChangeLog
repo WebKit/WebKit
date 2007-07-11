@@ -1,5 +1,16 @@
 2007-07-11  George Staikos  <staikos@kde.org>
 
+        Reviewed by Olliej.
+
+        Make comboboxes update when the current item is changed.
+
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::updateFromElement):
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::activeChanged):
+
+2007-07-11  George Staikos  <staikos@kde.org>
+
         Reviewed by Brady.
 
         Add a destructor to cleanup the SQL handle.
