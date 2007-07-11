@@ -1,3 +1,29 @@
+2007-07-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5234383> REGRESSION: Sentence breaker method returning entire document length
+        
+        The functions for moving the caret to the next/previous sentence boundary
+        were in many cases moving to the beginning/end of the document.  The functions that 
+        should move the caret to an equivalent position in the next/previous sentence behaved
+        like the aforementioned functions ought to.  Put the code from the second two functions
+        in the first and made sure that the second two are properly FIXMEd.  They're rarely 
+        used (filed 5323691).
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify): Added an option for sentenceBoundary granularity,
+        so that we can test the functions that were broken from JS.
+        * editing/visible_units.cpp:
+        (WebCore::startOfSentence): Removed the FIXME about 5234383.
+        (WebCore::endSentenceBoundary): Make this function do what nextSentencePositionBoundary
+        current does.
+        (WebCore::endOfSentence): Removed the FIXME about 5234383.
+        (WebCore::previousSentencePosition): Removed an incorrect FIXME.
+        (WebCore::nextSentencePositionBoundary): Tweaked FIXME.  This function is
+        identical, not close to endSentenceBoundary.
+        (WebCore::nextSentencePosition): Removed an incorrect FIXME.
+
 2007-07-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

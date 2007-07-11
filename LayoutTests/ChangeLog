@@ -1,3 +1,18 @@
+2007-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5234383> REGRESSION: Sentence breaker method returning entire document length
+
+        * editing/selection/5234383-1-expected.checksum: Added.
+        * editing/selection/5234383-1-expected.png: Added.
+        * editing/selection/5234383-1-expected.txt: Added.
+        * editing/selection/5234383-1.html: Added.
+        * editing/selection/5234383-2-expected.checksum: Added.
+        * editing/selection/5234383-2-expected.png: Added.
+        * editing/selection/5234383-2-expected.txt: Added.
+        * editing/selection/5234383-2.html: Added.
+
 2007-07-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
