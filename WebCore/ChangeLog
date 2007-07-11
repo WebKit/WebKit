@@ -1,3 +1,13 @@
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
+        Fix build for BuildBot.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::outerHeight):
+        (WebCore::DOMWindow::outerWidth):
+        (WebCore::DOMWindow::screenX):
+        (WebCore::DOMWindow::screenY):
+
 2007-07-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

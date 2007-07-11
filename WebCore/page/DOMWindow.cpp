@@ -183,7 +183,7 @@ int DOMWindow::outerHeight() const
     if (!page)
         return 0;
 
-    return page->chrome()->windowRect().height();
+    return static_cast<int>(page->chrome()->windowRect().height());
 }
 
 int DOMWindow::outerWidth() const
@@ -195,7 +195,7 @@ int DOMWindow::outerWidth() const
     if (!page)
         return 0;
 
-    return page->chrome()->windowRect().width();
+    return static_cast<int>(page->chrome()->windowRect().width());
 }
 
 int DOMWindow::innerHeight() const
@@ -231,7 +231,7 @@ int DOMWindow::screenX() const
     if (!page)
         return 0;
 
-    return page->chrome()->windowRect().x();
+    return static_cast<int>(page->chrome()->windowRect().x());
 }
 
 int DOMWindow::screenY() const
@@ -243,7 +243,7 @@ int DOMWindow::screenY() const
     if (!page)
         return 0;
 
-    return page->chrome()->windowRect().y();
+    return static_cast<int>(page->chrome()->windowRect().y());
 }
 
 int DOMWindow::scrollX() const
