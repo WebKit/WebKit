@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
 #include "History.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -147,6 +148,7 @@ void DOMWindow::focus()
 {
     if (!m_frame)
         return;
+
     m_frame->focusWindow();
 }
 
@@ -154,6 +156,7 @@ void DOMWindow::blur()
 {
     if (!m_frame)
         return;
+
     m_frame->unfocusWindow();
 }
 
@@ -164,6 +167,117 @@ void DOMWindow::close()
 
     if (m_frame->loader()->openedByDOM() || m_frame->loader()->getHistoryLength() <= 1)
         m_frame->scheduleClose();
+}
+
+bool DOMWindow::offscreenBuffering() const
+{
+    return true;
+}
+
+int DOMWindow::outerHeight() const
+{
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->chrome()->windowRect().height();
+}
+
+int DOMWindow::outerWidth() const
+{
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->chrome()->windowRect().width();
+}
+
+int DOMWindow::innerHeight() const
+{
+    if (!m_frame)
+        return 0;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return 0;
+
+    return view->height();
+}
+
+int DOMWindow::innerWidth() const
+{
+    if (!m_frame)
+        return 0;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return 0;
+
+    return view->width();
+}
+
+int DOMWindow::screenX() const
+{
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->chrome()->windowRect().x();
+}
+
+int DOMWindow::screenY() const
+{
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->chrome()->windowRect().y();
+}
+
+int DOMWindow::scrollX() const
+{
+    if (!m_frame)
+        return 0;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return 0;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (doc)
+        doc->updateLayoutIgnorePendingStylesheets();
+
+    return view->contentsX();
+}
+
+int DOMWindow::scrollY() const
+{
+    if (!m_frame)
+        return 0;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return 0;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (doc)
+        doc->updateLayoutIgnorePendingStylesheets();
+
+    return view->contentsY();
 }
 
 Document* DOMWindow::document() const
@@ -179,24 +293,36 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const 
 {
     if (!elt)
         return 0;
-    
-    // FIXME: This needs to work with pseudo elements. 
+
+    // FIXME: This needs to work with pseudo elements.
     return new CSSComputedStyleDeclaration(elt);
 }
 
 PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String& pseudoElt, bool authorOnly) const
 {
-    if (!m_frame || !m_frame->document())
+    if (!m_frame)
         return 0;
-    
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (!doc)
+        return 0;
+
     if (!pseudoElt.isEmpty())
-        return m_frame->document()->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt.impl(), authorOnly);
-    return m_frame->document()->styleSelector()->styleRulesForElement(elt, authorOnly);
+        return doc->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt.impl(), authorOnly);
+    return doc->styleSelector()->styleRulesForElement(elt, authorOnly);
 }
 
 double DOMWindow::devicePixelRatio() const
 {
-    return m_frame->page()->chrome()->scaleFactor();
+    if (!m_frame)
+        return 0.0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->chrome()->scaleFactor();
 }
 
 } // namespace WebCore

@@ -42,6 +42,21 @@ module window {
         [DoNotCheckDomainSecurity] void blur();
         [DoNotCheckDomainSecurity] void close();
 
+        readonly attribute boolean offscreenBuffering;
+
+        readonly attribute long outerHeight;
+        readonly attribute long outerWidth;
+        readonly attribute long innerHeight;
+        readonly attribute long innerWidth;
+        readonly attribute long screenX;
+        readonly attribute long screenY;
+        readonly attribute long screenLeft;
+        readonly attribute long screenTop;
+        readonly attribute long scrollX;
+        readonly attribute long scrollY;
+        readonly attribute long pageXOffset;
+        readonly attribute long pageYOffset;
+
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 

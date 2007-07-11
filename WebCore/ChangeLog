@@ -1,3 +1,38 @@
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Move more readonly attributes from pure JS bindings in KJS::Window
+        to the implementation in DOMWindow and autogenerate the new bindings.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):  Sort the hashmap comment into categories
+        to make further migration easier.
+        * bindings/js/kjs_window.h: Sort the enum into categories to make further
+        migration easier.
+        (KJS::Window::):
+        * page/DOMWindow.cpp: Add new methods.
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::blur):
+        (WebCore::DOMWindow::offscreenBuffering):
+        (WebCore::DOMWindow::outerHeight):
+        (WebCore::DOMWindow::outerWidth):
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        (WebCore::DOMWindow::screenX):
+        (WebCore::DOMWindow::screenY):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::getComputedStyle):
+        (WebCore::DOMWindow::getMatchedCSSRules): Add null Document assertion.
+        (WebCore::DOMWindow::devicePixelRatio): Add null Frame and Page checks.
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::screenLeft):
+        (WebCore::DOMWindow::screenTop):
+        (WebCore::DOMWindow::pageXOffset):
+        (WebCore::DOMWindow::pageYOffset):
+        * page/DOMWindow.idl:
+
 2007-07-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

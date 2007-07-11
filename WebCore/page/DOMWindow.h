@@ -67,6 +67,21 @@ namespace WebCore {
         void blur();
         void close();
 
+        bool offscreenBuffering() const;
+
+        int outerHeight() const;
+        int outerWidth() const;
+        int innerHeight() const;
+        int innerWidth() const;
+        int screenX() const;
+        int screenY() const;
+        int screenLeft() const { return screenX(); }
+        int screenTop() const { return screenY(); }
+        int scrollX() const;
+        int scrollY() const;
+        int pageXOffset() const { return scrollX(); }
+        int pageYOffset() const { return scrollY(); }
+
         // DOM Level 2 AbstractView Interface
         Document* document() const;
 

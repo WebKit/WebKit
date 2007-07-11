@@ -144,21 +144,37 @@ namespace KJS {
     
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { AToB, BToA, Closed, Crypto, DefaultStatus, Status, DOMException, Frames, Event_, InnerHeight,
-           InnerWidth, Length, Location_, Name, Navigator_, ClientInformation,
-           OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
-           Parent, ScreenX, ScreenY, Scroll, ScrollBy,
-           ScreenTop, ScreenLeft,
-           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top,
-           Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
-           SetInterval, ClearInterval, CaptureEvents, 
-           ReleaseEvents, AddEventListener, RemoveEventListener,
-           XMLHttpRequest, XSLTProcessor_,
-           Onabort, Onblur, Onchange, Onclick, Ondblclick, Onerror, 
-           Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
-           Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onreset, Onresize, Onscroll, Onsearch,
-           Onselect, Onsubmit, Onunload, Onbeforeunload,
-           FrameElement, ShowModalDialog, Find, Stop };
+
+    enum {
+        // Functions
+        AToB, BToA, Alert, Confirm,
+        Prompt, Open, Print, SetTimeout,
+        ClearTimeout, SetInterval, ClearInterval, CaptureEvents, 
+        ReleaseEvents, AddEventListener, RemoveEventListener, Scroll,
+        ScrollBy, ScrollTo, MoveBy, MoveTo,
+        ResizeBy, ResizeTo, ShowModalDialog, Find,
+        Stop,
+
+        // Attributes
+        Closed, Crypto, DefaultStatus, Status,
+        Frames, Event_, Length, Location_,
+        Name, Navigator_, ClientInformation, Opener,
+        Parent, Self, Window_, Top,
+        FrameElement,
+
+        // Event Listeners
+        Onabort, Onblur, Onchange, Onclick,
+        Ondblclick, Onerror, Onfocus, Onkeydown,
+        Onkeypress, Onkeyup, Onload, Onmousedown,
+        Onmousemove, Onmouseout, Onmouseover, Onmouseup,
+        OnWindowMouseWheel, Onreset, Onresize, Onscroll,
+        Onsearch, Onselect, Onsubmit, Onunload,
+        Onbeforeunload,
+
+        // Constructors
+        DOMException, Image, Option, XMLHttpRequest,
+        XSLTProcessor_
+    };
 
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;

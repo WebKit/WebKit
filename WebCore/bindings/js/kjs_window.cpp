@@ -146,93 +146,84 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
 @begin WindowTable 118
-  atob          Window::AToB            DontDelete|Function 1
-  btoa          Window::BToA            DontDelete|Function 1
-  closed        Window::Closed          DontDelete|ReadOnly
-  crypto        Window::Crypto          DontDelete|ReadOnly
-  defaultStatus Window::DefaultStatus   DontDelete
-  defaultstatus Window::DefaultStatus   DontDelete
-  status        Window::Status          DontDelete
-  DOMException  Window::DOMException    DontDelete
-  frames        Window::Frames          DontDelete|ReadOnly
-  event         Window::Event_          DontDelete
-  innerHeight   Window::InnerHeight     DontDelete|ReadOnly
-  innerWidth    Window::InnerWidth      DontDelete|ReadOnly
-  length        Window::Length          DontDelete|ReadOnly
-  location      Window::Location_       DontDelete
-  name          Window::Name            DontDelete
-  navigator     Window::Navigator_      DontDelete|ReadOnly
-  clientInformation     Window::ClientInformation       DontDelete|ReadOnly
-  offscreenBuffering    Window::OffscreenBuffering      DontDelete|ReadOnly
-  opener        Window::Opener          DontDelete|ReadOnly
-  outerHeight   Window::OuterHeight     DontDelete|ReadOnly
-  outerWidth    Window::OuterWidth      DontDelete|ReadOnly
-  pageXOffset   Window::PageXOffset     DontDelete|ReadOnly
-  pageYOffset   Window::PageYOffset     DontDelete|ReadOnly
-  parent        Window::Parent          DontDelete|ReadOnly
-  screenX       Window::ScreenX         DontDelete|ReadOnly
-  screenY       Window::ScreenY         DontDelete|ReadOnly
-  screenLeft    Window::ScreenLeft      DontDelete|ReadOnly
-  screenTop     Window::ScreenTop       DontDelete|ReadOnly
-  scroll        Window::Scroll          DontDelete|Function 2
-  scrollBy      Window::ScrollBy        DontDelete|Function 2
-  scrollTo      Window::ScrollTo        DontDelete|Function 2
-  scrollX       Window::ScrollX         DontDelete|ReadOnly
-  scrollY       Window::ScrollY         DontDelete|ReadOnly
-  moveBy        Window::MoveBy          DontDelete|Function 2
-  moveTo        Window::MoveTo          DontDelete|Function 2
-  resizeBy      Window::ResizeBy        DontDelete|Function 2
-  resizeTo      Window::ResizeTo        DontDelete|Function 2
-  self          Window::Self            DontDelete|ReadOnly
-  window        Window::Window_         DontDelete|ReadOnly
-  top           Window::Top             DontDelete|ReadOnly
-  Image         Window::Image           DontDelete
-  Option        Window::Option          DontDelete
-  XMLHttpRequest        Window::XMLHttpRequest  DontDelete
-  XSLTProcessor Window::XSLTProcessor_  DontDelete
-  alert         Window::Alert           DontDelete|Function 1
-  confirm       Window::Confirm         DontDelete|Function 1
-  prompt        Window::Prompt          DontDelete|Function 2
-  open          Window::Open            DontDelete|Function 3
-  print         Window::Print           DontDelete|Function 2
-  setTimeout    Window::SetTimeout      DontDelete|Function 2
-  clearTimeout  Window::ClearTimeout    DontDelete|Function 1
-  setInterval   Window::SetInterval     DontDelete|Function 2
-  clearInterval Window::ClearInterval   DontDelete|Function 1
-  captureEvents Window::CaptureEvents   DontDelete|Function 0
-  releaseEvents Window::ReleaseEvents   DontDelete|Function 0
 # Warning, when adding a function to this object you need to add a case in Window::get
-  addEventListener      Window::AddEventListener        DontDelete|Function 3
-  removeEventListener   Window::RemoveEventListener     DontDelete|Function 3
-  onabort       Window::Onabort         DontDelete
-  onblur        Window::Onblur          DontDelete
-  onchange      Window::Onchange        DontDelete
-  onclick       Window::Onclick         DontDelete
-  ondblclick    Window::Ondblclick      DontDelete
-  onerror       Window::Onerror         DontDelete
-  onfocus       Window::Onfocus         DontDelete
-  onkeydown     Window::Onkeydown       DontDelete
-  onkeypress    Window::Onkeypress      DontDelete
-  onkeyup       Window::Onkeyup         DontDelete
-  onload        Window::Onload          DontDelete
-  onmousedown   Window::Onmousedown     DontDelete
-  onmousemove   Window::Onmousemove     DontDelete
-  onmouseout    Window::Onmouseout      DontDelete
-  onmouseover   Window::Onmouseover     DontDelete
-  onmouseup     Window::Onmouseup       DontDelete
-  onmousewheel  Window::OnWindowMouseWheel      DontDelete
-  onreset       Window::Onreset         DontDelete
-  onresize      Window::Onresize        DontDelete
-  onscroll      Window::Onscroll        DontDelete
-  onsearch      Window::Onsearch        DontDelete
-  onselect      Window::Onselect        DontDelete
-  onsubmit      Window::Onsubmit        DontDelete
-  onunload      Window::Onunload        DontDelete
-  onbeforeunload Window::Onbeforeunload DontDelete
-  frameElement  Window::FrameElement    DontDelete|ReadOnly
-  showModalDialog Window::ShowModalDialog    DontDelete|Function 1
-  find          Window::Find            DontDelete|Function 7
-  stop          Window::Stop            DontDelete|Function 0
+# -- Functions --
+  atob                  Window::AToB                DontDelete|Function 1
+  btoa                  Window::BToA                DontDelete|Function 1
+  scroll                Window::Scroll              DontDelete|Function 2
+  scrollBy              Window::ScrollBy            DontDelete|Function 2
+  scrollTo              Window::ScrollTo            DontDelete|Function 2
+  moveBy                Window::MoveBy              DontDelete|Function 2
+  moveTo                Window::MoveTo              DontDelete|Function 2
+  resizeBy              Window::ResizeBy            DontDelete|Function 2
+  resizeTo              Window::ResizeTo            DontDelete|Function 2
+  alert                 Window::Alert               DontDelete|Function 1
+  confirm               Window::Confirm             DontDelete|Function 1
+  prompt                Window::Prompt              DontDelete|Function 2
+  open                  Window::Open                DontDelete|Function 3
+  print                 Window::Print               DontDelete|Function 2
+  setTimeout            Window::SetTimeout          DontDelete|Function 2
+  clearTimeout          Window::ClearTimeout        DontDelete|Function 1
+  setInterval           Window::SetInterval         DontDelete|Function 2
+  clearInterval         Window::ClearInterval       DontDelete|Function 1
+  captureEvents         Window::CaptureEvents       DontDelete|Function 0
+  releaseEvents         Window::ReleaseEvents       DontDelete|Function 0
+  addEventListener      Window::AddEventListener    DontDelete|Function 3
+  removeEventListener   Window::RemoveEventListener DontDelete|Function 3
+  showModalDialog       Window::ShowModalDialog     DontDelete|Function 1
+  find                  Window::Find                DontDelete|Function 7
+  stop                  Window::Stop                DontDelete|Function 0
+# -- Attributes --
+  closed                Window::Closed              DontDelete|ReadOnly
+  crypto                Window::Crypto              DontDelete|ReadOnly
+  defaultStatus         Window::DefaultStatus       DontDelete
+  defaultstatus         Window::DefaultStatus       DontDelete
+  status                Window::Status              DontDelete
+  frames                Window::Frames              DontDelete|ReadOnly
+  event                 Window::Event_              DontDelete
+  length                Window::Length              DontDelete|ReadOnly
+  location              Window::Location_           DontDelete
+  name                  Window::Name                DontDelete
+  navigator             Window::Navigator_          DontDelete|ReadOnly
+  clientInformation     Window::ClientInformation   DontDelete|ReadOnly
+  opener                Window::Opener              DontDelete|ReadOnly
+  parent                Window::Parent              DontDelete|ReadOnly
+  self                  Window::Self                DontDelete|ReadOnly
+  window                Window::Window_             DontDelete|ReadOnly
+  top                   Window::Top                 DontDelete|ReadOnly
+  frameElement          Window::FrameElement        DontDelete|ReadOnly
+# -- Event Listeners --
+  onabort               Window::Onabort             DontDelete
+  onblur                Window::Onblur              DontDelete
+  onchange              Window::Onchange            DontDelete
+  onclick               Window::Onclick             DontDelete
+  ondblclick            Window::Ondblclick          DontDelete
+  onerror               Window::Onerror             DontDelete
+  onfocus               Window::Onfocus             DontDelete
+  onkeydown             Window::Onkeydown           DontDelete
+  onkeypress            Window::Onkeypress          DontDelete
+  onkeyup               Window::Onkeyup             DontDelete
+  onload                Window::Onload              DontDelete
+  onmousedown           Window::Onmousedown         DontDelete
+  onmousemove           Window::Onmousemove         DontDelete
+  onmouseout            Window::Onmouseout          DontDelete
+  onmouseover           Window::Onmouseover         DontDelete
+  onmouseup             Window::Onmouseup           DontDelete
+  onmousewheel          Window::OnWindowMouseWheel  DontDelete
+  onreset               Window::Onreset             DontDelete
+  onresize              Window::Onresize            DontDelete
+  onscroll              Window::Onscroll            DontDelete
+  onsearch              Window::Onsearch            DontDelete
+  onselect              Window::Onselect            DontDelete
+  onsubmit              Window::Onsubmit            DontDelete
+  onunload              Window::Onunload            DontDelete
+  onbeforeunload        Window::Onbeforeunload      DontDelete
+# -- Constructors --
+  DOMException          Window::DOMException        DontDelete
+  Image                 Window::Image               DontDelete
+  Option                Window::Option              DontDelete
+  XMLHttpRequest        Window::XMLHttpRequest      DontDelete
+  XSLTProcessor         Window::XSLTProcessor_      DontDelete
 @end
 */
 
@@ -555,18 +546,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       if (!d->m_evt)
         return jsUndefined();
       return toJS(exec, d->m_evt);
-    case InnerHeight:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      return jsNumber(m_frame->view()->height());
-    case InnerWidth:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      return jsNumber(m_frame->view()->width());
     case Length:
       return jsNumber(m_frame->tree()->childCount());
     case Location_:
@@ -587,62 +566,12 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
       return n;
     }
-    case OffscreenBuffering:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsBoolean(true);
     case Opener:
       if (m_frame->loader()->opener())
         return retrieve(m_frame->loader()->opener());
       return jsNull();
-    case OuterHeight:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-        return jsNumber(m_frame->page()->chrome()->windowRect().height());
-    case OuterWidth:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-        return jsNumber(m_frame->page()->chrome()->windowRect().width());
-    case PageXOffset:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      updateLayout();
-      return jsNumber(m_frame->view()->contentsX());
-    case PageYOffset:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      updateLayout();
-      return jsNumber(m_frame->view()->contentsY());
     case Parent:
       return retrieve(m_frame->tree()->parent() ? m_frame->tree()->parent() : m_frame);
-    case ScreenLeft:
-    case ScreenX:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsNumber(m_frame->page()->chrome()->windowRect().x());
-    case ScreenTop:
-    case ScreenY:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsNumber(m_frame->page()->chrome()->windowRect().y());
-    case ScrollX:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      updateLayout();
-      return jsNumber(m_frame->view()->contentsX());
-    case ScrollY:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      if (!m_frame->view())
-        return jsUndefined();
-      updateLayout();
-      return jsNumber(m_frame->view()->contentsY());
     case Self:
     case Window_:
       return retrieve(m_frame);
