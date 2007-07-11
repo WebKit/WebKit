@@ -912,6 +912,7 @@ sub countAndPrintLeaks($$$)
             "FOGetCoveredUnicodeChars", # leak in ATS, Radar 3943604
             "GetLineDirectionPreference", "InitUnicodeUtilities", # leaks tool falsely reporting leak in CFNotificationCenterAddObserver, Radar 4964790
             "ICCFPrefWrapper::GetPrefDictionary", # leaks in Internet Config. code, Radar 4449794
+            "NSHTTPURLProtocol setResponseHeader:", # leak in multipart/mixed-replace handling in Foundation, no Radar, but fixed in Leopard
             "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
             "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
             "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
