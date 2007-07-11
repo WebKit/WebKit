@@ -1,3 +1,17 @@
+2007-07-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5108789> WEBVIEW: Drawing artifacts when dragging in IB
+
+        Interface Builder 3 is relying on KVO notifications for frameOrigin and frameSize,
+        among other standard NSView keys. Change automaticallyNotifiesObserversForKey to 
+        return NO only for keys WebView manually fires notifications for.
+
+        * WebView/WebView.mm:
+        (+[WebView automaticallyNotifiesObserversForKey:]): Selectivly return NO for keys we manually fire.
+        (-[WebView _declaredKeys]): Code clean up.
+
 2007-07-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by John.

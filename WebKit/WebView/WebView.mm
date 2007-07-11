@@ -1154,18 +1154,21 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     [self willChangeValueForKey: key];
 }
 
-// Required to prevent automatic observer notifications.
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key {
-    return NO;
+    static NSSet *manualNotifyKeys = nil;
+    if (!manualNotifyKeys)
+        manualNotifyKeys = [[NSSet alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
+            _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey, nil];
+    if ([manualNotifyKeys containsObject:key])
+        return NO;
+    return YES;
 }
 
 - (NSArray *)_declaredKeys {
     static NSArray *declaredKeys = nil;
-    
-    if (!declaredKeys) {
-        declaredKeys = [[NSArray alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey, _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey, nil];
-    }
-
+    if (!declaredKeys)
+        declaredKeys = [[NSArray alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey,
+            _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, _WebMainFrameDocumentKey, nil];
     return declaredKeys;
 }
 
