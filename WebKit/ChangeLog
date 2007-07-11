@@ -1,3 +1,25 @@
+2007-07-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - Fixed <rdar://problem/5049509> REGRESSION(10.4.9-9A377a): REAP Suite 
+        installer shows empty modal alert window (hangs) if user cancels during
+        "installing shared components" phase
+        
+        Added Adobe installers to the family of apps that need a data load
+        loading quirk.
+        
+        Added a linked-on-or-after check because this code is no longer 
+        Tiger-only.
+        
+        I tested this code on Tiger and Leopard.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDocumentLoaderMac.mm:
+        (needsDataLoadWorkaround):
+        (WebDocumentLoaderMac::setDataSource):
+
 2007-07-10  Darin Adler  <darin@apple.com>
 
         - fix build

@@ -28,6 +28,7 @@
 
 #import "WebDocumentLoaderMac.h"
 
+#import "WebKitVersionChecks.h"
 #import "WebView.h"
 
 using namespace WebCore;
@@ -39,17 +40,25 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 {
 }
 
-static inline bool needsAppKitWorkaround(WebView *webView)
+static inline bool needsDataLoadWorkaround(WebView *webView)
 {
-#ifndef BUILDING_ON_TIGER
-    return false;
-#else    
+#ifdef BUILDING_ON_TIGER
+    // Tiger has to be a little less efficient.
     id frameLoadDelegate = [webView frameLoadDelegate];
     if (!frameLoadDelegate)
         return false;
-    
+
     NSString *bundleIdentifier = [[NSBundle bundleForClass:[frameLoadDelegate class]] bundleIdentifier];
-    return [bundleIdentifier isEqualToString:@"com.apple.AppKit"];
+
+    if ([bundleIdentifier isEqualToString:@"com.apple.AppKit"])
+        return true;
+    if ([bundleIdentifier isEqualToString:@"com.adobe.Installers.Setup"])
+        return true;
+    return false;
+#else
+    static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_VITALSOURCE_QUIRK) 
+                                  && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
+    return needsWorkaround;
 #endif
 }
 
@@ -64,11 +73,10 @@ void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *web
     m_resourceLoadDelegate = [webView resourceLoadDelegate];
     m_downloadDelegate = [webView downloadDelegate];
     
-    // Work around a bug in Tiger AppKit's use of WebKit. The particular idiom used
-    // won't allow the timer to run, so deferring the main resource load with a timer
-    // causes a delay until something else wakes the run loop.
-    // See <rdar://problem/5266289>
-    if (needsAppKitWorkaround(webView))
+    // Some clients run the run loop in a way that prevents the data load timer
+    // from firing. We work around that issue here. See <rdar://problem/5266289>
+    // and <rdar://problem/5049509>.
+    if (needsDataLoadWorkaround(webView))
         m_deferMainResourceDataLoad = false;
 }
 
