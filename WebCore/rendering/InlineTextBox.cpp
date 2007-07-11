@@ -783,10 +783,11 @@ void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* ctx, int tx, int t
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
-    // Thick marked text underlines are 2px thick as long as there is room for 1px space under the baseline.
-    // All other marked text underlines are 1px thick, and if there's not enough space they will touch or overlap characters.
+    // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
+    // All other marked text underlines are 1px thick.
+    // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    if (underline.thick && m_height - m_baseline > 2)
+    if (underline.thick && m_height - m_baseline >= 2)
         lineThickness = 2;
 
     ctx->setStrokeColor(underline.color);

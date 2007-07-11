@@ -1,3 +1,15 @@
+2007-07-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5230188> REGRESSION: Active/inactive marked text is not distinguished in textfields and textareas
+
+        We were previously trying to leave room for 1px of space between the text and the underline.
+        This change removes that requirement so that if we don't have room for the extra space, we still draw the thick underline
+        touching the text.
+
+        * rendering/InlineTextBox.cpp: (WebCore::InlineTextBox::paintMarkedTextUnderline):
+
 2007-07-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Geoff.
