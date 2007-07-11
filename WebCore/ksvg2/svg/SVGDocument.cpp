@@ -54,11 +54,6 @@ SVGSVGElement* SVGDocument::rootElement() const
     return 0;
 }
 
-PassRefPtr<Element> SVGDocument::createElement(const String& tagName, ExceptionCode& ec)
-{
-    return createElementNS(SVGNames::svgNamespaceURI, tagName, ec);
-}
-
 void SVGDocument::dispatchZoomEvent(float prevScale, float newScale)
 {
     ExceptionCode ec = 0;

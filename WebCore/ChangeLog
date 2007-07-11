@@ -1,3 +1,13 @@
+2007-07-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        Forgot to commit this as part of commit r24146. Now we are sure
+        createElement creates elements in the xhtml namespace only.
+
+        * ksvg2/svg/SVGDocument.cpp:
+        * ksvg2/svg/SVGDocument.h:
+
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
