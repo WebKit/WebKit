@@ -1,3 +1,12 @@
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mark.
+
+        Forwardport the hash table fix from CodeGeneratorJS.pm to create_hash_table.
+        Reran run-jsc-tests, couldn't find any regressions. Suggested by Darin.
+
+        * kjs/create_hash_table:
+
 2007-07-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
