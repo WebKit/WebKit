@@ -65,7 +65,7 @@ bool ResourceHandle::start(Frame* frame)
         return false;
 
     // check for (probably) broken requests
-    if (method() != "GET" && method() != "POST") {
+    if (d->m_request.httpMethod() != "GET" && d->m_request.httpMethod() != "POST") {
         notImplemented();
         return false;
     }
