@@ -156,9 +156,8 @@ namespace KJS {
         Stop,
 
         // Attributes
-        Closed, Crypto, DefaultStatus, Status,
-        Frames, Event_, Length, Location_,
-        Name, Navigator_, ClientInformation, Opener,
+        Crypto, Frames, Event_, Location_,
+        Navigator_, ClientInformation, Opener,
         Parent, Self, Window_, Top,
         FrameElement,
 

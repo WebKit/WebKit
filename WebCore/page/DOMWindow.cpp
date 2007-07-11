@@ -35,10 +35,12 @@
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "History.h"
 #include "Page.h"
 #include "PlatformScreen.h"
+#include "PlatformString.h"
 #include "Screen.h"
 #include "cssstyleselector.h"
 
@@ -278,6 +280,67 @@ int DOMWindow::scrollY() const
         doc->updateLayoutIgnorePendingStylesheets();
 
     return view->contentsY();
+}
+
+bool DOMWindow::closed() const
+{
+    return !m_frame;
+}
+
+unsigned DOMWindow::length() const
+{
+    if (!m_frame)
+        return 0;
+
+    return m_frame->tree()->childCount();
+}
+
+String DOMWindow::name() const
+{
+    if (!m_frame)
+        return String();
+
+    return m_frame->tree()->name();
+}
+
+void DOMWindow::setName(const String& string)
+{
+    if (!m_frame)
+        return;
+
+    m_frame->tree()->setName(string);
+}
+
+String DOMWindow::status() const
+{
+    if (!m_frame)
+        return String();
+
+    return m_frame->jsStatusBarText();
+}
+
+void DOMWindow::setStatus(const String& string)
+{
+    if (!m_frame)
+        return;
+
+    m_frame->setJSStatusBarText(string);
+}
+
+String DOMWindow::defaultStatus() const
+{
+    if (!m_frame)
+        return String();
+
+    return m_frame->jsDefaultStatusBarText();
+}
+
+void DOMWindow::setDefaultStatus(const String& string)
+{
+    if (!m_frame)
+        return;
+
+    m_frame->setJSDefaultStatusBarText(string);
 }
 
 Document* DOMWindow::document() const

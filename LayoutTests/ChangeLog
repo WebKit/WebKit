@@ -1,5 +1,12 @@
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        * fast/dom/Window/get-set-properties-expected.txt: Added.
+        * fast/dom/Window/get-set-properties.html: Added.
+
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Tests for <rdar://problem/5326791>

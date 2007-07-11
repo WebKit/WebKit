@@ -878,35 +878,28 @@ sub GenerateImplementation
                 $implClassNameForValueConversion = $implClassName;
             }
 
+            if ($attribute->signature->type =~ /Constructor$/) {
+                push(@implContent, "    case " . $name . "ConstructorAttrNum: {\n");
+            } else {
+                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
+            }
+
+            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+                push(@implContent, "        if (!isSafeScript(exec))\n");
+                push(@implContent, "            return jsUndefined();\n");
+            }
+
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                    push(@implContent, "        if (!isSafeScript(exec))\n");
-                    push(@implContent, "            return jsUndefined();");
-                }
                 push(@implContent, "        return $name(exec);\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
-                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
-                push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
                 $implIncludes{"Document.h"} = 1;
                 $implIncludes{"kjs_dom.h"} = 1;
+                push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                 $constructorType =~ s/Constructor$//;
-
-                push(@implContent, "    case " . $name . "ConstructorAttrNum:\n");
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                    push(@implContent, "        if (!isSafeScript(exec))\n");
-                    push(@implContent, "            return jsUndefined();\n");
-                }
                 push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
             } elsif (!@{$attribute->getterExceptions}) {
-                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum:\n");
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                    push(@implContent, "        if (!isSafeScript(exec))\n");
-                    push(@implContent, "            return jsUndefined();\n");
-                }
-        
                 if ($podType) {
                     if ($podType eq "double") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp") . ";\n");
@@ -918,7 +911,6 @@ sub GenerateImplementation
                     my $jsType = NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name()");
 
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
-                        push(@implContent, "    {\n");   
                         push(@implContent, "        ASSERT(exec && exec->dynamicInterpreter());\n\n");
                         push(@implContent, "        RefPtr<$type> obj = $jsType;\n");
                         push(@implContent, "        Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
@@ -932,7 +924,6 @@ sub GenerateImplementation
                         push(@implContent, "            }\n");
                         push(@implContent, "        }\n\n");
                         push(@implContent, "        return toJS(exec, obj.get());\n");
-                        push(@implContent, "    }\n");
                     } elsif ($attribute->signature->extendedAttributes->{"NullCheck"}) {
                         push(@implContent, "        return imp->$name() ? $jsType : jsUndefined();\n");
                     } else {
@@ -940,11 +931,6 @@ sub GenerateImplementation
                     }
                 }
             } else {
-                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
-                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                    push(@implContent, "        if (!isSafeScript(exec))\n");
-                    push(@implContent, "            return jsUndefined();\n");
-                }
                 push(@implContent, "        ExceptionCode ec = 0;\n");
         
                 if ($podType) {
@@ -957,8 +943,8 @@ sub GenerateImplementation
 
                 push(@implContent, "        setDOMException(exec, ec);\n");
                 push(@implContent, "        return result;\n");
-                push(@implContent, "    }\n");
             }
+            push(@implContent, "    }\n");
         }
 
         if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
@@ -966,7 +952,8 @@ sub GenerateImplementation
             push(@implContent, "        return getConstructor(exec);\n");
         }
 
-        push(@implContent, "    }\n    return 0;\n}\n\n");
+        push(@implContent, "    }\n");
+        push(@implContent, "    return 0;\n}\n\n");
 
         # Check if we have any writable attributes
         my $hasReadWriteProperties = 0;
@@ -1007,22 +994,26 @@ sub GenerateImplementation
                 if ($attribute->type !~ /^readonly/) {
                     my $name = $attribute->signature->name;
 
-                    if ($attribute->signature->extendedAttributes->{"Custom"}) {
+                    if ($attribute->signature->type =~ /Constructor$/) {
+                        push(@implContent, "    case " . $name ."ConstructorAttrNum: {\n");
+                    } else {
                         push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
+                    }
+
+                    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+                        push(@implContent, "        if (!isSafeScript(exec))\n");
+                        push(@implContent, "            return;\n");
+                    }
+
+                    if ($attribute->signature->extendedAttributes->{"Custom"}) {
                         push(@implContent, "        set" . WK_ucfirst($name) . "(exec, value);\n");
                     } elsif ($attribute->signature->type =~ /Constructor$/) {
                         my $constructorType = $attribute->signature->type;
                         $constructorType =~ s/Constructor$//;
-
                         $implIncludes{"JS" . $constructorType . ".h"} = 1;
-                        push(@implContent, "    case " . $name ."ConstructorAttrNum: {\n");
                         push(@implContent, "        // Shadowing a built-in constructor\n");
-
-                        # FIXME: We need to provide scalable hooks/attributes for this kind of extension
-                        push(@implContent, "        if (isSafeScript(exec))\n");
-                        push(@implContent, "            JSObject::put(exec, \"$name\", value);\n");
+                        push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
                     } else {
-                        push(@implContent, "    case " . WK_ucfirst($name) ."AttrNum: {\n");
                         if ($podType) {
                             if ($podType eq "double") { # Special case for JSSVGNumber
                                 push(@implContent, "        imp = " . JSValueToNative($attribute->signature, "value") . ";\n");
@@ -1045,10 +1036,7 @@ sub GenerateImplementation
             push(@implContent, "    }\n"); # end switch
 
             my $contextInterfaceName = CreateSVGContextInterfaceName($interfaceName);
-            if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
-                push(@implContent, "    (void)imp;\n");
-            } elsif ($contextInterfaceName ne "") {
+            if ($contextInterfaceName ne "") {
                 push(@implContent, "    ASSERT(exec && exec->dynamicInterpreter());\n");
                 push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
                 push(@implContent, "    if (!activeFrame)\n        return;\n\n");

@@ -57,6 +57,19 @@ module window {
         readonly attribute long pageXOffset;
         readonly attribute long pageYOffset;
 
+        readonly attribute [DoNotCheckDomainSecurity] boolean closed;
+
+        readonly attribute [DoNotCheckDomainSecurity] unsigned long length;
+
+                 attribute DOMString name;
+
+                 attribute DOMString status;
+                 attribute DOMString defaultStatus;
+#if defined(LANGUAGE_JAVASCRIPT)
+                 // This attribute is an alias of defaultStatus and is necessary for legacy uses.
+                 attribute DOMString defaultstatus;
+#endif
+
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 

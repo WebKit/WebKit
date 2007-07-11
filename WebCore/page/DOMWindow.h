@@ -26,6 +26,7 @@
 #ifndef DOMWindow_h
 #define DOMWindow_h
 
+#include "PlatformString.h"
 #include "Shared.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -41,7 +42,6 @@ namespace WebCore {
     class Frame;
     class History;
     class Screen;
-    class String;
     
     class DOMWindow : public Shared<DOMWindow> {
     public:
@@ -81,6 +81,21 @@ namespace WebCore {
         int scrollY() const;
         int pageXOffset() const { return scrollX(); }
         int pageYOffset() const { return scrollY(); }
+
+        bool closed() const;
+
+        unsigned length() const;
+
+        String name() const;
+        void setName(const String&);
+
+        String status() const;
+        void setStatus(const String&);
+        String defaultStatus() const;
+        void setDefaultStatus(const String&);
+        // This attribute is an alias of defaultStatus and is necessary for legacy uses.
+        String defaultstatus() const { return defaultStatus(); }
+        void setDefaultstatus(const String& string) { setDefaultStatus(string); }
 
         // DOM Level 2 AbstractView Interface
         Document* document() const;

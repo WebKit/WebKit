@@ -1,5 +1,38 @@
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Move more attributes from the pure JS bindings in KJS::Window
+        to the implementation in DOMWindow and autogenerate the new bindings
+
+        Test: fast/dom/Window/get-set-properties.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot): Change to use propHashTable in
+        JSDOMWindow instead of KJS::Window
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm: Cleanup getValueProperty and put generation
+        to reduce code duplication. 
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::closed):
+        (WebCore::DOMWindow::length):
+        (WebCore::DOMWindow::name):
+        (WebCore::DOMWindow::setName):
+        (WebCore::DOMWindow::status):
+        (WebCore::DOMWindow::setStatus):
+        (WebCore::DOMWindow::defaultStatus):
+        (WebCore::DOMWindow::setDefaultStatus):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::defaultstatus):
+        (WebCore::DOMWindow::setDefaultstatus):
+        * page/DOMWindow.idl:
+
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Fix for <rdar://problem/5326791> XSS vulnerability: ability to set window.defaultStatus,

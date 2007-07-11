@@ -174,16 +174,10 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   find                  Window::Find                DontDelete|Function 7
   stop                  Window::Stop                DontDelete|Function 0
 # -- Attributes --
-  closed                Window::Closed              DontDelete|ReadOnly
   crypto                Window::Crypto              DontDelete|ReadOnly
-  defaultStatus         Window::DefaultStatus       DontDelete
-  defaultstatus         Window::DefaultStatus       DontDelete
-  status                Window::Status              DontDelete
   frames                Window::Frames              DontDelete|ReadOnly
   event                 Window::Event_              DontDelete
-  length                Window::Length              DontDelete|ReadOnly
   location              Window::Location_           DontDelete
-  name                  Window::Name                DontDelete
   navigator             Window::Navigator_          DontDelete|ReadOnly
   clientInformation     Window::ClientInformation   DontDelete|ReadOnly
   opener                Window::Opener              DontDelete|ReadOnly
@@ -517,27 +511,17 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
 
 JSValue *Window::getValueProperty(ExecState *exec, int token) const
 {
-   ASSERT(token == Closed || m_frame);
+   ASSERT(m_frame);
 
    switch (token) {
-   case Closed:
-      return jsBoolean(!m_frame);
    case Crypto:
       if (!isSafeScript(exec))
         return jsUndefined();
       return jsUndefined(); // FIXME: implement this
-   case DefaultStatus:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsString(UString(m_frame->jsDefaultStatusBarText()));
    case DOMException:
       if (!isSafeScript(exec))
         return jsUndefined();
       return getDOMExceptionConstructor(exec);
-   case Status:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
       return retrieve(m_frame);
     case Event_:
@@ -546,14 +530,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       if (!d->m_evt)
         return jsUndefined();
       return toJS(exec, d->m_evt);
-    case Length:
-      return jsNumber(m_frame->tree()->childCount());
     case Location_:
       return location();
-    case Name:
-      if (!isSafeScript(exec))
-        return jsUndefined();
-      return jsString(m_frame->tree()->name());
     case Navigator_:
     case ClientInformation: {
       if (!isSafeScript(exec))
@@ -761,14 +739,6 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
        return;
 
     switch (entry->value) {
-    case Status:
-      if (isSafeScript(exec))
-        m_frame->setJSStatusBarText(value->toString(exec));
-      return;
-    case DefaultStatus:
-      if (isSafeScript(exec))
-        m_frame->setJSDefaultStatusBarText(value->toString(exec));
-      return;
     case Location_: {
       Frame* p = Window::retrieveActive(exec)->m_frame;
       if (p) {
@@ -880,10 +850,6 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
     case Onunload:
       if (isSafeScript(exec))
         setListener(exec, unloadEvent, value);
-      return;
-    case Name:
-      if (isSafeScript(exec))
-        m_frame->tree()->setName(value->toString(exec));
       return;
     default:
       break;
