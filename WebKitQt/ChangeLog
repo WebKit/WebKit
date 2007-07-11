@@ -1,5 +1,12 @@
 2007-07-12  George Staikos  <staikos@kde.org>
 
+        Qt build fix for assertions.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+
+2007-07-12  George Staikos  <staikos@kde.org>
+
         Qt build fix.
 
         * Api/qwebnetworkinterface.cpp:

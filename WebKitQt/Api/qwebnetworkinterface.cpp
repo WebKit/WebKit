@@ -377,8 +377,6 @@ QWebNetworkManager *QWebNetworkManager::self()
 
 bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *interface)
 {
-    ASSERT(resource);
-
     if (!interface)
         interface = default_interface;
 
