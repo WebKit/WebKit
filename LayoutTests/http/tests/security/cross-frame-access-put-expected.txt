@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains must match.
+
+ALERT: PASS: window.defaultStatus should be '' and is.
+ALERT: PASS: window.defaultstatus should be '' and is.
+ALERT: PASS: window.status should be '' and is.
+This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).
+
+
+MAIN WINDOW: !!-- Test ended--!!
+

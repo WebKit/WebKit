@@ -1,3 +1,14 @@
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Tests for <rdar://problem/5326791>
+
+        * http/tests/security/cross-frame-access-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt: Added.
+        * http/tests/security/cross-frame-access-put.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html: Added.
+
 2007-07-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

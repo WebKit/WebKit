@@ -1,5 +1,18 @@
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5326791> XSS vulnerability: ability to set window.defaultStatus,
+        window.defaultstatus and window.status cross domains
+
+        Test: http/tests/security/cross-frame-access-put.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put): Adds isSafeScript check for defaultStatus,
+        defaultstatus and status cases.
+
+2007-07-10  Sam Weinig  <sam@webkit.org>
+
         Fix build for BuildBot.
 
         * page/DOMWindow.cpp:

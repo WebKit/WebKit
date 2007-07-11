@@ -1,0 +1,32 @@
+<p>This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).</p>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html" style=""></iframe>
+<pre id="console"></pre>
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+window.targetWindow = window.frames[0];
+
+window.onload = function()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    targetWindow.defaultStatus = "FAIL!! CUSTOM defaultStatus";
+    targetWindow.defaultstatus = "FAIL!! CUSTOM defaultstatus";
+    targetWindow.status = "FAIL!! CUSTOM status";
+
+    setTimeout(function() {
+        log("MAIN WINDOW: !!-- Test ended--!!");
+
+        window.stop();
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 1);
+}
+</script>

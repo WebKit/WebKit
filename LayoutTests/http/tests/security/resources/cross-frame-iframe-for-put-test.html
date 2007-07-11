@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function shouldBe(a, b)
+        {
+            var evalA, evalB;
+            try {
+                evalA = eval(a);
+                evalB = eval(b);
+            } catch(e) {
+                evalA = e;
+            }
+
+            var message = (evalA === evalB)
+                            ? "PASS: " + a + " should be '" + evalB + "' and is."
+                            : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+            alert(message);
+        }
+    </script>
+</head>
+<body>
+    <p>This text is in an iframe.</p>
+    <pre id="console"></pre>
+    <script>
+        setTimeout(function() {
+            shouldBe("window.defaultStatus", "''");
+            shouldBe("window.defaultstatus", "''");
+            shouldBe("window.status", "''");
+        }, 0);
+    </script>
+</body>
+</html>
