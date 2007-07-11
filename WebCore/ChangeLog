@@ -1,3 +1,14 @@
+2007-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        <rdar://problem/5326653> - REGRESSION: [WebBackForwardList forwardListCount] might return incorrect result
+
+        No layout test because this is an API issue that can't be tested in DRT or the browser
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::forwardListCount): If the index is NoCurrentItemIndex, return 0
+
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

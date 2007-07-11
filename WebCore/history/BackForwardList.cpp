@@ -201,7 +201,7 @@ int BackForwardList::backListCount()
 
 int BackForwardList::forwardListCount()
 {
-    return (int)m_entries.size() - (m_current + 1);
+    return m_current == NoCurrentItemIndex ? 0 : (int)m_entries.size() - (m_current + 1);
 }
 
 HistoryItem* BackForwardList::itemAtIndex(int index)
