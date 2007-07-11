@@ -1,3 +1,21 @@
+2007-07-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        As of http://bugs.webkit.org/show_bug.cgi?id=14527 move the
+        WebCore/ForwardingHeader/JavaScriptCore to JavaScriptCore
+
+        * ForwardingHeaders/JavaScriptCore: Removed.
+        * ForwardingHeaders/JavaScriptCore/APICast.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSBase.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSContextRef.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSLock.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSObjectRef.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSStringRef.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSStringRefCF.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JSValueRef.h: Removed.
+        * ForwardingHeaders/JavaScriptCore/JavaScriptCore.h: Removed.
+
 2007-07-11  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

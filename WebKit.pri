@@ -32,6 +32,7 @@ INCLUDEPATH += \
     $$BASE_DIR/JavaScriptCore/bindings \
     $$BASE_DIR/JavaScriptCore/bindings/c \
     $$BASE_DIR/JavaScriptCore/wtf \
+    $$BASE_DIR/JavaScriptCore/ForwardingHeaders \
     $$BASE_DIR/WebCore \
     $$BASE_DIR/WebCore/ForwardingHeaders \
     $$BASE_DIR/WebCore/platform \

@@ -1,3 +1,13 @@
+2007-07-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        As of http://bugs.webkit.org/show_bug.cgi?id=14527 move the
+        WebCore/ForwardingHeader/JavaScriptCore to JavaScriptCore
+
+        * ForwardingHeaders: Added.
+        * ForwardingHeaders/JavaScriptCore: Copied from WebCore/ForwardingHeaders/JavaScriptCore.
+
 2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mark.
