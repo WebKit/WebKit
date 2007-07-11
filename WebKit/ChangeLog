@@ -1,3 +1,24 @@
+2007-07-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by John.
+        
+        Fix <rdar://problem/4570550>
+        Hang in layout/layoutBlock/layoutBlockChildren preparing to print certain Mail messages
+        
+        When printing from Mail, WebHTMLView is a subview of the view that is actually printed and does not 
+        receive calls that would set it to printing mode. Method adjustPageHeightNew is called repeatedly (for each page) during
+        printing and it enables printing mode temporarily for each call. This triggers two full style recalcs and layouts
+        each time making printing at least O(n^2). 
+
+        Instead of enabling printing mode and resetting it back immediatly do the resetting asynchronously, after
+        all adjustPageHeightNew calls are done. Normal Safari printing is not affected as adjustPageHeightNew is only
+        called in case WebHTMLView is embedded in the view that is being printed.
+        
+        No automatic test possible, requires printing and non-Safari client.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+
 2007-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

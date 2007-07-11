@@ -3075,8 +3075,15 @@ noPromisedData:
 
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
     
-    if (!wasInPrintingMode)
-        [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+    if (!wasInPrintingMode) {
+        NSPrintOperation *currenPrintOperation = [NSPrintOperation currentOperation];
+        if (currenPrintOperation)
+            // delay _setPrinting:NO until back to main loop as this method may get called repeatedly
+            [self performSelector:@selector(_delayedEndPrintMode:) withObject:currenPrintOperation afterDelay:0];
+        else
+            // not sure if this is actually ever invoked, it probably shouldn't be
+            [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+    }
 }
 
 - (float)_availablePaperWidthForPrintOperation:(NSPrintOperation *)printOperation
