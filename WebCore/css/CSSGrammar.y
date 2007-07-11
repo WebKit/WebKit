@@ -172,7 +172,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %right <string> IDENT
 
-%nonassoc <string> HEX_OR_IDENT
+%nonassoc <string> HEX
 %nonassoc <string> IDSEL
 %nonassoc ':'
 %nonassoc '.'
@@ -741,7 +741,7 @@ specifier_list:
 ;
 
 specifier:
-    HEX_OR_IDENT {
+    IDSEL {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::Id;
@@ -750,14 +750,18 @@ specifier:
         $$->m_attr = idAttr;
         $$->m_value = atomicString($1);
     }
-  | IDSEL {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::Id;
-        if (!p->strict)
-            $1.lower();
-        $$->m_attr = idAttr;
-        $$->m_value = atomicString($1);
+  | HEX {
+        if ($1.characters[0] >= '0' && $1.characters[0] <= '9') {
+            $$ = 0;
+        } else {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            $$ = p->createFloatingSelector();
+            $$->m_match = CSSSelector::Id;
+            if (!p->strict)
+                $1.lower();
+            $$->m_attr = idAttr;
+            $$->m_value = atomicString($1);
+        }
     }
   | class
   | attrib
@@ -1124,7 +1128,8 @@ function:
  * after the "#"; e.g., "#000" is OK, but "#abcd" is not.
  */
 hexcolor:
-  HEX_OR_IDENT maybe_space { $$ = $1; }
+  HEX maybe_space { $$ = $1; }
+  | IDSEL maybe_space { $$ = $1; }
   ;
 
 

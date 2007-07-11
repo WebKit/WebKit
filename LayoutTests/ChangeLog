@@ -1,3 +1,16 @@
+2007-07-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Regression test for:
+        http://bugs.webkit.org/show_bug.cgi?id=14453
+        REGRESSION: www.nzherald.co.nz almost all the formating is gone
+
+        * css2.1/bogus-color-span-expected.checksum: Added.
+        * css2.1/bogus-color-span-expected.png: Added.
+        * css2.1/bogus-color-span-expected.txt: Added.
+        * css2.1/bogus-color-span.html: Added.
+
 2007-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

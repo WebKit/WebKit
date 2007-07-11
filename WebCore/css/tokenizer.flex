@@ -45,7 +45,7 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 
 {ident}                 {yyTok = IDENT; return yyTok;}
 
-"#"{hexcolor}           {yyTok = HEX_OR_IDENT; return yyTok;}
+"#"{hexcolor}           {yyTok = HEX; return yyTok;}
 "#"{ident}              {yyTok = IDSEL; return yyTok;}
 
 "@import"               {BEGIN(mediaquery); yyTok = IMPORT_SYM; return yyTok;}

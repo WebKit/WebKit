@@ -1,5 +1,20 @@
 2007-07-11  Rob Buis  <buis@kde.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14453
+        REGRESSION: www.nzherald.co.nz almost all the formating is gone
+ 
+        Be less strict for the hex color definition.
+
+        * css/CSSGrammar.y:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::text):
+        * css/tokenizer.flex:
+
+2007-07-11  Rob Buis  <buis@kde.org>
+
         Reviewed by Oliver.
 
         Forgot to commit this as part of commit r24146. Now we are sure
