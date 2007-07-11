@@ -1,3 +1,36 @@
+2007-07-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        <rdar://problem/5313508>
+        REGRESSION (Leopard): http/tests/xmlhttprequest/basic-auth.html hangs
+        
+        Leopard Foundation now ignores credentials passed in as part of the URL so we need to pass them ourselves.
+        
+        For the asynchronous case, we simply keep track of the URL and if it has a user name and password, we
+        pass those if we're asked to authenticate.
+                
+        For the synchronous case, implement a new connection delegate and run it in a separate mode so 
+        no other sources will fire.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (-[WebCoreResourceHandleAsDelegate dealloc]):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreSynchronousLoader _isDone]):
+        (-[WebCoreSynchronousLoader dealloc]):
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreSynchronousLoader connection:didReceiveResponse:]):
+        (-[WebCoreSynchronousLoader connection:didReceiveData:]):
+        (-[WebCoreSynchronousLoader connectionDidFinishLoading:]):
+        (-[WebCoreSynchronousLoader connection:didFailWithError:]):
+        (-[WebCoreSynchronousLoader _data]):
+        (-[WebCoreSynchronousLoader _response]):
+        (-[WebCoreSynchronousLoader _error]):
+        (+[WebCoreSynchronousLoader loadRequest:returningResponse:error:]):
+
 2007-07-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

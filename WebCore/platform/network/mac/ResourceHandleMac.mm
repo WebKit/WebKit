@@ -44,6 +44,9 @@ using namespace WebCore;
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
 {
     ResourceHandle* m_handle;
+#ifndef BUILDING_ON_TIGER
+    NSURL *m_url;
+#endif
 }
 - (id)initWithHandle:(ResourceHandle*)handle;
 - (void)detachHandle;
@@ -56,6 +59,20 @@ using namespace WebCore;
 @interface NSURLProtocol (WebFoundationSecret) 
 + (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
 @end
+
+#ifndef BUILDING_ON_TIGER
+@interface WebCoreSynchronousLoader : NSObject {
+    NSURL *m_url;
+    NSURLResponse *m_response;
+    NSMutableData *m_data;
+    NSError *m_error;
+    BOOL m_isDone;
+}
++ (NSData *)loadRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error;
+@end
+
+static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
+#endif
 
 namespace WebCore {
    
@@ -211,8 +228,11 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
+#ifndef BUILDING_ON_TIGER
+    result = [WebCoreSynchronousLoader loadRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
+#else
     result = [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:&nsError];
-    
+#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (nsError == nil)
@@ -300,6 +320,14 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     return self;
 }
 
+#ifndef BUILDING_ON_TIGER
+- (void)dealloc
+{
+    [m_url release];
+    [super dealloc];
+}
+#endif
+
 - (void)detachHandle
 {
     m_handle = 0;
@@ -313,11 +341,31 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     ResourceRequest request = newRequest;
     m_handle->client()->willSendRequest(m_handle, request, redirectResponse);
     --inNSURLConnectionCallback;
+#ifndef BUILDING_ON_TIGER
+    [m_url release];
+    m_url = [[request.nsURLRequest() URL] copy];    
+#endif
+    
     return request.nsURLRequest();
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+#ifndef BUILDING_ON_TIGER
+    if ([challenge previousFailureCount] == 0) {
+        NSString *user = [m_url user];
+        NSString *password = [m_url password];
+
+        if (user && password) {
+            NSURLCredential *credential = [NSURLCredential credentialWithUser:user
+                                                                     password:password
+                                                                  persistence:NSURLCredentialPersistenceForSession];
+            [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            return;
+        }
+    }
+#endif
+    
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
@@ -435,3 +483,117 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 
 @end
+
+#ifndef BUILDING_ON_TIGER
+@implementation WebCoreSynchronousLoader
+
+- (BOOL)_isDone
+{
+    return m_isDone;
+}
+
+- (void)dealloc
+{
+    [m_url release];
+    [m_response release];
+    [m_data release];
+    [m_error release];
+    
+    [super dealloc];
+}
+
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+{
+    [m_url release];
+    m_url = [[newRequest URL] copy];
+
+    return newRequest;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if ([challenge previousFailureCount] == 0) {
+        NSString *user = [m_url user];
+        NSString *password = [m_url password];
+        
+        if (user && password) {
+            NSURLCredential *credential = [NSURLCredential credentialWithUser:user
+                                                                     password:password
+                                                                  persistence:NSURLCredentialPersistenceForSession];
+            [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            return;
+        }
+    }
+    
+    [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSURLResponse *r = [response copy];
+    
+    [m_response release];
+    m_response = r;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    if (!m_data)
+        m_data = [[NSMutableData alloc] init];
+    
+    [m_data appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    m_isDone = YES;
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    ASSERT(!m_error);
+    
+    m_error = [error retain];
+    m_isDone = YES;
+}
+
+- (NSData *)_data
+{
+    return [[m_data retain] autorelease];
+}
+
+- (NSURLResponse *)_response
+{
+    return [[m_response retain] autorelease];
+}
+
+- (NSError *)_error
+{
+    return [[m_error retain] autorelease];
+}
+
++ (NSData *)loadRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error
+{
+    WebCoreSynchronousLoader *delegate = [[WebCoreSynchronousLoader alloc] init];
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:NO];
+    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:WebCoreSynchronousLoaderRunLoopMode];
+    [connection start];
+    
+    while (![delegate _isDone])
+        [[NSRunLoop currentRunLoop] runMode:WebCoreSynchronousLoaderRunLoopMode beforeDate:[NSDate distantFuture]];
+
+    NSData *data = [delegate _data];
+    *response = [delegate _response];
+    *error = [delegate _error];
+    
+    [connection cancel];
+    
+    [connection release];
+    [delegate release];
+    
+    return data;
+}
+
+@end
+#endif
