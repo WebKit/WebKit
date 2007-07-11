@@ -94,9 +94,4 @@ void Editor::showColorPanel()
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
 
-void Editor::unmarkText()
-{
-    m_frame->setMarkedTextRange(0, nil, nil);
-}
-
 } // namespace WebCore

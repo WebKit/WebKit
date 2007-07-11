@@ -1,3 +1,17 @@
+2007-07-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5326417> Editor::unmarkText needs to be crossplatform
+
+        Missed this in earlier patch to make text marking platform independent.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::unmarkText):
+           Add platform independent impl
+        * editing/mac/EditorMac.mm:
+           Remove the old mac path.
+
 2007-07-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.
