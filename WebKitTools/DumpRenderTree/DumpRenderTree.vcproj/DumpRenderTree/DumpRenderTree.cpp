@@ -589,6 +589,7 @@ static void initializePreferences(IWebPreferences* preferences)
     preferences->setJavaEnabled(FALSE);
     preferences->setPlugInsEnabled(TRUE);
     preferences->setDOMPasteAllowed(TRUE);
+    preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
 
     SysFreeString(standardFamily);
     SysFreeString(fixedFamily);
