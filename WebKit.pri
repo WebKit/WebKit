@@ -1,7 +1,10 @@
 # Include file to make it easy to include WebKit into Qt projects
 
 
-isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/WebKitBuild/Release
+isEmpty(OUTPUT_DIR) {
+    CONFIG(release):OUTPUT_DIR=$$PWD/WebKitBuild/Release
+    CONFIG(debug):OUTPUT_DIR=$$PWD/WebKitBuild/Debug
+}
 
 !gdk-port:CONFIG += qt-port
 qt-port:DEFINES += BUILDING_QT__=1
