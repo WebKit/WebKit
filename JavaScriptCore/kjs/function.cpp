@@ -155,13 +155,13 @@ inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
 #ifdef KJS_VERBOSE
     fprintf(stderr, "---------------------------------------------------\n"
           "processing parameters for %s call\n",
-          name().isEmpty() ? "(internal)" : name().ascii());
+          functionName().isEmpty() ? "(internal)" : functionName().ascii());
 #endif
 
     size_t size = parameters.size();
     for (size_t i = 0; i < size; ++i) {
 #ifdef KJS_VERBOSE
-      fprintf(stderr, "setting parameter %s ", parameters->at(i).name.ascii());
+      fprintf(stderr, "setting parameter %s ", parameters.at(i).name.ascii());
       printInfo(exec, "to", args[i]);
 #endif
       variable->put(exec, parameters[i].name, args[i]);
