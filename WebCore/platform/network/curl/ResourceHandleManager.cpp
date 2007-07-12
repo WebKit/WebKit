@@ -191,13 +191,13 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job)
 
     curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
 
-    job->postData()->flatten(d->m_postBytes);
+    job->request().httpBody()->flatten(d->m_postBytes);
     if (d->m_postBytes.size() != 0) {
         curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
         curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
     }
 
-    Vector<FormDataElement> elements = job->postData()->elements();
+    Vector<FormDataElement> elements = job->request().httpBody()->elements();
     size_t size = elements.size();
     struct curl_httppost* lastItem = 0;
     struct curl_httppost* post = 0;
@@ -269,7 +269,7 @@ bool ResourceHandleManager::startScheduledJobs()
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
     ResourceHandleInternal* d = job->getInternal();
-    DeprecatedString url = job->url().url();
+    DeprecatedString url = job->request().url().url();
     d->m_handle = curl_easy_init();
 #ifndef NDEBUG
     if (getenv("DEBUG_CURL"))
@@ -300,9 +300,9 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
         curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, m_cookieJarFileName);
     }
 
-    if (job->requestHeaders().size() > 0) {
+    if (job->request().httpHeaderFields().size() > 0) {
         struct curl_slist* headers = 0;
-        HTTPHeaderMap customHeaders = job->requestHeaders();
+        HTTPHeaderMap customHeaders = job->request().httpHeaderFields();
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
             String key = it->first;
@@ -317,13 +317,13 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
         d->m_customHeaders = headers;
     }
 
-    if ("GET" == job->method())
+    if ("GET" == job->request().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
-    else if ("POST" == job->method())
+    else if ("POST" == job->request().httpMethod())
         setupPOST(job);
-    else if ("PUT" == job->method())
+    else if ("PUT" == job->request().httpMethod())
         setupPUT(job);
-    else if ("HEAD" == job->method())
+    else if ("HEAD" == job->request().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
 
     CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, d->m_handle);
@@ -331,7 +331,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
 #ifndef NDEBUG
-        printf("Error %d starting job %s\n", ret, job->url().url().ascii());
+        printf("Error %d starting job %s\n", ret, job->request().url().url().ascii());
 #endif
         job->cancel();
         return;
