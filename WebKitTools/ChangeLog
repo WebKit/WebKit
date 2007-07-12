@@ -1,3 +1,11 @@
+2007-07-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Ada.
+
+        Remove leak suppression for xmlDocPtrForString now that <rdar://problem/5329877> is fixed.
+
+        * Scripts/run-webkit-tests:
+
 2007-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

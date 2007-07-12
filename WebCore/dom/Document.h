@@ -599,10 +599,10 @@ public:
 
 #if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
-    void setTransformSource(void* doc) { m_transformSource = doc; }
+    void setTransformSource(void* doc);
     const void* transformSource() { return m_transformSource; }
     PassRefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
-    void setTransformSourceDocument(Document *doc) { m_transformSourceDocument = doc; }
+    void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
 #endif
 
 #if ENABLE(XBL)

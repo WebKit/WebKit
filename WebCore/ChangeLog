@@ -1,3 +1,13 @@
+2007-07-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Ada.
+
+        <rdar://problem/5329877> REGRESSION: Document::setTransformSource leaks an xmlDocPtr if called more than once per document
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTransformSource): Free any existing m_transformSource before overwriting it, rather than simply leaking it.
+        * dom/Document.h:
+
 2007-07-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
