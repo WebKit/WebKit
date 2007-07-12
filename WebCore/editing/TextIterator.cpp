@@ -728,7 +728,8 @@ void SimplifiedBackwardsTextIterator::advance()
     m_textLength = 0;
 
     while (m_node && m_node != m_pastStartNode) {
-        if (!m_handledNode) {
+        // Don't handle node if we start iterating at [node, 0].
+        if (!m_handledNode && !(m_node == m_endNode && m_endOffset == 0)) {
             RenderObject *renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
                 // FIXME: What about CDATA_SECTION_NODE?
@@ -747,7 +748,10 @@ void SimplifiedBackwardsTextIterator::advance()
         if (!next) {
             // Exit empty containers as we pass over them or containers
             // where [container, 0] is where we started iterating.
-            if (canHaveChildrenForEditing(m_node) && m_node->parentNode() && (!m_node->lastChild() || m_node == m_endNode && m_endOffset == 0)) {
+            if (!m_handledNode &&
+                canHaveChildrenForEditing(m_node) && 
+                m_node->parentNode() && 
+                (!m_node->lastChild() || m_node == m_endNode && m_endOffset == 0)) {
                 exitNode();
                 if (m_positionNode) {
                     m_handledNode = true;
@@ -755,6 +759,7 @@ void SimplifiedBackwardsTextIterator::advance()
                     return;
                 }            
             }
+            // Exit all other containers.
             next = m_node->previousSibling();
             while (!next) {
                 if (!m_node->parentNode())

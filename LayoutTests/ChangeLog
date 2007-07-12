@@ -1,3 +1,14 @@
+2007-07-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5300379> Mail hung on option-delete
+
+        * editing/deleting/5300379-expected.checksum: Added.
+        * editing/deleting/5300379-expected.png: Added.
+        * editing/deleting/5300379-expected.txt: Added.
+        * editing/deleting/5300379.html: Added.
+
 2007-07-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

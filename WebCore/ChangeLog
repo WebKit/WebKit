@@ -1,3 +1,18 @@
+2007-07-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5300379> Mail hung on option-delete
+        
+        We were starting backward iteration at [container, 0] and
+        emitting for container over and over.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Don't 
+        emit characters for a node if we're starting iteration at 
+        [container, 0].  Don't emit characters for exiting containers
+        if we've already done so.
+
 2007-07-12  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Mark Rowe.
