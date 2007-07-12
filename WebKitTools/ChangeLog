@@ -1,3 +1,13 @@
+2007-07-11  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Maciej.
+
+        Update the iExploder list of CSS properties after box-sizing was renamed to
+        -webkit-box-sizing in r21026 to fix <rdar://problem/4667227>.
+
+        * iExploder/htdocs/cssproperties.in:  Added -webkit-box-sizing.  Both box-sizing and
+        -moz-box-sizing remain.
+
 2007-07-10  Darin Adler  <darin@apple.com>
 
         * Scripts/run-webkit-tests: Add an ignore item for a leak in Tiger's

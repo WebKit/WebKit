@@ -19,6 +19,7 @@
 -webkit-box-ordinal-group
 -webkit-box-orient
 -webkit-box-pack
+-webkit-box-sizing
 -webkit-dashboard-region
 -webkit-font-size-delta
 -webkit-line-break
