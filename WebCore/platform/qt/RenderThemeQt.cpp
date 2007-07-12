@@ -310,8 +310,8 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
         return true;
 
     QStyleOptionComboBox opt;
-    EAppearance appearance = applyTheme(opt, o);
     opt.initFrom(widget);
+    EAppearance appearance = applyTheme(opt, o);
     const QPoint topLeft = r.topLeft();
     painter->translate(topLeft);
     opt.rect.moveTo(QPoint(0,0));
