@@ -141,6 +141,7 @@ sub parseLeaksOutput(\@)
     my @leakList = ();
     for my $line (@$leaksOutput) {
         next if $line =~ /^Process/;
+        next if $line =~ /^node buffer added/;
         
         if ($line =~ /^Leak: /) {
             my ($address) = ($line =~ /Leak: ([[:xdigit:]x]+)/);

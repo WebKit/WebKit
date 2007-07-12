@@ -1,3 +1,12 @@
+2007-07-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Made the leaks tests pass on Leopard.
+
+        * Scripts/run-webkit-tests: Added some leaks to exclude on Leopard.
+        * Scripts/run-leaks: Updated parser for slight change in text output.
+
 2007-07-11  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Maciej.
