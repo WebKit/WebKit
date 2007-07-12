@@ -1,0 +1,1 @@
+#include <kjs/JSLock.h>
