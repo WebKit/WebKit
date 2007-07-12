@@ -1,3 +1,12 @@
+2007-07-12  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5039463> find a good gray that works well for full frame plug-ins; consistent look for plugins
+
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure): Changed values to a darker gray, per request from the HI team.
+
 2007-07-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.
