@@ -722,23 +722,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSRect)firstRectForDOMRange:(DOMRange *)range
 {
-    int extraWidthToEndOfLine = 0;
-    IntRect startCaretRect = [[range startContainer] _node]->renderer()->caretRect([range startOffset], DOWNSTREAM, &extraWidthToEndOfLine);
-    IntRect endCaretRect = [[range endContainer] _node]->renderer()->caretRect([range endOffset], UPSTREAM);
-
-    if (startCaretRect.y() == endCaretRect.y()) {
-        // start and end are on the same line
-        return IntRect(MIN(startCaretRect.x(), endCaretRect.x()), 
-                     startCaretRect.y(), 
-                     abs(endCaretRect.x() - startCaretRect.x()),
-                     MAX(startCaretRect.height(), endCaretRect.height()));
-    }
-
-    // start and end aren't on the same line, so go from start to the end of its line
-    return IntRect(startCaretRect.x(), 
-                 startCaretRect.y(),
-                 startCaretRect.width() + extraWidthToEndOfLine,
-                 startCaretRect.height());
+   return m_frame->firstRectForRange([range _range]);
 }
 
 - (void)scrollDOMRangeToVisible:(DOMRange *)range

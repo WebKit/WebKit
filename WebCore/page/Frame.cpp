@@ -312,6 +312,33 @@ Range* Frame::markedTextRange() const
     return d->m_markedTextRange.get();
 }
 
+
+IntRect Frame::firstRectForRange(Range* range) const
+{
+    int extraWidthToEndOfLine = 0;
+    ExceptionCode ec = 0;
+    ASSERT(range->startContainer(ec));
+    ASSERT(range->endContainer(ec));
+    IntRect startCaretRect = range->startContainer(ec)->renderer()->caretRect(range->startOffset(ec), DOWNSTREAM, &extraWidthToEndOfLine);
+    ASSERT(!ec);
+    IntRect endCaretRect = range->endContainer(ec)->renderer()->caretRect(range->endOffset(ec), UPSTREAM);
+    ASSERT(!ec);
+    
+    if (startCaretRect.y() == endCaretRect.y()) {
+        // start and end are on the same line
+        return IntRect(MIN(startCaretRect.x(), endCaretRect.x()), 
+                       startCaretRect.y(), 
+                       abs(endCaretRect.x() - startCaretRect.x()),
+                       MAX(startCaretRect.height(), endCaretRect.height()));
+    }
+    
+    // start and end aren't on the same line, so go from start to the end of its line
+    return IntRect(startCaretRect.x(), 
+                   startCaretRect.y(),
+                   startCaretRect.width() + extraWidthToEndOfLine,
+                   startCaretRect.height());
+}
+
 void Frame::setMarkedTextRange(Range* range, Vector<MarkedTextUnderline>& markedRangeDecorations)
 {
     int exception = 0;
