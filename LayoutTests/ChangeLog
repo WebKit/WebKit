@@ -1,3 +1,12 @@
+2007-07-12  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Mark Rowe.
+
+        Update the expected results now that they match what the test describes as the correct rendering.
+
+        * svg/custom/invalid-fill-hex-expected.txt:
+        * svg/custom/invalid-fill-hex-expected.png:
+
 2007-07-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
