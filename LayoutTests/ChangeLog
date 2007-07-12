@@ -2,6 +2,14 @@
 
         Reviewed by Mark Rowe.
 
+        - try to fix hang seen on buildbot after the last fix
+
+        * fast/history/resources/history_reload_window.html:
+
+2007-07-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         - fix an assertion failure in DumpRenderTree when running fast/history/resources/history_reload_window.html
 
         * fast/history/resources/history_reload_window.html: Delay notifyDone() until

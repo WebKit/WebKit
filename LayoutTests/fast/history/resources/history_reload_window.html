@@ -12,13 +12,17 @@
             } else {
                 console.innerHTML = tempConsole.innerHTML;
                 window.close();
-                if (window.layoutTestController)
-                    setTimeout("layoutTestController.notifyDone()", 0);
             }
+        }
+
+        function closed()
+        {
+            if (window.layoutTestController)
+                opener.setTimeout("layoutTestController.notifyDone()", 0);
         }
         </script>
     </head>
-    <body onload="test()">
+    <body onload="test()" onunload="closed()">
         <div id="console">Test Passed</div>
     </body>
 </html>
