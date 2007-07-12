@@ -1,3 +1,12 @@
+2007-07-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for <rdar://problem/5329712> GMail crash when trying to compose new message
+
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::containsCharacters):
+
 2007-07-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

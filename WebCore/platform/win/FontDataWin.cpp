@@ -149,12 +149,10 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
 
     for (int i = 0; i < length; i++) {
         if (glyphBuffer[i] == 0xFFFFFFFF) {
-            delete []glyphBuffer;
             return false;
         }
     }
 
-    delete []glyphBuffer;
     return true;
 }
 
