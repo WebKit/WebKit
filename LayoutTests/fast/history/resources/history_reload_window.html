@@ -13,7 +13,7 @@
                 console.innerHTML = tempConsole.innerHTML;
                 window.close();
                 if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                    setTimeout("layoutTestController.notifyDone()", 0);
             }
         }
         </script>
