@@ -1,5 +1,12 @@
 2007-07-11  Oliver Hunt  <oliver@apple.com>
 
+        Build fix for windows
+
+        * page/Frame.cpp:
+        (WebCore::Frame::firstRectForRange):
+
+2007-07-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej.
 
         Fix <rdar://problem/5329481> Character range rect code for IME support needs to be crossplatform

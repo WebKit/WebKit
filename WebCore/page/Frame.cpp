@@ -326,10 +326,10 @@ IntRect Frame::firstRectForRange(Range* range) const
     
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
-        return IntRect(MIN(startCaretRect.x(), endCaretRect.x()), 
+        return IntRect(min(startCaretRect.x(), endCaretRect.x()), 
                        startCaretRect.y(), 
                        abs(endCaretRect.x() - startCaretRect.x()),
-                       MAX(startCaretRect.height(), endCaretRect.height()));
+                       max(startCaretRect.height(), endCaretRect.height()));
     }
     
     // start and end aren't on the same line, so go from start to the end of its line
