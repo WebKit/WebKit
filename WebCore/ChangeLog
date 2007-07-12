@@ -1,3 +1,58 @@
+2007-07-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Patch for <rdar://problem/5329841>
+        Calling window.closed on a closed window causes Safari to crash
+
+        - Replaces the Frame member variable in KJS::Window for more appropriate DOMWindow
+        - Adds additional new null checks as necessary
+        - Removes bogus toBoolean method
+        - Removes unused scheduleClose method
+
+        Test: fast/dom/Window/window-closed-crash.html
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        (WebCore::JSDOMWindow::customPut):
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::Window):
+        (KJS::Window::impl):
+        (KJS::Window::interpreter):
+        (KJS::Window::location):
+        (KJS::Window::find):
+        (KJS::allowPopUp):
+        (KJS::createWindow):
+        (KJS::canShowModalDialog):
+        (KJS::canShowModalDialogNow):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::indexGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::Window::isSafeScript):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::Window::clear):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Window::updateLayout):
+        (KJS::ScheduledAction::execute):
+        (KJS::Window::disconnectFrame):
+        (KJS::Location::put):
+        (KJS::LocationFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (updateRenderingForBindings):
+
 2007-07-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Ada.

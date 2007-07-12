@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
+#include "DOMWindow.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -218,7 +219,10 @@ JSValue* JSXMLHttpRequestPrototypeFunction::callAsFunction(ExecState* exec, JSOb
                 return throwError(exec, SyntaxError, "Not enough arguments");
 
             String method = args[0]->toString(exec);
-            KURL url = Window::retrieveActive(exec)->frame()->loader()->completeURL(DeprecatedString(args[1]->toString(exec)));
+            Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+            if (!frame)
+                return jsUndefined();
+            KURL url = frame->loader()->completeURL(DeprecatedString(args[1]->toString(exec)));
 
             bool async = true;
             if (args.size() >= 3)

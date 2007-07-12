@@ -1,3 +1,13 @@
+2007-07-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Test for <rdar://problem/5329841>
+        Calling window.closed on a closed window causes Safari to crash
+
+        * fast/dom/Window/window-closed-crash-expected.txt: Added.
+        * fast/dom/Window/window-closed-crash.html: Added.
+
 2007-07-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Mark Rowe.

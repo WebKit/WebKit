@@ -90,12 +90,10 @@ namespace KJS {
      * was called from.
      */
     static Window* retrieveActive(ExecState*);
-    WebCore::Frame* frame() const { return m_frame; }
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool toBoolean(ExecState*) const;
 
     int installTimeout(const UString& handler, int t, bool singleShot);
     int installTimeout(JSValue* function, const List& args, int t, bool singleShot);
@@ -106,8 +104,6 @@ namespace KJS {
     void timerFired(DOMWindowTimer*);
     
     KJS::ScriptInterpreter *interpreter() const;
-
-    void scheduleClose();
         
     bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
@@ -190,7 +186,7 @@ namespace KJS {
     void clearAllTimeouts();
     int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
-    WebCore::Frame* m_frame;
+    RefPtr<WebCore::DOMWindow> m_impl;
     OwnPtr<WindowPrivate> d;
   };
 

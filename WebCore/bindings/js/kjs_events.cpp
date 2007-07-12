@@ -25,6 +25,7 @@
 #include "Chrome.h"
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -70,7 +71,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     // xmlhttprequest objects. See http://bugs.webkit.org/show_bug.cgi?id=13275
     if (!window)
         return;
-    Frame *frame = window->frame();
+    Frame *frame = window->impl()->frame();
     if (!frame)
         return;
     KJSProxy* proxy = frame->scriptProxy();
@@ -290,7 +291,7 @@ void JSLazyEventListener::parseCode() const
         return;
     m_parsed = true;
 
-    Frame* frame = windowObj()->frame();
+    Frame* frame = windowObj()->impl()->frame();
     KJSProxy* proxy = 0;
     if (frame)
         proxy = frame->scriptProxy();

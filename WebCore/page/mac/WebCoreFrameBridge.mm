@@ -33,6 +33,7 @@
 #import "ClipboardMac.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
+#import "DOMWindow.h"
 #import "TextResourceDecoder.h"
 #import "DeleteSelectionCommand.h"
 #import "DocLoader.h"
@@ -142,9 +143,10 @@ static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
     Window* window = static_cast<Window*>(rootObject);
     if (!window)
         return;
-        
-    if (Document* doc = window->frame()->document())
-        doc->updateRendering();
+
+    if (Frame* frame = window->impl()->frame())
+        if (Document* doc = frame->document())
+            doc->updateRendering();
 }
 
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
