@@ -1,3 +1,20 @@
+2007-07-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14584
+        XMLHttpRequest treats null login/password incorrectly
+
+        Test: http/tests/xmlhttprequest/null-auth.php
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        * xml/xmlhttprequest.h:
+        Split the open() method into three to distinguish between missing and null credentials.
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestPrototypeFunction::callAsFunction): Call the appropriate open().
+
 2007-07-11  Oliver Hunt  <oliver@apple.com>
 
         Build fix for windows

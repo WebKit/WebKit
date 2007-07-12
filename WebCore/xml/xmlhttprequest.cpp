@@ -371,7 +371,7 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const
     return false;
 }
 
-void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
 {
     abort();
     m_aborted = false;
@@ -397,12 +397,6 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     
     m_url = url;
 
-    if (!user.isNull())
-        m_url.setUser(user.deprecatedString());
-
-    if (!password.isNull())
-        m_url.setPass(password.deprecatedString());
-
     // Method names are case sensitive. But since Firefox uppercases method names it knows, we'll do the same.
     String methodUpper(method.upper());
     if (methodUpper == "CONNECT" || methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
@@ -416,6 +410,23 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     m_async = async;
 
     changeState(Open);
+}
+
+void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, ExceptionCode& ec)
+{
+    KURL urlWithCredentials(url);
+    urlWithCredentials.setUser(user.deprecatedString());
+    
+    open(method, urlWithCredentials, async, ec);
+}
+
+void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec)
+{
+    KURL urlWithCredentials(url);
+    urlWithCredentials.setUser(user.deprecatedString());
+    urlWithCredentials.setPass(password.deprecatedString());
+    
+    open(method, urlWithCredentials, async, ec);
 }
 
 void XMLHttpRequest::send(const String& body, ExceptionCode& ec)

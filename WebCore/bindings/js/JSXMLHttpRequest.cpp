@@ -224,18 +224,18 @@ JSValue* JSXMLHttpRequestPrototypeFunction::callAsFunction(ExecState* exec, JSOb
             if (args.size() >= 3)
                 async = args[2]->toBoolean(exec);
 
-            String user;
-            String password;
             if (args.size() >= 4 && !args[3]->isUndefined()) {
-                user = args[3]->toString(exec);
+                String user = valueToStringWithNullCheck(exec, args[3]);
 
-                if (args.size() >= 5 && !args[4]->isUndefined())
-                    password = args[4]->toString(exec);
-            }
+                if (args.size() >= 5 && !args[4]->isUndefined()) {
+                    String password = valueToStringWithNullCheck(exec, args[4]);
+                    request->m_impl->open(method, url, async, user, password, ec);
+                } else
+                    request->m_impl->open(method, url, async, user, ec);
+            } else
+                request->m_impl->open(method, url, async, ec);
 
-            request->m_impl->open(method, url, async, user, password, ec);
             setDOMException(exec, ec);
-
             return jsUndefined();
         }
         case JSXMLHttpRequest::Send: {

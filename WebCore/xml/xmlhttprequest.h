@@ -72,7 +72,9 @@ public:
     String getStatusText(ExceptionCode&) const;
     int getStatus(ExceptionCode&) const;
     XMLHttpRequestState getReadyState() const;
-    void open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec);
+    void open(const String& method, const KURL&, bool async, ExceptionCode&);
+    void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
+    void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
     void send(const String& body, ExceptionCode&);
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);

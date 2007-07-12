@@ -1,3 +1,21 @@
+2007-07-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14584
+        XMLHttpRequest treats null login/password incorrectly
+
+        * http/tests/xmlhttprequest/null-auth-expected.txt: Added.
+        * http/tests/xmlhttprequest/null-auth.php: Added.
+        * http/tests/xmlhttprequest/resources/echo-auth.php: Added.
+
+        * http/tests/xmlhttprequest/basic-auth.html:
+        * http/tests/xmlhttprequest/resources/basic-auth: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth.php: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth/basic-auth.php: Copied from LayoutTests/http/tests/xmlhttprequest/resources/basic-auth.php.
+        Moved this test's protected resource to its own subdirectory, so that accessing it doesn't set
+        default credentials for the whole resources directory.
+
 2007-07-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
