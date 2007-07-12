@@ -1,3 +1,21 @@
+2007-07-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5327189> Logic error in DeprecatedString::to{,U}Int{,64} can lead to reading past end of buffer
+
+        The fix for reading past the end of the buffer is to verify we are not at the end of the string before checking
+        for a leading '+' character.  Rather than fixing the logic error in four nearly-identical functions I chose to
+        extract the common functionality into the toIntegralType helper function which the four functions call through to.
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::isCharacterAllowedInBase):
+        (WebCore::toIntegralType):
+        (WebCore::DeprecatedString::toInt):
+        (WebCore::DeprecatedString::toInt64):
+        (WebCore::DeprecatedString::toUInt):
+        (WebCore::DeprecatedString::toUInt64):
+
 2007-07-12  George Staikos  <staikos@kde.org>
 
         Reviewed by Alexey.

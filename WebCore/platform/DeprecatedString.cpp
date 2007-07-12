@@ -192,7 +192,7 @@ static inline bool equalCaseInsensitive(DeprecatedChar c1, char c2)
     return tolower(c1.unicode()) == tolower(static_cast<unsigned char>(c2));
 }
 
-static bool ok_in_base(DeprecatedChar c, int base)
+static bool isCharacterAllowedInBase(DeprecatedChar c, int base)
 {
     int uc = c.unicode();
     if (isdigit(uc))
@@ -1375,228 +1375,93 @@ unsigned short DeprecatedString::toUShort(bool *ok, int base) const
     return sv;
 }
 
-int DeprecatedString::toInt(bool *ok, int base) const
+template <typename IntegralType> static inline
+IntegralType toIntegralType(const DeprecatedString& string, bool *ok, int base)
 {
-    const DeprecatedChar *p = unicode();
-    int val=0;
-    int l = dataHandle[0]->_length;
-    const int max_mult = INT_MAX / base;
-    bool is_ok = false;
-    int neg = 0;
-    if ( !p )
+    static const IntegralType integralMax = std::numeric_limits<IntegralType>::max();
+    static const bool isSigned = std::numeric_limits<IntegralType>::is_signed;
+    const DeprecatedChar* p = string.unicode();
+    const IntegralType maxMultiplier = integralMax / base;
+
+    int length = string.length();
+    IntegralType value = 0;
+    bool isOk = false;
+    bool isNegative = false;
+
+    if (!p)
         goto bye;
-    while ( l && p->isSpace() )                 // skip leading space
-        l--,p++;
-    if ( l && *p == '-' ) {
-        l--;
-        p++;
-        neg = 1;
-    } else if ( *p == '+' ) {
-        l--;
+
+    // skip leading whitespace
+    while (length && p->isSpace()) {
+        length--;
         p++;
     }
 
-    // NOTE: toUInt() code is similar
-    if ( !l || !ok_in_base(*p,base) )
-        goto bye;
-    while ( l && ok_in_base(*p,base) ) {
-        l--;
-        int dv;
-        int c = p->unicode();
-        if ( isdigit(c) ) {
-            dv = c - '0';
-        } else {
-            if ( c >= 'a' )
-                dv = c - 'a' + 10;
-            else
-                dv = c - 'A' + 10;
-        }
-        if ( val > max_mult || (val == max_mult && dv > (INT_MAX % base)+neg) )
-            goto bye;
-        val = base*val + dv;
+    if (isSigned && length && *p == '-') {
+        length--;
+        p++;
+        isNegative = true;
+    } else if (length && *p == '+') {
+        length--;
         p++;
     }
-    if ( neg )
-        val = -val;
-    while ( l && p->isSpace() )                 // skip trailing space
-        l--,p++;
-    if ( !l )
-        is_ok = true;
+
+    if (!length || !isCharacterAllowedInBase(*p, base))
+        goto bye;
+
+    while (length && isCharacterAllowedInBase(*p, base)) {
+        length--;
+        IntegralType digitValue;
+        int c = p->unicode();
+        if (isdigit(c))
+            digitValue = c - '0';
+        else if (c >= 'a')
+            digitValue = c - 'a' + 10;
+        else
+            digitValue = c - 'A' + 10;
+
+        if (value > maxMultiplier || (value == maxMultiplier && digitValue > (integralMax % base) + isNegative))
+            goto bye;
+
+        value = base * value + digitValue;
+        p++;
+    }
+
+    if (isNegative)
+        value = -value;
+
+    // skip trailing space
+    while (length && p->isSpace()) {
+        length--;
+        p++;
+    }
+
+    if (!length)
+        isOk = true;
 bye:
-    if ( ok )
-        *ok = is_ok;
-    return is_ok ? val : 0;
+    if (ok)
+        *ok = isOk;
+    return isOk ? value : 0;
+}
+
+int DeprecatedString::toInt(bool *ok, int base) const
+{
+    return toIntegralType<int>(*this, ok, base);
 }
 
 int64_t DeprecatedString::toInt64(bool *ok, int base) const
 {
-    static int64_t int64_max = std::numeric_limits<int64_t>::max();
-    const DeprecatedChar *p = unicode();
-    int64_t val = 0;
-    int l = dataHandle[0]->_length;
-    const int64_t max_mult = int64_max / base;
-    bool is_ok = false;
-    int neg = 0;
-    
-    if (!p)
-        goto bye;
-        
-    while (l && p->isSpace()) {                 // skip leading space
-        l--;
-        p++;
-    }
-    
-    if (l && *p == '-') {
-        l--;
-        p++;
-        neg = 1;
-    } else if (*p == '+') {
-        l--;
-        p++;
-    }
-
-    // NOTE: toUInt() code is similar
-    if (!l || !ok_in_base(*p,base))
-        goto bye;
-        
-    while (l && ok_in_base(*p,base)) {
-        l--;
-        int dv;
-        int c = p->unicode();
-        if (isdigit(c))
-            dv = c - '0';
-        else {
-            if (c >= 'a')
-                dv = c - 'a' + 10;
-            else
-                dv = c - 'A' + 10;
-        }
-        
-        if (val > max_mult || (val == max_mult && dv > (int64_max % base) + neg))
-            goto bye;
-            
-        val = base * val + dv;
-        p++;
-    }
-    
-    if (neg)
-        val = -val;
-        
-    while (l && p->isSpace()) {                 // skip trailing space
-        l--;
-        p++;
-    }
-    
-    if (!l)
-        is_ok = true;
-bye:
-    if (ok)
-        *ok = is_ok;
-    return is_ok ? val : 0;
+    return toIntegralType<int64_t>(*this, ok, base);
 }
 
 unsigned DeprecatedString::toUInt(bool *ok, int base) const
 {
-    const DeprecatedChar *p = unicode();
-    unsigned val=0;
-    int l = dataHandle[0]->_length;
-    const unsigned max_mult = UINT_MAX / base;
-    bool is_ok = false;
-    if ( !p )
-        goto bye;
-    while ( l && p->isSpace() )                 // skip leading space
-        l--,p++;
-    if ( *p == '+' )
-        l--,p++;
-
-    // NOTE: toInt() code is similar
-    if ( !l || !ok_in_base(*p, base) )
-        goto bye;
-    while ( l && ok_in_base(*p, base) ) {
-        l--;
-        unsigned dv;
-        int c = p->unicode();
-        if ( isdigit(c) ) {
-            dv = c - '0';
-        } else {
-            if ( c >= 'a' )
-                dv = c - 'a' + 10;
-            else
-                dv = c - 'A' + 10;
-        }
-        if ( val > max_mult || (val == max_mult && dv > (UINT_MAX % base)) )
-            goto bye;
-        val = base*val + dv;
-        p++;
-    }
-
-    while ( l && p->isSpace() )                 // skip trailing space
-        l--,p++;
-    if ( !l )
-        is_ok = true;
-bye:
-    if ( ok )
-        *ok = is_ok;
-    return is_ok ? val : 0;
+    return toIntegralType<unsigned>(*this, ok, base);
 }
 
 uint64_t DeprecatedString::toUInt64(bool *ok, int base) const
 {
-    static uint64_t uint64_max = std::numeric_limits<uint64_t>::max();
-    const DeprecatedChar *p = unicode();
-    uint64_t val = 0;
-    int l = dataHandle[0]->_length;
-
-    const uint64_t max_mult = uint64_max / base;
-    bool is_ok = false;
-    
-    if (!p)
-        goto bye;
-        
-    while (l && p->isSpace()) {                 // skip leading space
-        l--;
-        p++;
-    }
-    
-    if (*p == '+') {
-        l--;
-        p++;
-    }
-
-    // NOTE: toInt() code is similar
-    if (!l || !ok_in_base(*p, base))
-        goto bye;
-        
-    while (l && ok_in_base(*p, base)) {
-        l--;
-        unsigned dv;
-        int c = p->unicode();
-        if (isdigit(c))
-            dv = c - '0';
-        else {
-            if (c >= 'a')
-                dv = c - 'a' + 10;
-            else
-                dv = c - 'A' + 10;
-        }
-        
-        if (val > max_mult || (val == max_mult && dv > (uint64_max % base)))
-            goto bye;
-        val = base * val + dv;
-        p++;
-    }
-
-    while (l && p->isSpace()) {                 // skip trailing space
-        l--;
-        p++;
-    }
-    
-    if (!l)
-        is_ok = true;
-bye:
-    if (ok)
-        *ok = is_ok;
-    return is_ok ? val : 0;
+    return toIntegralType<uint64_t>(*this, ok, base);
 }
 
 double DeprecatedString::toDouble(bool *ok) const
