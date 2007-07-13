@@ -106,6 +106,8 @@ namespace WebCore {
 
         virtual void setToolTip(const String&);
 
+        virtual void print();
+
         QWebPage* m_webPage;
     };
 }

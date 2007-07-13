@@ -178,6 +178,11 @@ void ChromeClientGdk::setToolTip(const String&)
     notImplemented();
 }
 
+void ChromeClientGdk::print()
+{
+    notImplemented();
+}
+
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

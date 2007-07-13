@@ -382,3 +382,8 @@ void WebChromeClient::setToolTip(const String& toolTip)
 {
     [(WebHTMLView *)[[[m_webView mainFrame] frameView] documentView] _setToolTip:toolTip];
 }
+
+void WebChromeClient::print()
+{
+    // FIXME: printing is still handled via WebFrameBridge
+}

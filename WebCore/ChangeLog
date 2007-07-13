@@ -1,3 +1,15 @@
+2007-07-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Build fix.  Stub out ChromeClientGdk::print and SVGEmptyChromeClient::print.
+
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (ChromeClientGdk::print):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::print):
+
 2007-07-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej and Steve.

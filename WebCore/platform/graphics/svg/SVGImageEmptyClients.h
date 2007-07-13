@@ -113,6 +113,8 @@ public:
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) { }
     
     virtual void setToolTip(const String&) { }
+
+    virtual void print() { }
 };
 
 class SVGEmptyFrameLoaderClient : public FrameLoaderClient {
