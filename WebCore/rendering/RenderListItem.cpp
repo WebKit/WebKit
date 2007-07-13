@@ -135,7 +135,7 @@ bool RenderListItem::isEmpty() const
     return lastChild() == m_marker;
 }
 
-static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* marker)
+static RenderObject* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* marker)
 {
     RenderObject* firstChild = curr->firstChild();
     if (!firstChild)
@@ -145,7 +145,7 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
         if (currChild == marker)
             continue;
 
-        if (currChild->isInline())
+        if (currChild->isInline() && (!currChild->isInlineFlow() || curr->generatesLineBoxesForInlineChild(currChild)))
             return curr;
 
         if (currChild->isFloating() || currChild->isPositioned())
@@ -154,11 +154,11 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
         if (currChild->isTable() || !currChild->isRenderBlock())
             break;
 
-        if (currChild->style()->htmlHacks() && currChild->element() &&
+        if (curr->isListItem() && currChild->style()->htmlHacks() && currChild->element() &&
             (currChild->element()->hasTagName(ulTag)|| currChild->element()->hasTagName(olTag)))
             break;
 
-        RenderObject* lineBox = getParentOfFirstLineBox(currChild, marker);
+        RenderObject* lineBox = getParentOfFirstLineBox(static_cast<RenderBlock*>(currChild), marker);
         if (lineBox)
             return lineBox;
     }

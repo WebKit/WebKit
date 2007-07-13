@@ -129,6 +129,7 @@ public:
     bool matchedEndLine(const BidiIterator& start, const BidiStatus& status, BidiContext* context,
                         const BidiIterator& endLineStart, const BidiStatus& endLineStatus, BidiContext* endLineContext,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
+    bool generatesLineBoxesForInlineChild(RenderObject*);
     int skipWhitespace(BidiIterator&, BidiState&);
     BidiIterator findNextLineBreak(BidiIterator& start, BidiState& info);
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);

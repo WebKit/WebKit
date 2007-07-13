@@ -1,3 +1,18 @@
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=14395
+          When a <p> is inside <li> two <BR>s are rendered
+
+        * editing/pasteboard/4861080-expected.checksum:
+        * editing/pasteboard/4861080-expected.png:
+        * editing/pasteboard/4861080-expected.txt:
+        * fast/lists/marker-before-empty-inline-expected.checksum: Added.
+        * fast/lists/marker-before-empty-inline-expected.png: Added.
+        * fast/lists/marker-before-empty-inline-expected.txt: Added.
+        * fast/lists/marker-before-empty-inline.html: Added.
+
 2007-07-12  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by NOBODY.

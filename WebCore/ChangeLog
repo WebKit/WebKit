@@ -1,3 +1,24 @@
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14395
+          When a <p> is inside <li> two <BR>s are rendered
+
+        Test: fast/lists/marker-before-empty-inline.html
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox): Changed to skip empty inline flows that
+        do not actually generate any line boxes. Limited the nested lists quirk to
+        the case where the list is a child of the list item, to match Firefox.
+        * rendering/bidi.cpp:
+        (WebCore::requiresLineBox): Added. Factored out of skipWhitespace.
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild): Added. Checkes
+        whether the child or any of its siblings following it will generate a line
+        box in the flow.
+        (WebCore::RenderBlock::skipWhitespace):
+
 2007-07-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alexey.

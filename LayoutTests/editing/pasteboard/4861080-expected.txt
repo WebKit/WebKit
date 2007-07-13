@@ -8,21 +8,21 @@ layer at (0,0) size 800x600
           text run at (0,0) width 741: "This tests dropping content into the unwanted space above a list items content when the content is wrapped in a span. "
           text run at (741,0) width 28: "You"
           text run at (0,18) width 234: "should see 'DragMe DropAboveMe'."
-      RenderBlock {DIV} at (0,52) size 784x58
-        RenderListItem {LI} at (0,0) size 784x40 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 782x18
-            RenderListMarker at (-1,0) size 7x18: bullet
-            RenderInline {SPAN} at (0,0) size 0x18
-          RenderBlock (anonymous) at (1,19) size 782x20
-            RenderBlock {DIV} at (0,0) size 782x20 [border: (1px solid #FF0000)]
-              RenderText {#text} at (1,1) size 57x18
-                text run at (1,1) width 57: "DragMe "
-              RenderText {#text} at (58,1) size 97x18
-                text run at (58,1) width 97: "DropAboveMe"
-          RenderBlock (anonymous) at (1,39) size 782x0
+      RenderBlock {DIV} at (0,52) size 784x40
+        RenderListItem {LI} at (0,0) size 784x22 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 782x0
             RenderInline {SPAN} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,40) size 784x18
+          RenderBlock (anonymous) at (1,1) size 782x20
+            RenderBlock {DIV} at (0,0) size 782x20 [border: (1px solid #FF0000)]
+              RenderListMarker at (0,1) size 7x18: bullet
+              RenderText {#text} at (15,1) size 97x18
+                text run at (15,1) width 97: "DropAboveMe"
+              RenderText {#text} at (112,1) size 57x18
+                text run at (112,1) width 57: " DragMe"
+          RenderBlock (anonymous) at (1,21) size 782x0
+            RenderInline {SPAN} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,22) size 784x18
           RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {UL} at (0,126) size 784x0
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 0 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+      RenderBlock {UL} at (0,108) size 784x0
+selection start: position 0 of child 1 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 1 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

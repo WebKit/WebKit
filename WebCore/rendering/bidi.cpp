@@ -2006,6 +2006,29 @@ static inline bool shouldPreserveNewline(RenderObject* object)
     return object->style()->preserveNewline();
 }
 
+static inline bool requiresLineBox(BidiIterator& it)
+{
+    if (it.obj->isFloatingOrPositioned() || it.obj->isInlineFlow())
+        return false;
+    if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
+        return true;
+
+    UChar current = it.current();
+    return current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || shouldPreserveNewline(it.obj)) && !skipNonBreakingSpace(it);
+}
+
+bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
+{
+    ASSERT(inlineObj->parent() == this);
+
+    BidiIterator it(this, inlineObj, 0);
+    BidiState state;
+    while (!it.atEnd() && !requiresLineBox(it))
+        it.increment(state);
+
+    return !it.atEnd();
+}
+
 int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 {
     // FIXME: The entire concept of the skipWhitespace function is flawed, since we really need to be building
@@ -2013,10 +2036,9 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // elements quite right.  In other words, we need to build this function's work into the normal line
     // object iteration process.
     int w = lineWidth(m_height);
-    while (!it.atEnd() && (it.obj->isFloatingOrPositioned() || it.obj->isInlineFlow() || 
-           (shouldCollapseWhiteSpace(it.obj->style()) && !it.obj->isBR() &&
-            (it.current() == ' ' || it.current() == '\t' || (!shouldPreserveNewline(it.obj) && it.current() == '\n') ||
-             it.current() == softHyphen || skipNonBreakingSpace(it))))) {
+    bidi.adjustEmbedding = true;
+
+    while (!it.atEnd() && !requiresLineBox(it)) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
             // add to special objects...
@@ -2053,11 +2075,10 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
                     o->setStaticY(m_height);
             }
         }
-        
-        bidi.adjustEmbedding = true;
         it.increment(bidi);
-        bidi.adjustEmbedding = false;
     }
+
+    bidi.adjustEmbedding = false;
     return w;
 }
 
