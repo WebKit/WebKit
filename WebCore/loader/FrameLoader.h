@@ -558,6 +558,8 @@ namespace WebCore {
         void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
         bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length);
 
+        void setShouldClearWindowProperties(bool shouldClearWindowProperties) { m_shouldClearWindowProperties = shouldClearWindowProperties; }
+        
         Frame* m_frame;
         FrameLoaderClient* m_client;
 
@@ -608,6 +610,7 @@ namespace WebCore {
         OwnPtr<ScheduledRedirection> m_scheduledRedirection;
 
         bool m_needsClear;
+        bool m_shouldClearWindowProperties;
         bool m_receivedData;
 
         bool m_encodingWasChosenByUser;
