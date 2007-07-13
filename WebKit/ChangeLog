@@ -1,3 +1,29 @@
+2007-07-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Maciej.
+
+        <rdar://problem/5271096> panic after Safari stress test, caused by port leak
+
+        Replace uses of -[NSObject performSelector:withObject:afterDelay:] with CFRunLoopTimer. performSelector
+        causes the target (the WebHTMLView in this case) to be retained until the timer fires. Furthermore, when
+        running the PLT or iBench, the timers will not fire until the main loop is entered (usually after running all tests).
+        
+        This means that the timers and ports will not be released until after the test has finished running.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView _cancelUpdateMouseoverTimer]):
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]):
+        (-[WebHTMLView _updateMouseoverTimerCallback:]):
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        (-[WebHTMLView _updateActiveState]):
+        (-[WebHTMLView _updateActiveStateTimerCallback:]):
+        (-[WebHTMLView viewWillMoveToWindow:]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebTextCompleteController dealloc]):
+        * WebView/WebHTMLViewInternal.h:
+
 2007-07-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Mitz.

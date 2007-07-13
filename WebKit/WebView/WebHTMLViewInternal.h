@@ -91,6 +91,9 @@ struct WebHTMLViewInterpretKeyEventsParameters;
     
     WebDataSource *dataSource;
     WebCore::CachedImage *promisedDragTIFFDataSource;
+    
+    CFRunLoopTimerRef updateActiveStateTimer;
+    CFRunLoopTimerRef updateMouseoverTimer;
 }
 - (void)clear;
 @end

@@ -318,8 +318,10 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 - (void)dealloc
 {
-    ASSERT(autoscrollTimer == nil);
-    ASSERT(autoscrollTriggerEvent == nil);
+    ASSERT(!autoscrollTimer);
+    ASSERT(!autoscrollTriggerEvent);
+    ASSERT(!updateActiveStateTimer);
+    ASSERT(!updateMouseoverTimer);
     
     [mouseDownEvent release];
     [keyDownEvent release];
@@ -331,6 +333,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     [highlighters release];
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->deref(promisedDataClient());
+
     [super dealloc];
 }
 
@@ -730,6 +733,24 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         _private->firstResponderTextViewAtMouseDownTime = nil;
 }
 
+- (void)_cancelUpdateActiveStateTimer
+{
+    if (_private->updateActiveStateTimer) {
+        CFRunLoopTimerInvalidate(_private->updateActiveStateTimer);
+        CFRelease(_private->updateActiveStateTimer);
+        _private->updateActiveStateTimer = NULL;
+    }
+}
+
+- (void)_cancelUpdateMouseoverTimer
+{
+    if (_private->updateMouseoverTimer) {
+        CFRunLoopTimerInvalidate(_private->updateMouseoverTimer);
+        CFRelease(_private->updateMouseoverTimer);
+        _private->updateMouseoverTimer = NULL;
+    }
+}
+
 @end
 
 @implementation WebHTMLView (WebPrivate)
@@ -786,6 +807,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_updateMouseoverWithFakeEvent
 {
+    [self _cancelUpdateMouseoverTimer];
+    
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
         location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
         modifierFlags:[[NSApp currentEvent] modifierFlags]
@@ -795,6 +818,13 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         eventNumber:0 clickCount:0 pressure:0];
     
     [self _updateMouseoverWithEvent:fakeEvent];
+}
+
+static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
+{
+    WebHTMLView *view = (WebHTMLView *)info;
+    
+    [view _updateMouseoverWithFakeEvent];
 }
 
 - (void)_frameOrBoundsChanged
@@ -815,9 +845,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     }
     _private->lastScrollPosition = origin;
 
-    SEL selector = @selector(_updateMouseoverWithFakeEvent);
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
-    [self performSelector:selector withObject:nil afterDelay:0];
+    if (!_private->updateMouseoverTimer) {
+        CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
+        _private->updateMouseoverTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
+                                                              _updateMouseoverTimerCallback, &context);
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateMouseoverTimer, kCFRunLoopDefaultMode);
+    }
 }
 
 - (void)_setAsideSubviews
@@ -1543,6 +1576,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_updateActiveState
 {
+    [self _cancelUpdateActiveStateTimer];
+
     // This method does the job of updating the view based on the view's firstResponder-ness and
     // the window key-ness of the window containing this view. This involves four kinds of 
     // drawing updates right now. 
@@ -2330,6 +2365,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     }
 }
 
+static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
+{
+    WebHTMLView *view = (WebHTMLView *)info;
+    [view _updateActiveState];
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     // Don't do anything if we aren't initialized.  This happens
@@ -2343,8 +2384,9 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [self removeMouseMovedObserverUnconditionally];
     [self removeWindowObservers];
     [self removeSuperviewObservers];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
-
+    [self _cancelUpdateMouseoverTimer];
+    [self _cancelUpdateActiveStateTimer];
+    
     [[self _pluginController] stopAllPlugins];
 }
 
@@ -2370,8 +2412,13 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         // at the time this code is running. However, it will be there on the next
         // crank of the run loop. Doing this helps to make a blinking caret appear 
         // in a new, empty window "automatic".
-        [self performSelector:@selector(_updateActiveState) withObject:nil afterDelay:0];
-
+        if (!_private->updateActiveStateTimer) {
+            CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
+            _private->updateActiveStateTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
+                                                                    _updateActiveStateTimerCallback, &context);
+            CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateActiveStateTimer, kCFRunLoopDefaultMode);
+        }
+        
         [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;
@@ -2774,7 +2821,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         _private->ignoringMouseDraggedEvents = NO;
 
         // Don't do any mouseover while the mouse is down.
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+        [self _cancelUpdateMouseoverTimer];
 
         // Let WebCore get a chance to deal with the event. This will call back to us
         // to start the autoscroll timer if appropriate.
@@ -5554,6 +5601,7 @@ BOOL isTextInput(Frame *coreFrame)
     [_popupWindow release];
     [_completions release];
     [_originalString release];
+    
     [super dealloc];
 }
 
