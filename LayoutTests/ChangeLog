@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY.
 
+        Backed out previous change.  This worked fine with Safari, but not so much with DumpRenderTree.
+
+        * http/tests/security/cross-frame-access-put.html:
+
+2007-07-12  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by NOBODY.
+
         Don't hard code the hostname to make it work with run-webkit-httpd on other interfaces.
 
         * http/tests/security/cross-frame-access-put.html:
