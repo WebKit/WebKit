@@ -1,3 +1,12 @@
+2007-07-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5333766> Can't include WebEditingDelegatePrivate.h
+
+        * WebView/WebEditingDelegatePrivate.h: Changed the include to be a framework include,
+        so other projects can use this header.
+
 2007-07-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Maciej.
