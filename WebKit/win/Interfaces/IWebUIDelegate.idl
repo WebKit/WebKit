@@ -703,3 +703,24 @@ interface IWebUIDelegate : IUnknown
     */
     HRESULT canRedo([out, retval] BOOL* result);
 }
+
+/*!
+    @category WebUIDelegate2
+    @discussion A class that supplements the IWebUIDelegate interface
+*/
+[
+    object,
+    oleautomation,
+    uuid(C6FF73E1-304D-4129-A60C-66326C2578DB),
+    pointer_default(unique)
+]
+interface IWebUIDelegate2 : IWebUIDelegate
+{
+    /*!
+        @method print:
+        @abstract Informs that a WebView needs to be printed
+        @param webView The WebView sending the delegate method and whose mainFrame needs to be printed
+    */
+    HRESULT print([in] IWebView* webView);
+
+}

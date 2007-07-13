@@ -100,6 +100,8 @@ namespace WebCore {
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&) = 0;
+
+        virtual void print() = 0;
 };
 
 }

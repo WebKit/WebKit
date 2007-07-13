@@ -442,3 +442,13 @@ void WebChromeClient::setToolTip(const String& toolTip)
 {
     m_webView->setToolTip(toolTip);
 }
+
+void WebChromeClient::print()
+{
+    COMPtr<IWebUIDelegate> uiDelegate;
+    COMPtr<IWebUIDelegate2> uiDelegate2;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        if (SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**) &uiDelegate2)) && uiDelegate2)
+            uiDelegate2->print(m_webView);
+    }
+}

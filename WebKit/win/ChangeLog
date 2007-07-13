@@ -1,3 +1,14 @@
+2007-07-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej and Steve.
+
+        fixed <rdar://4982432> window.print() needs to be implemented
+
+        * Interfaces/IWebUIDelegate.idl:
+        * WebChromeClient.cpp:
+        (WebChromeClient::print):
+        * WebChromeClient.h:
+
 2007-07-11  Steve Falkenburg  <sfalken@apple.com>
 
         Static analysis build fix.

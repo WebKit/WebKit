@@ -1,3 +1,17 @@
+2007-07-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej and Steve.
+
+        fixed <rdar://4982432> window.print() needs to be implemented
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::Frame::print):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::print):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+
 2007-07-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

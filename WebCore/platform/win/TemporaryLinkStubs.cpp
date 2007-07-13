@@ -76,7 +76,6 @@
 
 using namespace WebCore;
 
-void Frame::print() { notImplemented(); }
 void Frame::issueTransposeCommand() { notImplemented(); }
 
 void GraphicsContextPlatformPrivate::clip(const Path&) { notImplemented(); }
