@@ -1,3 +1,27 @@
+2007-07-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Tests for <rdar://problem/5318394>
+        http site can read/write content of https site in same domain
+
+        Adds ssl configuration information and tests.
+
+        * http/conf/apache2-httpd.conf:
+        * http/conf/cygwin-httpd.conf:
+        * http/conf/httpd.conf:
+        * http/conf/webkit-httpd.pem: Added.
+        * http/tests/security/cross-frame-access-expected.txt:
+        * http/tests/security/cross-frame-access-first-time-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-expected.txt: Added.
+        * http/tests/security/cross-frame-access-protocol.html: Added.
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/ssl: Added.
+        * http/tests/ssl/resources: Added.
+        * http/tests/ssl/resources/cross-frame-access-protocol-iframe.html: Added.
+        * http/tests/ssl/verify-ssl-enabled-expected.txt: Added.
+        * http/tests/ssl/verify-ssl-enabled.php: Added.
+
 2007-07-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

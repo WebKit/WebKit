@@ -88,6 +88,7 @@ my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
 $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
 my $documentRoot = "$testDirectory/http/tests";
 my $typesConfig = "$testDirectory/http/conf/mime.types";
+my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
 
 my $listen = "127.0.0.1:$httpdPort";
 $listen = "$httpdPort" if ($allInterfaces);
@@ -103,6 +104,7 @@ system($httpdPath,
     "-f", "$httpdConfig",
     "-C", "DocumentRoot \"$documentRoot\"",
     "-C", "Listen $listen",
+    "-c", "SSLCertificateFile $sslCertificate",
     "-c", "TypesConfig \"$typesConfig\"",
     "-c", "CustomLog |/usr/bin/tee common",
     "-c", "ErrorLog |/usr/bin/tee",

@@ -83,6 +83,7 @@ my $shouldCheckLeaks = '';
 my $configuration = '';
 my $guardMalloc = '';
 my $httpdPort = 8000;
+my $httpdSSLPort = 8443;
 my $ignoreTests = '';
 my $launchSafari = 1;
 my $pixelTests = '';
@@ -427,10 +428,14 @@ for my $test (@tests) {
         print OUT "$testPath\n";
     } else {
         openHTTPDIfNeeded();
-        if ($test !~ /^http\/tests\/local\//) {
+        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path\n";
+        } elsif ($test =~ /^http\/tests\/ssl\//) {
+            my $path = canonpath($test);
+            $path =~ s/^http\/tests\///;
+            print OUT "https://127.0.0.1:$httpdSSLPort/$path\n";
         } else {
             my $testPath = "$testDirectory/$test";
             if (isCygwin()) {
@@ -1135,6 +1140,7 @@ sub openHTTPDIfNeeded()
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
     my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
 
     mkpath $absTestResultsDirectory;
 
@@ -1142,6 +1148,7 @@ sub openHTTPDIfNeeded()
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
+        "-c", "SSLCertificateFile $sslCertificate",
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
         "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"",

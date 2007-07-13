@@ -1,3 +1,16 @@
+2007-07-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Add support for running SSL tests over HTTPS.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (runTest):
+        * DumpRenderTree/FrameLoadDelegate.m:
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+
 2007-07-13  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Darin.

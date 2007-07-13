@@ -1,3 +1,15 @@
+2007-07-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Patch for <rdar://problem/5318394>
+        http site can read/write content of https site in same domain
+
+        Add protocol and port checks in isSafeScript.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+
 2007-07-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz Pettel.

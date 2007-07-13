@@ -43,6 +43,11 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebNSURLExtras.h>
+
+@interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
++(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
+@end
 
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
@@ -149,6 +154,13 @@
     if (shouldDumpFrameLoadCallbacks && !done) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailProvisionalLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
+    }
+
+    if ([error domain] == NSURLErrorDomain && [error code] == NSURLErrorServerCertificateHasUnknownRoot) {
+        NSURL *failedURL = [[error userInfo] objectForKey:@"NSErrorFailingURLKey"];
+        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[failedURL _web_hostString]];
+        [frame loadRequest:[[[[frame provisionalDataSource] request] mutableCopy] autorelease]];
+        return;
     }
     
     ASSERT([frame provisionalDataSource]);

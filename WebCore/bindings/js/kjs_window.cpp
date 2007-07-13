@@ -955,41 +955,38 @@ bool Window::isSafeScript(ExecState *exec) const
   WebCore::Document* thisDocument = frame->document();
   WebCore::Document* actDocument = activeFrame->document();
 
-  WebCore::String actDomain;
-
-  if (!actDocument)
-    actDomain = activeFrame->loader()->url().host();
-  else
-    actDomain = actDocument->domain();
+  KURL actURL = activeFrame->loader()->url();
+  WebCore::String actDomain = actDocument ? actDocument->domain() : actURL.host();
   
   // FIXME: this really should be explicitly checking for the "file:" protocol instead
   // Always allow local pages to execute any JS.
   if (actDomain.isEmpty())
     return true;
-  
+
+  KURL thisURL = frame->loader()->url();
   WebCore::String thisDomain = thisDocument->domain();
 
-  // if this document is being initially loaded as empty by its parent
+  // If this document is being initially loaded as empty by its parent
   // or opener, allow access from any document in the same domain as
   // the parent or opener.
-  if (shouldLoadAsEmptyDocument(frame->loader()->url())) {
-    Frame* ancestorFrame = impl()->frame()->loader()->opener()
-        ? frame->loader()->opener() : frame->tree()->parent();
+  if (shouldLoadAsEmptyDocument(thisURL)) {
+    Frame* ancestorFrame = frame->loader()->opener() ? frame->loader()->opener() : frame->tree()->parent();
     while (ancestorFrame && shouldLoadAsEmptyDocument(ancestorFrame->loader()->url()))
       ancestorFrame = ancestorFrame->tree()->parent();
-    if (ancestorFrame)
+    if (ancestorFrame) {
       thisDomain = ancestorFrame->document()->domain();
+      thisURL = ancestorFrame->loader()->url();
+    }
   }
 
-  // FIXME: this should check that URL scheme and port match too, probably
-  if (actDomain == thisDomain)
+  if (actDomain == thisDomain && actURL.protocol() == thisURL.protocol() && actURL.port() == thisURL.port())
     return true;
 
   if (Interpreter::shouldPrintExceptions()) {
-      printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+      printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n", 
              thisDocument->URL().latin1(), actDocument->URL().latin1());
   }
-  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n", 
                   thisDocument->URL().latin1(), actDocument->URL().latin1());
   if (Page* page = frame->page())
       page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());

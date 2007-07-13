@@ -1456,7 +1456,7 @@ static void runTest(const char *pathOrURL)
     }
     
     CFURLRef URL;
-    if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")))
+    if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")) || CFStringHasPrefix(pathOrURLString, CFSTR("https://")))
         URL = CFURLCreateWithString(NULL, pathOrURLString, NULL);
     else
         URL = CFURLCreateWithFileSystemPath(NULL, pathOrURLString, kCFURLPOSIXPathStyle, FALSE);
