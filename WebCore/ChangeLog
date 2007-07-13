@@ -1,3 +1,16 @@
+2007-07-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Update ResourceError related code to account for changes in CF interfaces.
+
+        Reviewed by Darin, Ada.
+
+        * platform/network/ResourceError.h: Change Mac conditionals to CF to share more code.
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError): Modified based on CFErrorRef changes
+        (WebCore::ResourceError::unpackPlatformError): Ported from ResourceErrorMac.mm.
+        (WebCore::ResourceError::operator CFErrorRef): Ported from ResourceErrorMac.mm.
+        (WebCore::ResourceError::operator CFStreamError): Modified based on CFErrorRef changes.
+
 2007-07-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
