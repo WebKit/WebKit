@@ -1,3 +1,12 @@
+2007-07-13  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Darin.
+
+        Added support for -h|--help argument and verify that all command line arguments parse
+        correctly.
+
+        * Scripts/run-webkit-httpd:
+
 2007-07-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Ada.
