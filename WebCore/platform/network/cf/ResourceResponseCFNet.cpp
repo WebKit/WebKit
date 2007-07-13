@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceResponseCFNet.h"
 
+#include "HTTPParsers.h"
 #include "MimeTypeRegistry.h"
 #include "ResourceResponse.h"
 #include <CFNetwork/CFURLResponsePriv.h>
@@ -43,34 +44,6 @@ namespace WebCore {
 CFURLResponseRef ResourceResponse::cfURLResponse() const
 {  
     return m_cfResponse.get();
-}
-
-// FIXME: Move this to HTTPParsers.h
-static inline String filenameFromHTTPContentDisposition(const String& value)
-{
-    Vector<String> keyValuePairs = value.split(';');
-
-    unsigned length = keyValuePairs.size();
-    for (unsigned i = 0; i < length; i++) {
-        int valueStartPos = keyValuePairs[i].find('=');
-        if (valueStartPos < 0)
-            continue;
-
-        String key = keyValuePairs[i].left(valueStartPos).stripWhiteSpace();
-
-        if (key.isEmpty() || key != "filename")
-            continue;
-        
-        String value = keyValuePairs[i].substring(valueStartPos + 1).stripWhiteSpace();
-
-        // Remove quotes if there are any
-        if (value[0] == '\"')
-            value = value.substring(1, value.length() - 2);
-
-        return value;
-    }
-
-    return String();
 }
 
 static inline bool filenameHasSaneExtension(const String& filename)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -100,4 +102,85 @@ bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& del
     }
 }
 
+String filenameFromHTTPContentDisposition(const String& value)
+{
+    Vector<String> keyValuePairs = value.split(';');
+
+    unsigned length = keyValuePairs.size();
+    for (unsigned i = 0; i < length; i++) {
+        int valueStartPos = keyValuePairs[i].find('=');
+        if (valueStartPos < 0)
+            continue;
+
+        String key = keyValuePairs[i].left(valueStartPos).stripWhiteSpace();
+
+        if (key.isEmpty() || key != "filename")
+            continue;
+        
+        String value = keyValuePairs[i].substring(valueStartPos + 1).stripWhiteSpace();
+
+        // Remove quotes if there are any
+        if (value[0] == '\"')
+            value = value.substring(1, value.length() - 2);
+
+        return value;
+    }
+
+    return String();
+}
+
+String extractMIMETypeFromMediaType(const String& mediaType)
+{
+    String mimeType;
+    unsigned length = mediaType.length();
+    for (unsigned offset = 0; offset < length; offset++) {
+        UChar c = mediaType[offset];
+        if (c == ';')
+            break;
+        else if (DeprecatedChar(c).isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
+            continue;
+        // FIXME: This is a very slow way to build a string, given WebCore::String's implementation.
+        mimeType += String(&c, 1);
+    }
+    return mimeType;
+}
+
+String extractCharsetFromMediaType(const String& mediaType)
+{
+    int pos = 0;
+    int length = (int)mediaType.length();
+    
+    while (pos < length) {
+        pos = mediaType.find("charset", pos, false);
+        if (pos <= 0)
+            return String();
+        
+        // is what we found a beginning of a word?
+        if (mediaType[pos-1] > ' ' && mediaType[pos-1] != ';') {
+            pos += 7;
+            continue;
+        }
+        
+        pos += 7;
+
+        // skip whitespace
+        while (pos != length && mediaType[pos] <= ' ')
+            ++pos;
+    
+        if (mediaType[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
+            continue;
+
+        while (pos != length && (mediaType[pos] <= ' ' || mediaType[pos] == '"' || mediaType[pos] == '\''))
+            ++pos;
+
+        // we don't handle spaces within quoted parameter values, because charset names cannot have any
+        int endpos = pos;
+        while (pos != length && mediaType[endpos] > ' ' && mediaType[endpos] != '"' && mediaType[endpos] != '\'' && mediaType[endpos] != ';')
+            ++endpos;
+    
+        return mediaType.substring(pos, endpos-pos);
+    }
+    
+    return String();
+}
 }

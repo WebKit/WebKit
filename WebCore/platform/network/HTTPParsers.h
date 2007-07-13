@@ -34,6 +34,9 @@ namespace WebCore {
     class String;
 
     bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url);
+    String filenameFromHTTPContentDisposition(const String&); 
+    String extractMIMETypeFromMediaType(const String&);
+    String extractCharsetFromMediaType(const String&); 
 }
 
 #endif

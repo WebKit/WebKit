@@ -1,3 +1,29 @@
+2007-07-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alexey.
+
+        Move HTTP methods to parse Content-Type from xmlhttprequest.cpp
+        which is LGPL to HTTPParsers.cpp. As both files were written by the
+        same author and the advice to move them came from him I think this move
+        is what is meant to be done.
+
+        Move filenameFromHTTPContentDisposition to HTTPParsers as well. This parse
+        function uses Vector<String>::split and doesn't honor quoting. This needs
+        to be fixed in later versions.
+
+        http://bugs.webkit.org/show_bug.cgi?id=5954 and http://bugs.webkit.org/show_bug.cgi?id=14059
+        benefit from this change.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::filenameFromHTTPContentDisposition):
+        (WebCore::extractMIMETypeFromMediaType):
+        (WebCore::extractCharsetFromMediaType):
+        * platform/network/HTTPParsers.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::responseMIMEType):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+
 2007-07-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Mitz.

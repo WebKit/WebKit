@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "HTTPParsers.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
@@ -85,61 +86,6 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
         requestsByDocument().remove(doc);
         delete requests;
     }
-}
-
-static inline String getMIMEType(const String& contentTypeString)
-{
-    String mimeType;
-    unsigned length = contentTypeString.length();
-    for (unsigned offset = 0; offset < length; offset++) {
-        UChar c = contentTypeString[offset];
-        if (c == ';')
-            break;
-        else if (DeprecatedChar(c).isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
-            continue;
-        // FIXME: This is a very slow way to build a string, given WebCore::String's implementation.
-        mimeType += String(&c, 1);
-    }
-    return mimeType;
-}
-
-static String getCharset(const String& contentTypeString)
-{
-    int pos = 0;
-    int length = (int)contentTypeString.length();
-    
-    while (pos < length) {
-        pos = contentTypeString.find("charset", pos, false);
-        if (pos <= 0)
-            return String();
-        
-        // is what we found a beginning of a word?
-        if (contentTypeString[pos-1] > ' ' && contentTypeString[pos-1] != ';') {
-            pos += 7;
-            continue;
-        }
-        
-        pos += 7;
-
-        // skip whitespace
-        while (pos != length && contentTypeString[pos] <= ' ')
-            ++pos;
-    
-        if (contentTypeString[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
-            continue;
-
-        while (pos != length && (contentTypeString[pos] <= ' ' || contentTypeString[pos] == '"' || contentTypeString[pos] == '\''))
-            ++pos;
-
-        // we don't handle spaces within quoted parameter values, because charset names cannot have any
-        int endpos = pos;
-        while (pos != length && contentTypeString[endpos] > ' ' && contentTypeString[endpos] != '"' && contentTypeString[endpos] != '\'' && contentTypeString[endpos] != ';')
-            ++endpos;
-    
-        return contentTypeString.substring(pos, endpos-pos);
-    }
-    
-    return String();
 }
 
 static bool canSetRequestHeader(const String& name)
@@ -596,10 +542,10 @@ String XMLHttpRequest::getResponseHeader(const String& name) const
 
 String XMLHttpRequest::responseMIMEType() const
 {
-    String mimeType = getMIMEType(m_mimeTypeOverride);
+    String mimeType = extractMIMETypeFromMediaType(m_mimeTypeOverride);
     if (mimeType.isEmpty()) {
         if (m_response.isHTTP())
-            mimeType = getMIMEType(getResponseHeader("Content-Type"));
+            mimeType = extractMIMETypeFromMediaType(getResponseHeader("Content-Type"));
         else
             mimeType = m_response.mimeType();
     }
@@ -708,7 +654,7 @@ void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& reques
 void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceResponse& response)
 {
     m_response = response;
-    m_encoding = getCharset(m_mimeTypeOverride);
+    m_encoding = extractCharsetFromMediaType(m_mimeTypeOverride);
     if (m_encoding.isEmpty())
         m_encoding = response.textEncodingName();
 
