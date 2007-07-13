@@ -52,7 +52,7 @@
 
         Reviewed by NOBODY.
 
-        Backed out previous change.  This worked fine with Safari, but not so much with DumpRenderTree.
+        Backed out previous change.  The test requires a different hostname to work.
 
         * http/tests/security/cross-frame-access-put.html:
 
