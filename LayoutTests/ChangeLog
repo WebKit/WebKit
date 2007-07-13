@@ -1,5 +1,15 @@
 2007-07-13  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Darin.
+        
+        Test for x <rdar://problem/5333387>
+        Combination of selection and click() on checkbox crashes
+
+        * fast/dynamic/checkbox-selection-crash-expected.txt: Added.
+        * fast/dynamic/checkbox-selection-crash.html: Added.
+
+2007-07-13  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Adele.
         
         Test for <rdar://problem/5333365>

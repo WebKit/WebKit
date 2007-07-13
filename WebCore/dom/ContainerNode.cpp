@@ -826,8 +826,11 @@ void ContainerNode::setActive(bool down, bool pause)
             double startTime = currentTime();
 #endif
 
+            // Ensure there are no pending changes
+            Document::updateDocumentsRendering();
             // Do an immediate repaint.
-            renderer()->repaint(true);
+            if (renderer())
+                renderer()->repaint(true);
             
             // FIXME: Find a substitute for usleep for Win32.
             // Better yet, come up with a way of doing this that doesn't use this sort of thing at all.            

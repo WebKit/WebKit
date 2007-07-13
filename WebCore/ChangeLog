@@ -1,5 +1,19 @@
 2007-07-13  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5333387>
+        Combination of selection and click() on checkbox crashes
+        
+        Ensure there is no pending style update before doing synchronous paint. Under certain
+        circumstances this ends up doing style recalc in middle of paint() which may
+        for example tear down the rendering tree being painted, with bad results.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setActive):
+
+2007-07-13  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Adele.
         
         Fix <rdar://problem/5333365>
