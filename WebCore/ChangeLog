@@ -1,3 +1,17 @@
+2007-07-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Fix <rdar://problem/5333365>
+        Calling click() is very slow
+        
+        There is a 100ms delay in ContainerNode::setActive() to do an activation effect. It is used for
+        simulated mouse activations (using keyboard for example). However, it shouldn't be done when calling from javascript 
+        (through click() interface) since it hangs script execution.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::click):
+
 2007-07-13  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

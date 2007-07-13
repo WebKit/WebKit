@@ -1,3 +1,13 @@
+2007-07-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Test for <rdar://problem/5333365>
+        Calling click() is very slow
+
+        * fast/forms/slow-click-expected.txt: Added.
+        * fast/forms/slow-click.html: Added.
+
 2007-07-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam.

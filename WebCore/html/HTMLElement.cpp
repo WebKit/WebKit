@@ -618,7 +618,7 @@ void HTMLElement::setContentEditable(const String &enabled)
 
 void HTMLElement::click()
 {
-    dispatchSimulatedClick(0);
+    dispatchSimulatedClick(0, false, false);
 }
 
 // accessKeyAction is used by the accessibility support code
