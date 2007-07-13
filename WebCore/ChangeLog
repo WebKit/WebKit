@@ -1,3 +1,20 @@
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13438 <rdar://problem/5153030>
+              Run rounding makes word-break:break-all/word not functional
+
+        Test: fast/text/word-break-run-rounding.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcPrefWidths): Update the maximum width only on word
+        boundaries to avoid rounding errors.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Integrated breakAll with the
+        midWordBreak/wrapW mechanism. Also made the wrapW upper bound more accurate
+        by resetting it when tmpW is committed.
+
 2007-07-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

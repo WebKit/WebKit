@@ -1,3 +1,15 @@
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13438 <rdar://problem/5153030>
+                   Run rounding makes word-break:break-all/word not functional
+
+        * fast/text/word-break-run-rounding-expected.checksum: Added.
+        * fast/text/word-break-run-rounding-expected.png: Added.
+        * fast/text/word-break-run-rounding-expected.txt: Added.
+        * fast/text/word-break-run-rounding.html: Added.
+
 2007-07-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

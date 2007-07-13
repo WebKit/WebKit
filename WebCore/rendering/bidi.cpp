@@ -2275,6 +2275,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             bool appliedStartWidth = pos > 0; // If the span originated on a previous line,
                                               // then assume the start width has been applied.
             int wrapW = tmpW + inlineWidth(o, !appliedStartWidth, true);
+            int charWidth = 0;
             int nextBreakable = -1;
             bool breakNBSP = autoWrap && o->style()->nbspMode() == SPACE;
             // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
@@ -2330,14 +2331,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
 
-                if (breakAll || (breakWords && !midWordBreak)) {
-                    wrapW += t->width(pos, 1, f, w + wrapW);
-                    midWordBreak = w + wrapW > width;
+                if ((breakAll || breakWords) && !midWordBreak) {
+                    wrapW += charWidth;
+                    charWidth = t->width(pos, 1, f, w + wrapW);
+                    midWordBreak = w + wrapW + charWidth > width;
                 }
 
                 bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(str, pos, strlen, nextBreakable, breakNBSP));
     
-                if (betweenWords || midWordBreak || breakAll) {
+                if (betweenWords || midWordBreak) {
                     bool stoppedIgnoringSpaces = false;
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
@@ -2422,7 +2424,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             }
                             goto end; // Didn't fit. Jump to the end.
                         } else {
-                            if (midWordBreak)
+                            if (!betweenWords || (midWordBreak && !autoWrap))
                                 tmpW -= additionalTmpW;
                             if (pos > 0 && str[pos-1] == softHyphen)
                                 // Subtract the width of the soft hyphen out since we fit on a line.
@@ -2446,6 +2448,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
                     if (autoWrap && betweenWords) {
                         w += tmpW;
+                        wrapW = 0;
                         tmpW = 0;
                         lBreak.obj = o;
                         lBreak.pos = pos;
@@ -2459,8 +2462,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         // adding the end width forces a break.
                         lBreak.obj = o;
                         lBreak.pos = pos;
-                        midWordBreak &= breakWords;
-                    } else {
+                        midWordBreak &= (breakWords || breakAll);
+                    }
+
+                    if (betweenWords) {
                         lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
                         lastSpace = pos;
                     }

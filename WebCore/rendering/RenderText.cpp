@@ -521,8 +521,9 @@ void RenderText::calcPrefWidths(int leadWidth)
     bool firstWord = true;
     bool firstLine = true;
     int nextBreakable = -1;
-    bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
+    int lastWordBoundary = 0;
 
+    bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
     bool breakAll = (style()->wordBreak() == BreakAllWordBreak || style()->wordBreak() == BreakWordBreak) && style()->autoWrap();
 
     for (int i = 0; i < len; i++) {
@@ -559,25 +560,39 @@ void RenderText::calcPrefWidths(int leadWidth)
             ignoringSpaces = false;
 
         // Ignore spaces and soft hyphens
-        if (ignoringSpaces || c == softHyphen)
+        if (ignoringSpaces || c == softHyphen) {
+            ASSERT(lastWordBoundary == i);
+            lastWordBoundary++;
             continue;
+        }
 
         bool hasBreak = breakAll || isBreakable(txt, i, len, nextBreakable, breakNBSP);
+        bool betweenWords = true;
         int j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style()) && c != '\t' && c != softHyphen) {
             j++;
             if (j == len)
                 break;
             c = txt[j];
-            if (breakAll || isBreakable(txt, j, len, nextBreakable, breakNBSP))
+            if (isBreakable(txt, j, len, nextBreakable, breakNBSP))
                 break;
+            if (breakAll) {
+                betweenWords = false;
+                break;
+            }
         }
 
         int wordLen = j - i;
         if (wordLen) {
             int w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth);
             currMinWidth += w;
-            currMaxWidth += w;
+            if (betweenWords) {
+                if (lastWordBoundary == i)
+                    currMaxWidth += w;
+                else
+                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth);
+                lastWordBoundary = j;
+            }
 
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style());
             bool isCollapsibleWhiteSpace = (j < len) && style()->isCollapsibleWhiteSpace(c);
@@ -630,6 +645,8 @@ void RenderText::calcPrefWidths(int leadWidth)
                 currMaxWidth += f.width(TextRun(txt + i, 1), TextStyle(allowTabs(), leadWidth + currMaxWidth));
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len - 1;
             }
+            ASSERT(lastWordBoundary == i);
+            lastWordBoundary++;
         }
     }
 
