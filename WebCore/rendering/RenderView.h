@@ -72,7 +72,7 @@ public:
 
     int truncatedAt() const { return m_truncatedAt; }
 
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
 
     IntRect selectionRect(bool clipToVisibleContent = true) const;
 

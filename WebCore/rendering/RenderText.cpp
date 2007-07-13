@@ -169,7 +169,7 @@ PassRefPtr<StringImpl> RenderText::originalText() const
     return e ? static_cast<Text*>(e)->string() : 0;
 }
 
-void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rects.append(IntRect(tx + box->xPos(), ty + box->yPos(), box->width(), box->height()));

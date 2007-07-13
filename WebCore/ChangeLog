@@ -1,3 +1,52 @@
+2007-07-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5304742> A hang occurs when attempting to 
+        display web clip banner at http://www.signonsandiego.com/sports/
+        chargers/index.html
+
+        Here is the actual fix. 
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects): Set topLevel to 
+        false when we recurse to get our children's absoluteRects.
+        * rendering/RenderInline.h: New boolean parameter 
+        topLevel that defaults to true.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRects):
+        * rendering/RenderObject.h:
+
+        And these are just other implementations/declarations of this 
+        (virtual) function that have to add the parameter. No behavior 
+        change here.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::absoluteRects):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::absoluteRects):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::absoluteRects):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::absoluteRects):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        * rendering/RenderSVGTSpan.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteRects):
+        * rendering/RenderView.h:
+
 2007-07-13  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

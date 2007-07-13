@@ -43,7 +43,7 @@ public:
     virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual IntRect absoluteClippedOverflowRect();
     virtual bool requiresLayer();
     virtual void layout();

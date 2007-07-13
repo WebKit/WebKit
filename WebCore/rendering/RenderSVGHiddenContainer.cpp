@@ -83,7 +83,7 @@ IntRect RenderSVGHiddenContainer::absoluteClippedOverflowRect()
     return IntRect();
 }
 
-void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
     // This subtree does not take up space or paint
 }

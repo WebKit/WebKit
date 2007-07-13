@@ -278,20 +278,21 @@ void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
     paintLines(paintInfo, tx, ty);
 }
 
-void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
         rects.append(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText())
-            curr->absoluteRects(rects, tx + curr->xPos(), ty + curr->yPos());
+            curr->absoluteRects(rects, tx + curr->xPos(), ty + curr->yPos(), false);
     }
 
-    if (continuation())
+    if (continuation() && topLevel)
         continuation()->absoluteRects(rects, 
                                       tx - containingBlock()->xPos() + continuation()->xPos(),
-                                      ty - containingBlock()->yPos() + continuation()->yPos());
+                                      ty - containingBlock()->yPos() + continuation()->yPos(),
+                                      topLevel);
 }
 
 bool RenderInline::requiresLayer()

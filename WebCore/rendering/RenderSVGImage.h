@@ -45,7 +45,7 @@ namespace WebCore {
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual IntRect absoluteClippedOverflowRect();
         
-        virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+        virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
 
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio*);

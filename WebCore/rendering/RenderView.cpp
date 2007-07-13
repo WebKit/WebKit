@@ -214,7 +214,7 @@ void RenderView::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         rect.move(m_frameView->contentsX(), m_frameView->contentsY());
 }
 
-void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
     rects.append(IntRect(tx, ty, m_layer->width(), m_layer->height()));
 }

@@ -246,7 +246,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->restore();
 }
 
-void RenderPath::absoluteRects(Vector<IntRect>& rects, int _tx, int _ty)
+void RenderPath::absoluteRects(Vector<IntRect>& rects, int _tx, int _ty, bool)
 {
     rects.append(absoluteClippedOverflowRect());
 }

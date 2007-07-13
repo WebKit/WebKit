@@ -647,7 +647,7 @@ public:
 
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     IntRect absoluteBoundingBoxRect();
 
     // the rect that will be painted if this object is passed as the paintingRoot

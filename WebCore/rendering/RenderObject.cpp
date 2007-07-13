@@ -1601,17 +1601,17 @@ void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsig
 {
 }
 
-void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (continuation()) {
+    if (topLevel && continuation()) {
         rects.append(IntRect(tx, ty - collapsedMarginTop(),
                              width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
         continuation()->absoluteRects(rects,
                                       tx - xPos() + continuation()->containingBlock()->xPos(),
-                                      ty - yPos() + continuation()->containingBlock()->yPos());
+                                      ty - yPos() + continuation()->containingBlock()->yPos(), topLevel);
     } else
         rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }

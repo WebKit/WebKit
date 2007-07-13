@@ -32,7 +32,7 @@ class RenderSVGTSpan : public RenderSVGInline {
 public:
     RenderSVGTSpan(Node*);
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
+    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
 };
 }
 
