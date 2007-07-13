@@ -1,5 +1,22 @@
 2007-07-13  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Adele.
+        
+        Fix <rdar://problem/5192256>
+        click() in onchange handler causes another change event (causes hang at http://forums.whirlpool.net.au/)
+        
+        Guard against generating a simulated event from within a simulated event in the same node. Try to
+        match Firefox behavior.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSimulatedMouseEvent):
+        (WebCore::EventTargetNode::dispatchSimulatedClick):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+
+2007-07-13  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
         
         Fix <rdar://problem/5333387>

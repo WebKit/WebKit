@@ -153,6 +153,7 @@ Node::Node(Document *doc)
       m_hovered(false),
       m_inActiveChain(false),
       m_inDetach(false),
+      m_dispatchingSimulatedEvent(false),
       m_inSubtreeMark(false)
 {
 #ifndef NDEBUG

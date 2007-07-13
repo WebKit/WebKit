@@ -401,6 +401,9 @@ void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
     PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());
+    
+    if (m_dispatchingSimulatedEvent)
+        return;
 
     bool ctrlKey = false;
     bool altKey = false;
@@ -412,15 +415,22 @@ void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
         shiftKey = keyStateEvent->shiftKey();
         metaKey = keyStateEvent->metaKey();
     }
+    
+    m_dispatchingSimulatedEvent = true;
 
     // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
     // Internet Explorer instead gives the current mouse position and state.
     dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0,
         ctrlKey, altKey, shiftKey, metaKey, true, 0, underlyingEvent);
+    
+    m_dispatchingSimulatedEvent = false;
 }
 
 void EventTargetNode::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
 {
+    if (m_dispatchingSimulatedEvent)
+        return;
+    
     // send mousedown and mouseup before the click, if requested
     if (sendMouseEvents)
         dispatchSimulatedMouseEvent(mousedownEvent, event.get());
