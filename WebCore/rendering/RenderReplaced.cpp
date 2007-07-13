@@ -30,10 +30,14 @@ using namespace std;
 
 namespace WebCore {
 
+typedef WTF::HashMap<const RenderReplaced*, IntRect> OverflowRectMap;
+static OverflowRectMap* gOverflowRectMap = 0;
+
 RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
     , m_intrinsicSize(300, 150)
     , m_selectionState(SelectionNone)
+    , m_hasOverflow(false)
 {
     setReplaced(true);
 }
@@ -42,8 +46,15 @@ RenderReplaced::RenderReplaced(Node* node, const IntSize& intrinsicSize)
     : RenderBox(node)
     , m_intrinsicSize(intrinsicSize)
     , m_selectionState(SelectionNone)
+    , m_hasOverflow(false)
 {
     setReplaced(true);
+}
+
+RenderReplaced::~RenderReplaced()
+{
+    if (m_hasOverflow)
+        gOverflowRectMap->remove(this);
 }
 
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
@@ -63,8 +74,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     int currentTY = ty + m_y;
 
     // Early exit if the element touches the edges.
-    int top = currentTY;
-    int bottom = currentTY + m_height;
+    int top = currentTY + overflowTop();
+    int bottom = currentTY + overflowHeight();
     if (isSelected() && m_inlineBoxWrapper) {
         int selTop = ty + m_inlineBoxWrapper->root()->selectionTop();
         int selBottom = ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
@@ -73,7 +84,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     }
     
     int os = 2 * maximalOutlineSize(paintInfo.phase);
-    if (currentTX >= paintInfo.rect.right() + os || currentTX + m_width <= paintInfo.rect.x() - os)
+    if (currentTX + overflowLeft() >= paintInfo.rect.right() + os || currentTX + overflowWidth() <= paintInfo.rect.x() - os)
         return false;
     if (top >= paintInfo.rect.bottom() + os || bottom <= paintInfo.rect.y() - os)
         return false;
@@ -223,6 +234,72 @@ IntSize RenderReplaced::intrinsicSize() const
 void RenderReplaced::setIntrinsicSize(const IntSize& size)
 {
     m_intrinsicSize = size;
+}
+
+void RenderReplaced::adjustOverflowForBoxShadow()
+{
+    if (ShadowData* boxShadow = style()->boxShadow()) {
+        if (!gOverflowRectMap)
+            gOverflowRectMap = new OverflowRectMap();
+
+        IntRect shadow = borderBox();
+        shadow.move(boxShadow->x, boxShadow->y);
+        shadow.inflate(boxShadow->blur);
+        shadow.unite(borderBox());
+
+        gOverflowRectMap->set(this, shadow);
+        m_hasOverflow = true;
+        return;
+    }
+
+    if (m_hasOverflow) {
+        gOverflowRectMap->remove(this);
+        m_hasOverflow = false;
+    }
+}
+
+int RenderReplaced::overflowHeight(bool includeInterior) const
+{
+    if (m_hasOverflow) {
+        IntRect *r = &gOverflowRectMap->find(this)->second;
+        return r->height() + r->y();
+    }
+
+    return height();
+}
+
+int RenderReplaced::overflowWidth(bool includeInterior) const
+{
+    if (m_hasOverflow) {
+        IntRect *r = &gOverflowRectMap->find(this)->second;
+        return r->width() + r->x();
+    }
+
+    return width();
+}
+
+int RenderReplaced::overflowLeft(bool includeInterior) const
+{
+    if (m_hasOverflow)
+        return gOverflowRectMap->get(this).x();
+
+    return 0;
+}
+
+int RenderReplaced::overflowTop(bool includeInterior) const
+{
+    if (m_hasOverflow)
+        return gOverflowRectMap->get(this).y();
+
+    return 0;
+}
+
+IntRect RenderReplaced::overflowRect(bool includeInterior) const
+{
+    if (m_hasOverflow)
+        return gOverflowRectMap->find(this)->second;
+
+    return borderBox();
 }
 
 }

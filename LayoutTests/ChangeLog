@@ -2,6 +2,22 @@
 
         Reviewed by Dave Hyatt.
 
+        - updated tests and results for http://bugs.webkit.org/show_bug.cgi?id=13873
+          Incomplete repaint of replaced element's box shadow
+
+        * fast/repaint/box-shadow-h-expected.checksum:
+        * fast/repaint/box-shadow-h-expected.png:
+        * fast/repaint/box-shadow-h-expected.txt:
+        * fast/repaint/box-shadow-h.html:
+        * fast/repaint/box-shadow-v-expected.checksum:
+        * fast/repaint/box-shadow-v-expected.png:
+        * fast/repaint/box-shadow-v-expected.txt:
+        * fast/repaint/box-shadow-v.html:
+
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
         - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=14395
           When a <p> is inside <li> two <BR>s are rendered
 

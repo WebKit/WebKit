@@ -2,6 +2,36 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13873
+          Incomplete repaint of replaced element's box shadow
+
+        Tests: fast/repaint/box-shadow-h.html
+               fast/repaint/box-shadow-v.html
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout): Added a call to adjustOverflowForBoxShadow().
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout): Ditto.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::layout): Ditto.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced): Initialize m_hasOverflow.
+        (WebCore::RenderReplaced::~RenderReplaced): Added. Removes this object from the
+        overflow rect map if it has overflow.
+        (WebCore::RenderReplaced::shouldPaint): Account for overflow.
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadow): Added. Creates or
+        removes an entry for this object in the global overflow rect map.
+        (WebCore::RenderReplaced::overflowHeight): Added.
+        (WebCore::RenderReplaced::overflowWidth): Added.
+        (WebCore::RenderReplaced::overflowLeft): Added.
+        (WebCore::RenderReplaced::overflowTop): Added.
+        (WebCore::RenderReplaced::overflowRect): Added.
+        * rendering/RenderReplaced.h:
+
+2007-07-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=14395
           When a <p> is inside <li> two <BR>s are rendered
 
