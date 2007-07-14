@@ -1,5 +1,14 @@
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
+        Blind attempt at (hopefully) fixing the Qt and GDK builds
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FTPDirectoryDocument::FTPDirectoryDocument):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (FTPDirectoryDocument::FTPDirectoryDocument):
+
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig
 
         Initial check-in for <rdar://problem/3154486> - Supporting FTP directory listings in the browser

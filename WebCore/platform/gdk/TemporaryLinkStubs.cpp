@@ -48,6 +48,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
+#include "FTPDirectoryDocument.h"
 #include "GlobalHistory.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
@@ -308,6 +309,8 @@ PlatformMenuDescription ContextMenuItem::platformSubMenu() const { notImplemente
 void ContextMenuItem::setSubMenu(ContextMenu*) { notImplemented(); }
 void ContextMenuItem::setChecked(bool) { notImplemented(); }
 void ContextMenuItem::setEnabled(bool) { notImplemented(); }
+
+FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation*, WebCore::Frame*) { notImplemented(); }
 
 namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
