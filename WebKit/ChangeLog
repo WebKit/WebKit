@@ -1,3 +1,25 @@
+2007-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5290103> Assert failure when loading page with multipart resource
+        
+        Don't try to call the delegate method if the resource object doesn't exist in the 
+        identifier map. When a multipart resource has finished loading one part, it is removed from the
+        web view identifier map. 
+        
+        This is not an ideal fix, a better fix would be to special-case multipart resources and not remove
+        them when the first part has finished loading. I've filed <rdar://problem/5335034> to track doing that.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+
 2007-07-13  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver Hunt.

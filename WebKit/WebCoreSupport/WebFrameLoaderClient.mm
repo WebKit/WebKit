@@ -324,8 +324,10 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     NSURLAuthenticationChallenge *webChallenge = mac(challenge);
 
     if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:[webView _objectForIdentifier:identifier] didReceiveAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
-        return;
+        if (id resource = [webView _objectForIdentifier:identifier]) {
+            [resourceLoadDelegate webView:webView resource:resource didReceiveAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
+            return;
+        }
     }
 
     NSWindow *window = [webView hostWindow] ? [webView hostWindow] : [webView window];
@@ -341,8 +343,10 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
     NSURLAuthenticationChallenge *webChallenge = mac(challenge);
 
     if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:[webView _objectForIdentifier:identifier] didCancelAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
-        return;
+        if (id resource = [webView _objectForIdentifier:identifier]) {
+            [resourceLoadDelegate webView:webView resource:resource didCancelAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
+            return;
+        }
     }
 
     [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:webChallenge];
@@ -354,8 +358,10 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, un
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if (implementations.delegateImplementsDidReceiveResponse)
-        implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, [webView _objectForIdentifier:identifier], response.nsURLResponse(), dataSource(loader));
+    if (implementations.delegateImplementsDidReceiveResponse) {
+        if (id resource = [webView _objectForIdentifier:identifier])
+            implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, resource, response.nsURLResponse(), dataSource(loader));
+    }
 }
 
 NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader* loader, unsigned long identifier, NSCachedURLResponse* response) const
@@ -363,8 +369,10 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader* loa
     WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
-    if (implementations.delegateImplementsWillCacheResponse)
-        return implementations.willCacheResponseFunc(resourceLoadDelegate, @selector(webView:resource:willCacheResponse:fromDataSource:), webView, [webView _objectForIdentifier:identifier], response, dataSource(loader));
+    if (implementations.delegateImplementsWillCacheResponse) {
+        if (id resource = [webView _objectForIdentifier:identifier]) 
+            return implementations.willCacheResponseFunc(resourceLoadDelegate, @selector(webView:resource:willCacheResponse:fromDataSource:), webView, resource, response, dataSource(loader));
+    }
 
     return response;
 }
@@ -375,8 +383,10 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loade
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if (implementations.delegateImplementsDidReceiveContentLength)
-        implementations.didReceiveContentLengthFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:), webView, [webView _objectForIdentifier:identifier], (WebNSUInteger)lengthReceived, dataSource(loader));
+    if (implementations.delegateImplementsDidReceiveContentLength) {
+        if (id resource = [webView _objectForIdentifier:identifier]) 
+            implementations.didReceiveContentLengthFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:), webView, resource, (WebNSUInteger)lengthReceived, dataSource(loader));
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
@@ -385,8 +395,10 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsi
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, [webView _objectForIdentifier:identifier], dataSource(loader));
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource) {
+        if (id resource = [webView _objectForIdentifier:identifier])
+            implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, resource, dataSource(loader));
+    }
     [webView _removeObjectForIdentifier:identifier];
 
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
@@ -398,8 +410,10 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
-    if (implementations.delegateImplementsDidFailLoadingWithErrorFromDataSource)
-        implementations.didFailLoadingWithErrorFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFailLoadingWithError:fromDataSource:), webView, [webView _objectForIdentifier:identifier], error, dataSource(loader));
+    if (implementations.delegateImplementsDidFailLoadingWithErrorFromDataSource) {
+        if (id resource = [webView _objectForIdentifier:identifier])
+            implementations.didFailLoadingWithErrorFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFailLoadingWithError:fromDataSource:), webView, resource, error, dataSource(loader));
+    }
     [webView _removeObjectForIdentifier:identifier];
 
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
