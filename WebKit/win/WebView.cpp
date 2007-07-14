@@ -90,6 +90,7 @@
 #include <JavaScriptCore/value.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <tchar.h>
+#include <dimm.h>
 #include <windowsx.h>
 #include <ShlObj.h>
 
@@ -135,6 +136,7 @@ WebView::WebView()
 , m_hasSpellCheckerDocumentTag(false)
 , m_smartInsertDeleteEnabled(false)
 , m_didClose(false)
+, m_inIMEComposition(0)
 , m_toolTipHwnd(0)
 {
     KJS::Collector::registerAsMainThread();
@@ -856,6 +858,10 @@ bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData)
         return false;
     }
 
+    // Don't process keyDown events during IME composition
+    if (m_inIMEComposition)
+        return false;
+
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     m_currentCharacterCode = 0;
@@ -984,6 +990,10 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
 
     // Don't send key events for shift, ctrl, and capslock keys when they're by themselves
     if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL)
+        return false;
+
+    // Don't process keyDown events during IME composition
+    if (m_inIMEComposition)
         return false;
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
@@ -1234,6 +1244,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             // If we are losing focus to another part of our window, then we are no longer focused for real
             // and we need to clear out the focused target.
             FocusController* focusController = webView->page()->focusController();
+            webView->resetIME(focusController->focusedOrMainFrame());
             if (GetAncestor(hWnd, GA_ROOT) != GetFocus()) {
                 if (Frame* frame = focusController->focusedFrame()) {
                     frame->setIsActive(false);
@@ -1305,6 +1316,31 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             handled = false;
             break;
         }
+
+        case WM_IME_STARTCOMPOSITION:
+            handled = webView->onIMEStartComposition();
+            break;
+        case WM_IME_REQUEST:
+            webView->onIMERequest(wParam, lParam, &lResult);
+            break;
+        case WM_IME_COMPOSITION:
+            handled = webView->onIMEComposition(lParam);
+            break;
+        case WM_IME_ENDCOMPOSITION:
+            handled = webView->onIMEEndComposition();
+            break;
+        case WM_IME_CHAR:
+            handled = webView->onIMEChar(wParam, lParam);
+            break;
+        case WM_IME_NOTIFY:
+            handled = webView->onIMENotify(wParam, lParam, &lResult);
+            break;
+        case WM_IME_SELECT:
+            handled = webView->onIMESelect(wParam, lParam);
+            break;
+        case WM_IME_SETCONTEXT:
+            handled = webView->onIMESetContext(wParam, lParam);
+            break;
         case WM_SETCURSOR:
             if (lastSetCursor) {
                 SetCursor(lastSetCursor);
@@ -3596,6 +3632,297 @@ HRESULT WebView::revokeDragDrop()
 void WebView::setProhibitsMainFrameScrolling(bool b)
 {
     m_page->mainFrame()->setProhibitsScrolling(b);
+}
+
+class IMMDict {
+    typedef HIMC (CALLBACK *getContextPtr)(HWND);
+    typedef BOOL (CALLBACK *releaseContextPtr)(HWND, HIMC);
+    typedef LONG (CALLBACK *getCompositionStringPtr)(HIMC, DWORD, LPVOID, DWORD);
+    typedef BOOL (CALLBACK *setCandidateWindowPtr)(HIMC, LPCANDIDATEFORM);
+    typedef BOOL (CALLBACK *setOpenStatusPtr)(HIMC, BOOL);
+    typedef BOOL (CALLBACK *notifyIMEPtr)(HIMC, DWORD, DWORD, DWORD);
+
+public:
+    getContextPtr getContext;
+    releaseContextPtr releaseContext;
+    getCompositionStringPtr getCompositionString;
+    setCandidateWindowPtr setCandidateWindow;
+    setOpenStatusPtr setOpenStatus;
+    notifyIMEPtr notifyIME;
+    static const IMMDict& dict();
+private:
+    IMMDict();
+    HMODULE m_instance;
+};
+
+const IMMDict& IMMDict::dict()
+{
+    static IMMDict instance;
+    return instance;
+}
+
+IMMDict::IMMDict()
+{
+    m_instance = ::LoadLibrary(TEXT("IMM32.DLL"));
+    getContext = reinterpret_cast<getContextPtr>(::GetProcAddress(m_instance, "ImmGetContext"));
+    ASSERT(getContext);
+    releaseContext = reinterpret_cast<releaseContextPtr>(::GetProcAddress(m_instance, "ImmReleaseContext"));
+    ASSERT(releaseContext);
+    getCompositionString = reinterpret_cast<getCompositionStringPtr>(::GetProcAddress(m_instance, "ImmGetCompositionStringW"));
+    ASSERT(getCompositionString);
+    setCandidateWindow = reinterpret_cast<setCandidateWindowPtr>(::GetProcAddress(m_instance, "ImmSetCandidateWindow"));
+    ASSERT(setCandidateWindow);
+    setOpenStatus = reinterpret_cast<setOpenStatusPtr>(::GetProcAddress(m_instance, "ImmSetOpenStatus"));
+    ASSERT(setOpenStatus);
+    notifyIME = reinterpret_cast<notifyIMEPtr>(::GetProcAddress(m_instance, "ImmNotifyIME"));
+    ASSERT(notifyIME);
+}
+
+HIMC WebView::getIMMContext() 
+{
+    HIMC context = IMMDict::dict().getContext(m_viewWindow);
+    ASSERT(context);
+    return context;
+}
+
+void WebView::releaseIMMContext(HIMC hIMC)
+{
+    if (!hIMC)
+        return;
+    IMMDict::dict().releaseContext(m_viewWindow, hIMC);
+}
+
+void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext) 
+{
+    IntRect caret;
+    if (RefPtr<Range> range = targetFrame->selectionController()->selection().toRange()) {
+        ExceptionCode ec = 0;
+        RefPtr<Range> tempRange = range->cloneRange(ec);
+        caret = targetFrame->firstRectForRange(tempRange.get());
+    }
+    caret = targetFrame->view()->contentsToWindow(caret);
+    CANDIDATEFORM form;
+    form.dwIndex = 0;
+    form.dwStyle = CFS_CANDIDATEPOS;
+    form.ptCurrentPos.x = caret.x();
+    form.ptCurrentPos.y = caret.y() + caret.height();
+    form.rcArea.top = 0;
+    form.rcArea.bottom = 0;
+    form.rcArea.left = 0;
+    form.rcArea.right = 0;
+    IMMDict::dict().setCandidateWindow(hInputContext, &form);
+}
+
+static bool markedTextContainsSelection(Range* markedTextRange, Range* selection)
+{
+    ExceptionCode ec = 0;
+
+    ASSERT(markedTextRange->startContainer(ec) == markedTextRange->endContainer(ec));
+
+    if (selection->startContainer(ec) != markedTextRange->startContainer(ec))
+        return false;
+
+    if (selection->endContainer(ec) != markedTextRange->endContainer(ec))
+        return false;
+
+    if (selection->startOffset(ec) < markedTextRange->startOffset(ec))
+        return false;
+
+    if (selection->endOffset(ec) > markedTextRange->endOffset(ec))
+        return false;
+
+    return true;
+}
+
+static void setSelectionToEndOfRange(Frame* targetFrame, Range* sourceRange)
+{
+    ExceptionCode ec = 0;
+    Node* caretContainer = sourceRange->endContainer(ec);
+    unsigned caretOffset = sourceRange->endOffset(ec);
+    RefPtr<Range> range = targetFrame->document()->createRange();
+    range->setStart(caretContainer, caretOffset, ec);
+    range->setEnd(caretContainer, caretOffset, ec);
+    targetFrame->editor()->unmarkText();
+    targetFrame->selectionController()->setSelectedRange(range.get(), WebCore::DOWNSTREAM, true, ec);
+}
+
+void WebView::resetIME(Frame* targetFrame)
+{
+    if (targetFrame)
+        targetFrame->editor()->unmarkText();
+
+    if (HIMC hInputContext = getIMMContext()) {
+        IMMDict::dict().notifyIME(hInputContext, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
+        releaseIMMContext(hInputContext);
+    }
+}
+
+void WebView::updateSelectionForIME()
+{
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->markedTextRange())
+        return;
+    
+    if (targetFrame->editor()->ignoreMarkedTextSelectionChange())
+        return;
+
+    RefPtr<Range> selectionRange = targetFrame->selectionController()->selection().toRange();
+    if (!selectionRange || !markedTextContainsSelection(targetFrame->markedTextRange(), selectionRange.get()))
+        resetIME(targetFrame);
+}
+
+void WebView::selectionChanged()
+{
+    updateSelectionForIME();
+}
+
+bool WebView::onIMEStartComposition()
+{
+    m_inIMEComposition++;
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame)
+        return true;
+
+    //Tidy up in case the last IME composition was not correctly terminated
+    targetFrame->editor()->unmarkText();
+
+    HIMC hInputContext = getIMMContext();
+    prepareCandidateWindow(targetFrame, hInputContext);
+    releaseIMMContext(hInputContext);
+    return true;
+}
+
+static bool getCompositionString(HIMC hInputContext, DWORD type, String& result)
+{
+    int compositionLength = IMMDict::dict().getCompositionString(hInputContext, type, 0, 0);
+    if (compositionLength <= 0)
+        return false;
+    Vector<UChar> compositionBuffer(compositionLength / 2);
+    compositionLength = IMMDict::dict().getCompositionString(hInputContext, type, (LPVOID)compositionBuffer.data(), compositionLength);
+    result = String(compositionBuffer, compositionLength / 2);
+    ASSERT(!compositionLength || compositionBuffer[0]);
+    ASSERT(!compositionLength || compositionBuffer[compositionLength / 2 - 1]);
+    return true;
+}
+
+static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<BYTE>& attributes, 
+                                    unsigned startOffset, Vector<MarkedTextUnderline>& underlines)
+{
+    if (!clauses.size())
+        return;
+  
+    const size_t numBoundaries = clauses.size() - 1;
+    underlines.resize(numBoundaries);
+    for (unsigned i = 0; i < numBoundaries; i++) {
+        underlines[i].startOffset = startOffset + clauses[i];
+        underlines[i].endOffset = startOffset + clauses[i + 1];
+        BYTE attribute = attributes[clauses[i]];
+        underlines[i].thick = attribute == ATTR_TARGET_CONVERTED || attribute == ATTR_TARGET_NOTCONVERTED;
+        underlines[i].color = Color(0,0,0);
+    }
+}
+
+bool WebView::onIMEComposition(LPARAM lparam)
+{
+    HIMC hInputContext = getIMMContext();
+    if (!hInputContext)
+        return true;
+
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->editor()->canEdit())
+        return true;
+
+    prepareCandidateWindow(targetFrame, hInputContext);
+    targetFrame->editor()->setIgnoreMarkedTextSelectionChange(true);
+
+    // if we had marked text already, we need to make sure to replace
+    // that, instead of the selection/caret
+    targetFrame->editor()->selectMarkedText();
+
+    if (lparam & GCS_RESULTSTR || !lparam) {
+        String compositionString;
+        if (!getCompositionString(hInputContext, GCS_RESULTSTR, compositionString) && lparam)
+            goto cleanup;
+        
+        targetFrame->editor()->replaceMarkedText(compositionString);
+        RefPtr<Range> sourceRange = targetFrame->selectionController()->selection().toRange();
+        setSelectionToEndOfRange(targetFrame, sourceRange.get());
+    } else if (lparam) {
+        String compositionString;
+        if (!getCompositionString(hInputContext, GCS_COMPSTR, compositionString))
+            goto cleanup;
+        
+        targetFrame->editor()->replaceMarkedText(compositionString);
+
+        ExceptionCode ec = 0;
+        RefPtr<Range> sourceRange = targetFrame->selectionController()->selection().toRange();
+        if (!sourceRange)
+            goto cleanup;
+
+        Node* startContainer = sourceRange->startContainer(ec);
+        const String& str = startContainer->textContent();
+        for (unsigned i = 0; i < str.length(); i++)
+            ASSERT(str[i]);
+
+        unsigned startOffset = sourceRange->startOffset(ec);
+        RefPtr<Range> range = targetFrame->document()->createRange();
+        range->setStart(startContainer, startOffset, ec);
+        range->setEnd(startContainer, startOffset + compositionString.length(), ec);
+
+        // Composition string attributes
+        int numAttributes = IMMDict::dict().getCompositionString(hInputContext, GCS_COMPATTR, 0, 0);
+        Vector<BYTE> attributes(numAttributes);
+        IMMDict::dict().getCompositionString(hInputContext, GCS_COMPATTR, attributes.data(), numAttributes);
+
+        // Get clauses
+        int numClauses = IMMDict::dict().getCompositionString(hInputContext, GCS_COMPCLAUSE, 0, 0);
+        Vector<DWORD> clauses(numClauses / sizeof(DWORD));
+        IMMDict::dict().getCompositionString(hInputContext, GCS_COMPCLAUSE, clauses.data(), numClauses);
+        Vector<MarkedTextUnderline> underlines;
+        compositionToUnderlines(clauses, attributes, startOffset, underlines);
+        targetFrame->setMarkedTextRange(range.get(), underlines);
+        if (targetFrame->markedTextRange())
+            targetFrame->selectRangeInMarkedText(LOWORD(IMMDict::dict().getCompositionString(hInputContext, GCS_CURSORPOS, 0, 0)), 0);
+    }
+cleanup:
+    targetFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
+    return true;
+}
+
+bool WebView::onIMEEndComposition()
+{
+    if (m_inIMEComposition) 
+        m_inIMEComposition--;
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame)
+        return true;
+    targetFrame->editor()->unmarkText();
+    return true;
+}
+
+bool WebView::onIMEChar(WPARAM, LPARAM)
+{
+    return true;
+}
+
+bool WebView::onIMENotify(WPARAM, LPARAM, LRESULT*)
+{
+    return false;
+}
+
+bool WebView::onIMERequest(WPARAM, LPARAM, LRESULT*)
+{
+    return false;
+}
+
+bool WebView::onIMESelect(WPARAM, LPARAM)
+{
+    return false;
+}
+
+bool WebView::onIMESetContext(WPARAM, LPARAM)
+{
+    return false;
 }
 
 class EnumTextMatches : public IEnumTextMatches

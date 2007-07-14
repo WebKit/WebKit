@@ -635,6 +635,17 @@ public:
     bool didClose() const { return m_didClose; }
     void setProhibitsMainFrameScrolling(bool = true);
 
+    bool onIMEStartComposition();
+    bool onIMEComposition(LPARAM);
+    bool onIMEEndComposition();
+    bool onIMEChar(WPARAM, LPARAM);
+    bool onIMENotify(WPARAM, LPARAM, LRESULT*);
+    bool onIMERequest(WPARAM, LPARAM, LRESULT*);
+    bool onIMESelect(WPARAM, LPARAM);
+    bool onIMESetContext(WPARAM, LPARAM);
+    void selectionChanged();
+    void resetIME(WebCore::Frame*);
+
     HRESULT registerDragDrop();
     HRESULT revokeDragDrop();
 
@@ -655,12 +666,15 @@ public:
     void setToolTip(const WebCore::String&);
 
 protected:
-    static bool allowSiteSpecificHacks() { return s_allowSiteSpecificHacks; }
+    HIMC getIMMContext();
+    void releaseIMMContext(HIMC);
+    static bool allowSiteSpecificHacks() { return s_allowSiteSpecificHacks; } 
     void preflightSpellChecker();
     bool continuousCheckingAllowed();
     void initializeCacheSizesIfNecessary();
     void initializeToolTipWindow();
-
+    void prepareCandidateWindow(WebCore::Frame*, HIMC);
+    void updateSelectionForIME();
     ULONG m_refCount;
     WebCore::String m_groupName;
     HWND m_hostWindow;
@@ -700,7 +714,7 @@ protected:
     bool m_hasSpellCheckerDocumentTag;
     bool m_smartInsertDeleteEnabled;
     bool m_didClose;
-
+    unsigned m_inIMEComposition;
     HWND m_toolTipHwnd;
     WebCore::String m_toolTip;
 

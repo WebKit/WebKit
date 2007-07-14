@@ -1,3 +1,51 @@
+2007-07-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin and Alexey.
+
+        Fix for <rdar://problem/5231528> Inline input of International text (IME)
+                http://bugs.webkit.org/show_bug.cgi?id=14331
+
+        This patch adds IME support to WebKit/win, it currently does not support
+        reconversion (<rdar://problem/5334818>) and has issues with the chinese
+        IMEs (<rdar://problem/5334826>)
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::respondToChangedSelection):
+        (WebEditorClient::handleInputMethodKeypress):
+          Prevent the initial keydown for an IME from triggering a keypressed event
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::keyUp):
+        (WebView::keyDown):
+        (WebViewWndProc):
+        (IMMDict::dict):
+        (IMMDict::IMMDict):
+           Dynamic loader for IME libraries
+
+        (WebView::getIMMContext):
+        (WebView::releaseIMMContext):
+        (WebView::prepareCandidateWindow):
+        (selectionInsideMarkedText):
+        (setSelectionToEndOfRange):
+        (WebView::resetIME):
+        (WebView::updateSelectionForIME):
+        (WebView::selectionChanged):
+        (getCompositionString):
+        (compositionToUnderlines):
+           Helper functions
+
+        (WebView::onIMEStartComposition):
+        (WebView::onIMEComposition):
+        (WebView::onIMEEndComposition):
+        (WebView::onIMEChar):
+        (WebView::onIMENotify):
+        (WebView::onIMERequest):
+        (WebView::onIMESelect):
+        (WebView::onIMESetContext):
+           IME event handling, so far most of these are not implemented, but the bulk of functionality 
+           is performed the the composition event handlers
+        * WebView.h:
+
 2007-07-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej and Steve.
