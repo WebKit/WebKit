@@ -21,7 +21,6 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (0,68) size 740x24 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 734x18
           text run at (3,3) width 734: "The black border should fit tightly around this one line of text with no space after the period."
-        RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,68) size 784x24
         RenderBR {BR} at (740,0) size 0x18
       RenderBlock {P} at (0,108) size 784x18

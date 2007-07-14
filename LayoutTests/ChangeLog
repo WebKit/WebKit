@@ -1,3 +1,9 @@
+2007-07-13  Sam Weinig  <sam@webkit.org>
+
+        Fix results.
+
+        * fast/text/word-break-run-rounding-expected.txt:
+
 2007-07-13  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
