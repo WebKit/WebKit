@@ -2677,6 +2677,22 @@
 				RelativePath="..\loader\FrameLoaderTypes.h"
 				>
 			</File>
+            <File
+				RelativePath="..\loader\FTPDirectoryDocument.cpp"
+				>
+            </File>
+            <File
+				RelativePath="..\loader\FTPDirectoryDocument.h"
+				>
+            </File>
+            <File
+				RelativePath="..\loader\FTPDirectoryParser.cpp"
+				>
+            </File>
+            <File
+				RelativePath="..\loader\FTPDirectoryParser.h"
+				>
+            </File>
 			<File
 				RelativePath="..\loader\ImageDocument.cpp"
 				>

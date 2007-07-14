@@ -1,3 +1,11 @@
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-07-14  Sam Weinig  <sam@webkit.org>
 
         Fix Tiger build.

@@ -1507,6 +1507,8 @@ HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferenc
 
     settings->setShowsURLsInToolTips(false);
 
+    settings->setForceFTPDirectoryListings(true);
+
     m_mainFrame->invalidate(); // FIXME
 
     return S_OK;

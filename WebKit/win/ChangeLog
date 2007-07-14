@@ -1,3 +1,12 @@
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+        
+        Set the pref to override the policy delegate for FTP directory listings on Windows
+
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+
 2007-07-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin and Alexey.
