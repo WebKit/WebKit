@@ -32,6 +32,31 @@ function argumentsLengthInnerBlock2() {
   return arguments.length;
 }
 
+// this tests that arguments doesn't get overriden by a variable declaration
+// with an initializer in a catch block with a parameter of the same name
+function argumentsLengthTryCatch() {
+  try {
+    throw ["foo"];
+  } catch (arguments) {
+    var arguments = ["foo", "bar"];
+  }
+
+  return arguments.length;
+}
+
+// this tests that arguments doesn't get overriden by a variable declaration
+// with an initializer in a with block where the parameter has a property of
+// same name
+function argumentsLengthWith() {
+  var object = { 'arguments': ["foo"] };
+
+  with (object) {
+    var arguments = ["foo", "bar"];
+  }
+
+  return arguments.length;
+}
+
 // this tests that arguments can still be overridden
 function argumentsLengthOverride() {
   shouldBe("'" + typeof arguments + "'", "'object'");
@@ -97,6 +122,9 @@ shouldBe("argumentsLengthInnerBlock('a','b')", "2");
 shouldBe("argumentsLengthInnerBlock2()", "0");
 shouldBe("argumentsLengthInnerBlock2(1)", "1");
 shouldBe("argumentsLengthInnerBlock2('a','b')", "2");
+
+shouldBe("argumentsLengthTryCatch()", "0");
+shouldBe("argumentsLengthWith()", "0");
 
 shouldBe("argumentsLengthOverride()", "0");
 shouldBe("argumentsLengthOverride(1)", "1");

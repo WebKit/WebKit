@@ -3,6 +3,7 @@
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -1595,7 +1596,35 @@ JSValue *VarDeclNode::evaluate(ExecState *exec)
   if (init) {
       val = init->evaluate(exec);
       KJS_CHECKEXCEPTIONVALUE
-  } else {
+      
+      if (variable->getDirect(ident) || ident == exec->propertyNames().arguments) {
+          const ScopeChain& chain = exec->context()->scopeChain();
+          ScopeChainIterator iter = chain.begin();
+          ScopeChainIterator end = chain.end();        
+
+          // we must always have something in the scope chain
+          ASSERT(iter != end);
+
+          PropertySlot slot;
+          JSObject* base;
+
+          do {
+              base = *iter;
+              if (base->getPropertySlot(exec, ident, slot))
+                  break;
+
+             ++iter;
+          } while (iter != end);
+
+          unsigned flags = 0;
+          base->getPropertyAttributes(ident, flags);
+          if (varType == VarDeclNode::Constant)
+              flags |= ReadOnly;
+
+          base->put(exec, ident, val, flags);
+          return jsString(ident.ustring());
+      }
+    } else {
       // already declared? - check with getDirect so you can override
       // built-in properties of the global object with var declarations.
       // Also check for 'arguments' property. The 'arguments' cannot be found with

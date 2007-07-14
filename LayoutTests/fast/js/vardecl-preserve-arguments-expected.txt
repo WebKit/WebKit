@@ -18,6 +18,8 @@ PASS argumentsLengthInnerBlock('a','b') is 2
 PASS argumentsLengthInnerBlock2() is 0
 PASS argumentsLengthInnerBlock2(1) is 1
 PASS argumentsLengthInnerBlock2('a','b') is 2
+PASS argumentsLengthTryCatch() is 0
+PASS argumentsLengthWith() is 0
 PASS 'object' is 'object'
 PASS 'object' is 'object'
 PASS 7 is 7

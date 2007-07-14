@@ -1,3 +1,20 @@
+2007-07-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Added tests for the following bugs:
+        http://bugs.webkit.org/show_bug.cgi?id=13517
+        http://bugs.webkit.org/show_bug.cgi?id=14237
+
+        Bug 13517: DOM Exception 8 in finance.aol.com sub-page
+        Bug 14237: Javascript "var" statement interprets initialization in the topmost function scope
+
+        * fast/js/resources/vardecl-blocks-init.js: Added.
+        * fast/js/resources/vardecl-preserve-arguments.js: Updated.
+        * fast/js/vardecl-blocks-init-expected.txt: Added.
+        * fast/js/vardecl-blocks-init.html: Added.
+        * fast/js/vardecl-preserve-arguments-expected.txt: Updated result.
+
 2007-07-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.

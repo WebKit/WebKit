@@ -1,3 +1,18 @@
+2007-07-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=13517,
+              http://bugs.webkit.org/show_bug.cgi?id=14237, and
+              the failure of test js1_5/Scope/regress-185485.js
+
+        Bug 13517: DOM Exception 8 in finance.aol.com sub-page
+        Bug 14237: Javascript "var" statement interprets initialization in the topmost function scope
+
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate):
+        * tests/mozilla/expected.html:
+
 2007-07-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.
