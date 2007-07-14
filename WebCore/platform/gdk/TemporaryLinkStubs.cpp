@@ -310,7 +310,7 @@ void ContextMenuItem::setSubMenu(ContextMenu*) { notImplemented(); }
 void ContextMenuItem::setChecked(bool) { notImplemented(); }
 void ContextMenuItem::setEnabled(bool) { notImplemented(); }
 
-FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation*, WebCore::Frame*) { notImplemented(); }
+FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation* i, WebCore::Frame* f) : HTMLDocument(i, f) { notImplemented(); }
 
 namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
