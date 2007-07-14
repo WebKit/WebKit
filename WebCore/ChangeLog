@@ -1,5 +1,14 @@
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
+        Third shot at blind Qt/GDK build fix
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (FTPDirectoryDocument::createTokenizer):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (FTPDirectoryDocument::createTokenizer):
+
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam
 
         Windows build fix
