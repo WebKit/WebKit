@@ -1,3 +1,15 @@
+2007-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14618
+        REGRESSION(13464): drivehq.com login form doesn't work
+
+        Test: http/tests/misc/post-submit-button.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData): Append a submit even if its value is empty.
+
 2007-07-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

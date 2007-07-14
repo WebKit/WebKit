@@ -845,10 +845,8 @@ bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
         case SUBMIT:
             if (m_activeSubmit) {
                 String enc_str = valueWithDefault();
-                if (!enc_str.isEmpty()) {
-                    encoding.appendData(name(), enc_str);
-                    return true;
-                }
+                encoding.appendData(name(), enc_str);
+                return true;
             }
             break;
 
