@@ -1562,13 +1562,13 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     // Once we're past the hysteresis point, we don't want to treat this gesture as a click
     invalidateClick();
     
-    DragOperation srcOp = DragOperationNone;        
+    DragOperation srcOp = DragOperationNone;      
+    
+    freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
+                        // to make sure it gets numbified
+    dragState().m_dragClipboard = createDraggingClipboard();  
+    
     if (dragState().m_dragSrcMayBeDHTML) {
-        freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
-                            // to make sure it gets numbified
-        
-        dragState().m_dragClipboard = createDraggingClipboard();
-        
         // Check to see if the is a DOM based drag, if it is get the DOM specified drag 
         // image and offset
         if (dragState().m_dragSrcIsDHTML) {

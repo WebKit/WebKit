@@ -1,3 +1,17 @@
+2007-07-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for 
+            <rdar://problem/5335265> REGRESSION: WebCore::DragController crashes if WebDragSourceActionDHTML cleared
+            http://bugs.webkit.org/show_bug.cgi?id=13652
+
+        Reorder logic for drag initiation: we can always preflight the clipboard, regardless as to whether 
+        we are performing any dhtml drag handling    
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2007-07-13  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Tim Hatcher.
