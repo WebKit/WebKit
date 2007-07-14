@@ -1,3 +1,12 @@
+2007-07-13  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 14401: Semi-regression: Can no longer copy anything from the inspector
+        http://bugs.webkit.org/show_bug.cgi?id=14401
+
+        * page/inspector/inspector.css:
+
 2007-07-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
