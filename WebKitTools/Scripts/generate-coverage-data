@@ -55,7 +55,7 @@ chdirWebKit();
 
 # Clean-up old files
 print "Cleaning up\n";
-system("find WebKitBuild -name '*.gcda' -delete") == 0 or die;
+system("if [ -d WebKitBuild ]; then find WebKitBuild -name '*.gcda' -delete; fi;") == 0 or die;
 
 
 print "Building and testing\n";

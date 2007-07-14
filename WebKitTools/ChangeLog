@@ -1,3 +1,7 @@
+2007-07-15  Mark Rowe  <mrowe@apple.com>
+
+        * Scripts/generate-coverage-data: Don't fail if WebKitBuild directory does not exist.
+
 2007-07-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
