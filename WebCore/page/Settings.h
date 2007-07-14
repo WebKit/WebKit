@@ -128,10 +128,17 @@ namespace WebCore {
         void setShowsURLsInToolTips(bool);
         bool showsURLsInToolTips() const { return m_showsURLsInToolTips; }
         
+        void setFTPDirectoryTemplatePath(const String&);
+        const String& ftpDirectoryTemplatePath() const { return m_ftpDirectoryTemplatePath; }
+        
+        void setForceFTPDirectoryListings(bool);
+        bool forceFTPDirectoryListings() const { return m_forceFTPDirectoryListings; }
+        
     private:
         Page* m_page;
         
         String m_defaultTextEncodingName;
+        String m_ftpDirectoryTemplatePath;
         KURL m_userStyleSheetLocation;
         AtomicString m_standardFontFamily;
         AtomicString m_fixedFontFamily;
@@ -158,6 +165,7 @@ namespace WebCore {
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;
         bool m_showsURLsInToolTips : 1;
+        bool m_forceFTPDirectoryListings : 1;
     };
 
 } // namespace WebCore

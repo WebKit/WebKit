@@ -116,3 +116,7 @@ typedef float CGFloat;
 #endif
 #endif /* PLATFORM(CG) */
 
+#ifdef BUILDING_ON_TIGER
+#define ENABLE_FTPDIR 0
+#endif
+

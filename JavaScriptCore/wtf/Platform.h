@@ -205,4 +205,8 @@
 #define ENABLE_ICONDATABASE 1
 #endif
 
+#if !defined(FTPDIR)
+#define ENABLE_FTPDIR 1
+#endif
+
 #endif /* WTF_Platform_h */

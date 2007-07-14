@@ -141,4 +141,13 @@ void SharedBuffer::clearPlatformData()
     m_nsData = 0;
 }
 
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
+{
+    NSData *resourceData = [NSData dataWithContentsOfFile:filePath];
+    if (resourceData) 
+        return SharedBuffer::wrapNSData(resourceData);
+    return 0;
 }
+
+}
+

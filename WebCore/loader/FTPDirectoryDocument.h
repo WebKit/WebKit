@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,42 +16,29 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#ifndef FTPDirectoryDocument_h
+#define FTPDirectoryDocument_h
 
-#ifndef Logging_h
-#define Logging_h
-
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "HTMLDocument.h"
 
 namespace WebCore {
+    
+class DOMImplementation;
+    
+class FTPDirectoryDocument : public HTMLDocument {
+public:
+    FTPDirectoryDocument(DOMImplementation*, Frame*);
+    
+    virtual bool isImageDocument() const { return false; }
+    virtual Tokenizer* createTokenizer();
+};
+    
+} // namespace WebCore
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
-    extern WTFLogChannel LogBackForward;
-    extern WTFLogChannel LogHistory;
-    extern WTFLogChannel LogPageCache;
-    extern WTFLogChannel LogPlatformLeaks;
-    extern WTFLogChannel LogNetwork;
-    extern WTFLogChannel LogFTP;
-
-    void InitializeLoggingChannelsIfNecessary();
-}
-
-#endif // Logging_h
+#endif // FTPDirectoryDocument_h

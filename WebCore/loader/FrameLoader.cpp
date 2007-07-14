@@ -2089,6 +2089,15 @@ void FrameLoader::checkContentPolicy(const String& MIMEType, ContentPolicyDecisi
         return;
     }
 
+#if ENABLE(FTPDIR)
+    // Respect the hidden FTP Directory Listing pref so it can be tested even if the policy delegate might otherwise disallow it
+    Settings* settings = m_frame->settings();
+    if (settings && settings->forceFTPDirectoryListings() && MIMEType == "application/x-ftp-directory") {
+        function(argument, PolicyUse);
+        return;
+    }
+#endif
+
     m_policyCheck.set(function, argument);
     m_client->dispatchDecidePolicyForMIMEType(&FrameLoader::continueAfterContentPolicy,
         MIMEType, activeDocumentLoader()->request());

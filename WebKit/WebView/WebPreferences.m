@@ -826,6 +826,26 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:DOMPasteAllowed forKey:WebKitDOMPasteAllowedPreferenceKey];
 }
 
+- (void)_setFTPDirectoryTemplatePath:(NSString *)path
+{
+    [self _setStringValue:path forKey:WebKitFTPDirectoryTemplatePath];
+}
+
+- (NSString *)_ftpDirectoryTemplatePath
+{
+    return [self _stringValueForKey:WebKitFTPDirectoryTemplatePath];
+}
+
+- (void)_setForceFTPDirectoryListings:(BOOL)force
+{
+    [self _setBoolValue:force forKey:WebKitForceFTPDirectoryListings];
+}
+
+- (BOOL)_forceFTPDirectoryListings
+{
+    return [self _boolValueForKey:WebKitForceFTPDirectoryListings];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

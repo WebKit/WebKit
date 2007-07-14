@@ -338,11 +338,15 @@
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
 		5186C0560A9C21470034FE94 /* IconDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5186C0550A9C21470034FE94 /* IconDataCache.cpp */; };
 		51AA3F6F0BD5AA9E00892971 /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */; };
+		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
+		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */; };
 		51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3EA140A3D24D300BADA35 /* SQLDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */; };
+		51E4ADB60C42B4CF0042BC55 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */; };
+		51E4ADB70C42B4CF0042BC55 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */; };
 		51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F11E140A48C2920034A24E /* SQLTransaction.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3573,11 +3577,15 @@
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
 		5186C0550A9C21470034FE94 /* IconDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDataCache.cpp; sourceTree = "<group>"; };
 		51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
+		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
+		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLDatabase.cpp; sourceTree = "<group>"; };
 		51D3EA140A3D24D300BADA35 /* SQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLDatabase.h; sourceTree = "<group>"; };
 		51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
 		51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCheck.h; sourceTree = "<group>"; };
 		51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadCheck.mm; sourceTree = "<group>"; };
+		51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryDocument.cpp; sourceTree = "<group>"; };
+		51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryDocument.h; sourceTree = "<group>"; };
 		51F11E140A48C2920034A24E /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9447,6 +9455,10 @@
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
+				51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */,
+				51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */,
+				51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */,
+				51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */,
 				1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */,
 				1A820D900A13EBA600AF843C /* ImageDocument.h */,
 				BCB16C130979C3BD00467741 /* loader.cpp */,
@@ -11665,6 +11677,8 @@
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				BCA85A100C3AEAF4006F8308 /* DOMSVGNumberInternal.h in Headers */,
 				E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */,
+				51E4ADB70C42B4CF0042BC55 /* FTPDirectoryDocument.h in Headers */,
+				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13098,6 +13112,8 @@
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
 				BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */,
 				E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */,
+				51E4ADB60C42B4CF0042BC55 /* FTPDirectoryDocument.cpp in Sources */,
+				51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

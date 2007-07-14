@@ -1,3 +1,12 @@
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Initial check-in for <rdar://problem/3154486> - Supporting FTP directory listings in the browser
+
+        * wtf/Platform.h: Add ENABLE_FTPDIR feature to handle building on platforms that don't have the
+          proper network-layer support
+
 2007-07-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

@@ -1,3 +1,22 @@
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Initial check-in for <rdar://problem/3154486> - Supporting FTP directory listings in the browser
+
+        * WebView/WebPreferenceKeysPrivate.h: Added preference keys for the FTP template location, as well as to force 
+          FTP directory listings, bypassing the policy delegate.  This is necessary to test the new feature until browser
+          policy delegate support is added.
+
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _setFTPDirectoryTemplatePath:]):
+        (-[WebPreferences _ftpDirectoryTemplatePath]):
+        (-[WebPreferences _setForceFTPDirectoryListings:]):
+        (-[WebPreferences _forceFTPDirectoryListings]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2007-07-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

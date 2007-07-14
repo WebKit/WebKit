@@ -78,6 +78,11 @@ typedef enum {
 - (BOOL)isDOMPasteAllowed;
 - (void)setDOMPasteAllowed:(BOOL)DOMPasteAllowed;
 
+- (NSString *)_ftpDirectoryTemplatePath;
+- (void)_setFTPDirectoryTemplatePath:(NSString *)path;
+- (void)_setForceFTPDirectoryListings:(BOOL)force;
+- (BOOL)_forceFTPDirectoryListings;
+
 // Other private methods
 - (size_t)_pageCacheSize;
 - (size_t)_objectCacheSize;

@@ -1,3 +1,97 @@
+2007-07-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Initial check-in for <rdar://problem/3154486> - Supporting FTP directory listings in the browser
+
+        Development has taken place on both Leopard and Windows (windows enabling patch will follow shortly)
+        Support will only exist on platforms whose network layers (ie, ResourceHandle) support piping the raw
+        FTP Directory data into the engine.  
+
+        This is known to include Leopard, Windows, and CURL based platforms - probably others
+        Known incompatible platforms include Tiger.
+
+        The FTP listing page is built in HTML.  An external HTML document can be provided as a template for the 
+        directory listing.  This document is parsed, and expected to have a <table> with a certain class in it.
+        As FTP directory listings come in, each entry is added to this table as a row.
+
+        If no HTML template is provided to work with, a very basic empty document is hard coded that contains only 
+        this special table.
+
+        Upgrades to the look and feel of the directory listings can take place largely in this HTML template which,
+        admittedly, is conspicuously absent in this initial checkin
+
+        * WebCore.exp: New Settings symbols for WebKit
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * config.h: If BUILDING_ON_TIGER, disable FTP directory listing support
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Create an FTPDirectoryDocument if the mime type is 
+          "application/x-ftp-directory"
+
+        * loader/FTPDirectoryDocument.cpp: Added.
+        (WebCore::FTPDirectoryTokenizer::isWaitingForScripts):
+        (WebCore::FTPDirectoryTokenizer::checkBuffer):
+        (WebCore::FTPDirectoryTokenizer::FTPDirectoryTokenizer): Building on HTML tokenizer, this facilitates 
+          parsing FTP Directory listings in the engine
+        (WebCore::FTPDirectoryTokenizer::appendEntry): Add a table row for a directory listing to the document
+        (WebCore::FTPDirectoryTokenizer::createTDForFilename): Create the TD for the filename with the anchor in it
+
+        (WebCore::processFilesizeString): Prettify the filesize
+        (WebCore::wasLastDayOfMonth):
+        (WebCore::processFileDateString): Prettify the date
+        (WebCore::FTPDirectoryTokenizer::parseAndAppendOneLine):
+        (WebCore::FTPDirectoryTokenizer::loadDocumentTemplate): Loads the HTML template that FTP directory listings
+          can build on top of
+        (WebCore::FTPDirectoryTokenizer::createBasicDocument): Creates a most basic document (body and one table) to
+          append the rows to in case the document template is not loaded and parsed
+        (WebCore::FTPDirectoryTokenizer::write): Add the FTP listing to the buffer and parse entries out of it
+        (WebCore::FTPDirectoryTokenizer::finish): 
+
+        (WebCore::FTPDirectoryDocument::FTPDirectoryDocument): Special document-type for FTP directory listings
+        (WebCore::FTPDirectoryDocument::createTokenizer):
+        * loader/FTPDirectoryDocument.h: Added.
+        (WebCore::FTPDirectoryDocument::isImageDocument):
+        
+        * loader/FTPDirectoryParser.cpp: Added.
+        (WebCore::parseOneFTPLine): Adapted from ParseFTPList.cpp from Firefox - parses most known
+          FTP directory listing styles into discrete FTP directory entries
+        * loader/FTPDirectoryParser.h: Added.
+        (WebCore::ListState::ListState): Maintains FTP Parser state
+        (WebCore::ListResult::ListResult): Represents one FTP directory listing
+        (WebCore::ListResult::clear):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy): If the Settings say to bypass the policy check for 
+          "application/x-ftp-directory", skip it.  This will allow people to test this feature even if their 
+          browser/WebKit app would otherwise not allow it
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFTPDirectoryTemplatePath): Set the path to the FTP listing document template
+        (WebCore::Settings::setForceFTPDirectoryListings): Set to bypass the policy delegate check for mime type
+          "application/x-ftp-directory"
+        * page/Settings.h:
+        (WebCore::Settings::ftpDirectoryTemplatePath):
+        (WebCore::Settings::forceFTPDirectoryListings):
+
+        * platform/Logging.cpp: Add an "LogFTP" logging channel
+        * platform/Logging.h:
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedNonImageMimeTypes): Add "application/x-ftp-directory"
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile): Stub for now
+        * platform/SharedBuffer.h:
+
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createWithContentsOfFile): Load contents of the file into an NSData, then
+          wrap that NSData
+
 2007-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -25,6 +25,7 @@
 #ifndef SharedBuffer_h
 #define SharedBuffer_h
 
+#include "PlatformString.h"
 #include "Shared.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -46,6 +47,9 @@ class SharedBuffer : public Shared<SharedBuffer> {
 public:
     SharedBuffer();
     SharedBuffer(const char*, int);
+
+    static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+    
 #if PLATFORM(MAC)
     NSData *createNSData();
     CFDataRef createCFData();

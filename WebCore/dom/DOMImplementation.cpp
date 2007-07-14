@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FTPDirectoryDocument.h"
 #include "HTMLDocument.h"
 #include "HTMLViewSourceDocument.h"
 #include "Image.h"
@@ -356,6 +357,12 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new HTMLDocument(this, frame);
     if (type == "application/xhtml+xml")
         return new Document(this, frame);
+        
+#if ENABLE(FTPDIR)
+    // Plugins cannot take FTP from us either
+    if (type == "application/x-ftp-directory")
+        return new FTPDirectoryDocument(this, frame);
+#endif
 
     // PDF is one image type for which a plugin can override built-in support.
     // We do not want QuickTime to take over all image types, obviously.
