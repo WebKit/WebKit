@@ -1,5 +1,14 @@
 2007-07-16  Adam Roben  <aroben@apple.com>
 
+        Added a manual test to test calling window.print on a subframe.
+
+        Reviewed by Darin.
+
+        * manual-tests/resources/print-subframe.html: Added.
+        * manual-tests/window-print-subframe.html: Added.
+
+2007-07-16  Adam Roben  <aroben@apple.com>
+
         Replace Frame::print with Chrome::print
 
         This also adds a Frame* parameter to Chrome::print and

@@ -1,5 +1,16 @@
 2007-07-16  Adam Roben  <aroben@apple.com>
 
+        WebKit/win part of <rdar://problem/5336005> Calling window.print() on a subframe prints whole page, should only print that subframe
+
+        Reviewed by Darin.
+
+        * Interfaces/IWebUIDelegate.idl: Rename print to printFrame to closer
+        match the Mac method, and copy more of the Mac API comments.
+        * WebChromeClient.cpp:
+        (WebChromeClient::print): Call printFrame instead of print.
+
+2007-07-16  Adam Roben  <aroben@apple.com>
+
         Updated WebChromeClient for ChromeClient changes.
 
         Reviewed by Darin.
