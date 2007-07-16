@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe.html" style=""></iframe>
+<pre id="console"></pre>
+<script>
+
+window.targetWindow = frames[0];
+
+window.onload = function()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    log("\n----- tests for getting/setting interesting properties -----\n");
+
+    // built-in property
+    shouldBeFalse("canGet('targetWindow.Object')");
+    shouldBeFalse("canSet('targetWindow.Object')");
+
+    // pre-existing custom property
+    shouldBeFalse("canGet('targetWindow.existingCustomProperty')");
+    shouldBeFalse("canSet('targetWindow.existingCustomProperty')");
+
+    // new custom property
+    shouldBeFalse("canSet('targetWindow.newCustomProperty')");
+
+    // built-in prototype property
+    shouldBeFalse("canGet('targetWindow.hasOwnProperty')");
+    shouldBeFalse("canSet('targetWindow.hasOwnProperty')");
+
+    // custom prototype property
+    shouldBeFalse("canGet('targetWindow.prototypeCustomProperty')");
+    shouldBeFalse("canSet('targetWindow.prototypeCustomProperty')");
+
+    // window object itself
+    shouldBeFalse("canGet('targetWindow.toString')");
+    shouldBeFalse("canSet('targetWindow.toString')");
+    log("FIXME: Firefox allows converting a window to string -- maybe WebKit should, too.");
+    shouldBe("toString('targetWindow', '')", "''");
+
+    // Work around DRT bug that causes subsequent tests to fail.
+    window.stop();
+}
+</script>
+</body>
+</html>

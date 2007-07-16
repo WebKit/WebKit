@@ -1,0 +1,15 @@
+
+
+----- tests for getting/setting window.history and its properties -----
+
+Firefox prohibits getting 'history.length' but that seems unnecessarily strict since you're allowed to use the 'history' object.
+PASS: canGet('targetWindow.history.length') should be 'true' and is.
+PASS: canGet('targetWindow.history.back') should be 'true' and is.
+PASS: canGet('targetWindow.history.forward') should be 'true' and is.
+PASS: canGet('targetWindow.history.go') should be 'true' and is.
+PASS: canCall('targetWindow.history.back') should be 'true' and is.
+PASS: canCall('targetWindow.history.forward') should be 'true' and is.
+PASS: canCall('targetWindow.history.go', '-1') should be 'true' and is.
+PASS: canGet('targetWindow.history.toString') should be 'true' and is.
+PASS: toString('targetWindow.history') should be '[object History]' and is.
+

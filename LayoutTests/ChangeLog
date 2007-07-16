@@ -1,3 +1,26 @@
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Breakup http/tests/security/cross-frame-access.html into multiple tests to
+        make it easier to identify flaws should they arise.
+
+        - Also factors out JS into a separate file.
+
+        * http/tests/security/cross-frame-access-custom-expected.txt: Added.
+        * http/tests/security/cross-frame-access-custom.html: Added.
+        * http/tests/security/cross-frame-access-expected.txt:
+        * http/tests/security/cross-frame-access-frames-expected.txt: Added.
+        * http/tests/security/cross-frame-access-frames.html: Added.
+        * http/tests/security/cross-frame-access-history-expected.txt: Added.
+        * http/tests/security/cross-frame-access-history.html: Added.
+        * http/tests/security/cross-frame-access-location-expected.txt: Added.
+        * http/tests/security/cross-frame-access-location.html: Added.
+        * http/tests/security/cross-frame-access-name-getter-expected.txt: Added.
+        * http/tests/security/cross-frame-access-name-getter.html: Added.
+        * http/tests/security/cross-frame-access.html:
+        * http/tests/security/resources/cross-frame-access.js: Added.
+
 2007-07-16  Anders Carlsson  <andersca@apple.com>
 
         Remove basic-auth.html, it no longer hangs on Leopard.
