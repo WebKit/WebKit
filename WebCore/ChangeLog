@@ -55,6 +55,17 @@
 
 2007-07-16  David Hyatt  <hyatt@apple.com>
 
+        Fix for 5335829, avoid creating a pathological # of FontData objects
+        on Windows.  The MLang service actually caches and reuses HFONTs, which
+        means it is safe to use our FontPlatformData -> FontData cache.
+
+        Reviewed by olliej
+
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
+2007-07-16  David Hyatt  <hyatt@apple.com>
+
         Fix for Radar 5338081, text-shadow should be reset on form controls so that
         it doesn't inherit in when set e.g., on the <body>.
 
