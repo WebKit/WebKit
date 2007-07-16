@@ -1,3 +1,12 @@
+2007-07-16  Charles Gaudette  <charles@gaudette-net.com>
+
+        Reviewed by Niko.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14628
+          broken link on webkit.org home page - "KHTML" points to http://khtml.info/
+
+        * index.html:
+
 2007-07-06  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Adam Roben.
