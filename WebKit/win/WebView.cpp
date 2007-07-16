@@ -3683,7 +3683,6 @@ IMMDict::IMMDict()
 HIMC WebView::getIMMContext() 
 {
     HIMC context = IMMDict::dict().getContext(m_viewWindow);
-    ASSERT(context);
     return context;
 }
 

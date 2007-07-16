@@ -1,3 +1,14 @@
+2007-07-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14630
+
+        Remove bogus assertion
+
+        * WebView.cpp:
+        (WebView::getIMMContext):
+
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam
