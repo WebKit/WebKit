@@ -138,7 +138,7 @@ namespace WebCore {
 #if PLATFORM(GDK)
         Widget(GtkWidget*);
         virtual void setGtkWidget(GtkWidget*);
-        GdkDrawable* drawable() const;
+        GdkDrawable* gdkDrawable() const;
         GtkWidget* gtkWidget() const;
 #endif
 

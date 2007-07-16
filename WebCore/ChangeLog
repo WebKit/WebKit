@@ -1,5 +1,64 @@
 2007-07-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Niko.
+
+        FrameView, PlatformScrollbar and changes to the way we draw
+
+        Fix the lifetime of PlatformScrollbar, use a default width and
+        height and fix drawing of the PlatformScrollbar and other widgets
+        the following way: FrameGdk handles the expose events of the Frame
+        and will make the frame redraw and now it will draw the childrent of
+        the FrameView as well. This approach has the issue of honoring the
+        z-order of elements inside the RenderTree. Honoring the z-order will
+        be a bit more work
+
+        Widget can now handle Widget::setGtkWidget call where the GtkWidget
+        has not yet a GdkWindow allocated. We will lazily set the GdkDrawable.
+
+        In preparation of honoring the z-order of the RenderTree for RenderWidgets
+        it is started to store native objects inside the GraphicsContext. Doing this
+        nicely eliminates the need of RenderThemeGdk to do any drawing to a temporary
+        GdkPixmap. This should fix themes with rounded buttons.
+
+        ScrollView implement add- and removeChild to get a working PlatformScrollbar
+
+
+        * platform/Widget.h:
+        * platform/gdk/FrameGdk.cpp:
+        (frame_gdk_expose_child): Will send the expose to all children
+        (WebCore::FrameGdk::handleGdkEvent): Painting changes, move to mouseMoved
+        * platform/gdk/PlatformScreenGdk.cpp:
+        (WebCore::screenDepth): gdkDrawable
+        * platform/gdk/PlatformScrollBarGdk.cpp:
+        (PlatformScrollbar::PlatformScrollbar): Fix ownership
+        (PlatformScrollbar::~PlatformScrollbar): Fix ownership
+        (PlatformScrollbar::paint): Widget::paint will do the right thing soon
+        * platform/gdk/RenderThemeGdk.cpp: No need for using a GdkPixmap, draw directly
+        (WebCore::RenderThemeGdk::paintCheckbox): No need for using a GdkPixmap, draw directly
+        (WebCore::RenderThemeGdk::paintRadio): No need for using a GdkPixmap, draw directly
+        (WebCore::RenderThemeGdk::paintButton): No need for using a GdkPixmap, draw directly
+        * platform/gdk/RenderThemeGdk.h: remove the copyContext call
+        * platform/gdk/ScrollViewGdk.cpp: gdkDrawable
+        (WebCore::ScrollView::updateView): gdkDrawable
+        (WebCore::ScrollView::update): clear the area to fix repainting issues
+        (WebCore::ScrollView::setGtkWidget): gdkDrawable
+        (WebCore::ScrollView::addChild): implement
+        (WebCore::ScrollView::removeChild): implement
+        * platform/gdk/TemporaryLinkStubs.cpp: Not needed header removed
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::gdkDrawable): Renamed from drawable
+        (WebCore::Widget::setGtkWidget): use gdkDrawable
+        (WebCore::Widget::setCursor): gdkDrawable
+        (WebCore::Widget::show): gdkDrawable
+        (WebCore::Widget::hide): gdkDrawable
+        * platform/graphics/GraphicsContext.h: Allow to set the GdkDrawable, e.g. used inside a expose event
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::setGdkDrawable):
+        (WebCore::GraphicsContext::gdkDrawable):
+
+2007-07-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Maciej.
 
         Lazily update the scrollbars (e.g. on loading a page) to

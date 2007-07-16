@@ -38,10 +38,10 @@ namespace WebCore {
 
 int screenDepth(Widget* widget) 
 {
-    ASSERT(widget->drawable());
+    ASSERT(widget->gdkDrawable());
 
     gint dummy, depth;
-    gdk_window_get_geometry(widget->drawable(), &dummy, &dummy, &dummy, &dummy, &depth);
+    gdk_window_get_geometry(widget->gdkDrawable(), &dummy, &dummy, &dummy, &dummy, &depth);
     return depth;
 }
 

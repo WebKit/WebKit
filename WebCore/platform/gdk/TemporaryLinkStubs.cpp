@@ -64,7 +64,6 @@
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformScrollBar.h"
 #include "PlugInInfoStore.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

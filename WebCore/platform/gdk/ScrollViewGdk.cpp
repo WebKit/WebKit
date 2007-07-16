@@ -83,7 +83,7 @@ ScrollView::~ScrollView()
 void ScrollView::updateView(const IntRect& updateRect, bool now)
 {
     GdkRectangle rect = { updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height() };
-    GdkDrawable* gdkdrawable = Widget::drawable();
+    GdkDrawable* gdkdrawable = Widget::gdkDrawable();
     if (GDK_IS_WINDOW(gdkdrawable)) {
         GdkWindow* window = GDK_WINDOW(gdkdrawable);
         gdk_window_invalidate_rect(window, &rect, true);
@@ -260,20 +260,26 @@ void ScrollView::setGtkWidget(GtkLayout* layout)
     m_data->verticalAdjustment = gtk_layout_get_vadjustment(layout);
 
     Widget::setGtkWidget(GTK_WIDGET(layout));
-    if (!GDK_IS_WINDOW(drawable())) {
+    if (!GDK_IS_WINDOW(gdkDrawable())) {
         LOG_ERROR("image scrollview not supported");
         return;
     }
 }
 
-void ScrollView::addChild(Widget*)
+void ScrollView::addChild(Widget* w)
 { 
-    notImplemented();
+    ASSERT(w->gtkWidget());
+    ASSERT(m_data->layout);
+
+    gtk_layout_put(m_data->layout, w->gtkWidget(), 0, 0);
 }
 
-void ScrollView::removeChild(Widget*)
+void ScrollView::removeChild(Widget* w)
 {
-    notImplemented();
+    ASSERT(w->gtkWidget());
+    ASSERT(m_data->layout);
+
+    gtk_container_remove(GTK_CONTAINER(m_data->layout), w->gtkWidget());
 }
 
 void ScrollView::scrollRectIntoViewRecursively(const IntRect&)

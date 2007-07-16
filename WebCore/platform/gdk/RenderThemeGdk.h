@@ -90,8 +90,6 @@ private:
      */
     GtkWidget* gtkWindowContainer() const;
 
-    void copyToContext(GdkPixmap *src, PlatformGraphicsContext*, const IntRect&);
-
 private:
     mutable GtkWidget *m_gtkButton;
     mutable GtkWidget *m_gtkCheckbox;
