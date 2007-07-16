@@ -69,3 +69,7 @@ fast/xsl/xslt-string-parameters.html
 
 # <rdar://problem/5317692> http/tests/multipart/invalid-image-data failing on Leopard
 http/tests/multipart/invalid-image-data.html
+
+# <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
+fast/forms/hidden-listbox.html
+fast/forms/hidden-input-file.html

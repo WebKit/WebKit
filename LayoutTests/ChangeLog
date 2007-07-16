@@ -1,3 +1,12 @@
+2007-07-16  Adele Peterson  <adele@apple.com>
+
+        Updated results for Tiger and filed:
+        <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
+
+        * fast/forms/hidden-input-file-expected.txt:
+        * fast/forms/hidden-listbox-expected.txt:
+        * mac/leopard/Skipped:
+
 2007-07-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele.
