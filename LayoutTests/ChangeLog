@@ -1,3 +1,14 @@
+2007-07-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele.
+        
+        <rdar://problem/5240265> REGRESSION: Clicking a <button> clears the selection in contenteditable areas
+
+        * editing/selection/5240265-expected.checksum: Added.
+        * editing/selection/5240265-expected.png: Added.
+        * editing/selection/5240265-expected.txt: Added.
+        * editing/selection/5240265.html: Added.
+
 2007-07-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

@@ -235,6 +235,13 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     Node* selectionStartNode = s->selection().start().node();
     if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->shadowAncestorNode() == newFocusedNode)
         return;
+        
+    if (Node* mousePressNode = newFocusedFrame->eventHandler()->mousePressNode())
+        if (mousePressNode->renderer() && mousePressNode->renderer()->style()->userSelect() == SELECT_IGNORE)
+            // Don't do this for textareas and text fields, when they lose focus their selections should be cleared
+            // and then restored when they regain focus, to match other browsers.
+            if (!s->rootEditableElement()->shadowAncestorNode())
+                return;
     
     s->clear();
 }

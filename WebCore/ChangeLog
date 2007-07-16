@@ -1,3 +1,15 @@
+2007-07-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/5240265> 
+        REGRESSION: Clicking a <button> clears the selection in contenteditable areas
+
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded): Don't clear the selection if
+        the mouse press that caused the focus shift occurred in 
+        a -webkit-user-select: ignore region.
+
 2007-07-16  Adam Roben  <aroben@apple.com>
 
         Added a manual test to test calling window.print on a subframe.
