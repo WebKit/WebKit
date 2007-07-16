@@ -1,3 +1,11 @@
+2007-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Update results after removing redundant calls to isSafeScript()
+
+        * http/tests/security/cross-frame-access-expected.txt:
+
 2007-07-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

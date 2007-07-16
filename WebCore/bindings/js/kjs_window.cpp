@@ -750,9 +750,13 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
 {
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
   if (entry) {
-    if (entry->attr & ReadOnly)
-       // readonly! Can't put!
+     if (entry->attr & Function) {
+       if (isSafeScript(exec))
+         JSObject::put(exec, propertyName, value, attr);
        return;
+    }
+    if (entry->attr & ReadOnly)
+      return;
 
     switch (entry->value) {
     case Location_: {

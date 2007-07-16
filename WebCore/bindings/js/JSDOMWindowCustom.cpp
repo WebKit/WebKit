@@ -95,10 +95,16 @@ bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propert
     if (!impl()->frame())
         return true;
 
-    // Called by an internal KJS call or if we have a local override (e.g. "var location")
-    // If yes, save time and jump directly to JSObject.
-    if ((attr != KJS::None && attr != KJS::DontDelete) || (KJS::JSObject::getDirect(propertyName) && isSafeScript(exec))) {
-        JSObject::put(exec, propertyName, value, attr);
+    // Called by an internal KJS, save time and jump directly to JSObject.
+    if (attr != KJS::None && attr != KJS::DontDelete) {
+        KJS::JSObject::put(exec, propertyName, value, attr);
+        return true;
+    }
+
+    // We have a local override (e.g. "var location"), save time and jump directly to JSObject.
+    if (KJS::JSObject::getDirect(propertyName)) {
+        if (isSafeScript(exec))
+            KJS::JSObject::put(exec, propertyName, value, attr);
         return true;
     }
 
