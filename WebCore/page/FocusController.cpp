@@ -38,6 +38,7 @@
 #include "FrameView.h"
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "Range.h"
@@ -50,6 +51,7 @@
 namespace WebCore {
 
 using namespace EventNames;
+using namespace HTMLNames;
 
 FocusController::FocusController(Page* page)
     : m_page(page)
@@ -238,10 +240,12 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
         
     if (Node* mousePressNode = newFocusedFrame->eventHandler()->mousePressNode())
         if (mousePressNode->renderer() && mousePressNode->renderer()->style()->userSelect() == SELECT_IGNORE)
-            // Don't do this for textareas and text fields, when they lose focus their selections should be cleared
-            // and then restored when they regain focus, to match other browsers.
-            if (!s->rootEditableElement()->shadowAncestorNode())
-                return;
+            if (Node* root = s->rootEditableElement())
+                if (Node* shadowAncestorNode = root->shadowAncestorNode())
+                    // Don't do this for textareas and text fields, when they lose focus their selections should be cleared
+                    // and then restored when they regain focus, to match other browsers.
+                    if (!shadowAncestorNode->hasTagName(inputTag) && !shadowAncestorNode->hasTagName(textareaTag))
+                        return;
     
     s->clear();
 }
