@@ -1,3 +1,12 @@
+2007-07-16  David Hyatt  <hyatt@apple.com>
+
+        Fix for Radar 5338081, text-shadow should be reset on form controls so that
+        it doesn't inherit in when set e.g., on the <body>.
+
+        Reviewed by beth
+
+        * css/html4.css:
+
 2007-07-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Niko.
