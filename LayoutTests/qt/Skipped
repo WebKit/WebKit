@@ -14,6 +14,9 @@ plugins
 svg
 
 # crashes
+fast/encoding
+fast/encoding/utf-16-little-endian.html
+fast/encoding/utf-16-big-endian.html
 dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 fast/dom/Window/Plug-ins.html
 fast/html/tab-order.html

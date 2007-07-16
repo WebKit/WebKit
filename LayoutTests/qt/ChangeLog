@@ -1,3 +1,11 @@
+2007-07-16  Adam Treat <treat@kde.org>
+
+        Reviewed by Lars.
+
+        These are crashing for Qt/X11.
+
+        * Skipped:
+
 2007-07-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
