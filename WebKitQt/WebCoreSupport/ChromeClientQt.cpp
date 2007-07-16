@@ -305,7 +305,7 @@ void ChromeClientQt::setToolTip(const String&)
     notImplemented();
 }
 
-void ChromeClientQt::print()
+void ChromeClientQt::print(Frame*)
 {
     notImplemented();
 }

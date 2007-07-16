@@ -1370,7 +1370,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       return Window::retrieve(frame); // global object
   }
   case Window::Print:
-    frame->print();
+    if (Page* page = frame->page())
+        page->chrome()->print(frame);
     return jsUndefined();
   case Window::ScrollBy:
     window->updateLayout();

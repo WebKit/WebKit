@@ -123,7 +123,7 @@ namespace WebCore {
 
         void setToolTip(const HitTestResult&);
 
-        void print();
+        void print(Frame*);
 
 #if PLATFORM(MAC)
         void focusNSView(NSView*);

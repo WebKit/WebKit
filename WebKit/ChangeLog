@@ -1,3 +1,14 @@
+2007-07-16  Adam Roben  <aroben@apple.com>
+
+        Move printing from WebFrameBridge to WebChromeClient
+
+        Reviewed by Darin.
+
+        * WebCoreSupport/WebChromeClient.h: Updated for ChromeClient changes.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::print): Moved code from WebFrameBridge.
+        * WebCoreSupport/WebFrameBridge.mm: Removed -print.
+
 2007-07-16  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Update for recent changes.

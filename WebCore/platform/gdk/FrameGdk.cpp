@@ -231,11 +231,6 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
     }
 }
 
-void Frame::print() 
-{
-    notImplemented();
-}
-
 void Frame::issueTransposeCommand()
 {
     notImplemented();

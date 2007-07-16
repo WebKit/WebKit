@@ -1,3 +1,32 @@
+2007-07-16  Adam Roben  <aroben@apple.com>
+
+        Replace Frame::print with Chrome::print
+
+        This also adds a Frame* parameter to Chrome::print and
+        ChromeClient::print so that it knows which Frame to print.
+
+        Reviewed by Darin.
+
+        All tests pass.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction): Call Chrome::print.
+        * editing/JSEditor.cpp: Ditto.
+
+        * bridge/win/FrameWin.cpp: Removed Frame::print.
+        * page/Frame.h: Ditto.
+        * page/mac/FrameMac.mm: Ditto.
+        * page/qt/FrameQt.cpp: Ditto.
+        * platform/gdk/FrameGdk.cpp: Ditto.
+        * page/mac/WebCoreFrameBridge.h: Removed -print.
+
+        * page/Chrome.cpp: Added Frame* parameter to Chrome::print and pass it
+        up to the ChromeClient.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h: Ditto.
+        * platform/gdk/TemporaryLinkStubs.cpp: Ditto.
+        * platform/graphics/svg/SVGImageEmptyClients.h: Ditto.
+
 2007-07-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

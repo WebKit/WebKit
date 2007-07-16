@@ -191,10 +191,4 @@ void Frame::dashboardRegionsChanged()
 {
 }
 
-void Frame::print()
-{
-    if (d->m_page)
-        d->m_page->chrome()->print();
-}
-
 } // namespace WebCore

@@ -443,7 +443,7 @@ void WebChromeClient::setToolTip(const String& toolTip)
     m_webView->setToolTip(toolTip);
 }
 
-void WebChromeClient::print()
+void WebChromeClient::print(Frame*)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     COMPtr<IWebUIDelegate2> uiDelegate2;

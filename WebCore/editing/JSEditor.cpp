@@ -411,7 +411,8 @@ bool execPasteAndMatchStyle(Frame* frame, bool, const String&)
 
 bool execPrint(Frame* frame, bool, const String&)
 {
-    frame->print();
+    if (Page* page = frame->page())
+        page->chrome()->print(frame);
     return true;
 }
 

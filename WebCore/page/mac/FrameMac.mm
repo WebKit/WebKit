@@ -491,11 +491,6 @@ NSWritingDirection Frame::baseWritingDirectionForSelectionStart() const
     return result;
 }
 
-void Frame::print()
-{
-    [d->m_bridge print];
-}
-
 void Frame::issuePasteCommand()
 {
     [d->m_bridge issuePasteCommand];

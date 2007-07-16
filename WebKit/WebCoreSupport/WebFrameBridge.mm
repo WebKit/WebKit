@@ -630,15 +630,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return ObjectElementNone;
 }
 
-- (void)print
-{
-    id wd = [[self webView] UIDelegate];    
-    if ([wd respondsToSelector:@selector(webView:printFrameView:)])
-        [wd webView:[self webView] printFrameView:[_frame frameView]];
-    else
-        [[WebDefaultUIDelegate sharedUIDelegate] webView:[self webView] printFrameView:[_frame frameView]];
-}
-
 - (jobject)getAppletInView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInGetApplet)])

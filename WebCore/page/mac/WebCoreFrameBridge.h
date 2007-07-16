@@ -278,8 +278,6 @@ typedef enum ObjectElementType {
 
 - (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
 
-- (void)print;
-
 - (jobject)getAppletInView:(NSView *)view;
 
 // Deprecated, use getAppletInView: instead.

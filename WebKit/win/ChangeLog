@@ -1,3 +1,13 @@
+2007-07-16  Adam Roben  <aroben@apple.com>
+
+        Updated WebChromeClient for ChromeClient changes.
+
+        Reviewed by Darin.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::print): Added a Frame* parameter.
+        * WebChromeClient.h: Ditto.
+
 2007-07-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Steve.

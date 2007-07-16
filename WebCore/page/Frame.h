@@ -245,7 +245,6 @@ private:
 public:
     void focusWindow();
     void unfocusWindow();
-    void print();
     bool shouldClose();
     void scheduleClose();
 

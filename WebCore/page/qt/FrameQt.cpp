@@ -101,11 +101,6 @@ void Frame::issueTransposeCommand()
     notImplemented();
 }
 
-void Frame::print()
-{
-    notImplemented();
-}
-
 KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
     return 0;

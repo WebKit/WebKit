@@ -99,7 +99,7 @@ public:
 
     virtual void setToolTip(const WebCore::String&);
 
-    virtual void print();
+    virtual void print(WebCore::Frame*);
 private:
     WebView *m_webView;
 };
