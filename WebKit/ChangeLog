@@ -1,3 +1,7 @@
+2007-07-16  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Update for recent changes.
+
 2007-07-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker and Darin Adler
