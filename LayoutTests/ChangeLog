@@ -1,3 +1,9 @@
+2007-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove basic-auth.html, it no longer hangs on Leopard.
+        
+        * mac/leopard/Skipped:
+
 2007-07-16  Mark Rowe  <mrowe@apple.com>
 
         Update expected result after r24302.
