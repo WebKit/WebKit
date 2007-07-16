@@ -4,9 +4,102 @@ CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http
 
 CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
 
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-put.html. Domains, protocols and ports must match.
+
 ALERT: PASS: window.defaultStatus should be '' and is.
 ALERT: PASS: window.defaultstatus should be '' and is.
 ALERT: PASS: window.status should be '' and is.
+ALERT: PASS: window.focus should be 'function focus() {    [native code]}' and is.
+ALERT: *** FAIL: window.blur should be 'function close() {    [native code]}' but instead is function blur() {    [native code]}. ***
+ALERT: PASS: window.close should be 'function close() {    [native code]}' and is.
+ALERT: PASS: window.getSelection should be 'function getSelection() {    [native code]}' and is.
+ALERT: PASS: window.getComputedStyle should be 'function getComputedStyle() {    [native code]}' and is.
+ALERT: PASS: window.getMatchedCSSRules should be 'function getMatchedCSSRules() {    [native code]}' and is.
+ALERT: PASS: window.atob should be 'function atob() {    [native code]}' and is.
+ALERT: PASS: window.btoa should be 'function btoa() {    [native code]}' and is.
+ALERT: PASS: window.scroll should be 'function scroll() {    [native code]}' and is.
+ALERT: PASS: window.scrollBy should be 'function scrollBy() {    [native code]}' and is.
+ALERT: PASS: window.scrollTo should be 'function scrollTo() {    [native code]}' and is.
+ALERT: PASS: window.moveBy should be 'function moveBy() {    [native code]}' and is.
+ALERT: PASS: window.moveTo should be 'function moveTo() {    [native code]}' and is.
+ALERT: PASS: window.resizeBy should be 'function resizeBy() {    [native code]}' and is.
+ALERT: PASS: window.resizeTo should be 'function resizeTo() {    [native code]}' and is.
+ALERT: PASS: window.alert should be 'function alert() {    [native code]}' and is.
+ALERT: PASS: window.confirm should be 'function confirm() {    [native code]}' and is.
+ALERT: PASS: window.prompt should be 'function prompt() {    [native code]}' and is.
+ALERT: PASS: window.open should be 'function open() {    [native code]}' and is.
+ALERT: PASS: window.print should be 'function print() {    [native code]}' and is.
+ALERT: PASS: window.setTimeout should be 'function setTimeout() {    [native code]}' and is.
+ALERT: PASS: window.clearTimeout should be 'function clearTimeout() {    [native code]}' and is.
+ALERT: PASS: window.setInterval should be 'function setInterval() {    [native code]}' and is.
+ALERT: PASS: window.clearInterval should be 'function clearInterval() {    [native code]}' and is.
+ALERT: PASS: window.captureEvents should be 'function captureEvents() {    [native code]}' and is.
+ALERT: PASS: window.releaseEvents should be 'function releaseEvents() {    [native code]}' and is.
+ALERT: PASS: window.addEventListener should be 'function addEventListener() {    [native code]}' and is.
+ALERT: PASS: window.removeEventListener should be 'function removeEventListener() {    [native code]}' and is.
+ALERT: PASS: window.showModalDialog should be 'undefined' and is.
+ALERT: PASS: window.find should be 'function find() {    [native code]}' and is.
+ALERT: PASS: window.stop should be 'function stop() {    [native code]}' and is.
 This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).
 
 

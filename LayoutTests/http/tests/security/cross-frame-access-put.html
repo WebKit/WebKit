@@ -20,7 +20,42 @@ window.onload = function()
     targetWindow.defaultstatus = "FAIL!! CUSTOM defaultstatus";
     targetWindow.status = "FAIL!! CUSTOM status";
 
+    targetWindow.focus = "FAIL!! CUSTOM focus";
+    targetWindow.blur = "FAIL!! CUSTOM blur";
+    targetWindow.close = "FAIL!! CUSTOM close";
+    targetWindow.getSelection = "FAIL!! CUSTOM getSelection";
+    targetWindow.getComputedStyle = "FAIL!! CUSTOM getComputedStyle";
+    targetWindow.getMatchedCSSRules = "FAIL!! CUSTOM getMatchedCSSRules";
+
+    targetWindow.atob = "FAIL!! CUSTOM atob";
+    targetWindow.btoa = "FAIL!! CUSTOM btoa";
+    targetWindow.scroll = "FAIL!! CUSTOM scroll";
+    targetWindow.scrollBy = "FAIL!! CUSTOM scrollBy";
+    targetWindow.scrollTo = "FAIL!! CUSTOM scrollTo";
+    targetWindow.moveBy = "FAIL!! CUSTOM moveBy";
+    targetWindow.moveTo = "FAIL!! CUSTOM moveTo";
+    targetWindow.resizeBy = "FAIL!! CUSTOM resizeBy";
+    targetWindow.resizeTo = "FAIL!! CUSTOM resizeTo";
+    targetWindow.alert = "FAIL!! CUSTOM alert";
+    targetWindow.confirm = "FAIL!! CUSTOM confirm";
+    targetWindow.prompt = "FAIL!! CUSTOM prompt";
+    targetWindow.open = "FAIL!! CUSTOM open";
+    targetWindow.print = "FAIL!! CUSTOM print";
+    targetWindow.setTimeout = "FAIL!! CUSTOM setTimeout";
+    targetWindow.clearTimeout = "FAIL!! CUSTOM clearTimeout";
+    targetWindow.setInterval = "FAIL!! CUSTOM setInterval";
+    targetWindow.clearInterval = "FAIL!! CUSTOM clearInterval";
+    targetWindow.captureEvents = "FAIL!! CUSTOM captureEvents";
+    targetWindow.releaseEvents = "FAIL!! CUSTOM releaseEvents";
+    targetWindow.addEventListener = "FAIL!! CUSTOM addEventListener";
+    targetWindow.removeEventListener = "FAIL!! CUSTOM removeEventListener";
+    targetWindow.showModalDialog = "FAIL!! CUSTOM showModalDialog";
+    targetWindow.find = "FAIL!! CUSTOM find";
+    targetWindow.stop = "FAIL!! CUSTOM stop";
+
+
     setTimeout(function() {
+        // log(targetWindow.focus.__proto__);
         log("MAIN WINDOW: !!-- Test ended--!!");
 
         window.stop();

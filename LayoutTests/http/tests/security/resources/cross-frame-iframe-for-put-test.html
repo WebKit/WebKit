@@ -15,7 +15,8 @@
             var message = (evalA === evalB)
                             ? "PASS: " + a + " should be '" + evalB + "' and is."
                             : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
-            alert(message);
+
+            alert(String(message).replace(/\n/g, ""));
         }
     </script>
 </head>
@@ -23,10 +24,80 @@
     <p>This text is in an iframe.</p>
     <pre id="console"></pre>
     <script>
+        var defaultStatusOld = window.defaultStatus;
+        var defaultstatusOld = window.defaultstatus;
+        var statusOld = window.status;
+
+        // Functions
+        var focusOld = window.focus;
+        var blurOld = window.blur;
+        var closeOld = window.close;
+        var getSelectionOld = window.getSelection;
+        var getComputedStyleOld = window.getComputedStyle;
+        var getMatchedCSSRulesOld = window.getMatchedCSSRules;
+        var atobOld = window.atob;
+        var btoaOld = window.btoa;
+        var scrollOld = window.scroll;
+        var scrollByOld = window.scrollBy;
+        var scrollToOld = window.scrollTo;
+        var moveByOld = window.moveBy;
+        var moveToOld = window.moveTo;
+        var resizeByOld = window.resizeBy;
+        var resizeToOld = window.resizeTo;
+        var alertOld = window.alert;
+        var confirmOld = window.confirm;
+        var promptOld = window.prompt;
+        var openOld = window.open;
+        var printOld = window.print;
+        var setTimeoutOld = window.setTimeout;
+        var clearTimeoutOld = window.clearTimeout;
+        var setIntervalOld = window.setInterval;
+        var clearIntervalOld = window.clearInterval;
+        var captureEventsOld = window.captureEvents;
+        var releaseEventsOld = window.releaseEvents;
+        var addEventListenerOld = window.addEventListener;
+        var removeEventListenerOld = window.removeEventListener;
+        var showModalDialogOld = window.showModalDialog;
+        var findOld = window.find;
+        var stopOld = window.stop;
+
         setTimeout(function() {
-            shouldBe("window.defaultStatus", "''");
-            shouldBe("window.defaultstatus", "''");
-            shouldBe("window.status", "''");
+            shouldBe("window.defaultStatus", "defaultStatusOld");
+            shouldBe("window.defaultstatus", "defaultstatusOld");
+            shouldBe("window.status", "statusOld");
+
+            // Functions
+            shouldBe("window.focus", "focusOld");
+            shouldBe("window.blur", "closeOld");
+            shouldBe("window.close", "closeOld");
+            shouldBe("window.getSelection", "getSelectionOld");
+            shouldBe("window.getComputedStyle", "getComputedStyleOld");
+            shouldBe("window.getMatchedCSSRules", "getMatchedCSSRulesOld");
+            shouldBe("window.atob", "atobOld");
+            shouldBe("window.btoa", "btoaOld");
+            shouldBe("window.scroll", "scrollOld");
+            shouldBe("window.scrollBy", "scrollByOld");
+            shouldBe("window.scrollTo", "scrollToOld");
+            shouldBe("window.moveBy", "moveByOld");
+            shouldBe("window.moveTo", "moveToOld");
+            shouldBe("window.resizeBy", "resizeByOld");
+            shouldBe("window.resizeTo", "resizeToOld");
+            shouldBe("window.alert", "alertOld");
+            shouldBe("window.confirm", "confirmOld");
+            shouldBe("window.prompt", "promptOld");
+            shouldBe("window.open", "openOld");
+            shouldBe("window.print", "printOld");
+            shouldBe("window.setTimeout", "setTimeoutOld");
+            shouldBe("window.clearTimeout", "clearTimeoutOld");
+            shouldBe("window.setInterval", "setIntervalOld");
+            shouldBe("window.clearInterval", "clearIntervalOld");
+            shouldBe("window.captureEvents", "captureEventsOld");
+            shouldBe("window.releaseEvents", "releaseEventsOld");
+            shouldBe("window.addEventListener", "addEventListenerOld");
+            shouldBe("window.removeEventListener", "removeEventListenerOld");
+            shouldBe("window.showModalDialog", "showModalDialogOld");
+            shouldBe("window.find", "findOld");
+            shouldBe("window.stop", "stopOld");
         }, 0);
     </script>
 </body>
