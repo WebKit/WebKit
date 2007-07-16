@@ -1190,7 +1190,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     }
     PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
     [selectionForInitialSearch release];
-    
+
     // If we first searched in the selection, and we found the selection, search again from just past the selection
     if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))
         foundSelection = [document findString:string fromSelection:initialSelection withOptions:options];
@@ -1302,8 +1302,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)_scaleOrDisplayModeChanged:(NSNotification *)notification
 {
     ASSERT([notification object] == PDFSubview);
-    if (!_ignoreScaleAndDisplayModeNotifications)
+    if (!_ignoreScaleAndDisplayModeNotifications) {
         [self _updatePreferencesSoon];
+        // Notify UI delegate that the entire page has been redrawn, since (unlike for WebHTMLView)
+        // we can't hook into the drawing mechanism itself. This fixes 5337529.
+        WebView *webView = [self _webView];
+        [[webView _UIDelegateForwarder] webView:webView didDrawRect:[webView bounds]];
+    }
 }
 
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString

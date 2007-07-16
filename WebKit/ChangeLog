@@ -1,3 +1,13 @@
+2007-07-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker and Darin Adler
+        
+        - fixed <rdar://problem/5337529> Holes in Find banner overlay on PDF pages are left in wrong place after changing scale
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _scaleOrDisplayModeChanged:]):
+        tell UI delegate that the entire PDF view has been redrawn
+
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
