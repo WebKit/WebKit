@@ -1,3 +1,14 @@
+2007-07-16  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14462
+        non empty <style> element doesn't work
+
+        * fast/css/empty-script-expected.txt: Added.
+        * fast/css/empty-script.html: Added.
+
 2007-07-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

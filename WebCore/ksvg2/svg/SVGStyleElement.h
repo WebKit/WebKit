@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -48,11 +48,13 @@ namespace WebCore {
         virtual const AtomicString& type() const;
         void setType(const AtomicString&, ExceptionCode&);
 
-        const AtomicString& media() const;
+        virtual const AtomicString& media() const;
         void setMedia(const AtomicString&, ExceptionCode&);
 
         virtual String title() const;
         void setTitle(const AtomicString&, ExceptionCode&);
+
+        StyleSheet* sheet();
     };
 
 } // namespace WebCore

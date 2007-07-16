@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
 
     This file is part of the KDE project
@@ -109,13 +109,15 @@ void SVGStyleElement::childrenChanged()
     StyleElement::childrenChanged(this);
 }
 
+StyleSheet* SVGStyleElement::sheet()
+{
+    return StyleElement::sheet(this);
+}
+
 bool SVGStyleElement::sheetLoaded()
 {
-    if (!isLoading()) {
-        document()->stylesheetLoaded();
-        return true;
-    }
-    return false;
+    document()->stylesheetLoaded();
+    return true;
 }
 
 }

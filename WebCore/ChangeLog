@@ -1,3 +1,30 @@
+2007-07-16  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14462
+        non empty <style> element doesn't work
+
+        Return an empty sheet for empty <style> elements
+        instead of a null sheet. Clean up StyleElement a bit.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::StyleElement):
+        (WebCore::StyleElement::sheet):
+        (WebCore::StyleElement::childrenChanged):
+        (WebCore::StyleElement::createSheet):
+        * dom/StyleElement.h:
+        (WebCore::StyleElement::setLoading):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::sheet):
+        * html/HTMLStyleElement.h:
+        (WebCore::HTMLStyleElement::setLoading):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::sheet):
+        (WebCore::SVGStyleElement::sheetLoaded):
+        * ksvg2/svg/SVGStyleElement.h:
+
 2007-07-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003 Apple Computer, Inc.
+ *           (C) 2007 Rob Buis (buis@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +34,7 @@ using namespace HTMLNames;
 
 HTMLStyleElement::HTMLStyleElement(Document* doc)
     : HTMLElement(styleTag, doc)
+    , m_loading(false)
 {
 }
 
@@ -62,6 +64,11 @@ void HTMLStyleElement::removedFromDocument()
 void HTMLStyleElement::childrenChanged()
 {
     StyleElement::childrenChanged(this);
+}
+
+StyleSheet* HTMLStyleElement::sheet()
+{
+    return StyleElement::sheet(this);
 }
 
 bool HTMLStyleElement::isLoading() const
