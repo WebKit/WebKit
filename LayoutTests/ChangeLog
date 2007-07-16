@@ -1,3 +1,13 @@
+2007-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Testcase for <rdar://problem/5336602> REGRESSION: tab characters cannot be entered into text fields
+                     http://bugs.webkit.org/show_bug.cgi?id=14032
+
+        * fast/forms/tab-in-input-expected.txt: Added.
+        * fast/forms/tab-in-input.html: Added.
+
 2007-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -1437,11 +1437,13 @@ String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen)
     if (isTextField()) {
         StringImpl* s = proposedValue.impl();
         int newLen = numCharactersInGraphemeClusters(s, maxLen);
-        for (int i = 0; i < newLen; ++i)
-            if ((*s)[i] < ' ') {
+        for (int i = 0; i < newLen; ++i) {
+            const char current = (*s)[i];
+            if (current < ' ' && current != '\t') {
                 newLen = i;
                 break;
             }
+        }
         if (newLen < static_cast<int>(proposedValue.length()))
             return proposedValue.substring(0, newLen);
     }

@@ -1,3 +1,18 @@
+2007-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for <rdar://problem/5336602> REGRESSION: tab characters cannot be entered into text fields
+                http://bugs.webkit.org/show_bug.cgi?id=14032
+
+        constrainValue attempted to block control characters from being inserted 
+        by a simple less than ' ' check, which prevent tab characters from being
+        inserted.  This patch adds an additional check to allow the tab character 
+        again
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::constrainValue):
+
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
         Third shot at blind Qt/GDK build fix
