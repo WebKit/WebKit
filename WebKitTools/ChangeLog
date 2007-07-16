@@ -1,3 +1,37 @@
+2007-07-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam, Sam and Tim.
+
+        - Moving files to prepare for cross-platform architecture.
+
+        * Drosera/DebuggerApplication.h: Removed.
+        * Drosera/DebuggerApplication.m: Removed.
+        * Drosera/DebuggerDocument.h: Removed.
+        * Drosera/DebuggerDocument.m: Removed.
+        * Drosera/Drosera.pch: Removed.
+        * Drosera/Drosera.xcodeproj: Removed.
+        * Drosera/Drosera.xcodeproj/project.pbxproj: Removed.
+        * Drosera/Info.plist: Removed.
+        * Drosera/LauncherInfo.plist: Removed.
+        * Drosera/Makefile: Removed.
+        * Drosera/launcher.m: Removed.
+        * Drosera/mac: Added.
+        * Drosera/mac/DebuggerApplication.h: Copied from Drosera/DebuggerApplication.h.
+        * Drosera/mac/DebuggerApplication.mm: Copied from Drosera/DebuggerApplication.m.
+        * Drosera/mac/DebuggerDocument.h: Copied from Drosera/DebuggerDocument.h.
+        * Drosera/mac/DebuggerDocument.mm: Copied from Drosera/DebuggerDocument.m.
+        * Drosera/mac/Drosera.pch: Copied from Drosera/Drosera.pch.
+        * Drosera/mac/Drosera.xcodeproj: Copied from Drosera/Drosera.xcodeproj.
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/mac/Info.plist: Copied from Drosera/Info.plist.
+        * Drosera/mac/LauncherInfo.plist: Copied from Drosera/LauncherInfo.plist.
+        * Drosera/mac/Makefile: Copied from Drosera/Makefile.
+        * Drosera/mac/launcher.m: Copied from Drosera/launcher.m.
+        * Drosera/mac/main.m: Copied from Drosera/main.m.
+        * Drosera/main.m: Removed.
+        * Makefile:
+        * Makefile.Drosera: Added.
+
 2007-07-15  Mark Rowe  <mrowe@apple.com>
 
         * Scripts/generate-coverage-data: Don't fail if WebKitBuild directory does not exist.
