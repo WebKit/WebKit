@@ -1,5 +1,53 @@
 2007-07-16  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Sam.
+
+        - Modified files to use cross-platform code.
+
+        * Drosera/DebuggerDocument.cpp: Added.
+        (DebuggerDocument::breakpointEditorHTML):
+        (DebuggerDocument::isPaused):
+        (DebuggerDocument::pause):
+        (DebuggerDocument::resume):
+        (DebuggerDocument::stepInto):
+        (DebuggerDocument::evaluateScript):
+        (DebuggerDocument::currentFunctionStack):
+        (DebuggerDocument::localScopeVariableNamesForCallFrame):
+        (DebuggerDocument::valueForScopeVariableNamed):
+        * Drosera/DebuggerDocument.h: Added.
+        (DebuggerDocument::DebuggerDocument):
+        * Drosera/config.h: Added.
+        * Drosera/mac/DebuggerApplication.mm:
+        (-[DebuggerApplication attach:]):
+        * Drosera/mac/DebuggerDocument.h: Removed.
+        * Drosera/mac/DebuggerDocument.mm: Removed.
+        * Drosera/mac/DebuggerDocumentMac.h: Copied from Drosera/mac/DebuggerDocument.h.
+        * Drosera/mac/DebuggerDocumentMac.mm: Copied from Drosera/mac/DebuggerDocument.mm.
+        (-[DebuggerDocumentMac initWithServerName:]):
+        (-[DebuggerDocumentMac dealloc]):
+        (-[DebuggerDocumentMac breakpointEditorHTML]):
+        (-[DebuggerDocumentMac isPaused]):
+        (-[DebuggerDocumentMac pause]):
+        (-[DebuggerDocumentMac resume]):
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/win/DebuggerApplication.cpp:
+        * Drosera/win/DebuggerObjectCallbacks.cpp:
+        (breakpointEditorHTMLCallback):
+        (currentFunctionStackCallback):
+        (evaluateScript_inCallFrame_Callback):
+        (isPausedCallback):
+        (localScopeVariableNamesForCallFrame_Callback):
+        (pauseCallback):
+        (resumeCallback):
+        (stepIntoCallback):
+        (valueForScopeVariableNamed_inCallFrame_Callback):
+        (staticFunctions):
+        * Drosera/win/Drosera.cpp:
+        * Drosera/win/DroseraPrefix.cpp: Added.
+        * Drosera/win/DroseraPrefix.h: Added.
+
+2007-07-16  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam, Sam and Tim.
 
         - Moving files to prepare for cross-platform architecture.

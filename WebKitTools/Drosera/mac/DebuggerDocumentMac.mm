@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DebuggerDocument.h"
+#import "DebuggerDocumentMac.h"
 #import "DebuggerApplication.h"
+#import "DebuggerDocument.h"
 #import <Carbon/Carbon.h>
+#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSStringRefCF.h>
 
 static NSString *DebuggerConsoleToolbarItem = @"DebuggerConsoleToolbarItem";
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
@@ -38,7 +41,7 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
-@implementation DebuggerDocument
+@implementation DebuggerDocumentMac
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     return NO;
@@ -53,6 +56,8 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (id)initWithServerName:(NSString *)serverName
 {
+    callbacks = new DebuggerDocument();
+
     if ((self = [super init]))
         [self switchToServerNamed:serverName];
     return self;
@@ -60,6 +65,8 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (void)dealloc
 {
+    delete callbacks;
+
     [server release];
     [currentServerName release];
     [super dealloc];
@@ -162,20 +169,22 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 }
 
 #pragma mark -
-#pragma mark System Information
-
-- (int)doubleClickMilliseconds
-{
-    // GetDblTime() returns values in 1/60ths of a second
-    return ((double)GetDblTime() / 60.0) * 1000;
-}
-
-#pragma mark -
 #pragma mark File Loading
 
 - (NSString *)breakpointEditorHTML
 {
-    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"breakpointEditor" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef jsRet = DebuggerDocument::breakpointEditorHTML(context);
+    if (!jsRet)
+        return 0;
+
+    JSStringRef jsString = JSValueToStringCopy(context, jsRet, 0);
+    const JSChar* cRet = JSStringGetCharactersPtr(jsString);
+
+    NSString* returnString = [NSString stringWithCharacters:cRet length:JSStringGetLength(jsString)];
+    CFRelease(jsString);
+
+    return returnString;
 }
 
 #pragma mark -
@@ -183,12 +192,13 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (BOOL)isPaused
 {
-    return paused;
+    return callbacks->isPaused();
 }
 
 - (void)pause
 {
-    paused = YES;
+    callbacks->pause();
+
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server pause];
     [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
@@ -196,7 +206,8 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (void)resume
 {
-    paused = NO;
+    callbacks->resume();
+
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server resume];
 }
@@ -631,6 +642,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     currentFrame = [frame retain];
     [old release];
 
+//webView->mainframe->JSObejctRef->
     NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"didEnterCallFrame" withArguments:args];
     [args release];

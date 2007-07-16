@@ -26,14 +26,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface DebuggerApplication : NSObject {
-    NSMutableDictionary *knownServerNames;
-    IBOutlet NSPanel *attachWindow;
-    IBOutlet NSTableView *attachTable;
-    IBOutlet NSButton *attachButton;
-}
-- (IBAction)showAttachPanel:(id)sender;
-- (IBAction)attach:(id)sender;
+#ifndef DebuggerDocument_H
+#define DebuggerDocument_H
 
-- (NSDictionary *)knownServers;
-@end
+#pragma warning(push)
+#pragma warning(disable: 4510 4512 4610)
+#include <JavaScriptCore/JSObjectRef.h>
+#pragma warning(pop)
+
+#include <JavaScriptCore/Vector.h>
+
+// FIXME This is a placeholder, replace with a real CallFrame structure when a cross-platform one exists.
+typedef int CallFrame;
+
+class DebuggerDocument {
+public:
+    DebuggerDocument()
+        : m_paused(false)
+    {
+    }
+
+    bool isPaused();
+    void pause();
+    void resume();
+    void stepInto();
+    JSValueRef evaluateScript(JSContextRef context, CallFrame frame);
+    Vector<CallFrame> currentFunctionStack();
+    Vector<CallFrame> localScopeVariableNamesForCallFrame(JSContextRef /*context*/);
+    JSStringRef valueForScopeVariableNamed(CallFrame frame, JSStringRef key);
+
+    static JSValueRef breakpointEditorHTML(JSContextRef context);
+
+private:
+    bool m_paused;
+};
+
+#endif //DebuggerDocumentImpl_H

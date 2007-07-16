@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdafx.h"
+#include "config.h"
 #include "DebuggerApplication.h"
 
 // ------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
  */
 
 #import "DebuggerApplication.h"
-#import "DebuggerDocument.h"
+#import "DebuggerDocumentMac.h"
 #import <WebKit/WebCoreStatistics.h>
 
 @implementation DebuggerApplication
@@ -106,8 +106,8 @@
     unsigned int row = [[attachTable selectedRowIndexes] firstIndex];
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
 
-    // DebuggerDocument will release on close
-    DebuggerDocument *document = [[DebuggerDocument alloc] initWithServerName:key];
+    // DebuggerDocumentMac will release on close
+    DebuggerDocumentMac *document = [[DebuggerDocumentMac alloc] initWithServerName:key];
     [document showWindow:sender];
 }
 

@@ -69,7 +69,8 @@
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		D23E47C60C4460C600B7CD07 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */; };
-		D26889930C4BE62300319738 /* DebuggerDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = D26889920C4BE62300319738 /* DebuggerDocument.mm */; };
+		D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */; };
+		D2D795070C4BEDC3004784F7 /* DebuggerDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = D2D795060C4BEDC3004784F7 /* DebuggerDocumentMac.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,8 +154,11 @@
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = /System/Library/Frameworks/JavaScriptCore.framework; sourceTree = "<absolute>"; };
-		D2476EB10C48454500B45916 /* DebuggerDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DebuggerDocument.h; sourceTree = "<group>"; };
-		D26889920C4BE62300319738 /* DebuggerDocument.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerDocument.mm; sourceTree = "<group>"; };
+		D2D794EC0C4BED83004784F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../config.h; sourceTree = SOURCE_ROOT; };
+		D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DebuggerDocument.cpp; path = ../DebuggerDocument.cpp; sourceTree = SOURCE_ROOT; };
+		D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DebuggerDocument.h; path = ../DebuggerDocument.h; sourceTree = SOURCE_ROOT; };
+		D2D795050C4BEDC3004784F7 /* DebuggerDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DebuggerDocumentMac.h; sourceTree = "<group>"; };
+		D2D795060C4BEDC3004784F7 /* DebuggerDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerDocumentMac.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,10 +289,13 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D26889920C4BE62300319738 /* DebuggerDocument.mm */,
+				D2D794EC0C4BED83004784F7 /* config.h */,
 				1C74F1840A47DEE600FEC632 /* DebuggerApplication.mm */,
 				1C74F1830A47DEE600FEC632 /* DebuggerApplication.h */,
-				D2476EB10C48454500B45916 /* DebuggerDocument.h */,
+				D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */,
+				D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */,
+				D2D795060C4BEDC3004784F7 /* DebuggerDocumentMac.mm */,
+				D2D795050C4BEDC3004784F7 /* DebuggerDocumentMac.h */,
 				1C27AC230A413D660016ECF4 /* debugger.js */,
 				1C27AC1F0A413D2D0016ECF4 /* debugger.html */,
 				1C4FF7430A44F5260000D05D /* debugger.css */,
@@ -481,7 +488,8 @@
 			files = (
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				1C74F1850A47DEE600FEC632 /* DebuggerApplication.mm in Sources */,
-				D26889930C4BE62300319738 /* DebuggerDocument.mm in Sources */,
+				D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */,
+				D2D795070C4BEDC3004784F7 /* DebuggerDocumentMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
