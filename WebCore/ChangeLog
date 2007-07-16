@@ -1,3 +1,17 @@
+2007-07-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Lazily update the scrollbars (e.g. on loading a page) to
+        generate less expose events, which will lead to laying out less often
+         and will fix http://bugs.webkit.org/show_bug.cgi?id=14020.
+
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::updateScrollbars):
+
 2007-07-16  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

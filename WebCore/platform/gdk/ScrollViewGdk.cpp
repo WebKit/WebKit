@@ -56,6 +56,7 @@ public:
         , layout(0)
         , horizontalAdjustment(0)
         , verticalAdjustment(0)
+        , scrollBarsNeedUpdate(false)
     { }
 
     bool hasStaticBackground;
@@ -67,6 +68,7 @@ public:
     GtkAdjustment *verticalAdjustment;
     IntSize contentsSize;
     IntSize viewPortSize;
+    bool scrollBarsNeedUpdate;
 };
 
 ScrollView::ScrollView()
@@ -97,7 +99,11 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
 
 void ScrollView::update()
 {
-    notImplemented();
+    ASSERT(gtkWidget());
+    gtk_widget_queue_draw(gtkWidget());
+
+    if (m_data->scrollBarsNeedUpdate)
+        updateScrollbars();
 }
 
 int ScrollView::visibleWidth() const
@@ -139,7 +145,7 @@ void ScrollView::resizeContents(int w, int h)
     
     if (m_data->layout) {
         gtk_layout_set_size(m_data->layout, w, h);
-        updateScrollbars(); 
+        m_data->scrollBarsNeedUpdate = true;
     }
 }
 
@@ -302,6 +308,8 @@ void ScrollView::updateScrollbars()
     
     gtk_adjustment_changed(m_data->verticalAdjustment);
     gtk_adjustment_value_changed(m_data->verticalAdjustment);
+
+    m_data->scrollBarsNeedUpdate = false;
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& point) const
