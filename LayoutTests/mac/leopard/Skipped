@@ -48,9 +48,6 @@ fast/table/absolute-table-at-bottom.html
 fast/text/atsui-multiple-renderers.html
 fast/text/international/thai-line-breaks.html
 
-# <rdar://problem/5313508> http/tests/xmlhttprequest/basic-auth.html hangs on Leopard
-http/tests/xmlhttprequest/basic-auth.html
-
 # <rdar://problem/5313531> editing/pasteboard/copy-in-password-field.html sometimes fails on Leopard
 editing/pasteboard/copy-in-password-field.html
 
