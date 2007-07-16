@@ -1,3 +1,21 @@
+2007-07-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Removed incorrect error log, seen while running layout tests.
+        
+        Perhaps at some point FrameLoadTypeInteral had a specific meaning
+        that prevented it from being used in non-child frame, non-redirect
+        situations. However, that meaning has been lost and nobody remembers
+        how to get it back.
+        
+        We currently use FrameLoadTypeInternal for any load that is not
+        initiated by a user gesture, so it's trivial to produce this error
+        log, even though nothing has gone wrong.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForInternalLoad):
+
 2007-07-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej

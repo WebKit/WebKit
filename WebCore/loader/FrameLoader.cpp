@@ -4138,18 +4138,8 @@ void FrameLoader::updateHistoryForInternalLoad()
     } else {
         // Add an item to the item tree for this frame
         Frame* parentFrame = m_frame->tree()->parent();
-        // The only case where parentItem is NULL should be when a parent frame loaded an
-        // empty URL, which doesn't set up a current item in that parent.
-        if (parentFrame) {
-            if (parentFrame->loader()->m_currentHistoryItem)
-                parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
-        } else {
-            // See 3556159. It's not clear if it's valid to be in FrameLoadTypeOnLoadEvent
-            // for a top-level frame, but that was a likely explanation for those crashes,
-            // so let's guard against it.
-            // ...and all FrameLoadTypeOnLoadEvent uses were folded to WebFrameLoadTypeInternal
-            LOG_ERROR("No parent frame in transitionToCommitted:, FrameLoadTypeInternal");
-        }
+        if (parentFrame && parentFrame->loader()->m_currentHistoryItem)
+            parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
     }
 }
 
