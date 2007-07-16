@@ -1,3 +1,16 @@
+2007-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for fix for <rdar://problem/5336602> REGRESSION: tab characters
+                        cannot be entered into text fields
+                        http://bugs.webkit.org/show_bug.cgi?id=14032
+
+        Need to use UChar not char.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::constrainValue):
+
 2007-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

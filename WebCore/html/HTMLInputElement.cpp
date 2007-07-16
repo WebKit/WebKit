@@ -1438,7 +1438,7 @@ String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen)
         StringImpl* s = proposedValue.impl();
         int newLen = numCharactersInGraphemeClusters(s, maxLen);
         for (int i = 0; i < newLen; ++i) {
-            const char current = (*s)[i];
+            const UChar current = (*s)[i];
             if (current < ' ' && current != '\t') {
                 newLen = i;
                 break;

@@ -1,3 +1,13 @@
+2007-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Update for changed behaviour now that we allow tab characters in input fields again
+
+        * editing/inserting/typing-tab-designmode-forms-expected.checksum:
+        * editing/inserting/typing-tab-designmode-forms-expected.png:
+        * editing/inserting/typing-tab-designmode-forms-expected.txt:
+
 2007-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
