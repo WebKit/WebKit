@@ -1,3 +1,19 @@
+2007-07-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Test for <rdar://problem/5321490> REGRESSION: visibility:hidden property doesn't hide parts of file input element
+        http://bugs.webkit.org/show_bug.cgi?id=14565
+
+        * fast/forms/hidden-input-file-expected.checksum: Added.
+        * fast/forms/hidden-input-file-expected.png: Added.
+        * fast/forms/hidden-input-file-expected.txt: Added.
+        * fast/forms/hidden-input-file.html: Added.
+        * fast/forms/hidden-listbox-expected.checksum
+        * fast/forms/hidden-listbox-expected.png
+        * fast/forms/hidden-listbox-expected.txt
+        * fast/forms/hidden-listbox.html
+
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

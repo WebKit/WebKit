@@ -159,6 +159,9 @@ RenderStyle* RenderFileUploadControl::createButtonStyle(RenderStyle* parentStyle
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (style()->visibility() != VISIBLE)
+        return;
+    
     // Push a clip.
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         IntRect clipRect(tx + borderLeft(), ty + borderTop(),

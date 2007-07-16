@@ -1,3 +1,20 @@
+2007-07-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/5321490> REGRESSION: visibility:hidden property doesn't hide parts of file input element and listbox
+        http://bugs.webkit.org/show_bug.cgi?id=14565
+
+        Tests:
+        fast/forms/hidden-input-file.html
+        fast/forms/hidden-listbox.html
+
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::paintObject):
+        Only paint if the control is supposed to be visible.
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::paintObject):
+        ditto.  We already had checks to prevent drawing the text that considered the option's style too, but if visibility: hidden
+        was just set on the listbox then a lot of extra work was being done, and the scrollbar was drawing too.  This change fixes that.
+
 2007-07-16  David Hyatt  <hyatt@apple.com>
 
         Fix for Radar 5338081, text-shadow should be reset on form controls so that

@@ -248,6 +248,9 @@ IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)
     
 void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (style()->visibility() != VISIBLE)
+        return;
+    
     int listItemsSize = numItems();
 
     if (paintInfo.phase == PaintPhaseForeground) {
