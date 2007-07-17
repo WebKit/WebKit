@@ -127,12 +127,15 @@ namespace WebCore {
 
         void setShowsURLsInToolTips(bool);
         bool showsURLsInToolTips() const { return m_showsURLsInToolTips; }
-        
+
         void setFTPDirectoryTemplatePath(const String&);
         const String& ftpDirectoryTemplatePath() const { return m_ftpDirectoryTemplatePath; }
         
         void setForceFTPDirectoryListings(bool);
         bool forceFTPDirectoryListings() const { return m_forceFTPDirectoryListings; }
+        
+        void setDeveloperExtrasEnabled(bool);
+        bool developerExtrasEnabled() const { return m_developerExtrasEnabled; }
         
     private:
         Page* m_page;
@@ -166,6 +169,7 @@ namespace WebCore {
         bool m_usesPageCache: 1;
         bool m_showsURLsInToolTips : 1;
         bool m_forceFTPDirectoryListings : 1;
+        bool m_developerExtrasEnabled : 1;
     };
 
 } // namespace WebCore

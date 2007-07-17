@@ -881,6 +881,7 @@ static bool debugWidget = true;
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
+    settings->setDeveloperExtrasEnabled([WebView _developerExtrasEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

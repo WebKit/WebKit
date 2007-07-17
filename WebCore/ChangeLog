@@ -1,3 +1,13 @@
+2007-07-17  Adam Roben  <aroben@apple.com>
+
+        Add Settings::developerExtrasEnabled
+
+        Reviewed by Tim.
+
+        * WebCore.exp:
+        * page/Settings.cpp:
+        * page/Settings.h:
+
 2007-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Antti.
