@@ -41,8 +41,6 @@ ResourceHandleInternal::~ResourceHandleInternal()
     free(m_fileName);
     if (m_customHeaders)
         curl_slist_free_all(m_customHeaders);
-    if (m_customPostHeader)
-        curl_slist_free_all(m_customPostHeader);
 }
 
 ResourceHandle::~ResourceHandle()

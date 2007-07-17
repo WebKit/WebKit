@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +34,8 @@
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "HTTPParsers.h"
+
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -51,6 +55,14 @@ ResourceHandleManager::ResourceHandleManager()
     curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
 }
 
+ResourceHandleManager::~ResourceHandleManager()
+{
+    curl_multi_cleanup(m_curlMultiHandle);
+    curl_share_cleanup(m_curlShareHandle);
+    if (m_cookieJarFileName)
+        free(m_cookieJarFileName);
+}
+
 void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
 { 
     m_cookieJarFileName = strdup(cookieJarFileName);
@@ -58,7 +70,7 @@ void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
 
 ResourceHandleManager* ResourceHandleManager::sharedInstance()
 {
-    static ResourceHandleManager* sharedInstance;
+    static ResourceHandleManager* sharedInstance = 0;
     if (!sharedInstance)
         sharedInstance = new ResourceHandleManager();
     return sharedInstance;
@@ -85,11 +97,60 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     return totalSize;
 }
 
-// This is being called for each HTTP header in the response so it'll be called
-// multiple times for a given response.
+/*
+ * This is being called for each HTTP header in the response. This includes '\r\n'
+ * for the last line of the header.
+ *
+ * We will add each HTTP Header to the ResourceResponse and on the termination
+ * of the header (\r\n) we will parse Content-Type and Content-Disposition and
+ * update the ResourceResponse and then send it away.
+ *
+ */
 static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
-    int totalSize = size * nmemb;
+    ResourceHandle* job = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = job->getInternal();
+
+    unsigned int totalSize = size * nmemb;
+    ResourceHandleClient* client = d->client();
+    if (!client) {
+        return totalSize;
+    }
+
+    
+    String header(static_cast<const char*>(ptr), totalSize);
+
+    /*
+     * a) We can finish and send the ResourceResponse
+     * b) We will add the current header to the HTTPHeaderMap of the ResourceResponse 
+     */
+    if (header == String("\r\n")) {
+        CURL* h = d->m_handle;
+        CURLcode err;
+
+        double contentLength = 0;
+        err = curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+        d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength)); 
+
+        const char* hdr;
+        err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
+        d->m_response.setUrl(KURL(hdr));
+
+        long httpCode = 0;
+        err = curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
+        d->m_response.setHTTPStatusCode(httpCode);
+    
+        d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField("Content-Type")));
+        d->m_response.setTextEncodingName(extractCharsetFromMediaType(d->m_response.httpHeaderField("Content-Type")));
+        d->m_response.setSuggestedFilename(filenameFromHTTPContentDisposition(d->m_response.httpHeaderField("Content-Disposition")));
+
+        client->didReceiveResponse(job, d->m_response);
+    } else {
+        int splitPos = header.find(":");
+        if (splitPos != -1)
+            d->m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos+1).stripWhiteSpace());
+    }
+
     return totalSize;
 }
 

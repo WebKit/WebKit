@@ -1,3 +1,36 @@
+2007-07-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej.
+
+        Implement the callback responsible for handling HTTP headers. This
+        callback gets called for every header.
+        We will add these headers to our ResourceResponse and on the 'end-of-header'
+        indicator we will update the ResourceResponse and dispatch it.
+
+        This patch adds various set methods to ResourceResponse. This improves
+        the readability of the headerCallback and avoids storing a CURL handle inside
+        the ResourceResponse which would be needed to implement ResourceResponse::doUpdateResourceResponse
+
+        Add a destructor for ResourceHandleManager which would free the resources and remove
+        a unused variable.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::setUrl):
+        (WebCore::ResourceResponse::setMimeType):
+        (WebCore::ResourceResponse::setExpectedContentLength):
+        (WebCore::ResourceResponse::setTextEncodingName):
+        (WebCore::ResourceResponse::setSuggestedFilename):
+        * platform/network/ResourceResponse.h:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::ResourceHandleManager::sharedInstance):
+        (WebCore::headerCallback):
+        * platform/network/curl/ResourceHandleManager.h:
+
 2007-07-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -65,6 +65,7 @@ public:
 
 private:
     ResourceHandleManager();
+    ~ResourceHandleManager();
     void downloadTimerCallback(Timer<ResourceHandleManager>*);
     void removeFromCurl(ResourceHandle*);
     bool removeScheduledJob(ResourceHandle*);
@@ -72,9 +73,9 @@ private:
     bool startScheduledJobs();
 
     Timer<ResourceHandleManager> m_downloadTimer;
-    CURLM* m_curlMultiHandle; // FIXME: never freed
-    CURLSH* m_curlShareHandle; // FIXME: never freed
-    char* m_cookieJarFileName; // FIXME: never freed
+    CURLM* m_curlMultiHandle;
+    CURLSH* m_curlShareHandle;
+    char* m_cookieJarFileName;
     char m_curlErrorBuffer[CURL_ERROR_SIZE];
     ResourceHandleList* m_resourceHandleListHead;
 };

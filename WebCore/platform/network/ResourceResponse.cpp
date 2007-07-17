@@ -45,11 +45,27 @@ const KURL& ResourceResponse::url() const
     return m_url; 
 }
 
+void ResourceResponse::setUrl(const KURL& url)
+{
+    updateResourceResponse();
+    m_isNull = false;
+    
+    m_url = url; 
+}
+
 const String& ResourceResponse::mimeType() const
 {
     updateResourceResponse();
 
     return m_mimeType; 
+}
+
+void ResourceResponse::setMimeType(const String& mimeType)
+{
+    updateResourceResponse();
+    m_isNull = false;
+    
+    m_mimeType = mimeType; 
 }
 
 long long ResourceResponse::expectedContentLength() const 
@@ -59,11 +75,27 @@ long long ResourceResponse::expectedContentLength() const
     return m_expectedContentLength;
 }
 
+void ResourceResponse::setExpectedContentLength(long long expectedContentLength)
+{
+    updateResourceResponse();
+    m_isNull = false;
+    
+    m_expectedContentLength = expectedContentLength; 
+}
+
 const String& ResourceResponse::textEncodingName() const
 {
     updateResourceResponse();
 
     return m_textEncodingName;
+}
+
+void ResourceResponse::setTextEncodingName(const String& encodingName)
+{
+    updateResourceResponse();
+    m_isNull = false;
+    
+    m_textEncodingName = encodingName; 
 }
 
 // FIXME should compute this on the fly
@@ -72,6 +104,14 @@ const String& ResourceResponse::suggestedFilename() const
     updateResourceResponse();
 
     return m_suggestedFilename;
+}
+
+void ResourceResponse::setSuggestedFilename(const String& suggestedName)
+{
+    updateResourceResponse();
+    m_isNull = false;
+    
+    m_suggestedFilename = suggestedName; 
 }
 
 int ResourceResponse::httpStatusCode() const

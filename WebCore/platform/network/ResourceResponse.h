@@ -73,12 +73,20 @@ public:
     bool isHTTP() const;
     
     const KURL& url() const;
+    void setUrl(const KURL& url);
+
     const String& mimeType() const;
+    void setMimeType(const String& mimeType);
+
     long long expectedContentLength() const;
+    void setExpectedContentLength(long long expectedContentLength);
+
     const String& textEncodingName() const;
+    void setTextEncodingName(const String& name);
 
     // FIXME should compute this on the fly
     const String& suggestedFilename() const;
+    void setSuggestedFilename(const String&);
 
     int httpStatusCode() const;
     void setHTTPStatusCode(int);
