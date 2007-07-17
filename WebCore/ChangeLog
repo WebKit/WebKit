@@ -1,3 +1,17 @@
+2007-07-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Append FTP row entries to the first TBODY instead of the TABLE element itself, 
+        as many TABLE elements end up with an implicit TBODY and that's where most people would
+        expect it to be added.
+
+        * html/HTMLTableElement.h:
+        (WebCore::HTMLTableElement::firstTBody): Added this accessor
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::appendEntry): Add to the first tbody if it exists
+
 2007-07-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele.

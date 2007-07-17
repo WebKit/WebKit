@@ -120,7 +120,6 @@ void FTPDirectoryTokenizer::appendEntry(const String& filename, const String& si
 
     RefPtr<Element> rowElement = m_doc->createElementNS(xhtmlNamespaceURI, "tr", ec);
     rowElement->setAttribute("class", "ftpDirectoryEntryRow", ec);
-    m_tableElement->appendChild(rowElement, ec);
    
     RefPtr<Element> element = m_doc->createElementNS(xhtmlNamespaceURI, "td", ec);
     element->appendChild(new Text(m_doc, String(&noBreakSpace, 1)), ec);
@@ -143,6 +142,15 @@ void FTPDirectoryTokenizer::appendEntry(const String& filename, const String& si
     element->appendChild(new Text(m_doc, size), ec);
     element->setAttribute("class", "ftpDirectoryFileSize", ec);
     rowElement->appendChild(element, ec);
+    
+    // Append the new row to the first tbody if it exists.  
+    // Many <TABLE> elements end up having an implicit <TBODY> created for them and in those
+    // cases, it's more correct to append to the tbody instead of the table itself
+    HTMLTableSectionElement* body = m_tableElement->firstTBody();
+    if (body)
+        body->appendChild(rowElement, ec);
+    else
+        m_tableElement->appendChild(rowElement, ec);
 }
 
 PassRefPtr<Element> FTPDirectoryTokenizer::createTDForFilename(const String& filename)
