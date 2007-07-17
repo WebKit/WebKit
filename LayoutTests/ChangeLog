@@ -1,3 +1,38 @@
+-we2007-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a bunch of layout test failures I just caused.
+        
+        Made the tests I just added into http test to make their results 
+        universal.
+        
+        Also checked in the result change I forgot to check in last time.
+
+        * fast/history/location-assign-adds-history-item-expected.txt: Removed.
+        * fast/history/location-assign-adds-history-item.html: Removed.
+        * fast/history/location-href-set-adds-history-item-expected.txt: Removed.
+        * fast/history/location-href-set-adds-history-item.html: Removed.
+        * fast/history/location-replace-adds-history-item-expected.txt: Removed.
+        * fast/history/location-replace-adds-history-item.html: Removed.
+        * fast/history/location-set-adds-history-item-expected.txt: Removed.
+        * fast/history/location-set-adds-history-item.html: Removed.
+        * fast/history/window-open-adds-history-item-expected.txt: Removed.
+        * fast/history/window-open-adds-history-item.html: Removed.
+        * fast/history/window-open-adds-history-item2-expected.txt: Removed.
+        * fast/history/window-open-adds-history-item2.html: Removed.
+        * http/tests/navigation/location-assign-adds-history-item-expected.txt: Copied from fast/history/location-assign-adds-history-item-expected.txt.
+        * http/tests/navigation/location-assign-adds-history-item.html: Copied from fast/history/location-assign-adds-history-item.html.
+        * http/tests/navigation/location-href-set-adds-history-item-expected.txt: Copied from fast/history/location-href-set-adds-history-item-expected.txt.
+        * http/tests/navigation/location-href-set-adds-history-item.html: Copied from fast/history/location-href-set-adds-history-item.html.
+        * http/tests/navigation/location-replace-adds-history-item-expected.txt: Copied from fast/history/location-replace-adds-history-item-expected.txt.
+        * http/tests/navigation/location-replace-adds-history-item.html: Copied from fast/history/location-replace-adds-history-item.html.
+        * http/tests/navigation/location-set-adds-history-item-expected.txt: Copied from fast/history/location-set-adds-history-item-expected.txt.
+        * http/tests/navigation/location-set-adds-history-item.html: Copied from fast/history/location-set-adds-history-item.html.
+        * http/tests/navigation/redirect-load-no-form-restoration-expected.txt:
+        * http/tests/navigation/window-open-adds-history-item-expected.txt: Copied from fast/history/window-open-adds-history-item-expected.txt.
+        * http/tests/navigation/window-open-adds-history-item.html: Copied from fast/history/window-open-adds-history-item.html.
+        * http/tests/navigation/window-open-adds-history-item2-expected.txt: Copied from fast/history/window-open-adds-history-item2-expected.txt.
+        * http/tests/navigation/window-open-adds-history-item2.html: Copied from fast/history/window-open-adds-history-item2.html.
+
 2007-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
