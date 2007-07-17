@@ -1745,7 +1745,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
                 url = frame->loader()->url().url();
             else
                 url = completeURL(url);
-            frame->loader()->scheduleRedirection(delay, url);
+            frame->loader()->scheduleHTTPRedirection(delay, url);
         }
     } else if (equalIgnoringCase(equiv, "set-cookie")) {
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>

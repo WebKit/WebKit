@@ -141,7 +141,7 @@ namespace WebCore {
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finalSetupForReplace(DocumentLoader*);
         void load(const KURL&, Event*);
-        void load(const FrameLoadRequest&, bool userGesture,
+        void load(const FrameLoadRequest&, bool lockHistory, bool userGesture,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
         void load(const KURL&, const String& referrer, FrameLoadType, const String& target,
             Event*, PassRefPtr<FormState>);
@@ -275,7 +275,7 @@ namespace WebCore {
         void changeLocation(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void changeLocation(const KURL& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
-        void urlSelected(const FrameLoadRequest&, Event*, bool userGesture);
+        void urlSelected(const FrameLoadRequest&, Event*, bool lockHistory, bool userGesture);
       
         bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
@@ -297,12 +297,10 @@ namespace WebCore {
         String baseTarget() const;
         KURL dataURLBaseFromRequest(const ResourceRequest& request) const;
 
-        void scheduleRedirection(double delay, const String& URL);
-
+        bool isScheduledLocationChangePending() const;
+        void scheduleHTTPRedirection(double delay, const String& URL);
         void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void scheduleRefresh(bool userGesture = false);
-        bool isScheduledLocationChangePending() const;
-
         void scheduleHistoryNavigation(int steps);
 
         bool canGoBackOrForward(int distance) const;

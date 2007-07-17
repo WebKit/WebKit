@@ -1,3 +1,53 @@
+2007-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/5334483> REGRESSION: JavaScript-induced 
+        window.open loads not added to back/forward list
+        
+        I did an audit of our history rules in loading and tried to establish
+        some sane uniformity.
+        
+        The uniform rule is:
+            - HTTP redirects and HTTP redirects simulated by <meta http-equiv>
+            add a history item if and only if the redirect takes > 1 second.
+            - Other navigations, including JavaScript navigations, always
+            add a history item, except for location.replace navigations.
+
+        In the future, we'll want to refine the second case to be more like the
+        first. I've filed <rdar://problem/5339292> about that.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::setLocation): Don't pass 'true' for 
+        userGesture unconditionally. userGesture is used to determine popup 
+        blocking, not history item creation.
+
+        * bindings/js/kjs_window.cpp: Pass 'false' for lockHistory in all loads
+        except location.replace, which intends to lock history.
+
+        * loader/FrameLoader.cpp: Distinguish between lockHistory and 
+        userGesture. The former determines whether a new history item gets
+        created. The latter determines whether JavaScript can open popup
+        windows. Start passing these variables in functions that used to
+        swallow or conflate them.
+        
+        (WebCore::FrameLoader::requestFrame): Pass 'true' for lockHistory here
+        because that's usually correct when setting the 'src' attribute of a
+        child frame, and we want to avoid regressing <rdar://problem/4921797>.
+
+        (WebCore::FrameLoader::load): Use the lockHistory variable to determine
+        whether to start a history-creating load. Using userGesture for this
+        purpose is wrong, as explained above.
+
+        * loader/FrameLoader.h: Renamed one variant of scheduleRedirection to
+        scheduleHTTPRedirection because the behavior there of measuring elapsed
+        time is specific to the HTTP redirection case.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): lockHistory
+        can always be false here because this navigation is never the result of
+        a redirection.
+
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam and Maciej.

@@ -115,8 +115,8 @@ void JSHTMLDocument::setLocation(ExecState* exec, JSValue* value)
     if (activeFrame)
         str = activeFrame->document()->completeURL(str);
 
-    // We always want a new history item when assigning to document.location.
-    frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, true);
+    bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
+    frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
 }
 
 // Custom functions
