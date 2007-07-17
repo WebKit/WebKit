@@ -1,3 +1,13 @@
+2007-07-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Convert JS undefined to the empty string when calling alert, confirm, and prompt. 
+
+        Test: fast/dom/Window/alert-undefined.html
+
+        * page/DOMWindow.idl:
+
 2007-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin McCulough.

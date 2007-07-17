@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function runTests()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            alert();
+        }
+    </script>
+</head>
+<body onload="runTests();">
+    <p>The alert that shows up (or if this is running under DRT, that is dumped) should be blank and not contain the text "undefined".</p>
+    <pre id="console"></pre>
+</body>
+</html>

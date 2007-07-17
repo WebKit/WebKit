@@ -1,0 +1,4 @@
+ALERT: 
+The alert that shows up (or if this is running under DRT, that is dumped) should be blank and not contain the text "undefined".
+
+

@@ -47,10 +47,10 @@ module window {
         void print();
         void stop();
 
-        void alert(in DOMString message);
-        boolean confirm(in DOMString message);
-        [ConvertNullStringTo=Null] DOMString prompt(in [ConvertNullToNullString] DOMString message,
-                                                    in [ConvertNullToNullString] DOMString defaultValue);
+        void alert(in [ConvertUndefinedOrNullToNullString] DOMString message);
+        boolean confirm(in [ConvertUndefinedOrNullToNullString] DOMString message);
+        [ConvertNullStringTo=Null] DOMString prompt(in [ConvertUndefinedOrNullToNullString] DOMString message,
+                                                    in [ConvertUndefinedOrNullToNullString] DOMString defaultValue);
 
         boolean find(in DOMString string,
                      in boolean caseSensitive,
