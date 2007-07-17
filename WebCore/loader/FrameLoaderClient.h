@@ -192,7 +192,7 @@ namespace WebCore {
         
         virtual void saveDocumentViewToCachedPage(CachedPage*) = 0;
         virtual bool canCachePage() const = 0;
-        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
+        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) = 0;
 
         virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;

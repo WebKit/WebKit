@@ -154,7 +154,7 @@ public:
     virtual void detachedFromParent3() { }
     virtual void detachedFromParent4() { }
     
-    virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
+    virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) { }
     
     virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) { }
     virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse) { }

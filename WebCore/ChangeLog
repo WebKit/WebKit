@@ -1,3 +1,19 @@
+2007-07-17  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/5294691> Source of file is misrepresented if downloaded by typing in URL in Safari address bar
+
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.cpp:        
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        Added an extra request parameter, initialRequest, to the download() method
+        by passing up the resource handle's request.
+        
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::download):
+        Added an extra parameter to the empty SVG download method.
+        
 2007-07-17  Antti  <antti@apple.com>
 
         Reviewed by home-bradee.
