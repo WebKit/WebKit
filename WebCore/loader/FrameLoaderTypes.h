@@ -53,7 +53,7 @@ namespace WebCore {
         FrameLoadTypeReload,
         FrameLoadTypeReloadAllowingStaleData,
         FrameLoadTypeSame,               // user loads same URL again (but not reload button)
-        FrameLoadTypeInternal,
+        FrameLoadTypeRedirectWithLockedHistory,
         FrameLoadTypeReplace
     };
 

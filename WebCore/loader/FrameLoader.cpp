@@ -184,7 +184,7 @@ bool isBackForwardLoadType(FrameLoadType type)
         case FrameLoadTypeReload:
         case FrameLoadTypeReloadAllowingStaleData:
         case FrameLoadTypeSame:
-        case FrameLoadTypeInternal:
+        case FrameLoadTypeRedirectWithLockedHistory:
         case FrameLoadTypeReplace:
             return false;
         case FrameLoadTypeBack:
@@ -1087,7 +1087,7 @@ void FrameLoader::restoreDocumentState()
         case FrameLoadTypeBack:
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
-        case FrameLoadTypeInternal:
+        case FrameLoadTypeRedirectWithLockedHistory:
         case FrameLoadTypeStandard:
             itemToRestore = m_currentHistoryItem.get(); 
     }
@@ -1818,7 +1818,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         if (request.resourceRequest().cachePolicy() == ReloadIgnoringCacheData)
             loadType = FrameLoadTypeReload;
         else if (lockHistory)
-            loadType = FrameLoadTypeInternal;
+            loadType = FrameLoadTypeRedirectWithLockedHistory;
         else
             loadType = FrameLoadTypeStandard;    
     
@@ -2463,8 +2463,8 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
             m_client->makeDocumentView();
             break;
 
-        case FrameLoadTypeInternal:
-            updateHistoryForInternalLoad();
+        case FrameLoadTypeRedirectWithLockedHistory:
+            updateHistoryForRedirectWithLockedHistory();
             m_client->makeDocumentView();
             break;
 
@@ -3914,7 +3914,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                             request.setCachePolicy(ReturnCacheDataElseLoad);
                         break;
                     case FrameLoadTypeStandard:
-                    case FrameLoadTypeInternal:
+                    case FrameLoadTypeRedirectWithLockedHistory:
                         // no-op: leave as protocol default
                         // FIXME:  I wonder if we ever hit this case
                         break;
@@ -4121,7 +4121,7 @@ void FrameLoader::updateHistoryForReload()
     updateGlobalHistoryForReload(documentLoader()->originalURL());
 }
 
-void FrameLoader::updateHistoryForInternalLoad()
+void FrameLoader::updateHistoryForRedirectWithLockedHistory()
 {
 #if !LOG_DISABLED
     if (documentLoader())
@@ -4129,13 +4129,13 @@ void FrameLoader::updateHistoryForInternalLoad()
 #endif
     
     if (documentLoader()->isClientRedirect()) {
-        if (!m_currentHistoryItem)
+        if (!m_currentHistoryItem && !m_frame->tree()->parent())
             addHistoryForCurrentLocation();
-            
-        m_currentHistoryItem->setURL(documentLoader()->URL());
-        m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
+        if (m_currentHistoryItem) {
+            m_currentHistoryItem->setURL(documentLoader()->URL());
+            m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
+        }
     } else {
-        // Add an item to the item tree for this frame
         Frame* parentFrame = m_frame->tree()->parent();
         if (parentFrame && parentFrame->loader()->m_currentHistoryItem)
             parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));

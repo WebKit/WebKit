@@ -1,3 +1,23 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Kevin McCulough.
+
+        Fixed failing layout test.
+        
+        Renamed "FrameLoadTypeInternal" to "FrameLoadTypeRedirectWithLockedHistory".
+        This is almost certainly not a correct name for the original intent
+        of this load type, but it's a correct name for its current behavior.
+        
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory):
+        When history is supposed to be locked, and no current history item
+        exists, only add a new history item if you're the top-level frame.
+        
+        This rule, combined with the rule that setting iframe.src should not
+        create a history item, is pretty hackish. On the other hand, it
+        matches WinIE and doesn't cause any test regressions. So I'm OK with
+        it as a short-term solution until the solution described in 
+        <rdar://problem/5339292> can be implemented.
+
 2007-07-17  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Maciej Stachowiak.

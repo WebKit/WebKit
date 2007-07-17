@@ -1,3 +1,11 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Kevin McCulough.
+
+        * http/tests/navigation/multiple-back-forward-entries-expected.txt:
+        Updated results to match new behavior, which is correct (multiple
+        history entries should not be created).
+
 2007-07-17  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
