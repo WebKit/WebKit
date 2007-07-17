@@ -570,7 +570,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
     if (jsString.isNull()) {
-        m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, true);
+        m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
 
         // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
         if (request->sendNotification()) {
