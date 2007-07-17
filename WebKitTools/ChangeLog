@@ -1,3 +1,16 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Antti Koivisto.
+        
+        Added watchdog timer to waitUntilDone to prevent a run-away test from
+        hanging the test harness.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump):
+        (-[LayoutTestController waitUntilDone]):
+        (-[LayoutTestController waitUntilDoneWatchdogFired]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-07-17  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

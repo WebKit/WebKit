@@ -107,6 +107,9 @@ static void displayWebView();
 volatile BOOL done;
 NavigationController *navigationController = nil;
 
+static NSTimer *waitToDumpWatchdog;
+static NSTimeInterval waitToDumpWatchdogInterval = 10; // seconds
+
 // Delegates
 static FrameLoadDelegate *frameLoadDelegate;
 static UIDelegate *uiDelegate;
@@ -809,6 +812,10 @@ static void dumpBackForwardListForWebView(WebView *view)
 
 void dump(void)
 {
+    [waitToDumpWatchdog invalidate];
+    [waitToDumpWatchdog release];
+    waitToDumpWatchdog = nil;
+    
     if (dumpTree) {
         NSString *result = nil;
 
@@ -1110,6 +1117,16 @@ void dump(void)
 - (void)waitUntilDone 
 {
     waitToDump = YES;
+    if (!waitToDumpWatchdog)
+        waitToDumpWatchdog = [[NSTimer scheduledTimerWithTimeInterval:waitToDumpWatchdogInterval target:self selector:@selector(waitUntilDoneWatchdogFired) userInfo:nil repeats:NO] retain];
+}
+
+- (void)waitUntilDoneWatchdogFired
+{
+    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
+    fprintf(stderr, message);
+    fprintf(stdout, message);
+    dump();
 }
 
 - (void)notifyDone
