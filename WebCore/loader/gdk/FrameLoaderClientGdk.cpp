@@ -303,7 +303,7 @@ void FrameLoaderClientGdk::dispatchDidFailLoading(DocumentLoader*, unsigned long
 bool FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { notImplemented(); return false; }
 void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&) { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&) { notImplemented(); }
-void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { notImplemented(); }
+void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) { notImplemented(); }
 ResourceError FrameLoaderClientGdk::cancelledError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::blockedError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::cannotShowURLError(const ResourceRequest&) { notImplemented(); return ResourceError(); }

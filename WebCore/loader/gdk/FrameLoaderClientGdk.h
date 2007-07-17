@@ -175,7 +175,7 @@ namespace WebCore {
 
         virtual void saveDocumentViewToCachedPage(CachedPage*);
         virtual bool canCachePage() const;
-        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
+        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);
     private:
         FrameGdk *m_frame;
         ResourceResponse m_response;

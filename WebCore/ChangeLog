@@ -1,3 +1,14 @@
+2007-07-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by NOBODY.
+
+        Build fix after r24366 add an additional ResourceRequest parameter to
+        the download method.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::download):
+        * loader/gdk/FrameLoaderClientGdk.h:
+
 2007-07-17  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item
