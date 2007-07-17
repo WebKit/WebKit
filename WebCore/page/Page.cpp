@@ -154,10 +154,6 @@ bool Page::goForward()
 
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
-    // Handle the go back/forward to a frameset, don't need to handle if the traget is a _blank
-    // We never go back/forward on a per-frame basis, so the target must be the main frame
-    ASSERT(item->target().isEmpty() || item->target().contains("_blank", true) || m_mainFrame->tree()->find(item->target()) == m_mainFrame);
-
     // Abort any current load if we're going to a history item
     m_mainFrame->loader()->stopAllLoaders();
     m_mainFrame->loader()->goToItem(item, type);

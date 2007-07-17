@@ -1,3 +1,17 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        Layout test that demonstrates why an old ASSERT in WebCore was wrong.
+
+        * ChangeLog:
+        * fast/history/go-back-to-changed-name-expected.txt: Added.
+        * fast/history/go-back-to-changed-name.html: Added.
+        * fast/history/resources/go-back-to-changed-name2.html: Added.
+        * fast/history/resources/go-back-to-changed-name3.html: Added.
+        * http/tests/security/cross-frame-access-data-url-expected.txt: Added.
+        * http/tests/security/cross-frame-access-data-url.html: Added.
+
 2007-07-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Antti.

@@ -93,6 +93,17 @@
 
 2007-07-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Removed ASSERT that was breaking the pageout test. It's trivial to
+        reproduce this ASSERT when navigating between pages that change their
+        names, but nothing bad seems to happen.
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
         
         * plugins/win/PluginViewWin.cpp: Pass false for lockHistory like we
