@@ -63,6 +63,8 @@ namespace WebCore {
 
         DOMSelection* getSelection();
 
+        Element* frameElement() const;
+
         void focus();
         void blur();
         void close();

@@ -891,6 +891,9 @@ sub GenerateImplementation
 
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
                 push(@implContent, "        return $name(exec);\n");
+            } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
+                $implIncludes{"kjs_dom.h"} = 1;
+                push(@implContent, "        return checkNodeSecurity(exec, imp->$name()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                 $implIncludes{"Document.h"} = 1;
                 $implIncludes{"kjs_dom.h"} = 1;

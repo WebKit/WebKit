@@ -146,6 +146,20 @@ DOMSelection* DOMWindow::getSelection()
     return m_selection.get();
 }
 
+Element* DOMWindow::frameElement() const
+{
+    if (!m_frame)
+        return 0;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (!doc)
+        return 0;
+
+    // FIXME: could this use m_frame->ownerElement() instead of going through the Document.
+    return doc->ownerElement();
+}
+
 void DOMWindow::focus()
 {
     if (!m_frame)
@@ -467,7 +481,7 @@ double DOMWindow::devicePixelRatio() const
 
     Page* page = m_frame->page();
     if (!page)
-        return 0;
+        return 0.0;
 
     return page->chrome()->scaleFactor();
 }

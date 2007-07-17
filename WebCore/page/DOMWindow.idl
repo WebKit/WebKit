@@ -38,6 +38,8 @@ module window {
 
         DOMSelection getSelection();
 
+        readonly attribute [CheckNodeSecurity] Element frameElement;
+
         [DoNotCheckDomainSecurity] void focus();
         [DoNotCheckDomainSecurity] void blur();
         [DoNotCheckDomainSecurity] void close();

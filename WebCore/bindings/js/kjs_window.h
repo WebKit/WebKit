@@ -153,7 +153,6 @@ namespace KJS {
         Crypto, Frames, Event_, Location_,
         Navigator_, ClientInformation, Opener,
         Parent, Self, Window_, Top,
-        FrameElement,
 
         // Event Listeners
         Onabort, Onblur, Onchange, Onclick,

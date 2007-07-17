@@ -1,5 +1,23 @@
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam and Maciej.
+
+        Move the frameElement attribute from kjs_window to DOMWindow and
+        auto-generate the bindings for it. 
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::frameElement):
+        (WebCore::DOMWindow::devicePixelRatio):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam.
 
         Move more functions from kjs_window to DOMWindow and auto-generate
