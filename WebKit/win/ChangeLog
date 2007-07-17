@@ -1,3 +1,17 @@
+2007-07-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5334818> Support IME reconversion in windows
+
+        Also includes a small amount of IME refactoring.
+
+        * WebView.cpp:
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequestReconvertString):
+        (WebView::onIMERequest):
+        * WebView.h:
+
 2007-07-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

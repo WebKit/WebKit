@@ -3911,12 +3911,9 @@ bool WebView::onIMENotify(WPARAM, LPARAM, LRESULT*)
     return false;
 }
 
-bool WebView::onIMERequestCharPosition(IMECHARPOSITION* charPos, LRESULT* result)
+bool WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* charPos, LRESULT* result)
 {    
     IntRect caret;
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
-    if (!targetFrame)
-        return true;
     if (RefPtr<Range> range = targetFrame->selectionController()->selection().toRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
@@ -3932,14 +3929,41 @@ bool WebView::onIMERequestCharPosition(IMECHARPOSITION* charPos, LRESULT* result
     return true;
 }
 
+bool WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING* reconvertString, LRESULT* result)
+{
+    RefPtr<Range> selectedRange = targetFrame->selectionController()->toRange();
+    String text = selectedRange->text();
+    if (!reconvertString) {
+        *result = sizeof(RECONVERTSTRING) + text.length() * sizeof(UChar);
+        return true;
+    }
+
+    unsigned totalSize = sizeof(RECONVERTSTRING) + text.length() * sizeof(UChar);
+    *result = totalSize;
+    if (totalSize > reconvertString->dwSize) {
+        *result = 0;
+        return false;
+    }
+    reconvertString->dwCompStrLen = text.length();
+    reconvertString->dwStrLen = text.length();
+    reconvertString->dwTargetStrLen = text.length();
+    reconvertString->dwStrOffset = sizeof(RECONVERTSTRING);
+    memcpy(reconvertString + 1, text.characters(), text.length() * sizeof(UChar));
+    return true;
+}
+
 bool WebView::onIMERequest(WPARAM request, LPARAM data, LRESULT* result)
 {
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->editor()->canEdit())
+        return true;
+
     switch (request) {
         case IMR_RECONVERTSTRING:
-            return false;
+            return onIMERequestReconvertString(targetFrame, (RECONVERTSTRING*)data, result);
 
         case IMR_QUERYCHARPOSITION:
-            return onIMERequestCharPosition((IMECHARPOSITION*)data, result);
+            return onIMERequestCharPosition(targetFrame, (IMECHARPOSITION*)data, result);
     }
     return false;
 }
