@@ -1,6 +1,19 @@
+2007-07-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5336276>
+        ASSERT(cs->accessCount() > 0) when instantiating widget templates in DashCode
+
+        If the cache is disabled, accessCount will always be 0. Account for this in the assert.
+        
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::notifyFinished):
+
 2007-07-16  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Darin
+        Reviewed by Darin.
 
         Append FTP row entries to the first TBODY instead of the TABLE element itself, 
         as many TABLE elements end up with an implicit TBODY and that's where most people would
