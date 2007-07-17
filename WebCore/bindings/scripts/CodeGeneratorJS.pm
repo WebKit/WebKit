@@ -927,19 +927,15 @@ sub GenerateImplementation
                         push(@implContent, "            }\n");
                         push(@implContent, "        }\n\n");
                         push(@implContent, "        return toJS(exec, obj.get());\n");
-                    } elsif ($attribute->signature->extendedAttributes->{"NullCheck"}) {
-                        push(@implContent, "        return imp->$name() ? $jsType : jsUndefined();\n");
                     } else {
                         push(@implContent, "        return $jsType;\n");
                     }
                 }
             } else {
                 push(@implContent, "        ExceptionCode ec = 0;\n");
-        
+
                 if ($podType) {
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "", "imp.$name(ec)") . ";\n");
-                } elsif ($attribute->signature->extendedAttributes->{"NullCheck"}) {
-                    push(@implContent, "        return imp->$name(ec) ? " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . " : jsUndefined();\n");
                 } else {
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . ";\n");
                 }
@@ -1441,11 +1437,6 @@ sub NativeToJSValue
         $implIncludes{"StyleSheetList.h"} = 1;
         $implIncludes{"kjs_css.h"} = 1;
         return "toJS(exec, WTF::getPtr($value), imp)";
-    }
-
-    if ($type eq "Window") {
-        $implIncludes{"kjs_window.h"} = 1;
-        return "Window::retrieve(WTF::getPtr($value))";
     }
 
     if ($codeGenerator->IsSVGAnimatedType($type)) {

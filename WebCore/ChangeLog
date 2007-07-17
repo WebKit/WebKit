@@ -1,3 +1,20 @@
+2007-07-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Make HTMLFrameOwnerElement::contentWindow() return a DOMWindow instead of a Frame
+        - Remove the unnecessary hack in HTMLFrameElement.idl and HTMLIFrameElement.idl that
+          converted from Frame to Window now that it is not necessary.
+        - Remove now unused [NullCheck] extended attribute from CodeGeneratorJS.pm.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLDocument.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::contentWindow):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLIFrameElement.idl:
+
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -25,6 +25,7 @@
 
 namespace WebCore {
 
+class DOMWindow;
 class Frame;
 class KeyboardEvent;
 
@@ -36,7 +37,7 @@ public:
     virtual ~HTMLFrameOwnerElement();
 
     Frame* contentFrame() const { return m_contentFrame; }
-    Frame* contentWindow() const { return contentFrame(); } // alias for JS DOM bindings
+    DOMWindow* contentWindow() const;
     Document* contentDocument() const;
 
     virtual bool isFrameOwnerElement() const { return true; }
@@ -47,6 +48,6 @@ private:
     Frame* m_contentFrame;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // HTMLFrameOwnerElement_h

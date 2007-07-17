@@ -66,7 +66,7 @@ module html {
 
                  attribute [Custom, Deletable] HTMLCollection all;
 
-                 attribute [Custom] Window location;
+                 attribute [Custom] Location location;
 
         [Custom] void clear();
 #endif
