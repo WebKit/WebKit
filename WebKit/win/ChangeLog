@@ -1,3 +1,11 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix. 
+
+        * WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle): Pass false for lockHistory 
+        like we do elsewhere.
+
 2007-07-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
