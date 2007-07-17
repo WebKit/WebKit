@@ -1,5 +1,19 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Initialize ContextMenuController::m_page
+
+        Somehow this variable had never been initialized before.
+
+        Reviewed by Tim.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController):
+        * page/ContextMenuController.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Add Settings::developerExtrasEnabled
 
         Reviewed by Tim.
