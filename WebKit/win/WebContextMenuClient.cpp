@@ -74,7 +74,7 @@ static bool isPreInspectElementTagSafari(IWebUIDelegate* uiDelegate)
 
 static HMENU fixMenuReceivedFromOldSafari(IWebUIDelegate* uiDelegate, ContextMenu* originalMenu, HMENU menuFromClient)
 {
-    ASSERT_ARG(menu, menu);
+    ASSERT_ARG(originalMenu, originalMenu);
     if (!isPreInspectElementTagSafari(uiDelegate))
         return menuFromClient;
 

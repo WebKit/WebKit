@@ -1,3 +1,17 @@
+2007-07-17  Ada Chan  <adachan@apple.com>
+
+        Rubbet-stamped by Adam.
+        
+        Fixed build.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebContextMenuClient.cpp:
+        (fixMenuReceivedFromOldSafari):
+        * WebFrame.cpp:
+        (WebFrame::loadURLIntoChild):
+        (WebFrame::download):
+        * WebFrame.h:
+
 2007-07-17  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item

@@ -1286,7 +1286,7 @@ void WebFrame::loadURLIntoChild(const KURL& originalURL, const String& referrer,
 
     HistoryItem* parentItem = coreFrame->loader()->currentHistoryItem();
     FrameLoadType loadType = coreFrame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeInternal;
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
 
     KURL url = originalURL;
 
@@ -2005,7 +2005,7 @@ void WebFrame::dispatchUnableToImplementPolicy(const ResourceError& error)
     }
 }
 
-void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse& response)
 {
     COMPtr<IWebDownloadDelegate> downloadDelegate;
     COMPtr<IWebView> webView;
