@@ -1,3 +1,12 @@
+2007-07-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Blind build fix for Qt after r24366 by adding the additional
+        WebCore::ResourceRequest& parameter to the download method.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::download):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-07-17  Adam Roben  <aroben@apple.com>
 
         Remove ContextMenuClientQt::shouldIncludeInspectElementItem

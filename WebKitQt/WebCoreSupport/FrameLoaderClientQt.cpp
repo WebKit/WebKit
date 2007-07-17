@@ -718,7 +718,7 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
     return loader.release();
 }
 
-void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
 {
     notImplemented();
 }
