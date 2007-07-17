@@ -91,8 +91,6 @@ IconDatabase::IconDatabase()
     , m_startupTimer(this, &IconDatabase::pruneUnretainedIconsOnStartup)
     , m_updateTimer(this, &IconDatabase::updateDatabase)
     , m_initialPruningComplete(false)
-    , m_initialPruningTransaction(0)
-    , m_preparedPageRetainInsertStatement(0)
     , m_imported(false)
     , m_isImportedSet(false)
 {
@@ -173,18 +171,13 @@ bool IconDatabase::open(const String& databasePath)
         createDatabaseTables(m_mainDB);
     }
 
-    m_initialPruningTransaction = new SQLTransaction(m_mainDB);
-    // We're going to track an icon's retain count in a temp table in memory so we can cross reference it to to the on disk tables
-    bool result;
-    result = m_mainDB.executeCommand("CREATE TEMP TABLE PageRetain (url TEXT);");
-    // Creating an in-memory temp table should never, ever, ever fail
-    ASSERT(result);
-
     // These are actually two different SQLite config options - not my fault they are named confusingly  ;)
     m_mainDB.setSynchronous(SQLDatabase::SyncOff);
     m_mainDB.setFullsync(false);
-
-    m_initialPruningTransaction->begin();
+    
+    // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill
+    if (!SQLStatement(m_mainDB, "PRAGMA cache_size = 200;").executeCommand())         
+        LOG_ERROR("SQLite database could not set cache_size");
     
     // Open the in-memory table for private browsing
     if (!m_privateBrowsingDB.open(":memory:"))
@@ -262,12 +255,6 @@ void IconDatabase::removeAllIcons()
 // B - Resetting the DB via removeAllIcons() - in this case, you *don't* want to sync, because it would be a waste of time
 void IconDatabase::deleteAllPreparedStatements(bool withSync)
 {
-    // Must wipe the initial retain statement before the initial transaction
-    delete m_preparedPageRetainInsertStatement;
-    m_preparedPageRetainInsertStatement = 0;
-    delete m_initialPruningTransaction;
-    m_initialPruningTransaction = 0;
-
     // Sync, if desired
     if (withSync)
         syncDatabase();
@@ -479,24 +466,10 @@ void IconDatabase::retainIconForPageURL(const String& pageURL)
     if (!(retainCount = m_pageURLToRetainCount.get(pageURL))) {
         m_pageURLToRetainCount.set(pageURL, 1);   
 
-        // If we haven't done initial pruning, we store this retain record in the temporary in-memory table
-        // Note we only keep the URL in the temporary table, not the full retain count, because for pruning-considerations
-        // we only care *if* a pageURL is retained - not the full count.  This call to retainIconForPageURL incremented the PageURL's
-        // retain count from 0 to 1 therefore we may store it in the temporary table
-        // Also, if we haven't done pruning yet, we want to avoid any pageURL->iconURL lookups and the pageURLsPendingDeletion is moot, 
+        // If we haven't done pruning yet, we want to avoid any pageURL->iconURL lookups and the pageURLsPendingDeletion is moot, 
         // so we bail here and skip those steps
-        if (!m_initialPruningComplete) {
-            String escapedPageURL = escapeSQLString(pageURL);
-            if (!m_preparedPageRetainInsertStatement) {
-                m_preparedPageRetainInsertStatement = new SQLStatement(m_mainDB, "INSERT INTO PageRetain VALUES (?);");
-                m_preparedPageRetainInsertStatement->prepare();
-            }
-            m_preparedPageRetainInsertStatement->reset();
-            m_preparedPageRetainInsertStatement->bindText16(1, pageURL);
-            if (m_preparedPageRetainInsertStatement->step() != SQLResultDone)
-                LOG_ERROR("Failed to record icon retention in temporary table for IconURL %s", pageURL.ascii().data());
+        if (!m_initialPruningComplete)
             return;
-        }
         
         // If this pageURL is marked for deletion, bring it back from the brink
         m_pageURLsPendingDeletion.remove(pageURL);
@@ -536,18 +509,10 @@ void IconDatabase::releaseIconForPageURL(const String& pageURL)
     // Otherwise, remove all record of the retain count
     m_pageURLToRetainCount.remove(pageURL);   
     
-    // If we haven't done initial pruning, we remove this retain record from the temporary in-memory table
-    // Note we only keep the URL in the temporary table, not the full retain count, because for pruning-considerations
-    // we only care *if* a pageURL is retained - not the full count.  This call to releaseIconForPageURL decremented the PageURL's
-    // retain count from 1 to 0 therefore we may remove it from the temporary table
-    // Also, if we haven't done pruning yet, we want to avoid any pageURL->iconURL lookups and the pageURLsPendingDeletion is moot, 
+    // If we haven't done pruning yet, we want to avoid any pageURL->iconURL lookups and the pageURLsPendingDeletion is moot, 
     // so we bail here and skip those steps
-    if (!m_initialPruningComplete) {
-        String escapedPageURL = escapeSQLString(pageURL);
-        if (!m_mainDB.executeCommand("DELETE FROM PageRetain WHERE url='" + escapedPageURL + "';"))
-            LOG_ERROR("Failed to delete record of icon retention from temporary table for IconURL %s", pageURL.ascii().data());
+    if (!m_initialPruningComplete)
         return;
-    }
 
     
     // Then mark this pageURL for deletion
@@ -742,9 +707,7 @@ void IconDatabase::setIconURLForPageURLInDatabase(const String& iconURL, const S
 }
 
 int64_t IconDatabase::establishIconIDForIconURL(SQLDatabase& db, const String& iconURL, bool createIfNecessary)
-{
-    String escapedIconURL = escapeSQLString(iconURL);
-    
+{    
     // Get the iconID thats already in this database and return it - or return 0 if we're read-only
     int64_t iconID = getIconIDForIconURLQuery(db, iconURL);
     if (iconID || !createIfNecessary)
@@ -770,33 +733,54 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
     // rdar://4690949 - Need to prune unretained iconURLs here, then prune out all pageURLs that reference
     // nonexistent icons
     
-    // Finalize the PageRetain statement
-    delete m_preparedPageRetainInsertStatement;
-    m_preparedPageRetainInsertStatement = 0;
+    SQLTransaction pruningTransaction(m_mainDB);
+    pruningTransaction.begin();
     
-    // Commit all of the PageRetains and start a new transaction for the pruning dirty-work
-    m_initialPruningTransaction->commit();
-    m_initialPruningTransaction->begin();
+    // Wipe all PageURLs that aren't retained
+    // Temporary tables in sqlite seem to lose memory permanently so do this by hand instead. This is faster too.
     
-    // Then wipe all PageURLs and Icons that aren't retained
-    if (!m_mainDB.executeCommand("DELETE FROM PageURL WHERE PageURL.url NOT IN (SELECT url FROM PageRetain);") ||
-        !m_mainDB.executeCommand("DELETE FROM Icon WHERE Icon.iconID NOT IN (SELECT iconID FROM PageURL);") ||
-        !m_mainDB.executeCommand("DROP TABLE PageRetain;"))
-        LOG_ERROR("Failed to execute SQL to prune unretained pages and icons from the on-disk tables");
+    HashMap<String, int64_t> pageUrlsToDelete; 
     
+    // First get the known PageURLs from the db
+    int result;
+    SQLStatement pageSQL(m_mainDB, "SELECT url, iconID FROM PageURL");
+    pageSQL.prepare();
+    while((result = pageSQL.step()) == SQLResultRow)
+        pageUrlsToDelete.set(pageSQL.getColumnText16(0), pageSQL.getColumnInt64(1));
+    pageSQL.finalize();
+    if (result != SQLResultDone)
+        LOG_ERROR("Error reading PageURL table from on-disk DB");
+    
+    // Remove all urls we actually want to keep from the hash
+    HashMap<String, int>::iterator endit = m_pageURLToRetainCount.end();
+    for (HashMap<String, int>::iterator it = m_pageURLToRetainCount.begin(); it != endit; ++it)
+        pageUrlsToDelete.remove(it->first);
+    
+    // Delete the rest, if any
+    if (pageUrlsToDelete.size()) {
+        SQLStatement pageDeleteSQL(m_mainDB, "DELETE FROM PageURL WHERE iconID = (?)");
+        pageDeleteSQL.prepare();
+        HashMap<String, int64_t>::iterator endit = pageUrlsToDelete.end();
+        for (HashMap<String, int64_t>::iterator it = pageUrlsToDelete.begin(); it != endit; ++it) {
+            LOG(IconDatabase, "Deleting %s from PageURL table\n", it->first.latin1().data());
+            pageDeleteSQL.bindInt64(1, it->second);
+            if (pageDeleteSQL.step() != SQLResultDone)
+                LOG_ERROR("Unable to delete %s from PageURL table", it->first.latin1().data());
+            pageDeleteSQL.reset();
+        }
+        pageDeleteSQL.finalize();
+    }
+    
+    // Wipe Icons that aren't retained
+    if (!m_mainDB.executeCommand("DELETE FROM Icon WHERE Icon.iconID NOT IN (SELECT iconID FROM PageURL);"))
+        LOG_ERROR("Failed to execute SQL to prune unretained icons from the on-disk tables");    
     
     // Since we lazily retained the pageURLs without getting the iconURLs or retaining the iconURLs, 
     // we need to do that now
-    // We now should be in a spiffy situation where we know every single pageURL left in the DB is retained, so we are interested
-    // in the iconURLs for all remaining pageURLs
-    // So we can simply add all the remaining mappings, and retain each pageURL's icon once
-    
     SQLStatement sql(m_mainDB, "SELECT PageURL.url, Icon.url FROM PageURL INNER JOIN Icon ON PageURL.iconID=Icon.iconID");
     sql.prepare();
-    int result;
     while((result = sql.step()) == SQLResultRow) {
         String iconURL = sql.getColumnText16(1);
-        m_pageURLToIconURLMap.set(sql.getColumnText16(0), iconURL);
         retainIconURL(iconURL);
         LOG(IconDatabase, "Found a PageURL that mapped to %s", iconURL.ascii().data());
     }
@@ -804,15 +788,12 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
         LOG_ERROR("Error reading PageURL->IconURL mappings from on-disk DB");
     sql.finalize();
     
-    // Commit the transaction and do some cleanup
-    m_initialPruningTransaction->commit();
-    delete m_initialPruningTransaction;
-    m_initialPruningTransaction = 0;
+    pruningTransaction.commit();
     m_initialPruningComplete = true;
     
     // Handle dangling PageURLs, if any
     checkForDanglingPageURLs(true);
-    
+
 #ifndef NDEBUG
     timestamp = currentTime() - timestamp;
     if (timestamp <= 1.0)

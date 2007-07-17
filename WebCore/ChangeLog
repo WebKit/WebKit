@@ -1,3 +1,43 @@
+2007-07-17  Antti  <antti@apple.com>
+
+        Reviewed by home-bradee.
+
+        <rdar://problem/5336372>
+        Icon database uses too much memory
+        
+        XRaying Safari startup memory consumption revealed that icon database is eating quite
+        a bit of RAM if Icon.db is large (which it probably is if it has been in use for a while, 
+        mine used for getting figures below was 2.6MB). 
+        
+        Note that the wins are less impressive with smaller Icon.db.
+        
+        This patch addresses three separate issues
+        
+        - SQLite fails to free the memory used by temporary tables. Icon database uses a temporary table
+          on startup for pruning unused page urls. This wastes around 1MB. Addressed by rewriting
+          pruning so it does not need a temporary table. The new method is also quite a bit faster speeding
+          up Safari launch time by around 100ms
+        - SQLite has it's own memory cache limited by default to 3MB. Icon database does not really need that much.
+          Dropped the cache size to 300kB saving ~1MB on startup. 
+          Smaller cache slows down startup by ~30ms (more than compensated by faster pruning above)
+        - Don't populate m_pageURLToIconURLMap with all urls from database on startup, instead let it get populated
+          when urls are accessed (user opens history menu for example). This shouldn't have any real performance impact 
+          as the accesses are icon loads that need to hit the database anyway. This saves ~700kB.
+          
+        All in all with this Icon.db these changes reduce allocated memory by around 2.7MB on startup. Release build
+        Safari RPRVT (empty start page) goes from 12.4MB to 10.4MB (TCMalloc pooling probably explaining why the win 
+        looks bit smaller here).
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::deleteAllPreparedStatements):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::establishIconIDForIconURL):
+        (WebCore::IconDatabase::pruneUnretainedIconsOnStartup):
+        * loader/icon/IconDatabase.h:
+
 2007-07-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
