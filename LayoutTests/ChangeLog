@@ -1,5 +1,15 @@
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Remove more redundant isSafeScript checks.
+
+        * http/tests/security/cross-frame-access-custom-expected.txt:
+        * http/tests/security/cross-frame-access-get-expected.txt:
+        * http/tests/security/cross-frame-access-name-getter-expected.txt:
+
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff Garen.
 
         Rename cross-frame-access.html to cross-frame-access-get.html
