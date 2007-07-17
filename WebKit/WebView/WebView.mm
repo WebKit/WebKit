@@ -2268,7 +2268,7 @@ NS_ENDHANDLER
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)url
 {
-    return [self _userAgentForURL:KURL(url)];
+    return [self _userAgentForURL:KURL([url absoluteURL])];
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow

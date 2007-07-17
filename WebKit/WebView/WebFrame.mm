@@ -321,7 +321,7 @@ WebView *getWebView(WebFrame *webFrame)
     if (archive)
         [childFrame loadArchive:archive];
     else
-        [childFrame _frameLoader]->load(URL, referrer, childLoadType,
+        [childFrame _frameLoader]->load([URL absoluteURL], referrer, childLoadType,
                                         String(), 0, 0);
 }
 
@@ -768,12 +768,12 @@ static NSURL *createUniqueWebDataURL()
         responseURL = createUniqueWebDataURL();
     }
     
-    ResourceRequest request(URL);
+    ResourceRequest request([URL absoluteURL]);
 
     // hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest()];
 
-    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, unreachableURL, responseURL);
+    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, [unreachableURL absoluteURL], responseURL);
 
     [self _frameLoader]->load(request, substituteData);
 }

@@ -1,3 +1,17 @@
+2007-07-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5336267> loadData:MIMEType:textEncodingName:baseURL: doesn't like relative URLs
+
+        Get the absoluteURL from any user supplied NSURL before we pass it down to WebCore.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        * WebView/WebView.mm:
+        (-[WebView userAgentForURL:]):
+
 2007-07-17  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item
