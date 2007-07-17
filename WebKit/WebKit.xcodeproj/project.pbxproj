@@ -26,7 +26,6 @@
 		1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA57D600AED6A470009BDD0 /* WebGraphicsExtras.h */; };
 		1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CA57D610AED6A470009BDD0 /* WebGraphicsExtras.c */; };
 		1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */; };
-		1CE502610C4D48E000F0494E /* WebKit.LP64.exp in Sources */ = {isa = PBXBuildFile; fileRef = 1CE502600C4D48E000F0494E /* WebKit.LP64.exp */; };
 		220398770922D816009C3FFC /* WebBaseNetscapePluginViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */; settings = {ATTRIBUTES = (); }; };
 		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
@@ -1528,7 +1527,6 @@
 				06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */,
 				BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */,
 				5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */,
-				1CE502610C4D48E000F0494E /* WebKit.LP64.exp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
