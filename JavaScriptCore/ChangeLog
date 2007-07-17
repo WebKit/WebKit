@@ -2,7 +2,7 @@
 
         Reviewed by Oliver.
 
-        Turn of -Wshorten-64-to-32 warning for 64-bit builds.
+        Turn off -Wshorten-64-to-32 warning for 64-bit builds.
 
         * Configurations/Base.xcconfig:
 
