@@ -288,8 +288,3 @@ void WebContextMenuClient::stopSpeaking()
 {
     [NSApp stopSpeaking];
 }
-
-bool WebContextMenuClient::shouldIncludeInspectElementItem()
-{
-    return [WebView _developerExtrasEnabled];
-}

@@ -1,5 +1,21 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Remove ContextMenuClient::shouldIncludeInspectElementItem
+
+        Reviewed by Tim.
+
+        No regression test possible.
+
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Use Settings
+        to determine whether to include the Inspect Element item.
+        * page/gdk/ContextMenuClientGdk.cpp:
+        * page/gdk/ContextMenuClientGdk.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Initialize ContextMenuController::m_page
 
         Somehow this variable had never been initialized before.

@@ -1,5 +1,14 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Remove WebContextMenuClient::shouldIncludeInspectElementItem
+
+        Reviewed by Tim.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Initialize Settings::developerExtrasEnabled
 
         Reviewed by Tim.

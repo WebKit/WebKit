@@ -45,7 +45,6 @@ public:
     virtual void lookUpInDictionary(WebCore::Frame*);
     virtual void speak(const WebCore::String&);
     virtual void stopSpeaking();
-    virtual bool shouldIncludeInspectElementItem();
 
 private:
     WebView* m_webView;

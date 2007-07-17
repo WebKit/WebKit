@@ -52,6 +52,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+#include "Settings.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -97,9 +98,7 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
     m_contextMenu->setPlatformDescription(customMenu);
 
-    // FIXME: We should be asking Settings whether to include the Inspect
-    // Element item, rather than our client.
-    if (m_client->shouldIncludeInspectElementItem())
+    if (m_page->settings()->developerExtrasEnabled())
         m_contextMenu->addInspectElementItem();
     event->setDefaultHandled();
 }

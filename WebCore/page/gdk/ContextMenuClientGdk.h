@@ -45,7 +45,6 @@ namespace WebCore {
         virtual void lookUpInDictionary(Frame*);
         virtual void speak(const String&);
         virtual void stopSpeaking();
-        virtual bool shouldIncludeInspectElementItem();
     };
 }
 
