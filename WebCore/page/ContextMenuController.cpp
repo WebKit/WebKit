@@ -95,11 +95,12 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
 
     m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();
+    if (m_page->settings()->developerExtrasEnabled())
+        m_contextMenu->addInspectElementItem();
+
     PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
     m_contextMenu->setPlatformDescription(customMenu);
 
-    if (m_page->settings()->developerExtrasEnabled())
-        m_contextMenu->addInspectElementItem();
     event->setDefaultHandled();
 }
 

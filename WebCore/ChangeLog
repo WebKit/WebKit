@@ -1,5 +1,20 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item
+        http://bugs.webkit.org/show_bug.cgi?id=14324
+
+        Reviewed by Tim.
+
+        No regression test possible.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Add the
+        Inspect Element item to the menu before passing it to the
+        ContextMenuClient so that the UI delegate has a chance to
+        modify/remove the item.
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Remove ContextMenuClient::shouldIncludeInspectElementItem
 
         Reviewed by Tim.

@@ -71,14 +71,37 @@ static BOOL isPreVersion3Client(void)
     return preVersion3Client;
 }
 
-static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
+static BOOL isPreInspectElementTagClient(void)
 {
+    static BOOL preInspectElementTagClient = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_INSPECT_ELEMENT_MENU_TAG);
+    return preInspectElementTagClient;
+}
+
+static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
+{
+    NSMutableArray *savedItems = nil;
+
+    unsigned defaultItemsCount = [defaultMenuItems count];
+
+    if (isPreInspectElementTagClient()) {
+        NSMenuItem *secondToLastItem = [defaultMenuItems objectAtIndex:defaultItemsCount - 2];
+        NSMenuItem *lastItem = [defaultMenuItems objectAtIndex:defaultItemsCount - 1];
+
+        if ([secondToLastItem isSeparatorItem] && [lastItem tag] == WebMenuItemTagInspectElement) {
+            savedItems = [NSMutableArray arrayWithCapacity:2];
+            [savedItems addObject:secondToLastItem];
+            [savedItems addObject:lastItem];
+
+            [defaultMenuItems removeObject:secondToLastItem];
+            [defaultMenuItems removeObject:lastItem];
+        }
+    }
+
     BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
-        return;
+        return savedItems;
         
     BOOL isMail = isAppleMail();
-    unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
         int tag = [item tag];
@@ -123,10 +146,15 @@ static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
         if (oldStyleTag != tag)
             [item setTag:oldStyleTag];
     }
+
+    return savedItems;
 }
 
-static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems)
+static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *savedItems)
 {   
+    if (savedItems)
+        [newMenuItems addObjectsFromArray:savedItems];
+
     BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
         return;
@@ -240,9 +268,10 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
     for (unsigned i = 0; i < defaultItemsCount; ++i)
         [[defaultMenuItems objectAtIndex:i] setRepresentedObject:element];
             
-    fixMenusToSendToOldClients(defaultMenuItems);
+    NSMutableArray *savedItems = [fixMenusToSendToOldClients(defaultMenuItems) retain];
     NSMutableArray *newMenuItems = [[[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy] autorelease];
-    fixMenusReceivedFromOldClients(newMenuItems);
+    fixMenusReceivedFromOldClients(newMenuItems, savedItems);
+    [savedItems release];
     return newMenuItems;
 }
 

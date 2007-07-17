@@ -1,5 +1,22 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item
+        http://bugs.webkit.org/show_bug.cgi?id=14324
+
+        If we detect that we're running against the Safari 3 Beta, we add back
+        the Inspect Element menu item after passing it off to the delegate
+        because Safari's UI delegate will remove it.
+
+        Reviewed by Tim.
+
+        * WebContextMenuClient.cpp:
+        (isPreInspectElementTagSafari): Added.
+        (fixMenuReceivedFromOldSafari): Added.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Call
+        fixMenuReceivedFromOldSafari before returning the new menu.
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Remove WebContextMenuClient::shouldIncludeInspectElementItem
 
         Reviewed by Tim.

@@ -1,5 +1,25 @@
 2007-07-17  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 14324: Cannot remove/customize the "Inspect Element" contextual menu item
+        http://bugs.webkit.org/show_bug.cgi?id=14324
+
+        Only clients linking against new versions of WebKit will see the item.
+        I've maintained our behavior for old clients of not including the
+        Inspect Element item in the menu items passed to the UI delegate.
+
+        Reviewed by Tim.
+
+        * Misc/WebKitVersionChecks.h: Added a new constant.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (isPreInspectElementTagClient): Added.
+        (fixMenusToSendToOldClients): Return an array of items that should be
+        appended to the menu received from the delegate.
+        (fixMenusReceivedFromOldClients): Append the saved items to the array.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Retain/release
+        the saved items.
+
+2007-07-17  Adam Roben  <aroben@apple.com>
+
         Remove WebContextMenuClient::shouldIncludeInspectElementItem
 
         Reviewed by Tim.
