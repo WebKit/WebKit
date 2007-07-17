@@ -3911,8 +3911,36 @@ bool WebView::onIMENotify(WPARAM, LPARAM, LRESULT*)
     return false;
 }
 
-bool WebView::onIMERequest(WPARAM, LPARAM, LRESULT*)
+bool WebView::onIMERequestCharPosition(IMECHARPOSITION* charPos, LRESULT* result)
+{    
+    IntRect caret;
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame)
+        return true;
+    if (RefPtr<Range> range = targetFrame->selectionController()->selection().toRange()) {
+        ExceptionCode ec = 0;
+        RefPtr<Range> tempRange = range->cloneRange(ec);
+        caret = targetFrame->firstRectForRange(tempRange.get());
+    }
+    caret = targetFrame->view()->contentsToWindow(caret);
+    charPos->pt.x = caret.x();
+    charPos->pt.y = caret.y();
+    ::ClientToScreen(m_viewWindow, &charPos->pt);
+    charPos->cLineHeight = caret.height();
+    ::GetWindowRect(m_viewWindow, &charPos->rcDocument);
+    *result = TRUE;
+    return true;
+}
+
+bool WebView::onIMERequest(WPARAM request, LPARAM data, LRESULT* result)
 {
+    switch (request) {
+        case IMR_RECONVERTSTRING:
+            return false;
+
+        case IMR_QUERYCHARPOSITION:
+            return onIMERequestCharPosition((IMECHARPOSITION*)data, result);
+    }
     return false;
 }
 

@@ -1,3 +1,16 @@
+2007-07-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5334826> Chinese IME composition window does not appear in the correct location
+
+        Respect IME requests for character position.
+
+        * WebView.cpp:
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequest):
+        * WebView.h:
+
 2007-07-16  Adam Roben  <aroben@apple.com>
 
         WebKit/win part of <rdar://problem/5336005> Calling window.print() on a subframe prints whole page, should only print that subframe

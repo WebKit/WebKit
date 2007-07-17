@@ -675,6 +675,7 @@ protected:
     void initializeToolTipWindow();
     void prepareCandidateWindow(WebCore::Frame*, HIMC);
     void updateSelectionForIME();
+    bool onIMERequestCharPosition(IMECHARPOSITION*, LRESULT*);
     ULONG m_refCount;
     WebCore::String m_groupName;
     HWND m_hostWindow;
