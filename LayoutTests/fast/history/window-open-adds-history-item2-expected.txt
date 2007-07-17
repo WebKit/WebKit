@@ -1,6 +1,0 @@
-This page dumps the back/forward list that results from calling window.open targeted at _top
-
-============== Back Forward List ==============
-        file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/window-open-adds-history-item2.html  **nav target**
-curr->  file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/window-open-adds-history-item2.html?1  **nav target**
-===============================================

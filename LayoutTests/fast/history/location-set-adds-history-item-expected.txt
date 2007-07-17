@@ -1,6 +1,0 @@
-This page dumps the back/forward list that results from setting window.location
-
-============== Back Forward List ==============
-        file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/location-set-adds-history-item.html  **nav target**
-curr->  file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/location-set-adds-history-item.html?1  **nav target**
-===============================================

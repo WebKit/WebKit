@@ -1,6 +1,0 @@
-This page dumps the back/forward list that results from calling location.assign
-
-============== Back Forward List ==============
-        file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/location-assign-adds-history-item.html  **nav target**
-curr->  file:///Volumes/Big/ggaren/Labyrinth/OpenSource/LayoutTests/fast/history/location-assign-adds-history-item.html?1  **nav target**
-===============================================

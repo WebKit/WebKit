@@ -1,4 +1,8 @@
--we2007-07-16  Geoffrey Garen  <ggaren@apple.com>
+2007-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Forgot to do the delete half of the file move. Oops.
+
+2007-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a bunch of layout test failures I just caused.
         
