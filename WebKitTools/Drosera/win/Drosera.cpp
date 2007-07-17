@@ -29,7 +29,7 @@
 #include "config.h"
 #include "Drosera.h"
 
-#include "DebuggerObjectCallbacks.h"
+#include "DebuggerDocumentWin.h"
 #include "HelperFunctions.h"
 #include "resource.h"
 #include <JavaScriptCore/JSStringRef.h>

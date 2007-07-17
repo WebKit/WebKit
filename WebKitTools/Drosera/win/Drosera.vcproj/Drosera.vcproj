@@ -42,19 +42,21 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\Test&quot;;&quot;$(ProjectDir)\VistaSDK\Include&quot;;&quot;$(ProjectDir)\WTL75\include&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore\wtf\os-win32&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore\wtf\os-win32&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(IntDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="1"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="DroseraPrefix.h"
 				WarningLevel="4"
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4127"
+				ForcedIncludeFiles="DroseraPrefix.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -139,17 +141,19 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\Test&quot;;&quot;$(ProjectDir)\VistaSDK\Include&quot;;&quot;$(ProjectDir)\WTL75\include&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore\wtf\os-win32&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore\wtf\os-win32&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(IntDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;NDEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="1"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="DroseraPrefix.h"
 				WarningLevel="4"
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4127"
+				ForcedIncludeFiles="DroseraPrefix.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -217,7 +221,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\DebuggerObjectCallbacks.cpp"
+				RelativePath="..\..\DebuggerDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\DebuggerDocumentWin.cpp"
 				>
 			</File>
 			<File
@@ -225,7 +233,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\stdafx.cpp"
+				RelativePath="..\DroseraPrefix.cpp"
 				>
 			</File>
 		</Filter>
@@ -239,15 +247,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\config.h"
+				>
+			</File>
+			<File
 				RelativePath="..\DebuggerApplication.h"
 				>
 			</File>
 			<File
-				RelativePath="..\DebuggerObjectCallbacks.h"
+				RelativePath="..\..\DebuggerDocument.h"
+				>
+			</File>
+			<File
+				RelativePath="..\DebuggerDocumentWin.h"
 				>
 			</File>
 			<File
 				RelativePath="..\Drosera.h"
+				>
+			</File>
+			<File
+				RelativePath="..\DroseraPrefix.h"
 				>
 			</File>
 			<File
@@ -256,10 +276,6 @@
 			</File>
 			<File
 				RelativePath="..\resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\stdafx.h"
 				>
 			</File>
 		</Filter>

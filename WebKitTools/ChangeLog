@@ -1,5 +1,20 @@
 2007-07-16  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin.
+
+        - Continued x-platform modifications.
+
+        * Drosera/win/DebuggerDocumentWin.cpp: Copied from Drosera/win/DebuggerObjectCallbacks.cpp.
+        * Drosera/win/DebuggerDocumentWin.h: Copied from Drosera/win/DebuggerObjectCallbacks.h.
+        * Drosera/win/DebuggerObjectCallbacks.cpp: Removed.
+        * Drosera/win/DebuggerObjectCallbacks.h: Removed.
+        * Drosera/win/Drosera.cpp:
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+        * Drosera/win/stdafx.cpp: Removed.
+        * Drosera/win/stdafx.h: Removed.
+
+2007-07-16  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         - Modified files to use cross-platform code.
