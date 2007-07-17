@@ -1,3 +1,11 @@
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Turn of -Wshorten-64-to-32 warning for 64-bit builds.
+
+        * Configurations/Base.xcconfig:
+
 2007-07-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

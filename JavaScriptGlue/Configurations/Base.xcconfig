@@ -23,4 +23,11 @@ GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
 VALID_ARCHS = i386 ppc x86_64 ppc64;
-WARNING_CFLAGS = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double -Wundef -Wshorten-64-to-32 -Wno-strict-aliasing;
+WARNING_CFLAGS = $(WARNING_CFLAGS_$(CURRENT_ARCH));
+WARNING_CFLAGS_BASE = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double -Wundef -Wno-strict-aliasing;
+WARNING_CFLAGS_ = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
+WARNING_CFLAGS_i386 = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
+WARNING_CFLAGS_ppc = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
+// FIXME: JavaScriptGlue 64-bit builds should build with -Wshorten-64-to-32
+WARNING_CFLAGS_ppc64 = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
