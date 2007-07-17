@@ -46,6 +46,9 @@ public:
     {
     }
 
+    //-- Not sure of a good naming scheme here. --//
+    //-- These are the calls out of the JS. --//
+
     bool isPaused();
     void pause();
     void resume();
@@ -56,9 +59,28 @@ public:
     JSStringRef valueForScopeVariableNamed(CallFrame frame, JSStringRef key);
 
     static JSValueRef breakpointEditorHTML(JSContextRef context);
+    
+    //-- Not sure of a good naming scheme here. --//
+    //-- These are the calls into the JS. --//
+    static void pause(JSContextRef);
+    static void resume(JSContextRef);
+    static void stepInto(JSContextRef);
+    static void stepOver(JSContextRef);
+    static void stepOut(JSContextRef);
+    static void showConsole(JSContextRef);
+    static void closeCurrentFile(JSContextRef);
+    static void updateFileSource(JSContextRef, JSStringRef documentSource, JSStringRef url);
+    static void didParseScript(JSContextRef, JSStringRef source, JSStringRef documentSource, JSStringRef url, JSValueRef sourceId, JSValueRef baseLine);
+    static void willExecuteStatement(JSContextRef, JSValueRef sourceId, JSValueRef lineno);
+    static void didEnterCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno);
+    static void willLeaveCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno);
+    static void exceptionWasRaised(JSContextRef, JSValueRef sourceId, JSValueRef lineno);
 
 private:
+    static void callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[]);   // Implementation for calls into JS
+
     bool m_paused;
 };
 
-#endif //DebuggerDocumentImpl_H
+#endif //DebuggerDocument_H
+

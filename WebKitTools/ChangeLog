@@ -1,3 +1,40 @@
+2007-07-17  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Implemented cross-platform code for functions calling into the JavaScript.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::callAsFunction):
+        (DebuggerDocument::pauseJS):
+        (DebuggerDocument::resumeJS):
+        (DebuggerDocument::stepIntoJS):
+        (DebuggerDocument::stepOverJS):
+        (DebuggerDocument::stepOutJS):
+        (DebuggerDocument::showConsoleJS):
+        (DebuggerDocument::closeCurrentFileJS):
+        (DebuggerDocument::updateFileSource):
+        (DebuggerDocument::didParseScript):
+        (DebuggerDocument::willExecuteStatement):
+        (DebuggerDocument::didEnterCallFrame):
+        (DebuggerDocument::willLeaveCallFrame):
+        (DebuggerDocument::exceptionWasRaised):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/mac/DebuggerDocumentMac.mm:
+        (-[DebuggerDocumentMac pause:]):
+        (-[DebuggerDocumentMac resume:]):
+        (-[DebuggerDocumentMac stepInto:]):
+        (-[DebuggerDocumentMac stepOver:]):
+        (-[DebuggerDocumentMac stepOut:]):
+        (-[DebuggerDocumentMac showConsole:]):
+        (-[DebuggerDocumentMac closeCurrentFile:]):
+        (-[DebuggerDocumentMac webView:didLoadMainResourceForDataSource:]):
+        (-[DebuggerDocumentMac webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[DebuggerDocumentMac webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocumentMac webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocumentMac webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocumentMac webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+
 2007-07-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

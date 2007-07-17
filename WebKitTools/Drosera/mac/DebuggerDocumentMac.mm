@@ -228,37 +228,37 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (IBAction)pause:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"pause" withArguments:nil];
+    DebuggerDocument::pause([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)resume:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"resume" withArguments:nil];
+    DebuggerDocument::resume([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepInto:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"stepInto" withArguments:nil];
+    DebuggerDocument::stepInto([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepOver:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"stepOver" withArguments:nil];
+    DebuggerDocument::stepOver([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepOut:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"stepOut" withArguments:nil];
+    DebuggerDocument::stepOut([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)showConsole:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"showConsoleWindow" withArguments:nil];
+    DebuggerDocument::showConsole([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)closeCurrentFile:(id)sender
 {
-    [[webView windowScriptObject] callWebScriptMethod:@"closeCurrentFile" withArguments:nil];
+    callbacks->closeCurrentFile([[webView mainFrame] globalContext]);
 }
 
 #pragma mark -
@@ -581,22 +581,23 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 #pragma mark Debug Listener Callbacks
 
 - (void)webView:(WebView *)view didLoadMainResourceForDataSource:(WebDataSource *)dataSource
-{
-    NSString *documentSourceCopy = nil;
+{  
+    NSString *documentSource = nil;
     id <WebDocumentRepresentation> rep = [dataSource representation];
     if ([rep canProvideDocumentSource])
-        documentSourceCopy = [[rep documentSource] copy];
+        documentSource = [rep documentSource];
 
-    if (!documentSourceCopy)
+    if (!documentSource)
         return;
 
-    NSString *urlCopy = [[[[dataSource response] URL] absoluteString] copy];
-    NSArray *args = [[NSArray alloc] initWithObjects:(documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithBool:NO], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"updateFileSource" withArguments:args];
+    JSStringRef documentSourceJS = JSStringCreateWithCFString((CFStringRef)documentSource);     // We already checked for NULL
+    NSString *url = [[[dataSource response] URL] absoluteString];
+    JSStringRef urlJS = JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR(""));
 
-    [args release];
-    [documentSourceCopy release];
-    [urlCopy release];
+    DebuggerDocument::updateFileSource([[webView mainFrame] globalContext], documentSourceJS, urlJS);
+
+    JSStringRelease(documentSourceJS);
+    JSStringRelease(urlJS);
 }
 
 - (void)webView:(WebView *)view didParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
@@ -620,10 +621,19 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
             urlCopy = [[[[dataSource response] URL] absoluteString] copy];
     }
 
-    NSArray *args = [[NSArray alloc] initWithObjects:sourceCopy, (documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithInt:sid], [NSNumber numberWithUnsignedInt:baseLine], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"didParseScript" withArguments:args];
+    JSStringRef sourceCopyJS = JSStringCreateWithCFString((CFStringRef)sourceCopy);  // We checked for NULL earlier.
+    JSStringRef documentSourceCopyJS = JSStringCreateWithCFString(documentSourceCopy ? (CFStringRef)documentSourceCopy : (CFStringRef)@"");
+    JSStringRef urlCopyJS = JSStringCreateWithCFString(urlCopy ? (CFStringRef)urlCopy : (CFStringRef)@"");
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef sidJS = JSValueMakeNumber(context, sid);     // JSValueRefs are garbage collected
+    JSValueRef baseLineJS = JSValueMakeNumber(context, baseLine);
 
-    [args release];
+    DebuggerDocument::didParseScript(context, sourceCopyJS, documentSourceCopyJS, urlCopyJS, sidJS, baseLineJS);
+
+    JSStringRelease(sourceCopyJS);
+    JSStringRelease(documentSourceCopyJS);
+    JSStringRelease(urlCopyJS);
+
     [sourceCopy release];
     [documentSourceCopy release];
     [urlCopy release];
@@ -642,10 +652,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     currentFrame = [frame retain];
     [old release];
 
-//webView->mainframe->JSObejctRef->
-    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"didEnterCallFrame" withArguments:args];
-    [args release];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef sidJS = JSValueMakeNumber(context, sid);
+    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
+
+    DebuggerDocument::didEnterCallFrame(context, sidJS, linenoJS);
 }
 
 - (void)webView:(WebView *)view willExecuteStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -653,9 +664,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!webViewLoaded)
         return;
 
-    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"willExecuteStatement" withArguments:args];
-    [args release];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef sidJS = JSValueMakeNumber(context, sid);
+    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
+
+    DebuggerDocument::willExecuteStatement(context, sidJS, linenoJS);
 }
 
 - (void)webView:(WebView *)view willLeaveCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -663,9 +676,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!webViewLoaded)
         return;
 
-    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"willLeaveCallFrame" withArguments:args];
-    [args release];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef sidJS = JSValueMakeNumber(context, sid);
+    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
+
+    DebuggerDocument::willLeaveCallFrame(context, sidJS, linenoJS);
 
     id old = currentFrame;
     currentFrame = [[frame caller] retain];
@@ -677,8 +692,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!webViewLoaded)
         return;
 
-    NSArray *args = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
-    [[webView windowScriptObject] callWebScriptMethod:@"exceptionWasRaised" withArguments:args];
-    [args release];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSValueRef sidJS = JSValueMakeNumber(context, sid);
+    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
+
+    DebuggerDocument::exceptionWasRaised(context, sidJS, linenoJS);
 }
 @end
+

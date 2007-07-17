@@ -120,3 +120,103 @@ JSStringRef DebuggerDocument::valueForScopeVariableNamed(CallFrame /*frame*/, JS
 {
     return key;
 }
+
+//-- These are the calls into the JS. --//
+
+void DebuggerDocument::callGlobalFunction(JSContextRef context, const char* functionName, int argumentCount, JSValueRef arguments[])
+{
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+
+    JSStringRef string = JSStringCreateWithUTF8CString(functionName);
+    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, globalObject, string, 0), 0);
+    JSStringRelease(string);
+
+    JSObjectCallAsFunction(context, function, 0, argumentCount, arguments, 0);
+}
+    
+void DebuggerDocument::pause(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "pause", 0, 0);
+}
+
+void DebuggerDocument::resume(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "resume", 0, 0);
+}
+
+void DebuggerDocument::stepInto(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "stepInto", 0, 0);
+}
+
+void DebuggerDocument::stepOver(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "stepOver", 0, 0);
+}
+
+void DebuggerDocument::stepOut(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "stepOut", 0, 0);
+}
+
+void DebuggerDocument::showConsole(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "showConsole", 0, 0);
+}
+
+void DebuggerDocument::closeCurrentFile(JSContextRef context)
+{
+    DebuggerDocument::callGlobalFunction(context, "closeCurrentFile", 0, 0);
+}
+
+void DebuggerDocument::updateFileSource(JSContextRef context, JSStringRef documentSource, JSStringRef url)
+{
+    JSValueRef documentSourceValue = JSValueMakeString(context, documentSource);
+    JSValueRef urlValue = JSValueMakeString(context, url);
+    JSValueRef forceValue = JSValueMakeBoolean(context, false);
+
+    JSValueRef arguments[] = { documentSourceValue, urlValue, forceValue };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+
+    DebuggerDocument::callGlobalFunction(context, "updateFileSource", argumentsSize, arguments);
+}
+
+void DebuggerDocument::didParseScript(JSContextRef context, JSStringRef source, JSStringRef documentSource, JSStringRef url, JSValueRef sourceId, JSValueRef baseLine)
+{
+    JSValueRef sourceValue = JSValueMakeString(context, source);
+    JSValueRef documentSourceValue = JSValueMakeString(context, documentSource);
+    JSValueRef urlValue = JSValueMakeString(context, url);
+
+    JSValueRef arguments[] = { sourceValue, documentSourceValue, urlValue, sourceId, baseLine };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+    DebuggerDocument::callGlobalFunction(context, "didParseScript", argumentsSize, arguments);
+}
+
+void DebuggerDocument::willExecuteStatement(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+{
+    JSValueRef arguments[] = { sourceId, lineno };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+    DebuggerDocument::callGlobalFunction(context, "willExecuteStatement", argumentsSize, arguments);
+}
+
+void DebuggerDocument::didEnterCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+{
+    JSValueRef arguments[] = { sourceId, lineno };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+    DebuggerDocument::callGlobalFunction(context, "didEnterCallFrame", argumentsSize, arguments);
+}
+
+void DebuggerDocument::willLeaveCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+{
+    JSValueRef arguments[] = { sourceId, lineno };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+    DebuggerDocument::callGlobalFunction(context, "willLeaveCallFrame", argumentsSize, arguments);
+}
+
+void DebuggerDocument::exceptionWasRaised(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+{
+    JSValueRef arguments[] = { sourceId, lineno };
+    int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
+    DebuggerDocument::callGlobalFunction(context, "exceptionWasRaised", argumentsSize, arguments);
+}
+
