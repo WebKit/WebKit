@@ -1,3 +1,17 @@
+2007-07-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5339416> Candidate window does not
+                appear in the correct location for japanese IME
+
+        * WebView.cpp:
+        (WebView::prepareCandidateWindow):
+          We now use an exclusion zone so that the composition window never 
+          overlaps the composition string
+        (WebView::onIMERequestCharPosition):
+          Correctly handle character offsets marked regions
+
 2007-07-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

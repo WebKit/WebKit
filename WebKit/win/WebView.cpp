@@ -3704,13 +3704,13 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
     caret = targetFrame->view()->contentsToWindow(caret);
     CANDIDATEFORM form;
     form.dwIndex = 0;
-    form.dwStyle = CFS_CANDIDATEPOS;
+    form.dwStyle = CFS_EXCLUDE;
     form.ptCurrentPos.x = caret.x();
     form.ptCurrentPos.y = caret.y() + caret.height();
-    form.rcArea.top = 0;
-    form.rcArea.bottom = 0;
-    form.rcArea.left = 0;
-    form.rcArea.right = 0;
+    form.rcArea.top = caret.y();
+    form.rcArea.bottom = caret.bottom();
+    form.rcArea.left = caret.x();
+    form.rcArea.right = caret.right();
     IMMDict::dict().setCandidateWindow(hInputContext, &form);
 }
 
@@ -3912,11 +3912,13 @@ bool WebView::onIMENotify(WPARAM, LPARAM, LRESULT*)
 }
 
 bool WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* charPos, LRESULT* result)
-{    
+{
     IntRect caret;
-    if (RefPtr<Range> range = targetFrame->selectionController()->selection().toRange()) {
+    ASSERT(charPos->dwCharPos == 0 || targetFrame->markedTextRange());
+    if (RefPtr<Range> range = targetFrame->markedTextRange() ? targetFrame->markedTextRange() : targetFrame->selectionController()->selection().toRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
+        tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + charPos->dwCharPos, ec);
         caret = targetFrame->firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
