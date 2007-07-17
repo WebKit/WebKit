@@ -2,6 +2,17 @@
 
         Reviewed by Geoff Garen.
 
+        Rename cross-frame-access.html to cross-frame-access-get.html
+
+        * http/tests/security/cross-frame-access-expected.txt: Removed.
+        * http/tests/security/cross-frame-access-get-expected.txt: Copied from http/tests/security/cross-frame-access-expected.txt.
+        * http/tests/security/cross-frame-access-get.html: Copied from http/tests/security/cross-frame-access.html.
+        * http/tests/security/cross-frame-access.html: Removed.
+
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
         Move cross frame access put tests into cross-frame-access-put.html.
 
         * http/tests/security/cross-frame-access-custom-expected.txt:
