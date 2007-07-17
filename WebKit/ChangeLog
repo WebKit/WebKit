@@ -1,3 +1,14 @@
+2007-07-17  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/5294691> Source of file is misrepresented if downloaded by typing in URL in Safari address bar
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::download):
+        Revised code to check the initial request's referrer before assuming it has a history to check.
+
 2007-07-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

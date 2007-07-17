@@ -238,33 +238,43 @@ void WebFrameLoaderClient::detachedFromParent4()
     m_webFrame->_private->bridge = nil;
 }
 
-void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
 {
     id proxy = handle->releaseProxy();
     ASSERT(proxy);
     
     WebView *webView = getWebView(m_webFrame.get());
+    NSURLRequest *initialURLRequest = initialRequest.nsURLRequest();
     WebDownload *download = [WebDownload _downloadWithLoadingConnection:handle->connection()
                                                                 request:request.nsURLRequest()
                                                                response:response.nsURLResponse()
                                                                delegate:[webView downloadDelegate]
                                                                   proxy:proxy]; 
+    
     NSURL *originalURL = nil;
     WebBackForwardList *history = [webView backForwardList];
     WebHistoryItem *currentItem = nil;
     int backListCount = [history backListCount];
     int backCount = 0;
     
-    // find the first item in the history that was originated
-    // by the user
-    while (backListCount > 0 && !originalURL) {
-        currentItem = [history itemAtIndex:backCount--];
-        
-        if (![currentItem respondsToSelector:@selector(_wasUserGesture)] || [currentItem _wasUserGesture])
-            originalURL = [currentItem URL];
+    // if there was no referrer, don't traverse the backforward history
+    // since this download was initiated directly
+    // <rdar://problem/5294691>
+    if ([initialURLRequest valueForHTTPHeaderField:@"Referer"]) {
+        // find the first item in the history that was originated
+        // by the user
+        while (backListCount > 0 && !originalURL) {
+            currentItem = [history itemAtIndex:backCount--];
+            
+            if ([currentItem respondsToSelector:@selector(_wasUserGesture)] && [currentItem _wasUserGesture])
+                originalURL = [currentItem URL];
+        }
     }
+    
+    if (!originalURL)
+        originalURL = [initialURLRequest URL];
 
-    if (originalURL && [download respondsToSelector:@selector(_setOriginatingURL:)])
+    if ([download respondsToSelector:@selector(_setOriginatingURL:)])
         [download _setOriginatingURL:originalURL];
 }
 
