@@ -150,9 +150,8 @@ namespace KJS {
         ResizeBy, ResizeTo, ShowModalDialog,
 
         // Attributes
-        Crypto, Frames, Event_, Location_,
-        Navigator_, ClientInformation, Opener,
-        Parent, Self, Window_, Top,
+        Crypto, Event_, Location_, Navigator_,
+        ClientInformation,
 
         // Event Listeners
         Onabort, Onblur, Onchange, Onclick,

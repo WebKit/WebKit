@@ -169,16 +169,10 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   showModalDialog       Window::ShowModalDialog     DontDelete|Function 1
 # -- Attributes --
   crypto                Window::Crypto              DontDelete|ReadOnly
-  frames                Window::Frames              DontDelete|ReadOnly
   event                 Window::Event_              DontDelete
   location              Window::Location_           DontDelete
   navigator             Window::Navigator_          DontDelete|ReadOnly
   clientInformation     Window::ClientInformation   DontDelete|ReadOnly
-  opener                Window::Opener              DontDelete|ReadOnly
-  parent                Window::Parent              DontDelete|ReadOnly
-  self                  Window::Self                DontDelete|ReadOnly
-  window                Window::Window_             DontDelete|ReadOnly
-  top                   Window::Top                 DontDelete|ReadOnly
 # -- Event Listeners --
   onabort               Window::Onabort             DontDelete
   onblur                Window::Onblur              DontDelete
@@ -521,8 +515,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       if (!isSafeScript(exec))
         return jsUndefined();
       return getDOMExceptionConstructor(exec);
-    case Frames:
-      return retrieve(impl()->frame());
     case Event_:
       if (!isSafeScript(exec))
         return jsUndefined();
@@ -543,17 +535,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
       return n;
     }
-    case Opener:
-      if (impl()->frame()->loader()->opener())
-        return retrieve(impl()->frame()->loader()->opener());
-      return jsNull();
-    case Parent:
-      return retrieve(impl()->frame()->tree()->parent() ? impl()->frame()->tree()->parent() : impl()->frame());
-    case Self:
-    case Window_:
-      return retrieve(impl()->frame());
-    case Top:
-      return retrieve(impl()->frame()->page()->mainFrame());
     case Image:
       if (!isSafeScript(exec))
         return jsUndefined();

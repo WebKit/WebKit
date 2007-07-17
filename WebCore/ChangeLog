@@ -1,3 +1,24 @@
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Move self, opener, parent, top, window, and frames from kjs_window
+        to DOMWindow and auto-generate the bindings for them.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::self):
+        (WebCore::DOMWindow::opener):
+        (WebCore::DOMWindow::parent):
+        (WebCore::DOMWindow::top):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::window):
+        (WebCore::DOMWindow::frames):
+        * page/DOMWindow.idl:
+
 2007-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

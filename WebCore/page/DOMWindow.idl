@@ -88,6 +88,15 @@ module window {
                  attribute DOMString defaultstatus;
 #endif
 
+        // Self referential attributes
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow self;
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow window;
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow frames;
+
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow opener;
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow parent;
+        readonly attribute [DoNotCheckDomainSecurity] DOMWindow top;
+
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
 

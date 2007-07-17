@@ -441,6 +441,50 @@ void DOMWindow::setDefaultStatus(const String& string)
     m_frame->setJSDefaultStatusBarText(string);
 }
 
+DOMWindow* DOMWindow::self() const
+{
+    if (!m_frame)
+        return 0;
+
+    return m_frame->domWindow();
+}
+
+DOMWindow* DOMWindow::opener() const
+{
+    if (!m_frame)
+        return 0;
+
+    Frame* opener = m_frame->loader()->opener();
+    if (!opener)
+        return 0;
+
+    return opener->domWindow();
+}
+
+DOMWindow* DOMWindow::parent() const
+{
+    if (!m_frame)
+        return 0;
+
+    Frame* parent = m_frame->tree()->parent();
+    if (parent)
+        return parent->domWindow();
+
+    return m_frame->domWindow();
+}
+
+DOMWindow* DOMWindow::top() const
+{
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    return page->mainFrame()->domWindow();
+}
+
 Document* DOMWindow::document() const
 {
     if (!m_frame)
