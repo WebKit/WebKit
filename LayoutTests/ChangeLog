@@ -1,3 +1,19 @@
+2007-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Antti.
+        
+        <rdar://problem/5206311> 
+        Whitespace can't be removed when editing text pasted into from web page
+
+        * editing/deleting/5206311-1-expected.checksum: Added.
+        * editing/deleting/5206311-1-expected.png: Added.
+        * editing/deleting/5206311-1-expected.txt: Added.
+        * editing/deleting/5206311-1.html: Added.
+        * editing/deleting/5206311-2-expected.checksum: Added.
+        * editing/deleting/5206311-2-expected.png: Added.
+        * editing/deleting/5206311-2-expected.txt: Added.
+        * editing/deleting/5206311-2.html: Added.
+
 2007-07-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

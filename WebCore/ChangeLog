@@ -1,3 +1,30 @@
+2007-07-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5206311> 
+        Whitespace can't be removed when editing text pasted into from web page
+        
+        The whitespace comes from table rows that aren't being removed after they are
+        emptied out during a deletion.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableCell):
+        (WebCore::isTableRow):
+        (WebCore::isTableCellEmpty):
+        (WebCore::isTableRowEmpty):
+        (WebCore::DeleteSelectionCommand::initializePositionData): Remember the table
+        rows that contained the start and end of the selection.
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        Remove table rows that come before the end of the selection
+        that was removed (except for the row that contained the start of the selection
+        and any before that).
+        Remove table rows that are come after the start of the selection
+        that was removed (except for the row that contained the end of the selection
+        and any after that).
+        (WebCore::DeleteSelectionCommand::doApply): Call the new function.
+        * editing/DeleteSelectionCommand.h:
+
 2007-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

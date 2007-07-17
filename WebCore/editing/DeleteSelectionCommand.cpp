@@ -46,6 +46,36 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+bool isTableCell(Node* node)
+{
+    return node && (node->hasTagName(tdTag) || node->hasTagName(thTag));
+}
+
+bool isTableRow(Node* node)
+{
+    return node && node->hasTagName(trTag);
+}
+
+bool isTableCellEmpty(Node* cell)
+{
+    ASSERT(isTableCell(cell));
+    VisiblePosition firstInCell(Position(cell, 0));
+    VisiblePosition lastInCell(Position(cell, maxDeepOffset(cell)));
+    return firstInCell == lastInCell;
+}
+
+bool isTableRowEmpty(Node* row)
+{
+    if (!isTableRow(row))
+        return false;
+        
+    for (Node* child = row->firstChild(); child; child = child->nextSibling())
+        if (isTableCell(child) && !isTableCellEmpty(child))
+            return false;
+    
+    return true;
+}
+
 DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
     : CompositeEditCommand(document), 
       m_hasSelectionToDelete(false), 
@@ -139,6 +169,9 @@ void DeleteSelectionCommand::initializePositionData()
     
     m_startRoot = editableRootForPosition(start);
     m_endRoot = editableRootForPosition(end);
+    
+    m_startTableRow = enclosingNodeOfType(start.node(), &isTableRow);
+    m_endTableRow = enclosingNodeOfType(end.node(), &isTableRow);
     
     Node* startCell = enclosingTableCell(m_upstreamStart);
     Node* endCell = enclosingTableCell(m_downstreamEnd);
@@ -509,6 +542,35 @@ void DeleteSelectionCommand::mergeParagraphs()
     m_endingPosition = endingSelection().start();
 }
 
+void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
+{
+    if (m_endTableRow && m_endTableRow->inDocument()) {
+        Node* row = m_endTableRow.get();
+        // Do not remove the row that contained the start of the selection,
+        // since it now contains the selection.
+        while (row && row != m_startTableRow.get()) {
+            RefPtr<Node> previousRow = row->previousSibling();
+            if (isTableRowEmpty(row))
+                // Use a raw removeNode, instead of DeleteSelectionCommand's, because
+                // that won't remove rows, it only empties them in preparation for this function.
+                CompositeEditCommand::removeNode(row);
+            row = previousRow.get();
+        }
+    }
+    
+    if (m_startTableRow && m_startTableRow->inDocument()) {
+        // Do not remove the row that contained the start of the selection,
+        // since it now contains the selection.
+        Node* row = m_startTableRow->nextSibling();
+        while (row) {
+            RefPtr<Node> nextRow = row->nextSibling();
+            if (isTableRowEmpty(row))
+                CompositeEditCommand::removeNode(row);
+            row = nextRow.get();
+        }
+    }
+}
+
 void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlaceholder)
 {
     // Compute the difference between the style before the delete and the style now
@@ -646,6 +708,8 @@ void DeleteSelectionCommand::doApply()
     RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()) : 0;
     
     mergeParagraphs();
+    
+    removePreviouslySelectedEmptyTableRows();
     
     if (placeholder)
         insertNodeAt(placeholder.get(), m_endingPosition);
