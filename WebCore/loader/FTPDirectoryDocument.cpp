@@ -123,9 +123,9 @@ void FTPDirectoryTokenizer::appendEntry(const String& filename, const String& si
     RefPtr<Element> element = m_doc->createElementNS(xhtmlNamespaceURI, "td", ec);
     element->appendChild(new Text(m_doc, String(&noBreakSpace, 1)), ec);
     if (isDirectory)
-        element->setAttribute("class", "ftpDirectoryDirectoryRow", ec);
+        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", ec);
     else
-        element->setAttribute("class", "ftpDirectoryFileRow", ec);
+        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeFile", ec);
     rowElement->appendChild(element, ec);
     
     element = createTDForFilename(filename);

@@ -1,3 +1,13 @@
+2007-07-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Tweak the class names we give to the icon table cell to make it easier to style
+
+        * loader/FTPDirectoryDocument.cpp:
+          (WebCore::FTPDirectoryTokenizer::appendEntry): The the table cell a "IconCell" class name and
+          either a "FileType" or "DirectoryType" class name depending on the type
+
 2007-07-17  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by NOBODY.
