@@ -4,10 +4,10 @@
 </head>
 <body>
 <p>This test checks cross-frame access security (rdar://problem/5251309).</p>
-<iframe src="http://localhost:8000/security/resources/cross-frame-iframe.html" style=""></iframe>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html" style=""></iframe>
 <pre id="console"></pre>
 <script>
-var windowPropertiesNotAllowed = [
+var windowConstructorPropertiesNotAllowed = [
     "Attr", 
     "CDATASection", 
     "CSSPrimitiveValue", 
@@ -102,16 +102,42 @@ var windowPropertiesNotAllowed = [
     "XMLSerializer", 
     "XPathEvaluator", 
     "XPathResult", 
-    "XSLTProcessor", 
+    "XSLTProcessor"
+];
+
+var windowFunctionPropertiesNotAllowed = [
     "addEventListener", 
     "alert", 
-    "atob", 
+    "atob",
     "btoa", 
     "captureEvents", 
     "clearInterval", 
     "clearTimeout", 
+    "confirm",
+    "find", 
+    "getComputedStyle",
+    "getMatchedCSSRules", 
+    "getSelection", 
+    "moveBy", 
+    "moveTo", 
+    "open", 
+    "print", 
+    "prompt", 
+    "releaseEvents", 
+    "removeEventListener", 
+    "resizeBy", 
+    "resizeTo", 
+    "scroll", 
+    "scrollBy", 
+    "scrollTo", 
+    "setInterval", 
+    "setTimeout", 
+    "showModalDialog", 
+    "stop"
+];
+
+var windowAttributesPropertiesNotAllowed = [
     "clientInformation", 
-    "confirm", 
     "console", 
     "crypto", 
     "defaultStatus", 
@@ -121,18 +147,12 @@ var windowPropertiesNotAllowed = [
     "embeds",
     "eval",
     "event", 
-    "find", 
     "frameElement", 
-    "getComputedStyle",
-    "getMatchedCSSRules", 
-    "getSelection", 
     "images",
     "innerHeight", 
     "innerWidth", 
     "locationbar", 
     "menubar", 
-    "moveBy", 
-    "moveTo", 
     "name", 
     "navigator", 
     "offscreenBuffering", 
@@ -161,44 +181,33 @@ var windowPropertiesNotAllowed = [
     "onselect", 
     "onsubmit", 
     "onunload", 
-    "open", 
     "outerHeight", 
     "outerWidth", 
     "pageXOffset", 
     "pageYOffset", 
     "personalbar", 
     "plugins",
-    "print", 
-    "prompt", 
-    "releaseEvents", 
-    "removeEventListener", 
-    "resizeBy", 
-    "resizeTo", 
     "screen", 
     "screenLeft", 
     "screenTop", 
     "screenX", 
     "screenY", 
-    "scroll", 
-    "scrollBy", 
-    "scrollTo", 
     "scrollX", 
     "scrollY", 
     "scrollbars", 
-    "setInterval", 
-    "setTimeout", 
-    "showModalDialog", 
     "status", 
     "statusbar", 
-    "stop", 
     "toolbar"
 ];
 
-var windowPropertiesAllowed = [
+var windowFunctionPropertiesAllowed = [
     "blur",
     "close",
+    "focus"
+]
+
+var windowAttributesPropertiesAllowed = [
     "closed",
-    "focus",
     "frames",
     "history",
     "length",
@@ -216,19 +225,41 @@ window.onload = function()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    log("\n----- tests for getting/setting vanilla properties -----\n");
+    log("\n----- tests for getting of allowed properties -----\n");
 
-    for (var i = 0; i < windowPropertiesAllowed.length; i++) { //>
-        var property = windowPropertiesAllowed[i];
+    log("\n----- tests for getting of allowed Functions -----\n");
+    for (var i = 0; i < windowFunctionPropertiesAllowed.length; i++) {
+        var property = windowFunctionPropertiesAllowed[i];
         shouldBeTrue("canGet('targetWindow." + property + "')");
     }
 
-    for (var i = 0; i < windowPropertiesNotAllowed.length; i++) { //>
-        var property = windowPropertiesNotAllowed[i];
+    log("\n----- tests for getting of allowed Attributes -----\n");
+    for (var i = 0; i < windowAttributesPropertiesAllowed.length; i++) {
+        var property = windowAttributesPropertiesAllowed[i];
+        shouldBeTrue("canGet('targetWindow." + property + "')");
+    }
+
+
+    log("\n----- tests for getting of not allowed properties -----\n");
+
+    log("\n----- tests for getting of not allowed Constructors -----\n");
+    for (var i = 0; i < windowConstructorPropertiesNotAllowed.length; i++) {
+        var property = windowConstructorPropertiesNotAllowed[i];
+        shouldBeFalse("canGet('targetWindow." + property + "')");
+    }
+
+    log("\n----- tests for getting of not allowed Functions -----\n");
+    for (var i = 0; i < windowFunctionPropertiesNotAllowed.length; i++) {
+        var property = windowFunctionPropertiesNotAllowed[i];
+        shouldBeFalse("canGet('targetWindow." + property + "')");
+    }
+
+    log("\n----- tests for getting of not allowed Attributes -----\n");
+    for (var i = 0; i < windowAttributesPropertiesNotAllowed.length; i++) {
+        var property = windowAttributesPropertiesNotAllowed[i];
         if (property == "document")
             log("Firefox allows access to 'document' but throws an exception when you access its properties.");
         shouldBeFalse("canGet('targetWindow." + property + "')");
-        shouldBeFalse("canSet('targetWindow." + property + "')");
     }
 
     // Work around DRT bug that causes subsequent tests to fail.

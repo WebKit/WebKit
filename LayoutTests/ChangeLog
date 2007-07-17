@@ -1,3 +1,27 @@
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Move cross frame access put tests into cross-frame-access-put.html.
+
+        * http/tests/security/cross-frame-access-custom-expected.txt:
+        * http/tests/security/cross-frame-access-custom.html:
+        * http/tests/security/cross-frame-access-expected.txt:
+        * http/tests/security/cross-frame-access-first-time-expected.txt:
+        * http/tests/security/cross-frame-access-first-time.html:
+        * http/tests/security/cross-frame-access-frames.html:
+        * http/tests/security/cross-frame-access-history.html:
+        * http/tests/security/cross-frame-access-location-expected.txt:
+        * http/tests/security/cross-frame-access-location.html:
+        * http/tests/security/cross-frame-access-name-getter-expected.txt:
+        * http/tests/security/cross-frame-access-name-getter.html:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/cross-frame-access-put.html:
+        * http/tests/security/cross-frame-access.html:
+        * http/tests/security/resources/cross-frame-iframe-for-get-test.html: Copied from http/tests/security/resources/cross-frame-iframe.html.
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+        * http/tests/security/resources/cross-frame-iframe.html: Removed.
+
 2007-07-16  Adele Peterson  <adele@apple.com>
 
         Updated results for Tiger and filed:
