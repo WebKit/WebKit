@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -47,7 +45,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
-    : HTMLGenericFormElement(textareaTag, doc, f)
+    : HTMLFormControlElementWithState(textareaTag, doc, f)
     , m_rows(2)
     , m_cols(20)
     , m_wrap(ta_Virtual)
@@ -55,12 +53,6 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
     , cachedSelEnd(-1)
 {
     setValueMatchesRenderer();
-    document()->registerFormElementWithState(this);
-}
-
-HTMLTextAreaElement::~HTMLTextAreaElement()
-{
-    document()->unregisterFormElementWithState(this);
 }
 
 const AtomicString& HTMLTextAreaElement::type() const
@@ -69,9 +61,10 @@ const AtomicString& HTMLTextAreaElement::type() const
     return textarea;
 }
 
-String HTMLTextAreaElement::stateValue() const
+bool HTMLTextAreaElement::saveState(String& result) const
 {
-    return value();
+    result = value();
+    return true;
 }
 
 void HTMLTextAreaElement::restoreState(const String& state)
@@ -165,7 +158,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == onchangeAttr)
         setHTMLEventListener(changeEvent, attr);
     else
-        HTMLGenericFormElement::parseMappedAttribute(attr);
+        HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -192,12 +185,12 @@ void HTMLTextAreaElement::reset()
 bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent*) const
 {
     // If text areas can be focused, then they should always be keyboard focusable
-    return HTMLGenericFormElement::isFocusable();
+    return HTMLFormControlElementWithState::isFocusable();
 }
 
 bool HTMLTextAreaElement::isMouseFocusable() const
 {
-    return HTMLGenericFormElement::isFocusable();
+    return HTMLFormControlElementWithState::isFocusable();
 }
 
 void HTMLTextAreaElement::focus(bool)
@@ -240,7 +233,7 @@ void HTMLTextAreaElement::defaultEventHandler(Event *evt)
     if (renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent))
         static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
 
-    HTMLGenericFormElement::defaultEventHandler(evt);
+    HTMLFormControlElementWithState::defaultEventHandler(evt);
 }
 
 void HTMLTextAreaElement::rendererWillBeDestroyed()

@@ -1,3 +1,78 @@
+2007-07-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14569
+          Repro crash due to saved state not being cleared when select and textarea elements
+          are adopted by another document
+
+        Test: fast/forms/saved-state-adoptNode-crash.html
+
+        * dom/Document.h:
+        (WebCore::Document::registerFormElementWithState): Updated parameter type to be
+        HTMLFormControlElementWithState.
+        (WebCore::Document::unregisterFormElementWithState): Ditto.
+        Also removed isFormElementRegistered function and changed the type of the
+        m_formElementsWithState ListHashSet.
+        * dom/Document.cpp: (WebCore::Document::formElementsState): Updated to use new type,
+        for set contents and to use new saveState() function and only save state for elements
+        that return true.
+
+        * html/HTMLGenericFormElement.h: Added HTMLFormControlElementWithState class,
+        derived from HTMLGenericFormElement, and moved down all the behavior related to
+        saving form control element state. Also removed the unnecessary default parameter
+        to the HTMLGenericFormElement constructor.
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLFormControlElementWithState::HTMLFormControlElementWithState): Added.
+        Calls registerFormElementWithState.
+        (WebCore::HTMLFormControlElementWithState::~HTMLFormControlElementWithState): Added.
+        Calls unregisterFormElementWithState.
+        (WebCore::HTMLFormControlElementWithState::willMoveToNewOwnerDocument): Added.
+        Calls unregisterFormElementWithState.
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewOwnerDocument): Added.
+        Calls registerFormElementWithState.
+        (WebCore::HTMLFormControlElementWithState::closeRenderer): Moved to this class from
+        the base class.
+
+        * html/HTMLInputElement.h: Updated the base class name and overrode saveState instead
+        of stateValue.
+        * html/HTMLInputElement.cpp: Updated the base class name.
+        (WebCore::HTMLInputElement::init): Removed the call to registerFormElementWithState.
+        (WebCore::HTMLInputElement::~HTMLInputElement): Removed the call to
+        unregisterFormElementWithState. Also changed the code to only call the
+        unregisterForDidRestoreFromCacheCallback function for type PASSWORD (consistency
+        and efficiency).
+        (WebCore::HTMLInputElement::setInputType): Removed calls to registerFormElementWithState
+        and unregisterFormElementWithState; we now let the element stay registered and simply
+        don't save or restore state for password fields.
+        (WebCore::HTMLInputElement::saveState): Updated function name and signature to replace
+        the old stateValue function. Returns false for password fields.
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument): Removed the call to
+        unregisterFormElementWithState.
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument): Removed the call to
+        registerFormElementWithState.
+
+        * html/HTMLSelectElement.h: Updated the base class name and overrode saveState instead
+        of stateValue.
+        * html/HTMLSelectElement.cpp: Updated the base class name.
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Removed the call to
+        registerFormElementWithState.
+        (WebCore::HTMLSelectElement::~HTMLSelectElement): Removed the call to
+        unregisterFormElementWithState.
+        (WebCore::HTMLSelectElement::saveState): Updated function name and signature to
+        replace the old stateValue function.
+        (WebCore::HTMLSelectElement::setLength): Updated to use document() instead of
+        ownerDocument(); the latter is just a slower virtual-function way of doing the
+        same thing in all cases except for Document and XPathNamespace.
+
+        * html/HTMLTextAreaElement.h: Update the base class name, overrode saveState instead
+        of stateValue, and removed the now-unnecessary explicit destructor.
+        * html/HTMLTextAreaElement.cpp: Updated the base class name.
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Removed the call to
+        registerFormElementWithState.
+        (WebCore::HTMLTextAreaElement::saveState): Updated function name and signature to replace
+        the old stateValue function.
+
 2007-07-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

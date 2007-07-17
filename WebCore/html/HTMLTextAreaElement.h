@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,12 +30,11 @@ namespace WebCore {
 
 class Selection;
 
-class HTMLTextAreaElement : public HTMLGenericFormElement {
+class HTMLTextAreaElement : public HTMLFormControlElementWithState {
 public:
     enum WrapMethod { ta_NoWrap, ta_Virtual, ta_Physical };
 
     HTMLTextAreaElement(Document*, HTMLFormElement* = 0);
-    ~HTMLTextAreaElement();
 
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
@@ -50,7 +47,7 @@ public:
 
     virtual const AtomicString& type() const;
 
-    virtual String stateValue() const;
+    virtual bool saveState(String& value) const;
     virtual void restoreState(const String&);
 
     bool readOnly() const { return isReadOnlyControl(); }

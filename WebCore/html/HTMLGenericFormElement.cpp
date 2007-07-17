@@ -40,7 +40,11 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLGenericFormElement::HTMLGenericFormElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLElement(tagName, doc), m_form(f), m_disabled(false), m_readOnly(false), m_valueMatchesRenderer(false)
+    : HTMLElement(tagName, doc)
+    , m_form(f)
+    , m_disabled(false)
+    , m_readOnly(false)
+    , m_valueMatchesRenderer(false)
 {
     if (!m_form)
         m_form = findFormAncestor();
@@ -189,32 +193,6 @@ bool HTMLGenericFormElement::isMouseFocusable() const
     return false;
 }
 
-String HTMLGenericFormElement::stateValue() const
-{
-    // Should only reach here if object is inserted into the "form element with
-    // state" set. If so, the derived class is responsible for implementing this function.
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-void HTMLGenericFormElement::restoreState(const String&)
-{
-    // Should only reach here if object of this type was once inserted into the
-    // "form element with state" set. If so, the derived class is responsible for
-    // implementing this function.
-    ASSERT_NOT_REACHED();
-}
-
-void HTMLGenericFormElement::closeRenderer()
-{
-    Document* doc = document();
-    if (doc->isFormElementRegistered(this) && doc->hasStateForNewFormElements()) {
-        String state;
-        if (doc->takeStateForFormElement(name().impl(), type().impl(), state))
-            restoreState(state);
-    }
-}
-
 void HTMLGenericFormElement::setTabIndex(int value)
 {
     setAttribute(tabindexAttr, String::number(value));
@@ -228,6 +206,39 @@ bool HTMLGenericFormElement::supportsFocus() const
 HTMLFormElement* HTMLGenericFormElement::virtualForm() const
 {
     return m_form;
+}
+
+HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
+    : HTMLGenericFormElement(tagName, doc, f)
+{
+    doc->registerFormElementWithState(this);
+}
+
+HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
+{
+    document()->unregisterFormElementWithState(this);
+}
+
+void HTMLFormControlElementWithState::willMoveToNewOwnerDocument()
+{
+    document()->unregisterFormElementWithState(this);
+    HTMLGenericFormElement::willMoveToNewOwnerDocument();
+}
+
+void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
+{
+    document()->registerFormElementWithState(this);
+    HTMLGenericFormElement::didMoveToNewOwnerDocument();
+}
+
+void HTMLFormControlElementWithState::closeRenderer()
+{
+    Document* doc = document();
+    if (doc->hasStateForNewFormElements()) {
+        String state;
+        if (doc->takeStateForFormElement(name().impl(), type().impl(), state))
+            restoreState(state);
+    }
 }
 
 } // namespace Webcore

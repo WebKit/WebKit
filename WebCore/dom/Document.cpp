@@ -3431,13 +3431,16 @@ Vector<String> Document::formElementsState() const
 {
     Vector<String> stateVector;
     stateVector.reserveCapacity(m_formElementsWithState.size() * 3);
-    typedef ListHashSet<HTMLGenericFormElement*>::const_iterator Iterator;
+    typedef ListHashSet<HTMLFormControlElementWithState*>::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
-        HTMLGenericFormElement* e = *it;
-        stateVector.append(e->name().domString());
-        stateVector.append(e->type().domString());
-        stateVector.append(e->stateValue());
+        HTMLFormControlElementWithState* e = *it;
+        String value;
+        if (e->saveState(value)) {
+            stateVector.append(e->name().domString());
+            stateVector.append(e->type().domString());
+            stateVector.append(value);
+        }
     }
     return stateVector;
 }

@@ -1,3 +1,16 @@
+2007-07-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+        Landed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14569
+          Repro crash due to saved state not being cleared when select and textarea elements are adopted by another document
+          and for http://bugs.webkit.org/show_bug.cgi?id=13701
+          REGRESSION (r21431): Reproducible crash resulting from calling adoptNode on a password field
+
+        * fast/forms/saved-state-adoptNode-crash-expected.txt: Added.
+        * fast/forms/saved-state-adoptNode-crash.html: Added.
+
 2007-07-17  Darin Adler  <darin@apple.com>
 
         * http/tests/navigation/multiple-back-forward-entries-expected.txt: Updated results to
