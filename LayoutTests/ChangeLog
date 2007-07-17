@@ -1,3 +1,9 @@
+2007-07-17  Darin Adler  <darin@apple.com>
+
+        * http/tests/navigation/multiple-back-forward-entries-expected.txt: Updated results to
+        match what I see locally and what we see on the buildbot. Geoff, please double-check that
+        these new results are correct.
+
 2007-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Forgot to do the delete half of the file move. Oops.
