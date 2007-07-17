@@ -80,3 +80,5 @@ String WebCore::AXLinkText() { return String(LPCTSTR_UI_STRING("link", "accessib
 String WebCore::AXListMarkerText() { return String(LPCTSTR_UI_STRING("list marker", "accessibility role description for list marker")); }
 String WebCore::AXImageMapText() { return String(LPCTSTR_UI_STRING("image map", "accessibility role description for image map")); }
 String WebCore::AXHeadingText() { return String(LPCTSTR_UI_STRING("heading", "accessibility role description for headings")); }
+String WebCore::unknownFileSizeText() { return String(LPCTSTR_UI_STRING("Unknown", "Unknown filesize FTP directory listing item")); }
+

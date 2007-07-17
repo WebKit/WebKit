@@ -496,4 +496,12 @@ String AXHeadingText()
     return String();
 }
 
+String unknownFileSizeText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] unknownFileSizeText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 }

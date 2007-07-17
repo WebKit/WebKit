@@ -469,4 +469,9 @@
     return UI_STRING("heading", "accessibility role description for headings");
 }
 
+- (NSString *)unknownFileSizeText
+{
+    return UI_STRING("Unknown", "Unknown filesize FTP directory listing item");
+}
+
 @end

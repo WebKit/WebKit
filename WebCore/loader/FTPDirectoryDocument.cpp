@@ -34,6 +34,7 @@
 #include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "KURL.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "FTPDirectoryParser.h"
 #include "SegmentedString.h"
@@ -45,8 +46,6 @@
 using namespace std;
 
 namespace WebCore {
-
-const String UnknownFileSizeString = "unknown";
 
 using namespace HTMLNames;
     
@@ -181,7 +180,7 @@ static String processFilesizeString(const String& size, bool isDirectory)
     bool valid;
     int64_t bytes = size.toUInt64(&valid);
     if (!valid)
-        return UnknownFileSizeString;
+        return unknownFileSizeText();
      
     if (bytes < 1000000)
         return String::format("%.2f KB", static_cast<float>(bytes)/1000);

@@ -237,6 +237,7 @@ String WebCore::contextMenuItemTagInspectElement() { return String(); }
 String WebCore::searchMenuNoRecentSearchesText() { return String("No recent searches"); }
 String WebCore::searchMenuRecentSearchesText() { return String("Recent searches"); }
 String WebCore::searchMenuClearRecentSearchesText() { return String("Clear recent searches"); }
+String WebCore::unknownFileSizeText() { return "Unknown"; }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }

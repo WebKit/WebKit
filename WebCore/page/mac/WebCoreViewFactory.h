@@ -120,6 +120,9 @@
 - (NSString *)AXImageMapText;
 - (NSString *)AXHeadingText;
 
+// FTP Directory Related
+- (NSString *)unknownFileSizeText;
+
 @end
 
 @interface WebCoreViewFactory : NSObject

@@ -86,6 +86,7 @@ String AXLinkText() { return String(); }
 String AXListMarkerText() { return String(); }
 String AXImageMapText() { return String(); }
 String AXHeadingText() { return String(); }
+String unknownFileSizeText() { return "Unknown"; }
 
 }
 // vim: ts=4 sw=4 et

@@ -1,3 +1,25 @@
+2007-07-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Begin the arduous task of localizing FTP directory listings while removing a global initializer!
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::processFilesizeString):
+
+        * page/mac/WebCoreViewFactory.h:
+
+        * platform/LocalizedStrings.h:
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::unknownFileSizeText):
+
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::unknownFileSizeText):
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::unknownFileSizeText):
+
 2007-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

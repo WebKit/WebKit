@@ -93,6 +93,7 @@ namespace WebCore {
     String AXImageMapText();
     String AXHeadingText();
 
+    String unknownFileSizeText();
 }
 
 #endif
