@@ -1,3 +1,9 @@
+2007-07-17  Mark Rowe  <mrowe@apple.com>
+
+        Gdk build fix.
+
+        * platform/gdk/ChromeClientGdk.h:
+
 2007-07-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
