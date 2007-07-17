@@ -1,3 +1,11 @@
+2007-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        * WebView/WebFramePrivate.h:
+
 2007-07-17  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Maciej Stachowiak.

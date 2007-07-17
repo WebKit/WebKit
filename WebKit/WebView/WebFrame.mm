@@ -289,7 +289,7 @@ WebView *getWebView(WebFrame *webFrame)
     ASSERT(childFrame);
     HistoryItem* parentItem = core(self)->loader()->currentHistoryItem();
     FrameLoadType loadType = [self _frameLoader]->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeInternal;
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
 
     // If we're moving in the backforward list, we might want to replace the content
     // of this child frame with whatever was there at that point.
