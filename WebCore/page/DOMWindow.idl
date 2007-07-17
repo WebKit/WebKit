@@ -42,6 +42,22 @@ module window {
         [DoNotCheckDomainSecurity] void blur();
         [DoNotCheckDomainSecurity] void close();
 
+        void print();
+        void stop();
+
+        void alert(in DOMString message);
+        boolean confirm(in DOMString message);
+        [ConvertNullStringTo=Null] DOMString prompt(in [ConvertNullToNullString] DOMString message,
+                                                    in [ConvertNullToNullString] DOMString defaultValue);
+
+        boolean find(in DOMString string,
+                     in boolean caseSensitive,
+                     in boolean backwards,
+                     in boolean wrap,
+                     in boolean wholeWord,
+                     in boolean searchInFrames,
+                     in boolean showDialog);
+
         readonly attribute boolean offscreenBuffering;
 
         readonly attribute long outerHeight;

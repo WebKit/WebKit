@@ -66,6 +66,14 @@ namespace WebCore {
         void focus();
         void blur();
         void close();
+        void print();
+        void stop();
+
+        void alert(const String& message);
+        bool confirm(const String& message);
+        String prompt(const String& message, const String& defaultValue);
+
+        bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
 
         bool offscreenBuffering() const;
 

@@ -171,6 +171,90 @@ void DOMWindow::close()
         m_frame->scheduleClose();
 }
 
+void DOMWindow::print()
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->chrome()->print(m_frame);
+}
+
+void DOMWindow::stop()
+{
+    if (!m_frame)
+        return;
+
+    m_frame->loader()->stopForUserCancel();
+}
+
+void DOMWindow::alert(const String& message)
+{
+    if (!m_frame)
+        return;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (doc)
+        doc->updateRendering();
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->chrome()->runJavaScriptAlert(m_frame, message);
+}
+
+bool DOMWindow::confirm(const String& message)
+{
+    if (!m_frame)
+        return false;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (doc)
+        doc->updateRendering();
+
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
+    return page->chrome()->runJavaScriptConfirm(m_frame, message);
+}
+
+String DOMWindow::prompt(const String& message, const String& defaultValue)
+{
+    if (!m_frame)
+        return String();
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (doc)
+        doc->updateRendering();
+
+    Page* page = m_frame->page();
+    if (!page)
+        return String();
+
+    String returnValue;
+    if (page->chrome()->runJavaScriptPrompt(m_frame, message, defaultValue, returnValue))
+        return returnValue;
+
+    return String();
+}
+
+bool DOMWindow::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
+{
+    if (!m_frame)
+        return false;
+
+    // FIXME (13016): Support wholeWord, searchInFrames and showDialog
+    return m_frame->findString(string, !backwards, caseSensitive, wrap, false);
+}
+
 bool DOMWindow::offscreenBuffering() const
 {
     return true;

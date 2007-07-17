@@ -107,8 +107,8 @@ namespace KJS {
         
     bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
-    Location *location() const;
-    bool find(const WebCore::String&, bool, bool, bool, bool, bool, bool) const;
+
+    Location* location() const;
 
     // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
     WebCore::JSEventListener* findJSEventListener(JSValue*, bool html = false);
@@ -143,13 +143,11 @@ namespace KJS {
 
     enum {
         // Functions
-        AToB, BToA, Alert, Confirm,
-        Prompt, Open, Print, SetTimeout,
+        AToB, BToA, Open, SetTimeout,
         ClearTimeout, SetInterval, ClearInterval, CaptureEvents, 
         ReleaseEvents, AddEventListener, RemoveEventListener, Scroll,
         ScrollBy, ScrollTo, MoveBy, MoveTo,
-        ResizeBy, ResizeTo, ShowModalDialog, Find,
-        Stop,
+        ResizeBy, ResizeTo, ShowModalDialog,
 
         // Attributes
         Crypto, Frames, Event_, Location_,

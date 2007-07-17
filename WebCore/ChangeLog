@@ -1,3 +1,24 @@
+2007-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Move more functions from kjs_window to DOMWindow and auto-generate
+        the bindings for them.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::print):
+        (WebCore::DOMWindow::stop):
+        (WebCore::DOMWindow::alert):
+        (WebCore::DOMWindow::confirm):
+        (WebCore::DOMWindow::prompt):
+        (WebCore::DOMWindow::find):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2007-07-17  Mark Rowe  <mrowe@apple.com>
 
         Gdk build fix.

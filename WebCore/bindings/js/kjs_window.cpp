@@ -157,11 +157,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   moveTo                Window::MoveTo              DontDelete|Function 2
   resizeBy              Window::ResizeBy            DontDelete|Function 2
   resizeTo              Window::ResizeTo            DontDelete|Function 2
-  alert                 Window::Alert               DontDelete|Function 1
-  confirm               Window::Confirm             DontDelete|Function 1
-  prompt                Window::Prompt              DontDelete|Function 2
   open                  Window::Open                DontDelete|Function 3
-  print                 Window::Print               DontDelete|Function 2
   setTimeout            Window::SetTimeout          DontDelete|Function 2
   clearTimeout          Window::ClearTimeout        DontDelete|Function 1
   setInterval           Window::SetInterval         DontDelete|Function 2
@@ -171,8 +167,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   addEventListener      Window::AddEventListener    DontDelete|Function 3
   removeEventListener   Window::RemoveEventListener DontDelete|Function 3
   showModalDialog       Window::ShowModalDialog     DontDelete|Function 1
-  find                  Window::Find                DontDelete|Function 7
-  stop                  Window::Stop                DontDelete|Function 0
 # -- Attributes --
   crypto                Window::Crypto              DontDelete|ReadOnly
   frames                Window::Frames              DontDelete|ReadOnly
@@ -295,16 +289,6 @@ Location *Window::location() const
   if (!d->loc)
     d->loc = new Location(impl()->frame());
   return d->loc;
-}
-
-bool Window::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
-{
-    // FIXME (13016): Support wholeWord, searchInFrames and showDialog
-    Frame* frame = impl()->frame();
-    if (!frame)
-        return false;
-
-    return frame->findString(string, !backwards, caseSensitive, wrap, false);
 }
 
 // reference our special objects during garbage collection
@@ -1280,12 +1264,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   String str2;
 
   switch (id) {
-  case Window::Alert:
-    if (frame && frame->document())
-      frame->document()->updateRendering();
-    if (page)
-        page->chrome()->runJavaScriptAlert(frame, str);
-    return jsUndefined();
   case Window::AToB:
   case Window::BToA: {
     if (args.size() < 1)
@@ -1309,24 +1287,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
         base64Encode(in, out);
     
     return jsString(String(out.data(), out.size()));
-  }
-  case Window::Confirm: {
-    if (frame && frame->document())
-      frame->document()->updateRendering();
-    bool result = false;
-    if (page)
-        result = page->chrome()->runJavaScriptConfirm(frame, str);
-    return jsBoolean(result);
-  }
-  case Window::Prompt:
-  {
-    if (frame && frame->document())
-      frame->document()->updateRendering();
-    String message = args.size() >= 2 ? args[1]->toString(exec) : UString();
-    if (page && page->chrome()->runJavaScriptPrompt(frame, str, message, str2))
-        return jsString(str2);
-
-    return jsNull();
   }
   case Window::Open:
   {
@@ -1374,10 +1334,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
 
       return Window::retrieve(frame); // global object
   }
-  case Window::Print:
-    if (Page* page = frame->page())
-        page->chrome()->print(frame);
-    return jsUndefined();
   case Window::ScrollBy:
     window->updateLayout();
     if(args.size() >= 2 && widget)
@@ -1504,19 +1460,6 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     JSValue* result = showModalDialog(exec, window, args);
     return result;
   }
-  case Window::Stop:
-        frame->loader()->stopForUserCancel();
-        return jsUndefined();
-  case Window::Find:
-      if (!window->isSafeScript(exec))
-          return jsUndefined();
-      return jsBoolean(window->find(args[0]->toString(exec),
-                                    args[1]->toBoolean(exec),
-                                    args[2]->toBoolean(exec),
-                                    args[3]->toBoolean(exec),
-                                    args[4]->toBoolean(exec),
-                                    args[5]->toBoolean(exec),
-                                    args[6]->toBoolean(exec)));
   }
   return jsUndefined();
 }
