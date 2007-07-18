@@ -57,7 +57,7 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static const HashSet<Page*>* frameNamespace(const String&);
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*);
         ~Page();
         
         EditorClient* editorClient() const { return m_editorClient; }
@@ -92,8 +92,6 @@ namespace WebCore {
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
-
-        void setInspectorClient(InspectorClient*);
 
         void setParentInspectorController(InspectorController* controller) { m_parentInspectorController = controller; }
         InspectorController* parentInspectorController() const { return m_parentInspectorController; }

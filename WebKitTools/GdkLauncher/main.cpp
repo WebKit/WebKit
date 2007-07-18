@@ -9,6 +9,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
+#include "InspectorClientGdk.h"
 #include "KURL.h"
 #include "Logging.h"
 #include "Page.h"
@@ -220,7 +221,7 @@ int main(int argc, char* argv[])
 
     EditorClientGdk* editorClient = new EditorClientGdk;
     ContextMenuClient* contextMenuClient = new ContextMenuClientGdk;
-    Page* page = new Page(new ChromeClientGdk, contextMenuClient, editorClient, 0);
+    Page* page = new Page(new ChromeClientGdk, contextMenuClient, editorClient, 0, new InspectorClientGdk);
     editorClient->setPage(page);
     FrameLoaderClientGdk* frameLoaderClient = new FrameLoaderClientGdk;
     gFrame = new FrameGdk(page, 0, frameLoaderClient);

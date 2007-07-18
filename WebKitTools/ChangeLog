@@ -1,5 +1,14 @@
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Adam.
+
+        Make the Page with the now required InspectorClient.
+
+        * GdkLauncher/main.cpp:
+        (main):
+
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
         Remove the redundant copies of Makefile.shared and the new Makefile.Drosera.
         Now included the main Makefile.shared and change the SCRIPTS_PATH variable as needed.
 

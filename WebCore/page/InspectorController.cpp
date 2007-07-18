@@ -46,6 +46,7 @@
 #include "Range.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "Settings.h"
 #include "Shared.h"
 #include "SharedBuffer.h"
 #include "SystemTime.h"
@@ -481,9 +482,14 @@ InspectorController::~InspectorController()
     deleteAllValues(m_consoleMessages);
 }
 
+bool InspectorController::enabled() const
+{
+    return m_inspectedPage->settings()->developerExtrasEnabled();
+}
+
 void InspectorController::inspect(Node* node)
 {
-    if (!node)
+    if (!node || !enabled())
         return;
 
     if (!m_page) {
@@ -509,6 +515,9 @@ void InspectorController::inspect(Node* node)
 
 void InspectorController::focusNode()
 {
+    if (!enabled())
+        return;
+
     ASSERT(m_scriptContext);
     ASSERT(m_scriptObject);
     ASSERT(m_nodeToFocus);
@@ -532,13 +541,16 @@ void InspectorController::focusNode()
 
 void InspectorController::highlight(Node* node)
 {
+    if (!enabled())
+        return;
     ASSERT_ARG(node, node);
-
     m_client->highlight(node);
 }
 
 void InspectorController::hideHighlight()
 {
+    if (!enabled())
+        return;
     m_client->hideHighlight();
 }
 
@@ -570,6 +582,9 @@ void InspectorController::setWindowVisible(bool visible)
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
+    if (!enabled())
+        return;
+
     ConsoleMessage* consoleMessage = new ConsoleMessage(source, level, message, lineNumber, sourceID);
     m_consoleMessages.append(consoleMessage);
 
@@ -579,17 +594,21 @@ void InspectorController::addMessageToConsole(MessageSource source, MessageLevel
 
 void InspectorController::attachWindow()
 {
+    if (!enabled())
+        return;
     m_client->attachWindow();
 }
 
 void InspectorController::detachWindow()
 {
+    if (!enabled())
+        return;
     m_client->detachWindow();
 }
 
 void InspectorController::windowScriptObjectAvailable()
 {
-    if (!m_page)
+    if (!m_page || !enabled())
         return;
 
     m_scriptContext = toRef(m_page->mainFrame()->scriptProxy()->interpreter()->globalExec());
@@ -1075,6 +1094,9 @@ void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoad
 
 void InspectorController::didCommitLoad(DocumentLoader* loader)
 {
+    if (!enabled())
+        return;
+
     if (loader->frame() == m_inspectedPage->mainFrame()) {
         ASSERT(m_mainResource);
         // FIXME: Should look into asserting that m_mainResource->loader == loader here.
@@ -1101,6 +1123,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
 void InspectorController::frameDetachedFromParent(Frame* frame)
 {
+    if (!enabled())
+        return;
     if (ResourcesMap* resourceMap = m_frameResources.get(frame))
         removeAllResources(resourceMap);
 }
@@ -1140,6 +1164,9 @@ void InspectorController::removeResource(InspectorResource* resource)
 
 void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
+    if (!enabled())
+        return;
+
     InspectorResource* resource = new InspectorResource(m_nextIdentifier--, loader, loader->frame());
     resource->finished = true;
 
@@ -1163,6 +1190,9 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
 void InspectorController::identifierForInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
+    if (!enabled())
+        return;
+
     InspectorResource* resource = new InspectorResource(identifier, loader, loader->frame());
 
     updateResourceRequest(resource, request);
@@ -1175,6 +1205,9 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
 
 void InspectorController::willSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    if (!enabled())
+        return;
+
     InspectorResource* resource = m_resources.get(identifier).get();
     if (!resource)
         return;
@@ -1201,6 +1234,9 @@ void InspectorController::willSendRequest(DocumentLoader* loader, unsigned long 
 
 void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse& response)
 {
+    if (!enabled())
+        return;
+
     InspectorResource* resource = m_resources.get(identifier).get();
     if (!resource)
         return;
@@ -1217,6 +1253,9 @@ void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long iden
 
 void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)
 {
+    if (!enabled())
+        return;
+
     InspectorResource* resource = m_resources.get(identifier).get();
     if (!resource)
         return;
@@ -1229,6 +1268,9 @@ void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long
 
 void InspectorController::didFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {
+    if (!enabled())
+        return;
+
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
     if (!resource)
         return;
@@ -1248,6 +1290,9 @@ void InspectorController::didFinishLoading(DocumentLoader* loader, unsigned long
 
 void InspectorController::didFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& /*error*/)
 {
+    if (!enabled())
+        return;
+
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
     if (!resource)
         return;

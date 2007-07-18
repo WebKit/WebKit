@@ -44,6 +44,7 @@
 #include "KURL.h"
 #include "Image.h"
 #include "IconDatabase.h"
+#include "InspectorClientQt.h"
 #include "FocusController.h"
 #include "Editor.h"
 #include "PlatformScrollBar.h"
@@ -74,7 +75,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     contextMenuClient = new ContextMenuClientQt();
     editorClient = new EditorClientQt(q);
     page = new Page(chromeClient, contextMenuClient, editorClient,
-                    new DragClientQt(q));
+                    new DragClientQt(q), new InspectorClientQt());
 
     undoStack = 0;
     mainFrame = 0;

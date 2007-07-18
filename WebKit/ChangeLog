@@ -1,3 +1,17 @@
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5343767> Should have a way to disable the Web Inspector
+
+        Adds a new DisableWebKitDeveloperExtras default that will force the Web Inspector to be disabled.
+        This overrides the WebKitDeveloperExtras and IncludeDebugMenu default. It also disables
+        the Web Inspector in Debug builds.
+
+        * WebView/WebView.mm:
+        (+[WebView _developerExtrasEnabled]): Check for the DisableWebKitDeveloperExtras default.
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Make a new WebInspectorClient when making the Page.
+
 2007-07-18  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

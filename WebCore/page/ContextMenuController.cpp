@@ -95,7 +95,7 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
 
     m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();
-    if (m_page->settings()->developerExtrasEnabled())
+    if (m_page->inspectorController()->enabled())
         m_contextMenu->addInspectElementItem();
 
     PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
@@ -277,8 +277,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 #endif
         case ContextMenuItemTagInspectElement:
             if (Page* page = frame->page())
-                if (InspectorController* inspector = page->inspectorController())
-                    inspector->inspect(result.innerNonSharedNode());
+                page->inspectorController()->inspect(result.innerNonSharedNode());
             break;
         default:
             break;

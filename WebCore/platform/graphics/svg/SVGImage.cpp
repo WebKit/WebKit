@@ -135,10 +135,11 @@ bool SVGImage::dataChanged(bool allDataReceived)
         static EditorClient* dummyEditorClient = new SVGEmptyEditorClient;
         static ContextMenuClient* dummyContextMenuClient = new SVGEmptyContextMenuClient;
         static DragClient* dummyDragClient = new SVGEmptyDragClient;
+        static InspectorClient* dummyInspectorClient = new SVGEmptyInspectorClient;
 
         // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
         // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
-        m_page.set(new Page(dummyChromeClient, dummyContextMenuClient, dummyEditorClient, dummyDragClient));
+        m_page.set(new Page(dummyChromeClient, dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient));
         m_frame = new Frame(m_page.get(), 0, dummyFrameLoaderClient);
         m_frame->init();
         m_frameView = new FrameView(m_frame.get());

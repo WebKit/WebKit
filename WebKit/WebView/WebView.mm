@@ -537,8 +537,10 @@ static bool debugWidget = true;
 
 + (BOOL)_developerExtrasEnabled
 {
-#ifdef NDEBUG
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:@"DisableWebKitDeveloperExtras"])
+        return NO;
+#ifdef NDEBUG
     BOOL enableDebugger = [defaults boolForKey:@"WebKitDeveloperExtras"];
     if (!enableDebugger)
         enableDebugger = [defaults boolForKey:@"IncludeDebugMenu"];
@@ -1767,9 +1769,7 @@ NSMutableDictionary *countInvocations;
     [WebHistoryItem initWindowWatcherIfNecessary];
     [WebView _initializeCacheSizesIfNecessary];
 
-    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self));
-    if ([WebView _developerExtrasEnabled])
-        _private->page->setInspectorClient(new WebInspectorClient(self));
+    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
 
     [self _addToAllWebViewsSet];

@@ -820,6 +820,7 @@ gdk-port:SOURCES += \
         page/gdk/EventHandlerGdk.cpp \
         page/gdk/ContextMenuClientGdk.cpp \
         page/gdk/DragControllerGdk.cpp \
+        page/gdk/InspectorClientGdk.cpp \
         loader/gdk/DocumentLoaderGdk.cpp \
         loader/gdk/FrameLoaderClientGdk.cpp \
         platform/gdk/CookieJarGdk.cpp \

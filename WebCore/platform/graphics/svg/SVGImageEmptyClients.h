@@ -34,6 +34,7 @@
 #include "EditorClient.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
+#include "InspectorClient.h"
 #include "SharedBuffer.h"
 
 /*
@@ -390,6 +391,25 @@ public:
     virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) { }
     virtual DragImageRef createDragImageForLink(KURL&, const String& label, Frame*) { return 0; } 
     virtual void dragControllerDestroyed() { }
+};
+
+class SVGEmptyInspectorClient : public InspectorClient {
+public:
+    virtual ~SVGEmptyInspectorClient() {}
+
+    virtual void inspectorDestroyed() {};
+
+    virtual WebCore::Page* createPage() { return 0; };
+
+    virtual void showWindow() {};
+    virtual void closeWindow() {};
+
+    virtual void attachWindow() {};
+    virtual void detachWindow() {};
+
+    virtual void highlight(WebCore::Node*) {};
+    virtual void hideHighlight() {};
+    virtual void inspectedURLChanged(const WebCore::String& newURL) {};
 };
     
 }

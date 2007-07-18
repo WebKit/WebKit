@@ -1,3 +1,82 @@
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5343767> Should have a way to disable the Web Inspector
+
+        This change facilitates the ability to turn the Web Inspector on and off.
+
+        Makes the InspectorClient be required to create a new Page. This also means that
+        InspectorController will never be NULL. Adds a new function on Page to test
+        if the inspector is enabled.
+
+        * WebCore.exp: New symbol for the Page constructor.
+        * WebCore.pro: Add InspectorClientGdk.cpp.
+        * WebCoreSources.bkl: ditto.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createTokenizer):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent): Don't null check the InspectorCOntroller.
+        (WebCore::FrameLoader::dispatchDidCommitLoad): Ditto.
+        (WebCore::FrameLoader::dispatchAssignIdentifierToInitialRequest): Ditto.
+        (WebCore::FrameLoader::dispatchWillSendRequest): Ditto.
+        (WebCore::FrameLoader::dispatchDidReceiveResponse): Ditto.
+        (WebCore::FrameLoader::dispatchDidReceiveContentLength): Ditto.
+        (WebCore::FrameLoader::dispatchDidFinishLoading): Ditto.
+        (WebCore::FrameLoader::dispatchDidLoadResourceFromMemoryCache): Ditto.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Ask the InspectorController if it is enabled.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::enabled): Ask the Page's settings if developer extras are enabled.
+        (WebCore::InspectorController::inspect): Check if the InspectorController is enabled.
+        (WebCore::InspectorController::focusNode): Ditto.
+        (WebCore::InspectorController::highlight): Ditto.
+        (WebCore::InspectorController::hideHighlight): Ditto.
+        (WebCore::InspectorController::addMessageToConsole): Ditto.
+        (WebCore::InspectorController::attachWindow): Ditto.
+        (WebCore::InspectorController::detachWindow): Ditto.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Ditto.
+        (WebCore::InspectorController::didCommitLoad): Ditto.
+        (WebCore::InspectorController::frameDetachedFromParent): Ditto.
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache): Ditto.
+        (WebCore::InspectorController::identifierForInitialRequest): Ditto.
+        (WebCore::InspectorController::willSendRequest): Ditto.
+        (WebCore::InspectorController::didReceiveResponse): Ditto.
+        (WebCore::InspectorController::didReceiveContentLength): Ditto.
+        (WebCore::InspectorController::didFinishLoading): Ditto.
+        (WebCore::InspectorController::didFailLoading): Ditto.
+        * page/InspectorController.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page): Require an InspectorClient.
+        (WebCore::Page::~Page): Always call pageDestroyed on the InspectorController.
+        (WebCore::Page::inspectorEnabled): Check the WebCore settings if the developer extras are enabled.
+        * page/Page.h:
+        * page/gdk/InspectorClientGdk.cpp: Added.
+        (WebCore::InspectorClientGdk::inspectorDestroyed): Empty stub calling notImplemented.
+        (WebCore::InspectorClientGdk::createPage): Ditto.
+        (WebCore::InspectorClientGdk::showWindow): Ditto.
+        (WebCore::InspectorClientGdk::closeWindow): Ditto.
+        (WebCore::InspectorClientGdk::attachWindow): Ditto.
+        (WebCore::InspectorClientGdk::detachWindow): Ditto.
+        (WebCore::InspectorClientGdk::highlight): Ditto.
+        (WebCore::InspectorClientGdk::hideHighlight): Ditto.
+        (WebCore::InspectorClientGdk::inspectedURLChanged): Ditto.
+        * page/gdk/InspectorClientGdk.h: Added.
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Pass in a dummy InspectorClient.
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyInspectorClient::~SVGEmptyInspectorClient): Empty dummy implementation.
+        (WebCore::SVGEmptyInspectorClient::inspectorDestroyed): Ditto.
+        (WebCore::SVGEmptyInspectorClient::createPage): Ditto.
+        (WebCore::SVGEmptyInspectorClient::showWindow): Ditto.
+        (WebCore::SVGEmptyInspectorClient::closeWindow): Ditto.
+        (WebCore::SVGEmptyInspectorClient::attachWindow): Ditto.
+        (WebCore::SVGEmptyInspectorClient::detachWindow): Ditto.
+        (WebCore::SVGEmptyInspectorClient::highlight): Ditto.
+        (WebCore::SVGEmptyInspectorClient::hideHighlight): Ditto.
+        (WebCore::SVGEmptyInspectorClient::inspectedURLChanged): Ditto.
+
 2007-07-18  Anders Carlsson  <andersca@apple.com>
 
         Make some headers private instead of project.

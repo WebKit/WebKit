@@ -67,12 +67,13 @@ int PageCounter::count = 0;
 static PageCounter pageCounter;
 #endif
 
-Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient)
+Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient, InspectorClient* inspectorClient)
     : m_chrome(new Chrome(this, chromeClient))
     , m_dragCaretController(new SelectionController(0, true))
     , m_dragController(new DragController(this, dragClient))
     , m_focusController(new FocusController(this))
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
+    , m_inspectorController(new InspectorController(this, inspectorClient))
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
     , m_backForwardList(new BackForwardList(this))
@@ -104,8 +105,7 @@ Page::~Page()
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->pageDestroyed();
     m_editorClient->pageDestroyed();
-    if (m_inspectorController)
-        m_inspectorController->pageDestroyed();
+    m_inspectorController->pageDestroyed();
 
     m_backForwardList->close();
 
@@ -222,11 +222,6 @@ void Page::setDefersLoading(bool defers)
 void Page::clearUndoRedoOperations()
 {
     m_editorClient->clearUndoRedoOperations();
-}
-
-void Page::setInspectorClient(InspectorClient* client)
-{
-    m_inspectorController.set(new InspectorController(this, client));
 }
 
 } // namespace WebCore

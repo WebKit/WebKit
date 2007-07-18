@@ -1,3 +1,14 @@
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Make the Page with the now required InspectorClient.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::initView):
+
 2007-07-18  Sam Weinig  <sam@webkit.org>
 
         Build fix.

@@ -56,6 +56,8 @@ public:
 
     void pageDestroyed() { m_page = 0; }
 
+    bool enabled() const;
+
     Page* inspectedPage() const { return m_inspectedPage; }
 
     void inspect(Node*);

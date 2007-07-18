@@ -286,8 +286,7 @@ Tokenizer *HTMLDocument::createTokenizer()
     bool reportErrors = false;
     if (m_frame)
         if (Page* page = m_frame->page())
-            if (InspectorController* controller = page->inspectorController())
-                reportErrors = controller->windowVisible();
+            reportErrors = page->inspectorController()->windowVisible();
 
     return new HTMLTokenizer(this, reportErrors);
 }

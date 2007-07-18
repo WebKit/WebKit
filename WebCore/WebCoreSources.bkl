@@ -126,6 +126,7 @@
         page/gdk/EventHandlerGdk.cpp
         page/gdk/ContextMenuClientGdk.cpp
         page/gdk/DragControllerGdk.cpp
+        page/gdk/InspectorClientGdk.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_LOADER">

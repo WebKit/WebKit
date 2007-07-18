@@ -1761,10 +1761,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     m_groupName = String(groupName, SysStringLen(groupName));
 
-    m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this));
-    // FIXME: make this read a preference like the Mac's WebKitDeveloperExtras or when Safari's IncludeDebugMenu is set
-    if (true)
-        m_page->setInspectorClient(new WebInspectorClient(this));
+    m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
     // FIXME: 4931464 - When we do cache pages on Windows this needs to be removed so the "should I cache this page?" check
     // in FrameLoader::provisionalLoadStarted() doesn't always fail
     m_page->settings()->setUsesPageCache(false);
