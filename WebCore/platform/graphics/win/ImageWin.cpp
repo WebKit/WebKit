@@ -32,7 +32,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "PlatformString.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 
 // This function loads resources from WebKit

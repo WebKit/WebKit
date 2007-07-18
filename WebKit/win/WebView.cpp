@@ -70,7 +70,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/MimeTypeRegistry.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
@@ -1687,8 +1687,8 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
     if (!canShow)
         return E_POINTER;
 
-    *canShow = MimeTypeRegistry::isSupportedImageMIMEType(mimeTypeStr) ||
-        MimeTypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr) ||
+    *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr) ||
+        MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr) ||
         PlugInInfoStore::supportsMIMEType(mimeTypeStr);
     
     return S_OK;

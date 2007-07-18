@@ -40,7 +40,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "Image.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "markup.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -267,7 +267,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     fgd->fgd[0].nFileSizeLow = image->image()->data()->size();
     
     String extension(".");
-    extension += WebCore::MimeTypeRegistry::getPreferredExtensionForMIMEType(image->response().mimeType());
+    extension += WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType(image->response().mimeType());
     const String& preferredTitle = title.isEmpty() ? image->response().suggestedFilename() : title;
     fsPath = filesystemPathFromUrlOrTitle(url, preferredTitle, extension.length() ? (TCHAR*)extension.charactersWithNullTermination() : 0, false);
 

@@ -1,5 +1,17 @@
 2007-07-18  Sam Weinig  <sam@webkit.org>
 
+        Build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::objectContentType):
+        * platform/graphics/win/ImageWin.cpp:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor):
+
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Adam Roben.
 
         Rename MimeTypeRegistry to MIMETypeRegistry and xmlhttprequest to XMLHttpRequest

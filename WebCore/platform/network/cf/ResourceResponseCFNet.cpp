@@ -27,7 +27,7 @@
 #include "ResourceResponseCFNet.h"
 
 #include "HTTPParsers.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <wtf/RetainPtr.h>

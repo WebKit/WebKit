@@ -1,3 +1,13 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+
 2007-07-18  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack & Simon

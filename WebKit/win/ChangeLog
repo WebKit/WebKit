@@ -1,3 +1,13 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDecidePolicyForMIMEType):
+        (WebFrame::objectContentType):
+        * WebView.cpp:
+        (WebView::canShowMIMEType):
+
 2007-07-17  Brady Eidson <beidson@apple.com>
 
         Blind Windows build fix from r24395

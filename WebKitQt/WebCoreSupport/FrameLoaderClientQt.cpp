@@ -32,7 +32,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "DocumentLoader.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -496,10 +496,10 @@ void FrameLoaderClientQt::clearArchivedResources()
 
 bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 {
-    if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType))
+    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
         return true;
 
-    if (MimeTypeRegistry::isSupportedNonImageMIMEType(MIMEType))
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType))
         return true;
 
     return false;
@@ -884,19 +884,19 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     String mimeType = _mimeType;
     if (!mimeType.length()) {
         QFileInfo fi(url.path());
-        mimeType = MimeTypeRegistry::getMIMETypeForExtension(fi.suffix());
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(fi.suffix());
     }
 
     if (!mimeType.length())
         return ObjectContentFrame;
 
-    if (MimeTypeRegistry::isSupportedImageMIMEType(mimeType))
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentImage;
 
     if (QWebFactoryLoader::self()->supportsMimeType(mimeType))
         return ObjectContentPlugin;
 
-    if (MimeTypeRegistry::isSupportedNonImageMIMEType(mimeType))
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
     
     return ObjectContentNone;

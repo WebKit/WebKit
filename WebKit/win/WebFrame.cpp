@@ -77,7 +77,7 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/MimeTypeRegistry.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseRelatedEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -1949,7 +1949,7 @@ void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, con
 
     // FIXME: This is a stopgap default implementation to tide us over until
     // <rdar://4911042/> is taken care of
-    if (MimeTypeRegistry::isSupportedNonImageMIMEType(mimeType) || MimeTypeRegistry::isSupportedImageMIMEType(mimeType))
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         (coreFrame->loader()->*function)(PolicyUse);
     else
         (coreFrame->loader()->*function)(PolicyDownload);
@@ -2329,7 +2329,7 @@ ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mim
 {
     String mimeType = mimeTypeIn;
     if (mimeType.isEmpty()) {
-        mimeType = MimeTypeRegistry::getMIMETypeForExtension(url.path().mid(url.path().findRev('.')+1));
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(url.path().mid(url.path().findRev('.')+1));
         if(mimeType.isEmpty())
             return WebCore::ObjectContentNone;
     }
@@ -2337,13 +2337,13 @@ ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mim
     if (mimeType.isEmpty())
         return ObjectContentFrame; // Go ahead and hope that we can display the content.
 
-    if (MimeTypeRegistry::isSupportedImageMIMEType(mimeType))
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return WebCore::ObjectContentImage;
 
     if (PluginDatabaseWin::installedPlugins()->isMIMETypeRegistered(mimeType))
         return WebCore::ObjectContentPlugin;
 
-    if (MimeTypeRegistry::isSupportedNonImageMIMEType(mimeType))
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return WebCore::ObjectContentFrame;
 
     return (ObjectContentType)0;
