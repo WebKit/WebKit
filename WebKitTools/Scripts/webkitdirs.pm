@@ -441,6 +441,16 @@ sub isLeopard()
     return isOSX() && osXVersion()->{"minor"} == 5;
 }
 
+sub launcherPath()
+{
+    my $relativeScriptsPath = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
+    if (isGdk() || isQt()) {
+        return "$relativeScriptsPath/run-launcher";
+    } elsif (isOSX() || isCygwin()) {
+        return "$relativeScriptsPath/run-safari";
+    }
+}
+
 sub checkRequiredSystemConfig
 {
     if (isOSX()) {

@@ -144,14 +144,15 @@ for my $dir (@projects) {
 
 # Write out congratulations message.
 
-my $runSafariPath = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), $originalWorkingDirectory), "run-safari");
+my $launcherPath = launcherPath();
+
 print "\n";
 print "===========================================================\n";
-print " WebKit is now built. To run Safari with this newly-built\n";
-print " code, use the \"$runSafariPath\" script.\n";
+print " WebKit is now built. To run WebKit with this newly-built\n";
+print " code, use the \"$launcherPath\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
-    print " Safari will have SVG viewing capabilities.\n";
+    print " WebKit will have SVG viewing capabilities.\n";
 }
 if ($svgExperimentalSupport) {
     print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
