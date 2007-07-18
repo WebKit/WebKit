@@ -93,7 +93,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
-#import <WebCore/MimeTypeRegistry.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
@@ -387,7 +387,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
     while ((path = [enumerator nextObject]) != nil) {
         NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if (MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType))
+        if (MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType))
             return YES;
     }
     

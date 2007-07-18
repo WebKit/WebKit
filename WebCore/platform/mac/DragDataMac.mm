@@ -32,7 +32,7 @@
 #import "DocumentFragment.h"
 #import "DOMDocumentFragment.h"
 #import "DOMDocumentFragmentInternal.h"
-#import "MimeTypeRegistry.h"
+#import "MIMETypeRegistry.h"
 #import "Pasteboard.h"
 #import "PasteboardHelper.h"
 

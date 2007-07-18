@@ -38,7 +38,7 @@
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Element.h>
-#import <WebCore/MimeTypeRegistry.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RenderImage.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -235,12 +235,12 @@ static NSArray *_writableTypesForImageWithArchive (void)
     NSArray *subresources = [archive subresources];
     WebResource *resource = [archive mainResource];
     if (containsImage && [subresources count] > 0 
-        && MimeTypeRegistry::isSupportedImageResourceMIMEType([[subresources objectAtIndex:0] MIMEType]))
+        && MIMETypeRegistry::isSupportedImageResourceMIMEType([[subresources objectAtIndex:0] MIMEType]))
         resource = (WebResource *)[subresources objectAtIndex:0];
     ASSERT(resource != nil);
     
-    ASSERT(!containsImage || MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
-    if (!containsImage || MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
+    ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
+    if (!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]))
         [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
     
 }

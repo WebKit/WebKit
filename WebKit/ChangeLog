@@ -1,3 +1,21 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Update after renaming MimeTypeRegistry to MIMETypeRegistry.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writePromisedRTFDFromArchive:containsImage:]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _imageExistsAtPaths:]):
+
 2007-07-18  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Maciej Stachowiak.

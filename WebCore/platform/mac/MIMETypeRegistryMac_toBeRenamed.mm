@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -26,47 +25,45 @@
  */
 
 #include "config.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 
-namespace WebCore {
+#include "WebCoreSystemInterface.h"
 
-struct ExtensionMap {
-    const char* extension;
-    const char* mimeType;
-};
-
-static const ExtensionMap extensionMap [] = {
-    { "bmp", "image/bmp" },
-    { "gif", "image/gif" },
-    { "html", "text/html" },
-    { "ico", "image/x-icon" },   
-    { "jpeg", "image/jpeg" },
-    { "jpg", "image/jpeg" },
-    { "js", "application/x-javascript" },
-    { "pdf", "application/pdf" },
-    { "png", "image/png" },
-    { "rss", "application/rss+xml" },
-    { "svg", "image/svg+xml" },
-    { "text", "text/plain" },
-    { "txt", "text/plain" },
-    { "xbm", "image/x-xbitmap" },
-    { "xml", "text/xml" },
-    { "xsl", "text/xsl" },
-    { "xhtml", "application/xhtml+xml" },
-    { 0, 0 }
-};
-    
-String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
+namespace WebCore 
 {
-    String s = ext.lower();
-    const ExtensionMap *e = extensionMap;
-    while (e->extension) {
-        if (s == e->extension)
-            return e->mimeType;
-        ++e;
+String getMIMETypeForUTI(const String & uti)
+{
+    CFStringRef utiref = uti.createCFString();
+    CFStringRef mime = UTTypeCopyPreferredTagWithClass(utiref, kUTTagClassMIMEType);
+    String mimeType = mime;
+    if (mime)
+        CFRelease(mime);
+    CFRelease(utiref);
+    return mimeType;
+}
+
+String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+{
+    return wkGetMIMETypeForExtension(ext);
+}
+
+Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& type)
+{
+    NSArray *stringsArray = wkGetExtensionsForMIMEType(type);
+    Vector<String> stringsVector = Vector<String>();
+    unsigned count = [stringsArray count];
+    if (count > 0) {
+        NSEnumerator* enumerator = [stringsArray objectEnumerator];
+        NSString* string;
+        while ((string = [enumerator nextObject]) != nil)
+            stringsVector.append(string);
     }
-    // unknown, let's just assume plain text
-    return "text/plain";
+    return stringsVector;
+}
+
+String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
+{
+    return wkGetPreferredExtensionForMIMEType(type);
 }
 
 }

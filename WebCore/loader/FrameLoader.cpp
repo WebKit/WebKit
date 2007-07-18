@@ -30,10 +30,10 @@
 #include "config.h"
 #include "FrameLoader.h"
 
+#include "CString.h"
 #include "Cache.h"
 #include "CachedPage.h"
 #include "Chrome.h"
-#include "CString.h"
 #include "DOMImplementation.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -52,18 +52,18 @@
 #include "FramePrivate.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HistoryItem.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTTPParsers.h"
+#include "HistoryItem.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
 #include "InspectorController.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "ProgressTracker.h"
@@ -76,11 +76,11 @@
 #include "SystemTime.h"
 #include "TextResourceDecoder.h"
 #include "WindowFeatures.h"
+#include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-#include "xmlhttprequest.h"
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 
@@ -1460,7 +1460,7 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
     if (shouldUsePlugin(completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
         Settings* settings = m_frame->settings();
         if (!settings || !settings->arePluginsEnabled() || 
-            (!settings->isJavaEnabled() && MimeTypeRegistry::isJavaAppletMIMEType(mimeType)))
+            (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
             return false;
         return loadPlugin(renderer, completedURL, mimeType, paramNames, paramValues, useFallback);
     }

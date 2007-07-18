@@ -2,6 +2,69 @@
 
         Rubber-stamped by Adam Roben.
 
+        Rename MimeTypeRegistry to MIMETypeRegistry and xmlhttprequest to XMLHttpRequest
+
+        * WebCore.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_dom.cpp:
+        * dom/Document.cpp:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+        * loader/mac/LoaderNSURLExtras.m:
+        (suggestedFilenameWithMIMEType):
+        * platform/MIMETypeRegistry.cpp: Copied from platform/MimeTypeRegistry.cpp.
+        (WebCore::initialiseSupportedImageMIMETypes):
+        (WebCore::initialiseMIMETypeRegistry):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MIMETypeRegistry::isJavaAppletMIMEType):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes):
+        * platform/MIMETypeRegistry.h: Copied from platform/MimeTypeRegistry.h.
+        * platform/MimeTypeRegistry.cpp: Removed.
+        * platform/MimeTypeRegistry.h: Removed.
+        * platform/gdk/MIMETypeRegistryGdk.cpp: Copied from platform/gdk/MimeTypeRegistryGdk.cpp.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/gdk/MimeTypeRegistryGdk.cpp: Removed.
+        * platform/graphics/BitmapImage.cpp:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::supportsType):
+        * platform/mac/DragDataMac.mm:
+        * platform/mac/MIMETypeRegistryMac.mm: Copied from platform/mac/MimeTypeRegistryMac.mm.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/mac/MimeTypeRegistryMac.mm: Removed.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage):
+        * platform/qt/MIMETypeRegistryQt.cpp: Copied from platform/qt/MimeTypeRegistryQt.cpp.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/qt/MimeTypeRegistryQt.cpp: Removed.
+        * platform/win/MIMETypeRegistryWin.cpp: Copied from platform/win/MimeTypeRegistryWin.cpp.
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/win/MimeTypeRegistryWin.cpp: Removed.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * xml/xmlhttprequest.cpp: Removed.
+        * xml/xmlhttprequest.h: Removed.
+        * xml/XMLHttpRequest.cpp: Copied from xml/xmlhttprequest.cpp.
+        * xml/XMLHttpRequest.h: Copied from xml/xmlhttprequest.h.
+
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
         Rename csshelper.h, csshelper.cpp, cssparser.h, cssparser.cpp,
         cssstyleselector.h, and cssstyleselector.cpp to be CamelCase.
 

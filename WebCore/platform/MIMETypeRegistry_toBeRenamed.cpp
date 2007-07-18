@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
+
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -83,7 +84,7 @@ static void initialiseSupportedImageMIMETypes()
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
     for (size_t i = 0; i < formats.size(); ++i) {
-        String mimeType = MimeTypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
+        String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
         supportedImageMIMETypes->add(mimeType);
         supportedImageResourceMIMETypes->add(mimeType);
     }
@@ -133,7 +134,7 @@ static void initialiseSupportedNonImageMimeTypes()
       supportedNonImageMIMETypes->add(types[i]);
 }
 
-static void initialiseMimeTypeRegistry()
+static void initialiseMIMETypeRegistry()
 {
     supportedImageResourceMIMETypes = new WTF::HashSet<String>();
     supportedImageMIMETypes = new WTF::HashSet<String>();
@@ -143,7 +144,7 @@ static void initialiseMimeTypeRegistry()
     initialiseSupportedImageMIMETypes();
 }
 
-String MimeTypeRegistry::getMIMETypeForPath(const String& path)
+String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {
     int pos = path.reverseFind('.');
     if(pos >= 0) {
@@ -153,28 +154,28 @@ String MimeTypeRegistry::getMIMETypeForPath(const String& path)
     return "application/octet-stream";
 }
 
-bool MimeTypeRegistry::isSupportedImageMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 { 
     if (!supportedImageMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return !mimeType.isEmpty() && supportedImageMIMETypes->contains(mimeType); 
 }
 
-bool MimeTypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 { 
     if (!supportedImageResourceMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return !mimeType.isEmpty() && supportedImageResourceMIMETypes->contains(mimeType); 
 }
     
-bool MimeTypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
     if (!supportedNonImageMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return !mimeType.isEmpty() && supportedNonImageMIMETypes->contains(mimeType);
 }
 
-bool MimeTypeRegistry::isJavaAppletMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 {
     // Since this set is very limited and is likely to remain so we won't bother with the overhead
     // of using a hash set.
@@ -185,24 +186,24 @@ bool MimeTypeRegistry::isJavaAppletMIMEType(const String& mimeType)
         || mimeType.startsWith("application/x-java-vm", false);
 }
 
-const HashSet<String> &MimeTypeRegistry::getSupportedImageMIMETypes()
+const HashSet<String> &MIMETypeRegistry::getSupportedImageMIMETypes()
 {
     if (!supportedImageMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return *supportedImageMIMETypes;
 }
 
-const HashSet<String> &MimeTypeRegistry::getSupportedImageResourceMIMETypes()
+const HashSet<String> &MIMETypeRegistry::getSupportedImageResourceMIMETypes()
 {
     if (!supportedImageResourceMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return *supportedImageResourceMIMETypes;
 }
 
-const HashSet<String> &MimeTypeRegistry::getSupportedNonImageMIMETypes()
+const HashSet<String> &MIMETypeRegistry::getSupportedNonImageMIMETypes()
 {
     if (!supportedNonImageMIMETypes)
-        initialiseMimeTypeRegistry();
+        initialiseMIMETypeRegistry();
     return *supportedNonImageMIMETypes;
 }
 

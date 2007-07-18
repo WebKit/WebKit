@@ -36,9 +36,9 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "RangeException.h"
+#include "XMLHttpRequest.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
-#include "xmlhttprequest.h"
 #include <kjs/collector.h>
 #include <wtf/HashMap.h>
 

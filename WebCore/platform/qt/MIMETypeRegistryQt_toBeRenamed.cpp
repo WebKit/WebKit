@@ -26,18 +26,18 @@
  */
 
 #include "config.h"
-#include "MimeTypeRegistry.h"
-#include "NotImplemented.h"
+#include "MIMETypeRegistry.h"
 
+#include "NotImplemented.h"
 #include "qwebobjectplugin_p.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 struct ExtensionMap {
     const char* extension;
     const char* mimeType;
 };
+
 static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
     { "gif", "image/gif" },
@@ -66,7 +66,7 @@ static const ExtensionMap extensionMap [] = {
     { 0, 0 }
 };
 
-String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     String s = ext.lower();
 

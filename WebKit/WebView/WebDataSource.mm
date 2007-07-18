@@ -51,7 +51,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
-#import <WebCore/MimeTypeRegistry.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -260,7 +260,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
-        } else if (MimeTypeRegistry::isSupportedImageMIMEType(MIMEType)) {
+        } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)) {
             return [self _documentFragmentWithImageResource:mainResource];
             
         }

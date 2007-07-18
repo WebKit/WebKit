@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
+
 #include <shlwapi.h>
 #include <wtf/HashMap.h>
 
@@ -56,7 +57,7 @@ static String mimeTypeForExtension(const String& extension)
     return String();
 }
    
-String MimeTypeRegistry::getPreferredExtensionForMIMEType(const String& type)
+String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 {
     String mimeType;
     
@@ -79,7 +80,7 @@ String MimeTypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     return String();
 }
 
-String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     if (ext.isEmpty())
         return String();

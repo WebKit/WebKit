@@ -48,7 +48,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/MimeTypeRegistry.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Range.h>
 
 using namespace WebCore;
@@ -104,14 +104,14 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 + (NSArray *)supportedNonImageMIMETypes
 {
     static RetainPtr<NSArray> staticSupportedNonImageMIMETypes =
-        stringArray(MimeTypeRegistry::getSupportedNonImageMIMETypes());
+        stringArray(MIMETypeRegistry::getSupportedNonImageMIMETypes());
     return staticSupportedNonImageMIMETypes.get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
     static RetainPtr<NSArray> staticSupportedImageMIMETypes =
-        stringArray(MimeTypeRegistry::getSupportedImageMIMETypes());
+        stringArray(MIMETypeRegistry::getSupportedImageMIMETypes());
     return staticSupportedImageMIMETypes.get();
 }
 

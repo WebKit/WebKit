@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef xmlhttprequest_h
-#define xmlhttprequest_h
+#ifndef XMLHttpRequest_h
+#define XMLHttpRequest_h
 
 #include "EventTarget.h"
 #include "HTTPHeaderMap.h"
@@ -149,6 +149,6 @@ private:
     bool m_aborted;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // XMLHttpRequest_h

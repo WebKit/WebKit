@@ -1,5 +1,7 @@
 /*
+ * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +25,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MimeTypeRegistry_h
-#define MimeTypeRegistry_h
-
-#include "PlatformString.h"
-#include "StringHash.h"
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
+#include "config.h"
+#include "MIMETypeRegistry.h"
 
 namespace WebCore {
 
-class MimeTypeRegistry {
-public:
-    static String getMIMETypeForExtension(const String& ext);
-    static Vector<String> getExtensionsForMIMEType(const String& type);
-    static String getPreferredExtensionForMIMEType(const String& type);
-    static String getMIMETypeForPath(const String& path);
-    
-    // Check to see if a mime type is suitable for being loaded inline as an
-    // image (e.g., <img> tags).
-    static bool isSupportedImageMIMEType(const String& mimeType);   
-
-    // Check to see if a mime type is suitable for being loaded as an image
-    // document in a frame.
-    static bool isSupportedImageResourceMIMEType(const String& mimeType);    
-
-    // Check to see if a non-image mime type is suitable for being loaded as a
-    // document in a frame.
-    static bool isSupportedNonImageMIMEType(const String& mimeType);
-    
-    // Check to see if a mime type is a valid Java applet mime type
-    static bool isJavaAppletMIMEType(const String& mimeType);
-
-    static const HashSet<String>& getSupportedImageMIMETypes();
-    static const HashSet<String>& getSupportedImageResourceMIMETypes();
-    static const HashSet<String>& getSupportedNonImageMIMETypes();
+struct ExtensionMap {
+    const char* extension;
+    const char* mimeType;
 };
 
+static const ExtensionMap extensionMap [] = {
+    { "bmp", "image/bmp" },
+    { "gif", "image/gif" },
+    { "html", "text/html" },
+    { "ico", "image/x-icon" },   
+    { "jpeg", "image/jpeg" },
+    { "jpg", "image/jpeg" },
+    { "js", "application/x-javascript" },
+    { "pdf", "application/pdf" },
+    { "png", "image/png" },
+    { "rss", "application/rss+xml" },
+    { "svg", "image/svg+xml" },
+    { "text", "text/plain" },
+    { "txt", "text/plain" },
+    { "xbm", "image/x-xbitmap" },
+    { "xml", "text/xml" },
+    { "xsl", "text/xsl" },
+    { "xhtml", "application/xhtml+xml" },
+    { 0, 0 }
+};
+    
+String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+{
+    String s = ext.lower();
+    const ExtensionMap *e = extensionMap;
+    while (e->extension) {
+        if (s == e->extension)
+            return e->mimeType;
+        ++e;
+    }
+    // unknown, let's just assume plain text
+    return "text/plain";
 }
 
-#endif // !MimeTypeRegistry_h
+}

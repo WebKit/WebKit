@@ -37,7 +37,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
 #include "KURL.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "Text.h"
 
@@ -182,7 +182,7 @@ void RenderPartObject::updateWidget()
       // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
       // else our Java plugin will misinterpret it. [4004531]
       String codebase;
-      if (!embed && MimeTypeRegistry::isJavaAppletMIMEType(serviceType)) {
+      if (!embed && MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
           codebase = "codebase";
           uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
       }

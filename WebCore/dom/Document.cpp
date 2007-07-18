@@ -96,10 +96,10 @@
 #include "TreeWalker.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
+#include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "xmlhttprequest.h"
 
 #if ENABLE(XPATH)
 #include "XPathEvaluator.h"

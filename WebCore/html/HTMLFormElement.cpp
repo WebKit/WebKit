@@ -39,7 +39,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 #include "RenderTextControl.h"
 
 namespace WebCore {
@@ -287,7 +287,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
-                            DeprecatedString mimeType = MimeTypeRegistry::getMIMETypeForPath(path).deprecatedString();
+                            DeprecatedString mimeType = MIMETypeRegistry::getMIMETypeForPath(path).deprecatedString();
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
                                 hstr += mimeType.ascii();

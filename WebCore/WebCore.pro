@@ -614,7 +614,7 @@ SOURCES += \
     platform/graphics/Pen.cpp \
     platform/KURL.cpp \
     platform/Logging.cpp \
-    platform/MimeTypeRegistry.cpp \
+    platform/MIMETypeRegistry.cpp \
     platform/network/AuthenticationChallenge.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
@@ -697,7 +697,7 @@ SOURCES += \
     rendering/SVGRenderTreeAsText.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
-    xml/xmlhttprequest.cpp \
+    xml/XMLHttpRequest.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \
     xml/XPathExpression.cpp \
@@ -776,7 +776,7 @@ qt-port:SOURCES += \
     platform/qt/FontQt.cpp \
     platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/Localizations.cpp \
-    platform/qt/MimeTypeRegistryQt.cpp \
+    platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
@@ -835,7 +835,7 @@ gdk-port:SOURCES += \
         platform/gdk/GlyphPageTreeNodeGdk.cpp \
         platform/gdk/KeyEventGdk.cpp \
         platform/gdk/LoggingGdk.cpp \
-        platform/gdk/MimeTypeRegistryGdk.cpp \
+        platform/gdk/MIMETypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \
         platform/gdk/PlatformScreenGdk.cpp \
         platform/gdk/PlatformScrollBarGdk.cpp \

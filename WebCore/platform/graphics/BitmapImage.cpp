@@ -33,7 +33,7 @@
 #include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 
 namespace WebCore {
 

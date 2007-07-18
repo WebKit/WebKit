@@ -3118,11 +3118,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\MimeTypeRegistry.cpp"
+				RelativePath="..\platform\MIMETypeRegistry.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\platform\MimeTypeRegistry.h"
+				RelativePath="..\platform\MIMETypeRegistry.h"
 				>
 			</File>
 			<File
@@ -3517,7 +3517,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\MimeTypeRegistryWin.cpp"
+					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
 				<File
@@ -5317,11 +5317,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\xml\xmlhttprequest.cpp"
+				RelativePath="..\xml\XMLHttpRequest.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xml\xmlhttprequest.h"
+				RelativePath="..\xml\XMLHttpRequest.h"
 				>
 			</File>
 			<File

@@ -34,7 +34,7 @@
 #import <wtf/Vector.h>
 #import "KURL.h"
 #import "LocalizedStrings.h"
-#import "MimeTypeRegistry.h"
+#import "MIMETypeRegistry.h"
 #import "PlatformString.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
@@ -241,11 +241,11 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
     // I don't think we need to worry about this for the image case
     // If the type is known, check the extension and correct it if necessary.
     if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
-        Vector<String> extensions = MimeTypeRegistry::getExtensionsForMIMEType(MIMEType);
+        Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(MIMEType);
 
         if (!extensions.size() || (extensions && !vectorContainsString(extensions, extension))) {
             // The extension doesn't match the MIME type. Correct this.
-            NSString *correctExtension = MimeTypeRegistry::getPreferredExtensionForMIMEType(MIMEType);
+            NSString *correctExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(MIMEType);
             if ([correctExtension length] != 0) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension];

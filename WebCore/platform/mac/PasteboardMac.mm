@@ -37,7 +37,7 @@
 #import "Image.h"
 #import "KURL.h"
 #import "LoaderNSURLExtras.h"
-#import "MimeTypeRegistry.h"
+#import "MIMETypeRegistry.h"
 #import "RenderImage.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
@@ -291,7 +291,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     [m_pasteboard.get() setData:[image->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
 
     String MIMEType = cachedImage->response().mimeType();
-    ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
+    ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
 
     writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, URL));
 }

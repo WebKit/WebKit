@@ -28,9 +28,9 @@
 #include "HTMLPlugInElement.h"
 #include "JSAttr.h"
 #include "JSNode.h"
+#include "XMLHttpRequest.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
-#include "xmlhttprequest.h"
 
 #if ENABLE(SVG)
 #include "JSSVGElementInstance.h"
