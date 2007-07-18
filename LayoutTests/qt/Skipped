@@ -27,6 +27,7 @@ fast/forms/input-truncate-newline.html
 fast/forms/plaintext-mode-1.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
+fast/dom/Window/alert-undefined.html
 
 
 # missing stuff in DRT

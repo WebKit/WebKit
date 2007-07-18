@@ -242,7 +242,7 @@ my $expectedDirectory = $testDirectory;
 if (isLeopard()) {
     $platformTestDirectory = "$testDirectory/mac/leopard";
 } elsif (isQt()) {
-    $expectedDirectory = "LayoutTests/qt/";
+    $expectedDirectory = File::Spec->rel2abs("LayoutTests/qt/");
     $platformTestDirectory = $expectedDirectory;
 } elsif (isCygwin()) {
     $expectedDirectory = $testDirectory;
@@ -461,6 +461,9 @@ for my $test (@tests) {
 
     my $expected;
     my $expectedDir = expectedDirectoryForTest($base);
+    if ($isText) {
+      $expectedDir = $testDirectory;
+    }
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
         $expected = "";

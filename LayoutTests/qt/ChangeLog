@@ -1,3 +1,11 @@
+2007-07-18  Lars Knoll <lars@trolltech.com>
+
+        Skip a test that pops up a message box and makes the test hang.
+
+        Reviewed by Zack
+
+        * Skipped:
+
 2007-07-16  Adam Treat <treat@kde.org>
 
         Reviewed by Lars.

@@ -25,6 +25,16 @@
 
 2007-07-18  Lars Knoll <lars@trolltech.com>
 
+        We really don't want to compare non text only tests to the 
+        Mac results if we don't have a result for Qt, as this would
+        give a failure and not a notification that the test is new.
+
+        Reviewed by Zack
+
+        * Scripts/run-webkit-tests:
+
+2007-07-18  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Zack & Simon
 
         Adjust to changed API in QWebFrame
