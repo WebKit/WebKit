@@ -24,15 +24,15 @@
 #include "config.h"
 #if ENABLE(SVG)
 
-#include "SVGPaint.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
-#include "cssparser.h"
+#include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "SVGPaint.h"
 #include "ksvgcssproperties.c"
 #include "ksvgcssvalues.c"
 

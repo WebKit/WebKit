@@ -25,6 +25,7 @@
 #include "config.h"
 
 #include "CSSMediaRule.h"
+#include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -36,7 +37,6 @@
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
 #include "PlatformString.h"
-#include "cssparser.h"
 #include <stdlib.h>
 #include <string.h>
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HTMLTableElement.h"
 
-#include "csshelper.h"
+#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"

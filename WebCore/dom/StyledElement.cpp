@@ -26,11 +26,11 @@
 #include "config.h"
 #include "StyledElement.h"
 
+#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "cssstyleselector.h"
 
 using namespace std;
 

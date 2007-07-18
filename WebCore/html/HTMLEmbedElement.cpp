@@ -25,12 +25,12 @@
 #include "config.h"
 #include "HTMLEmbedElement.h"
 
+#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "csshelper.h"
 #include "RenderPartObject.h"
 
 #if ENABLE(SVG)

@@ -25,16 +25,16 @@
 #if ENABLE(SVG)
 #include "SVGGradientElement.h"
 
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 #include "RenderPath.h"
 #include "RenderSVGHiddenContainer.h"
 #include "SVGNames.h"
+#include "SVGPaintServerLinearGradient.h"
+#include "SVGPaintServerRadialGradient.h"
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "SVGUnitTypes.h"
-#include "SVGPaintServerLinearGradient.h"
-#include "SVGPaintServerRadialGradient.h"
 
 namespace WebCore {
 

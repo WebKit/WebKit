@@ -31,7 +31,7 @@
 #if ENABLE(SVG)
 #include "SVGUseElement.h"
 
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 #include "CString.h"
 #include "Document.h"
 #include "Event.h"
@@ -47,7 +47,6 @@
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
 #include "XMLSerializer.h"
-
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

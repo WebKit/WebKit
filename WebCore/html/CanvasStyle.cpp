@@ -27,10 +27,10 @@
 #include "config.h"
 #include "CanvasStyle.h"
 
+#include "CSSParser.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
-#include "cssparser.h"
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(QT)

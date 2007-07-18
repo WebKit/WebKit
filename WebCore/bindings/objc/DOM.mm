@@ -29,6 +29,7 @@
 #import "DOM.h"
 
 #import "CDATASection.h"
+#import "CSSHelper.h"
 #import "CSSStyleSheet.h"
 #import "Comment.h"
 #import "DOMHTMLCanvasElement.h"
@@ -63,7 +64,6 @@
 #import "Text.h"
 #import "TreeWalker.h"
 #import "WebScriptObjectPrivate.h"
-#import "csshelper.h"
 #import <objc/objc-class.h>
 #import <wtf/HashMap.h>
 

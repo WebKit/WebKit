@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "AffineTransform.h"
+#include "CSSStyleSelector.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "Document.h"
@@ -43,6 +44,7 @@
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "Page.h"
+#include "PlatformScreen.h"
 #include "Position.h"
 #include "RenderArena.h"
 #include "RenderCounter.h"
@@ -56,10 +58,8 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "PlatformScreen.h"
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
-#include "cssstyleselector.h"
 #include <algorithm>
 
 using namespace std;

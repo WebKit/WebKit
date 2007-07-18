@@ -27,6 +27,7 @@
 #include "SVGAElement.h"
 
 #include "Attr.h"
+#include "CSSHelper.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -34,12 +35,11 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
-#include "RenderSVGInline.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGInline.h"
 #include "ResourceRequest.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
-#include "csshelper.h"
 
 namespace WebCore {
 

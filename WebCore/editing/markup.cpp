@@ -32,8 +32,8 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
+#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
-#include "cssstyleselector.h"
 #include "Comment.h"
 #include "DeleteButtonController.h"
 #include "DeprecatedStringList.h"
@@ -51,9 +51,9 @@
 #include "QualifiedName.h"
 #include "Range.h"
 #include "Selection.h"
+#include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
-#include "TextIterator.h"
 
 using namespace std;
 

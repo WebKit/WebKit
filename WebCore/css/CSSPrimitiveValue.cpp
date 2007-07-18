@@ -23,6 +23,7 @@
 #include "config.h"
 #include "CSSPrimitiveValue.h"
 
+#include "CSSHelper.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "Counter.h"
@@ -30,7 +31,6 @@
 #include "ExceptionCode.h"
 #include "Pair.h"
 #include "RenderStyle.h"
-#include "csshelper.h"
 #include <ctype.h>
 
 namespace WebCore {

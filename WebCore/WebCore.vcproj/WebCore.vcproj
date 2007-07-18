@@ -4401,11 +4401,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\csshelper.cpp"
+				RelativePath="..\css\CSSHelper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\csshelper.h"
+				RelativePath="..\css\CSSHelper.h"
 				>
 			</File>
 			<File
@@ -4469,11 +4469,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\cssparser.cpp"
+				RelativePath="..\css\CSSParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\cssparser.h"
+				RelativePath="..\css\CSSParser.h"
 				>
 			</File>
 			<File
@@ -4545,11 +4545,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\cssstyleselector.cpp"
+				RelativePath="..\css\CSSStyleSelector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\cssstyleselector.h"
+				RelativePath="..\css\CSSStyleSelector.h"
 				>
 			</File>
 			<File

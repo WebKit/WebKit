@@ -27,11 +27,10 @@
 #include "ApplyStyleCommand.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "cssparser.h"
+#include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
@@ -40,6 +39,7 @@
 #include "RenderObject.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 #include "visible_units.h"
 
 namespace WebCore {

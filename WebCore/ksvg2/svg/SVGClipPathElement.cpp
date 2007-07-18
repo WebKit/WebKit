@@ -25,10 +25,10 @@
 #if ENABLE(SVG)
 #include "SVGClipPathElement.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
-#include "cssstyleselector.h"
 
 namespace WebCore {
 

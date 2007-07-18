@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef csshelper_h
-#define csshelper_h
+#ifndef CSSHelper_h
+#define CSSHelper_h
 
 namespace WebCore {
 
@@ -36,6 +36,7 @@ namespace WebCore {
     // At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called
     // "absolute" CSS length units like inch and pt is always fixed and never changes.
     const float cssPixelsPerInch = 96.0f;
+
 } // namespace WebCore
 
-#endif // csshelper_h
+#endif // CSSHelper_h

@@ -24,7 +24,7 @@
 #include "config.h"
 #include "Element.h"
 
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Editor.h"
 #include "ExceptionCode.h"

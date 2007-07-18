@@ -325,7 +325,7 @@ SOURCES += \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCursorImageValue.cpp \
     css/CSSFontFaceRule.cpp \
-    css/csshelper.cpp \
+    css/CSSHelper.cpp \
     css/CSSImageValue.cpp \
     css/CSSImportRule.cpp \
     css/CSSInheritedValue.cpp \
@@ -333,7 +333,7 @@ SOURCES += \
     css/CSSMediaRule.cpp \
     css/CSSMutableStyleDeclaration.cpp \
     css/CSSPageRule.cpp \
-    css/cssparser.cpp \
+    css/CSSParser.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
     css/CSSRule.cpp \
@@ -341,7 +341,7 @@ SOURCES += \
     css/CSSSelector.cpp \
     css/CSSStyleDeclaration.cpp \
     css/CSSStyleRule.cpp \
-    css/cssstyleselector.cpp \
+    css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
     css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
@@ -1314,7 +1314,7 @@ cssbison.variable_out = GENERATED_SOURCES
 cssbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += cssbison
 #PRE_TARGETDEPS += tmp/CSSGrammar.cpp
-grammar_h_dep.target = tmp/cssparser.o
+grammar_h_dep.target = tmp/CSSParser.o
 grammar_h_dep.depends = tmp/CSSGrammar.cpp tmp/HTMLNames.cpp
 QMAKE_EXTRA_TARGETS += grammar_h_dep
 

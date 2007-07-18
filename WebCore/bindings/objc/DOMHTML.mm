@@ -27,6 +27,7 @@
 #import "config.h"
 #import "DOMHTML.h"
 
+#import "CSSHelper.h"
 #import "DOMExtensions.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
@@ -38,7 +39,6 @@
 #import "KURL.h"
 #import "Range.h"
 #import "RenderTextControl.h"
-#import "csshelper.h"
 #import "markup.h"
 
 //------------------------------------------------------------------------------------------

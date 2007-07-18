@@ -27,14 +27,14 @@
 #include "config.h"
 #include "HTMLOptionElement.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "Text.h"
-#include "cssstyleselector.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef cssparser_h
-#define cssparser_h
+#ifndef CSSParser_h
+#define CSSParser_h
 
 #include "AtomicString.h"
 #include "Color.h"
@@ -281,4 +281,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // cssparser_h
+#endif // CSSParser_h

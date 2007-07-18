@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 #include "SVGLength.h"
 
+#include "CSSHelper.h"
 #include "DeprecatedString.h"
 #include "FloatConversion.h"
 #include "FrameView.h"
@@ -34,7 +35,6 @@
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
-#include "csshelper.h"
 
 #include <math.h>
 #include <wtf/Assertions.h>

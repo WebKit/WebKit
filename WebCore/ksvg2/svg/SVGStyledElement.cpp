@@ -26,10 +26,9 @@
 #include "SVGStyledElement.h"
 
 #include "Attr.h"
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "ksvgcssproperties.h"
 #include "PlatformString.h"
 #include "RenderPath.h"
 #include "SVGElement.h"
@@ -37,7 +36,7 @@
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-
+#include "ksvgcssproperties.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

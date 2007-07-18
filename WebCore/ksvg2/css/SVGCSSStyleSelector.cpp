@@ -29,20 +29,20 @@
 
 #include "config.h"
 #if ENABLE(SVG)
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 
+#include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 #include "SVGStyledElement.h"
-#include "CSSValueKeywords.h"
-#include "CSSValueList.h"
-#include "ksvgcssvalues.h"
 #include "ksvgcssproperties.h"
-#include <stdlib.h>
+#include "ksvgcssvalues.h"
 #include <math.h>
+#include <stdlib.h>
 #include <wtf/MathExtras.h>
 
 #define HANDLE_INHERIT(prop, Prop) \

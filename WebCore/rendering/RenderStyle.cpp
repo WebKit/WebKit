@@ -22,7 +22,7 @@
 #include "config.h"
 #include "RenderStyle.h"
 
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 #include "RenderArena.h"
 
 namespace WebCore {

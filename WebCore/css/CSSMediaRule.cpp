@@ -25,11 +25,11 @@
 #include "config.h"
 #include "CSSMediaRule.h"
 
+#include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "ExceptionCode.h"
 #include "MediaList.h"
 #include "StyleSheet.h"
-#include "cssparser.h"
 
 namespace WebCore {
 

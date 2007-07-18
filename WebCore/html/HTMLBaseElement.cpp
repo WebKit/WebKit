@@ -25,12 +25,12 @@
 #include "config.h"
 #include "HTMLBaseElement.h"
 
+#include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "KURL.h"
-#include "csshelper.h"
 
 namespace WebCore {
 

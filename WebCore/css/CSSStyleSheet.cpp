@@ -23,11 +23,11 @@
 
 #include "CSSImportRule.h"
 #include "CSSNamespace.h"
+#include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
-#include "cssparser.h"
 
 namespace WebCore {
 

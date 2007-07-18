@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef cssstyleselector_h
-#define cssstyleselector_h
+#ifndef CSSStyleSelector_h
+#define CSSStyleSelector_h
 
 #include "DeprecatedString.h"
 #include "RenderStyle.h"
@@ -271,6 +271,6 @@ class StyledElement;
         CSSRuleData* m_last;
     };
     
-}
+} // WebCore
 
-#endif
+#endif // CSSStyleSelector_h

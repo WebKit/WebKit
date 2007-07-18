@@ -22,7 +22,7 @@
 #include "config.h"
 #include "HTMLImageLoader.h"
 
-#include "csshelper.h"
+#include "CSSHelper.h"
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "Document.h"

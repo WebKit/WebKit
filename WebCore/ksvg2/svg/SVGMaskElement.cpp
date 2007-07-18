@@ -26,12 +26,12 @@
 #if ENABLE(SVG)
 #include "SVGMaskElement.h"
 
+#include "CSSStyleSelector.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
-#include "cssstyleselector.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>

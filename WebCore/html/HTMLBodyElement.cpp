@@ -24,8 +24,10 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
+#include "CSSHelper.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
@@ -33,8 +35,6 @@
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "csshelper.h"
-#include "cssstyleselector.h"
 
 namespace WebCore {
 

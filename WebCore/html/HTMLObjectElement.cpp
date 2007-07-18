@@ -24,14 +24,15 @@
 #include "config.h"
 #include "HTMLObjectElement.h"
 
+#include "CSSHelper.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
-#include "HTMLFormElement.h"
 #include "HTMLDocument.h"
+#include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "Image.h"
@@ -40,7 +41,6 @@
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
 #include "Text.h"
-#include "csshelper.h"
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"

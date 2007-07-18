@@ -28,6 +28,7 @@
 #include "CanvasRenderingContext2D.h"
 
 #include "AffineTransform.h"
+#include "CSSParser.h"
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -42,7 +43,6 @@
 #include "NotImplemented.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
-#include "cssparser.h"
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(QT)

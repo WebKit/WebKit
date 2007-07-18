@@ -22,12 +22,13 @@
  */
 
 #include "config.h"
-#include "cssparser.h"
+#include "CSSParser.h"
 
 #include "CSSBorderImageValue.h"
-#include "CSSCursorImageValue.h"
-#include "CSSImageValue.h"
 #include "CSSCharsetRule.h"
+#include "CSSCursorImageValue.h"
+#include "CSSHelper.h"
+#include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -36,11 +37,11 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSQuirkPrimitiveValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
-#include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Counter.h"
@@ -50,10 +51,9 @@
 #include "FontValue.h"
 #include "KURL.h"
 #include "MediaList.h"
+#include "MediaQueryExp.h"
 #include "Pair.h"
 #include "ShadowValue.h"
-#include "csshelper.h"
-#include "MediaQueryExp.h"
 
 #define YYDEBUG 0
 

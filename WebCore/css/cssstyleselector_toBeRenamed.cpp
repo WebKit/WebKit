@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "cssstyleselector.h"
+#include "CSSStyleSelector.h"
 
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"

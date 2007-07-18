@@ -23,7 +23,7 @@
 #include "config.h"
 #include "HitTestResult.h"
 
-#include "csshelper.h"
+#include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -34,8 +34,8 @@
 #include "HTMLNames.h"
 #include "KURL.h"
 #include "PlatformScrollBar.h"
-#include "RenderObject.h"
 #include "RenderImage.h"
+#include "RenderObject.h"
 #include "SelectionController.h"
 
 #if ENABLE(SVG)

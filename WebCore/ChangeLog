@@ -1,3 +1,75 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Rename csshelper.h, csshelper.cpp, cssparser.h, cssparser.cpp,
+        cssstyleselector.h, and cssstyleselector.cpp to be CamelCase.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMHTML.mm:
+        * css/CSSGrammar.y:
+        * css/CSSMediaRule.cpp:
+        * css/CSSMutableStyleDeclaration.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSStyleSheet.cpp:
+        * css/MediaList.cpp:
+        * css/MediaQueryExp.cpp:
+        * css/csshelper.cpp: Removed.
+        * css/csshelper.h: Removed.
+        * css/CSSHelper.cpp: Copied from css/csshelper.cpp.
+        * css/CSSHelper.h: Copied from css/csshelper.h.
+        * css/cssparser.cpp: Removed.
+        * css/cssparser.h: Removed.
+        * css/CSSParser.cpp: Copied from css/cssparser.cpp.
+        * css/CSSParser.h: Copied from css/cssparser.h.
+        * css/cssstyleselector.cpp: Removed.
+        * css/cssstyleselector.h: Removed.
+        * css/CSSStyleSelector.cpp: Copied from css/cssstyleselector.cpp.
+        * css/CSSStyleSelector.h: Copied from css/cssstyleselector.h.
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/StyledElement.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/markup.cpp:
+        * html/CanvasGradient.cpp:
+        * html/CanvasRenderingContext2D.cpp:
+        * html/CanvasStyle.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLBaseElement.cpp:
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFrameElementBase.cpp:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLImageLoader.cpp:
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLOptGroupElement.cpp:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTablePartElement.cpp:
+        * html/HTMLTokenizer.cpp:
+        * ksvg2/css/SVGCSSParser.cpp:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGLength.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * page/DOMWindow.cpp:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        * rendering/HitTestResult.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderStyle.cpp:
+        * rendering/RenderThemeMac.mm:
+
 2007-07-18  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Adam

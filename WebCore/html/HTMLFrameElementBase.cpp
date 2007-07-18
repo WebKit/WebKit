@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFrameElementBase.h"
 
+#include "CSSHelper.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -38,7 +39,6 @@
 #include "Page.h"
 #include "RenderFrame.h"
 #include "Settings.h"
-#include "csshelper.h"
 
 namespace WebCore {
 

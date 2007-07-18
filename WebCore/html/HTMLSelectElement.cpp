@@ -25,8 +25,9 @@
 #include "config.h"
 #include "HTMLSelectElement.h"
 
-#include "CharacterNames.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSelector.h"
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -41,9 +42,8 @@
 #include "MouseEvent.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
-#include "cssstyleselector.h"
-#include <wtf/Vector.h>
 #include <math.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #define ARROW_KEYS_POP_MENU 1

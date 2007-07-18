@@ -29,6 +29,7 @@
 #include "BarInfo.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
+#include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "DOMSelection.h"
 #include "Document.h"
@@ -42,7 +43,6 @@
 #include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "Screen.h"
-#include "cssstyleselector.h"
 
 namespace WebCore {
 

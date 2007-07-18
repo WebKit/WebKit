@@ -22,6 +22,7 @@
 #import "config.h"
 #import "RenderThemeMac.h"
 
+#import "CSSStyleSelector.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
 #import "Element.h"
@@ -34,10 +35,8 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
-#import "cssstyleselector.h"
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
-
 
 // The methods in this file are specific to the Mac OS X platform.
 

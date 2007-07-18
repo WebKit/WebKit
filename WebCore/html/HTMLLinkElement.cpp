@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLLinkElement.h"
 
+#include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -32,7 +33,6 @@
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
-#include "csshelper.h"
 #include "MediaQueryEvaluator.h"
 
 namespace WebCore {

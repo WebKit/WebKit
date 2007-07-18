@@ -26,8 +26,8 @@
 #include "HTMLFormElement.h"
 
 #include "Base64.h"
+#include "CSSHelper.h"
 #include "CString.h"
-#include "csshelper.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormData.h"
