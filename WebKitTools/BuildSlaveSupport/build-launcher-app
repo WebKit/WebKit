@@ -38,7 +38,7 @@ use webkitdirs;
 my @xcodeBuildArguments = XcodeOptions();
 my $nightlyLauncherTemplatePath = "$FindBin::Bin/../WebKitLauncher";
 my $nightlyLauncherStagingPath = productDir() . "/WebKit.app";
-my $droseraProjectPath = "$FindBin::Bin/../Drosera";
+my $droseraProjectPath = "$FindBin::Bin/../Drosera/mac";
 my $droseraStagingPath = productDir() . "/DroseraLauncher.app";
 
 sub buildNightlyLauncher
