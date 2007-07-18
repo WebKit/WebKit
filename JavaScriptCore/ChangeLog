@@ -1,5 +1,13 @@
 2007-07-18  Simon Hausmann  <hausmann@kde.org>
 
+        * Fix the Qt build, call dftables from the right directory.
+
+        Reviewed by Adam Treat.
+
+        * pcre/pcre.pri:
+
+2007-07-18  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Zack.
 
         Don't call gcc directly when building the dftables tool but use a separate .pro file for the Qt build.

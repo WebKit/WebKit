@@ -26,7 +26,7 @@ CTGENFILE += \
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 ctgen.output = tmp/chartables.c
-ctgen.commands = tmp/dftables ${QMAKE_FILE_OUT}
+ctgen.commands = $$OUTPUT_DIR/JavaScriptCore/pcre/tmp/dftables ${QMAKE_FILE_OUT}
 ctgen.input = CTGENFILE
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
