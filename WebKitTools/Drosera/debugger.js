@@ -71,6 +71,9 @@ ScriptCallFrame.prototype.loadVariables = function ()
     var variablesTable = document.getElementById("variablesTable");
     variablesTable.innerHTML = "";
 
+    if (!this.localVariableNames)
+        return;
+
     for(var i = 0; i < this.localVariableNames.length; i++) {
         var tr = document.createElement("tr");
         var td = document.createElement("td");
@@ -965,7 +968,7 @@ function switchFunction(index, shouldResetPopup)
     var selectedFunction = functionSelect.childNodes[index];
     var selection = sourcesFrame.getSelection();
     var currentFunction = selectedFunction.value;     
-    var currentFunctionElement = sourcesFrame.document.getElementById(currentFunction);
+    var currentFunctionElement = sourcesFrame.contentDocument.getElementById(currentFunction);
     
     functionSelect.blur();
     sourcesFrame.focus();

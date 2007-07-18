@@ -1,3 +1,10 @@
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Use contentDocument to get the source view's iframe document.
+        Also adds a null/undefined check for localVariableNames.
+
+        * Drosera/debugger.js:
+
 2007-07-18  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack & Simon
