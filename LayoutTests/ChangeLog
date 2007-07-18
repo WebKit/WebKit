@@ -1,3 +1,14 @@
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5340098>
+        http://bugs.webkit.org/show_bug.cgi?id=13366
+        REGRESSION (r10935): AOL beta music player doesn't play
+        
+        * fast/dom/HTMLDocument/object-by-name-unknown-child-element-expected.txt: Added.
+        * fast/dom/HTMLDocument/object-by-name-unknown-child-element.html: Added.
+
 2007-07-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

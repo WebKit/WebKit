@@ -311,14 +311,15 @@ void HTMLObjectElement::renderFallbackContent()
 void HTMLObjectElement::updateDocNamedItem()
 {
     // The rule is "<object> elements with no children other than
-    // <param> elements and whitespace can be found by name in a
-    // document, and other <object> elements cannot."
+    // <param> elements, unknown elements and whitespace can be
+    // found by name in a document, and other <object> elements cannot."
     bool wasNamedItem = m_docNamedItem;
     bool isNamedItem = true;
     Node* child = firstChild();
     while (child && isNamedItem) {
         if (child->isElementNode()) {
-            if (!static_cast<Element*>(child)->hasTagName(paramTag))
+            Element* element = static_cast<Element*>(child);
+            if (HTMLElement::isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
                 isNamedItem = false;
         } else if (child->isTextNode()) {
             if (!static_cast<Text*>(child)->containsOnlyWhitespace())

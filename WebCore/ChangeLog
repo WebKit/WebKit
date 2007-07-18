@@ -1,3 +1,23 @@
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5340098>
+        http://bugs.webkit.org/show_bug.cgi?id=13366
+        REGRESSION (r10935): AOL beta music player doesn't play
+
+        The AOL beta music player has a typo, causing it to create an <embed"> element inside of
+        an <object> element
+        Because of this, it will not be treated as an embed tag, so its name will not be added
+        to the document's named item map. Furthermore, since the <object> contains a child that
+        is not a <param>, the object's name won't be added either.
+        
+        The (somewhat ugly) fix is to add <object> to the named map only if it has <param> or
+        unknown elements as children.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
