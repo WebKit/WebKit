@@ -1,3 +1,13 @@
+2007-07-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej and Kevin Decker
+
+        - fixed <rdar://problem/5315926> REGRESSION: ~.4% PLT regression from r23949 (canonicalization change)
+
+        * loader/mac/LoaderNSURLExtras.m:
+        (canonicalURL):
+        Rolled out the fix for 5249730 that caused this regression. 5249730 is addressed a different way now.
+
 2007-07-18  Sam Weinig  <sam@webkit.org>
 
         Build fix.

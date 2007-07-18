@@ -186,13 +186,16 @@ NSURL *canonicalURL(NSURL *url)
         return url;
     }
     
-    // Get NSURLProtocol's idea of canonical URL
+    // This applies NSURL's concept of canonicalization, but not KURL's concept. It would
+    // make sense to apply both, but when we tried that it caused a performance degradation
+    // (see 5315926). It might make sense to apply only the KURL concept and not the NSURL
+    // concept, but it's too risky to make that change for WebKit 3.0.
     NSURLRequest *newRequest = [concreteClass canonicalRequestForRequest:request];
-    KURL newURL = [newRequest URL];
+    NSURL *newURL = [newRequest URL]; 
+    NSURL *result = [[newURL retain] autorelease]; 
     [request release];
     
-    // pass through KURL to get KURL's idea of canonical URL
-    return newURL.getNSURL();
+    return result;
 }
 
 static bool vectorContainsString(Vector<String> vector, String string)
