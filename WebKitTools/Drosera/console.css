@@ -48,7 +48,7 @@ body { margin: 0; padding: 0; overflow: hidden; }
 
 #history {
     position: absolute;
-    top: 20px;
+    top: 0;
     bottom: 10px;
     left: 0;
     right: 0;

@@ -1,5 +1,11 @@
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
+        The console log was 20px down from the top for no reason, move it up.
+
+        * Drosera/console.css:
+
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
         Use contentDocument to get the source view's iframe document.
         Also adds a null/undefined check for localVariableNames.
 
