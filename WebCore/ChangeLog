@@ -1,3 +1,18 @@
+2007-07-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for <rdar://problem/5154518> REGRESSION: Hitting return does
+        nothing in ruby terminal at http://tryruby.hobix.com/
+
+        Calling event.preventDefault() during a keydown event should not 
+        prevent the keypress event from firing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+
 2007-07-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

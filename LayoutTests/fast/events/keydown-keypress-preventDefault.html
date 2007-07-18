@@ -5,10 +5,10 @@
         tf.focus();
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
-            eventSender.keyDown('F');
+            eventSender.keyDown('P');
             eventSender.keyDown('A');
-            eventSender.keyDown('I');
-            eventSender.keyDown('L');
+            eventSender.keyDown('S');
+            eventSender.keyDown('S');
         }
     }
     
@@ -18,8 +18,8 @@
     }
 </script> 
 <body onload="test()">
-    This tests that preventing the default behavior for a keydown event will also prevent the keypress event from firing, and the text from being inserted.<br>
-    This matches IE behavior, but not Firefox.<br>
+    This tests that preventing the default behavior for a keydown event will not prevent the keypress event from firing, and the text will be inserted.<br>
+    This matches IE7 and Firefox.<br>
     <input id="tf" onkeydown="log('key down'); event.preventDefault();" onkeypress="log('key press')">
     <br>
     <div id="res"></div>

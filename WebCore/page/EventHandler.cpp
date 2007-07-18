@@ -1383,47 +1383,36 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     
     if (!keyEvent.isKeyUp())
         m_frame->loader()->resetMultipleFormSubmissionProtection();
-
-    return !node->dispatchKeyEvent(keyEvent);
+    bool result = !node->dispatchKeyEvent(keyEvent);
+    
+    if (keyEvent.isAutoRepeat() || keyEvent.isKeyUp()) 
+        return result;
+    
+    // Focus may have change during the keyDown handling, so refetch node
+    node = eventTargetNodeForDocument(m_frame->document());
+    if (!node)
+        return result;
+    
+    // Create a keypress event from the keydown event
+    RefPtr<KeyboardEvent> keypress;
+    PlatformKeyboardEvent key = keyEvent;
+    key.setIsAutoRepeat(true);
+    keypress = new KeyboardEvent(key, m_frame->document()->defaultView());
+    keypress->setTarget(node);
+    
+    m_frame->editor()->handleInputMethodKeypress(keypress.get());
+    
+    if (keypress->defaultHandled())
+        return true;
+    
+    ExceptionCode ec;
+    node->dispatchEvent(keypress, ec, true);
+    return result || keypress->defaultHandled() || keypress->defaultPrevented();
 }
 
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
-    if (event->type() == keydownEvent) {     
-        // Get the target node again, in case the focus has changed
-        if (EventTargetNode* node = eventTargetNodeForDocument(m_frame->document())) {
-            // Create a keypress event from the keydown event
-            RefPtr<KeyboardEvent> keypress;
-            const PlatformKeyboardEvent* keyEvent = event->keyEvent();
-            if (keyEvent) {
-                PlatformKeyboardEvent key = *keyEvent;
-                // Set "is repeat" to true, which will cause this PlatformKeyboardEvent to be interpreted as a keypress event.
-                // We should do this a better way.
-                key.setIsAutoRepeat(true);
-                keypress = new KeyboardEvent(key, event->view());
-            } else {
-                keypress = new KeyboardEvent(keypressEvent, event->bubbles(), event->cancelable(), 
-                                            event->view(), event->keyIdentifier(), event->keyLocation(),
-                                            event->ctrlKey(), event->altKey(), event->shiftKey(), event->metaKey(), event->altGraphKey());
-            }
-            keypress->setUnderlyingEvent(event);   
-            keypress->setTarget(node);
-            
-            // Call handleInputMethodKeypress so that input methods have a chance to handle the event.
-            // If that happens, then we don't need to send the keypress event.  If an input method doesn't handle the event, 
-            // then we'll save the data we need to perform the correct action (like inserting text) 
-            // when we call handleKeypress.
-            m_frame->editor()->handleInputMethodKeypress(keypress.get());
-            
-            if (!keypress->defaultHandled()) {
-                // Dispatch the new keypress event
-                ExceptionCode ec;
-                node->dispatchEvent(keypress, ec, true);
-            }
-            if (keypress->defaultHandled() || keypress->defaultPrevented())
-                event->setDefaultHandled();
-        }
-    } else if (event->type() == keypressEvent) {
+   if (event->type() == keypressEvent) {
         m_frame->editor()->handleKeypress(event);
         if (event->defaultHandled())
             return;
