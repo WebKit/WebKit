@@ -47,19 +47,21 @@ struct FontPlatformData {
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false)
     : font(f), syntheticBold(b), syntheticOblique(o)
     {
-        if (f && objc_collecting_enabled()) CFRetain(f); // fix for <rdar://problems/4223619>
+        if (f) 
+            CFRetain(f);
     }
 
     FontPlatformData(const FontPlatformData& f)
     {
-        font = (f.font && f.font != (NSFont*)-1 && objc_collecting_enabled()) ? (NSFont*)CFRetain(f.font) : f.font;
+        font = (f.font && f.font != (NSFont*)-1) ? (NSFont*)CFRetain(f.font) : f.font;
         syntheticBold = f.syntheticBold;
         syntheticOblique = f.syntheticOblique;
     }
 
     ~FontPlatformData()
     {
-        if (font && font != (NSFont*)-1 && objc_collecting_enabled()) CFRelease(font);
+        if (font && font != (NSFont*)-1)
+            CFRelease(font);
     }
 
     NSFont *font;

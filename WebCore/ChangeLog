@@ -1,3 +1,17 @@
+2007-07-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4799967> Safari and other WebKit 
+        apps sometimes crash in WebCore::FontData::platformInit
+
+        Always retain/release our font handle, instead of only retaining
+        in the presence of GC.
+
+        * platform/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+
 2007-07-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
