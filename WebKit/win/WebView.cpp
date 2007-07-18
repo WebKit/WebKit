@@ -1775,7 +1775,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     if (!setFTPDirectoryTemplatePathOnce && m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;
         if (SUCCEEDED(m_uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**)&uiDelegate2))) {
-            BSTR path;        
+            BSTR path;
             if (SUCCEEDED(uiDelegate2->ftpDirectoryTemplatePath(this, &path))) {
                 m_page->settings()->setFTPDirectoryTemplatePath(String(path, SysStringLen(path)));
                 SysFreeString(path);
