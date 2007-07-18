@@ -1,3 +1,10 @@
+2007-07-17  Brady Eidson <beidson@apple.com>
+
+        Blind Windows build fix from r24395
+
+        * WebView.cpp:
+        (WebView::initWithFrame): BSTR, not BString
+
 2007-07-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve
