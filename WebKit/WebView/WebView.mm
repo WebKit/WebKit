@@ -735,15 +735,17 @@ static bool debugWidget = true;
     return MIMEType;
 }
 
-- (void)_downloadURL:(NSURL *)URL
+- (WebDownload *)_downloadURL:(NSURL *)URL
 {
     ASSERT(URL);
     
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [WebDownload _downloadWithRequest:request
-                             delegate:_private->downloadDelegate
-                            directory:nil];
+    WebDownload *download = [WebDownload _downloadWithRequest:request
+                                                     delegate:_private->downloadDelegate
+                                                    directory:nil];
     [request release];
+    
+    return download;
 }
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request

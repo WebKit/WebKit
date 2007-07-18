@@ -46,6 +46,7 @@ typedef WebCore::Page WebCorePage;
 #endif
 
 @class WebBasePluginPackage;
+@class WebDownload;
 
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(WebCoreKeyboardEvent *)event shouldSaveCommand:(BOOL)shouldSave;
@@ -88,7 +89,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
-- (void)_downloadURL:(NSURL *)URL;
+- (WebDownload *)_downloadURL:(NSURL *)URL;
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
 - (BOOL)_isPerformingProgrammaticFocus;

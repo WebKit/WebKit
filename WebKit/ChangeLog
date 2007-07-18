@@ -1,3 +1,34 @@
+2007-07-18  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        <rdar://problem/5341334> Alt-clicking a link in Safari does not register original URL info with gatekeeper
+        <rdar://problem/5342570> REGRESSION: A hang occurs when attempting to open a attached file from a .Mac web mail message
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        Added a new method, setOriginalURLForDownload, for both download() 
+        and startDownload() to share.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::download):
+        Moved all the gatekeeper code into setOriginalURLForDownload.
+        
+        (WebFrameLoaderClient::setOriginalURLForDownload):
+        Same code that was in download() but moved into a single place for both
+        startDownload and download to use.  Also returned the boolean logic
+        for detecting _wasUserGesture back to it's previous state, since my prior change
+        was incorrect.  Additionally I found a loop index bug with backListCount and fixed it.
+        
+        (WebFrameLoaderClient::startDownload):
+        Calls out to setOriginalURLForDownload after a download is created.
+        
+        * WebView/WebView.mm:
+        (-[WebView _downloadURL:]):
+        Changed to return the WebDownload object created inside _downloadURL
+        
+        * WebView/WebViewInternal.h:
+        Changed _downloadURL to return the WebDownload it creates.
+
 2007-07-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

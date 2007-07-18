@@ -244,18 +244,23 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
     ASSERT(proxy);
     
     WebView *webView = getWebView(m_webFrame.get());
-    NSURLRequest *initialURLRequest = initialRequest.nsURLRequest();
     WebDownload *download = [WebDownload _downloadWithLoadingConnection:handle->connection()
                                                                 request:request.nsURLRequest()
                                                                response:response.nsURLResponse()
                                                                delegate:[webView downloadDelegate]
-                                                                  proxy:proxy]; 
+                                                                  proxy:proxy];
     
+    setOriginalURLForDownload(download, initialRequest);    
+}
+
+void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, const WebCore::ResourceRequest& initialRequest) const
+{
+    WebView *webView = getWebView(m_webFrame.get());
+    NSURLRequest *initialURLRequest = initialRequest.nsURLRequest();
     NSURL *originalURL = nil;
     WebBackForwardList *history = [webView backForwardList];
     WebHistoryItem *currentItem = nil;
     int backListCount = [history backListCount];
-    int backCount = 0;
     
     // if there was no referrer, don't traverse the backforward history
     // since this download was initiated directly
@@ -263,17 +268,17 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
     if ([initialURLRequest valueForHTTPHeaderField:@"Referer"]) {
         // find the first item in the history that was originated
         // by the user
-        while (backListCount > 0 && !originalURL) {
-            currentItem = [history itemAtIndex:backCount--];
-            
-            if ([currentItem respondsToSelector:@selector(_wasUserGesture)] && [currentItem _wasUserGesture])
+        for (int backIndex = 0; backIndex <= backListCount && !originalURL; backIndex++) {
+            currentItem = [history itemAtIndex:-backIndex];
+
+            if (![currentItem respondsToSelector:@selector(_wasUserGesture)] || [currentItem _wasUserGesture])
                 originalURL = [currentItem URL];
         }
     }
     
     if (!originalURL)
         originalURL = [initialURLRequest URL];
-
+    
     if ([download respondsToSelector:@selector(_setOriginatingURL:)])
         [download _setOriginatingURL:originalURL];
 }
@@ -746,7 +751,9 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
 void WebFrameLoaderClient::startDownload(const ResourceRequest& request)
 {
     // FIXME: Should download full request.
-    [getWebView(m_webFrame.get()) _downloadURL:request.url().getNSURL()];
+    WebDownload *download = [getWebView(m_webFrame.get()) _downloadURL:request.url().getNSURL()];
+    
+    setOriginalURLForDownload(download, request);
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader* loader)
