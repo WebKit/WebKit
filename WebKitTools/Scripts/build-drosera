@@ -42,7 +42,7 @@ chdirWebKit();
 my @options = XcodeOptions();
 
 # Build
-chdir "WebKitTools/Drosera" or die;
+chdir "WebKitTools/Drosera/mac" or die;
 my $result;
 if (isOSX()) {
     print "xcodebuild -project Drosera.xcodeproj ", join(" ", @options), "\n";
