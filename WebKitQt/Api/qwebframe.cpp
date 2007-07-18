@@ -202,9 +202,28 @@ QList<QWebFrame*> QWebFrame::childFrames() const
     return rc;
 }
 
-void QWebFrame::suppressScrollbars(bool suppress)
+
+Qt::ScrollBarPolicy QWebFrame::verticalScrollBarPolicy() const
 {
-    d->frameView->suppressScrollbars(suppress);
+    return (Qt::ScrollBarPolicy) d->frameView->vScrollbarMode();
+}
+
+void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
+{
+    Q_ASSERT(ScrollbarAuto == Qt::ScrollBarAsNeeded);
+    Q_ASSERT(ScrollbarAlwaysOff == Qt::ScrollBarAlwaysOff);
+    Q_ASSERT(ScrollbarAlwaysOn == Qt::ScrollBarAlwaysOn);
+    d->frameView->setVScrollbarMode((ScrollbarMode)policy);
+}
+
+Qt::ScrollBarPolicy QWebFrame::horizontalScrollBarPolicy() const
+{
+    return (Qt::ScrollBarPolicy) d->frameView->hScrollbarMode();
+}
+
+void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
+{
+    d->frameView->setHScrollbarMode((ScrollbarMode)policy);
 }
 
 void QWebFrame::render(QPainter *painter, const QRect &source)

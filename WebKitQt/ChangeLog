@@ -1,3 +1,15 @@
+2007-07-18  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack & Simon
+
+        Reallow setting of scrollbar policies on QWebFrame.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::verticalScrollBarPolicy):
+        (QWebFrame::setVerticalScrollBarPolicy):
+        (QWebFrame::horizontalScrollBarPolicy):
+        * Api/qwebframe.h:
+
 2007-07-17  Adam Treat <treat@kde.org>
 
         Build fix.

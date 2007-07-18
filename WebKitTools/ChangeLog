@@ -1,3 +1,12 @@
+2007-07-18  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack & Simon
+
+        Adjust to changed API in QWebFrame
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2007-07-18  Mark Rowe  <mrowe@apple.com>
 
         Update path to the Drosera Xcode project now that it has moved into a subdirectory.
