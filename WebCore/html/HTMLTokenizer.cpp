@@ -828,6 +828,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
     unsigned cBufferPos = m_cBufferPos;
 
     int* lineNoPtr = lineNumberPtr();
+    bool lastIsSlash = false;
 
     while (!src.isEmpty()) {
         checkBuffer();
@@ -1000,6 +1001,15 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #endif
             while(!src.isEmpty()) {
                 UChar curchar = *src;
+
+                if (lastIsSlash && curchar == '>') {
+                    // This is a quirk (with a long sad history).  We have to do this
+                    // since widgets do <script src="foo.js"/> and expect the tag to close.
+                    if (currToken.tagName == scriptTag)
+                        currToken.flat = true;
+                    currToken.brokenXMLStyle = true;
+                }
+
                 // In this mode just ignore any quotes or slashes we encounter and treat them like spaces.
                 if (curchar > ' ' && curchar != '\'' && curchar != '"' && curchar != '/') {
                     if(curchar == '=') {
@@ -1015,19 +1025,15 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         currToken.addAttribute(m_doc, attrName, emptyAtom, inViewSourceMode());
                         dest = buffer;
                         state.setTagState(SearchAttribute);
+                        lastIsSlash = false;
                     }
                     break;
                 }
                 if (inViewSourceMode())
                     currToken.addViewSourceChar(curchar);
                     
-                if (curchar == '/') {
-                    // This is a quirk (with a long sad history).  We have to do this
-                    // since widgets do <script src="foo.js"/> and expect the tag to close.
-                    if (currToken.tagName == scriptTag)
-                        currToken.flat = true;
-                    currToken.brokenXMLStyle = true;
-                }
+                lastIsSlash = curchar == '/';
+
                 src.advance(lineNoPtr);
             }
             break;

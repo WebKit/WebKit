@@ -1,3 +1,16 @@
+2007-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - fixed <rdar://problem/5340603> REGRESSION: javascript being written to the screen in Safari
+
+        Test Case: fast/tokenizer/badscript.html
+        
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Don't apply our self-closing
+        <script> quirk in cases where the / appears in a mangled attribtue
+        value.
+
 2007-07-17  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,12 @@
+2007-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - test for <rdar://problem/5340603> REGRESSION: javascript being written to the screen in Safari
+
+        * fast/tokenizer/badscript-expected.txt: Added.
+        * fast/tokenizer/badscript.html: Added.
+
 2007-07-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
