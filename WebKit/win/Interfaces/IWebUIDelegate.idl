@@ -726,4 +726,14 @@ interface IWebUIDelegate2 : IWebUIDelegate
 */
     HRESULT printFrame([in] IWebView* webView, [in] IWebFrame* frame);
 
+/*!
+    @method webView:ftpDirectoryTemplatePath
+    @abstract Returns the path to the FTP directory listing template document
+    @param webView The WebView sending the delegate method
+    @param path The path to the template document
+    @discussion This method is called when an FTP directory listing is viewed in a webView.  
+    In practice, all WebViews show the same template document data that was loaded for the very
+    first WebView that displayed a directory listing, so this will only be called once.
+*/
+    HRESULT ftpDirectoryTemplatePath([in] IWebView* webView, [out, retval] BSTR* path);
 }

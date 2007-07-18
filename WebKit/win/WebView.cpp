@@ -1769,6 +1769,21 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     // in FrameLoader::provisionalLoadStarted() doesn't always fail
     m_page->settings()->setUsesPageCache(false);
 
+    // Try to set the FTP Directory template path in WebCore when the first WebView is initialized
+    static bool setFTPDirectoryTemplatePathOnce = false;
+
+    if (!setFTPDirectoryTemplatePathOnce && m_uiDelegate) {
+        COMPtr<IWebUIDelegate2> uiDelegate2;
+        if (SUCCEEDED(m_uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**)&uiDelegate2))) {
+            BString path;        
+            if (SUCCEEDED(uiDelegate2->ftpDirectoryTemplatePath(this, &path))) {
+                m_page->settings()->setFTPDirectoryTemplatePath(String(path, SysStringLen(path)));
+                SysFreeString(path);
+                setFTPDirectoryTemplatePathOnce = true;
+            }
+        }
+    }
+
     WebFrame* webFrame = WebFrame::createInstance();
     webFrame->initWithWebFrameView(0 /*FIXME*/, this, m_page, 0);
     m_mainFrame = webFrame;

@@ -1,5 +1,17 @@
 2007-07-17  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Steve
+
+        Required for <rdar://problem/4516185> - FTP Directory Listings
+
+        * WebCore.vcproj/WebCore.vcproj: Added SharedBufferWin
+        
+        * platform/SharedBuffer.cpp: Windows doesn't get the default empty resource anymore
+        * platform/win/SharedBufferWin.cpp: Added.
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
+2007-07-17  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Tim Hatcher
 
         Tweak the class names we give to the icon table cell to make it easier to style

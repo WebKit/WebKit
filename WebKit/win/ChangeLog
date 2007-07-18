@@ -1,3 +1,15 @@
+2007-07-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Steve
+        
+        <rdar://problem/4516185> - FTP Directory Listings
+
+        * Interfaces/IWebUIDelegate.idl: Add IWebUIDelegate2 method for getting the path to the template
+        
+        * WebView.cpp:
+          (WebView::initWithFrame): Set the preference for the template path in WebCore when the first
+          WebView is initialized
+
 2007-07-17  Ada Chan  <adachan@apple.com>
 
         Rubbet-stamped by Adam.

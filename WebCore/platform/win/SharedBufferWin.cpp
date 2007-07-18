@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -28,83 +28,35 @@
 
 namespace WebCore {
 
-SharedBuffer::SharedBuffer()
-{
-}
-
-SharedBuffer::SharedBuffer(const char* data, int size)
-{
-    m_buffer.append(data, size);
-}
-
-unsigned SharedBuffer::size() const
-{
-    if (hasPlatformData())
-        return platformDataSize();
-    
-    return m_buffer.size();
-}
-
-const char* SharedBuffer::data() const
-{
-    if (hasPlatformData())
-        return platformData();
-    
-    return m_buffer.data();
-}
-
-void SharedBuffer::append(const char* data, int len)
-{
-    maybeTransferPlatformData();
-    
-    m_buffer.append(data, len);
-}
-
-void SharedBuffer::clear()
-{
-    clearPlatformData();
-    
-    m_buffer.resize(0);
-}
-
-#if !PLATFORM(MAC)
-
-inline void SharedBuffer::clearPlatformData()
-{
-}
-
-inline void SharedBuffer::maybeTransferPlatformData()
-{
-}
-
-inline bool SharedBuffer::hasPlatformData() const
-{
-    return false;
-}
-
-inline const char* SharedBuffer::platformData() const
-{
-    ASSERT_NOT_REACHED();
-
-    return 0;
-}
-
-inline unsigned SharedBuffer::platformDataSize() const
-{
-    ASSERT_NOT_REACHED();
-    
-    return 0;
-}
-
-#endif
-
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
 {
-    return 0;
+    String nullifiedPath = filePath;
+    FILE* fileDescriptor = 0;
+    if (_wfopen_s(&fileDescriptor, nullifiedPath.charactersWithNullTermination(), TEXT("r+b")) || !fileDescriptor) {
+        LOG_ERROR("Failed to open file %s to create shared buffer", filePath.ascii().data());
+        return 0;
+    }
+
+    RefPtr<SharedBuffer> result;
+
+    // Stat the file to get its size
+    struct _stat64 fileStat;
+    if (_fstat64(_fileno(fileDescriptor), &fileStat))
+        goto exit;
+
+    result = new SharedBuffer();
+    result->m_buffer.resize(fileStat.st_size);
+    if (result->m_buffer.size() != fileStat.st_size) {
+        result = 0;
+        goto exit;
+    }
+
+    if (fread(result->m_buffer.data(), 1, fileStat.st_size, fileDescriptor) != fileStat.st_size)
+        LOG_ERROR("Failed to fully read contents of file %s - errno(%i)", filePath.ascii().data(), errno);
+
+exit:
+    fclose(fileDescriptor);
+    return result.release();
 }
 
-#endif
-
-}
+}; // namespace WebCore

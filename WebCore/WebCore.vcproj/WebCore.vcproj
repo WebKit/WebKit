@@ -3552,7 +3552,11 @@
 					RelativePath="..\platform\win\SearchPopupMenuWin.cpp"
 					>
 				</File>
-				<File
+                <File
+					RelativePath="..\platform\win\SharedBufferWin.cpp"
+					>
+                </File>
+                <File
 					RelativePath="..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>
