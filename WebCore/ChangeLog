@@ -1,3 +1,9 @@
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Make some headers private instead of project.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-07-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej and Kevin Decker

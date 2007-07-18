@@ -2819,7 +2819,7 @@
 		BC6E2B1A0C04B93600444EF8 /* DOMHTMLDocumentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6E2B190C04B93600444EF8 /* DOMHTMLDocumentPrivate.h */; };
 		BC6E2B290C04B95400444EF8 /* DOMHTMLDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC6E2B190C04B93600444EF8 /* DOMHTMLDocumentPrivate.h */; };
 		BC772B3B0C4EA91E0083285F /* CSSHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B350C4EA91E0083285F /* CSSHelper.cpp */; };
-		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; };
+		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772B3D0C4EA91E0083285F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B370C4EA91E0083285F /* CSSParser.cpp */; };
 		BC772B3E0C4EA91E0083285F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B380C4EA91E0083285F /* CSSParser.h */; };
 		BC772B3F0C4EA91E0083285F /* CSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B390C4EA91E0083285F /* CSSStyleSelector.cpp */; };

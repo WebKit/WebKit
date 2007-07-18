@@ -1,3 +1,9 @@
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+        
+        * Misc/WebNSAttributedStringExtras.mm:
+
 2007-07-18  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.

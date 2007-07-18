@@ -33,8 +33,8 @@
 #import "WebFrame.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
-#import <WebCore/csshelper.h>
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/FontData.h>
