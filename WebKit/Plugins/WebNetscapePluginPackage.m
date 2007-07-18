@@ -277,6 +277,20 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 }
 
+- (void)_applyDjVuWorkaround
+{
+    if (!cfBundle)
+        return;
+    
+    if ([(NSString *)CFBundleGetIdentifier(cfBundle) isEqualToString:@"com.lizardtech.NPDjVu"]) {
+        // The DjVu plug-in will crash copying the vtable if it's too big so we cap it to 
+        // what the plug-in expects here. 
+        // size + version + 40 function pointers.
+        browserFuncs.size = 2 + 2 + sizeof(void *) * 40;
+    }
+        
+}
+
 - (BOOL)load
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
@@ -408,6 +422,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetException);
         browserFuncs.enumerate = (NPN_EnumerateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Enumerate);
         
+        [self _applyDjVuWorkaround];
+        
 #if !LOG_DISABLED
         CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
 #endif
@@ -503,6 +519,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.removeproperty = _NPN_RemoveProperty;
         browserFuncs.setexception = _NPN_SetException;
         browserFuncs.enumerate = _NPN_Enumerate;
+
+        [self _applyDjVuWorkaround];
 
 #if !LOG_DISABLED
         CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();

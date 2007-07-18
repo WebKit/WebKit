@@ -1,3 +1,19 @@
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5341133> REGRESSION (Safari 2->Safari 3): DjVu plug-in doesn't load in Safari 3
+        
+        The DjVu plug-in uses the size of the passed in NPNetscapeFuncs struct to copy it over to a NPNetscapeFuncs struct
+        whose size was determined when DjVu was compiled. This means that when we add extra functions to the vtable, 
+        DjVu will segfault copying it into the (too small) destination struct.
+        
+        Fix this by special-casing the DjVu plug-in and setting the NPNetscapeFuncs size to be the same size as what DjVu expects.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _applyDjVuWorkaround]):
+        (-[WebNetscapePluginPackage load]):
+
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
