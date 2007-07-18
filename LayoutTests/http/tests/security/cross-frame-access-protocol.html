@@ -1,5 +1,5 @@
 <html>
-<iframe id="aFrame" rc=""></iframe>
+<iframe id="aFrame"></iframe>
 <pre id="console"></pre>
 <script>
     function log(s)
@@ -17,7 +17,7 @@
         log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
 
     var iframe = document.getElementById('aFrame');
-    iframe.src = "https://127.0.0.1:8443/ssl/resources/cross-frame-access-protocol-iframe.html"
+    iframe.src = "https://127.0.0.1:8443/ssl/resources/cross-frame-access-protocol-iframe.html";
 
     setTimeout(test, 1);
 

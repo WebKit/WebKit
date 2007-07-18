@@ -786,8 +786,10 @@ void FrameLoader::clear(bool clearWindowProperties)
     }
 
     // Do this after detaching the document so that the unload event works.
-    if (clearWindowProperties && m_shouldClearWindowProperties && m_frame->scriptProxy())
-        m_frame->scriptProxy()->clear();
+    if (clearWindowProperties && m_shouldClearWindowProperties) {
+        m_frame->clearScriptProxy();
+        m_frame->clearDOMWindow();
+    }
 
     m_frame->selectionController()->clear();
     m_frame->eventHandler()->clear();

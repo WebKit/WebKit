@@ -1,3 +1,14 @@
+2007-07-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Test for <rdar://problem/5333957>
+
+        * http/tests/security/cross-frame-access-protocol.html: Fix a few typos.
+        * http/tests/security/cross-frame-access-selection-expected.txt: Added.
+        * http/tests/security/cross-frame-access-selection.html: Added.
+        * http/tests/security/resources/foreign-domain-iframe-for-selection-test.html: Added.
+
 2007-07-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

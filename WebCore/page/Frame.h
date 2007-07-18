@@ -232,6 +232,9 @@ public:
 
     void dashboardRegionsChanged();
 
+    void clearScriptProxy();
+    void clearDOMWindow();
+
     void cleanupScriptObjects();
     void cleanupScriptObjectsForPlugin(void*);
 

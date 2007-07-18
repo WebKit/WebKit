@@ -63,24 +63,46 @@ Frame* DOMWindow::frame()
 void DOMWindow::disconnectFrame()
 {
     m_frame = 0;
+    clear();
+}
+
+void DOMWindow::clear()
+{
     if (m_screen)
         m_screen->disconnectFrame();
+    m_screen = 0;
+
     if (m_selection)
         m_selection->disconnectFrame();
+    m_selection = 0;
+
     if (m_history)
         m_history->disconnectFrame();
+    m_history = 0;
+
     if (m_locationbar)
         m_locationbar->disconnectFrame();
+    m_locationbar = 0;
+
     if (m_menubar)
         m_menubar->disconnectFrame();
+    m_menubar = 0;
+
     if (m_personalbar)
         m_personalbar->disconnectFrame();
+    m_personalbar = 0;
+
     if (m_scrollbars)
         m_scrollbars->disconnectFrame();
+    m_scrollbars = 0;
+
     if (m_statusbar)
         m_statusbar->disconnectFrame();
+    m_statusbar = 0;
+
     if (m_toolbar)
         m_toolbar->disconnectFrame();
+    m_toolbar = 0;
 }
 
 Screen* DOMWindow::screen() const

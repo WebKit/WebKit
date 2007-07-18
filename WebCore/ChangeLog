@@ -1,3 +1,27 @@
+2007-07-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Fix for <rdar://problem/5333957>
+                http://bugs.webkit.org/show_bug.cgi?id=14610
+
+        Original patch by Feng Qian.
+
+        - Clear the selection object when disconnecting a frame.
+
+        Test: http/tests/security/cross-frame-access-selection.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::disconnectFrame):
+        (WebCore::DOMWindow::clear):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::clearScriptProxy):
+        (WebCore::Frame::clearDOMWindow):
+        * page/Frame.h:
+
 2007-07-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

@@ -51,6 +51,8 @@ namespace WebCore {
         Frame* frame();
         void disconnectFrame();
 
+        void clear();
+
         // DOM Level 0
         Screen* screen() const;
         History* history() const;
