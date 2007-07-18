@@ -1,20 +1,21 @@
-XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+SCRIPTS_PATH ?= ../WebKitTools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
 all:
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 
 debug d development dev develop: force
-	../WebKitTools/Scripts/set-webkit-configuration --debug
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 
 release r deployment dep deploy: force
-	../WebKitTools/Scripts/set-webkit-configuration --release
+	$(SCRIPTS_PATH)/set-webkit-configuration --release
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 
 universal u: force
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386' | grep -v setenv && exit $${PIPESTATUS[0]} )
 
 clean:
-	( xcodebuild -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
 
 force: ;

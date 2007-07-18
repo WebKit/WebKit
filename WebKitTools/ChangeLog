@@ -1,5 +1,17 @@
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
+        Remove the redundant copies of Makefile.shared and the new Makefile.Drosera.
+        Now included the main Makefile.shared and change the SCRIPTS_PATH variable as needed.
+
+        * Drosera/Makefile: Added.
+        * Drosera/mac/Makefile:
+        * DumpRenderTree/Makefile:
+        * Makefile:
+        * Makefile.Drosera: Removed.
+        * Makefile.shared: Removed.
+
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
         The console log was 20px down from the top for no reason, move it up.
 
         * Drosera/console.css:

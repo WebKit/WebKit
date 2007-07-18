@@ -1,4 +1,4 @@
-MODULES = Drosera/mac DumpRenderTree
+MODULES = Drosera DumpRenderTree
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \

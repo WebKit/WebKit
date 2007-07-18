@@ -1,3 +1,10 @@
+2007-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Add a SCRIPTS_PATH variable so Makefiles of differnet nested directories can
+        still use this one Makefile.shared as an include.
+
+        * Makefile.shared:
+
 2007-07-12  George Staikos  <staikos@kde.org>
 
         Fix build in debug mode.
