@@ -2,6 +2,15 @@
 
         Reviewed by bdash.
 
+        Use the old wording for Safari.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
+2007-07-18  Adam Treat <treat@kde.org>
+
+        Reviewed by bdash.
+
         Add convenience script for launching test apps for Qt and Gdk ports.
         Change the build-webkit script accordingly.
 

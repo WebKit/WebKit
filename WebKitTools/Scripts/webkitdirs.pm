@@ -451,6 +451,17 @@ sub launcherPath()
     }
 }
 
+sub launcherName()
+{
+    if (isGdk()) {
+        return "GdkLauncher";
+    } elsif (isQt()) {
+        return "QtLauncher";
+    } elsif (isOSX() || isCygwin()) {
+        return "Safari";
+    }
+}
+
 sub checkRequiredSystemConfig
 {
     if (isOSX()) {

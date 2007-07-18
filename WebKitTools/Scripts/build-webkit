@@ -145,14 +145,15 @@ for my $dir (@projects) {
 # Write out congratulations message.
 
 my $launcherPath = launcherPath();
+my $launcherName = launcherName();
 
 print "\n";
 print "===========================================================\n";
-print " WebKit is now built. To run WebKit with this newly-built\n";
+print " WebKit is now built. To run $launcherName with this newly-built\n";
 print " code, use the \"$launcherPath\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
-    print " WebKit will have SVG viewing capabilities.\n";
+    print " $launcherName will have SVG viewing capabilities.\n";
 }
 if ($svgExperimentalSupport) {
     print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
