@@ -87,9 +87,10 @@ protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);
 
     bool isURLAllowed(const AtomicString&) const;
+    void setNameAndOpenURL();
     void openURL();
 
-    static void openURLCallback(Node*);
+    static void setNameAndOpenURLCallback(Node*);
 
     AtomicString m_URL;
     AtomicString m_name;

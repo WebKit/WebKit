@@ -94,6 +94,8 @@ bool HTMLFrameElementBase::isURLAllowed(const AtomicString& URLString) const
 
 void HTMLFrameElementBase::openURL()
 {
+    ASSERT(!m_name.isEmpty());
+
     if (!isURLAllowed(m_URL))
         return;
 
@@ -153,22 +155,27 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
 
-void HTMLFrameElementBase::openURLCallback(Node* n)
+void HTMLFrameElementBase::setNameAndOpenURL()
 {
-    static_cast<HTMLFrameElementBase*>(n)->openURL();
+    m_name = getAttribute(nameAttr);
+    if (m_name.isNull())
+        m_name = getAttribute(idAttr);
+    
+    if (Frame* parentFrame = document()->frame())
+        m_name = parentFrame->tree()->uniqueChildName(m_name);
+    
+    openURL();
+}
+
+void HTMLFrameElementBase::setNameAndOpenURLCallback(Node* n)
+{
+    static_cast<HTMLFrameElementBase*>(n)->setNameAndOpenURL();
 }
 
 void HTMLFrameElementBase::insertedIntoDocument()
 {
     HTMLFrameOwnerElement::insertedIntoDocument();
     
-    m_name = getAttribute(nameAttr);
-    if (m_name.isNull())
-        m_name = getAttribute(idAttr);
-
-    if (Frame* parentFrame = document()->frame())
-        m_name = parentFrame->tree()->uniqueChildName(m_name);
-
     // We delay frame loading until after the render tree is fully constructed.
     // Othewise, a synchronous load that executed JavaScript would see incorrect 
     // (0) values for the frame's renderer-dependent properties, like width.
@@ -186,7 +193,7 @@ void HTMLFrameElementBase::attach()
 {
     if (m_shouldOpenURLAfterAttach) {
         m_shouldOpenURLAfterAttach = false;
-        queuePostAttachCallback(&HTMLFrameElementBase::openURLCallback, this);
+        queuePostAttachCallback(&HTMLFrameElementBase::setNameAndOpenURLCallback, this);
     }
 
     HTMLFrameOwnerElement::attach();

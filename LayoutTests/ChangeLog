@@ -1,3 +1,14 @@
+2007-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4993463> 
+        http://bugs.webkit.org/show_bug.cgi?id=12732
+        REGRESSION: Comments fields on ircimages not showing up in nightly
+        
+        * fast/frames/iframe-set-inner-html-expected.txt: Added.
+        * fast/frames/iframe-set-inner-html.html: Added.
+
 2007-07-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

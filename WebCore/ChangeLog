@@ -1,3 +1,23 @@
+2007-07-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4993463> 
+        http://bugs.webkit.org/show_bug.cgi?id=12732
+        REGRESSION: Comments fields on ircimages not showing up in nightly
+
+        Postpone setting the frame name to just right before we request the frame. Otherwise, 
+        two calls to FrameTree::uniqueChildName will return the same frame name and in that case only
+        one Frame object will actually be created and multiple iframe elements will refer to it.
+        
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL):
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURLCallback):
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+        (WebCore::HTMLFrameElementBase::attach):
+        * html/HTMLFrameElementBase.h:
+
 2007-07-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve
