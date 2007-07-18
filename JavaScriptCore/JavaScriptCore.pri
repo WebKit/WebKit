@@ -6,6 +6,7 @@ INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__
+gdk-port:DEFINES += BUILDING_GDK__
 
 include(pcre/pcre.pri)
 

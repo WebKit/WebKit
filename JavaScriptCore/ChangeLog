@@ -1,3 +1,11 @@
+2007-07-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Define __BUILDING_GDK when building for Gdk to fix building testkjs on OSX.
+
+        * JavaScriptCore.pri:
+
 2007-07-18  Simon Hausmann  <hausmann@kde.org>
 
         * Fix the Qt build, call dftables from the right directory.
