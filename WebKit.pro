@@ -3,6 +3,7 @@ CONFIG += ordered
 !gdk-port:CONFIG += qt-port
 qt-port:SUBDIRS += WebKitQt/Plugins
 SUBDIRS += \
+        JavaScriptCore/pcre/dftables.pro \
         WebCore \
         JavaScriptCore/kjs/testkjs.pro
 

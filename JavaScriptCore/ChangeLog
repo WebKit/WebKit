@@ -1,3 +1,12 @@
+2007-07-18  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Don't call gcc directly when building the dftables tool but use a separate .pro file for the Qt build.
+
+        * pcre/dftables.pro: Added.
+        * pcre/pcre.pri:
+
 2007-07-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin, Maciej, and Adam.

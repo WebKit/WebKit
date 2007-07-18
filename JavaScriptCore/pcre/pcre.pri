@@ -26,9 +26,7 @@ CTGENFILE += \
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 ctgen.output = tmp/chartables.c
-ctgen.commands = gcc ${QMAKE_FILE_NAME} -I$$PWD/../wtf -o tmp/${QMAKE_FILE_BASE} && ./tmp/${QMAKE_FILE_BASE} ${QMAKE_FILE_OUT}
-qt-port:ctgen.commands = gcc ${QMAKE_FILE_NAME} -DBUILDING_QT__ -I$$PWD/../wtf -o tmp/${QMAKE_FILE_BASE} && ./tmp/${QMAKE_FILE_BASE} ${QMAKE_FILE_OUT}
-gdk-port:ctgen.commands = gcc ${QMAKE_FILE_NAME} -DBUILDING_GDK__ -DBUILDING_CAIRO__ -I$$PWD/../wtf -o tmp/${QMAKE_FILE_BASE} && ./tmp/${QMAKE_FILE_BASE} ${QMAKE_FILE_OUT}
+ctgen.commands = tmp/dftables ${QMAKE_FILE_OUT}
 ctgen.input = CTGENFILE
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
