@@ -4,6 +4,7 @@
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 #include "config.h"
 #include "function.h"
 
+#include "dtoa.h"
 #include "internal.h"
 #include "function_object.h"
 #include "lexer.h"
@@ -669,6 +671,28 @@ static int parseDigit(unsigned short c, int radix)
     return digit;
 }
 
+double parseIntOverflow(const char* s, int length, int radix)
+{
+    double number = 0.0;
+    double radixMultiplier = 1.0;
+
+    for (const char* p = s + length - 1; p >= s; p--) {
+        if (radixMultiplier == Inf) {
+            if (*p != '0') {
+                number = Inf;
+                break;
+            }
+        } else {
+            int digit = parseDigit(*p, radix);
+            number += digit * radixMultiplier;
+        }
+
+        radixMultiplier *= radix;
+    }
+
+    return number;
+}
+
 static double parseInt(const UString& s, int radix)
 {
     int length = s.size();
@@ -701,6 +725,7 @@ static double parseInt(const UString& s, int radix)
     if (radix < 2 || radix > 36)
         return NaN;
 
+    int firstDigitPosition = p;
     bool sawDigit = false;
     double number = 0;
     while (p < length) {
@@ -711,6 +736,13 @@ static double parseInt(const UString& s, int radix)
         number *= radix;
         number += digit;
         ++p;
+    }
+
+    if (number >= mantissaOverflowLowerBound) {
+        if (radix == 10)
+            number = kjs_strtod(s.substr(firstDigitPosition, p - firstDigitPosition).ascii(), 0);
+        else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
+            number = parseIntOverflow(s.substr(firstDigitPosition, p - firstDigitPosition).ascii(), p - firstDigitPosition, radix);
     }
 
     if (!sawDigit)

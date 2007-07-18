@@ -3,6 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 
 #include "JSLock.h"
 #include "dtoa.h"
+#include "function.h"
 #include "identifier.h"
 #include "operations.h"
 #include <assert.h>
@@ -888,6 +890,7 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
 
   // hex number ?
   if (*c == '0' && (*(c+1) == 'x' || *(c+1) == 'X')) {
+    const char* firstDigitPosition = c + 2;
     c++;
     d = 0.0;
     while (*(++c)) {
@@ -898,25 +901,37 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
       else
         break;
     }
+
+    if (d >= mantissaOverflowLowerBound)
+        d = parseIntOverflow(firstDigitPosition, c - firstDigitPosition, 16);
   } else {
     // regular number ?
     char *end;
     d = kjs_strtod(c, &end);
-    if ((d != 0.0 || end != c) && d != HUGE_VAL && d != -HUGE_VAL) {
+    if ((d != 0.0 || end != c) && d != Inf && d != -Inf) {
       c = end;
     } else {
-      // infinity ?
-      d = 1.0;
+      double sign = 1.0;
+
       if (*c == '+')
         c++;
       else if (*c == '-') {
-        d = -1.0;
+        sign = -1.0;
         c++;
       }
-      if (strncmp(c, "Infinity", 8) != 0)
+
+      // We used strtod() to do the conversion. However, strtod() handles
+      // infinite values slightly differently than JavaScript in that it
+      // converts the string "inf" with any capitalization to infinity,
+      // whereas the ECMA spec requires that it be converted to NaN.
+
+      if (strncmp(c, "Infinity", 8) == 0) {
+        d = sign * Inf;
+        c += 8;
+      } else if ((d == Inf || d == -Inf) && *c != 'I' && *c != 'i')
+        c = end;
+      else
         return NaN;
-      d = d * Inf;
-      c += 8;
     }
   }
 

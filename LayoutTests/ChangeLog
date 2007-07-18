@@ -1,3 +1,16 @@
+2007-07-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Added tests for:
+        http://bugs.webkit.org/show_bug.cgi?id=9697
+
+        Bug 9697: parseInt results may be inaccurate for numbers greater than 2^53
+
+        * fast/js/numeric-conversion-expected.txt: Added.
+        * fast/js/numeric-conversion.html: Added.
+        * fast/js/resources/numeric-conversion.js: Added.
+
 2007-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin Decker.
