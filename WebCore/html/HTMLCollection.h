@@ -92,17 +92,36 @@ public:
 
     struct CollectionInfo {
         CollectionInfo();
+        CollectionInfo(const CollectionInfo&);
+        CollectionInfo& operator=(const CollectionInfo& other)
+        {
+            CollectionInfo tmp(other);    
+            swap(tmp);
+            return *this;
+        }
+        
         ~CollectionInfo();
         void reset();
+        void swap(CollectionInfo&);
+
         unsigned int version;
         Node *current;
         unsigned int position;
         unsigned int length;
         int elementsArrayPosition;
-        HashMap<AtomicStringImpl*, Vector<Node*>*> idCache;
-        HashMap<AtomicStringImpl*, Vector<Node*>*> nameCache;
+        typedef HashMap<AtomicStringImpl*, Vector<Node*>*> NodeCacheMap;
+        NodeCacheMap idCache;
+        NodeCacheMap nameCache;
         bool haslength;
         bool hasNameCache;
+    private:
+        static void copyCacheMap(NodeCacheMap& dest, const NodeCacheMap& src)
+        {
+            ASSERT(dest.isEmpty());
+            NodeCacheMap::const_iterator end = src.end();
+            for (NodeCacheMap::const_iterator it = src.begin(); it != end; ++it)
+                dest.add(it->first, new Vector<Node*>(*it->second));
+        }
     };
 
     Type collectionType() const { return type; }

@@ -1,3 +1,20 @@
+2007-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5322268>
+        Safari Crash at http://www.exlibrisgroup.com/sfx_openurl.htm
+        
+        Add a real copy constructor and assignment operator for CollectionInfo
+        so that the vectors in the cache maps will be copied correctly.
+        
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::CollectionInfo::CollectionInfo):
+        (WebCore::HTMLCollection::CollectionInfo::swap):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::CollectionInfo::operator=):
+        (WebCore::HTMLCollection::CollectionInfo::copyCacheMap):
+
 2007-07-19  David Hyatt  <hyatt@apple.com>
 
         Fix for 5237574, Colloquy main view does not size correctly.  Make

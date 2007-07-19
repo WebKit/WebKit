@@ -31,6 +31,8 @@
 #include "HTMLObjectElement.h"
 #include "NodeList.h"
 
+#include <utility>
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -56,6 +58,36 @@ HTMLCollection::CollectionInfo::CollectionInfo() :
     version(0)
 {
     reset();
+}
+
+HTMLCollection::CollectionInfo::CollectionInfo(const CollectionInfo& other)
+{
+    version = other.version;
+    current = other.current;
+    position = other.position;
+    length = other.length;
+    elementsArrayPosition = other.elementsArrayPosition;
+    
+    copyCacheMap(idCache, other.idCache);
+    copyCacheMap(nameCache, other.nameCache);
+    
+    haslength = other.haslength;
+    hasNameCache = other.hasNameCache;
+}
+
+void HTMLCollection::CollectionInfo::swap(CollectionInfo& other)
+{
+    std::swap(version, other.version);
+    std::swap(current, other.current);
+    std::swap(position, other.position);
+    std::swap(length, other.length);
+    std::swap(elementsArrayPosition, other.elementsArrayPosition);
+
+    idCache.swap(other.idCache);
+    nameCache.swap(other.nameCache);
+    
+    std::swap(haslength, other.haslength);
+    std::swap(hasNameCache, other.hasNameCache);
 }
 
 HTMLCollection::CollectionInfo::~CollectionInfo()
