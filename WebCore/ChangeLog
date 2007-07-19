@@ -2,7 +2,7 @@
 
         Rubber stamped by maciej
 
-        Rollout previous patch.
+        Rollout patch from r24437.
 
         * page/EventHandler.cpp:
         (WebCore::EventHandler::keyEvent):
