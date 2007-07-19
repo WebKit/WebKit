@@ -1,6 +1,6 @@
 2007-07-18  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by Kevin.
+        Reviewed by Kevin M.
 
         Fix for <rdar://problem/5346167> DOM key events triggered during
                 IME composition differ in webkit/mac vs all windows browsers
