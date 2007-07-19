@@ -46,6 +46,9 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
+# Apache 1.3 doesn't support SSL <rdar://problem/5345985>
+http/tests/ssl
+
 # Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
 css1/basic/contextual_selectors.html
 css1/font_properties/font.html

@@ -1,3 +1,14 @@
+2007-07-18  Adam Roben  <aroben@apple.com>
+
+	Disable SSL tests on Windows
+
+	<rdar://problem/5345985> tracks making these tests work
+
+        Rubberstamed by Mark.
+
+        * http/conf/cygwin-httpd.conf:
+        * win/Skipped:
+
 2007-07-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
