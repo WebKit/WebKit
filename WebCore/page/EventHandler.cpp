@@ -1383,10 +1383,9 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     
     if (!keyEvent.isKeyUp())
         m_frame->loader()->resetMultipleFormSubmissionProtection();
-    bool shouldFireDOMEvent = !m_frame->markedTextRange();
-    bool result = shouldFireDOMEvent ? !node->dispatchKeyEvent(keyEvent) : false;
+    bool result = !node->dispatchKeyEvent(keyEvent);
     
-    if (shouldFireDOMEvent && keyEvent.isAutoRepeat() || keyEvent.isKeyUp()) 
+    if (keyEvent.isAutoRepeat() || keyEvent.isKeyUp()) 
         return result;
     
     // Focus may have change during the keyDown handling, so refetch node
