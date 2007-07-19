@@ -1,3 +1,12 @@
+2007-07-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - test for <rdar://problem/5345432> PCRE computes length wrong for expressions such as "[**]"
+
+        * fast/js/regexp-charclass-crash-expected.txt: Added.
+        * fast/js/regexp-charclass-crash.html: Added.
+
 2007-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

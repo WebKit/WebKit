@@ -4324,7 +4324,7 @@ while (++ptr < patternEnd)
       /* Check the syntax for POSIX stuff. The bits we actually handle are
       checked during the real compile phase. */
 
-      else if (*ptr == '[' && ptr + 2 < patternEnd && check_posix_syntax(ptr, patternEnd, &ptr, &compile_block))
+      else if (*ptr == '[' && ptr + 2 < patternEnd && (ptr[1] == ':' || ptr[1] == '.' || ptr[1] == '=') && check_posix_syntax(ptr, patternEnd, &ptr, &compile_block))
         {
         ptr++;
         class_optcount = 10;    /* Make sure > 1 */

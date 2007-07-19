@@ -1,3 +1,15 @@
+2007-07-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/5345432> PCRE computes length wrong for expressions such as "[**]"
+
+        Test: fast/js/regexp-charclass-crash.html
+
+        * pcre/pcre_compile.c: (pcre_compile2): Fix the preflight code that calls
+        check_posix_syntax to match the actual regular expression compilation code;
+        before it was missing the check of the first character.
+
 2007-07-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.
