@@ -403,6 +403,15 @@ static PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle* style
     return new CSSPrimitiveValue(color.rgb());
 }
 
+static PassRefPtr<CSSPrimitiveValue> getBorderRadiusCornerValue(IntSize radius)
+{
+    if (radius.width() == radius.height())
+        return new CSSPrimitiveValue(radius.width(), CSSPrimitiveValue::CSS_PX);
+
+    return new CSSPrimitiveValue(new Pair(new CSSPrimitiveValue(radius.width(), CSSPrimitiveValue::CSS_PX),
+                                          new CSSPrimitiveValue(radius.height(), CSSPrimitiveValue::CSS_PX)));
+}
+
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n)
     : m_node(n)
 {
@@ -1557,6 +1566,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                     return new CSSPrimitiveValue(CSS_VAL_IGNORE);
             }
             break;
+        case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
+            return getBorderRadiusCornerValue(style->borderBottomLeftRadius());
+        case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
+            return getBorderRadiusCornerValue(style->borderBottomRightRadius());
+        case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
+            return getBorderRadiusCornerValue(style->borderTopLeftRadius());
+        case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
+            return getBorderRadiusCornerValue(style->borderTopRightRadius());
         case CSS_PROP_BACKGROUND:
         case CSS_PROP_BORDER:
         case CSS_PROP_BORDER_BOTTOM:
@@ -1603,12 +1620,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP_TEXT_UNDERLINE_MODE:
         case CSS_PROP_TEXT_UNDERLINE_STYLE:
         case CSS_PROP_TEXT_UNDERLINE_WIDTH:
-        case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
-        case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
         case CSS_PROP__WEBKIT_BORDER_IMAGE:
         case CSS_PROP__WEBKIT_BORDER_RADIUS:
-        case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
-        case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
         case CSS_PROP__WEBKIT_COLUMNS:
         case CSS_PROP__WEBKIT_COLUMN_RULE:
         case CSS_PROP__WEBKIT_MARGIN_COLLAPSE:

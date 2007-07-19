@@ -1,3 +1,17 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14646
+        WebKit border radius properties are unavailable via JavaScript
+
+        Test: fast/dom/getComputedStyle-borderRadius.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getBorderRadiusCornerValue): Helper function that returns a single value if
+        width and the height of the corner radius are equal, and otherwise a pair.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

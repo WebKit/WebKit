@@ -1,3 +1,13 @@
+2007-07-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14646
+        WebKit border radius properties are unavailable via JavaScript
+
+        * fast/dom/getComputedStyle-borderRadius-expected.txt: Added.
+        * fast/dom/getComputedStyle-borderRadius.html: Added.
+
 2007-07-18  Adam Roben  <aroben@apple.com>
 
 	Disable SSL tests on Windows
