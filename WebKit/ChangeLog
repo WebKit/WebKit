@@ -1,3 +1,20 @@
+2007-07-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        <rdar://problem/5345099>
+        
+        Reduced default WebCore cache size from 32 MB to 23 MB on systems below 
+        512 MB RAM. This improves RPRVT usage in the Safari pageout test by 
+        ~10% on a system with 384 MB RAM.
+        
+        At 23 MB, no extra resources are evicted from the cache during a PLT 
+        run, so this is a safe change PLT-wise. 23 MB is also seems to be a
+        generous number in real world usage.
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2007-07-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

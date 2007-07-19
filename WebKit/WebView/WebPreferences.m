@@ -226,8 +226,10 @@ NS_ENDHANDLER
         objectCacheSize = 128 * 1024 * 1024;
     else if (memSize >= 1024)
         objectCacheSize = 64 * 1024 * 1024;
-    else
+    else if (memSize >= 512)
         objectCacheSize = 32 * 1024 * 1024;
+    else
+        objectCacheSize = 23 * 1024 * 1024; 
     NSString *objectCacheSizeString = [NSString stringWithFormat:@"%d", objectCacheSize];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
