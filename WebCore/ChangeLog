@@ -1,3 +1,14 @@
+2007-07-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5237574, Colloquy main view does not size correctly.  Make
+        sure to reset the baseilne when calculating a row's height/baseline, so
+        that old values don't stick around.
+
+        Reviewed by Tim Hatcher
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight):
+
 2007-07-19  Antti  <antti@apple.com>
 
         Reviewed by John.

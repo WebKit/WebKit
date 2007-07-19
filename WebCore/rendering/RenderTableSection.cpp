@@ -319,7 +319,7 @@ void RenderTableSection::calcRowHeight()
 
     for (int r = 0; r < m_gridRows; r++) {
         m_rowPos[r + 1] = 0;
-
+        m_grid[r].baseline = 0;
         int baseline = 0;
         int bdesc = 0;
         int ch = m_grid[r].height.calcMinValue(0);
