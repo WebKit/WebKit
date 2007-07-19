@@ -1,5 +1,15 @@
 2007-07-19  Antti  <antti@apple.com>
 
+        Reviewed by Darin.
+        
+        Test for <rdar://problem/5257371>
+        Dashcode Client crash when clicking on placemarks in Maps widget in WebCore::DeprecatedPtrListImpl::addIterator
+
+        * fast/flexbox/inline-children-crash-expected.txt: Added.
+        * fast/flexbox/inline-children-crash.html: Added.
+
+2007-07-19  Antti  <antti@apple.com>
+
         Reviewed by John.
         
         Update test case to work better as a pixel test.

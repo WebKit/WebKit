@@ -1,3 +1,17 @@
+2007-07-19  Antti  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/5257371>
+        Dashcode Client crash when clicking on placemarks in Maps widget in WebCore::DeprecatedPtrListImpl::addIterator
+        
+        FlexibleBoxes should never have inline children. Don't move children out from last remaining anonymous block.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild): real fix
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): just to be sure, this is checked elsewhere too
+
 2007-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

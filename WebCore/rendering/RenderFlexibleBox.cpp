@@ -704,8 +704,10 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     child->setChildNeedsLayout(true, false);
                     
                     // Dirty all the positioned objects.
-                    static_cast<RenderBlock*>(child)->markPositionedObjectsForLayout();
-                    static_cast<RenderBlock*>(child)->clearTruncation();
+                    if (child->isRenderBlock()) {
+                        static_cast<RenderBlock*>(child)->markPositionedObjectsForLayout();
+                        static_cast<RenderBlock*>(child)->clearTruncation();
+                    }
                 }
                 child->layoutIfNeeded();
                 if (child->style()->height().isAuto() && child->isBlockFlow())
