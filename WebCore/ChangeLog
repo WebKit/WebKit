@@ -1,3 +1,31 @@
+2007-07-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14666
+          remove unused xxx-encodings.txt for all platforms other than Mac
+
+        * platform/gdk/gdk-encodings.txt: Removed.
+        * platform/win/win-encodings.txt: Removed.
+        * platform/wx/wx-encodings.txt: Removed.
+
+        * platform/character-sets.txt: Moved into mac subdirectory since it's only used for Mac; at some
+        point I hope to remove it completely.
+        * platform/make-charset-table.pl: Ditto.
+        * platform/mac/character-sets.txt: Copied from platform/character-sets.txt.
+        * platform/mac/make-charset-table.pl: Copied from platform/make-charset-table.pl.
+
+        * DerivedSources.make: Moved CharsetData.cpp into the MACOS section.
+        Changed the build rule to use Mac-specific paths for everything and got rid of
+        make variables.
+
+        * WebCore.vcproj/build-generated-files.sh: Removed code to set ENCODINGS_FILE and ENCODINGS_PREFIX.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * make-generated-sources.sh: Ditto.
+
+        * Projects/gdk/webcore-gdk.bkl: Removed code to pass gdk-encodings.txt to make-generated-sources.sh.
+        * Projects/wx/webcore-wx.bkl: Ditto, but for wx-encodings.txt.
+
 2007-07-19  Antti  <antti@apple.com>
 
         Reviewed by Darin.

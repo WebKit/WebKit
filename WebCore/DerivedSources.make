@@ -42,6 +42,7 @@ VPATH = \
 
 ifeq ($(OS),MACOS)
 all : \
+    CharsetData.cpp \
     DOMAbstractView.h \
     DOMAttr.h \
     DOMCDATASection.h \
@@ -294,7 +295,6 @@ all : \
     CSSGrammar.cpp \
     CSSPropertyNames.h \
     CSSValueKeywords.h \
-    CharsetData.cpp \
     ColorData.c \
     DocTypeStrings.cpp \
     HTMLEntityNames.c \
@@ -627,8 +627,8 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 
 # character set name table
 
-CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(ENCODINGS_FILE)
-	perl $^ $(ENCODINGS_PREFIX) > $@
+CharsetData.cpp : platform/mac/make-charset-table.pl platform/mac/character-sets.txt platform/mac/mac-encodings.txt
+	perl $^ kTextEncoding > $@
 
 # lookup tables for old-style JavaScript bindings
 

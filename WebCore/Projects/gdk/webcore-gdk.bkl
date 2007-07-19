@@ -1,10 +1,5 @@
 <?xml version="1.0" ?>
 <makefile>
-    <option name="ENCODINGS_FILE">
-        <default-value>platform/gdk/gdk-encodings.txt</default-value>
-        <values>platform/gdk/gdk-encodings.txt</values>
-   </option>
-
     <option name="FEATURE_DEFINES" never_empty="1" >
         <!-- ENABLE_SVG ENABLE_XPATH-->
         <default-value>ENABLE_XPATH</default-value>
@@ -12,7 +7,6 @@
     </option>
 
     <set var="FEATURE_DEFINES">ENABLE_XPATH</set>
-    <set var="ENCODINGS_FILE">$(SRCDIR)/platform/gdk/gdk-encodings.txt</set>
 
     <include file="../../webcore-base.bkl"/>
 
@@ -24,7 +18,7 @@
             bash -c "cd ../..; ./move-js-headers.sh" &amp;&amp; \
             bash -c "cd ../.. &amp;&amp; \
             export FEATURE_DEFINES=$(FEATURE_DEFINES) &amp;&amp; \
-            ./make-generated-sources.sh $(ENCODINGS_FILE)" &amp;&amp; \
+            ./make-generated-sources.sh &amp;&amp; \
             bash -c "touch .DerivedSources"
         </command>
     </action>

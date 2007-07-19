@@ -37,7 +37,7 @@ wxWebCore port Bakefile project file.
     
     <action id="DerivedSources" msvs-type="prebuild">
         <is-phony/>
-        <command>cd $(SRCDIR);bash move-js-headers.sh; bash make-generated-sources.sh platform/wx/wx-encodings.txt;cd Projects/wx</command>
+        <command>cd $(SRCDIR);bash move-js-headers.sh;bash make-generated-sources.sh;cd Projects/wx</command>
     </action>
       
     <lib id="webcore-wx" template="webcore_base">

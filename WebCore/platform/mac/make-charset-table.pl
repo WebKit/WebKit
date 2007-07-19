@@ -66,7 +66,7 @@ sub process_platform_encodings
         chomp;
         s/\#.*$//;
         s/\s+$//;
-	if (my ($PlatformName, undef, $flags, $IANANames) = /^(.+?)(, (.+))?: (.+)$/) {
+        if (my ($PlatformName, undef, $flags, $IANANames) = /^(.+?)(, (.+))?: (.+)$/) {
             my %aliases;
             
             my $PlatformNameWithFlags = $PlatformName;
@@ -80,7 +80,7 @@ sub process_platform_encodings
 
             # Build the aliases list.
             # Also check that no two names are part of the same entry in the charsets file.
-	    my @IANANames = split ", ", $IANANames;
+            my @IANANames = split ", ", $IANANames;
             my $firstName = "";
             my $canonicalFirstName = "";
             my $prevName = "";
@@ -130,13 +130,13 @@ sub process_platform_encodings
             for my $alias (sort keys %aliases) {
                 emit_line($alias, $PlatformPrefix, $PlatformName, $flags) if $alias ne $canonicalFirstName;
             }
-	} elsif (/^([a-zA-Z0-9_]+)(, (.+))?$/) {
+        } elsif (/^([a-zA-Z0-9_]+)(, (.+))?$/) {
             my $PlatformName = $1;
             
             error "Platform encoding name $PlatformName is mentioned twice in $baseFilename" if $seenPlatformNames{$PlatformName};
             $seenPlatformNames{$PlatformName} = 1;
         } elsif (/./) {
-            error "syntax error in platform-encodings.txt, line $.";
+            error "syntax error in $baseFilename, line $.";
         }
     }
     
@@ -179,9 +179,9 @@ sub process_iana_charsets
             $seen{$new_canonical_name} = $new_canonical_name;
             
             process_iana_charset $canonical_name, @aliases;
-	    
-	          $canonical_name = $new_canonical_name;
-	          @aliases = ();
+
+            $canonical_name = $new_canonical_name;
+            @aliases = ();
         } elsif ((my $new_alias) = /Alias: ([^ \t]*).*/) {
             $new_alias = lc $new_alias;
             $new_alias =~ tr/a-z0-9//cd;
