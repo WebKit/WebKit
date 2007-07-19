@@ -1,3 +1,14 @@
+2007-07-19  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://problem/5344972> REGRESSION: A error dialog occurs when
+        attempting to ctrl-click in a iChat message window (webview)
+
+        Reviewed by Oliver.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients): Don't check for the Inspect Element item
+        if we have fewer than 2 items.
+
 2007-07-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

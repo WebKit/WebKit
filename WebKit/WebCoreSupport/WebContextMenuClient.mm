@@ -83,7 +83,7 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
 
     unsigned defaultItemsCount = [defaultMenuItems count];
 
-    if (isPreInspectElementTagClient()) {
+    if (isPreInspectElementTagClient() && defaultItemsCount >= 2) {
         NSMenuItem *secondToLastItem = [defaultMenuItems objectAtIndex:defaultItemsCount - 2];
         NSMenuItem *lastItem = [defaultMenuItems objectAtIndex:defaultItemsCount - 1];
 
