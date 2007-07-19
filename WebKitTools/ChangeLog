@@ -1,5 +1,14 @@
 2007-07-19  Adam Roben  <aroben@apple.com>
 
+        Make commit-log-editor work with git
+
+        Reviewed by Sam.
+
+        * Scripts/commit-log-editor: Use VCSUtils and accept a git-style
+        commit message template. Also removed the unused $breakPoint variable.
+
+2007-07-19  Adam Roben  <aroben@apple.com>
+
         Move generally-useful VCS code into a new VCSUtils.pm module
 
         This is in preparation for making commit-log-editor git-friendly.

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 use strict;
 use FindBin;
 use lib $FindBin::Bin;
+use VCSUtils;
 use webkitdirs;
 
 my $log = $ARGV[0];
@@ -57,16 +58,30 @@ if (!$editor) {
     $editor = $ENV{EDITOR} || "/usr/bin/vi";
 }
 
-my $breakPoint = 0;
+my $inChangesToBeCommitted = !isGit();
 my @changeLogs = ();
 my $logContents = "";
+my $existingLog = 0;
 open LOG, $log or die;
 while (<LOG>) {
-    $breakPoint = /^--This line, and those below, will be ignored--$/ unless $breakPoint;
+    if (isGit()) {
+        if (/^# Changes to be committed:$/) {
+            $inChangesToBeCommitted = 1;
+        } elsif ($inChangesToBeCommitted && /^# \S/) {
+            $inChangesToBeCommitted = 0;
+        }
+    }
+
     $logContents .= $_;
-    push @changeLogs, $1 if /^M....(.*ChangeLog)$/ && !/-ChangeLog/;
+    $existingLog = isGit() && !/^#/ unless $existingLog;
+
+    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^M....(.*ChangeLog)$/ || /^#\tmodified:   (.*ChangeLog)/) && !/-ChangeLog/;
 }
 close LOG;
+
+# Don't change anything if there's already a log message
+# (as can happen with git-commit --amend)
+exec $editor, @ARGV if $existingLog;
 
 my %changeLogSort;
 my %changeLogContents;
