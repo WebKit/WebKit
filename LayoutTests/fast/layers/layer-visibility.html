@@ -1,6 +1,8 @@
 <html>
 <style>
 .red { border: 2px solid red }
+.case {  float: left; width: 130px; height: 100px; display: inline-block;  border: 2px solid blue}
+.positioned-root { position: relative; }
 .green { border: 2px solid green }
 .visible { visibility: visible}
 .invisible { visibility: hidden}
@@ -10,10 +12,16 @@
 </style>
 
 <script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
 var node1;
 var node2;
 function dotest()
 {
+// force layout
+document.body.offsetTop;
+
 //9
 document.getElementById('9').style.setProperty('visibility','visible','');
 //10
@@ -55,6 +63,9 @@ document.getElementById('21a').style.setProperty('visibility','hidden','');
 //22
 document.getElementById('22').style.setProperty('visibility','visible','');
 
+// force layout
+document.body.offsetTop;
+
 setTimeout(dotest2,20);
 }
 
@@ -78,37 +89,64 @@ document.getElementById('20b').style.setProperty('visibility','hidden','');
 document.getElementById('21b').style.setProperty('visibility','visible','');
 //22
 document.getElementById('22').style.setProperty('visibility','hidden','');
+
+// force layout
+document.body.offsetTop;
+
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
 }
 
 </script>
 </head>
 <body onload="setTimeout(dotest,20)">
+<div class=case>
+<div class=positioned-root>
 1 green box:
 <div class="visible green">
 <div class="invisible red">
 failed
 </div>
 </div>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 2  green box with word ok:
 <div class="invisible red">
 <div class="visible green">
 ok
 </div>
 </div>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 3 green box with word ok:
 <div class="invisible abstop red" >
 <div class="visible green">
 ok
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 4 green box with word ok:
 <div class="invisible abstop red" >
 <div class="visible abs green">
 ok
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+
+<div class=case>
+<div class=positioned-root>
 5 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -117,7 +155,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 6 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible abs red">
@@ -126,7 +168,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 7 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible abs red">
@@ -135,7 +181,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 8 double green box with word ok:
 <div class="visible abstop green">
 <div class="invisible abs red">
@@ -144,7 +194,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 9 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible abs red">
@@ -153,7 +207,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 10 green box:
 <div class="invisible abstop red">
 <div class="visible abs green">
@@ -162,7 +220,11 @@ failed
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 11 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -171,7 +233,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 12 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -180,7 +246,12 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+
+<div class=case>
+<div class=positioned-root>
 13 green box:
 <div id="13a" class="visible abstop red">
 <div id="13b" class="visible green">
@@ -189,15 +260,27 @@ failed
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 14 green box with word ok:
 <div id="14" class="invisible abstop">
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 15 green box with word ok:
 <div id="15" class="invisible abstop">
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 16 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -209,7 +292,13 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 17 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -221,7 +310,11 @@ fail
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 18 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -233,7 +326,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 19 green box with word ok:
 <div class="invisible abstop red">
 <div class="invisible red">
@@ -247,7 +344,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 20 green box:
 <div class="invisible abstop red">
 <div class="visible green">
@@ -259,7 +360,11 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 21 two green boxes with word ok:
 <div class="invisible abstop red">
 <div id="21a" class="visible red">
@@ -273,13 +378,19 @@ ok
 </div>
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
 22 green box with word ok:
 <div id="22" class="invisible abstop red" >
 <div class="visible abs green">
 ok
 </div>
 </div>
-<br><br><br><br>
+</div>
+</div>
+
 </body>
 </html>

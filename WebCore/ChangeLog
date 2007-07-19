@@ -1,3 +1,18 @@
+2007-07-19  Antti  <antti@apple.com>
+
+        Reviewed by John.
+        
+        Fix <rdar://problem/5346697>
+        REGRESSION(r23773): Visibile children on invisible layer are not painted (fast/layers/layer-visibility.html fails)
+        
+        Test m_hasVisibleContent instead of renderer()->style()->visibility(). 
+        This takes children into account too.
+
+        Regression spotted by Mitz.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+
 2007-07-18  Oliver Hunt  <oliver@apple.com>
 
         Rubber stamped by maciej

@@ -1,3 +1,14 @@
+2007-07-19  Antti  <antti@apple.com>
+
+        Reviewed by John.
+        
+        Update test case to work better as a pixel test.
+
+        * fast/layers/layer-visibility-expected.checksum:
+        * fast/layers/layer-visibility-expected.png:
+        * fast/layers/layer-visibility-expected.txt:
+        * fast/layers/layer-visibility.html:
+
 2007-07-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
