@@ -59,6 +59,7 @@ use File::Spec;
 use FindBin;
 use Getopt::Long;
 
+sub diffFromToString();
 sub diffCommand(@);
 sub statusCommand(@);
 sub createPatchCommand($);
@@ -917,22 +918,28 @@ sub processPaths(\@)
     return %result;
 }
 
+sub diffFromToString()
+{
+    return "" if isSVN();
+    return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
+    return "HEAD" if isGit();
+}
+
 sub diffCommand(@)
 {
     my @paths = @_;
 
-    my $prefix;
+    my $pathsString = "'" . join("' '", @paths) . "'"; 
+
+    my $command;
     if (isSVN()) {
-        $prefix = "$SVN diff --diff-cmd diff -x -N";
+        $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
     } elsif (isGit()) {
-        if ($gitCommit) {
-            return "$GIT diff \"$gitCommit^\" \"$gitCommit\"";
-        } else {
-            $prefix = "$GIT diff HEAD --";
-        }
+        $command = "$GIT diff " . diffFromToString();
+        $command .= " -- $pathsString" unless $gitCommit;
     }
 
-    return "$prefix '" . join("' '", @paths) . "'";
+    return $command;
 }
 
 sub statusCommand(@)
@@ -944,13 +951,8 @@ sub statusCommand(@)
     if (isSVN()) {
         $command = "$SVN stat $filesString";
     } elsif (isGit()) {
-        # FIXME: This command will give status for the whole repository, not
-        # just the files passed in.
-        if ($gitCommit) {
-            $command = "$GIT diff -r --name-status -M \"$gitCommit^\" \"$gitCommit\"";
-        } else {
-            $command = "$GIT status";
-        }
+        $command = "$GIT diff -r --name-status -C -C -M " . diffFromToString();
+        $command .= " -- $filesString" unless $gitCommit;
     }
 
     return "$command 2> /dev/stdout";
@@ -960,9 +962,15 @@ sub createPatchCommand($)
 {
     my ($changedFilesString) = @_;
 
-    return "'$FindBin::Bin/svn-create-patch' $changedFilesString" if isSVN();
-    return "$GIT diff -C -M \"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
-    return "$GIT diff -C -M HEAD -- $changedFilesString" if isGit();
+    my $command;
+    if (isSVN()) {
+        $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
+    } elsif (isGit()) {
+        $command = "$GIT diff -C -C -M " . diffFromToString();
+        $command .= " -- $changedFilesString" unless $gitCommit;
+    }
+
+    return $command;
 }
 
 sub diffHeaderFormat()
@@ -1015,29 +1023,15 @@ sub generateFileList(\@\@\%)
                 print;  # error output from svn stat
             }
         } elsif (isGit()) {
-            if ($gitCommit) {
-                if (/^([ADM])\t(.+)$/) {
-                    $status = $1;
-                    $file = $2;
-                } elsif (/^(R)[0-9]{1,3}\t([^\t]+)\t([^\t\n]+)$/) { # for example: R90%    newfile    oldfile
-                    $status = $1;
-                    $file = $2;
-                    $original = $3;
-                } else {
-                    print;  # error output from git diff
-                }
+            if (/^([ADM])\t(.+)$/) {
+                $status = $1;
+                $file = $2;
+            } elsif (/^([CR])[0-9]{1,3}\t([^\t]+)\t([^\t\n]+)$/) { # for example: R90%    newfile    oldfile
+                $status = $1;
+                $original = $2;
+                $file = $3;
             } else {
-                if (/^# Changes to be committed:$/ || /^# Changed but not updated:$/) {
-                    $inGitCommitSection = 1;
-                    next;
-                }
-                last if $inGitCommitSection && /^# \S/;
-
-                if ($inGitCommitSection && /^#\s+([^:]+):\s+((.+) -> )?(.+)$/) {
-                    $status = $1;
-                    $original = $3;
-                    $file = $4;
-                }
+                print;  # error output from git diff
             }
         }
 
@@ -1062,22 +1056,14 @@ sub isModifiedOrAddedStatus($)
 {
     my ($status) = @_;
 
-    my %svn = (
+    my %statusCodes = (
         "A" => 1,
+        "C" => isGit(),
         "M" => 1,
         "R" => 1,
     );
 
-    my %git = (
-        "new file" => 1,
-        "modified" => 1,
-        "copied" => 1,
-        "renamed" => 1,
-    );
-
-    # deliberately share the same description between svn status output and git diff --name-status
-    return $svn{$status} if (isSVN() || $gitCommit);
-    return $git{$status} if isGit();
+    return $statusCodes{$status};
 }
 
 sub isConflictStatus($)
@@ -1089,11 +1075,11 @@ sub isConflictStatus($)
     );
 
     my %git = (
-        "unmerged" => 1,
+        "U" => 1,
     );
 
-    return $svn{$status} if isSVN();
     return 0 if $gitCommit; # an existing commit cannot have conflicts
+    return $svn{$status} if isSVN();
     return $git{$status} if isGit();
 }
 
@@ -1107,16 +1093,13 @@ sub statusDescription($$)
         "M" => "",
         "R" => defined $original ? " Replaced with \%s." : " Replaced.",
     );
-    my %git = (
-        "copied" => " Copied from \%s.",
-        "deleted" => " Removed.",
-        "modified" => "",
-        "new file" => " Added.",
-        "renamed" => " Renamed from \%s.",
-    );
 
-    # deliberately share the same description between svn status output and git diff --name-status
-    return sprintf($svn{$status}, $original) if (isSVN() || $gitCommit) && exists $svn{$status};
+    my %git = %svn;
+    $git{"A"} = " Added.";
+    $git{"C"} = " Copied from \%s.";
+    $git{"R"} = " Renamed from \%s.";
+
+    return sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
     return sprintf($git{$status}, $original) if isGit() && exists $git{$status};
     return undef;
 }
