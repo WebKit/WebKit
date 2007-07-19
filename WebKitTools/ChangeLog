@@ -1,3 +1,35 @@
+2007-07-18  Adam Roben  <aroben@apple.com>
+
+        More git friendliness for prepare-ChangeLog
+
+        The overall change is to remove the use of git-status and replace it
+        with git-diff --name-status (which we were already using in the
+        --git-commit case).
+
+        This lets us respect directories specified on the command line when
+        using git, just as we do for Subversion. It also speeds things up a
+        bit, especially in the subdirectory case, as git-status is pretty slow.
+
+        I also fixed some issues where we wouldn't detect copied files and
+        would reverse the new filename and the original filename for renamed files.
+
+        Reviewed by Mark.
+
+        * Scripts/prepare-ChangeLog:
+        (sub diffFromToString): Added.
+        (sub diffCommand): Don't append the paths in the --git-commit case, as
+        we should be operating on the entire commit.
+        (sub statusCommand): Always use git-diff --name-status, and added an
+        extra -C option to git-diff to make it find a few more copied files.
+        (sub createPatchCommand): Collapsed the two git cases a bit, and added
+        the extra -C option as above.
+        (sub generateFileList): Remove the git-status codepath, and recognize
+        file copies in the --name-status output.
+        (sub isModifiedOrAddedStatus): Collapsed the status codes into one
+        dictionary.
+        (sub isConflictStatus): Updated the git dictionary.
+        (sub statusDescription): Updated the git dictionary.
+
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
         * Scripts/build-drosera: Update where we look for the Xcode project.
