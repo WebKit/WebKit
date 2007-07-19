@@ -1,3 +1,14 @@
+2007-07-19  Adam Roben  <aroben@apple.com>
+
+        Move generally-useful VCS code into a new VCSUtils.pm module
+
+        This is in preparation for making commit-log-editor git-friendly.
+
+        Reviewed by Sam.
+
+        * Scripts/VCSUtils.pm: Added. Code moved here from prepare-ChangeLog.
+        * Scripts/prepare-ChangeLog: Use VCSUtils.
+
 2007-07-19  Lars Knoll <lars@trolltech.com>
 
         Fix a crash on exit when running DRT against a current

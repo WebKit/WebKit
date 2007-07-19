@@ -58,7 +58,10 @@ use File::Basename;
 use File::Spec;
 use FindBin;
 use Getopt::Long;
+use lib $FindBin::Bin;
+use VCSUtils;
 
+sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
 sub statusCommand(@);
@@ -70,15 +73,12 @@ sub isModifiedOrAddedStatus($);
 sub isConflictStatus($);
 sub statusDescription($$);
 sub extractLineRange($);
-sub makeFilePathRelative($);
 sub canonicalizePath($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
-sub isGit();
-sub isSVN();
 
 my $gitCommit = 0;
 my $gitReviewer = "";
@@ -107,7 +107,10 @@ if (!$parseOptionsResult || $showHelp) {
 
 my %paths = processPaths(@ARGV);
 
-isSVN() || isGit() || die "Couldn't determine your version control system.";
+my $isGit = isGitDirectory(firstDirectoryOrCwd());
+my $isSVN = isSVNDirectory(firstDirectoryOrCwd());
+
+$isSVN || $isGit || die "Couldn't determine your version control system.";
 
 # Find the list of modified files
 my @changed_files;
@@ -253,7 +256,7 @@ foreach my $prefix (sort keys %files) {
     $logs .= " ${prefix}ChangeLog";
 }
 
-if ($logs && $updateChangeLogs && isSVN()) {
+if ($logs && $updateChangeLogs && $isSVN) {
     print STDERR "  Running 'svn update' to update ChangeLog files.\n";
     open ERRORS, "$SVN update -q$logs |" or die "The svn update of ChangeLog files failed: $!.\n";
     print STDERR "    $_" while <ERRORS>;
@@ -920,9 +923,9 @@ sub processPaths(\@)
 
 sub diffFromToString()
 {
-    return "" if isSVN();
+    return "" if $isSVN;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
-    return "HEAD" if isGit();
+    return "HEAD" if $isGit;
 }
 
 sub diffCommand(@)
@@ -932,9 +935,9 @@ sub diffCommand(@)
     my $pathsString = "'" . join("' '", @paths) . "'"; 
 
     my $command;
-    if (isSVN()) {
+    if ($isSVN) {
         $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         $command = "$GIT diff " . diffFromToString();
         $command .= " -- $pathsString" unless $gitCommit;
     }
@@ -948,9 +951,9 @@ sub statusCommand(@)
 
     my $filesString = "'" . join ("' '", @files) . "'";
     my $command;
-    if (isSVN()) {
+    if ($isSVN) {
         $command = "$SVN stat $filesString";
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         $command = "$GIT diff -r --name-status -C -C -M " . diffFromToString();
         $command .= " -- $filesString" unless $gitCommit;
     }
@@ -963,9 +966,9 @@ sub createPatchCommand($)
     my ($changedFilesString) = @_;
 
     my $command;
-    if (isSVN()) {
+    if ($isSVN) {
         $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
-    } elsif (isGit()) {
+    } elsif ($isGit) {
         $command = "$GIT diff -C -C -M " . diffFromToString();
         $command .= " -- $changedFilesString" unless $gitCommit;
     }
@@ -975,8 +978,8 @@ sub createPatchCommand($)
 
 sub diffHeaderFormat()
 {
-    return qr/^Index: (\S+)$/ if isSVN();
-    return qr/^diff --git a\/.+ b\/(.+)$/ if isGit();
+    return qr/^Index: (\S+)$/ if $isSVN;
+    return qr/^diff --git a\/.+ b\/(.+)$/ if $isGit;
 }
 
 sub findOriginalFileFromSvn($)
@@ -1014,7 +1017,7 @@ sub generateFileList(\@\@\%)
         my $original;
         my $file;
 
-        if (isSVN()) {
+        if ($isSVN) {
             if (/^([ACDMR]).{5} (.+)$/) {
                 $status = $1;
                 $file = $2;
@@ -1022,7 +1025,7 @@ sub generateFileList(\@\@\%)
             } else {
                 print;  # error output from svn stat
             }
-        } elsif (isGit()) {
+        } elsif ($isGit) {
             if (/^([ADM])\t(.+)$/) {
                 $status = $1;
                 $file = $2;
@@ -1058,7 +1061,7 @@ sub isModifiedOrAddedStatus($)
 
     my %statusCodes = (
         "A" => 1,
-        "C" => isGit(),
+        "C" => $isGit,
         "M" => 1,
         "R" => 1,
     );
@@ -1079,8 +1082,8 @@ sub isConflictStatus($)
     );
 
     return 0 if $gitCommit; # an existing commit cannot have conflicts
-    return $svn{$status} if isSVN();
-    return $git{$status} if isGit();
+    return $svn{$status} if $isSVN;
+    return $git{$status} if $isGit;
 }
 
 sub statusDescription($$)
@@ -1099,8 +1102,8 @@ sub statusDescription($$)
     $git{"C"} = " Copied from \%s.";
     $git{"R"} = " Renamed from \%s.";
 
-    return sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
-    return sprintf($git{$status}, $original) if isGit() && exists $git{$status};
+    return sprintf($svn{$status}, $original) if $isSVN && exists $svn{$status};
+    return sprintf($git{$status}, $original) if $isGit && exists $git{$status};
     return undef;
 }
 
@@ -1110,10 +1113,10 @@ sub extractLineRange($)
 
     my ($start, $end) = (-1, -1);
 
-    if (isSVN() && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
+    if ($isSVN && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
         $start = $2;
         $end = $4 || $2;
-    } elsif (isGit() && $string =~ /^@@ -\d+,\d+ \+(\d+),(\d+) @@/) {
+    } elsif ($isGit && $string =~ /^@@ -\d+,\d+ \+(\d+),(\d+) @@/) {
         $start = $1;
         $end = $1 + $2 - 1;
 
@@ -1130,47 +1133,12 @@ sub extractLineRange($)
     return ($start, $end);
 }
 
-my $gitRoot;
-sub makeFilePathRelative($)
+sub firstDirectoryOrCwd()
 {
-    my ($path) = @_;
-    return $path unless isGit();
-
-    unless (defined $gitRoot) {
-        chomp($gitRoot = `git rev-parse --git-dir`);
-        $gitRoot =~ s/\.git$//;
-    }
-    my $result = File::Spec->abs2rel(File::Spec->rel2abs($path, $gitRoot));
-    return $result;
-}
-
-my $isGit;
-sub isGit()
-{
-    return $isGit if defined $isGit;
-
     my $dir = ".";
     my @dirs = keys(%paths);
 
     $dir = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]) if @dirs;
 
-    $isGit = system("cd $dir && git rev-parse > /dev/null 2>&1") == 0;
-    return $isGit;
-}
-
-my $isSVN;
-sub isSVN()
-{
-    return $isSVN if defined $isSVN;
-
-    my $dir = ".svn";
-    my @dirs = keys(%paths);
-
-    if (@dirs) {
-        my $path = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]);
-        $dir = File::Spec->catdir($path, ".svn");
-    }
-
-    $isSVN = -d $dir;
-    return $isSVN;
+    return $dir;
 }
