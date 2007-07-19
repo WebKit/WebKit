@@ -1147,16 +1147,21 @@ sub openHTTPDIfNeeded()
 
     mkpath $absTestResultsDirectory;
 
-    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
+    my @args = (
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
-        "-c", "SSLCertificateFile $sslCertificate",
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
         "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "User \"#$<\"");
+        "-c", "User \"#$<\""
+    );
+
+    # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
+    push(@args, "-c", "SSLCertificateFile $sslCertificate") unless isCygwin();
+
+    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, @args);
 
     my $retryCount = 20;
     while (system("/usr/bin/curl -q --silent --stderr - --output /dev/null $listen") && $retryCount) {

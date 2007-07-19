@@ -1,5 +1,14 @@
 2007-07-18  Adam Roben  <aroben@apple.com>
 
+        Don't try to use an SSL certificate on Windows until <rdar://problem/5345985> is fixed
+
+        Reviewed by Mark.
+
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+
+2007-07-18  Adam Roben  <aroben@apple.com>
+
         More git friendliness for prepare-ChangeLog
 
         The overall change is to remove the use of git-status and replace it
