@@ -133,4 +133,7 @@ int main(int argc, char* argv[])
         dumper.open(QUrl(args.last()));
     }
     return app.exec();
+#ifdef Q_WS_X11
+    FcConfigSetCurrent(0);
+#endif
 }

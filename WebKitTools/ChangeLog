@@ -1,3 +1,13 @@
+2007-07-19  Lars Knoll <lars@trolltech.com>
+
+        Fix a crash on exit when running DRT against a current
+        Qt 4.4 snapshot.
+
+        Reviewed by Zack
+
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2007-07-18  Adam Roben  <aroben@apple.com>
 
         Don't try to use an SSL certificate on Windows until <rdar://problem/5345985> is fixed
