@@ -69,6 +69,7 @@ public:
     void setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy);
 
     void render(QPainter *painter, const QRect &source);
+    void layout();
 
     QPoint pos() const;
     QRect geometry() const;

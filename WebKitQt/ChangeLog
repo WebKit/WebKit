@@ -1,3 +1,15 @@
+2007-07-19  Adam Treat  <treat@kde.org>
+
+        Reviewed by George.
+
+        Do a recursive layout on the frame's children.  This fixes a
+        segfault found when rendering some framesets.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+        (QWebFrame::layout):
+        * Api/qwebframe.h:
+
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

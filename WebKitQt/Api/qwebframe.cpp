@@ -231,12 +231,21 @@ void QWebFrame::render(QPainter *painter, const QRect &source)
     if (!d->frameView || !d->frame->renderer())
         return;
 
+    layout();
+
+    GraphicsContext ctx(painter);
+    d->frameView->paint(&ctx, source);
+}
+
+void QWebFrame::layout()
+{
     if (d->frameView->needsLayout()) {
         d->frameView->layout();
     }
 
-    GraphicsContext ctx(painter);
-    d->frameView->paint(&ctx, source);
+    foreach (QWebFrame *child, childFrames()) {
+        child->layout();
+    }
 }
 
 QPoint QWebFrame::pos() const
