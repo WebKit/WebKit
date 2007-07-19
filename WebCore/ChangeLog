@@ -2,6 +2,24 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/5262136> Double form repost alert going forward on britishairways.com
+        
+        When checking if the request has changed and a new policy callback needs to be sent, 
+        ignore the request headers. NSURLConnection in Leopard will always call willSendRequest,
+        with a request that was different from the one passed to -[NSURLConnection connectionWithRequest:]
+        (a few Accept headers are added).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::equalIgnoringHeaderFields):
+        (WebCore::operator==):
+        * platform/network/ResourceRequestBase.h:
+
+2007-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         <rdar://problem/5340098>
         http://bugs.webkit.org/show_bug.cgi?id=13366
         REGRESSION (r10935): AOL beta music player doesn't play

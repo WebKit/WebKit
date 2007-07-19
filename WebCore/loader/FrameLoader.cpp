@@ -3364,8 +3364,9 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
         
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if (request == loader->lastCheckedRequest() || (!request.isNull() && request.url().isEmpty())) {
+    if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
         function(argument, request, 0, true);
+        loader->setLastCheckedRequest(request);
         return;
     }
     

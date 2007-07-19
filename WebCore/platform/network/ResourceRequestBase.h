@@ -131,7 +131,9 @@ namespace WebCore {
         const ResourceRequest& asResourceRequest() const;
     };
 
-    bool operator==(const ResourceRequestBase& a, const ResourceRequestBase& b);
+    bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
+
+    bool operator==(const ResourceRequestBase&, const ResourceRequestBase&);
     inline bool operator!=(ResourceRequestBase& a, const ResourceRequestBase& b) { return !(a == b); }
 
 } // namespace WebCore
