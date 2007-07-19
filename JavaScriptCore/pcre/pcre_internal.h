@@ -541,6 +541,10 @@ ESC_n is defined as yet another macro, which is set in config.h to either \n
 #define ESC_tee '\t'
 #endif
 
+#ifndef ESC_v
+#define ESC_v '\v'
+#endif
+
 /* These are escaped items that aren't just an encoding of a particular data
 value such as \n. They must have non-zero values, as check_escape() returns
 their negation. Also, they must appear in the same order as in the opcode

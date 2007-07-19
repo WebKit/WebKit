@@ -7,11 +7,11 @@
 <p class='results_summary'>
 Test List: All tests<br>
 Skip List: (none)<br>
-1135 test(s) selected, 1127 test(s) completed, 65 failures reported (5.76% failed)<br>
-Engine command line: /Users/Cameron/WebKit/WebKitBuild/Release/testkjs <br>
-OS type: Darwin d141-131-181.home.cgocable.net 8.10.1 Darwin Kernel Version 8.10.1: Wed May 23 16:33:00 PDT 2007; root:xnu-792.22.5~1/RELEASE_I386 i386 i386<br>
-Testcase execution time: 42 seconds.<br>
-Tests completed on Mon Jul 16 02:25:22 2007.<br><br>
+1135 test(s) selected, 1127 test(s) completed, 64 failures reported (5.67% failed)<br>
+Engine command line: /Users/darin/Build/Debug/testkjs <br>
+OS type: Darwin il0301e-dhcp201.apple.com 9.0.0b2 Darwin Kernel Version 9.0.0b2: Tue Jun 26 18:40:55 PDT 2007; root:xnu-1139.1~1/RELEASE_PPC Power Macintosh<br>
+Testcase execution time: 7 minutes, 13 seconds.<br>
+Tests completed on Thu Jul 19 13:10:08 2007.<br><br>
 [ <a href='#fail_detail'>Failure Details</a> | <a href='#retest_list'>Retest List</a> | <a href='menu.html'>Test Selection Page</a> ]<br>
 <hr>
 <a name='fail_detail'></a>
@@ -35,17 +35,19 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 618 KJS::Node<br>
 --> RegExp/hex-001.js JS regexp anchoring on empty match bug<br>
 --> BUGNUMBER: http://bugzilla.mozilla.org/show_bug.cgi?id=2157<br>
-[29772] ./ecma_2/RegExp/regress-001.js line 18: TypeError: Object /a||b/ (result of expression /a||b/) does not allow calls.<br>
+[67046] ./ecma_2/RegExp/regress-001.js line 18: TypeError: Object /a||b/ (result of expression /a||b/) does not allow calls.<br>
 </tt><br>
 <a name='failure4'></a><dd><b>Testcase <a target='other_window' href='./ecma_2/RegExp/unicode-001.js'>ecma_2/RegExp/unicode-001.js</a> failed</b> <br>
  [ <a href='#failure3'>Previous Failure</a> | <a href='#failure5'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 671 KJS::Node<br>
 --> RegExp/unicode-001.js new RegExp( pattern, flags )<br>
-[29773] ./ecma_2/RegExp/unicode-001.js line 20: SyntaxError: Invalid regular expression: PCRE does not support \L, \l, \N, \U, or \u<br>
+[67047] ./ecma_2/RegExp/unicode-001.js line 33: TypeError: Null value<br>
 </tt><br>
 <a name='failure5'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/Date/15.9.5.7.js'>ecma_3/Date/15.9.5.7.js</a> failed</b> <br>
  [ <a href='#failure4'>Previous Failure</a> | <a href='#failure6'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -60,8 +62,8 @@ Failure messages were:<br>
 --> (Mon Feb 28 2000 16:00:00 GMT-0800 (PST)).toLocaleTimeString() = 4:00:00 PM PST FAILED! expected: 16:00:00<br>
 --> (Mon Feb 28 2000 15:59:59 GMT-0800 (PST)).toLocaleTimeString() = 3:59:59 PM PST FAILED! expected: 15:59:59<br>
 --> (Tue Feb 29 2000 00:00:00 GMT-0800 (PST)).toLocaleTimeString() = 12:00:00 AM PST FAILED! expected: 00:00:00<br>
---> (Mon Jul 16 2007 02:25:12 GMT-0700 (PDT)).toLocaleTimeString() = 2:25:12 AM PDT FAILED! expected: 02:25:12<br>
---> (Mon Jul 16 2007 10:25:12 GMT-0700 (PDT)).toLocaleTimeString() = 10:25:12 AM PDT FAILED! expected: 10:25:12<br>
+--> (Thu Jul 19 2007 13:09:01 GMT-0700 (PDT)).toLocaleTimeString() = 1:09:01 PM PDT FAILED! expected: 13:09:01<br>
+--> (Thu Jul 19 2007 21:09:01 GMT-0700 (PDT)).toLocaleTimeString() = 9:09:01 PM PDT FAILED! expected: 21:09:01<br>
 --> (Fri Dec 31 2004 16:00:00 GMT-0800 (PST)).toLocaleTimeString() = 4:00:00 PM PST FAILED! expected: 16:00:00<br>
 --> (Fri Dec 31 2004 15:59:59 GMT-0800 (PST)).toLocaleTimeString() = 3:59:59 PM PST FAILED! expected: 15:59:59<br>
 --> (Sat Jan 01 2005 00:00:00 GMT-0800 (PST)).toLocaleTimeString() = 12:00:00 AM PST FAILED! expected: 00:00:00<br>
@@ -71,7 +73,8 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
 <a name='failure7'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/RegExp/15.10.2-1.js'>ecma_3/RegExp/15.10.2-1.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=(none)' target='other_window'>Bug Number (none)</a><br>
  [ <a href='#failure6'>Previous Failure</a> | <a href='#failure8'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: RegExp conformance test<br>
@@ -200,7 +203,8 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[29900] ./ecma_3/RegExp/regress-100199.js line 48: SyntaxError: Invalid regular expression: missing terminating ] for character class<br>
+LEAK: 853 KJS::Node<br>
+[67219] ./ecma_3/RegExp/regress-100199.js line 48: SyntaxError: Invalid regular expression: missing terminating ] for character class<br>
 </tt><br>
 <a name='failure13'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/RegExp/regress-188206.js'>ecma_3/RegExp/regress-188206.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=188206' target='other_window'>Bug Number 188206</a><br>
  [ <a href='#failure12'>Previous Failure</a> | <a href='#failure14'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -255,7 +259,8 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[29926] ./ecma_3/Statements/regress-194364.js line 1: SyntaxError: Parse error<br>
+LEAK: 397 KJS::Node<br>
+[67275] ./ecma_3/Statements/regress-194364.js line 1: SyntaxError: Parse error<br>
 </tt><br>
 <a name='failure16'></a><dd><b>Testcase <a target='other_window' href='./ecma_3/Unicode/uc-001.js'>ecma_3/Unicode/uc-001.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=23610' target='other_window'>Bug Number 23610</a><br>
  [ <a href='#failure15'>Previous Failure</a> | <a href='#failure17'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -278,8 +283,9 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 403 KJS::Node<br>
 --> JS1_2 Object.toString()<br>
-[29950] ./js1_2/Objects/toString-001.js line 103: TypeError: Object /^\{(.*)\}$/ (result of expression /^\{(.*)\}$/) does not allow calls.<br>
+[67306] ./js1_2/Objects/toString-001.js line 103: TypeError: Object /^\{(.*)\}$/ (result of expression /^\{(.*)\}$/) does not allow calls.<br>
 </tt><br>
 <a name='failure19'></a><dd><b>Testcase <a target='other_window' href='./js1_2/function/Function_object.js'>js1_2/function/Function_object.js</a> failed</b> <br>
  [ <a href='#failure18'>Previous Failure</a> | <a href='#failure20'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -296,6 +302,7 @@ Failure messages were:<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 OK.<br>
+LEAK: 331 KJS::Node<br>
 --> function-001.js functions not separated by semicolons are errors in version 120 and higher<br>
 --> eval("function f(){}function g(){}") = undefined FAILED! expected: error<br>
 </tt><br>
@@ -304,8 +311,9 @@ OK.<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 333 KJS::Node<br>
 --> JS_1.2 The variable statment<br>
-[29963] ./js1_2/function/regexparg-1.js line 80: TypeError: Object /abc/ (result of expression x) does not allow calls.<br>
+[67339] ./js1_2/function/regexparg-1.js line 80: TypeError: Object /abc/ (result of expression x) does not allow calls.<br>
 </tt><br>
 <a name='failure22'></a><dd><b>Testcase <a target='other_window' href='./js1_2/function/tostring-1.js'>js1_2/function/tostring-1.js</a> failed</b> <br>
  [ <a href='#failure21'>Previous Failure</a> | <a href='#failure23'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -376,9 +384,10 @@ Failure messages were:<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 329 KJS::Node<br>
 --> Executing script: compile.js<br>
 --> As described in Netscape doc "Whats new in JavaScript 1.2" RegExp: compile<br>
-[29991] ./js1_2/regexp/compile.js line 43: TypeError: Value undefined (result of expression regularExpression.compile) is not object.<br>
+[67376] ./js1_2/regexp/compile.js line 43: TypeError: Value undefined (result of expression regularExpression.compile) is not object.<br>
 </tt><br>
 <a name='failure30'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/endLine.js'>js1_2/regexp/endLine.js</a> failed</b> <br>
  [ <a href='#failure29'>Previous Failure</a> | <a href='#failure31'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
@@ -391,174 +400,187 @@ xyz'.match(new RegExp('\d+$')) = null FAILED! expected: 890<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 329 KJS::Node<br>
 --> BUGNUMBER: http://bugzilla.mozilla.org/show_bug.cgi?id=6359<br>
-[108] ./js1_2/regexp/regress-6359.js line 56: TypeError: Object /(a*)b\1+/ (result of expression /(a*)b\1+/) does not allow calls.<br>
+[67397] ./js1_2/regexp/regress-6359.js line 56: TypeError: Object /(a*)b\1+/ (result of expression /(a*)b\1+/) does not allow calls.<br>
 </tt><br>
 <a name='failure32'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/regress-9141.js'>js1_2/regexp/regress-9141.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=http://bugzilla.mozilla.org/show_bug.cgi?id=9141' target='other_window'>Bug Number http://bugzilla.mozilla.org/show_bug.cgi?id=9141</a><br>
  [ <a href='#failure31'>Previous Failure</a> | <a href='#failure33'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 329 KJS::Node<br>
 --> BUGNUMBER: http://bugzilla.mozilla.org/show_bug.cgi?id=9141<br>
-[109] ./js1_2/regexp/regress-9141.js line 73: TypeError: Object /(?:xx|x)*/ (result of expression /(?:xx|x)*/) does not allow calls.<br>
+[67398] ./js1_2/regexp/regress-9141.js line 73: TypeError: Object /(?:xx|x)*/ (result of expression /(?:xx|x)*/) does not allow calls.<br>
 </tt><br>
 <a name='failure33'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/simple_form.js'>js1_2/regexp/simple_form.js</a> failed</b> <br>
  [ <a href='#failure32'>Previous Failure</a> | <a href='#failure34'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 329 KJS::Node<br>
 --> Executing script: simple_form.js<br>
 --> As described in Netscape doc "Whats new in JavaScript 1.2" RegExp: simple form<br>
-[110] ./js1_2/regexp/simple_form.js line 43: TypeError: Object /[0-9]{3}/ (result of expression /[0-9]{3}/) does not allow calls.<br>
+[67399] ./js1_2/regexp/simple_form.js line 43: TypeError: Object /[0-9]{3}/ (result of expression /[0-9]{3}/) does not allow calls.<br>
 </tt><br>
-<a name='failure34'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/special_characters.js'>js1_2/regexp/special_characters.js</a> failed</b> <br>
+<a name='failure34'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/string_split.js'>js1_2/regexp/string_split.js</a> failed</b> <br>
  [ <a href='#failure33'>Previous Failure</a> | <a href='#failure35'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt><br>
 Failure messages were:<br>
---> 'ab a  b'.match(/a{2}/) = null FAILED! expected: a<br>
+--> 'abc'.split(/[a-z]/) = ,,, FAILED! expected: ,,<br>
+--> 'abc'.split(/[a-z]/) = ,,, FAILED! expected: ,,<br>
+--> 'abc'.split(new RegExp('[a-z]')) = ,,, FAILED! expected: ,,<br>
+--> 'abc'.split(new RegExp('[a-z]')) = ,,, FAILED! expected: ,,<br>
 </tt><br>
-<a name='failure35'></a><dd><b>Testcase <a target='other_window' href='./js1_2/regexp/string_split.js'>js1_2/regexp/string_split.js</a> failed</b> <br>
+<a name='failure35'></a><dd><b>Testcase <a target='other_window' href='./js1_2/version120/boolean-001.js'>js1_2/version120/boolean-001.js</a> failed</b> <br>
  [ <a href='#failure34'>Previous Failure</a> | <a href='#failure36'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt><br>
-Failure messages were:<br>
---> 'abc'.split(/[a-z]/) = ,,, FAILED! expected: ,,<br>
---> 'abc'.split(/[a-z]/) = ,,, FAILED! expected: ,,<br>
---> 'abc'.split(new RegExp('[a-z]')) = ,,, FAILED! expected: ,,<br>
---> 'abc'.split(new RegExp('[a-z]')) = ,,, FAILED! expected: ,,<br>
-</tt><br>
-<a name='failure36'></a><dd><b>Testcase <a target='other_window' href='./js1_2/version120/boolean-001.js'>js1_2/version120/boolean-001.js</a> failed</b> <br>
- [ <a href='#failure35'>Previous Failure</a> | <a href='#failure37'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt><br>
 Failure messages were:<br>
 --> new Boolean(false) = true FAILED! expected: false<br>
 </tt><br>
-<a name='failure37'></a><dd><b>Testcase <a target='other_window' href='./js1_2/version120/regress-99663.js'>js1_2/version120/regress-99663.js</a> failed</b> <br>
- [ <a href='#failure36'>Previous Failure</a> | <a href='#failure38'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure36'></a><dd><b>Testcase <a target='other_window' href='./js1_2/version120/regress-99663.js'>js1_2/version120/regress-99663.js</a> failed</b> <br>
+ [ <a href='#failure35'>Previous Failure</a> | <a href='#failure37'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Regression test for Bugzilla bug 99663<br>
 Failure messages were:<br>
 --> Section 1 of test - got Error: Can't find variable: it FAILED! expected: a "read-only" error<br>
 --> Section 2 of test - got Error: Can't find variable: it FAILED! expected: a "read-only" error<br>
 --> Section 3 of test - got Error: Can't find variable: it FAILED! expected: a "read-only" error<br>
 </tt><br>
-<a name='failure38'></a><dd><b>Testcase <a target='other_window' href='./js1_3/Script/function-001-n.js'>js1_3/Script/function-001-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=10278' target='other_window'>Bug Number 10278</a><br>
- [ <a href='#failure37'>Previous Failure</a> | <a href='#failure39'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure37'></a><dd><b>Testcase <a target='other_window' href='./js1_3/Script/function-001-n.js'>js1_3/Script/function-001-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=10278' target='other_window'>Bug Number 10278</a><br>
+ [ <a href='#failure36'>Previous Failure</a> | <a href='#failure38'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 3, got 0<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 OK.<br>
+LEAK: 391 KJS::Node<br>
 --> BUGNUMBER: 10278<br>
 --> function-001.js functions not separated by semicolons are errors in version 120 and higher<br>
 --> eval("function f(){}function g(){}") = undefined FAILED! expected: error<br>
 </tt><br>
-<a name='failure39'></a><dd><b>Testcase <a target='other_window' href='./js1_3/Script/script-001.js'>js1_3/Script/script-001.js</a> failed</b> <br>
- [ <a href='#failure38'>Previous Failure</a> | <a href='#failure40'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure38'></a><dd><b>Testcase <a target='other_window' href='./js1_3/Script/script-001.js'>js1_3/Script/script-001.js</a> failed</b> <br>
+ [ <a href='#failure37'>Previous Failure</a> | <a href='#failure39'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
+LEAK: 389 KJS::Node<br>
 --> script-001 NativeScript<br>
-[138] ./js1_3/Script/script-001.js line 133: ReferenceError: Can't find variable: Script<br>
+[67435] ./js1_3/Script/script-001.js line 133: ReferenceError: Can't find variable: Script<br>
 </tt><br>
-<a name='failure40'></a><dd><b>Testcase <a target='other_window' href='./js1_3/regress/function-001-n.js'>js1_3/regress/function-001-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=10278' target='other_window'>Bug Number 10278</a><br>
- [ <a href='#failure39'>Previous Failure</a> | <a href='#failure41'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure39'></a><dd><b>Testcase <a target='other_window' href='./js1_3/regress/function-001-n.js'>js1_3/regress/function-001-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=10278' target='other_window'>Bug Number 10278</a><br>
+ [ <a href='#failure38'>Previous Failure</a> | <a href='#failure40'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 3, got 0<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 OK.<br>
+LEAK: 391 KJS::Node<br>
 --> BUGNUMBER: 10278<br>
 --> function-001.js functions not separated by semicolons are errors in version 120 and higher<br>
 --> eval("function f(){}function g(){}") = undefined FAILED! expected: error<br>
 </tt><br>
-<a name='failure41'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-001.js'>js1_5/Exceptions/catchguard-001.js</a> failed</b> <br>
+<a name='failure40'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-001.js'>js1_5/Exceptions/catchguard-001.js</a> failed</b> <br>
+ [ <a href='#failure39'>Previous Failure</a> | <a href='#failure41'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<tt>Expected exit code 0, got 3<br>
+Testcase terminated with signal 0<br>
+Complete testcase output was:<br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure41'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-002.js'>js1_5/Exceptions/catchguard-002.js</a> failed</b> <br>
  [ <a href='#failure40'>Previous Failure</a> | <a href='#failure42'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure42'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-002.js'>js1_5/Exceptions/catchguard-002.js</a> failed</b> <br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure42'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-003.js'>js1_5/Exceptions/catchguard-003.js</a> failed</b> <br>
  [ <a href='#failure41'>Previous Failure</a> | <a href='#failure43'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure43'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/catchguard-003.js'>js1_5/Exceptions/catchguard-003.js</a> failed</b> <br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure43'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/errstack-001.js'>js1_5/Exceptions/errstack-001.js</a> failed</b> <br>
  [ <a href='#failure42'>Previous Failure</a> | <a href='#failure44'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure44'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/errstack-001.js'>js1_5/Exceptions/errstack-001.js</a> failed</b> <br>
+LEAK: 473 KJS::Node<br>
+[67490] ./js1_5/Exceptions/errstack-001.js line 247: TypeError: Undefined value<br>
+</tt><br>
+<a name='failure44'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/regress-50447.js'>js1_5/Exceptions/regress-50447.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=50447' target='other_window'>Bug Number 50447</a><br>
  [ <a href='#failure43'>Previous Failure</a> | <a href='#failure45'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[192] ./js1_5/Exceptions/errstack-001.js line 247: TypeError: Undefined value<br>
+LEAK: 654 KJS::Node<br>
+--> BUGNUMBER: 50447<br>
+--> STATUS: Test (non-ECMA) Error object properties fileName, lineNumber<br>
+[67491] ./js1_5/Exceptions/regress-50447.js line 65: TypeError: Undefined value<br>
 </tt><br>
-<a name='failure45'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Exceptions/regress-50447.js'>js1_5/Exceptions/regress-50447.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=50447' target='other_window'>Bug Number 50447</a><br>
+<a name='failure45'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-001.js'>js1_5/GetSet/getset-001.js</a> failed</b> <br>
  [ <a href='#failure44'>Previous Failure</a> | <a href='#failure46'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
---> BUGNUMBER: 50447<br>
---> STATUS: Test (non-ECMA) Error object properties fileName, lineNumber<br>
-[193] ./js1_5/Exceptions/regress-50447.js line 65: TypeError: Undefined value<br>
+LEAK: 323 KJS::Node<br>
 </tt><br>
-<a name='failure46'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-001.js'>js1_5/GetSet/getset-001.js</a> failed</b> <br>
+<a name='failure46'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-002.js'>js1_5/GetSet/getset-002.js</a> failed</b> <br>
  [ <a href='#failure45'>Previous Failure</a> | <a href='#failure47'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure47'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-002.js'>js1_5/GetSet/getset-002.js</a> failed</b> <br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure47'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-003.js'>js1_5/GetSet/getset-003.js</a> failed</b> <br>
  [ <a href='#failure46'>Previous Failure</a> | <a href='#failure48'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure48'></a><dd><b>Testcase <a target='other_window' href='./js1_5/GetSet/getset-003.js'>js1_5/GetSet/getset-003.js</a> failed</b> <br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure48'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-90596-001.js'>js1_5/Object/regress-90596-001.js</a> failed</b> <br>
  [ <a href='#failure47'>Previous Failure</a> | <a href='#failure49'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure49'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-90596-001.js'>js1_5/Object/regress-90596-001.js</a> failed</b> <br>
+LEAK: 765 KJS::Node<br>
+[67516] ./js1_5/Object/regress-90596-001.js line 48: TypeError: Value undefined (result of expression obj.toSource) is not object.<br>
+</tt><br>
+<a name='failure49'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-90596-002.js'>js1_5/Object/regress-90596-002.js</a> failed</b> <br>
  [ <a href='#failure48'>Previous Failure</a> | <a href='#failure50'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[211] ./js1_5/Object/regress-90596-001.js line 48: TypeError: Value undefined (result of expression obj.toSource) is not object.<br>
+LEAK: 769 KJS::Node<br>
+[67517] ./js1_5/Object/regress-90596-002.js line 48: ReferenceError: Can't find variable: uneval<br>
 </tt><br>
-<a name='failure50'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-90596-002.js'>js1_5/Object/regress-90596-002.js</a> failed</b> <br>
+<a name='failure50'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-96284-001.js'>js1_5/Object/regress-96284-001.js</a> failed</b> <br>
  [ <a href='#failure49'>Previous Failure</a> | <a href='#failure51'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[212] ./js1_5/Object/regress-90596-002.js line 48: ReferenceError: Can't find variable: uneval<br>
+LEAK: 397 KJS::Node<br>
+[67519] ./js1_5/Object/regress-96284-001.js line 49: TypeError: Value undefined (result of expression obj1.toSource) is not object.<br>
 </tt><br>
-<a name='failure51'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-96284-001.js'>js1_5/Object/regress-96284-001.js</a> failed</b> <br>
+<a name='failure51'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-96284-002.js'>js1_5/Object/regress-96284-002.js</a> failed</b> <br>
  [ <a href='#failure50'>Previous Failure</a> | <a href='#failure52'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[214] ./js1_5/Object/regress-96284-001.js line 49: TypeError: Value undefined (result of expression obj1.toSource) is not object.<br>
+LEAK: 397 KJS::Node<br>
+[67520] ./js1_5/Object/regress-96284-002.js line 49: ReferenceError: Can't find variable: uneval<br>
 </tt><br>
-<a name='failure52'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Object/regress-96284-002.js'>js1_5/Object/regress-96284-002.js</a> failed</b> <br>
+<a name='failure52'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-44009.js'>js1_5/Regress/regress-44009.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=44009' target='other_window'>Bug Number 44009</a><br>
  [ <a href='#failure51'>Previous Failure</a> | <a href='#failure53'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[215] ./js1_5/Object/regress-96284-002.js line 49: ReferenceError: Can't find variable: uneval<br>
-</tt><br>
-<a name='failure53'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-44009.js'>js1_5/Regress/regress-44009.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=44009' target='other_window'>Bug Number 44009</a><br>
- [ <a href='#failure52'>Previous Failure</a> | <a href='#failure54'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>Expected exit code 0, got 3<br>
-Testcase terminated with signal 0<br>
-Complete testcase output was:<br>
+LEAK: 396 KJS::Node<br>
 --> BUGNUMBER: 44009<br>
 --> STATUS: Testing that we don't crash on obj.toSource()<br>
-[220] ./js1_5/Regress/regress-44009.js line 60: TypeError: Value undefined (result of expression obj.toSource) is not object.<br>
+[67525] ./js1_5/Regress/regress-44009.js line 60: TypeError: Value undefined (result of expression obj.toSource) is not object.<br>
 </tt><br>
-<a name='failure54'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-68498-003.js'>js1_5/Regress/regress-68498-003.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=68498' target='other_window'>Bug Number 68498</a><br>
- [ <a href='#failure53'>Previous Failure</a> | <a href='#failure55'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure53'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-68498-003.js'>js1_5/Regress/regress-68498-003.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=68498' target='other_window'>Bug Number 68498</a><br>
+ [ <a href='#failure52'>Previous Failure</a> | <a href='#failure54'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Testing calling obj.eval(str)<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Testing calling obj.eval(str); currently at expect[1] within test -<br>
@@ -566,8 +588,8 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value '43', Actual value 'false'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure55'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-103602.js'>js1_5/Regress/regress-103602.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=103602' target='other_window'>Bug Number 103602</a><br>
- [ <a href='#failure54'>Previous Failure</a> | <a href='#failure56'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure54'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-103602.js'>js1_5/Regress/regress-103602.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=103602' target='other_window'>Bug Number 103602</a><br>
+ [ <a href='#failure53'>Previous Failure</a> | <a href='#failure55'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Reassignment to a const is NOT an error per ECMA<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Section 1 of test -<br>
@@ -577,28 +599,31 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value '1', Actual value '2'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure56'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-104077.js'>js1_5/Regress/regress-104077.js</a> failed</b> <br>
+<a name='failure55'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-104077.js'>js1_5/Regress/regress-104077.js</a> failed</b> <br>
+ [ <a href='#failure54'>Previous Failure</a> | <a href='#failure56'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<tt>Expected exit code 0, got 3<br>
+Testcase terminated with signal 0<br>
+Complete testcase output was:<br>
+LEAK: 323 KJS::Node<br>
+</tt><br>
+<a name='failure56'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-127557.js'>js1_5/Regress/regress-127557.js</a> failed</b> <br>
  [ <a href='#failure55'>Previous Failure</a> | <a href='#failure57'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure57'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-127557.js'>js1_5/Regress/regress-127557.js</a> failed</b> <br>
+LEAK: 419 KJS::Node<br>
+[67661] ./js1_5/Regress/regress-127557.js line 75: ReferenceError: Can't find variable: clone<br>
+</tt><br>
+<a name='failure57'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-172699.js'>js1_5/Regress/regress-172699.js</a> failed</b> <br>
  [ <a href='#failure56'>Previous Failure</a> | <a href='#failure58'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[246] ./js1_5/Regress/regress-127557.js line 75: ReferenceError: Can't find variable: clone<br>
+LEAK: 397 KJS::Node<br>
+[67760] ./js1_5/Regress/regress-172699.js line 61: URIError: URI error<br>
 </tt><br>
-<a name='failure58'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-172699.js'>js1_5/Regress/regress-172699.js</a> failed</b> <br>
+<a name='failure58'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-179524.js'>js1_5/Regress/regress-179524.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=179524' target='other_window'>Bug Number 179524</a><br>
  [ <a href='#failure57'>Previous Failure</a> | <a href='#failure59'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>Expected exit code 0, got 3<br>
-Testcase terminated with signal 0<br>
-Complete testcase output was:<br>
-[255] ./js1_5/Regress/regress-172699.js line 61: URIError: URI error<br>
-</tt><br>
-<a name='failure59'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-179524.js'>js1_5/Regress/regress-179524.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=179524' target='other_window'>Bug Number 179524</a><br>
- [ <a href='#failure58'>Previous Failure</a> | <a href='#failure60'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Don't crash on extraneous arguments to str.match(), etc.<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Section 14 of test -<br>
@@ -648,15 +673,16 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value 'SHOULD HAVE FALLEN INTO CATCH-BLOCK!', Actual value 'ABC Zbc'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure60'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-220584.js'>js1_5/Scope/regress-220584.js</a> failed</b> <br>
- [ <a href='#failure59'>Previous Failure</a> | <a href='#failure61'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure59'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-220584.js'>js1_5/Scope/regress-220584.js</a> failed</b> <br>
+ [ <a href='#failure58'>Previous Failure</a> | <a href='#failure60'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-[280] ./js1_5/Scope/regress-220584.js line 56: ReferenceError: Can't find variable: Script<br>
+LEAK: 397 KJS::Node<br>
+[67823] ./js1_5/Scope/regress-220584.js line 56: ReferenceError: Can't find variable: Script<br>
 </tt><br>
-<a name='failure61'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/scope-001.js'>js1_5/Scope/scope-001.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=53268' target='other_window'>Bug Number 53268</a><br>
- [ <a href='#failure60'>Previous Failure</a> | <a href='#failure62'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure60'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/scope-001.js'>js1_5/Scope/scope-001.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=53268' target='other_window'>Bug Number 53268</a><br>
+ [ <a href='#failure59'>Previous Failure</a> | <a href='#failure61'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Testing scope after changing obj.__proto__<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Step 1:  setting obj.__proto__ = global object<br>
@@ -667,8 +693,8 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value 'undefined', Actual value '1'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure62'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-301574.js'>js1_6/Regress/regress-301574.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=301574' target='other_window'>Bug Number 301574</a><br>
- [ <a href='#failure61'>Previous Failure</a> | <a href='#failure63'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure61'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-301574.js'>js1_6/Regress/regress-301574.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=301574' target='other_window'>Bug Number 301574</a><br>
+ [ <a href='#failure60'>Previous Failure</a> | <a href='#failure62'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: E4X should be enabled even when e4x=1 not specified<br>
 Failure messages were:<br>
 --> FAILED!: E4X should be enabled even when e4x=1 not specified: XML()<br>
@@ -678,27 +704,30 @@ Failure messages were:<br>
 --> FAILED!: Expected value 'No error', Actual value 'error: ReferenceError: Can't find variable: XML'<br>
 --> FAILED!: <br>
 </tt><br>
-<a name='failure63'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-309242.js'>js1_6/Regress/regress-309242.js</a> failed</b> <br>
+<a name='failure62'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-309242.js'>js1_6/Regress/regress-309242.js</a> failed</b> <br>
+ [ <a href='#failure61'>Previous Failure</a> | <a href='#failure63'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<tt>Expected exit code 0, got 3<br>
+Testcase terminated with signal 0<br>
+Complete testcase output was:<br>
+LEAK: 1212 KJS::Node<br>
+</tt><br>
+<a name='failure63'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-314887.js'>js1_6/Regress/regress-314887.js</a> failed</b> <br>
  [ <a href='#failure62'>Previous Failure</a> | <a href='#failure64'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure64'></a><dd><b>Testcase <a target='other_window' href='./js1_6/Regress/regress-314887.js'>js1_6/Regress/regress-314887.js</a> failed</b> <br>
+LEAK: 1212 KJS::Node<br>
+</tt><br>
+<a name='failure64'></a><dd><b>Testcase <a target='other_window' href='./js1_6/String/regress-306591.js'>js1_6/String/regress-306591.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=306591' target='other_window'>Bug Number 306591</a><br>
  [ <a href='#failure63'>Previous Failure</a> | <a href='#failure65'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
-Testcase produced no output!</tt><br>
-<a name='failure65'></a><dd><b>Testcase <a target='other_window' href='./js1_6/String/regress-306591.js'>js1_6/String/regress-306591.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=306591' target='other_window'>Bug Number 306591</a><br>
- [ <a href='#failure64'>Previous Failure</a> | <a href='#failure66'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>Expected exit code 0, got 3<br>
-Testcase terminated with signal 0<br>
-Complete testcase output was:<br>
+LEAK: 1212 KJS::Node<br>
 --> BUGNUMBER: 306591<br>
 --> STATUS: String static methods<br>
 --> STATUS: See https://bugzilla.mozilla.org/show_bug.cgi?id=304828<br>
-[302] ./js1_6/String/regress-306591.js line 48: TypeError: Value undefined (result of expression String.split) is not object.<br>
+[67845] ./js1_6/String/regress-306591.js line 48: TypeError: Value undefined (result of expression String.split) is not object.<br>
 </tt><br>
 </dl>
 [ <a href='#tippy_top'>Top of Page</a> | <a href='#fail_detail'>Top of Failures</a> ]<br>
@@ -706,9 +735,9 @@ Complete testcase output was:<br>
 <pre>
 <a name='retest_list'></a>
 <h2>Retest List</h2><br>
-# Retest List, kjs, generated Mon Jul 16 02:25:22 2007.
+# Retest List, kjs, generated Thu Jul 19 13:10:08 2007.
 # Original test base was: All tests.
-# 1127 of 1135 test(s) were completed, 65 failures reported.
+# 1127 of 1135 test(s) were completed, 64 failures reported.
 ecma/TypeConversion/9.3.1-3.js
 ecma_2/Exceptions/function-001.js
 ecma_2/RegExp/regress-001.js
@@ -742,7 +771,6 @@ js1_2/regexp/endLine.js
 js1_2/regexp/regress-6359.js
 js1_2/regexp/regress-9141.js
 js1_2/regexp/simple_form.js
-js1_2/regexp/special_characters.js
 js1_2/regexp/string_split.js
 js1_2/version120/boolean-001.js
 js1_2/version120/regress-99663.js

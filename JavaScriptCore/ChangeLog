@@ -1,3 +1,54 @@
+2007-07-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/5345440> PCRE computes wrong length for expressions with quantifiers
+          on named recursion or subexpressions
+
+        It's challenging to implement proper preflighting for compiling these advanced features.
+        But we don't want them in the JavaScript engine anyway.
+
+        Turned off the following features of PCRE (some of these are simply parsed and not implemented):
+
+            \C \E \G \L \N \P \Q \U \X \Z
+            \e \l \p \u \z
+            [::] [..] [==]
+            (?#) (?<=) (?<!) (?>)
+            (?C) (?P) (?R)
+            (?0) (and 1-9)
+            (?imsxUX)
+
+        Added the following:
+
+            \u \v
+
+        Because of \v, the js1_2/regexp/special_characters.js test now passes.
+
+        To be conservative, I left some features that JavaScript doesn't want, such as
+        \012 and \x{2013}, in place. We can revisit these later; they're not directly-enough
+        related to avoiding the incorrect preflighting.
+
+        I also didn't try to remove unused opcodes and remove code from the execution engine.
+        That could save code size and speed things up a bit, but it would require more changes.
+
+        * kjs/regexp.h:
+        * kjs/regexp.cpp: (KJS::RegExp::RegExp): Remove the sanitizePattern workaround for
+        lack of \u support, since the PCRE code now has \u support.
+
+        * pcre/pcre-config.h: Set JAVASCRIPT to 1.
+        * pcre/pcre_internal.h: Added ESC_v.
+
+        * pcre/pcre_compile.c: Added a different escape table for when JAVASCRIPT is set that
+        omits all the escapes we don't want interpreted and includes '\v'.
+        (check_escape): Put !JAVASCRIPT around the code for '\l', '\L', '\N', '\u', and '\U',
+        and added code to handle '\u2013' inside JAVASCRIPT.
+        (compile_branch): Put !JAVASCRIPT if around all the code implementing the features we
+        don't want.
+        (pcre_compile2): Ditto.
+
+        * tests/mozilla/expected.html: Updated since js1_2/regexp/special_characters.js now
+        passes.
+
 2007-07-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

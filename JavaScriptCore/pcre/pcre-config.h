@@ -97,3 +97,5 @@ Makefile (use --disable-stack-for-recursion). */
 
 #define SUPPORT_UCP 1
 #define SUPPORT_UTF8 1
+
+#define JAVASCRIPT 1
