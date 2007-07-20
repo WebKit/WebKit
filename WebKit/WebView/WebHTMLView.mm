@@ -253,6 +253,8 @@ static CachedResourceClient* promisedDataClient()
 - (DOMRange *)_documentRange;
 - (WebFrameBridge *)_bridge;
 - (void)_setMouseDownEvent:(NSEvent *)event;
+- (WebHTMLView *)_topHTMLView;
+- (BOOL)_isTopHTMLView;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -272,7 +274,6 @@ static CachedResourceClient* promisedDataClient()
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_clearPrintingModeRecursive;
 - (void)_web_layoutIfNeededRecursive;
-- (void)_web_layoutIfNeededRecursive:(NSRect)rect testDirtyRect:(bool)testDirtyRect;
 @end
 
 @interface NSMutableDictionary (WebHTMLViewFileInternal)
@@ -751,6 +752,21 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     }
 }
 
+- (WebHTMLView *)_topHTMLView
+{
+    // FIXME: this can fail if the dataSource is nil, which happens when the WebView is tearing down from the window closing.
+    WebHTMLView *view = (WebHTMLView *)[[[[_private->dataSource _webView] mainFrame] frameView] documentView];
+    ASSERT(view);
+    ASSERT([view isKindOfClass:[WebHTMLView class]]);
+    return view;
+}
+
+- (BOOL)_isTopHTMLView
+{
+    // FIXME: this should be a cached boolean that doesn't rely on _topHTMLView since that can fail (see _topHTMLView).
+    return self == [self _topHTMLView];
+}
+
 @end
 
 @implementation WebHTMLView (WebPrivate)
@@ -871,6 +887,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     _private->subviewsSetAside = NO;
 }
 
+#ifdef BUILDING_ON_TIGER
+
 // This is called when we are about to draw, but before our dirty rect is propagated to our ancestors.
 // That's the perfect time to do a layout, except that ideally we'd want to be sure that we're dirty
 // before doing it. As a compromise, when we're opaque we do the layout only when actually asked to
@@ -878,11 +896,24 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 // need to be redrawn (in case the layout causes some things to get dirtied).
 - (void)_propagateDirtyRectsToOpaqueAncestors
 {
-    if (![[self _webView] drawsBackground]) {
+    if (![[self _webView] drawsBackground])
         [self _web_layoutIfNeededRecursive];
-    }
     [super _propagateDirtyRectsToOpaqueAncestors];
 }
+
+#else
+
+- (void)viewWillDraw
+{
+    // On window close we will be called when the datasource is nil, then hit an assert in _topHTMLView
+    // So check if the dataSource is nil before calling [self _isTopHTMLView], this can be removed
+    // once the FIXME in _isTopHTMLView is fixed.
+    if (_private->dataSource && [self _isTopHTMLView])
+        [self _web_layoutIfNeededRecursive];
+    [super viewWillDraw];
+}
+
+#endif
 
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
@@ -892,27 +923,29 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     BOOL wasInPrintingMode = _private->printing;
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (wasInPrintingMode != isPrinting) {
-        if (isPrinting) {
+        if (isPrinting)
             [self _web_setPrintingModeRecursive];
-        } else {
+        else
             [self _web_clearPrintingModeRecursive];
-        }
     }
 
-    [self _web_layoutIfNeededRecursive: rect testDirtyRect:YES];
+#ifdef BUILDING_ON_TIGER
+
+    // Because Tiger does not have viewWillDraw we need to do layout here.
+    [self _web_layoutIfNeededRecursive];
     [_subviews makeObjectsPerformSelector:@selector(_propagateDirtyRectsToOpaqueAncestors)];
 
+#endif
+
     [self _setAsideSubviews];
-    [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
-        rectIsVisibleRectForView:visibleView topView:topView];
+    [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
     [self _restoreSubviews];
 
     if (wasInPrintingMode != isPrinting) {
-        if (wasInPrintingMode) {
+        if (wasInPrintingMode)
             [self _web_setPrintingModeRecursive];
-        } else {
+        else
             [self _web_clearPrintingModeRecursive];
-        }
     }
 }
 
@@ -928,53 +961,43 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         // This helps when we print as part of a larger print process.
         // If the WebHTMLView itself is what we're printing, then we will never have to do this.
         if (wasInPrintingMode != isPrinting) {
-            if (isPrinting) {
+            if (isPrinting)
                 [self _web_setPrintingModeRecursive];
-            } else {
+            else
                 [self _web_clearPrintingModeRecursive];
-            }
         }
 
+#ifdef BUILDING_ON_TIGER
+
+        // Because Tiger does not have viewWillDraw we need to do layout here.
         NSRect boundsBeforeLayout = [self bounds];
-        [self _web_layoutIfNeededRecursive: visRect testDirtyRect:NO];
+        if (!NSIsEmptyRect(visRect))
+            [self _web_layoutIfNeededRecursive];
 
         // If layout changes the view's bounds, then we need to recompute the visRect.
         // That's because the visRect passed to us was based on the bounds at the time
         // we were called. This method is only displayed to draw "all", so it's safe
         // to just call visibleRect to compute the entire rectangle.
-        if (!NSEqualRects(boundsBeforeLayout, [self bounds])) {
+        if (!NSEqualRects(boundsBeforeLayout, [self bounds]))
             visRect = [self visibleRect];
-        }
+
+#endif
 
         [self _setAsideSubviews];
     }
-    
+
     [super _recursiveDisplayAllDirtyWithLockFocus:needsLockFocus visRect:visRect];
-    
+
     if (needToSetAsideSubviews) {
         if (wasInPrintingMode != isPrinting) {
-            if (wasInPrintingMode) {
+            if (wasInPrintingMode)
                 [self _web_setPrintingModeRecursive];
-            } else {
+            else
                 [self _web_clearPrintingModeRecursive];
-            }
         }
 
         [self _restoreSubviews];
     }
-}
-
-- (WebHTMLView *)_topHTMLView
-{
-    WebHTMLView *view = (WebHTMLView *)[[[[_private->dataSource _webView] mainFrame] frameView] documentView];
-    ASSERT(view);
-    ASSERT([view isKindOfClass:[WebHTMLView class]]);
-    return view;
-}
-
-- (BOOL)_isTopHTMLView
-{
-    return self == [self _topHTMLView];
 }
 
 - (BOOL)_insideAnotherHTMLView
@@ -1380,21 +1403,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [super _web_layoutIfNeededRecursive];
 }
 
-- (void)_web_layoutIfNeededRecursive:(NSRect)displayRect testDirtyRect:(bool)testDirtyRect
-{
-    ASSERT(!_private->subviewsSetAside);
-
-    displayRect = NSIntersectionRect(displayRect, [self bounds]);
-    if (testDirtyRect) {
-        NSRect dirtyRect = [self _dirtyRect];
-        displayRect = NSIntersectionRect(displayRect, dirtyRect);
-    }
-    if (!NSIsEmptyRect(displayRect))
-        [self _layoutIfNeeded];
-
-    [super _web_layoutIfNeededRecursive:displayRect testDirtyRect:NO];
-}
-
 - (void)_startAutoscrollTimer: (NSEvent *)triggerEvent
 {
     if (_private->autoscrollTimer == nil) {
@@ -1791,16 +1799,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (void)_web_layoutIfNeededRecursive
 {
     [_subviews makeObjectsPerformSelector:@selector(_web_layoutIfNeededRecursive)];
-}
-
-- (void)_web_layoutIfNeededRecursive: (NSRect)rect testDirtyRect:(bool)testDirtyRect
-{
-    unsigned index, count;
-    for (index = 0, count = [(NSArray *)_subviews count]; index < count; index++) {
-        NSView *subview = [_subviews objectAtIndex:index];
-        NSRect dirtiedSubviewRect = [subview convertRect: rect fromView: self];
-        [subview _web_layoutIfNeededRecursive: dirtiedSubviewRect testDirtyRect:testDirtyRect];
-    }
 }
 
 @end
