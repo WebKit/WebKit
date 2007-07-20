@@ -2019,11 +2019,22 @@ void Document::recalcStyleSelector()
             if (e->hasLocalName(linkTag)) {
                 // <LINK> element
                 HTMLLinkElement* l = static_cast<HTMLLinkElement*>(n);
-                if (l->isLoading() || l->isDisabled())
+                if (l->isDisabled())
                     continue;
+                enabledViaScript = l->isEnabledViaScript();
+                if (l->isLoading()) {
+                    // it is loading but we should still decide which style sheet set to use
+                    if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSet.isEmpty()) {
+                        const AtomicString& rel = e->getAttribute(relAttr);
+                        if (!rel.domString().contains("alternate")) {
+                            m_preferredStylesheetSet = title;
+                            m_selectedStylesheetSet = title;
+                        }
+                    }
+                    continue;
+                }
                 if (!l->sheet())
                     title = DeprecatedString::null;
-                enabledViaScript = l->isEnabledViaScript();
             }
 
             // Get the current preferred styleset.  This is the

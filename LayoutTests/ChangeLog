@@ -1,3 +1,17 @@
+2007-07-21  Antti  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        HTTP test for <rdar://problem/5305788>
+        REGRESSION: Safari sometimes loads IE-specific stylesheet on www.apaema.org
+        
+        Test that order style sheets arrive has no impact to selection of preferred style sheet set.
+
+        * http/tests/local/fail.css: Added.
+        * http/tests/local/link-stylesheet-preferred-expected.txt: Added.
+        * http/tests/local/link-stylesheet-preferred.html: Added.
+        * http/tests/local/slow-css-pass.cgi: Added.
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

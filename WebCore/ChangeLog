@@ -1,3 +1,17 @@
+2007-07-21  Antti  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5305788>
+        REGRESSION: Safari sometimes loads IE-specific stylesheet on www.apaema.org
+        
+        Pick the preferred style sheet set based on document order even if the sheet is still loading. Previously 
+        the set was chosen based on which stylesheet happened to arrive first. Just fix the problem at hand 
+        and resist urge to start refactoring this function.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
