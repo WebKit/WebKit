@@ -1,3 +1,13 @@
+2007-07-20  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Darin and Adam.
+
+        <rdar://problem/5338385> Fixed infinite loop in ScrollView::scrollRectIntoViewRecursively().
+        Also removed an unused local variable.
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+
 2007-07-21  Antti  <antti@apple.com>
 
         Reviewed by Darin.
