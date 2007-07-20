@@ -278,6 +278,7 @@ IDL_BINDINGS += \
 
 
 SOURCES += \
+    bindings/js/GCController.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \

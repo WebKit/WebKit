@@ -1,3 +1,46 @@
+2007-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=12900 Page tear-down 
+        forces garbage collection once per frame
+
+        Also fixed <rdar://problem/5286989> GC on window close does not always 
+        bring the JS object count down to 0
+        
+        Implemented a 0-delay GC timer in WebCore. Instead of forcing GC
+        immediately, code that thinks it has created a lot of garbage starts
+        the timer. This has two advantages: 
+
+        1) Multiple GCs can coalesce. In my pathological test case, this 
+        improves performance by an order of magnitude. 
+        
+        2) Conservative marking is less likely to keep alive important dead
+        objects, like the window object, because the stack is small and free of
+        JS processing when the timer fires.
+
+        Added GCController.h/.cpp, sometimes blindly:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        Added singleton that implements GC on a 0-delay timer:
+        * bindings/js/GCController.h: Added.
+        * bindings/js/GCController.cpp: Added.
+        
+        Changed Collector::collect() calls below to call to the singleton:
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::clear):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::clear):
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Removed previous slightly hackish attempt to
+        avoid conservative marking of the window object.
+
 2007-07-20  Anders Carlsson  <andersca@apple.com>
     
         Reviewed by Darin.

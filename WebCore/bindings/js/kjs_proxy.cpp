@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "GCController.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
 #include "kjs_events.h"
@@ -49,11 +50,13 @@ KJSProxy::~KJSProxy()
     // Check for <rdar://problem/4876466>. In theory, no JS should be executing
     // in our interpreter. 
     ASSERT(!m_script || !m_script->context());
-    m_script = 0;
     
-    // It's likely that destroying the interpreter has created a lot of garbage.
-    JSLock lock;
-    Collector::collect();
+    if (m_script) {
+        m_script = 0;
+    
+        // It's likely that destroying the interpreter has created a lot of garbage.
+        gcController()->garbageCollectSoon();
+    }
 }
 
 JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str) 

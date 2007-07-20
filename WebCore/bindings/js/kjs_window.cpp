@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GCController.h"
 #include "HTMLDocument.h"
 #include "JSCSSRule.h"
 #include "JSCSSValue.h"
@@ -1061,7 +1062,7 @@ void Window::clear()
     frame->scriptProxy()->interpreter()->initGlobalObject();
 
   // there's likely to be lots of garbage now
-  Collector::collect();
+  gcController()->garbageCollectSoon();
 }
 
 void Window::setCurrentEvent(Event *evt)

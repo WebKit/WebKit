@@ -727,6 +727,7 @@
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_JS">
+        bindings/js/GCController.cpp
         bindings/js/JSCanvasRenderingContext2DCustom.cpp
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDocumentCustom.cpp

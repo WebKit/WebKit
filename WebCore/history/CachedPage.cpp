@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "GCController.h"
 #include "Logging.h"
 #include "Page.h"
 #include "SystemTime.h"
@@ -185,7 +186,7 @@ void CachedPage::clear()
     m_interpreterBuiltins.clear();
     m_pausedTimeouts.clear();
 
-    Collector::collect();
+    gcController()->garbageCollectSoon();
 }
 
 void CachedPage::setDocumentLoader(PassRefPtr<DocumentLoader> loader)

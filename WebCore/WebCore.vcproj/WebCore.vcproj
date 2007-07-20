@@ -7115,6 +7115,14 @@
 				Name="js"
 				>
 				<File
+					RelativePath="..\bindings\js\GCController.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\GCController.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
 					>
 				</File>
