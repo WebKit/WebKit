@@ -1,3 +1,17 @@
+2007-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/5348384> Restore old return value behavior of 
+        stringByEvaluatingJavaScriptFromString
+        
+        Return an empty string unless you have a string, boolean, or number
+        result.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+
 2007-07-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

@@ -407,22 +407,22 @@ void testStringByEvaluatingJavaScriptFromString()
 {
     // maps expected result <= JavaScript expression
     NSDictionary *expressions = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"", @"", 
+        @"0", @"0", 
+        @"0", @"'0'", 
+        @"", @"",
         @"", @"''", 
         @"", @"new String()", 
+        @"", @"new String('0')", 
         @"", @"throw 1", 
         @"", @"{ }", 
         @"", @"[ ]", 
         @"", @"//", 
         @"", @"a.b.c", 
         @"", @"(function() { throw 'error'; })()", 
-        @"0", @"new String('0')", 
-        @"0", @"0", 
-        @"0", @"'0'", 
+        @"", @"null",
+        @"", @"undefined",
         @"true", @"true",
         @"false", @"false",
-        @"null", @"null",
-        @"undefined", @"undefined",
         nil
     ];
 

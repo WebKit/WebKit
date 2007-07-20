@@ -1,3 +1,14 @@
+2007-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Updated DumpRenderTree for <rdar://problem/5348384> Restore old return 
+        value behavior of stringByEvaluatingJavaScriptFromString
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (testStringByEvaluatingJavaScriptFromString):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-07-19  Adam Roben  <aroben@apple.com>
 
         Make commit-log-editor work with git

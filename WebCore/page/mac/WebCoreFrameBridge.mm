@@ -686,24 +686,20 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     ASSERT(m_frame->document());
+    
     JSValue* result = m_frame->loader()->executeScript(string, forceUserGesture);
 
-    // If the value returned isn't an object, we don't need an ExecState to convert it
-    if (result && !result->isObject()) {
-        JSLock lock;
+    if (!m_frame) // In case the script removed our frame from the page.
+        return @"";
 
-        if (JSImmediate::isImmediate(result))
-            return String(JSImmediate::toString(result));
+    // This bizarre set of rules matches behavior from WebKit for Safari 2.0.
+    // If you don't like it, use -[WebScriptObject evaluateWebScript:] or 
+    // JSEvaluateScript instead, since they have less surprising semantics.
+    if (!result || !result->isBoolean() && !result->isString() && !result->isNumber())
+        return @"";
 
-        return String(result->getString());
-    }
-    
-    // Return nil if the frame was destroyed by the script
-    if (!m_frame)
-        return nil;
-    
     JSLock lock;
-    return String(result ? result->toString(m_frame->scriptProxy()->interpreter()->globalExec()) : "");
+    return String(result->toString(m_frame->scriptProxy()->interpreter()->globalExec()));
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
