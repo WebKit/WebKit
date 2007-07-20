@@ -155,24 +155,23 @@ void Cache::pruneLiveResources()
         return;
     
     // Destroy any decoded data in live objects that we can.
-    unsigned size = m_liveResources.size();
-    for (int i = size - 1; i >= 0; i--) {
-        // Start from the tail, since this is the least frequently accessed of the objects.
-        CachedResource* current = m_liveResources[i].m_tail;
-        while (current) {
-            CachedResource* prev = current->m_prevInLiveResourcesList;
-            ASSERT(current->referenced());
-            if (current->isLoaded()) {
-                // Go ahead and destroy our decoded data.  Note that this has the effect of moving
-                // us to a different list.
-                current->destroyDecodedData();
-                
-                // Stop pruning if our total live resource size is back under the maximum.
-                if (m_liveDecodedSize <= m_maximumSize)
-                    return;
-            }
-            current = prev;
+    // Start from the tail, since this is the least recently accessed of the objects.
+    CachedResource* current = m_liveResources.m_tail;
+    while (current) {
+        CachedResource* prev = current->m_prevInLiveResourcesList;
+        ASSERT(current->referenced());
+        if (current->isLoaded()) {
+            // Go ahead and destroy our decoded data.
+            current->destroyDecodedData();
+            
+            // Now remove us from the list so the next prune can ignore us.
+            removeFromLiveResourcesList(current);
+            
+            // Stop pruning if our total live resource size is back under the maximum.
+            if (m_liveDecodedSize <= m_maximumSize)
+                return;
         }
+        current = prev;
     }
 }
 
@@ -254,8 +253,7 @@ void Cache::remove(CachedResource* resource)
 
         // Remove from the appropriate LRU list.
         removeFromLRUList(resource);
-        if (resource->referenced())
-            removeFromLiveResourcesList(resource);
+        removeFromLiveResourcesList(resource);
         
         // Notify all doc loaders that might be observing this object still that it has been
         // extracted from the set of resources.
@@ -406,37 +404,17 @@ void Cache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
-Cache::LRUList* Cache::liveLRUListFor(CachedResource* resource)
-{
-    unsigned accessCount = max(resource->liveAccessCount(), 1U);
-    unsigned queueIndex = fastLog2(resource->decodedSize() / accessCount);
-#ifndef NDEBUG
-    resource->m_liveLRUIndex = queueIndex;
-#endif
-    if (m_liveResources.size() <= queueIndex)
-        m_liveResources.resize(queueIndex + 1);
-    return &m_liveResources[queueIndex];
-}
-
 void Cache::removeFromLiveResourcesList(CachedResource* resource)
 {
     // If we've never been accessed, then we're brand new and not in any list.
-    if (resource->liveAccessCount() == 0)
+    if (!resource->m_isInLiveResourcesList)
         return;
+    resource->m_isInLiveResourcesList = false;
 
 #ifndef NDEBUG
-    unsigned oldListIndex = resource->m_liveLRUIndex;
-#endif
-
-    LRUList* list = liveLRUListFor(resource);
-
-#ifndef NDEBUG
-    // Verify that the list we got is the list we want.
-    ASSERT(resource->m_liveLRUIndex == oldListIndex);
-
     // Verify that we are in fact in this list.
     bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInLiveResourcesList) {
+    for (CachedResource* current = m_liveResources.m_head; current; current = current->m_nextInLiveResourcesList) {
         if (current == resource) {
             found = true;
             break;
@@ -448,7 +426,7 @@ void Cache::removeFromLiveResourcesList(CachedResource* resource)
     CachedResource* next = resource->m_nextInLiveResourcesList;
     CachedResource* prev = resource->m_prevInLiveResourcesList;
     
-    if (next == 0 && prev == 0 && list->m_head != resource)
+    if (next == 0 && prev == 0 && m_liveResources.m_head != resource)
         return;
     
     resource->m_nextInLiveResourcesList = 0;
@@ -456,35 +434,33 @@ void Cache::removeFromLiveResourcesList(CachedResource* resource)
     
     if (next)
         next->m_prevInLiveResourcesList = prev;
-    else if (list->m_tail == resource)
-        list->m_tail = prev;
+    else if (m_liveResources.m_tail == resource)
+        m_liveResources.m_tail = prev;
 
     if (prev)
         prev->m_nextInLiveResourcesList = next;
-    else if (list->m_head == resource)
-        list->m_head = next;
+    else if (m_liveResources.m_head == resource)
+        m_liveResources.m_head = next;
 }
 
 void Cache::insertInLiveResourcesList(CachedResource* resource)
 {
-    // Make sure we aren't in some list already.
-    ASSERT(!resource->m_nextInLiveResourcesList && !resource->m_prevInLiveResourcesList);
+    // Make sure we aren't in the list already.
+    ASSERT(!resource->m_nextInLiveResourcesList && !resource->m_prevInLiveResourcesList && !resource->m_isInLiveResourcesList);
+    resource->m_isInLiveResourcesList = true;
 
-    LRUList* list = liveLRUListFor(resource);
-
-    resource->m_nextInLiveResourcesList = list->m_head;
-    if (list->m_head)
-        list->m_head->m_prevInLiveResourcesList = resource;
-    list->m_head = resource;
+    resource->m_nextInLiveResourcesList = m_liveResources.m_head;
+    if (m_liveResources.m_head)
+        m_liveResources.m_head->m_prevInLiveResourcesList = resource;
+    m_liveResources.m_head = resource;
     
     if (!resource->m_nextInLiveResourcesList)
-        list->m_tail = resource;
+        m_liveResources.m_tail = resource;
         
 #ifndef NDEBUG
     // Verify that we are in now in the list like we should be.
-    list = liveLRUListFor(resource);
     bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInLiveResourcesList) {
+    for (CachedResource* current = m_liveResources.m_head; current; current = current->m_nextInLiveResourcesList) {
         if (current == resource) {
             found = true;
             break;

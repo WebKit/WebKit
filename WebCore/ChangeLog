@@ -1,3 +1,23 @@
+2007-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/5347849> Cache eviction of live decoded data is 
+        thrash-y
+        
+        The solution here is to evict live decoded data based on a strict LRU
+        model. This should work well as a "scrolling window."
+
+        With this patch, I see a substantial reduction in CPU while scrolling
+        through a page with large images on a low memory system. Layout tests
+        pass.
+
+        * loader/Cache.h: Changed from a size-based vector of LRU lists to a
+        single LRU list in order to implement strict LRU.
+        
+        * loader/CachedResource.h: Removed tracking of access count, since that
+        was the old cache eviction model.
+
 2007-07-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

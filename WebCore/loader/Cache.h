@@ -156,8 +156,8 @@ private:
     // waiting to die when the clients referencing them go away.
     Vector<LRUList, 32> m_allResources;
     
-    // Lists for live resources only.  Access to this list is based off painting of the resource.
-    Vector<LRUList, 32> m_liveResources;
+    // List just for live resources with decoded data.  Access to this list is based off of painting the resource.
+    LRUList m_liveResources;
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).

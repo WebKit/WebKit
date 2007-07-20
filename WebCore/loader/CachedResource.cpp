@@ -43,7 +43,7 @@ CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool
     m_request = 0;
 
     m_accessCount = 0;
-    m_liveAccessCount = 0;
+    m_isInLiveResourcesList = false;
     
     m_nextInAllResourcesList = 0;
     m_prevInAllResourcesList = 0;
@@ -54,7 +54,6 @@ CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool
 #ifndef NDEBUG
     m_deleted = false;
     m_lruIndex = 0;
-    m_liveLRUIndex = 0;
 #endif
     m_errorOccurred = false;
     m_shouldTreatAsLocal = FrameLoader::shouldTreatURLAsLocal(m_url);
@@ -94,7 +93,6 @@ void CachedResource::setRequest(Request* request)
 void CachedResource::ref(CachedResourceClient *c)
 {
     if (!referenced() && inCache()) {
-        increaseLiveAccessCount();
         cache()->addToLiveResourcesSize(this);
         cache()->insertInLiveResourcesList(this);
     }
@@ -110,7 +108,6 @@ void CachedResource::deref(CachedResourceClient *c)
     else if (!referenced() && inCache()) {
         cache()->removeFromLiveResourcesSize(this);
         cache()->removeFromLiveResourcesList(this);
-        resetLiveAccessCount();
         allReferencesRemoved();
         cache()->pruneAllResources();
     }
@@ -147,7 +144,6 @@ void CachedResource::liveResourceAccessed()
 {
     if (inCache()) {
         cache()->removeFromLiveResourcesList(this);
-        increaseLiveAccessCount();
         cache()->insertInLiveResourcesList(this);
         cache()->pruneLiveResources();
     }
