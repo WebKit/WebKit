@@ -31,15 +31,18 @@
 
 namespace WebCore {
 
+class BidiIterator;
+class BidiRun;
 class Position;
+class RootInlineBox;
+
+template <class Iterator, class Run> class BidiResolver;
+typedef BidiResolver<BidiIterator, BidiRun> BidiState;
 
 enum CaretType { CursorCaret, DragCaret };
 
 class RenderBlock : public RenderFlow {
 public:
-    typedef Vector<UChar, 1024> CharacterBuffer;
-    static void bidiReorderCharacters(Document*, RenderStyle*, CharacterBuffer&);
-
     RenderBlock(Node*);
     virtual ~RenderBlock();
 
@@ -121,20 +124,20 @@ public:
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
 
     // the implementation of the following functions is in bidi.cpp
-    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState& bidi);
-    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState& bidi);
+    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState&);
+    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState&);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
-                                        BidiStatus& cleanLineBidiStatus, BidiContext*& cleanLineBidiContext,
+                                        BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
-    bool matchedEndLine(const BidiIterator& start, const BidiStatus& status, BidiContext* context,
-                        const BidiIterator& endLineStart, const BidiStatus& endLineStatus, BidiContext* endLineContext,
+    bool matchedEndLine(const BidiIterator& start, const BidiStatus& status,
+                        const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
     bool generatesLineBoxesForInlineChild(RenderObject*);
     int skipWhitespace(BidiIterator&, BidiState&);
     BidiIterator findNextLineBreak(BidiIterator& start, BidiState& info);
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject*);
-    void computeHorizontalPositionsForLine(RootInlineBox*, BidiState&);
+    void computeHorizontalPositionsForLine(RootInlineBox*, bool reachedEnd);
     void computeVerticalPositionsForLine(RootInlineBox*);
     void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();

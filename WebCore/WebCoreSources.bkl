@@ -162,6 +162,8 @@
         platform/ArrayImpl.cpp
         platform/AtomicString.cpp
         platform/Base64.cpp
+        platform/BidiContext.cpp
+        platform/BidiReorderCharacters.cpp
         platform/CString.cpp
         platform/ContextMenu.cpp
         platform/DeprecatedCString.cpp

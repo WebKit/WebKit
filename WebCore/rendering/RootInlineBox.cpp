@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RootInlineBox.h"
 
+#include "BidiResolver.h"
 #include "Document.h"
 #include "EllipsisBox.h"
 #include "Frame.h"
@@ -194,10 +195,10 @@ void RootInlineBox::adjustPosition(int dx, int dy)
 void RootInlineBox::childRemoved(InlineBox* box)
 {
     if (box->object() == m_lineBreakObj)
-        setLineBreakInfo(0, 0, 0, 0);
+        setLineBreakInfo(0, 0, BidiStatus());
 
     for (RootInlineBox* prev = prevRootBox(); prev && prev->lineBreakObj() == box->object(); prev = prev->prevRootBox()) {
-        prev->setLineBreakInfo(0, 0, 0, 0);
+        prev->setLineBreakInfo(0, 0, BidiStatus());
         prev->markDirty();
     }
 }
@@ -353,16 +354,19 @@ InlineBox* RootInlineBox::closestLeafChildForXPos(int x, bool onlyEditableLeaves
     return closestLeaf;
 }
 
-void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiStatus* status, BidiContext* context)
+BidiStatus RootInlineBox::lineBreakBidiStatus() const
+{ 
+    return BidiStatus(m_lineBreakBidiStatusEor, m_lineBreakBidiStatusLastStrong, m_lineBreakBidiStatusLast, m_lineBreakContext);
+}
+
+void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, const BidiStatus& status)
 {
     m_lineBreakObj = obj;
     m_lineBreakPos = breakPos;
-    m_lineBreakContext = context;
-    if (status) {
-        m_lineBreakBidiStatusEor = status->eor;
-        m_lineBreakBidiStatusLastStrong = status->lastStrong;
-        m_lineBreakBidiStatusLast = status->last;
-    }
+    m_lineBreakBidiStatusEor = status.eor;
+    m_lineBreakBidiStatusLastStrong = status.lastStrong;
+    m_lineBreakBidiStatusLast = status.last;
+    m_lineBreakContext = status.context;
 }
 
 EllipsisBox* RootInlineBox::ellipsisBox() const

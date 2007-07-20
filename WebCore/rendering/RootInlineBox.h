@@ -23,11 +23,12 @@
 #ifndef RootInlineBox_h
 #define RootInlineBox_h
 
-#include "bidi.h"
+#include "BidiContext.h"
 #include "InlineFlowBox.h"
 
 namespace WebCore {
 
+class BidiStatus;
 class EllipsisBox;
 class HitTestResult;
 struct GapRects;
@@ -39,7 +40,6 @@ public:
         , m_overflow(0)
         , m_lineBreakObj(0)
         , m_lineBreakPos(0)
-        , m_lineBreakContext(0)
     {
     }
 
@@ -64,15 +64,8 @@ public:
     virtual void setVerticalSelectionPositions(int top, int bottom);
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
-    BidiStatus lineBreakBidiStatus() const { 
-        BidiStatus status;
-        status.eor = m_lineBreakBidiStatusEor;
-        status.lastStrong = m_lineBreakBidiStatusLastStrong;
-        status.last = m_lineBreakBidiStatusLast;
-        return status;
-    }
-    BidiContext* lineBreakBidiContext() const { return m_lineBreakContext.get(); }
-    void setLineBreakInfo(RenderObject*, unsigned breakPos, BidiStatus*, BidiContext*);
+    BidiStatus lineBreakBidiStatus() const;
+    void setLineBreakInfo(RenderObject*, unsigned breakPos, const BidiStatus&);
 
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
@@ -158,7 +151,6 @@ protected:
     // we can create a BidiIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     unsigned m_lineBreakPos;
-
     RefPtr<BidiContext> m_lineBreakContext;
 
     // The height of the block at the end of this line.  This is where the next line starts.

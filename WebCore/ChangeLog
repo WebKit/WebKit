@@ -1,3 +1,121 @@
+2007-07-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14626
+          Make bidiReorderCharacters independent of RenderBlock
+
+        No layout test possible because there is no change in functionality.
+
+        This patch generalizes RenderBlock's implementation of the Unicode Bidi Algorithm
+        in the form of the BidiResolver class template. An instance of a BidiResolver class
+        can generate a sequence of runs with corresponding level and override attributes,
+        given a range specified by start and end iterators. The iterators can optionally
+        call back to the BidiResolver instance to push or pop explicit embedding levels.
+
+        The patch replaces BidiState with a specialization of BidiResolver that uses
+        BidiIterators and generates BidiRuns. It also eliminates some of the file statics
+        in bidi.cpp, instead relying on BidiResolver data members.
+
+        The patch makes the BidiContext part of BidiStatus, thus making BidiStatus the
+        entire state that needs to be saved and restored in order to restart the bidi
+        algorithm at a given point. Previously, you had to keep and pass around two
+        separate structures, namely the BidiContext and the BidiStatus.
+
+        bidiReorderCharacters is implemented without relying on render objects, using
+        a BidiResolver specialization that uses simple character buffer iterators and
+        simple run structures.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/BidiContext.cpp: Added.
+        (WebCore::operator==):
+        * platform/BidiContext.h: Added.
+        (WebCore::BidiContext::BidiContext):
+        (WebCore::BidiContext::ref):
+        (WebCore::BidiContext::deref):
+        (WebCore::BidiContext::parent):
+        (WebCore::BidiContext::level):
+        (WebCore::BidiContext::dir):
+        (WebCore::BidiContext::override):
+        * platform/BidiReorderCharacters.cpp: Added.
+        (WebCore::CharacterBufferIterator::CharacterBufferIterator):
+        (WebCore::CharacterBufferIterator::offset):
+        (WebCore::CharacterBufferIterator::increment):
+        (WebCore::CharacterBufferIterator::atEnd):
+        (WebCore::CharacterBufferIterator::current):
+        (WebCore::CharacterBufferIterator::direction):
+        (WebCore::CharacterBufferIterator::operator==):
+        (WebCore::CharacterBufferIterator::operator!=):
+        (WebCore::::appendRun):
+        (WebCore::bidiReorderCharacters):
+        * platform/BidiReorderCharacters.h: Added.
+        * platform/BidiResolver.h: Added.
+        (WebCore::BidiStatus::BidiStatus):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::BidiCharacterRun::BidiCharacterRun):
+        (WebCore::BidiCharacterRun::reversed):
+        (WebCore::BidiCharacterRun::dirOverride):
+        (WebCore::BidiCharacterRun::next):
+        (WebCore::BidiResolver::):
+        (WebCore::BidiResolver::context):
+        (WebCore::BidiResolver::setContext):
+        (WebCore::BidiResolver::setLastDir):
+        (WebCore::BidiResolver::setLastStrongDir):
+        (WebCore::BidiResolver::setEorDir):
+        (WebCore::BidiResolver::dir):
+        (WebCore::BidiResolver::setDir):
+        (WebCore::BidiResolver::status):
+        (WebCore::BidiResolver::setStatus):
+        (WebCore::BidiResolver::adjustEmbedding):
+        (WebCore::BidiResolver::setAdjustEmbedding):
+        (WebCore::BidiResolver::firstRun):
+        (WebCore::BidiResolver::lastRun):
+        (WebCore::BidiResolver::runCount):
+        (WebCore::::embed):
+        (WebCore::::deleteRuns):
+        (WebCore::::reverseRuns):
+        (WebCore::::createBidiRunsForLine):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::childRemoved):
+        (WebCore::RootInlineBox::lineBreakBidiStatus):
+        (WebCore::RootInlineBox::setLineBreakInfo):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/bidi.cpp:
+        (WebCore::BidiIterator::BidiIterator):
+        (WebCore::BidiState::deleteRuns):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::BidiState::addRun):
+        (WebCore::appendRunsForObject):
+        (WebCore::BidiState::appendRun):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::buildCompactRuns):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::skipWhitespace):
+        * rendering/bidi.h:
+        (WebCore::BidiRun::BidiRun):
+        (WebCore::BidiRun::next):
+
 2007-07-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

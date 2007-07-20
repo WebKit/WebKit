@@ -2890,6 +2890,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\BidiContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\BidiContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\BidiReorderCharacters.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\BidiReorderCharacters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\BidiResolver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\CharacterNames.h"
 				>
 			</File>

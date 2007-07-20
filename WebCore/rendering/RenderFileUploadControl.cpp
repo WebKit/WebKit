@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
+#include "BidiReorderCharacters.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -177,14 +178,14 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         unsigned length = displayedFilename.length();
         const UChar* string = displayedFilename.characters();
         TextStyle textStyle(0, 0, 0, false, true);
-        RenderBlock::CharacterBuffer characterBuffer;
+        CharacterBuffer characterBuffer;
 
         if (style()->direction() == RTL && style()->unicodeBidi() == Override)
             textStyle.setRTL(true);
         else if ((style()->direction() == RTL || style()->unicodeBidi() != Override) && !style()->visuallyOrdered()) {
             // If necessary, reorder characters by running the string through the bidi algorithm
             characterBuffer.append(string, length);
-            RenderBlock::bidiReorderCharacters(document(), style(), characterBuffer);
+            bidiReorderCharacters(characterBuffer, style()->direction() == RTL, style()->unicodeBidi() == Override, style()->visuallyOrdered());
             string = characterBuffer.data();
         }
         TextRun textRun(string, length);

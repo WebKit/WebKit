@@ -279,6 +279,8 @@
 		37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C1C0BF3762800956998 /* ShapeArabic.h */; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
+		0F31CBF92B654730BA0535E8 /* BidiContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AF320BE854014A7DA49FB /* BidiContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F971E27FD70F4382BC66D792 /* BidiContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A579C284B928484FB9A446BC /* BidiContext.cpp */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
@@ -2724,6 +2726,9 @@
 		B2FA3E170AB75A6F000E5AC4 /* JSSVGViewElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */; };
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
+		B402007C0C4D217800210AA6 /* BidiReorderCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */; };
+		B402007D0C4D217800210AA6 /* BidiReorderCharacters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */; };
+		B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B402FD090C4C9C3900210AA6 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
 		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
@@ -2910,7 +2915,7 @@
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; };
 		BCEA4852097D93020094C9E4 /* bidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4813097D93020094C9E4 /* bidi.cpp */; };
-		BCEA4853097D93020094C9E4 /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4814097D93020094C9E4 /* bidi.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCEA4853097D93020094C9E4 /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4814097D93020094C9E4 /* bidi.h */; };
 		BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4815097D93020094C9E4 /* break_lines.cpp */; };
 		BCEA4855097D93020094C9E4 /* break_lines.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4816097D93020094C9E4 /* break_lines.h */; };
 		BCEA4856097D93020094C9E4 /* DataRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4817097D93020094C9E4 /* DataRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3516,6 +3521,8 @@
 		37919C1C0BF3762800956998 /* ShapeArabic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeArabic.h; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
+		514AF320BE854014A7DA49FB /* BidiContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiContext.h; sourceTree = "<group>"; };
+		A579C284B928484FB9A446BC /* BidiContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BidiContext.cpp; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
@@ -6047,6 +6054,9 @@
 		B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGViewElement.h; sourceTree = "<group>"; };
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
+		B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiReorderCharacters.h; sourceTree = "<group>"; };
+		B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BidiReorderCharacters.cpp; sourceTree = "<group>"; };
+		B402FD090C4C9C3900210AA6 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
 		BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableSectionElement.cpp; sourceTree = "<group>"; };
 		BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableSectionElement.h; sourceTree = "<group>"; };
@@ -9507,6 +9517,11 @@
 				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
 				E11D51910B2E7A5F0056C188 /* Base64.h */,
 				E11D51920B2E7A5F0056C188 /* Base64.cpp */,
+				514AF320BE854014A7DA49FB /* BidiContext.h */,
+				A579C284B928484FB9A446BC /* BidiContext.cpp */,
+				B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */,
+				B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */,
+				B402FD090C4C9C3900210AA6 /* BidiResolver.h */,
 				65F5382009B2B55700F3DC4A /* character-sets.txt */,
 				93C7B5F30B52D89100B5477E /* CharacterNames.h */,
 				9326DC0A09DAD5BE00AFC847 /* CharsetData.h */,
@@ -11679,6 +11694,9 @@
 				BC772B400C4EA91E0083285F /* CSSStyleSelector.h in Headers */,
 				BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
+				B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */,
+				B402007C0C4D217800210AA6 /* BidiReorderCharacters.h in Headers */,
+				0F31CBF92B654730BA0535E8 /* BidiContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13114,6 +13132,8 @@
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
 				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
+				F971E27FD70F4382BC66D792 /* BidiContext.cpp in Sources */,
+				B402007D0C4D217800210AA6 /* BidiReorderCharacters.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
