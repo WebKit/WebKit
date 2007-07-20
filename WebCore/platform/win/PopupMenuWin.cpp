@@ -470,7 +470,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             optionBackgroundColor = theme()->activeListBoxSelectionBackgroundColor();
             optionTextColor = theme()->activeListBoxSelectionForegroundColor();
         } else {
-            optionBackgroundColor = itemStyle->backgroundColor();
+            optionBackgroundColor = client()->itemBackgroundColor(index);
             optionTextColor = itemStyle->color();
         }
 
@@ -478,11 +478,8 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         IntRect itemRect(0, (index - m_scrollOffset) * m_itemHeight, damageRect.width(), m_itemHeight);
 
         // Draw the background for this menu item
-        if (itemStyle->visibility() != HIDDEN) {
-            if (optionBackgroundColor.hasAlpha() && optionBackgroundColor != clientStyle->backgroundColor())
-                context.fillRect(itemRect, clientStyle->backgroundColor());
+        if (itemStyle->visibility() != HIDDEN)
             context.fillRect(itemRect, optionBackgroundColor);
-        }
 
         if (client()->itemIsSeparator(index)) {
             IntRect separatorRect(itemRect.x() + separatorPadding, itemRect.y() + (itemRect.height() - separatorHeight) / 2, itemRect.width() - 2 * separatorPadding, separatorHeight);

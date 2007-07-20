@@ -71,6 +71,7 @@ private:
     // PopupMenuClient methods
     virtual String itemText(unsigned listIndex) const;
     virtual bool itemIsEnabled(unsigned listIndex) const;
+    virtual Color itemBackgroundColor(unsigned listIndex) const;
     virtual RenderStyle* itemStyle(unsigned listIndex) const;
     virtual RenderStyle* clientStyle() const;
     virtual Document* clientDocument() const;

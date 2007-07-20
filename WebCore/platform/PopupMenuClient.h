@@ -23,6 +23,7 @@
 
 namespace WebCore {
 
+class Color;
 class Document;
 class String;
 class RenderStyle;
@@ -34,6 +35,7 @@ public:
 
     virtual String itemText(unsigned listIndex) const = 0;
     virtual bool itemIsEnabled(unsigned listIndex) const = 0;
+    virtual Color itemBackgroundColor(unsigned listIndex) const = 0;
     virtual RenderStyle* itemStyle(unsigned listIndex) const = 0;
     virtual RenderStyle* clientStyle() const = 0;
     virtual Document* clientDocument() const = 0;

@@ -201,7 +201,7 @@ Color Color::dark() const
                  alpha());
 }
 
-static int blend(int c, int a)
+static int blendComponent(int c, int a)
 {
     // We use white.
     float alpha = a / 255.0f;
@@ -214,6 +214,22 @@ const int cStartAlpha = 153; // 60%
 const int cEndAlpha = 204; // 80%;
 const int cAlphaIncrement = 17; // Increments in between.
 
+Color Color::blend(const Color& source) const
+{
+    if (!alpha() || !source.hasAlpha())
+        return source;
+
+    if (!source.alpha())
+        return *this;
+
+    int d = 255 * (alpha() + source.alpha()) - alpha() * source.alpha();
+    int a = d / 255;
+    int r = (red() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.red()) / d;
+    int g = (green() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.green()) / d;
+    int b = (blue() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.blue()) / d;
+    return Color(r, g, b, a);
+}
+
 Color Color::blendWithWhite() const
 {
     // If the color contains alpha already, we leave it alone.
@@ -224,9 +240,9 @@ Color Color::blendWithWhite() const
     for (int alpha = cStartAlpha; alpha <= cEndAlpha; alpha += cAlphaIncrement) {
         // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
         // at the current alpha.  Try using less transparency if the numbers end up being negative.
-        int r = blend(red(), alpha);
-        int g = blend(green(), alpha);
-        int b = blend(blue(), alpha);
+        int r = blendComponent(red(), alpha);
+        int g = blendComponent(green(), alpha);
+        int b = blendComponent(blue(), alpha);
         
         newColor = Color(r, g, b, alpha);
 

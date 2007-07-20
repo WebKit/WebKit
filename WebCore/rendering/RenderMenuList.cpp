@@ -317,6 +317,27 @@ RenderStyle* RenderMenuList::itemStyle(unsigned listIndex) const
     return element->renderStyle() ? element->renderStyle() : clientStyle();
 }
 
+Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    HTMLElement* element = select->listItems()[listIndex];
+
+    Color backgroundColor;
+    if (element->renderStyle())
+        backgroundColor = element->renderStyle()->backgroundColor();
+    // If the item has an opaque background color, return that.
+    if (!backgroundColor.hasAlpha())
+        return backgroundColor;
+
+    // Otherwise, the item's background is overlayed on top of the menu background.
+    backgroundColor = style()->backgroundColor().blend(backgroundColor);
+    if (!backgroundColor.hasAlpha())
+        return backgroundColor;
+
+    // If the menu background is not opaque, then add an opaque white background behind.
+    return Color(Color::white).blend(backgroundColor);
+}
+
 RenderStyle* RenderMenuList::clientStyle() const
 {
     return m_innerBlock ? m_innerBlock->style() : style();

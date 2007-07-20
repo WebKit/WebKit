@@ -1,3 +1,34 @@
+2007-07-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14689
+          REGRESSION (3.0.2-TOT): <select> menu items have incorrect background color
+
+        * manual-tests/item-background.html: Added.
+        * platform/PopupMenuClient.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::blendComponent): Renamed the static method blend() to this.
+        (WebCore::Color::blend): Added. Compositing (in "normal" or "source over"
+        blend mode) B.blend(C) over A is equivalent to compositing C over the
+        result of compositing B over A.
+        (WebCore::Color::blendWithWhite): Changed for the above rename.
+        * platform/graphics/Color.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint): Changed to use itemBackgroundColor().
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemBackgroundColor): Added. Returns the color
+        that would result from overlaying the item's background color over the
+        menu's background color over solid white. Note that clientStyle() cannot
+        be used for the menu's background color, since background color is not
+        inherited by the inner block (the regression resulted from changing
+        clientStyle() to return the inner block's style), and that the color
+        returned from this method is guaranteed to be opaque.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::itemBackgroundColor): Added.
+        * rendering/RenderTextControl.h:
+
 2007-07-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
