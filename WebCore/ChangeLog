@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        make offsetForPosition and selectionRectForText work correctly with small caps.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::offsetForPosition):
+        (WebCore::cursorToX):
+        (WebCore::Font::selectionRectForText):
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         clip the drawn text correctly when needed.
 
         * platform/qt/FontQt.cpp:

@@ -320,7 +320,7 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
             int xe = w - components.at(i).offset;
             int xs = xe - components.at(i).width;
             if (position >= xs && position <= xe) {
-                QTextLayout layout(components.at(i).string, m_font);
+                QTextLayout layout(components.at(i).string, *components.at(i).font);
                 layout.beginLayout();
                 QTextLine l = layout.createLine();
                 if (!l.isValid())
@@ -339,7 +339,7 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
             int xs = components.at(i).offset;
             int xe = xs + components.at(i).width;
             if (position >= xs && position <= xe) {
-                QTextLayout layout(components.at(i).string, m_font);
+                QTextLayout layout(components.at(i).string, *components.at(i).font);
                 layout.beginLayout();
                 QTextLine l = layout.createLine();
                 if (!l.isValid())
@@ -358,8 +358,7 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
 }
 
 static float cursorToX(const Vector<TextRunComponent, 1024>& components, int width,
-                     const TextStyle& style,
-                     const QFont& font, int cursor)
+                     const TextStyle& style, int cursor)
 {
     int start = 0;
     for (int i = 0; i < components.size(); ++i) {
@@ -370,7 +369,7 @@ static float cursorToX(const Vector<TextRunComponent, 1024>& components, int wid
         int xs = components.at(i).offset;
         if (style.rtl())
             xs = width - xs - components.at(i).width;
-        QTextLayout layout(components.at(i).string, font);
+        QTextLayout layout(components.at(i).string, *components.at(i).font);
         layout.beginLayout();
         QTextLine l = layout.createLine();
         if (!l.isValid())
@@ -390,8 +389,8 @@ FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style,
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
 
-    float x1 = cursorToX(components, w, style, m_font, from);
-    float x2 = cursorToX(components, w, style, m_font, to);
+    float x1 = cursorToX(components, w, style, from);
+    float x2 = cursorToX(components, w, style, to);
     if (x2 < x1)
         qSwap(x1, x2);
 
