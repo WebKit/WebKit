@@ -1,3 +1,20 @@
+2007-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - WebKit part of fix for <rdar://problem/5262230> Crash while loading a popup in addictinggames.com
+        
+        Made closeWindowSoon fire on a timer instead of happening synchronously.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::closeWindowSoon): Actually close the window on a timer, not immediately.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::closeWindowSoon):
+        (WebView::closeWindowTimerFired):
+        * WebView.h:
+
 2007-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

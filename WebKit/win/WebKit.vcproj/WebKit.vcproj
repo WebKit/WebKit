@@ -54,7 +54,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
+				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
 				EnablePREfast="$(EnablePREfast)"
 			/>
@@ -145,7 +145,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
+				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
 				EnablePREfast="$(EnablePREfast)"
 			/>
@@ -240,7 +240,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
+				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
 				EnablePREfast="$(EnablePREfast)"
 			/>

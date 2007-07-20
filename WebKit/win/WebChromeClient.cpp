@@ -319,7 +319,7 @@ void WebChromeClient::closeWindowSoon()
 
     m_webView->setGroupName(0);
     m_webView->stopLoading(0);
-    m_webView->closeWindow();
+    m_webView->closeWindowSoon();
 }
 
 void WebChromeClient::runJavaScriptAlert(Frame*, const String& message)
