@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        use the correct font for spaces.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::generateComponents):
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         spaces where not correctly taken into account for both offsetForPosition and selectionRectForText. Because of that selections sort of worked in LTR text, but completely failed in RTL.
 
         * platform/qt/FontQt.cpp:

@@ -172,7 +172,7 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                 padding -= add;
                 --numSpaces;
             }
-            components->append(TextRunComponent(1, style.rtl(), f, offset));
+            components->append(TextRunComponent(1, style.rtl(), &font.font(), offset));
             offset += add + letterSpacing + components->last().width;
             start = 1;
 //         qDebug() << "space at 0" << offset;
@@ -200,7 +200,7 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                     padding -= add;
                     --numSpaces;
                 }
-                components->append(TextRunComponent(1, style.rtl(), f, offset));
+                components->append(TextRunComponent(1, style.rtl(), &font.font(), offset));
                 offset += wordSpacing + add + components->last().width + letterSpacing;
                 start = i + 1;
                 continue;
@@ -250,7 +250,7 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
                     padding -= add;
                     --numSpaces;
                 }
-                components->append(TextRunComponent(1, style.rtl(), f, offset));
+                components->append(TextRunComponent(1, style.rtl(), &font.font(), offset));
                 offset += add + components->last().width;
                 if (i)
                     offset += wordSpacing;
