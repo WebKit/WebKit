@@ -1,5 +1,14 @@
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mitz.
+
+        Update test to reduce code duplication.
+
+        * fast/css/getComputedStyle-borderRadius-expected.txt:
+        * fast/css/getComputedStyle-borderRadius.html:
+
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Beth Dakin.
 
         Computed style for border radii should return a CSSValueList instead 

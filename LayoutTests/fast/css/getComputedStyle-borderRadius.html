@@ -18,42 +18,30 @@
             document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
         }
 
+        function test(id, prop)
+        {
+            var ob = document.getElementById(id + 'Diff');
+            log('getPropertyValue(' + prop + '): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue(prop));
+            log('getPropertyCSSValue(' + prop + '): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue(prop));
+            ob = document.getElementById(id + 'Same');
+            log('getPropertyValue(' + prop + '): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue(prop));
+            log('getPropertyCSSValue(' + prop + '): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue(prop));
+        }
+
         function runTests()
         {
             if (window.layoutTestController)
                 layoutTestController.dumpAsText();
 
-            var ob = document.getElementById('topRightDiff');
-            log('getPropertyValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-top-right-radius'));
-            log('getPropertyCSSValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-top-right-radius'));
-            ob = document.getElementById('topRightSame');
-            log('getPropertyValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-top-right-radius'));
-            log('getPropertyCSSValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-top-right-radius'));
-            ob = document.getElementById('topLeftDiff');
-            log('getPropertyValue(-webkit-border-top-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-top-left-radius'));
-            log('getPropertyCSSValue(-webkit-border-top-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-top-left-radius'));
-            ob = document.getElementById('topLeftSame');
-            log('getPropertyValue(-webkit-border-top-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-top-left-radius'));
-            log('getPropertyCSSValue(-webkit-border-top-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-top-left-radius'));
-            ob = document.getElementById('bottomRightDiff');
-            log('getPropertyValue(-webkit-border-bottom-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-bottom-right-radius'));
-            log('getPropertyCSSValue(-webkit-border-bottom-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-bottom-right-radius'));
-            ob = document.getElementById('bottomRightSame');
-            log('getPropertyValue(-webkit-border-bottom-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-bottom-right-radius'));
-            log('getPropertyCSSValue(-webkit-border-bottom-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-bottom-right-radius'));
-            ob = document.getElementById('bottomLeftDiff');
-            log('getPropertyValue(-webkit-border-bottom-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-bottom-left-radius'));
-            log('getPropertyCSSValue(-webkit-border-bottom-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-bottom-left-radius'));
-            ob = document.getElementById('bottomLeftSame');
-            log('getPropertyValue(-webkit-border-bottom-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-bottom-left-radius'));
-            log('getPropertyCSSValue(-webkit-border-bottom-left-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-bottom-left-radius'));
+            test('topRight', '-webkit-border-top-right-radius');
+            test('topLeft', '-webkit-border-top-left-radius');
+            test('bottomRight', '-webkit-border-bottom-right-radius');
+            test('bottomLeft', '-webkit-border-bottom-left-radius');
 
             log('');
 
             log('Test getting 0px value border radius.')
-            ob = document.getElementById('topRightDiff');
-            log('getPropertyValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyValue('-webkit-border-top-left-radius'));
-            log('getPropertyCSSValue(-webkit-border-top-right-radius): ' + document.defaultView.getComputedStyle(ob, null).getPropertyCSSValue('-webkit-border-top-left-radius'));
+            test('bottomRight', '-webkit-border-top-left-radius');
         }
     </script>
 </head>
