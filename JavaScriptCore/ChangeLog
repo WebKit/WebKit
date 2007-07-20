@@ -1,3 +1,17 @@
+2007-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=10880 | <rdar://problem/5335694>
+        REGRESSION: JavaScript menu doesn't appear on pricepoint.com (14595)
+        
+        Though the ECMA spec says auto-semicolon insertion should not occur
+        without a newline or '}', Firefox treats do-while specially, and the
+        library used by pricepoint.com requires that special treatment.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/grammar.y:
+
 2007-07-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

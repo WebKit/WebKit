@@ -1,3 +1,13 @@
+2007-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10880 | <rdar://problem/5335694>
+        REGRESSION: JavaScript menu doesn't appear on pricepoint.com (14595)
+        
+        * fast/js/do-while-without-semicolon-expected.txt: Added.
+        * fast/js/do-while-without-semicolon.html: Added.
+
 2007-07-19  Antti  <antti@apple.com>
 
         Reviewed by Darin.
