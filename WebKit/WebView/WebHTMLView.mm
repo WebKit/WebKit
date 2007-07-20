@@ -3095,6 +3095,8 @@ noPromisedData:
         [_private->pageRects release];
         _private->pageRects = nil;
         _private->printing = printing;
+        if (!printing)
+            _private->avoidingPrintOrphan = NO;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layoutToMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
@@ -3150,7 +3152,8 @@ noPromisedData:
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1.0f / PrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
-    return userScaleFactor * MAX(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
+    float shrinkToAvoidOrphan = _private->avoidingPrintOrphan ? (1.0f / PrintingOrphanShrinkAdjustment) : 1.0f;
+    return userScaleFactor * MAX(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
@@ -3254,8 +3257,10 @@ noPromisedData:
             NSArray *adjustedPageRects = [[self _bridge] computePageRectsWithPrintWidthScaleFactor:userScaleFactor
                                                                                        printHeight:fullPageHeight*PrintingOrphanShrinkAdjustment];
             // Use the adjusted rects only if the page count went down
-            if ([adjustedPageRects count] < [newPageRects count])
+            if ([adjustedPageRects count] < [newPageRects count]) {
                 newPageRects = adjustedPageRects;
+                _private->avoidingPrintOrphan = YES;
+            }
         }
     }
     

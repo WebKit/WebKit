@@ -1,3 +1,23 @@
+2007-07-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler and David Harrison
+        
+        - fixed <rdar://problem/5307075> REGRESSION: Bottom of some printed pages are truncated
+        
+        The "avoid orphan" code I added a year ago was causing the page to be imaged to a larger 
+        height (good), but not shrinking everything to compensate (bad). Bad one-year-ago me!
+
+        * WebView/WebHTMLViewInternal.h:
+        added avoidingPrintOrphan boolean
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        clear _private->avoidingPrintOrphan when clearing _private->printing
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        take _private->avoidingPrintOrphan into account when computing the scale factor
+        (-[WebHTMLView knowsPageRange:]):
+        set _private->avoidingPrintOrphan when we're shrinking to avoid an orphan
+
 2007-07-19  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://problem/5344972> REGRESSION: A error dialog occurs when
