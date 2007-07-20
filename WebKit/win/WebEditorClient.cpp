@@ -599,9 +599,7 @@ void WebEditorClient::handleKeypress(KeyboardEvent* evt)
 
 void WebEditorClient::handleInputMethodKeypress(KeyboardEvent* evt)
 {
-    // The key press that triggers an IME triggers a WM_KEYDOWN with VK_PROCESSKEY
-    // so we intercept and prevent the keypress from occurring
-    if (evt->keyEvent() && evt->keyEvent()->WindowsKeyCode() == VK_PROCESSKEY)
+    if (m_webView->inIMEKeyDown())
         evt->setDefaultHandled();
 }
 

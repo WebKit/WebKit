@@ -871,10 +871,6 @@ bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData)
         return false;
     }
 
-    // Don't process keyDown events during IME composition
-    if (m_inIMEComposition)
-        return false;
-
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     m_currentCharacterCode = 0;
@@ -1005,14 +1001,15 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
     if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL)
         return false;
 
-    // Don't process keyDown events during IME composition
-    if (m_inIMEComposition)
-        return false;
+    m_inIMEKeyDown = virtualKeyCode == VK_PROCESSKEY;
+    if (virtualKeyCode == VK_PROCESSKEY && !m_inIMEComposition)
+        virtualKeyCode = MapVirtualKey(LOBYTE(HIWORD(keyData)), 1);
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-
-    if (frame->eventHandler()->keyEvent(keyEvent))
+    bool handled = frame->eventHandler()->keyEvent(keyEvent);
+    m_inIMEKeyDown = false;
+    if (handled)
         return true;
 
     // We need to handle back/forward using either Backspace(+Shift) or Ctrl+Left/Right Arrow keys.

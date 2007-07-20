@@ -1,3 +1,22 @@
+2007-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5349668> WebKit/Win needs to send same key events during IME composition as it does on mac
+
+        Removed guards against sending key events during composition, and added a flag
+        to indicate a key event is IME related.  This is needed to prevent the first 
+        keydown from firing a keypress event, and makes WebEditorClient::handleInputMethodKeypress
+        somewhat cleaner.
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::handleInputMethodKeypress):
+        * WebView.cpp:
+        (WebView::keyUp):
+        (WebView::keyDown):
+        * WebView.h:
+        (WebView::inIMEKeyDown):
+
 2007-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
