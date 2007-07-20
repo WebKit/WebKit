@@ -1,3 +1,14 @@
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix BiDi text rendering.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::TextRunComponent::TextRunComponent):
+        (WebCore::generateComponents):
+        (WebCore::Font::drawText):
+
 2007-07-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
