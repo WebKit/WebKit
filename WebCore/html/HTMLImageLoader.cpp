@@ -96,6 +96,7 @@ void HTMLImageLoader::updateFromElement()
             doc->docLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(doc->docLoader(), parseURL(attr), false /* not for cache */);
             newImage->setLoading(true);
+            newImage->setDocLoader(doc->docLoader());
             doc->docLoader()->m_docResources.set(newImage->url(), newImage);
         } else
             newImage = doc->docLoader()->requestImage(parseURL(attr));

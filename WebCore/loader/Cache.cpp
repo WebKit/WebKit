@@ -115,6 +115,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         } else {
             // Kick the resource out of the cache, because the cache is disabled.
             resource->setInCache(false);
+            resource->setDocLoader(docLoader);
             if (resource->errorOccurred()) {
                 // We don't support immediate loads, but we do support immediate failure.
                 // In that case we should to delete the resource now and return 0 because otherwise

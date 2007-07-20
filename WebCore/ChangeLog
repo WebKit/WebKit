@@ -1,3 +1,22 @@
+2007-07-20  Anders Carlsson  <andersca@apple.com>
+    
+        Reviewed by Darin.
+
+        <rdar://problem/5298816> Crash redirecting message, in -[SharedBufferData initWithSharedBuffer:]
+        
+        Have cached resources keep track of what DocLoader they belong to. This is so that they can remove themselves
+        from the DocLoader's resource map when they're destroyed when the cache is disabled.
+        
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::setDocLoader):
+
 2007-07-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
