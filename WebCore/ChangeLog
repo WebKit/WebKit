@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        fix up some smaller issues in selection handling. It's still not perfect and selections in mixed rtl/ltr text are still broken, but it's getting there.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::offsetForPosition):
+        (WebCore::cursorToX):
+        (WebCore::Font::selectionRectForText):
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         make offsetForPosition and selectionRectForText work correctly with small caps.
 
         * platform/qt/FontQt.cpp:

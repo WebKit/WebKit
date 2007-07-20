@@ -319,7 +319,7 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
         for (int i = 0; i < components.size(); ++i) {
             int xe = w - components.at(i).offset;
             int xs = xe - components.at(i).width;
-            if (position >= xs && position <= xe) {
+            if (position >= xs) {
                 QTextLayout layout(components.at(i).string, *components.at(i).font);
                 layout.beginLayout();
                 QTextLine l = layout.createLine();
@@ -328,17 +328,23 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
                 
                 l.setLineWidth(INT_MAX/256);
                 layout.endLayout();
-                
-                return offset + l.xToCursor(position - xs) - 1;
+
+                if (position - xs >= l.width())
+                    return offset;
+                int cursor = l.xToCursor(position - xs);
+                if (cursor > 1)
+                    --cursor;
+                return offset + cursor;
             } else {
                 offset += components.at(i).string.length() - 1;
             }
         }
+        return 0;
     } else {
         for (int i = 0; i < components.size(); ++i) {
             int xs = components.at(i).offset;
             int xe = xs + components.at(i).width;
-            if (position >= xs && position <= xe) {
+            if (position <= xe) {
                 QTextLayout layout(components.at(i).string, *components.at(i).font);
                 layout.beginLayout();
                 QTextLine l = layout.createLine();
@@ -347,14 +353,19 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
                 
                 l.setLineWidth(INT_MAX/256);
                 layout.endLayout();
-                
-                return offset + l.xToCursor(position - xs) - 1;
+
+                if (position - xs >= l.width())
+                    return offset + components.at(i).string.length() - 1;
+                int cursor = l.xToCursor(position - xs);
+                if (cursor > 1)
+                    --cursor;
+                return offset + cursor;
             } else {
                 offset += components.at(i).string.length() - 1;
             }
         }
+        return run.length();
     }
-    return 0;
 }
 
 static float cursorToX(const Vector<TextRunComponent, 1024>& components, int width,
@@ -378,7 +389,7 @@ static float cursorToX(const Vector<TextRunComponent, 1024>& components, int wid
         l.setLineWidth(INT_MAX/256);
         layout.endLayout();
         
-        return xs + l.cursorToX(cursor + 1);
+        return xs + l.cursorToX(cursor - start + 1);
     }
     return width;
 }
@@ -388,6 +399,9 @@ FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style,
 {
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
+
+    if (from == 0 && to == run.length())
+        return FloatRect(pt.x(), pt.y(), w, h);
 
     float x1 = cursorToX(components, w, style, from);
     float x2 = cursorToX(components, w, style, to);
