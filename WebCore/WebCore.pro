@@ -774,7 +774,6 @@ qt-port:SOURCES += \
     platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FontQt.cpp \
-    platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \

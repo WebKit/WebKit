@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        Remove some files that are not used anymore.
+
+        * platform/qt/FontCacheQt.cpp: Removed.
+        * platform/qt/FontDataQt.cpp: Removed.
+        * platform/qt/FontPlatformData.h: Removed.
+        * platform/qt/FontPlatformDataQt.cpp: Removed.
+        * platform/qt/GlyphPageTreeNodeQt.cpp: Removed.
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         use the correct font for spaces.
 
         * platform/qt/FontQt.cpp:
