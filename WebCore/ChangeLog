@@ -2,8 +2,8 @@
 
         Reviewed by Adam.
 
-        <rdar://problem/5334742>
-        Windows Beta: Crash playing a very large QuickTime movie in Safari
+        <rdar://problem/5288617>
+        Crash playing a very large QuickTime movie in Safari
         
         <rdar://problem/5271174>
         http://bugs.webkit.org/show_bug.cgi?id=14148
