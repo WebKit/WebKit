@@ -1,3 +1,27 @@
+2007-07-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Tim and Geoff.
+
+        Fix for <rdar://problem/5346855> Mail crashes at 
+        WebCore::RenderTableSection:paint + 846 when attempting to display 
+        a HTML based message
+
+        After reapplying styles, the RenderView needs layout. However, 
+        layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize used to 
+        return early if the WebHTMLView itself does not need layout. 
+        Because the WebHTMLView is not necessarily in synch with the 
+        RenderTree, returning early here can get us into a bad situation 
+        where we paint before laying out the Render Tree. This patch checks 
+        both the WebHTMLView and the bridge (which checks the RenderView, 
+        etc), so that we do not return early without laying out the Render 
+        Tree. 
+
+        Some day, we should phase out WebHTMLView keeping track of 
+        needsLayout at all. But that is a bit beyond the scope of this fix.  
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+
 2007-07-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler and David Harrison

@@ -2479,9 +2479,8 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     [self reapplyStyles];
     
-    if (!_private->needsLayout) {
+    if (!_private->needsLayout && ![[self _bridge] needsLayout])
         return;
-    }
 
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
