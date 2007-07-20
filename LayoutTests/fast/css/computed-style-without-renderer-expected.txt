@@ -132,7 +132,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-border-top-left-radius: 0px
     -webkit-border-top-right-radius: 0px
     background-position: '0 0'
-    border-spacing: '0px 0px'
+    border-spacing: 0px 0px
     overflow: visible
     -webkit-match-nearest-mail-blockquote-color: normal
     -webkit-text-size-adjust: auto

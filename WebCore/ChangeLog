@@ -1,3 +1,14 @@
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5351252>
+        Computed value for -webkit-background-size and border-spacing
+        should be space separated CSSValueLists.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-07-20  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Darin Adler.

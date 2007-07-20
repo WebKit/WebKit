@@ -1,3 +1,18 @@
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Add tests for <rdar://problem/5351252>
+        Computed value for -webkit-background-size and border-spacing
+        should be space separated CSSValueLists.
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle-background-size-expected.txt: Added.
+        * fast/css/getComputedStyle-background-size.html: Added.
+        * fast/css/getComputedStyle-border-spacing-expected.txt: Added.
+        * fast/css/getComputedStyle-border-spacing.html: Added.
+
 2007-07-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

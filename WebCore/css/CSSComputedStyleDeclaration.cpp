@@ -505,9 +505,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->backgroundImage())
                 return new CSSPrimitiveValue(style->backgroundImage()->url(), CSSPrimitiveValue::CSS_URI);
             return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
-            return new CSSPrimitiveValue(new Pair(primitiveValueFromLength(style->backgroundSize().width),
-                primitiveValueFromLength(style->backgroundSize().height)));
+        case CSS_PROP__WEBKIT_BACKGROUND_SIZE: {
+            RefPtr<CSSValueList> list = new CSSValueList(true);
+            list->append(valueForLength(style->backgroundSize().width));
+            list->append(valueForLength(style->backgroundSize().height));
+            return list.release();
+        }  
         case CSS_PROP_BACKGROUND_REPEAT:
             switch (style->backgroundRepeat()) {
                 case REPEAT:
@@ -599,9 +602,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->borderCollapse())
                 return new CSSPrimitiveValue(CSS_VAL_COLLAPSE);
             return new CSSPrimitiveValue(CSS_VAL_SEPARATE);
-        case CSS_PROP_BORDER_SPACING:
-            return new CSSPrimitiveValue(numberAsString(style->horizontalBorderSpacing()) + "px "
-                + numberAsString(style->verticalBorderSpacing()) + "px", CSSPrimitiveValue::CSS_STRING);
+        case CSS_PROP_BORDER_SPACING: {
+            RefPtr<CSSValueList> list = new CSSValueList(true);
+            list->append(new CSSPrimitiveValue(style->horizontalBorderSpacing(), CSSPrimitiveValue::CSS_PX));
+            list->append(new CSSPrimitiveValue(style->verticalBorderSpacing(), CSSPrimitiveValue::CSS_PX));
+            return list.release();
+        }  
         case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING:
             return new CSSPrimitiveValue(style->horizontalBorderSpacing(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:

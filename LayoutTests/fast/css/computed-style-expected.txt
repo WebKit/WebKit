@@ -136,7 +136,7 @@ z-index: auto;
 Other attributes that the computed style class supports:
 
 background-position: '0 0';
-border-spacing: '0px 0px';
+border-spacing: 0px 0px;
 overflow: visible;
 -webkit-match-nearest-mail-blockquote-color: normal;
 -webkit-text-size-adjust: auto;
