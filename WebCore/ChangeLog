@@ -1,3 +1,16 @@
+2007-07-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5153021> and http://bugs.webkit.org/show_bug.cgi?id=13364
+
+        The issue here was that if a document in a subframe was loaded from a URL, but then a script did 
+        document.open or document.write during parsing, we would overwrite the document's url and baseurl 
+        with the parent frame's url.  WRONG!
+
+        * dom/Document.cpp:
+        (WebCore::Document::open): Only set the url and baseURL in document.open if they are still empty or about:blank
+
 2007-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

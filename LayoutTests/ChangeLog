@@ -1,3 +1,13 @@
+2007-07-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5153021> and http://bugs.webkit.org/show_bug.cgi?id=13364
+
+        * fast/frames/frame-base-url-expected.txt: Added.
+        * fast/frames/frame-base-url.html: Added.
+        * fast/frames/resources/subframe-base-url.html: Added.
+
 2007-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

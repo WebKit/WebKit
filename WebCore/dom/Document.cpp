@@ -1258,8 +1258,10 @@ void Document::open()
     // This is work that we should probably do in clear(), but we can't have it
     // happen when implicitOpen() is called unless we reorganize Frame code.
     if (Document *parent = parentDocument()) {
-        setURL(parent->baseURL());
-        setBaseURL(parent->baseURL());
+        if (m_url.isEmpty() || m_url == "about:blank")
+            setURL(parent->baseURL());
+        if (m_baseURL.isEmpty() || m_baseURL == "about:blank")
+            setBaseURL(parent->baseURL());
     }
 
     if ((frame() && frame()->loader()->isLoadingMainResource()) || (tokenizer() && tokenizer()->executingScript()))
