@@ -67,6 +67,7 @@ PluginStreamWin::PluginStreamWin(PluginViewWin* pluginView, Frame* frame, const 
     , m_streamState(StreamBeforeStarted)
     , m_delayDeliveryTimer(this, &PluginStreamWin::delayDeliveryTimerFired)
     , m_deliveryData(0)
+    , m_tempFileHandle(INVALID_HANDLE_VALUE)
     , m_pluginFuncs(pluginView->plugin()->pluginFuncs())
     , m_instance(pluginView->instance())
 {
@@ -97,6 +98,7 @@ PluginStreamWin::~PluginStreamWin()
 void PluginStreamWin::start()
 {
     m_loader = SubresourceLoader::create(m_frame, this, m_resourceRequest);
+    m_loader->setShouldBufferData(false);
 }
 
 void PluginStreamWin::stop()
@@ -147,6 +149,29 @@ void PluginStreamWin::startStream()
 
     if (npErr != NPERR_NO_ERROR)
         cancelAndDestroyStream(npErr);
+
+    if (m_transferMode == NP_NORMAL)
+        return;
+    
+    char tempPath[MAX_PATH];
+
+    int result = ::GetTempPathA(_countof(tempPath), tempPath);
+    if (result > 0 && result <= _countof(tempPath)) {
+        char tempFile[MAX_PATH];
+
+        if (::GetTempFileNameA(tempPath, "WKP", 0, tempFile) > 0) {
+            m_tempFileHandle = ::CreateFileA(tempFile, GENERIC_READ | GENERIC_WRITE, 0, 0, 
+                CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (m_tempFileHandle != INVALID_HANDLE_VALUE) {
+                m_path = tempFile;
+                return;
+            }
+        }
+    }
+
+    // Something went wrong, cancel loading the stream
+    cancelAndDestroyStream(NPRES_NETWORK_ERR);
 }
 
 NPP PluginStreamWin::ownerForStream(NPStream* stream)
@@ -189,7 +214,6 @@ void PluginStreamWin::destroyStream()
             ASSERT(!m_path.isNull());
 
             m_pluginFuncs->asfile(m_instance, &m_stream, m_path.data());
-            DeleteFileA(m_path.data());
         }
 
         NPError npErr;
@@ -209,6 +233,12 @@ void PluginStreamWin::destroyStream()
     m_pluginView->disconnectStream(this);
 
     m_pluginView = 0;
+
+    if (m_tempFileHandle != INVALID_HANDLE_VALUE)
+        ::CloseHandle(m_tempFileHandle);
+
+    if (!m_path.isNull())
+        ::DeleteFileA(m_path.data());
 }
 
 void PluginStreamWin::delayDeliveryTimerFired(Timer<PluginStreamWin>* timer)
@@ -310,6 +340,17 @@ void PluginStreamWin::didReceiveData(SubresourceLoader* loader, const char* data
 
     if (m_transferMode != NP_ASFILEONLY)
         deliverData();
+
+    if (m_streamState != StreamStopped && m_tempFileHandle != INVALID_HANDLE_VALUE) {
+        DWORD written;
+        bool retval = true;
+
+        retval = WriteFile(m_tempFileHandle, data, length, &written, 0);
+
+        if (!retval || (int)written != length)
+            cancelAndDestroyStream(NPRES_NETWORK_ERR);
+    }
+
 }
 
 void PluginStreamWin::didFail(SubresourceLoader* loader, const ResourceError&)
@@ -328,49 +369,6 @@ void PluginStreamWin::didFinishLoading(SubresourceLoader* loader)
     ASSERT(m_streamState == StreamStarted);
 
     m_loader = 0;
-
-    if ((m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY) && m_path.isNull()) {
-        char tempPath[MAX_PATH];
-
-        if (GetTempPathA(sizeof(tempPath), tempPath) == 0) {
-            LOG_PLUGIN_NET_ERROR();
-            destroyStream(NPRES_NETWORK_ERR);
-            return;
-        }
-
-        char tempName[MAX_PATH];
-
-        if (GetTempFileNameA(tempPath, "WKP", 0, tempName) == 0) {
-            LOG_PLUGIN_NET_ERROR();
-            destroyStream(NPRES_NETWORK_ERR);
-            return;
-        }
-
-        HANDLE tempFile = CreateFileA(tempName, GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-        if (tempFile == INVALID_HANDLE_VALUE) {
-            LOG_PLUGIN_NET_ERROR();
-            destroyStream(NPRES_NETWORK_ERR);
-            return;
-        }
-
-        DWORD written;
-        RefPtr<SharedBuffer> resourceData = loader->resourceData();
-        size_t dataSize = resourceData ? resourceData->size() : 0;
-        bool retval = true;
-
-        if (dataSize)
-            retval = WriteFile(tempFile, resourceData->data(), dataSize, &written, 0);
-        CloseHandle(tempFile);
-
-        if (!retval || written != dataSize) {
-            LOG_PLUGIN_NET_ERROR();
-            destroyStream(NPRES_NETWORK_ERR);
-            return;
-        }
-
-        m_path = tempName;
-    }
 
     destroyStream(NPRES_DONE);
 }

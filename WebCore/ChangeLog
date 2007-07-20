@@ -1,3 +1,33 @@
+2007-07-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5334742>
+        Windows Beta: Crash playing a very large QuickTime movie in Safari
+        
+        <rdar://problem/5271174>
+        http://bugs.webkit.org/show_bug.cgi?id=14148
+        LEAK: Serious memory consumption and leak when loading QT movies.
+        
+        Don't keep plugin stream data in memory since some plugin resources (like QT movies)
+        can be really big. If a plug-in wants data in a file, create a file and write data to it 
+        as it's coming from the wire, instead of using a big buffer.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setShouldBufferData):
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::PluginStreamWin):
+        (WebCore::PluginStreamWin::start):
+        (WebCore::PluginStreamWin::startStream):
+        (WebCore::PluginStreamWin::destroyStream):
+        (WebCore::PluginStreamWin::didReceiveData):
+        (WebCore::PluginStreamWin::didFinishLoading):
+        * plugins/win/PluginStreamWin.h:
+
 2007-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

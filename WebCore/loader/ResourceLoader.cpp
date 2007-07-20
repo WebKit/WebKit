@@ -57,6 +57,7 @@ ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
+    , m_shouldBufferData(true)
     , m_frame(frame)
     , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
@@ -142,6 +143,9 @@ FrameLoader* ResourceLoader::frameLoader() const
 
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
+    if (!m_shouldBufferData)
+        return;
+
     if (allAtOnce) {
         m_resourceData = new SharedBuffer(data, length);
         return;
@@ -221,6 +225,9 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
+    if (!m_shouldBufferData)
+        return;
+
     ASSERT(!m_resourceData);
     m_resourceData = new SharedBuffer(data, length);
 }
