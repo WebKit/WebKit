@@ -1,3 +1,15 @@
+2007-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - test case for <rdar://problem/5326303> REGRESSION: blur event fires upon navigating away from a page with focused element
+        
+        (Test mostly by Alice.)
+
+        * fast/events/no-blur-on-page-leave-expected.txt: Added.
+        * fast/events/no-blur-on-page-leave.html: Added.
+        * fast/events/resources/no-blur-result.html: Added.
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

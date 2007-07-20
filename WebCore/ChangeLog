@@ -1,3 +1,26 @@
+2007-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5326303> REGRESSION: blur event fires upon navigating away from a page with focused element
+
+
+        
+        The proximate cause was the recent change to keep focus on the
+        WebHTMLView when switching views. But the reason this happend was
+        that didCommitLoadForFrame got called at a time when the new view
+        was in place, but the old document was still there. This was a
+        longstanding problem with the delegate, and fixing it cleans it
+        up.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): Don't send dispatchWindowObjectAvailable if
+        caller asked not to (this is to allow order of delegates to be the same).
+        (WebCore::FrameLoader::transitionToCommitted): Don't emit didCommitLoadForFrame here.
+        (WebCore::FrameLoader::receivedFirstData): Instead do it here, after calling begin(),
+        so the new document is set up.
+        * loader/FrameLoader.h: Add new optional parameter to begin().
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
