@@ -1,3 +1,17 @@
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Computed style for border radii should return a CSSValueList instead 
+        of CSSPrimitiveValue (with a Pair type) when the radii are not the same. 
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle-borderRadius-expected.txt: Copied from LayoutTests/fast/dom/getComputedStyle-borderRadius-expected.txt.
+        * fast/css/getComputedStyle-borderRadius.html: Copied from LayoutTests/fast/dom/getComputedStyle-borderRadius.html.
+        * fast/dom/getComputedStyle-borderRadius-expected.txt: Removed.
+        * fast/dom/getComputedStyle-borderRadius.html: Removed.
+
 2007-07-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

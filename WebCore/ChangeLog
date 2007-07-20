@@ -1,3 +1,25 @@
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Update for fix for http://bugs.webkit.org/show_bug.cgi?id=14646
+        <rdar://problem/5340449>
+
+        - Return a CSSValueList instead of CSSValue (with a Pair type) for
+          computed values of border radii.
+        - Add ability to CSSValueList to print out a space separated list
+          instead of a comma.
+        - Add border radii to list of computed styles that we create and can
+          iterate over.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::getBorderRadiusCornerValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        (WebCore::CSSValueList::cssText):
+        * css/CSSValueList.h:
+
 2007-07-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

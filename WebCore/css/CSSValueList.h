@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-class CSSValueList : public CSSValue
-{
+class CSSValueList : public CSSValue {
 public:
+    CSSValueList(bool isSpaceSeparated = false);
     virtual ~CSSValueList();
 
     unsigned length() const { return m_values.size(); }
@@ -46,8 +46,9 @@ public:
 
 protected:
     Vector<RefPtr<CSSValue> > m_values;
+    bool m_isSpaceSeparated;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSValueList_h

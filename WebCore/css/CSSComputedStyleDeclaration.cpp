@@ -168,6 +168,10 @@ static const int computedProperties[] = {
     CSS_PROP__WEBKIT_USER_MODIFY,
     CSS_PROP__WEBKIT_USER_SELECT,
     CSS_PROP__WEBKIT_DASHBOARD_REGION,
+    CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS,
+    CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS,
+    CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS,
+    CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS
 };
 
 const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
@@ -403,13 +407,15 @@ static PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle* style
     return new CSSPrimitiveValue(color.rgb());
 }
 
-static PassRefPtr<CSSPrimitiveValue> getBorderRadiusCornerValue(IntSize radius)
+static PassRefPtr<CSSValue> getBorderRadiusCornerValue(IntSize radius)
 {
     if (radius.width() == radius.height())
         return new CSSPrimitiveValue(radius.width(), CSSPrimitiveValue::CSS_PX);
 
-    return new CSSPrimitiveValue(new Pair(new CSSPrimitiveValue(radius.width(), CSSPrimitiveValue::CSS_PX),
-                                          new CSSPrimitiveValue(radius.height(), CSSPrimitiveValue::CSS_PX)));
+    RefPtr<CSSValueList> list = new CSSValueList(true);
+    list->append(new CSSPrimitiveValue(radius.width(), CSSPrimitiveValue::CSS_PX));
+    list->append(new CSSPrimitiveValue(radius.height(), CSSPrimitiveValue::CSS_PX));
+    return list.release();
 }
 
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n)
