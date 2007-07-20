@@ -1,3 +1,22 @@
+2007-07-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5076807> REGRESSION: Can't undo conversion of inline text (by hitting ESC)
+        <rdar://problem/5346167> DOM key events triggered during IME composition differ in webkit/mac vs all windows browsers
+
+        We now basically match the behaviour of IE/Windows. This means that during composition keydown and autorepeat
+        keys generate keydown events with a keyCode of 229, which correlates to the windows VK_PROCESSKEY message.
+        keyup events are generated with the keyCode of the actual key that was pressed.
+
+        The only difference is on the first keydown of a composition, in which IE will use keyCode == 229, and we will
+        send an event with the keyCode for the actual key that was pressed.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::setWindowsKeyCode):
+
 2007-07-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

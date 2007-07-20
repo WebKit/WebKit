@@ -80,6 +80,10 @@ const int TextDragHysteresis = 3;
 const int GeneralDragHysteresis = 3;
 const double TextDragDelay = 0.15;
 
+// Match key code of composition keydown event on windows.
+// IE sends VK_PROCESSKEY which has value 229;
+const int CompositionEventKeyCode = 229;
+
 #if ENABLE(SVG)
 using namespace SVGNames;
 #endif
@@ -1373,8 +1377,11 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
     return EventTargetNodeCast(node);
 }
 
-bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
+
+bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
+    
+    PlatformKeyboardEvent keyEvent = initialKeyEvent;
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
     EventTargetNode* node = eventTargetNodeForDocument(m_frame->document());
@@ -1383,6 +1390,14 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     
     if (!keyEvent.isKeyUp())
         m_frame->loader()->resetMultipleFormSubmissionProtection();
+    
+    // When performing composition we don't want to send keypress events for autorepeats
+    int windowKey = keyEvent.WindowsKeyCode();
+    if (m_frame->markedTextRange() && !keyEvent.isKeyUp()) {
+        keyEvent.setIsAutoRepeat(false);
+        keyEvent.setWindowsKeyCode(CompositionEventKeyCode);
+    }
+    
     bool result = !node->dispatchKeyEvent(keyEvent);
     
     if (keyEvent.isAutoRepeat() || keyEvent.isKeyUp()) 
@@ -1392,6 +1407,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return result;
+    
+    keyEvent.setWindowsKeyCode(windowKey);
     
     // Create a keypress event from the keydown event
     RefPtr<KeyboardEvent> keypress;
@@ -1404,6 +1421,9 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     
     if (keypress->defaultHandled())
         return true;
+    
+    if (m_frame->markedTextRange())
+        return result;
     
     ExceptionCode ec;
     node->dispatchEvent(keypress, ec, true);
