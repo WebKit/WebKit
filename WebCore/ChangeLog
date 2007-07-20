@@ -1,3 +1,15 @@
+2007-07-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix for <rdar://problem/5331723> <rdar://problem/5331723> Safari gives error
+          103 for URLs that Adobe Lightroom's Preview feature produces, with ":1" in the hostname
+
+        Test: fast/loader/file-URL-with-port-number.html
+
+        * platform/network/ResourceHandle.cpp: (WebCore::ResourceHandle::portAllowed):
+        Don't do any port blocking for file URLs.
+
 2007-07-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

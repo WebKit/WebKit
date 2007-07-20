@@ -1,3 +1,14 @@
+2007-07-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for <rdar://problem/5331723> <rdar://problem/5331723> Safari gives error
+          103 for URLs that Adobe Lightroom's Preview feature produces, with ":1" in the hostname
+
+        * fast/loader/file-URL-with-port-number-expected.txt: Added.
+        * fast/loader/file-URL-with-port-number.html: Added.
+        * fast/loader/resources/empty-subframe.html: Added.
+
 2007-07-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

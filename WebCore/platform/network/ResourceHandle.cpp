@@ -161,9 +161,19 @@ bool ResourceHandle::portAllowed(const ResourceRequest& request)
     const unsigned short* const blockedPortListEnd = blockedPortList
         + sizeof(blockedPortList) / sizeof(blockedPortList[0]);
 
+    // If the port is not in the blocked port list, allow it.
+    if (!std::binary_search(blockedPortList, blockedPortListEnd, port))
+        return true;
+
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
-    return !std::binary_search(blockedPortList, blockedPortListEnd, port)
-        || ((port == 21 || port == 22) && request.url().url().startsWith("ftp:", false));
+    if ((port == 21 || port == 22) && request.url().url().startsWith("ftp:", false))
+        return true;
+
+    // Allow any port number in a file URL, since the port number is ignored.
+    if (request.url().url().startsWith("file:", false))
+        return true;
+
+    return false;
 }
   
 } // namespace WebCore
