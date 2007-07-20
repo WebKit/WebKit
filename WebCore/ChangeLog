@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Fix offsetForPosition and selectionRectForText methods.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::offsetForPosition):
+        (WebCore::cursorToX):
+        (WebCore::Font::selectionRectForText):
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix BiDi text rendering.
 
         * platform/qt/FontQt.cpp:

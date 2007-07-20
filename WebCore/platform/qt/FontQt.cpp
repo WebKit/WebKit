@@ -250,7 +250,6 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
 
 void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
 {
-    // FIXME: treat RTL correctly.
     if (to < 0)
         to = run.length();
     QPainter *p = ctx->platformContext();
@@ -299,41 +298,96 @@ float Font::floatWidth(const TextRun& run) const
     return width(run);
 }
 
-int Font::offsetForPosition(const TextRun& run, const TextStyle&, int position, bool includePartialGlyphs) const
+int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int position, bool includePartialGlyphs) const
 {
-    QTextLayout layout(QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length()),
-                m_font);
-    layout.beginLayout();
-    QTextLine l = layout.createLine();
-    if (!l.isValid())
-        return 0;
+    Vector<TextRunComponent, 1024> components;
+    int w = generateComponents(&components, *this, run, style);
 
-    l.setLineWidth(INT_MAX/256);
-    layout.endLayout();
-
-    return (int)l.cursorToX(position);
-    
+    int offset = 0;
+    if (style.rtl()) {
+        for (int i = 0; i < components.size(); ++i) {
+            int xe = w - components.at(i).offset;
+            int xs = xe - components.at(i).width;
+            if (position >= xs && position <= xe) {
+                QTextLayout layout(components.at(i).string, m_font);
+                layout.beginLayout();
+                QTextLine l = layout.createLine();
+                if (!l.isValid())
+                    return 0;
+                
+                l.setLineWidth(INT_MAX/256);
+                layout.endLayout();
+                
+                return offset + l.xToCursor(position - xs) - 1;
+            } else {
+                offset += components.at(i).string.length() - 1;
+            }
+        }
+    } else {
+        for (int i = 0; i < components.size(); ++i) {
+            int xs = components.at(i).offset;
+            int xe = xs + components.at(i).width;
+            if (position >= xs && position <= xe) {
+                QTextLayout layout(components.at(i).string, m_font);
+                layout.beginLayout();
+                QTextLine l = layout.createLine();
+                if (!l.isValid())
+                    return 0;
+                
+                l.setLineWidth(INT_MAX/256);
+                layout.endLayout();
+                
+                return offset + l.xToCursor(position - xs) - 1;
+            } else {
+                offset += components.at(i).string.length() - 1;
+            }
+        }
+    }
+    return 0;
 }
 
-FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint&, int h,
-                                     int from, int to) const
+static float cursorToX(const Vector<TextRunComponent, 1024>& components, int width,
+                     const TextStyle& style,
+                     const QFont& font, int cursor)
 {
-    QTextLayout layout(QString::fromRawData(reinterpret_cast<const QChar*>(run.characters()), run.length()),
-                m_font);
-    layout.beginLayout();
-    QTextLine l = layout.createLine();
-    if (!l.isValid())
-        return FloatRect(0, 0, 0, QFontMetrics(m_font).height());
+    int start = 0;
+    for (int i = 0; i < components.size(); ++i) {
+        if (start + components.at(i).string.length() - 1 < cursor) {
+            start += components.at(i).string.length() - 1;
+            continue;
+        }
+        int xs = components.at(i).offset;
+        if (style.rtl())
+            xs = width - xs - components.at(i).width;
+        QTextLayout layout(components.at(i).string, font);
+        layout.beginLayout();
+        QTextLine l = layout.createLine();
+        if (!l.isValid())
+            return 0;
+        
+        l.setLineWidth(INT_MAX/256);
+        layout.endLayout();
+        
+        return xs + l.cursorToX(cursor + 1);
+    }
+    return width;
+}
 
-    l.setLineWidth(INT_MAX/256);
-    layout.endLayout();
+FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint& pt,
+                                     int h, int from, int to) const
+{
+    Vector<TextRunComponent, 1024> components;
+    int w = generateComponents(&components, *this, run, style);
 
-    qreal x1 = l.cursorToX(from);
-    qreal x2 = l.cursorToX(to);
+    float x1 = cursorToX(components, w, style, m_font, from);
+    float x2 = cursorToX(components, w, style, m_font, to);
     if (x2 < x1)
         qSwap(x1, x2);
 
-    return FloatRect(x1, 0, x2 - x1, l.height());
+//     qDebug() << ">>>>>>>>>>> selectionRectForText: string=" << QString((QChar *)run.characters(), run.length())
+//              << "from/to=" << from << to
+//              << "x1/x2=" << x1 << x2;
+    return FloatRect(pt.x() + x1, pt.y(), x2 - x1, h);
 }
 
 bool Font::isFixedPitch() const
