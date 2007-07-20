@@ -662,7 +662,7 @@ HRESULT WebHistory::addItemForURL(BSTR url, BSTR title)
     if (!SystemTimeToVariantTime(&currentTime, &lastVisited))
         return E_FAIL;
 
-    HRESULT hr = item->initWithURLString(url, title, lastVisited);
+    HRESULT hr = item->initWithURLString(url, title, 0);
     if (FAILED(hr))
         return hr;
 

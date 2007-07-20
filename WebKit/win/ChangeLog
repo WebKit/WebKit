@@ -1,3 +1,18 @@
+2007-07-20  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve.
+        
+        <rdar://problem/5350832> History item's visitedCount wasn't updated correctly
+
+        The call to setLastVisitedTimeInterval() in WebHistory::addItemForURL() does not
+        really increment the visitedCount of the HistoryItem - because we only increment the count
+        if the last visited time is different.  We should initialize the HistoryItem with
+        lastVisited time = 0 so when we call setLastVisitedTimeInterval() later, it'll update
+        the last visited time AND the visitedCount.
+        
+        * WebHistory.cpp:
+        (WebHistory::addItemForURL):
+
 2007-07-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
