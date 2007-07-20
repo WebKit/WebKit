@@ -73,7 +73,7 @@ while (<LOG>) {
     }
 
     $logContents .= $_;
-    $existingLog = isGit() && !/^#/ unless $existingLog;
+    $existingLog = isGit() && !(/^#/ || /^\s*$/) unless $existingLog;
 
     push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^M....(.*ChangeLog)$/ || /^#\tmodified:   (.*ChangeLog)/) && !/-ChangeLog/;
 }
