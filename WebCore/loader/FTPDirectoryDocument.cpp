@@ -93,14 +93,7 @@ private:
     String m_carryOver;
     
     ListState m_listState;
-
-    static RefPtr<SharedBuffer> m_templateDocumentData;
-    // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
-    // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
-    // approach that make it worth putting this off.
 };
-
-RefPtr<SharedBuffer> FTPDirectoryTokenizer::m_templateDocumentData;
 
 FTPDirectoryTokenizer::FTPDirectoryTokenizer(HTMLDocument* doc)
     : HTMLTokenizer(doc, false)
@@ -302,23 +295,28 @@ void FTPDirectoryTokenizer::parseAndAppendOneLine(const String& inputLine)
 }
 
 bool FTPDirectoryTokenizer::loadDocumentTemplate()
-{        
-    if (!m_templateDocumentData) {
+{
+    static RefPtr<SharedBuffer> templateDocumentData;
+    // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
+    // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
+    // approach that make it worth putting this off.
+
+    if (!templateDocumentData) {
         Settings* settings = m_doc->settings();
         if (settings)
-            m_templateDocumentData = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath());
-        if (m_templateDocumentData)
-            LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", m_templateDocumentData->size());
+            templateDocumentData = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath());
+        if (templateDocumentData)
+            LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", templateDocumentData->size());
     }
     
-    if (!m_templateDocumentData) {
+    if (!templateDocumentData) {
         LOG_ERROR("Could not load templateData");
         return false;
     }
     
     // Tokenize the template as an HTML document synchronously
     setForceSynchronous(true);
-    HTMLTokenizer::write(String(m_templateDocumentData->data(), m_templateDocumentData->size()), true);
+    HTMLTokenizer::write(String(templateDocumentData->data(), templateDocumentData->size()), true);
     setForceSynchronous(false);
     
     RefPtr<Element> tableElement = m_doc->getElementById("ftpDirectoryTable");
