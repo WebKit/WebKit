@@ -1,3 +1,11 @@
+2007-07-20  Mark Rowe  <mrowe@apple.com>
+
+        Replace symlink with a PHP-level include to allow use of git on Windows without cygwin.
+        WordPress will replace the file with a symlink when it's first accessed, and the PHP-level
+        include is functionally identical for our purposes on the first use.
+
+        * blog/wp-content/advanced-cache.php:
+
 2007-07-16  Charles Gaudette  <charles@gaudette-net.com>
 
         Reviewed by Niko.
