@@ -626,6 +626,17 @@ void KURL::setPort(unsigned short i)
     }
 }
 
+void KURL::setHostAndPort(const DeprecatedString& hostAndPort)
+{
+    if (m_isValid) {
+        bool slashSlashNeeded = userStartPos == schemeEndPos + 1;
+        int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
+        
+        DeprecatedString newURL = urlString.left(hostStart) + (slashSlashNeeded ? "//" : DeprecatedString()) + hostAndPort + urlString.mid(portEndPos);
+        parse(newURL.ascii(), &newURL);
+    }
+}
+
 void KURL::setUser(const DeprecatedString &user)
 {
     if (m_isValid) {
@@ -1176,7 +1187,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         hostEndPos = p - buffer;
         
         // copy in the port
-        if (portEnd != portStart) {
+        if (hostEnd != portStart) {
             *p++ = ':';
             strPtr = url + portStart;
             const char *portEndPtr = url + portEnd;

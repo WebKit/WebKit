@@ -1747,10 +1747,7 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
       break;
     }
     case Host: {
-      DeprecatedString host = str.left(str.find(":"));
-      DeprecatedString port = str.mid(str.find(":")+1);
-      url.setHost(host);
-      url.setPort(port.toUInt());
+      url.setHostAndPort(str);
       break;
     }
     case Hostname:

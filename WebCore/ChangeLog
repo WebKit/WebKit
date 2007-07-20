@@ -1,3 +1,25 @@
+2007-07-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        <rdar://problem/5134929> REGRESSION: Colon detected as delimiting an empty port is stripped
+
+        The fix for this was in KURL::parse() which had a slightly changed rule that would strip the colon if there
+        was no port.
+
+        An additional canonicalization fix was made in window.location.host to match the expected behavior of leaving
+        the colon in place - before this fix, if the colon was there but no port was there, we'd see the port as 0.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Location::put): Call setHostAndPort instead of setHost and setPort seperately
+
+        * manual-tests/location-host-canonicalization.html: Added.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::setHostAndPort): Set the host and port as one string component then reparse the URL
+        (WebCore::KURL::parse): Change one line to consider the empty colon as part of the host name
+        * platform/KURL.h:
+
 2007-07-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
