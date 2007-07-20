@@ -1,3 +1,16 @@
+2007-07-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14642
+        REGRESSION(r24064-24096): Reflection type effect in canvas tag broke
+
+        * fast/canvas/gradient-empty-path-expected.checksum: Added.
+        * fast/canvas/gradient-empty-path-expected.png: Added.
+        * fast/canvas/gradient-empty-path-expected.txt: Added.
+        * fast/canvas/gradient-empty-path.html: Added.
+
 2007-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

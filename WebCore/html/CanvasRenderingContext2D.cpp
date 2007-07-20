@@ -443,14 +443,13 @@ void CanvasRenderingContext2D::fill()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (state().m_path.isEmpty())
-        return;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
     CGContextBeginPath(c->platformContext());
     CGContextAddPath(c->platformContext(), state().m_path.platformPath());
 
-    willDraw(CGContextGetPathBoundingBox(c->platformContext()));
+    if (!state().m_path.isEmpty())
+        willDraw(CGContextGetPathBoundingBox(c->platformContext()));
 
     if (state().m_fillStyle->gradient()) {
         // Shading works on the entire clip region, so convert the current path to a clip.
@@ -484,18 +483,17 @@ void CanvasRenderingContext2D::stroke()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (state().m_path.isEmpty())
-        return;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
     CGContextBeginPath(c->platformContext());
     CGContextAddPath(c->platformContext(), state().m_path.platformPath());
 
-    float lineWidth = state().m_lineWidth;
-    float inset = -lineWidth / 2;
-    CGRect boundingRect = CGRectInset(CGContextGetPathBoundingBox(c->platformContext()), inset, inset);
-
-    willDraw(boundingRect);
+    if (!state().m_path.isEmpty()) {
+        float lineWidth = state().m_lineWidth;
+        float inset = -lineWidth / 2;
+        CGRect boundingRect = CGRectInset(CGContextGetPathBoundingBox(c->platformContext()), inset, inset);
+        willDraw(boundingRect);
+    }
 
     if (state().m_strokeStyle->gradient()) {
         // Shading works on the entire clip region, so convert the current path to a clip.

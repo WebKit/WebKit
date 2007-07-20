@@ -1,3 +1,16 @@
+2007-07-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14642
+        REGRESSION(r24064-24096): Reflection type effect in canvas tag broke
+
+        Do not stop the fill/stroke operation when encountering an empty path.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+
 2007-07-20  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
