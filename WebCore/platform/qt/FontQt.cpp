@@ -259,6 +259,15 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
 
+    if (from > 0 || to < run.length()) {
+        FloatRect clip = selectionRectForText(run, style,
+                                              IntPoint(qRound(point.x()), qRound(point.y())),
+                                              QFontMetrics(m_font).height(), from, to);
+        QRectF rect(clip.x(), clip.y() - ascent(), clip.width(), clip.height());
+        p->save();
+        p->setClipRect(rect.toRect());
+    }
+
     if (style.rtl()) {
         for (int i = 0; i < components.size(); ++i) {
             p->setFont(*components.at(i).font);
@@ -272,6 +281,8 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
             p->drawText(pt, components.at(i).string);
         }
     }
+    if (from > 0 || to < run.length())
+        p->restore();
 }
 
 int Font::width(const TextRun& run, const TextStyle& style) const

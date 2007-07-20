@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        clip the drawn text correctly when needed.
+
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawText):
+
+2007-07-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix offsetForPosition and selectionRectForText methods.
 
         * platform/qt/FontQt.cpp:
