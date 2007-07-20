@@ -1062,7 +1062,7 @@ void Window::clear()
     frame->scriptProxy()->interpreter()->initGlobalObject();
 
   // there's likely to be lots of garbage now
-  gcController()->garbageCollectSoon();
+  gcController().garbageCollectSoon();
 }
 
 void Window::setCurrentEvent(Event *evt)

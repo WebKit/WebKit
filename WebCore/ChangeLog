@@ -1,5 +1,12 @@
 2007-07-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Suggested by Darin Adler.
+        
+        Slight tweak to my last commit: changed gcController() to return a 
+        reference instead of a pointer.
+
+2007-07-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Fixed http://bugs.webkit.org/show_bug.cgi?id=12900 Page tear-down 

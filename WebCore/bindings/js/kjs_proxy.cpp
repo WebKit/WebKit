@@ -55,7 +55,7 @@ KJSProxy::~KJSProxy()
         m_script = 0;
     
         // It's likely that destroying the interpreter has created a lot of garbage.
-        gcController()->garbageCollectSoon();
+        gcController().garbageCollectSoon();
     }
 }
 

@@ -33,10 +33,10 @@ using namespace KJS;
 
 namespace WebCore {
 
-GCController* gcController()
+GCController& gcController()
 {
     static GCController staticGCController;
-    return &staticGCController;
+    return staticGCController;
 }
 
 GCController::GCController()

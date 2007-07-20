@@ -32,7 +32,7 @@
 namespace WebCore {
 
     class GCController : Noncopyable {
-        friend GCController* gcController();
+        friend GCController& gcController();
 
     public:
         void garbageCollectSoon();
@@ -45,7 +45,7 @@ namespace WebCore {
     };
 
     // Function to obtain the global GC controller.
-    GCController* gcController();
+    GCController& gcController();
 
 } // namespace WebCore
 

@@ -186,7 +186,7 @@ void CachedPage::clear()
     m_interpreterBuiltins.clear();
     m_pausedTimeouts.clear();
 
-    gcController()->garbageCollectSoon();
+    gcController().garbageCollectSoon();
 }
 
 void CachedPage::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
