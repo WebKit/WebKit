@@ -359,7 +359,8 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 
 void FrameLoaderClientQt::dispatchDidFirstLayout()
 {
-    //notImplemented();
+    if (m_webFrame)
+        emit m_webFrame->page()->initialLayoutComplete();
 }
 
 
@@ -808,7 +809,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
     callPolicyFunction(function, PolicyIgnore);
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest& request)
+void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request)
 {
     Q_ASSERT(!m_policyFunction);
     m_policyFunction = function;
@@ -816,7 +817,8 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
         QWebNetworkRequest r(request);
         QWebPage *page = m_webFrame->page();
 
-        if (page->d->navigationRequested(m_webFrame, r) == QWebPage::IgnoreNavigationRequest) {
+        if (page->d->navigationRequested(m_webFrame, r, QWebPage::NavigationType(action.type())) ==
+            QWebPage::IgnoreNavigationRequest) {
             slotCallPolicyFunction(PolicyIgnore);
             return;
         }

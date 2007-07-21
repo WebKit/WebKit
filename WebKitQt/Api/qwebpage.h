@@ -58,6 +58,15 @@ public:
         IgnoreNavigationRequest
     };
 
+    enum NavigationType {
+        NavigationTypeLinkClicked,
+        NavigationTypeFormSubmitted,
+        NavigationTypeBackForward,
+        NavigationTypeReload,
+        NavigationTypeFormResubmitted,
+        NavigationTypeOther
+    };
+
     QWebPage(QWidget *parent);
     ~QWebPage();
 
@@ -152,11 +161,16 @@ signals:
 
     void selectionChanged();
 
+    /**
+      * Signal is emitted when the mainframe()'s initial layout is completed.
+     */
+    void initialLayoutComplete();
+
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
 
-    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request);
+    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
     virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
     virtual void javaScriptAlert(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);

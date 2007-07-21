@@ -1,3 +1,19 @@
+2007-07-20  Adam Treat  <adam@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Add a signal for first layout and add the action type for the policy
+        function.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::navigationRequested):
+        (QWebPage::navigationRequested):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
 2007-07-19  Adam Treat  <treat@kde.org>
 
         Reviewed by George.

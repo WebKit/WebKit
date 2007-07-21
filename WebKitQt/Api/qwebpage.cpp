@@ -89,12 +89,12 @@ QWebPagePrivate::~QWebPagePrivate()
     delete page;
 }
 
-QWebPage::NavigationRequestResponse QWebPagePrivate::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request)
+QWebPage::NavigationRequestResponse QWebPagePrivate::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
 {
     if (insideOpenCall
         && frame == mainFrame)
         return QWebPage::AcceptNavigationRequest;
-    return q->navigationRequested(frame, request);
+    return q->navigationRequested(frame, request, type);
 }
 
 void QWebPagePrivate::createMainFrame()
@@ -259,7 +259,7 @@ QWebPage *QWebPage::createWindow()
     return 0;
 }
 
-QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request)
+QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
 {
     Q_UNUSED(request)
     return AcceptNavigationRequest;
