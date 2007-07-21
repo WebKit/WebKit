@@ -1,3 +1,13 @@
+2007-07-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        - fixed typos and markup in the following manual tests
+
+        * manual-tests/accidental-strict-mode.html:
+        * manual-tests/caretScrolling.html:
+        * manual-tests/close-on-closedWindow.html:
+
 2007-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

@@ -4,13 +4,13 @@
 <head>
 </head>
 <body>
-<p><b>BUG ID:</b> <a href="rdar://problem/4094363"> Can't re-open a window at capripalace.com website because "close" fails on already-closed iwndow">4094363</a> Can't re-open a window at capripalace.com website because "close" fails on already-closed iwndow</p>
+<p><b>BUG ID:</b> <a href="rdar://problem/4094363">rdar://problem/4094363</a> Can't re-open a window at capripalace.com website because "close" fails on already-closed window</p>
 
 <p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
 <ol>
-	<li>Click the link below </li>
-	<li>Close the window that opens </li>
-	<li>Click the link again </li>
+    <li>Click the link below </li>
+    <li>Close the window that opens </li>
+    <li>Click the link again </li>
 </ol>
 </p>
 
@@ -26,10 +26,10 @@ If the bug is not fixed, a window WILL NOT OPEN after Step #3.
 win = null;
 function win_open() {
 
-	if (win != null) {
-		win.close();
-	}
-	win = window.open('about:blank');
+    if (win != null) {
+        win.close();
+    }
+    win = window.open('about:blank');
 }
 </script>
 
