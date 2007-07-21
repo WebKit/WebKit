@@ -1,3 +1,9 @@
+2007-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix for non-Mac platforms.
+        
+        * bindings/js/GCController.cpp:
+
 2007-07-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

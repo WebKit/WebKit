@@ -26,8 +26,8 @@
 #include "config.h"
 #include "GCController.h"
 
-#include <JavaScriptCore/collector.h>
-#include <JavaScriptCore/JSLock.h>
+#include <kjs/collector.h>
+#include <kjs/JSLock.h>
 
 using namespace KJS;
 
