@@ -1,3 +1,17 @@
+2007-07-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5109817> Ctrl-click on word in non-editable text doesn't select it
+        
+        * bridge/EditorClient.h: Removed a client method for enabling/disabling
+        word selection on right clicks.
+        * editing/Editor.cpp: Ditto.
+        * editing/Editor.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent): Select the
+        word underneath the mouse regardless of whether its editable.
+
 2007-07-20  Ada Chan  <adachan@apple.com>
 
         Reviewed by Darin and Adam.

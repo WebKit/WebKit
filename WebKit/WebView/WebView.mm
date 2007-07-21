@@ -323,8 +323,6 @@ static int pluginDatabaseClientCount = 0;
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
     BOOL dashboardBehaviorAllowWheelScrolling;
     
-    BOOL selectWordBeforeMenuEvent;
-    
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
     
@@ -3502,16 +3500,6 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 - (void)_insertNewlineInQuotedContent;
 {
     [[self _bridgeForSelectedOrMainFrame] insertParagraphSeparatorInQuotedContent];
-}
-
-- (BOOL)_selectWordBeforeMenuEvent
-{
-    return _private->selectWordBeforeMenuEvent;
-}
-
-- (void)_setSelectWordBeforeMenuEvent:(BOOL)flag
-{
-    _private->selectWordBeforeMenuEvent = flag;
 }
 
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle

@@ -197,11 +197,6 @@ int WebEditorClient::spellCheckerDocumentTag()
     return [m_webView spellCheckerDocumentTag];
 }
 
-bool WebEditorClient::selectWordBeforeMenuEvent()
-{
-    return [m_webView _selectWordBeforeMenuEvent];
-}
-
 bool WebEditorClient::isEditable()
 {
     return [m_webView isEditable];

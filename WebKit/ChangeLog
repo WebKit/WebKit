@@ -1,3 +1,18 @@
+2007-07-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5109817> Ctrl-click on word in non-editable text doesn't select it
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm: Removed the method
+        for enabling/disabling word selection on right click.
+        * WebView/WebView.mm: Ditto.
+        * WebView/WebViewPrivate.h: Removed the getter/setter entirely, 
+        it was in a private Category for Mail, but wasn't used by Mail
+        on Tiger or Leopard, they apparently implement word selection on 
+        their own.
+
 2007-07-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

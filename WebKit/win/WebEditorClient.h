@@ -49,7 +49,6 @@ public:
     virtual void toggleContinuousSpellChecking();
     virtual int spellCheckerDocumentTag();
 
-    virtual bool selectWordBeforeMenuEvent();
     virtual bool isEditable();
 
     virtual bool shouldBeginEditing(WebCore::Range*);

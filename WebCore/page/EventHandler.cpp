@@ -1306,9 +1306,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     IntPoint viewportPos = v->windowToContents(event.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(HitTestRequest(false, true), viewportPos, event);
 
-    if (!m_frame->selectionController()->contains(viewportPos) &&
-            (m_frame->editor()->selectWordBeforeMenuEvent() || m_frame->editor()->clientIsEditable()
-            || (mev.targetNode() && mev.targetNode()->isContentEditable()))) {
+    if (!m_frame->selectionController()->contains(viewportPos)) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordFromMouseEvent(mev);
     }

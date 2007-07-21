@@ -449,8 +449,6 @@ Could be worth adding to the API.
 
 @interface WebView (WebViewEditingInMail)
 - (void)_insertNewlineInQuotedContent;
-- (BOOL)_selectWordBeforeMenuEvent;
-- (void)_setSelectWordBeforeMenuEvent:(BOOL)flag;
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle;
 @end
 
