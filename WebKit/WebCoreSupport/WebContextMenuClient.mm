@@ -94,6 +94,7 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
 
             [defaultMenuItems removeObject:secondToLastItem];
             [defaultMenuItems removeObject:lastItem];
+            defaultItemsCount -= 2;
         }
     }
 

@@ -1,3 +1,16 @@
+2007-07-21  Adam Roben  <aroben@apple.com>
+
+        Fix REGRESSION: Right-click/control-click broken
+
+        http://bugs.webkit.org/show_bug.cgi?id=14658
+        <rdar://problem/5346830>
+
+        Reviewed by Mitz.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients): Update defaultItemsCount after removing
+        items from the defaultItems array.
+
 2007-07-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele.
