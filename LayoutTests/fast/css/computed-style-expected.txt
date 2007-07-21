@@ -3,8 +3,8 @@ Attributes that are exposed in the CSS computed style object:
 background-attachment: scroll;
 background-color: rgba(0, 0, 0, 0);
 background-image: none;
-background-position-x: auto;
-background-position-y: auto;
+background-position-x: 0px;
+background-position-y: 0px;
 background-repeat: repeat;
 border-bottom-color: rgb(0, 0, 0);
 border-bottom-style: none;
@@ -135,7 +135,7 @@ z-index: auto;
 
 Other attributes that the computed style class supports:
 
-background-position: '0 0';
+background-position: 0px 0px;
 border-spacing: 0px 0px;
 overflow: visible;
 -webkit-match-nearest-mail-blockquote-color: normal;

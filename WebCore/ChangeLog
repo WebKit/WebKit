@@ -1,3 +1,23 @@
+2007-07-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix for <rdar://problem/5351901>
+        Computed value of border-position should return a CSSValueList, not a CSSPrimitiveValue
+
+        - Return a space separated CSSValueList for background-position
+          instead of a CSSPrimitiveValue (string type).
+        - Remove the "else if (renderer)" case as it never returns a different
+          value than just calling length.value().
+        - Make background-position-x and background-position-y behave like
+          background-position.  Fix case of initial value return 'auto' instead
+          of 0.
+
+        Test: fast/css/getComputedStyle-background-position.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-07-20  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix for non-Mac platforms.

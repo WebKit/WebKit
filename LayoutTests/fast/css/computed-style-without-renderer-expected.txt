@@ -2,8 +2,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     background-attachment: scroll
     background-color: rgb(0, 128, 0)
     background-image: none
-    background-position-x: auto
-    background-position-y: auto
+    background-position-x: 0px
+    background-position-y: 0px
     background-repeat: repeat
     border-bottom-color: rgb(0, 0, 0)
     border-bottom-style: none
@@ -131,7 +131,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-border-bottom-right-radius: 0px
     -webkit-border-top-left-radius: 0px
     -webkit-border-top-right-radius: 0px
-    background-position: '0 0'
+    background-position: 0px 0px
     border-spacing: 0px 0px
     overflow: visible
     -webkit-match-nearest-mail-blockquote-color: normal

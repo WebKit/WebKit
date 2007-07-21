@@ -576,28 +576,36 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return 0;
         }
         case CSS_PROP_BACKGROUND_POSITION: {
-            String string;
+            RefPtr<CSSValueList> list = new CSSValueList(true);
+
             Length length(style->backgroundXPosition());
             if (length.isPercent())
-                string = numberAsString(length.percent()) + "%";
-            else if (renderer)
-                string = numberAsString(length.calcMinValue(renderer->contentWidth()));
+                list->append(new CSSPrimitiveValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
             else
-                string = numberAsString(length.value());
-            string += " ";
+                list->append(new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX));
+
             length = style->backgroundYPosition();
             if (length.isPercent())
-                string += numberAsString(length.percent()) + "%";
-            else if (renderer)
-                string += numberAsString(length.calcMinValue(renderer->contentWidth()));
+                list->append(new CSSPrimitiveValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
             else
-                string += numberAsString(length.value());
-            return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
+                list->append(new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX));
+
+            return list.release();
         }
-        case CSS_PROP_BACKGROUND_POSITION_X:
-            return valueForLength(style->backgroundXPosition());
-        case CSS_PROP_BACKGROUND_POSITION_Y:
-            return valueForLength(style->backgroundYPosition());
+        case CSS_PROP_BACKGROUND_POSITION_X: {
+            Length length(style->backgroundXPosition());
+            if (length.isPercent())
+                return new CSSPrimitiveValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            else
+                return new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX);
+        }
+        case CSS_PROP_BACKGROUND_POSITION_Y: {
+            Length length(style->backgroundYPosition());
+            if (length.isPercent())
+                return new CSSPrimitiveValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            else
+                return new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX);
+        }
         case CSS_PROP_BORDER_COLLAPSE:
             if (style->borderCollapse())
                 return new CSSPrimitiveValue(CSS_VAL_COLLAPSE);
