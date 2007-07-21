@@ -1,3 +1,14 @@
+2007-07-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Update tests for <rdar://problem/5352013>
+        The computed style for background-position is wrong for the initial value
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle-background-position-expected.txt:
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

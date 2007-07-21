@@ -1,3 +1,19 @@
+2007-07-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for <rdar://problem/5352013>
+        The computed style for background-position is wrong for the initial value
+
+        - Set the initial value for background-position-x and background-position-y (and
+          therefore background-position) to 0% instead of 0px.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::BackgroundLayer::BackgroundLayer):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::initialBackgroundXPosition):
+        (WebCore::RenderStyle::initialBackgroundYPosition):
+
 2007-07-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele and Andersca

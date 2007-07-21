@@ -107,6 +107,8 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
 
 BackgroundLayer::BackgroundLayer()
     : m_image(RenderStyle::initialBackgroundImage())
+    , m_xPosition(RenderStyle::initialBackgroundXPosition())
+    , m_yPosition(RenderStyle::initialBackgroundYPosition())
     , m_bgAttachment(RenderStyle::initialBackgroundAttachment())
     , m_bgClip(RenderStyle::initialBackgroundClip())
     , m_bgOrigin(RenderStyle::initialBackgroundOrigin())

@@ -44,12 +44,12 @@ background-position: 10px 20px;
 
 No background-position set
   background-position
-    getPropertyValue:    0px 0px
+    getPropertyValue:    0% 0%
     getPropertyCSSValue: [object CSSValueList]
   background-position-x
-    getPropertyValue:    0px
+    getPropertyValue:    0%
     getPropertyCSSValue: [object CSSPrimitiveValue]
   background-position-y
-    getPropertyValue:    0px
+    getPropertyValue:    0%
     getPropertyCSSValue: [object CSSPrimitiveValue]
 

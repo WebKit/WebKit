@@ -1810,8 +1810,8 @@ public:
     static ETextTransform initialTextTransform() { return TTNONE; }
     static EVisibility initialVisibility() { return VISIBLE; }
     static EWhiteSpace initialWhiteSpace() { return NORMAL; }
-    static Length initialBackgroundXPosition() { return Length(); }
-    static Length initialBackgroundYPosition() { return Length(); }
+    static Length initialBackgroundXPosition() { return Length(0.0, Percent); }
+    static Length initialBackgroundYPosition() { return Length(0.0, Percent); }
     static short initialHorizontalBorderSpacing() { return 0; }
     static short initialVerticalBorderSpacing() { return 0; }
     static ECursor initialCursor() { return CURSOR_AUTO; }
