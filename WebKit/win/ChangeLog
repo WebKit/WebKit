@@ -1,3 +1,13 @@
+2007-07-21  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam.
+        
+        Fix bug 14706: http://bugs.webkit.org/show_bug.cgi?id=14706
+        Need to set the last visited time before calling WebHistory::addItem().
+
+        * WebHistory.cpp:
+        (WebHistory::addItemForURL):
+
 2007-07-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

@@ -666,11 +666,11 @@ HRESULT WebHistory::addItemForURL(BSTR url, BSTR title)
     if (FAILED(hr))
         return hr;
 
-    hr = addItem(item.get());
+    hr = item->setLastVisitedTimeInterval(lastVisited); // also increments visitedCount
     if (FAILED(hr))
         return hr;
 
-    return item->setLastVisitedTimeInterval(lastVisited); // also increments visitedCount
+    return addItem(item.get());
 }
 
 HRESULT WebHistory::itemForURLString(
