@@ -5178,6 +5178,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
             return true;
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
+        _private->receivedNOOP = NO;
         KeypressCommand command = event->keypressCommand();
         bool hasKeypressCommand = !command.commandNames.isEmpty() || !command.text.isEmpty();
 
@@ -5194,7 +5195,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         }
         _private->interpretKeyEventsParameters = 0;
     }
-    return parameters.eventWasHandled || parameters.consumedByIM;
+    return (!_private->receivedNOOP && parameters.eventWasHandled) || parameters.consumedByIM;
 }
 
 - (WebCore::CachedImage*)promisedDragTIFFDataSource 
@@ -5430,8 +5431,10 @@ BOOL isTextInput(Frame *coreFrame)
     if (parameters)
         parameters->consumedByIM = NO;
 
-    if (selector == @selector(noop:))
+    if (selector == @selector(noop:)) {
+        _private->receivedNOOP = YES;
         return;
+    }
 
     KeyboardEvent* event = parameters ? parameters->event : 0;
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;

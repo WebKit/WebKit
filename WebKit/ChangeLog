@@ -1,3 +1,19 @@
+2007-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/5319438> REGRESSION: Cannot paste into an active inline input area (14522)
+        http://bugs.webkit.org/show_bug.cgi?id=14522
+
+        AppKit sends noop: to -[WebHTMLView doCommandBySelector:] when an IM does not handle event,
+        we now check this as it is necessary to work around some IMs that do send messages 
+        (such as insertText: rather than unmarkText: to confirm a composition)
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2007-07-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele and Andersca

@@ -87,7 +87,8 @@ struct WebHTMLViewInterpretKeyEventsParameters;
     BOOL transparentBackground;
 
     WebHTMLViewInterpretKeyEventsParameters *interpretKeyEventsParameters;
-
+    BOOL receivedNOOP;
+    
     NSTextView *firstResponderTextViewAtMouseDownTime;
     
     WebDataSource *dataSource;
