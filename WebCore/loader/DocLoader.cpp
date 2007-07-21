@@ -95,7 +95,15 @@ CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const St
     // FIXME: Passing true for "skipCanLoadCheck" here in the isUserStyleSheet case  won't have any effect
     // if this resource is already in the cache. It's theoretically possible that what's in the cache already
     // is a load that failed because of the canLoad check. Probably not an issue in practice.
-    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset, isUserStyleSheet, !isUserStyleSheet));
+    CachedCSSStyleSheet *sheet = static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset, isUserStyleSheet, !isUserStyleSheet));
+
+    // A user style sheet can outlive its DocLoader so don't store any pointers to it
+    if (sheet && isUserStyleSheet) {
+        sheet->setDocLoader(0);
+        m_docResources.remove(sheet->url());
+    }
+    
+    return sheet;
 }
 
 CachedCSSStyleSheet* DocLoader::requestUserCSSStyleSheet(const String& url, const String& charset)

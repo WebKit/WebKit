@@ -1,3 +1,13 @@
+2007-07-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        If the style sheet requested is a user style sheet, don't store it in the DocLoader's resource map;
+        user style sheets can outlive their doc loaders.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestCSSStyleSheet):
+
 2007-07-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
