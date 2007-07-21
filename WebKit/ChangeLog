@@ -1,3 +1,15 @@
+2007-07-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele and Andersca
+
+        <rdar://problem/5336105> - WebBackForwardList created from scratch is unusable (always leads to crash)
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList init]): Have a default initializer that uses an empty BackFowardList not associated with a page.
+
+        * WebView/WebFrame.mm:
+        (kit): For clarity's sake, this should return nil, not 0
+
 2007-07-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

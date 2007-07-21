@@ -99,6 +99,12 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 }
 #endif
 
+- (id)init
+{
+    RefPtr<BackForwardList> coreList(new BackForwardList(0));
+    return [self initWithBackForwardList:coreList.release()];
+}
+
 - (void)dealloc
 {
     WebCoreThreadViolationCheck();

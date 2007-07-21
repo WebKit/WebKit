@@ -1,3 +1,11 @@
+2007-07-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele and Andersca
+
+        <rdar://problem/5336105> - WebBackForwardList created from scratch is unusable (always leads to crash)
+
+        * WebCore.exp: Export the BackForwardList c'tor so WebKit can create one explicitly
+
 2007-07-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

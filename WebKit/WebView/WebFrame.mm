@@ -256,7 +256,7 @@ Page* core(WebView *webView)
 
 WebView *kit(Page* page)
 {
-    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
+    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : nil;
 }
 
 WebView *getWebView(WebFrame *webFrame)
