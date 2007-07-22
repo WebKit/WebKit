@@ -1,3 +1,25 @@
+2007-07-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14710
+
+        Add preliminary support for testing Input Method/WebKit behaviour and interaction 
+        in DRT.  This provides the NSTextInput API which is most of what should be necessary
+        to mimic the event sequences Input Methods trigger.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TextInputController.h:
+        * DumpRenderTree/TextInputController.m:
+        (-[WebHTMLView interpretKeyEvents:]):
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        (-[TextInputController initWithWebView:]):
+        (-[TextInputController dealloc]):
+        (-[TextInputController textInput]):
+        (-[TextInputController setInputMethodHandler:]):
+        (-[TextInputController interpretKeyEvents:withSender:]):
+
 2007-07-20  Adam Roben  <aroben@apple.com>
 
         * Scripts/commit-log-editor: Small fix to make an all-whitespace log

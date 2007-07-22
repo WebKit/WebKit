@@ -1,3 +1,16 @@
+2007-07-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Initial input method test case, this tests the behaviour of the 
+        enter key in our "kotoeri" engine.
+
+        * fast/events/inputmethods: Added.
+        * fast/events/inputmethods/kotoeri-enter-to-confirm-and-newline-expected.txt: Added.
+        * fast/events/inputmethods/kotoeri-enter-to-confirm-and-newline.html: Added.
+        * fast/events/inputmethods/kotoeri.js: Added.
+        * fast/events/inputmethods/logger.js: Added.
+
 2007-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

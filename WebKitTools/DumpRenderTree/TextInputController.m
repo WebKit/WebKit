@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,31 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebScriptObject.h>
 #import <WebKit/WebView.h>
+
+@interface TextInputController (DumpRenderTreeInputMethodHandler)
+- (BOOL)interpretKeyEvents:(NSArray *)eventArray withSender:(WebHTMLView *)sender;
+@end
+
+@interface WebHTMLView (DumpRenderTreeInputMethodHandler)
+- (void)interpretKeyEvents:(NSArray *)eventArray;
+@end
+
+@interface WebHTMLView (WebKitSecretsTextInputControllerIsAwareOf)
+- (WebFrame *)_frame;
+@end
+
+@implementation WebHTMLView (DumpRenderTreeInputMethodHandler)
+- (void)interpretKeyEvents:(NSArray *)eventArray
+{
+    WebScriptObject *obj = [[self _frame] windowObject];
+    TextInputController *tic = [obj valueForKey:@"textInputController"];
+    if (![tic interpretKeyEvents:eventArray withSender:self])
+        [super interpretKeyEvents:eventArray];
+}
+@end
 
 @implementation NSMutableAttributedString (TextInputController)
 
@@ -141,7 +165,8 @@
             || aSelector == @selector(firstRectForCharactersFrom:length:)
             || aSelector == @selector(characterIndexForPointX:Y:)
             || aSelector == @selector(validAttributesForMarkedText)
-            || aSelector == @selector(attributedStringWithString:))
+            || aSelector == @selector(attributedStringWithString:)
+            || aSelector == @selector(setInputMethodHandler:))
         return NO;
     return YES;
 }
@@ -164,6 +189,8 @@
         return @"characterIndexForPoint";
     else if (aSelector == @selector(attributedStringWithString:))
         return @"makeAttributedString"; // just a factory method, doesn't call into NSTextInput
+    else if (aSelector == @selector(setInputMethodHandler:))
+        return @"setInputMethodHandler"; 
 
     return nil;
 }
@@ -172,12 +199,22 @@
 {
     self = [super init];
     webView = wv;
+    inputMethodView = nil;
+    inputMethodHandler = nil;
     return self;
+}
+
+- (void)dealloc
+{
+    [inputMethodHandler release];
+    inputMethodHandler = nil;
+    
+    [super dealloc];
 }
 
 - (NSObject <NSTextInput> *)textInput
 {
-    NSView <NSTextInput> *view = (id)[[[webView mainFrame] frameView] documentView];
+    NSView <NSTextInput> *view = inputMethodView ? inputMethodView : (id)[[[webView mainFrame] frameView] documentView];
     return [view conformsToProtocol:@protocol(NSTextInput)] ? view : nil;
 }
 
@@ -328,6 +365,57 @@
 - (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
 {
     return [[[NSMutableAttributedString alloc] initWithString:aString] autorelease];
+}
+
+- (void)setInputMethodHandler:(WebScriptObject *)handler
+{
+    if (inputMethodHandler == handler)
+        return;
+    [handler retain];
+    [inputMethodHandler release];
+    inputMethodHandler = handler;
+}
+
+- (BOOL)interpretKeyEvents:(NSArray *)eventArray withSender:(WebHTMLView *)sender
+{
+    if (!inputMethodHandler)
+        return NO;
+    
+    inputMethodView = sender;
+    
+    NSEvent *event = [eventArray objectAtIndex:0];
+    unsigned modifierFlags = [event modifierFlags]; 
+    NSMutableArray *modifiers = [[NSMutableArray alloc] init];
+    if (modifierFlags & NSAlphaShiftKeyMask)
+        [modifiers addObject:@"NSAlphaShiftKeyMask"];
+    if (modifierFlags & NSShiftKeyMask)
+        [modifiers addObject:@"NSShiftKeyMask"];
+    if (modifierFlags & NSControlKeyMask)
+        [modifiers addObject:@"NSControlKeyMask"];
+    if (modifierFlags & NSAlternateKeyMask)
+        [modifiers addObject:@"NSAlternateKeyMask"];
+    if (modifierFlags & NSCommandKeyMask)
+        [modifiers addObject:@"NSCommandKeyMask"];
+    if (modifierFlags & NSNumericPadKeyMask)
+        [modifiers addObject:@"NSNumericPadKeyMask"];
+    if (modifierFlags & NSHelpKeyMask)
+        [modifiers addObject:@"NSHelpKeyMask"];
+    if (modifierFlags & NSFunctionKeyMask)
+        [modifiers addObject:@"NSFunctionKeyMask"];
+    
+    WebScriptObject* eventParam = [inputMethodHandler evaluateWebScript:@"new Object();"];
+    [eventParam setValue:[event characters] forKey:@"characters"];
+    [eventParam setValue:[event charactersIgnoringModifiers] forKey:@"charactersIgnoringModifiers"];
+    [eventParam setValue:[NSNumber numberWithBool:[event isARepeat]] forKey:@"isARepeat"];
+    [eventParam setValue:[NSNumber numberWithUnsignedShort:[event keyCode]] forKey:@"keyCode"];
+    [eventParam setValue:modifiers forKey:@"modifierFlags"];
+    
+    id result = [inputMethodHandler callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:inputMethodHandler, eventParam, nil]];
+    if (![result respondsToSelector:@selector(boolValue)] || ![result boolValue]) 
+        [sender doCommandBySelector:@selector(noop:)]; // AppKit sends noop: if the ime does not handle an event
+    
+    inputMethodView = nil;    
+    return YES;
 }
 
 @end
