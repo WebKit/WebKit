@@ -55,6 +55,9 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
 
 DocLoader::~DocLoader()
 {
+    HashMap<String, CachedResource*>::iterator end = m_docResources.end();
+    for (HashMap<String, CachedResource*>::iterator it = m_docResources.begin(); it != end; ++it)
+        it->second->setDocLoader(0);
     m_cache->removeDocLoader(this);
 }
 

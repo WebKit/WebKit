@@ -1,3 +1,13 @@
+2007-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - improve the fix for <rdar://problem/5298816> Crash redirecting message,
+          in -[SharedBufferData initWithSharedBuffer:]; fixes a crash seen on the buildbot
+
+        * loader/DocLoader.cpp: (WebCore::DocLoader::~DocLoader): Call setDocLoader(0) on all
+        the resources so they don't try to use a stale DocLoader pointer later.
+
 2007-07-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig.
