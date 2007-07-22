@@ -1,6 +1,6 @@
 2007-07-22  Darin Adler  <darin@apple.com>
 
-        Reviewed by Anders.
+        Reviewed by Anders Carlsson and John Sullivan.
 
         - speculative fix for <rdar://problem/5337500> CrashTracer: [USER] 4 crashes in Mail
           at WebCore::HTMLImageElement::isURLAttribute(WebCore::Attribute*) const
