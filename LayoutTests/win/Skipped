@@ -38,6 +38,10 @@ fast/dom/wrapper-identity.html
 fast/dom/wrapper-round-tripping.html
 fast/objc/longlongTest.html
 
+# Input Method tests are completely Mac specific for now
+# <rdar://problem/5352927>
+fast/events/inputmethods
+
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html

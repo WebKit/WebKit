@@ -1,5 +1,14 @@
 2007-07-22  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Adam.
+
+        Add the input methods tests to the windows skip list 
+        until we work to how to make them platform agnostic
+
+        * win/Skipped:
+
+2007-07-22  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin.
 
         Initial input method test case, this tests the behaviour of the 
