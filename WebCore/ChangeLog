@@ -1,3 +1,17 @@
+2007-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - speculative fix for <rdar://problem/5337500> CrashTracer: [USER] 4 crashes in Mail
+          at WebCore::HTMLImageElement::isURLAttribute(WebCore::Attribute*) const
+
+        * editing/markup.cpp: Added AttributeChange class.
+        (WebCore::completeURLs): Changed function so that all the URL completion is done in
+        a separate pass after finding all the URL attributes. This is safer, since actually
+        applying an attribute change could have any arbitrary effect on the document; it's
+        tricky to iterate a document while it's being modified and we don't have the checks
+        here that would be needed to make that work in pathological cases.
+
 2007-07-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

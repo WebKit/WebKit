@@ -63,6 +63,29 @@ using namespace HTMLNames;
 
 static inline bool shouldSelfClose(const Node *node);
 
+class AttributeChange {
+public:
+    AttributeChange()
+        : m_name(nullAtom, nullAtom, nullAtom)
+    {
+    }
+
+    AttributeChange(PassRefPtr<Element> element, const QualifiedName& name, const String& value)
+        : m_element(element), m_name(name), m_value(value)
+    {
+    }
+
+    void apply()
+    {
+        m_element->setAttribute(m_name, m_value);
+    }
+
+private:
+    RefPtr<Element> m_element;
+    QualifiedName m_name;
+    String m_value;
+};
+
 static DeprecatedString escapeTextForMarkup(const String& in, bool isAttributeValue)
 {
     DeprecatedString s = "";
@@ -344,21 +367,31 @@ static DeprecatedString markup(Node* startNode, bool onlyIncludeChildren, Vector
     return me;
 }
 
-static void completeURLs(Node *node, const DeprecatedString &baseURL)
+static void completeURLs(Node* node, const String& baseURL)
 {
-    Node *end = node->traverseNextSibling();
-    for (Node *n = node; n != end; n = n->traverseNextNode()) {
+    Vector<AttributeChange> changes;
+
+    KURL baseURLAsKURL(baseURL.deprecatedString());
+
+    Node* end = node->traverseNextSibling();
+    for (Node* n = node; n != end; n = n->traverseNextNode()) {
         if (n->isElementNode()) {
-            Element *e = static_cast<Element*>(n);
-            NamedAttrMap *attrs = e->attributes();
+            Element* e = static_cast<Element*>(n);
+            NamedAttrMap* attrs = e->attributes();
             unsigned length = attrs->length();
             for (unsigned i = 0; i < length; i++) {
-                Attribute *attr = attrs->attributeItem(i);
-                if (e->isURLAttribute(attr))
-                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().deprecatedString()).url());
+                Attribute* attr = attrs->attributeItem(i);
+                if (e->isURLAttribute(attr)) {
+                    String completedURL = KURL(baseURLAsKURL, attr->value().deprecatedString()).url();
+                    changes.append(AttributeChange(e, attr->name(), completedURL));
+                }
             }
         }
     }
+
+    size_t numChanges = changes.size();
+    for (size_t i = 0; i < numChanges; ++i)
+        changes[i].apply();
 }
 
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)
@@ -621,7 +654,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     RefPtr<DocumentFragment> fragment = element->createContextualFragment(markup);
 
     if (fragment && !baseURL.isEmpty() && baseURL != document->baseURL())
-        completeURLs(fragment.get(), baseURL.deprecatedString());
+        completeURLs(fragment.get(), baseURL);
 
     return fragment.release();
 }
