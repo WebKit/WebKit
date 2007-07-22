@@ -1,10 +1,13 @@
-# From WebKit CVS on 2006-04-15 (WebKit/WebCore/css/CSSPropertyNames.in)
+# From WebKit svn r24249 (WebCore/css/CSSPropertyNames.in)
 -webkit-appearance
 -webkit-background-clip
+-webkit-background-composite
 -webkit-background-origin
+-webkit-background-size
 -webkit-binding
 -webkit-border-bottom-left-radius
 -webkit-border-bottom-right-radius
+-webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
 -webkit-border-radius
@@ -19,9 +22,22 @@
 -webkit-box-ordinal-group
 -webkit-box-orient
 -webkit-box-pack
+-webkit-box-shadow
 -webkit-box-sizing
+-webkit-column-break-after
+-webkit-column-break-before
+-webkit-column-break-inside
+-webkit-column-count
+-webkit-column-gap
+-webkit-column-rule
+-webkit-column-rule-color
+-webkit-column-rule-style
+-webkit-column-rule-width
+-webkit-column-width
+-webkit-columns
 -webkit-dashboard-region
 -webkit-font-size-delta
+-webkit-highlight
 -webkit-line-break
 -webkit-line-clamp
 -webkit-margin-bottom-collapse
@@ -39,7 +55,12 @@
 -webkit-padding-start
 -webkit-rtl-ordering
 -webkit-text-decorations-in-effect
+-webkit-text-fill-color
+-webkit-text-security
 -webkit-text-size-adjust
+-webkit-text-stroke
+-webkit-text-stroke-color
+-webkit-text-stroke-width
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
@@ -74,7 +95,6 @@ border-top-style
 border-top-width
 border-width
 bottom
-box-sizing
 caption-side
 clear
 clip
@@ -119,6 +139,8 @@ outline-offset
 outline-style
 outline-width
 overflow
+overflow-x
+overflow-y
 padding
 padding-bottom
 padding-left
@@ -130,6 +152,7 @@ page-break-before
 page-break-inside
 position
 quotes
+resize
 right
 scrollbar-3dlight-color
 scrollbar-arrow-color
@@ -168,9 +191,29 @@ visibility
 white-space
 widows
 width
+word-break
 word-spacing
 word-wrap
 z-index
+
+# CSS3 properties - http://www.css3.info/preview/
+background-clip
+background-origin
+border-image
+border-radius
+box-shadow
+box-sizing
+column-count
+column-gap
+column-min-width
+column-rule
+column-rule-color
+column-rule-style
+column-rule-width
+column-space-distribution
+column-span
+column-width
+column-width-policy
 
 # All of the following are from khtml's cssproperties.in as of 19oct2004, but are no longer in WebKit
 -khtml-border-horizontal-spacing
@@ -185,8 +228,6 @@ z-index
 -khtml-text-decoration-color
 -khtml-user-input
 scrollbar-base-color
-
-
 
 # Internet Explorer 6.0 - http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
 filter:progid:

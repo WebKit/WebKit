@@ -1,3 +1,17 @@
+2007-07-22  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14713
+          Script to update iExploder cssproperties.in file based on CSSPropertyNames.in
+
+        Added script to update WebKitTools/iExploder/htdocs/cssproperties.in based on the contents
+        of WebCore/css/CSSPropertyNames.in.  Also updated cssproperties.in.
+
+        * Scripts/update-iexploder-cssproperties: Added.
+        * iExploder/htdocs/cssproperties.in: Updated by running update-iexploder-cssproperties script.
+        Added new CSS3 property section and Moved box-sizing property to it.
+
 2007-07-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
