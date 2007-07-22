@@ -244,8 +244,10 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
                 return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
                 return new RuntimeArray(exec, new ObjcArray(obj, rootObject));
-            if ([obj isKindOfClass:webScriptObjectClass()])
-                return [obj _imp];
+            if ([obj isKindOfClass:webScriptObjectClass()]) {
+                JSObject* imp = [obj _imp];
+                return imp ? imp : jsUndefined();
+            }
             if ([obj isKindOfClass:[NSNull class]])
                 return jsNull();
             if (obj == 0)

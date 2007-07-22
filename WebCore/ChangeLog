@@ -1,5 +1,45 @@
 2007-07-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        - fix <rdar://problem/5126394> REGRESSION: Crash after clicking back button in test application (13250)
+          http://bugs.webkit.org/show_bug.cgi?id=13250
+
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute): Removed unnecessary check for isValid() since the _rootObject method already
+        takes care of that check.
+        (-[WebScriptObject _imp]): Made this return 0 if there is not a valid rootObject.
+        (-[WebScriptObject _isSafeScript]): Made this always return false if there is not a valid
+        rootObject, eliminating the need to check _rootObject for nil if the code is checking _isSafeScript.
+        (-[WebScriptObject callWebScriptMethod:withArguments:]): Removed check of _rootObject, since it's
+        immediately followed by a check of _isSafeScript. Removed awkward conversion of name from NSString *
+        to KJS::Identifier and did it using WebCore::String instead -- makes it clear that there's no
+        arbitrary JavaScript execution after _isSafeScript and before _imp, so we don't need to null-check
+        the _imp pointer. Added a second check of _isSafeScript after calling get to get the function
+        object, since arbitrary changes could occur in there, including navigation to a new frame.
+        This also takes care of null checking the second call to _imp.
+        (-[WebScriptObject evaluateWebScript:]): Removed check of _rootObject, since it's
+        immediately followed by a check of _isSafeScript. Removed awkward conversion of script from NSString *
+        to KJS::Identifier and did it using WebCore::String instead -- makes it clear that there's no
+        arbitrary JavaScript execution after _isSafeScript and before _imp, so we don't need to null-check
+        the _imp pointer.
+        (-[WebScriptObject setValue:forKey:]): Removed check of _rootObject, since it's
+        immediately followed by a check of _isSafeScript. Removed awkward conversion of key from NSString *
+        to KJS::Identifier and did it using WebCore::String instead -- makes it clear that there's no
+        arbitrary JavaScript execution after _isSafeScript and before _imp, so we don't need to null-check
+        the _imp pointer.
+        (-[WebScriptObject valueForKey:]): Ditto.
+        (-[WebScriptObject removeWebScriptKey:]): Ditto.
+        (-[WebScriptObject stringRepresentation]): Removed check of _rootObject, since it's
+        immediately followed by a check of _isSafeScript. Removed unnecessary local variable
+        and const_cast from the call to the _imp method.
+        (-[WebScriptObject webScriptValueAtIndex:]): Removed check of _rootObject, since it's
+        immediately followed by a check of _isSafeScript.
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]): Ditto.
+        (-[WebScriptObject JSObject]): Ditto.
+
+2007-07-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson and John Sullivan.
 
         - speculative fix for <rdar://problem/5337500> CrashTracer: [USER] 4 crashes in Mail

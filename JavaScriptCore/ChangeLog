@@ -1,3 +1,14 @@
+2007-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - fix <rdar://problem/5126394> REGRESSION: Crash after clicking back button in test application (13250)
+          http://bugs.webkit.org/show_bug.cgi?id=13250
+
+        * bindings/objc/objc_utility.mm: (KJS::Bindings::convertObjcValueToValue):
+        If the object returns 0 for _imp, convert that to "undefined", since callers
+        can't cope with a JSValue of 0.
+
 2007-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
