@@ -1,5 +1,19 @@
 2007-07-22  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam.
+
+        Moving input method tests to editing/input/mac
+
+        * editing/input/mac: Copied from fast/events/inputmethods.
+        * fast/events/inputmethods: Removed.
+        * fast/events/inputmethods/kotoeri-enter-to-confirm-and-newline-expected.txt: Removed.
+        * fast/events/inputmethods/kotoeri-enter-to-confirm-and-newline.html: Removed.
+        * fast/events/inputmethods/kotoeri.js: Removed.
+        * fast/events/inputmethods/logger.js: Removed.
+        * win/Skipped:
+
+2007-07-22  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adam.
 
         Add the input methods tests to the windows skip list 

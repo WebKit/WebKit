@@ -40,7 +40,7 @@ fast/objc/longlongTest.html
 
 # Input Method tests are completely Mac specific for now
 # <rdar://problem/5352927>
-fast/events/inputmethods
+editing/input/mac
 
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html

@@ -13,6 +13,9 @@ http
 plugins
 svg
 
+#mac specific input method tests
+editing/input/mac
+
 # crashes
 fast/encoding
 fast/encoding/utf-16-little-endian.html
