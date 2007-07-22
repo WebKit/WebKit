@@ -1,3 +1,7 @@
+2007-07-22  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2007-07-21  Adam Roben  <aroben@apple.com>
 
         Fix REGRESSION: Right-click/control-click broken
