@@ -1,3 +1,13 @@
+2007-07-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix <rdar://problem/5350604> REGRESSION: Crash in inspector controller code after
+          clicking back button in test application (13250)
+
+        * page/InspectorController.cpp: (WebCore::InspectorController::addScriptResource):
+        Replace an assertion that was firing with some code that at least doesn't immediately crash.
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

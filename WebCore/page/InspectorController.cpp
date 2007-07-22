@@ -726,7 +726,10 @@ static JSObjectRef scriptObjectForResponse(JSContextRef context, const Inspector
 JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
 {
     ASSERT_ARG(resource, resource);
-    ASSERT(!resource->scriptObject);
+
+    // This happens for pages loaded from the back/forward cache.
+    if (resource->scriptObject)
+        return resource->scriptObject;
 
     ASSERT(m_scriptContext);
     ASSERT(m_scriptObject);
