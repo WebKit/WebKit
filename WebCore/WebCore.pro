@@ -20,7 +20,7 @@ CONFIG -= warn_on
 QMAKE_CXXFLAGS += -Wreturn-type
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
-qt-port:contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 
 linux-*: DEFINES += HAVE_STDINT_H
@@ -89,7 +89,9 @@ gdk-port {
                   page/gdk                    \
                   platform/graphics/cairo     \
                   platform/graphics/svg/cairo \
-                  platform/network/curl
+                  platform/network/curl       \
+                  ../WebKit/gtk/Api           \ 
+                  ../WebKit/gtk/WebCoreSupport
 }
 
 INCLUDEPATH +=  $$PWD \
@@ -816,7 +818,18 @@ qt-port:SOURCES += \
     ../WebKitQt/Api/qwebobjectplugin.cpp \
     ../WebKitQt/Api/qwebobjectpluginconnector.cpp 
 
-gdk-port:SOURCES += \
+gdk-port {
+    HEADERS += \
+        ../WebKit/gtk/Api/webkitgtkdefines.h \
+        ../WebKit/gtk/Api/webkitgtkframe.h \
+        ../WebKit/gtk/Api/webkitgtkframedata.h \
+        ../WebKit/gtk/Api/webkitgtkglobal.h \
+        ../WebKit/gtk/Api/webkitgtknetworkrequest.h \
+        ../WebKit/gtk/Api/webkitgtkpage.h \
+        ../WebKit/gtk/Api/webkitgtkprivate.h \
+        ../WebKit/gtk/Api/webkitgtksettings.h \
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGdk.h
+    SOURCES += \
         platform/TextCodecICU.cpp \
         platform/TextBreakIteratorICU.cpp \
         page/gdk/EventHandlerGdk.cpp \
@@ -866,7 +879,16 @@ gdk-port:SOURCES += \
         platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
-        platform/image-decoders/xbm/XBMImageDecoder.cpp
+        platform/image-decoders/xbm/XBMImageDecoder.cpp \
+        ../WebKit/gtk/Api/webkitgtkframe.cpp \
+        ../WebKit/gtk/Api/webkitgtkframedata.cpp \
+        ../WebKit/gtk/Api/webkitgtkglobal.cpp \
+        ../WebKit/gtk/Api/webkitgtknetworkrequest.cpp \
+        ../WebKit/gtk/Api/webkitgtkpage.cpp \
+        ../WebKit/gtk/Api/webkitgtkprivate.cpp \
+        ../WebKit/gtk/Api/webkitgtksettings.cpp \
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGdk.cpp
+}
  
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
     qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
@@ -1437,3 +1459,38 @@ qt-port {
     }
 }
 
+gdk-port {
+    isEmpty(WEBKIT_LIB_DIR):WEBKIT_LIB_DIR=$$[QT_INSTALL_LIBS]
+    isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=$$[QT_INSTALL_HEADERS]/WebKitGtk
+
+    target.path = $$WEBKIT_LIB_DIR
+    include($$PWD/../WebKit/gtk/Api/headers.pri)
+    headers.files = $$WEBKIT_API_HEADERS
+    headers.path = $$WEBKIT_INC_DIR
+    INSTALLS += target headers
+
+    unix {
+        CONFIG += create_pc create_prl
+        QMAKE_PKGCONFIG_LIBDIR = $$target.path
+        QMAKE_PKGCONFIG_INCDIR = $$headers.path
+        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+        lib_replace.match = $$DESTDIR
+        lib_replace.replace = $$[QT_INSTALL_LIBS]
+        QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
+    }
+
+    GENMARSHALS = ../WebKit/gtk/Api/webkitgtk-marshal.list
+    GENMARSHALS_PREFIX = webkit_gtk_marshal
+
+    #
+    # integrate glib-genmarshal as additional compiler
+    #
+    QMAKE_GENMARSHAL_CC  = glib-genmarshal
+    glib-genmarshal.commands = $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header --body >${QMAKE_FILE_OUT}
+    glib-genmarshal.output = $$OUT_PWD/${QMAKE_FILE_BASE}.h
+    glib-genmarshal.input = GENMARSHALS
+    glib-genmarshal.CONFIG = no_link
+    glib-genmarshal.variable_out = PRE_TARGETDEPS
+    glib-genmarshal.name = GENMARSHALS
+    QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshal
+}

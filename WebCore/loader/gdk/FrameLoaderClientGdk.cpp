@@ -4,6 +4,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -38,19 +39,22 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
+#include "CString.h"
+#include "ProgressTracker.h"
+#include "webkitgtkpage.h"
+#include "webkitgtkframe.h"
+#include "webkitgtkprivate.h"
 #include <stdio.h>
+
+using namespace WebKitGtk;
 
 namespace WebCore {
 
-FrameLoaderClientGdk::FrameLoaderClientGdk()
-    : m_frame(0)
+FrameLoaderClientGdk::FrameLoaderClientGdk(WebKitGtkFrame* frame)
+    : m_frame(frame)
     , m_firstData(false)
 {
-}
-
-Frame* FrameLoaderClientGdk::frame()
-{ 
-    return static_cast<Frame*>(m_frame);
+    ASSERT(m_frame);
 }
 
 String FrameLoaderClientGdk::userAgent(const KURL&)
@@ -67,17 +71,15 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientGdk::createDocumentLoa
 void FrameLoaderClientGdk::dispatchWillSubmitForm(FramePolicyFunction policyFunction,  PassRefPtr<FormState>)
 {
     // FIXME: This is surely too simple
-    ASSERT(frame() && policyFunction);
-    if (!frame() || !policyFunction)
+    ASSERT(policyFunction);
+    if (!policyFunction)
         return;
-    (frame()->loader()->*policyFunction)(PolicyUse);
+    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
 
 void FrameLoaderClientGdk::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    if (!frame())
-        return;
     FrameLoader *fl = loader->frameLoader();
     fl->setEncoding(m_response.textEncodingName(), false);
     fl->addData(data, length);
@@ -105,17 +107,23 @@ void FrameLoaderClientGdk::assignIdentifierToInitialRequest(unsigned long identi
 
 void FrameLoaderClientGdk::postProgressStartedNotification()
 {
-    // no progress notification for now
+    WebKitGtkPage* page = getPageFromFrame(m_frame);
+    g_signal_emit_by_name(page, "load_started", m_frame);
 }
 
 void FrameLoaderClientGdk::postProgressEstimateChangedNotification()
 {
-    // no progress notification for now    
+    WebKitGtkPage* kitPage = getPageFromFrame(m_frame);
+    Page* corePage = core(kitPage);
+
+    g_signal_emit_by_name(kitPage, "load_progress_changed", lround(corePage->progress()->estimatedProgress()*100)); 
 }
 
 void FrameLoaderClientGdk::postProgressFinishedNotification()
 {
-    // no progress notification for now
+    WebKitGtkPage* page = getPageFromFrame(m_frame);
+
+    g_signal_emit_by_name(page, "load_finished", m_frame);
 }
 
 void FrameLoaderClientGdk::frameLoaderDestroyed()
@@ -133,28 +141,28 @@ void FrameLoaderClientGdk::dispatchDidReceiveResponse(DocumentLoader*, unsigned 
 void FrameLoaderClientGdk::dispatchDecidePolicyForMIMEType(FramePolicyFunction policyFunction, const String&, const ResourceRequest&)
 {
     // FIXME: we need to call directly here (comment copied from Qt version)
-    ASSERT(frame() && policyFunction);
-    if (!frame() || !policyFunction)
+    ASSERT(policyFunction);
+    if (!policyFunction)
         return;
-    (frame()->loader()->*policyFunction)(PolicyUse);
+    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClientGdk::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&, const String&)
 {
-    ASSERT(frame() && policyFunction);
-    if (!frame() || !policyFunction)
+    ASSERT(policyFunction);
+    if (!policyFunction)
         return;
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
-    (frame()->loader()->*policyFunction)(PolicyIgnore);
+    (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
 }
 
 void FrameLoaderClientGdk::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&)
 {
-    ASSERT(frame() && policyFunction);
-    if (!frame() || !policyFunction)
+    ASSERT(policyFunction);
+    if (!policyFunction)
         return;
-    (frame()->loader()->*policyFunction)(PolicyUse);
+    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
 Widget* FrameLoaderClientGdk::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
@@ -203,7 +211,7 @@ String FrameLoaderClientGdk::overrideMediaType() const
 
 void FrameLoaderClientGdk::windowObjectCleared() const
 {
-    notImplemented();
+    g_signal_emit_by_name(m_frame, "cleared");
 }
 
 void FrameLoaderClientGdk::setMainFrameDocumentReady(bool) 
@@ -225,8 +233,7 @@ bool FrameLoaderClientGdk::hasFrameView() const
 
 void FrameLoaderClientGdk::dispatchDidFinishLoad() 
 { 
-    FrameGdk *frameGdk = static_cast<FrameGdk*>(m_frame);
-    frameGdk->onDidFinishLoad();
+    g_signal_emit_by_name(m_frame, "load_done", true);
 }
 
 void FrameLoaderClientGdk::frameLoadCompleted() 
@@ -269,9 +276,23 @@ void FrameLoaderClientGdk::dispatchDidCancelClientRedirect() { notImplemented();
 void FrameLoaderClientGdk::dispatchWillPerformClientRedirect(const KURL&, double, double) { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidChangeLocationWithinPage() { notImplemented(); }
 void FrameLoaderClientGdk::dispatchWillClose() { notImplemented(); }
-void FrameLoaderClientGdk::dispatchDidReceiveIcon() { notImplemented(); }
-void FrameLoaderClientGdk::dispatchDidStartProvisionalLoad() { notImplemented(); }
-void FrameLoaderClientGdk::dispatchDidReceiveTitle(const String&) { notImplemented(); }
+
+void FrameLoaderClientGdk::dispatchDidReceiveIcon()
+{
+    WebKitGtkPage* page = getPageFromFrame(m_frame);
+
+    g_signal_emit_by_name(page, "icon_loaded", m_frame);
+}
+
+void FrameLoaderClientGdk::dispatchDidStartProvisionalLoad()
+{
+}
+
+void FrameLoaderClientGdk::dispatchDidReceiveTitle(const String& title)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientGdk::dispatchDidCommitLoad() { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidFinishDocumentLoad() { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidFirstLayout() { notImplemented(); }
@@ -292,17 +313,46 @@ bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notI
 bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplemented(); return true; }
 bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
 String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
-void FrameLoaderClientGdk::provisionalLoadStarted() { notImplemented(); }
-void FrameLoaderClientGdk::didFinishLoad() { notImplemented(); }
+
+void FrameLoaderClientGdk::provisionalLoadStarted()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientGdk::didFinishLoad() {
+    notImplemented();
+}
+
 void FrameLoaderClientGdk::prepareForDataSourceReplacement() { notImplemented(); }
-void FrameLoaderClientGdk::setTitle(const String&, const KURL&) { notImplemented(); }
+
+void FrameLoaderClientGdk::setTitle(const String& title, const KURL& url)
+{
+    WebKitGtkPage* page = getPageFromFrame(m_frame);
+
+    CString titleString = title.utf8(); 
+    DeprecatedCString urlString = url.prettyURL().utf8();
+    g_signal_emit_by_name(m_frame, "title_changed", titleString.data(), urlString.data());
+
+    if (m_frame == webkit_gtk_page_get_main_frame(page))
+        g_signal_emit_by_name(page, "title_changed", titleString.data(), urlString.data());
+}
+
 void FrameLoaderClientGdk::setDocumentViewFromCachedPage(WebCore::CachedPage*) { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplemented(); }
 void FrameLoaderClientGdk::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplemented(); }
 bool FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { notImplemented(); return false; }
-void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&) { notImplemented(); }
-void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&) { notImplemented(); }
+
+void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&)
+{
+    g_signal_emit_by_name(m_frame, "load_done", false);
+}
+
+void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&)
+{
+    g_signal_emit_by_name(m_frame, "load_done", false);
+}
+
 void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) { notImplemented(); }
 ResourceError FrameLoaderClientGdk::cancelledError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::blockedError(const ResourceRequest&) { notImplemented(); return ResourceError(); }

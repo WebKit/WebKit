@@ -1,3 +1,26 @@
+2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        Add the WebKit/Gtk API to the buildsystem, ask qmake to create a
+        pkg-config file and install headers and libraries.
+
+        Start to emit signals from FrameLoaderClientGdk, hide the kit Frame
+        inside the the FrameLoaderClientGdk.
+
+        Move ChromeClientGdk to WebKit/gtk/WebCoreSupport
+
+        * WebCore.pro:
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        * loader/gdk/FrameLoaderClientGdk.h:
+        * platform/gdk/ChromeClientGdk.h: Removed.
+        * platform/gdk/FrameGdk.cpp: Remove code not belonging here
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/ScrollViewGdk.cpp: The gdkDrawable won't exist at that time and it is fine
+        * platform/gdk/TemporaryLinkStubs.cpp: Removed ChromeClientGdk stubs
+
 2007-07-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.

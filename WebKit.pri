@@ -28,7 +28,9 @@ gdk-port:INCLUDEPATH += \
     $$BASE_DIR/WebCore/platform/network/curl \
     $$BASE_DIR/WebCore/platform/graphics/cairo \
     $$BASE_DIR/WebCore/loader/gdk \
-    $$BASE_DIR/WebCore/page/gdk
+    $$BASE_DIR/WebCore/page/gdk \
+    $$BASE_DIR/WebKit/gtk/Api \
+    $$BASE_DIR/WebKit/gtk/WebCoreSupport
 INCLUDEPATH += \
     $$BASE_DIR/JavaScriptCore/ \
     $$BASE_DIR/JavaScriptCore/kjs \

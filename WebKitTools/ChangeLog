@@ -1,3 +1,13 @@
+2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Make the GdkLauncher use the new WebKit/Gtk API. Change webkitdirs.pm to
+        honor --qmakearg for the Gdk/Gtk build as well.
+
+        * GdkLauncher/main.cpp: Switch to the new API
+        * Scripts/webkitdirs.pm: Allow to specify --qmakearg, e.g. to control the WEBKIT_{INC,LIB}_DIR 
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/TextInputController.m: (-[TextInputController interpretKeyEvents:withSender:]):

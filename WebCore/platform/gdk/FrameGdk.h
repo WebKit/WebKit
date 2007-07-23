@@ -40,6 +40,7 @@ class FrameGdk;
 class FrameLoaderClientGdk;
 class FormData;
 
+
 class FrameGdk : public Frame {
 public:
     FrameGdk(Page*, HTMLFrameOwnerElement*, FrameLoaderClientGdk*);
@@ -49,17 +50,6 @@ public:
     bool keyPress(const PlatformKeyboardEvent& keyEvent);
 
     void dumpRenderTree() const;
-
-    void setExitAfterLoading(bool exitAfterLoading) { m_exitAfterLoading = exitAfterLoading; }
-    bool exitAfterLoading() const { return m_exitAfterLoading; }
-
-    void setDumpRenderTreeAfterLoading(bool dumpRenderTreeAfterLoading) { m_dumpRenderTreeAfterLoading = dumpRenderTreeAfterLoading; }
-    bool dumpRenderTreeAfterLoading() const { return m_dumpRenderTreeAfterLoading; }
-
-    void onDidFinishLoad();
-private:
-    bool            m_exitAfterLoading;
-    bool            m_dumpRenderTreeAfterLoading;
 };
 
 }

@@ -54,6 +54,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TypingCommand.h"
+#include "webkitgtkframe.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -88,9 +89,6 @@ namespace WebCore {
 FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClientGdk* frameLoader)
     : Frame(page, ownerElement, frameLoader)
 {
-    m_exitAfterLoading = false;
-    m_dumpRenderTreeAfterLoading = false;
-
     Settings* settings = page->settings();
     settings->setLoadsImagesAutomatically(true);
     settings->setMinimumFontSize(5);
@@ -104,21 +102,11 @@ FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderC
     settings->setSansSerifFontFamily("Arial");
     settings->setFixedFontFamily("Courier");
     settings->setStandardFontFamily("Arial");
-
-    frameLoader->setFrame(this);
 }
 
 FrameGdk::~FrameGdk()
 {
     loader()->cancelAndClear();
-}
-
-void FrameGdk::onDidFinishLoad()
-{
-    if (dumpRenderTreeAfterLoading())
-        dumpRenderTree();
-    if (exitAfterLoading())
-        gtk_main_quit();  // FIXME: a bit drastic?
 }
 
 void FrameGdk::dumpRenderTree() const

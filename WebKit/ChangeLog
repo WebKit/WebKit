@@ -1,3 +1,79 @@
+2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Add the first API and partial implementation of the WebKit/Gtk port as
+        of http://bugs.webkit.org/show_bug.cgi?id=14678.
+
+        The delegates of WebView will be modeled as signals. Delegates like the
+        WebPolicyDelegate will be implemented as signals with default handlers.
+
+        Start moving files to WebKit/gtk/WebCoreSupport.
+
+        * gtk: Added.
+        * gtk/Api: Added.
+        * gtk/Api/headers.pri: Added.
+        * gtk/Api/webkitgtk-marshal.list: Added.
+        * gtk/Api/webkitgtkdefines.h: Added.
+        * gtk/Api/webkitgtkframe.cpp: Added.
+        * gtk/Api/webkitgtkframe.h: Added.
+        * gtk/Api/webkitgtkframedata.cpp: Added.
+        * gtk/Api/webkitgtkframedata.h: Added.
+        * gtk/Api/webkitgtkglobal.cpp: Added.
+        * gtk/Api/webkitgtkglobal.h: Added.
+        * gtk/Api/webkitgtknetworkrequest.cpp: Added.
+        * gtk/Api/webkitgtknetworkrequest.h: Added.
+        * gtk/Api/webkitgtkpage.cpp: Added.
+        * gtk/Api/webkitgtkpage.h: Added.
+        * gtk/Api/webkitgtkprivate.cpp: Added.
+        * gtk/Api/webkitgtkprivate.h: Added.
+        * gtk/Api/webkitgtksettings.cpp: Added.
+        * gtk/Api/webkitgtksettings.h: Added.
+        * gtk/WebCoreSupport: Added.
+        * gtk/WebCoreSupport/ChromeClientGdk.cpp: Added.
+        (WebCore::ChromeClientGdk::ChromeClientGdk):
+        (WebCore::ChromeClientGdk::chromeDestroyed):
+        (WebCore::ChromeClientGdk::windowRect):
+        (WebCore::ChromeClientGdk::setWindowRect):
+        (WebCore::ChromeClientGdk::pageRect):
+        (WebCore::ChromeClientGdk::scaleFactor):
+        (WebCore::ChromeClientGdk::focus):
+        (WebCore::ChromeClientGdk::unfocus):
+        (WebCore::ChromeClientGdk::createWindow):
+        (WebCore::ChromeClientGdk::createModalDialog):
+        (WebCore::ChromeClientGdk::show):
+        (WebCore::ChromeClientGdk::canRunModal):
+        (WebCore::ChromeClientGdk::runModal):
+        (WebCore::ChromeClientGdk::setToolbarsVisible):
+        (WebCore::ChromeClientGdk::toolbarsVisible):
+        (WebCore::ChromeClientGdk::setStatusbarVisible):
+        (WebCore::ChromeClientGdk::statusbarVisible):
+        (WebCore::ChromeClientGdk::setScrollbarsVisible):
+        (WebCore::ChromeClientGdk::scrollbarsVisible):
+        (WebCore::ChromeClientGdk::setMenubarVisible):
+        (WebCore::ChromeClientGdk::menubarVisible):
+        (WebCore::ChromeClientGdk::setResizable):
+        (WebCore::ChromeClientGdk::closeWindowSoon):
+        (WebCore::ChromeClientGdk::canTakeFocus):
+        (WebCore::ChromeClientGdk::takeFocus):
+        (WebCore::ChromeClientGdk::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientGdk::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientGdk::addMessageToConsole):
+        (WebCore::ChromeClientGdk::runJavaScriptAlert):
+        (WebCore::ChromeClientGdk::runJavaScriptConfirm):
+        (WebCore::ChromeClientGdk::runJavaScriptPrompt):
+        (WebCore::ChromeClientGdk::setStatusbarText):
+        (WebCore::ChromeClientGdk::shouldInterruptJavaScript):
+        (WebCore::ChromeClientGdk::tabsToLinks):
+        (WebCore::ChromeClientGdk::windowResizerRect):
+        (WebCore::ChromeClientGdk::addToDirtyRegion):
+        (WebCore::ChromeClientGdk::scrollBackingStore):
+        (WebCore::ChromeClientGdk::updateBackingStore):
+        (WebCore::ChromeClientGdk::mouseDidMoveOverElement):
+        (WebCore::ChromeClientGdk::setToolTip):
+        (WebCore::ChromeClientGdk::print):
+        * gtk/WebCoreSupport/ChromeClientGdk.h: Added.
+
 2007-07-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver Hunt.

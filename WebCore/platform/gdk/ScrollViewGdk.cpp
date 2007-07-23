@@ -54,8 +54,6 @@ public:
         , vScrollbarMode(ScrollbarAuto)
         , hScrollbarMode(ScrollbarAuto)
         , layout(0)
-        , horizontalAdjustment(0)
-        , verticalAdjustment(0)
         , scrollBarsNeedUpdate(false)
     { }
 
@@ -64,8 +62,6 @@ public:
     ScrollbarMode vScrollbarMode;
     ScrollbarMode hScrollbarMode;
     GtkLayout *layout;
-    GtkAdjustment *horizontalAdjustment;
-    GtkAdjustment *verticalAdjustment;
     IntSize contentsSize;
     IntSize viewPortSize;
     bool scrollBarsNeedUpdate;
@@ -151,14 +147,14 @@ void ScrollView::resizeContents(int w, int h)
 
 int ScrollView::contentsX() const
 {
-    g_return_val_if_fail(m_data->horizontalAdjustment, 0);
-    return static_cast<int>(gtk_adjustment_get_value(m_data->horizontalAdjustment));
+    g_return_val_if_fail(gtk_layout_get_hadjustment(m_data->layout), 0);
+    return static_cast<int>(gtk_adjustment_get_value(gtk_layout_get_hadjustment(m_data->layout)));
 }
 
 int ScrollView::contentsY() const
 {
-    g_return_val_if_fail(m_data->verticalAdjustment, 0);
-    return static_cast<int>(gtk_adjustment_get_value(m_data->verticalAdjustment));
+    g_return_val_if_fail(gtk_layout_get_vadjustment(m_data->layout), 0);
+    return static_cast<int>(gtk_adjustment_get_value(gtk_layout_get_vadjustment(m_data->layout)));
 }
 
 int ScrollView::contentsWidth() const
@@ -179,18 +175,21 @@ IntSize ScrollView::scrollOffset() const
 
 void ScrollView::scrollBy(int dx, int dy)
 {
-    g_return_if_fail(m_data->horizontalAdjustment);
-    g_return_if_fail(m_data->verticalAdjustment);
+    GtkAdjustment* hadj = gtk_layout_get_hadjustment(m_data->layout);
+    GtkAdjustment* vadj = gtk_layout_get_vadjustment(m_data->layout);
+    g_return_if_fail(hadj);
+    g_return_if_fail(vadj);
 
     int current_x = contentsX();
     int current_y = contentsY();
 
-    gtk_adjustment_set_value(m_data->horizontalAdjustment,
-                             CLAMP(current_x+dx, m_data->horizontalAdjustment->lower,
-                                   MAX(0.0, m_data->horizontalAdjustment->upper - m_data->horizontalAdjustment->page_size)));
-    gtk_adjustment_set_value(m_data->verticalAdjustment,
-                             CLAMP(current_y+dy, m_data->verticalAdjustment->lower,
-                                   MAX(0.0, m_data->verticalAdjustment->upper - m_data->verticalAdjustment->page_size)));
+
+    gtk_adjustment_set_value(hadj,
+                             CLAMP(current_x+dx, hadj->lower,
+                                   MAX(0.0, hadj->upper - hadj->page_size)));
+    gtk_adjustment_set_value(vadj,
+                             CLAMP(current_y+dy, vadj->lower,
+                                   MAX(0.0, vadj->upper - vadj->page_size)));
 }
 
 ScrollbarMode ScrollView::hScrollbarMode() const
@@ -256,14 +255,8 @@ void ScrollView::setGtkWidget(GtkLayout* layout)
 {
     g_return_if_fail(GTK_LAYOUT(layout));
     m_data->layout = layout;
-    m_data->horizontalAdjustment = gtk_layout_get_hadjustment(layout);
-    m_data->verticalAdjustment = gtk_layout_get_vadjustment(layout);
 
     Widget::setGtkWidget(GTK_WIDGET(layout));
-    if (!GDK_IS_WINDOW(gdkDrawable())) {
-        LOG_ERROR("image scrollview not supported");
-        return;
-    }
 }
 
 void ScrollView::addChild(Widget* w)
@@ -300,20 +293,23 @@ void ScrollView::wheelEvent(PlatformWheelEvent&)
 
 void ScrollView::updateScrollbars()
 {
-    g_return_if_fail(m_data->horizontalAdjustment);
-    g_return_if_fail(m_data->verticalAdjustment);
+    GtkAdjustment* hadj = gtk_layout_get_hadjustment(m_data->layout);
+    GtkAdjustment* vadj = gtk_layout_get_vadjustment(m_data->layout);
+
+    g_return_if_fail(hadj);
+    g_return_if_fail(vadj);
     
-    m_data->horizontalAdjustment->page_size = visibleWidth();
-    m_data->horizontalAdjustment->step_increment = 13;
+    hadj->page_size = visibleWidth();
+    hadj->step_increment = 13;
     
-    m_data->verticalAdjustment->page_size = visibleHeight();
-    m_data->verticalAdjustment->step_increment = 13;
+    vadj->page_size = visibleHeight();
+    vadj->step_increment = 13;
     
-    gtk_adjustment_changed(m_data->horizontalAdjustment);
-    gtk_adjustment_value_changed(m_data->horizontalAdjustment);
+    gtk_adjustment_changed(hadj);
+    gtk_adjustment_value_changed(hadj);
     
-    gtk_adjustment_changed(m_data->verticalAdjustment);
-    gtk_adjustment_value_changed(m_data->verticalAdjustment);
+    gtk_adjustment_changed(vadj);
+    gtk_adjustment_value_changed(vadj);
 
     m_data->scrollBarsNeedUpdate = false;
 }

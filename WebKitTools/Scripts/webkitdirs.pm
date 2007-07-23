@@ -600,6 +600,13 @@ sub buildQMakeGdkProject($$)
     my $prefix = $ENV{"WebKitInstallationPrefix"};
 
     my @buildArgs = ("-r");
+
+    foreach my $opt (@ARGV) {
+        if ($opt =~ /^--qmakearg=(.*)/i ) {
+            push @buildArgs, $1;
+        }
+    }
+
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, "CONFIG-=qt";
     push @buildArgs, "CONFIG+=gdk-port";

@@ -1,3 +1,12 @@
+2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Add WebKit/gtk/Api and WebCoreSupport API to the INCLUDEPATH to allow GdkLauncher to be
+        build against it.
+
+        * WebKit.pri:
+
 2007-07-18  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

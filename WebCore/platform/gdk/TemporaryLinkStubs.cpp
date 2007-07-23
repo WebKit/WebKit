@@ -31,7 +31,6 @@
 #include "CString.h"
 #include "CachedPage.h"
 #include "CachedResource.h"
-#include "ChromeClientGdk.h"
 #include "Clipboard.h"
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
@@ -89,99 +88,6 @@ int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplemente
 void WebCore::findWordBoundary(UChar const* str, int len, int position, int* start, int* end) {*start = position; *end = position; }
 const char* WebCore::currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
 
-void ChromeClientGdk::chromeDestroyed() { notImplemented(); }
-FloatRect ChromeClientGdk::windowRect() { notImplemented(); return FloatRect(); }
-void ChromeClientGdk::setWindowRect(const FloatRect& r) {notImplemented(); }
-FloatRect ChromeClientGdk::pageRect() { notImplemented(); return FloatRect(); }
-float ChromeClientGdk::scaleFactor() { notImplemented(); return 1.0; }
-void ChromeClientGdk::focus() { notImplemented(); }
-void ChromeClientGdk::unfocus() { notImplemented(); }
-WebCore::Page* ChromeClientGdk::createWindow(Frame*, const FrameLoadRequest&) { notImplemented(); return 0; }
-WebCore::Page* ChromeClientGdk::createModalDialog(Frame*, const FrameLoadRequest&) { notImplemented(); return 0; }
-void ChromeClientGdk::show() { notImplemented(); }
-bool ChromeClientGdk::canRunModal() { notImplemented(); return false; }
-void ChromeClientGdk::runModal() { notImplemented(); }
-void ChromeClientGdk::setToolbarsVisible(bool) { notImplemented(); }
-bool ChromeClientGdk::toolbarsVisible() { notImplemented(); return false; }
-void ChromeClientGdk::setStatusbarVisible(bool) { notImplemented(); }
-bool ChromeClientGdk::statusbarVisible() { notImplemented(); return false; }
-void ChromeClientGdk::setScrollbarsVisible(bool) { notImplemented(); }
-bool ChromeClientGdk::scrollbarsVisible() { notImplemented(); return false; }
-void ChromeClientGdk::setMenubarVisible(bool) { notImplemented(); }
-bool ChromeClientGdk::menubarVisible() { notImplemented(); return false; }
-void ChromeClientGdk::setResizable(bool) { notImplemented(); }
-void ChromeClientGdk::closeWindowSoon() { notImplemented(); }
-bool ChromeClientGdk::canTakeFocus(FocusDirection) { notImplemented(); return true; }
-void ChromeClientGdk::takeFocus(FocusDirection) { notImplemented(); }
-bool ChromeClientGdk::canRunBeforeUnloadConfirmPanel() { notImplemented(); return false; }
-void ChromeClientGdk::addMessageToConsole(const WebCore::String&, unsigned int, const WebCore::String&) { notImplemented(); }
-bool ChromeClientGdk::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::Frame*) { notImplemented(); return false; }
-void ChromeClientGdk::runJavaScriptAlert(Frame*, const String&)
-{
-    notImplemented();
-}
-bool ChromeClientGdk::runJavaScriptConfirm(Frame*, const String&)
-{
-    notImplemented();
-    return false;
-}
-bool ChromeClientGdk::runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result)
-{
-    notImplemented();
-    return false;
-}
-void ChromeClientGdk::setStatusbarText(const String&)
-{
-    notImplemented();
-}
-
-bool ChromeClientGdk::shouldInterruptJavaScript()
-{
-    notImplemented();
-    return false;
-}
-
-bool ChromeClientGdk::tabsToLinks() const
-{
-    notImplemented();
-    return false;
-}
-
-IntRect ChromeClientGdk::windowResizerRect() const
-{
-    notImplemented();
-    return IntRect();
-}
-
-void ChromeClientGdk::addToDirtyRegion(const IntRect&)
-{
-    notImplemented();
-}
-
-void ChromeClientGdk::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    notImplemented();
-}
-
-void ChromeClientGdk::updateBackingStore()
-{
-    notImplemented();
-}
-
-void ChromeClientGdk::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
-{
-    notImplemented();
-}
-
-void ChromeClientGdk::setToolTip(const String&)
-{
-    notImplemented();
-}
-
-void ChromeClientGdk::print(Frame*)
-{
-    notImplemented();
-}
 
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */

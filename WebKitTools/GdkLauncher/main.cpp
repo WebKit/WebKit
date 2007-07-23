@@ -1,131 +1,96 @@
-#include "config.h"
-#include "Platform.h"
-#include "ChromeClientGdk.h"
-#include "ContextMenuClientGdk.h"
-#include "Document.h"
-#include "DragClient.h"
-#include "EditorClientGdk.h"
-#include "FrameGdk.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClientGdk.h"
-#include "FrameView.h"
-#include "InspectorClientGdk.h"
-#include "KURL.h"
-#include "Logging.h"
-#include "Page.h"
-#include "PlatformString.h"
-#include "ResourceHandleManager.h"
+#include "webkitgtkpage.h"
+#include "webkitgtkglobal.h"
 
-#if SVG_SUPPORT
-#include "SVGNames.h"
-#include "XLinkNames.h"
-#include "SVGDocumentExtensions.h"
-#endif
-
-#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-using namespace WebCore;
+#include <string.h>
 
 static GtkWidget* gURLBarEntry;
-static FrameGdk* gFrame = 0;
+static GtkWidget* gTopLevelWindow;
+static WebKitGtkPage* gPage;
+static gchar* gTitle;
+static gint gProgress;
 
 static bool stringIsEqual(const char* str1, const char* str2)
 {
     return 0 == strcmp(str1, str2);
 }
 
-static void handleGdkEvent(GtkWidget* widget, GdkEvent* event)
+static gchar* autocorrectURL(const gchar* url)
 {
-    gFrame->handleGdkEvent(event);
-}
-
-static String autocorrectURL(const String& url)
-{
-    String parsedURL = url;
-    if (!url.startsWith("http://") && !url.startsWith("https://")
-        && !url.startsWith("file://") && !url.startsWith("ftp://"))
-        parsedURL = String("http://") + url;
-    return parsedURL;
+    if (strncmp("http://", url, 7) != 0 && strncmp("https://", url, 8) != 0 && strncmp("file://", url, 7) != 0 && strncmp("ftp://", url, 6) != 0) {
+        GString* string = g_string_new("http://");
+        g_string_append(string, url);
+        return g_string_free(string, FALSE);
+    }
+    
+    return g_strdup(url);
 }
 
 static void goToURLBarText(GtkWidget* urlBarEntry)
 {
-    String url(gtk_entry_get_text(GTK_ENTRY(urlBarEntry)));
-    if (url.isEmpty())
+    const gchar* url = gtk_entry_get_text(GTK_ENTRY(urlBarEntry));
+    if (!url || strlen(url) == 0)
         return;
 
-    String parsedURL = autocorrectURL(url);
-    gFrame->loader()->load(ResourceRequest(parsedURL));
+    gchar* parsedURL = autocorrectURL(url);
+    webkit_gtk_page_open(gPage, parsedURL);
+    g_free(parsedURL);
 }
 
-static void goButtonClickedCallback(GtkWidget* widget, GtkWidget* entry)
+static void goButtonClickedCallback(GtkWidget*, GtkWidget* entry)
 {
     goToURLBarText(entry);
 }
 
-static void urlBarEnterCallback(GtkWidget* widget, GtkWidget* entry)
+static void urlBarEnterCallback(GtkWidget*, GtkWidget* entry)
 {
     goToURLBarText(entry);
 }
 
-static void registerRenderingAreaEvents(GtkWidget* win)
+static void updateWindowTitle()
 {
-    gdk_window_set_events(GTK_IS_LAYOUT(win) ? GTK_LAYOUT(win)->bin_window : win->window,
-                          (GdkEventMask)(GDK_EXPOSURE_MASK
-                            | GDK_BUTTON_PRESS_MASK
-                            | GDK_BUTTON_RELEASE_MASK
-                            | GDK_POINTER_MOTION_MASK
-                            | GDK_KEY_PRESS_MASK
-                            | GDK_KEY_RELEASE_MASK
-                            | GDK_BUTTON_MOTION_MASK
-                            | GDK_BUTTON1_MOTION_MASK
-                            | GDK_BUTTON2_MOTION_MASK
-                            | GDK_BUTTON3_MOTION_MASK));
-
-    g_signal_connect(GTK_OBJECT(win), "expose-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "key-press-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "key-release-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "button-press-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "button-release-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "motion-notify-event", G_CALLBACK(handleGdkEvent), NULL);
-    g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(handleGdkEvent), NULL);
+    GString* string = g_string_new(NULL);
+    g_string_printf(string, "GdkLauncher %s  (%d/100)", gTitle, gProgress);
+    gchar* title = g_string_free(string, FALSE);
+    gtk_window_set_title(GTK_WINDOW(gTopLevelWindow), title);
+    g_free(title);
 }
 
-static void layout_realize_callback(GtkWidget *widget, gpointer)
+static void titleChanged(WebKitGtkPage*, const gchar* title, const gchar* url, WebKitGtkPage*)
 {
-    registerRenderingAreaEvents(widget);
+    gtk_entry_set_text(GTK_ENTRY(gURLBarEntry), url);
+
+    if (gTitle)
+        g_free(gTitle);
+    gTitle = g_strdup(title);
+    updateWindowTitle();
 }
 
-static void frameResizeCallback(GtkWidget* widget, GtkAllocation* allocation, gpointer data)
+static void progressChanged(WebKitGtkPage*, gint progress, WebKitGtkPage*)
 {
-    if (!gFrame)
-        return;
-
-    gFrame->view()->updateGeometry(allocation->width, allocation->height);
-    gFrame->forceLayout();
-    gFrame->view()->adjustViewSize();
-    gFrame->sendResizeEvent();
+    gProgress = progress;
+    updateWindowTitle();
 }
 
-static void frameDestroyCallback(GtkWidget* widget, gpointer data)
+static void frameDestroyCallback(GtkWidget*, gpointer)
 {
     gtk_main_quit();
 }
 
 static void menuMainBackCallback(gpointer data)
 {
-    ASSERT(!data);
-    gFrame->loader()->goBackOrForward(-1);
+    g_assert(!data);
+    webkit_gtk_page_go_backward(gPage);
 }
 
 static void menuMainForwardCallback(gpointer data)
 {
-    ASSERT(!data);
-    gFrame->loader()->goBackOrForward(1);
+    g_assert(!data);
+    webkit_gtk_page_go_forward(gPage);
 }
 
-static void menuMainQuitCallback(gpointer data)
+static void menuMainQuitCallback(gpointer)
 {
     gtk_main_quit();
 }
@@ -133,9 +98,9 @@ static void menuMainQuitCallback(gpointer data)
 int main(int argc, char* argv[]) 
 {
     gtk_init(&argc, &argv);
-    WebCore::InitializeLoggingChannelsIfNecessary();
+    webkit_gtk_init();
 
-    String url("http://www.google.com");
+    gchar* url = "http://www.google.com";
     bool exitAfterLoading = false;
     bool dumpRenderTree = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
@@ -181,12 +146,12 @@ int main(int argc, char* argv[])
     GtkWidget* menuBar = gtk_menu_bar_new();
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuMainRoot);
 
-    GtkWidget* topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(topLevelWindow), 800, 600);
-    gtk_widget_set_name(topLevelWindow, "GdkLauncher");
+    gTopLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(gTopLevelWindow), 800, 600);
+    gtk_widget_set_name(gTopLevelWindow, "GdkLauncher");
     GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(topLevelWindow), vbox);
-    g_signal_connect(G_OBJECT(topLevelWindow), "destroy", G_CALLBACK(frameDestroyCallback), NULL);
+    gtk_container_add(GTK_CONTAINER(gTopLevelWindow), vbox);
+    g_signal_connect(G_OBJECT(gTopLevelWindow), "destroy", G_CALLBACK(frameDestroyCallback), NULL);
 
     GtkWidget* hbox = gtk_hbox_new(FALSE, 2);
     gtk_box_pack_start(GTK_BOX(vbox), menuBar, FALSE, FALSE, 0);
@@ -201,46 +166,19 @@ int main(int argc, char* argv[])
     g_signal_connect(G_OBJECT(urlBarSubmitButton), "clicked", G_CALLBACK(goButtonClickedCallback), (gpointer)gURLBarEntry);
     gtk_widget_show(vbox);
 
-    GtkWidget* scrolledWindow = gtk_scrolled_window_new(0,0);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledWindow),
-                                    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    GtkWidget* scrolledWindow = gtk_scrolled_window_new(NULL,NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow),
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gPage = WEBKIT_GTK_PAGE(webkit_gtk_page_new());
+    gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(gPage));
     gtk_box_pack_start(GTK_BOX(vbox), scrolledWindow, TRUE, TRUE, 0);
-    gtk_widget_show(scrolledWindow);
+    
+    g_signal_connect(gPage, "title-changed", G_CALLBACK(titleChanged), gPage);
+    g_signal_connect(gPage, "load-progress-changed", G_CALLBACK(progressChanged), gPage);
+    webkit_gtk_page_open(gPage, url);
 
-    GtkWidget* layout = gtk_layout_new(gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(scrolledWindow)),
-                                       gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolledWindow)));
-    g_signal_connect_after(G_OBJECT(layout), "realize", G_CALLBACK(layout_realize_callback), NULL );
-    gtk_container_add(GTK_CONTAINER(scrolledWindow), layout);
-
-    g_signal_connect_after(GTK_OBJECT(layout), "size-allocate", G_CALLBACK(frameResizeCallback), NULL);
-    gtk_widget_show(layout);
-    GTK_WIDGET_SET_FLAGS(scrolledWindow, GTK_CAN_FOCUS);
-    GTK_WIDGET_SET_FLAGS(layout, GTK_CAN_FOCUS);
-
-    gtk_widget_show_all(topLevelWindow);
-
-    EditorClientGdk* editorClient = new EditorClientGdk;
-    ContextMenuClient* contextMenuClient = new ContextMenuClientGdk;
-    Page* page = new Page(new ChromeClientGdk, contextMenuClient, editorClient, 0, new InspectorClientGdk);
-    editorClient->setPage(page);
-    FrameLoaderClientGdk* frameLoaderClient = new FrameLoaderClientGdk;
-    gFrame = new FrameGdk(page, 0, frameLoaderClient);
-    gFrame->setExitAfterLoading(exitAfterLoading);
-    gFrame->setDumpRenderTreeAfterLoading(dumpRenderTree);
-
-    FrameView* frameView = new FrameView(gFrame);
-    gFrame->setView(frameView);
-    frameView->setGtkWidget(GTK_LAYOUT(layout));
-
-    gFrame->init();
-    gFrame->loader()->load(ResourceRequest(url));
+    gtk_widget_show_all(gTopLevelWindow);
     gtk_main();
-#if 0 // FIXME: this crashes at the moment. needs to provide DragClient
-    delete page;
-#endif
-    if (FrameLoader* loader = gFrame->loader())
-        loader->stopAllLoaders();
-    delete gFrame;
     return 0;
 }
 
