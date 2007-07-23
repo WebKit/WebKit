@@ -821,12 +821,18 @@ HRESULT STDMETHODCALLTYPE DOMElement::getAttribute(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::setResult( 
-        /* [in] */ BSTR /*name*/,
-        /* [in] */ BSTR /*value*/)
+HRESULT STDMETHODCALLTYPE DOMElement::setAttribute( 
+        /* [in] */ BSTR name,
+        /* [in] */ BSTR value)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_element)
+        return E_FAIL;
+
+    WebCore::String nameString(name, SysStringLen(name));
+    WebCore::String valueString(value, SysStringLen(value));
+    WebCore::ExceptionCode ec = 0;
+    m_element->setAttribute(nameString, valueString, ec);
+    return ec ? E_FAIL : S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMElement::removeAttribute( 

@@ -577,9 +577,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMElement::removeAttribute(name); }
@@ -836,9 +836,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
@@ -1141,9 +1141,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
@@ -1465,9 +1465,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
@@ -1763,9 +1763,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
@@ -2163,9 +2163,9 @@ public:
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE setResult( 
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setResult(name, value); }
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
         /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }

@@ -547,7 +547,7 @@ interface IDOMElement : IDOMNode
     /*
         - (void)setAttribute:(NSString *)name :(NSString *)value;
     */
-    HRESULT setResult([in] BSTR name, [in] BSTR value);
+    HRESULT setAttribute([in] BSTR name, [in] BSTR value);
 
     /*
         - (void)removeAttribute:(NSString *)name;

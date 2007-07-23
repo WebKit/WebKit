@@ -1,3 +1,20 @@
+2007-07-22  Adam Roben  <aroben@apple.com>
+
+        Implement IDOMElement::setAttribute
+
+        This method was mistakenly called "setResult" in DOMCore.idl, so I
+        fixed that as well.
+
+        Needed for <rdar://problem/5314906>.
+
+        Reviewed by Ada.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::setAttribute): Implemented/renamed.
+        * DOMCoreClasses.h: Renamed setResult => setAttribute.
+        * DOMHTMLClasses.h: Ditto.
+        * Interfaces/DOMCore.idl: Ditto.
+
 2007-07-21  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam.
