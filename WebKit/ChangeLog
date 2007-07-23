@@ -1,3 +1,11 @@
+2007-07-23  Alice Liu  <alice.liu@apple.com>
+
+        Reverting change 24535 now that a solution has been found that doesn't 
+        involve exposing an interface unnecessarily.
+
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.

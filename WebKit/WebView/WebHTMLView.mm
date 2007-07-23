@@ -261,6 +261,10 @@ static CachedResourceClient* promisedDataClient()
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
 
+@interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
+- (void)_updateSelectionForInputManager;
+@end
+
 @interface WebHTMLView (WebEditingStyleSupport)
 - (DOMCSSStyleDeclaration *)_emptyStyle;
 - (NSString *)_colorAsString:(NSColor *)color;
