@@ -1,0 +1,4 @@
+ALERT: SUCCESS: If you see this alert the test has succeeded.
+If you don't see an alert dialog (or ALERT text output if you running this under DRT) this test has failed.
+
+

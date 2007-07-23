@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+
+        function runTests()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            alert('SUCCESS: If you see this alert the test has succeeded.');
+        }
+    </script>
+</head>
+<body onload="runTests();">
+    <p>If you don't see an alert dialog (or ALERT text output if you running this under DRT) this test has failed.</p>
+    <div id="alert"></button>
+    <pre id="console"></pre>
+</body>
+</html>

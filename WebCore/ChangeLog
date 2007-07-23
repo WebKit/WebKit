@@ -1,3 +1,16 @@
+2007-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14682
+        REGRESSION(24285-24399): alerts do not appear at W3C RTL test page
+
+        Test: fast/dom/Window/window-function-name-getter-precedence.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot): Make sure to return functions
+        before the custom name getter.
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

@@ -1,3 +1,13 @@
+2007-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for  http://bugs.webkit.org/show_bug.cgi?id=14682
+        REGRESSION(24285-24399): alerts do not appear at W3C RTL test page
+
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt: Added.
+        * fast/dom/Window/window-function-name-getter-precedence.html: Added.
+
 2007-07-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

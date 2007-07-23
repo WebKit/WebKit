@@ -82,6 +82,12 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
                     case CloseFuncNum:
                         slot.setStaticEntry(this, entry, KJS::staticFunctionGetter<JSDOMWindowPrototypeFunction>);
                         return true;
+                    default:
+                        if (!isSafeScript(exec))
+                            slot.setUndefined(this);
+                        else
+                            slot.setStaticEntry(this, entry, KJS::staticFunctionGetter<JSDOMWindowPrototypeFunction>);
+                        return true;
                 }
             }
         }
