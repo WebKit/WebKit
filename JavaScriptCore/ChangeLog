@@ -1,3 +1,9 @@
+2007-07-23  Darin Adler  <darin@apple.com>
+
+        * pcre/pcre_compile.c: Roll back a tiny accidental change in the unused !JAVASCRIPT
+        side of an #ifdef. This has no effect when using PCRE in JAVASCRIPT mode as we do,
+        but seems worth rolling back.
+
 2007-07-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
