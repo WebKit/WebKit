@@ -1,3 +1,12 @@
+2007-07-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - fix Window shadowing regressions caused by the previous commit.
+
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate): Handle the case of global scope specially.
+
 2007-07-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
