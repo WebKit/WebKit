@@ -42,6 +42,7 @@
 #include "SelectionController.h"
 #include "TextIterator.h"
 
+using namespace std;
 using namespace WTF;
 using namespace Unicode;
 
@@ -56,14 +57,15 @@ ContextMenuController* ContextMenu::controller() const
     return 0;
 }
 
-static ContextMenuItem* separatorItem()
+static auto_ptr<ContextMenuItem> separatorItem()
 {
-    return new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String());
+    return auto_ptr<ContextMenuItem>(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
 }
 
 static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuItem& fontMenuItem)
 {
-    ContextMenu* fontMenu = new ContextMenu(result);
+    ContextMenu fontMenu(result);
+
 #if PLATFORM(MAC)
     ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, contextMenuItemTagShowFonts());
 #endif
@@ -77,25 +79,26 @@ static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuI
 #endif
 
 #if PLATFORM(MAC)
-    fontMenu->appendItem(showFonts);
+    fontMenu.appendItem(showFonts);
 #endif
-    fontMenu->appendItem(bold);
-    fontMenu->appendItem(italic);
-    fontMenu->appendItem(underline);
-    fontMenu->appendItem(outline);
+    fontMenu.appendItem(bold);
+    fontMenu.appendItem(italic);
+    fontMenu.appendItem(underline);
+    fontMenu.appendItem(outline);
 #if PLATFORM(MAC)
-    fontMenu->appendItem(styles);
-    fontMenu->appendItem(*separatorItem());
-    fontMenu->appendItem(showColors);
+    fontMenu.appendItem(styles);
+    fontMenu.appendItem(*separatorItem());
+    fontMenu.appendItem(showColors);
 #endif
 
-    fontMenuItem.setSubMenu(fontMenu);
+    fontMenuItem.setSubMenu(&fontMenu);
 }
 
 #ifndef BUILDING_ON_TIGER
 static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
-    ContextMenu* spellingAndGrammarMenu = new ContextMenu(result);
+    ContextMenu spellingAndGrammarMenu(result);
+
     ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, 
         contextMenuItemTagShowSpellingPanel(true));
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, 
@@ -105,18 +108,19 @@ static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result
     ContextMenuItem grammarWithSpelling(ActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
         contextMenuItemTagCheckGrammarWithSpelling());
 
-    spellingAndGrammarMenu->appendItem(showSpellingPanel);
-    spellingAndGrammarMenu->appendItem(checkSpelling);
-    spellingAndGrammarMenu->appendItem(checkAsYouType);
-    spellingAndGrammarMenu->appendItem(grammarWithSpelling);
+    spellingAndGrammarMenu.appendItem(showSpellingPanel);
+    spellingAndGrammarMenu.appendItem(checkSpelling);
+    spellingAndGrammarMenu.appendItem(checkAsYouType);
+    spellingAndGrammarMenu.appendItem(grammarWithSpelling);
 
-    spellingAndGrammarMenuItem.setSubMenu(spellingAndGrammarMenu);
+    spellingAndGrammarMenuItem.setSubMenu(&spellingAndGrammarMenu);
 }
 #else
 
 static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextMenuItem& spellingMenuItem)
 {
-    ContextMenu* spellingMenu = new ContextMenu(result);
+    ContextMenu spellingMenu(result);
+
     ContextMenuItem showSpellingPanel(ActionType, ContextMenuItemTagShowSpellingPanel, 
         contextMenuItemTagShowSpellingPanel(true));
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, 
@@ -124,41 +128,43 @@ static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextM
     ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
         contextMenuItemTagCheckSpellingWhileTyping());
 
-    spellingMenu->appendItem(showSpellingPanel);
-    spellingMenu->appendItem(checkSpelling);
-    spellingMenu->appendItem(checkAsYouType);
+    spellingMenu.appendItem(showSpellingPanel);
+    spellingMenu.appendItem(checkSpelling);
+    spellingMenu.appendItem(checkAsYouType);
 
-    spellingMenuItem.setSubMenu(spellingMenu);
+    spellingMenuItem.setSubMenu(&spellingMenu);
 }
 #endif
 
 #if PLATFORM(MAC)
 static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
-    ContextMenu* speechMenu = new ContextMenu(result);
+    ContextMenu speechMenu(result);
+
     ContextMenuItem start(ActionType, ContextMenuItemTagStartSpeaking, contextMenuItemTagStartSpeaking());
     ContextMenuItem stop(ActionType, ContextMenuItemTagStopSpeaking, contextMenuItemTagStopSpeaking());
 
-    speechMenu->appendItem(start);
-    speechMenu->appendItem(stop);
+    speechMenu.appendItem(start);
+    speechMenu.appendItem(stop);
 
-    speechMenuItem.setSubMenu(speechMenu);
+    speechMenuItem.setSubMenu(&speechMenu);
 }
 #endif
 
 static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
 {
-    ContextMenu* writingDirectionMenu = new ContextMenu(result);
+    ContextMenu writingDirectionMenu(result);
+
     ContextMenuItem defaultItem(ActionType, ContextMenuItemTagDefaultDirection, 
         contextMenuItemTagDefaultDirection());
     ContextMenuItem ltr(ActionType, ContextMenuItemTagLeftToRight, contextMenuItemTagLeftToRight());
     ContextMenuItem rtl(ActionType, ContextMenuItemTagRightToLeft, contextMenuItemTagRightToLeft());
 
-    writingDirectionMenu->appendItem(defaultItem);
-    writingDirectionMenu->appendItem(ltr);
-    writingDirectionMenu->appendItem(rtl);
+    writingDirectionMenu.appendItem(defaultItem);
+    writingDirectionMenu.appendItem(ltr);
+    writingDirectionMenu.appendItem(rtl);
 
-    writingDirectionMenuItem.setSubMenu(writingDirectionMenu);
+    writingDirectionMenuItem.setSubMenu(&writingDirectionMenu);
 }
 
 static bool selectionContainsPossibleWord(Frame* frame)

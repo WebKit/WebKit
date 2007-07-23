@@ -1,5 +1,21 @@
 2007-07-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - fix <rdar://problem/5353263> ContextMenuItem and ContextMenu objects leaking (seen on buildbot)
+
+        * platform/ContextMenu.cpp:
+        (WebCore::separatorItem): Return an auto_ptr instead of a raw pointer, since this function
+        creates an object that's the caller's responsibility to delete.
+        (WebCore::createAndAppendFontSubMenu): Create the context menu on the stack, not the heap,
+        since setSubMenu does not take ownership, and hence the objects were leaking.
+        (WebCore::createAndAppendSpellingAndGrammarSubMenu): Ditto.
+        (WebCore::createAndAppendSpellingSubMenu): Ditto.
+        (WebCore::createAndAppendSpeechSubMenu): Ditto.
+        (WebCore::createAndAppendWritingDirectionSubMenu): Ditto.
+
+2007-07-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin Decker.
 
         - fix <rdar://problem/5126394> REGRESSION: Crash after clicking back button in test application (13250)
