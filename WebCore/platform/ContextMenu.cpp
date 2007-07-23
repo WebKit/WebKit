@@ -41,6 +41,7 @@
 #include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
+#include <memory>
 
 using namespace std;
 using namespace WTF;
