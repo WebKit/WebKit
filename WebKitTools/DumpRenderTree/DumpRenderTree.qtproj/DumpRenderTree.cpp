@@ -53,9 +53,15 @@ const unsigned int maxViewHeight = 600;
 class WebPage : public QWebPage {
 public:
     WebPage(QWidget *parent) : QWebPage(parent) {}
-    
+
+    void javaScriptAlert(QWebFrame *frame, const QString& message);
     void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
 };
+
+void WebPage::javaScriptAlert(QWebFrame *frame, const QString& message)
+{
+    fprintf(stdout, "ALERT: %s\n", message.toUtf8().constData());
+}
 
 void WebPage::javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString&)
 {

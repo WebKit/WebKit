@@ -1,3 +1,12 @@
+2007-07-23  Adam Treat  <treat@kde.org>
+
+        Reviewed by Nikolas.
+
+        Fix qt DRT to suppress js popup alerts and log instead.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::WebPage::javaScriptAlert):
+
 2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
