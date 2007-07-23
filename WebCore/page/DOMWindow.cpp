@@ -55,11 +55,6 @@ DOMWindow::~DOMWindow()
 {
 }
 
-Frame* DOMWindow::frame()
-{
-    return m_frame;
-}
-
 void DOMWindow::disconnectFrame()
 {
     m_frame = 0;

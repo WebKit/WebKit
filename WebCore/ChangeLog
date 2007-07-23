@@ -1,3 +1,17 @@
+2007-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5353174> REGRESSION: 1% JavaScript performance regression fro Window refactoring (14717)
+        http://bugs.webkit.org/show_bug.cgi?id=14717
+        
+        * bindings/js/kjs_window.cpp:
+        * bindings/js/kjs_window.h:
+        (KJS::Window::impl): inlined
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::frame): inlined
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         * platform/ContextMenu.cpp: Added missing include.
