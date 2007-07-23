@@ -1,3 +1,14 @@
+2007-07-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/5327887> Printing Mail note (or Safari page) with misspelled word prints red underline
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        When printing, bail out without doing any work. Also moved a couple of lines down below another early
+        bailout since they were pointless above it.
+
 2007-07-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
