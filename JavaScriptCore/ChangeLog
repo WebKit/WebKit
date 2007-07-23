@@ -2,6 +2,15 @@
 
         Reviewed by Oliver.
         
+        - fix remaining problems with Window shadowing
+
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate): Tweak the special case a little.
+
+2007-07-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
         - fix Window shadowing regressions caused by the previous commit.
 
         * kjs/nodes.cpp:

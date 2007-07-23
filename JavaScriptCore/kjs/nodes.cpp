@@ -1623,7 +1623,17 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
 
     ASSERT(!chain.isEmpty());
 
-    if (init) {
+    bool inGlobalScope = ++chain.begin() == chain.end();
+
+    if (inGlobalScope && (init || !variableObject->getDirect(ident))) {
+        JSValue* val = init ? init->evaluate(exec) : jsUndefined();
+        int flags = Internal;
+        if (exec->context()->codeType() != EvalCode)
+            flags |= DontDelete;
+        if (varType == VarDeclNode::Constant)
+            flags |= ReadOnly;
+        variableObject->putDirect(ident, val, flags);
+    } else if (init) {
         JSValue* val = init->evaluate(exec);
         KJS_CHECKEXCEPTIONVALUE
             
@@ -1638,28 +1648,8 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
         if (varType == VarDeclNode::Constant)
             flags |= ReadOnly;
         
-        if (++chain.begin() == chain.end()) {
-            int flags = Internal;
-            if (exec->context()->codeType() != EvalCode)
-                flags |= DontDelete;
-            if (varType == VarDeclNode::Constant)
-                flags |= ReadOnly;
-            variableObject->putDirect(ident, val, flags);
-        } else {
-            ASSERT(variableObject->getDirect(ident) || ident == exec->propertyNames().arguments);
-            variableObject->put(exec, ident, val, flags);
-        }
-    } else {
-        if (++chain.begin() == chain.end()) {
-            int flags = Internal;
-            if (exec->context()->codeType() != EvalCode)
-                flags |= DontDelete;
-            if (varType == VarDeclNode::Constant)
-                flags |= ReadOnly;
-            variableObject->putDirect(ident, jsUndefined(), flags);
-        } else {
-
-        }
+        ASSERT(variableObject->getDirect(ident) || ident == exec->propertyNames().arguments);
+        variableObject->put(exec, ident, val, flags);
     }
 
     // no caller of this function actually uses the return value. 
