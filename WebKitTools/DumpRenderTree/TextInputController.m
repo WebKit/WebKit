@@ -409,6 +409,8 @@
     [eventParam setValue:[NSNumber numberWithBool:[event isARepeat]] forKey:@"isARepeat"];
     [eventParam setValue:[NSNumber numberWithUnsignedShort:[event keyCode]] forKey:@"keyCode"];
     [eventParam setValue:modifiers forKey:@"modifierFlags"];
+
+    [modifiers release];
     
     id result = [inputMethodHandler callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:inputMethodHandler, eventParam, nil]];
     if (![result respondsToSelector:@selector(boolValue)] || ![result boolValue]) 
