@@ -1,3 +1,14 @@
+2007-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5045711> 
+        http://bugs.webkit.org/show_bug.cgi?id=12938
+        Google calendar settings page crashes
+
+        * fast/dom/destroy-selected-radio-button-crash-expected.txt: Added.
+        * fast/dom/destroy-selected-radio-button-crash.html: Added.
+
 2007-07-22  Sam Weinig  <sam@webkit.org>
 
         Fix typo.
@@ -225,9 +236,9 @@
 
 2007-07-18  Adam Roben  <aroben@apple.com>
 
-	Disable SSL tests on Windows
+    Disable SSL tests on Windows
 
-	<rdar://problem/5345985> tracks making these tests work
+    <rdar://problem/5345985> tracks making these tests work
 
         Rubberstamed by Mark.
 
@@ -2211,7 +2222,7 @@
         Reviewed by Geoff.
 
         Make sure that the test case tests '\n' and '\r' too.
-		
+        
         * fast/dom/xmlhttprequest-invalid-values.html:
 
 2007-06-20  Mitz Pettel  <mitz@webkit.org>
@@ -2251,8 +2262,8 @@
 
 2007-06-20  Anders Carlsson  <andersca@apple.com>
 
-		Remove the XPath tests, they all pass now.
-		
+        Remove the XPath tests, they all pass now.
+        
         * win/Skipped:
 
 2007-06-19  Geoffrey Garen  <ggaren@apple.com>

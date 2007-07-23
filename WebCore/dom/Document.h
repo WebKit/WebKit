@@ -31,6 +31,7 @@
 #include "DeprecatedValueList.h"
 #include "DocumentMarker.h"
 #include "HTMLCollection.h"
+#include "HTMLFormElement.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -809,9 +810,7 @@ public:
     void registerDisconnectedNodeWithEventListeners(Node*);
     void unregisterDisconnectedNodeWithEventListeners(Node*);
     
-    void radioButtonChecked(HTMLInputElement* caller, HTMLFormElement* form);
-    HTMLInputElement* checkedRadioButtonForGroup(AtomicStringImpl* name, HTMLFormElement* form);
-    void removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElement* form);
+    HTMLFormElement::CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
     
 #if ENABLE(SVG)
     const SVGDocumentExtensions* svgExtensions();
@@ -842,9 +841,8 @@ private:
     InheritedBool m_designMode;
     
     int m_selfOnlyRefCount;
-    typedef HashMap<AtomicStringImpl*, HTMLInputElement*> NameToInputMap;
-    typedef HashMap<HTMLFormElement*, NameToInputMap*> FormToGroupMap;
-    FormToGroupMap m_selectedRadioButtons;
+
+    HTMLFormElement::CheckedRadioButtons m_checkedRadioButtons;
     
     HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::UnnamedCollectionTypes];
     HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo> m_nameCollectionInfo[HTMLCollection::CollectionTypes - HTMLCollection::UnnamedCollectionTypes];

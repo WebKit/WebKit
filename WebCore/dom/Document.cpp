@@ -411,8 +411,6 @@ Document::~Document()
         delete m_jsEditor;
         m_jsEditor = 0;
     }
-    
-    deleteAllValues(m_selectedRadioButtons);
 }
 
 void Document::resetLinkColor()
@@ -3307,52 +3305,6 @@ SVGDocumentExtensions* Document::accessSVGExtensions()
     return m_svgExtensions;
 }
 #endif
-
-void Document::radioButtonChecked(HTMLInputElement *caller, HTMLFormElement *form)
-{
-    // Without a name, there is no group.
-    if (caller->name().isEmpty())
-        return;
-    if (!form)
-        form = defaultForm;
-    // Uncheck the currently selected item
-    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
-    if (!formRadioButtons) {
-        formRadioButtons = new NameToInputMap;
-        m_selectedRadioButtons.set(form, formRadioButtons);
-    }
-    
-    HTMLInputElement* currentCheckedRadio = formRadioButtons->get(caller->name().impl());
-    if (currentCheckedRadio && currentCheckedRadio != caller)
-        currentCheckedRadio->setChecked(false);
-
-    formRadioButtons->set(caller->name().impl(), caller);
-}
-
-HTMLInputElement* Document::checkedRadioButtonForGroup(AtomicStringImpl* name, HTMLFormElement *form)
-{
-    if (!form)
-        form = defaultForm;
-    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
-    if (!formRadioButtons)
-        return 0;
-    
-    return formRadioButtons->get(name);
-}
-
-void Document::removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElement *form)
-{
-    if (!form)
-        form = defaultForm;
-    NameToInputMap* formRadioButtons = m_selectedRadioButtons.get(form);
-    if (formRadioButtons) {
-        formRadioButtons->remove(name);
-        if (formRadioButtons->isEmpty()) {
-            m_selectedRadioButtons.remove(form);
-            delete formRadioButtons;
-        }
-    }
-}
 
 PassRefPtr<HTMLCollection> Document::images()
 {

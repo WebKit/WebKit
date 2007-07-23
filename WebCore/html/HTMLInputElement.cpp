@@ -142,12 +142,23 @@ HTMLInputElement::~HTMLInputElement()
 {
     if (inputType() == PASSWORD)
         document()->unregisterForDidRestoreFromCacheCallback(this);
+
+    document()->checkedRadioButtons().removeButton(this);
+    
     delete m_imageLoader;
 }
 
 const AtomicString& HTMLInputElement::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
+}
+
+static inline HTMLFormElement::CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
+{
+    if (HTMLFormElement* form = element->form())
+        return form->checkedRadioButtons();
+    
+    return element->document()->checkedRadioButtons();
 }
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -176,7 +187,7 @@ bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
         }
         
         // Allow keyboard focus if we're checked or if nothing in the group is checked.
-        return checked() || !document()->checkedRadioButtonForGroup(name().impl(), form());
+        return checked() || !checkedRadioButtons(this).checkedButtonForGroup(name());
     }
     
     return true;
@@ -301,9 +312,7 @@ void HTMLInputElement::setInputType(const String& t)
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
         else {
-            if (inputType() == RADIO && !name().isEmpty())
-                if (document()->checkedRadioButtonForGroup(name().impl(), form()) == this)
-                    document()->removeRadioButtonGroup(name().impl(), form());
+            checkedRadioButtons(this).removeButton(this);
 
             bool wasAttached = m_attached;
             if (wasAttached)
@@ -344,10 +353,7 @@ void HTMLInputElement::setInputType(const String& t)
             if (wasAttached)
                 attach();
 
-            // If our type morphs into a radio button and we are checked, then go ahead
-            // and signal this to the form.
-            if (inputType() == RADIO && checked())
-                document()->radioButtonChecked(this, form());
+            checkedRadioButtons(this).addButton(this);
         }
     }
     m_haveType = true;
@@ -581,20 +587,9 @@ bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == nameAttr) {
-        if (inputType() == RADIO && checked()) {
-            // Remove the radio from its old group.
-            if (!m_name.isEmpty())
-                document()->removeRadioButtonGroup(m_name.impl(), form());
-        }
-        
-        // Update our cached reference to the name.
+        checkedRadioButtons(this).removeButton(this);
         m_name = attr->value();
-        
-        if (inputType() == RADIO) {
-            // Add the button to its new group.
-            if (checked())
-                document()->radioButtonChecked(this, form());
-        }
+        checkedRadioButtons(this).addButton(this);
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = !equalIgnoringCase(attr->value(), "off");
     } else if (attr->name() == typeAttr) {
@@ -879,12 +874,12 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     if (checked() == nowChecked)
         return;
 
-    if (inputType() == RADIO && nowChecked)
-        document()->radioButtonChecked(this, form());
-
     m_useDefaultChecked = false;
     m_checked = nowChecked;
     setChanged();
+
+    checkedRadioButtons(this).addButton(this);
+    
     if (renderer() && renderer()->style()->hasAppearance())
         theme()->stateChanged(renderer(), CheckedState);
 
@@ -1064,7 +1059,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
             // We really want radio groups to end up in sane states, i.e., to have something checked.
             // Therefore if nothing is currently selected, we won't allow this action to be "undone", since
             // we want some object in the radio group to actually get selected.
-            HTMLInputElement* currRadio = document()->checkedRadioButtonForGroup(name().impl(), form());
+            HTMLInputElement* currRadio = checkedRadioButtons(this).checkedButtonForGroup(name());
             if (currRadio) {
                 // We have a radio button selected that is not us.  Cache it in our result field and ref it so
                 // that it can't be destroyed.
@@ -1480,6 +1475,8 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
     if (inputType() == PASSWORD)
         document()->unregisterForDidRestoreFromCacheCallback(this);
         
+    document()->checkedRadioButtons().removeButton(this);
+    
     HTMLFormControlElementWithState::willMoveToNewOwnerDocument();
 }
 

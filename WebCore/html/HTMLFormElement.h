@@ -27,12 +27,15 @@
 #include "HTMLCollection.h" 
 #include "HTMLElement.h"
 
+#include <wtf/OwnPtr.h>
+
 namespace WebCore {
 
 class Event;
 class FormData;
 class HTMLGenericFormElement;
 class HTMLImageElement;
+class HTMLInputElement;
 class HTMLFormCollection;
 
 class HTMLFormElement : public HTMLElement {
@@ -107,6 +110,19 @@ public:
     // FIXME: Change this to be private after getting rid of all the clients.
     Vector<HTMLGenericFormElement*> formElements;
 
+    class CheckedRadioButtons {
+    public:
+        void addButton(HTMLGenericFormElement*);
+        void removeButton(HTMLGenericFormElement*);
+        HTMLInputElement* checkedButtonForGroup(const AtomicString& name) const;
+
+    private:
+        typedef HashMap<AtomicStringImpl*, HTMLInputElement*> NameToInputMap;
+        OwnPtr<NameToInputMap> m_nameToCheckedRadioButtonMap;
+    };
+    
+    CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
+    
 private:
     void parseEnctype(const String&);
     PassRefPtr<FormData> formData(const char* boundary) const;
@@ -119,6 +135,8 @@ private:
     AliasMap* m_elementAliases;
     HTMLCollection::CollectionInfo* collectionInfo;
 
+    CheckedRadioButtons m_checkedRadioButtons;
+    
     Vector<HTMLImageElement*> imgElements;
     String m_url;
     String m_target;

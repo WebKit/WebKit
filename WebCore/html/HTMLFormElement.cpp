@@ -570,24 +570,15 @@ unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement *e)
 void HTMLFormElement::registerFormElement(HTMLGenericFormElement* e)
 {
     Document* doc = document();
-    if (e->isRadioButton() && !e->name().isEmpty()) {
-        HTMLGenericFormElement* currentCheckedRadio = doc->checkedRadioButtonForGroup(e->name().impl(), 0);
-        if (currentCheckedRadio == e)
-            doc->removeRadioButtonGroup(e->name().impl(), 0);
-        if (e->isChecked())
-            doc->radioButtonChecked(static_cast<HTMLInputElement*>(e), this);
-    }
+    doc->checkedRadioButtons().removeButton(e);
+    m_checkedRadioButtons.addButton(e);
     formElements.insert(formElementIndex(e), e);
     doc->incDOMTreeVersion();
 }
 
 void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
 {
-    if (!e->name().isEmpty()) {
-        HTMLGenericFormElement* currentCheckedRadio = document()->checkedRadioButtonForGroup(e->name().impl(), this);
-        if (currentCheckedRadio == e)
-            document()->removeRadioButtonGroup(e->name().impl(), this);
-    }
+    m_checkedRadioButtons.removeButton(e);
     removeFromVector(formElements, e);
     document()->incDOMTreeVersion();
 }
@@ -704,6 +695,57 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
     // name has been accessed, remember it
     if (namedItems.size() && aliasElem != namedItems.first())
         addElementAlias(static_cast<HTMLGenericFormElement*>(namedItems.first().get()), name);        
+}
+
+void HTMLFormElement::CheckedRadioButtons::addButton(HTMLGenericFormElement* element)
+{
+    // We only want to add radio buttons.
+    if (!element->isRadioButton())
+        return;
+
+    // Without a name, there is no group.
+    if (element->name().isEmpty())
+        return;
+
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
+    // We only track checked buttons.
+    if (!inputElement->checked())
+        return;
+
+    if (!m_nameToCheckedRadioButtonMap)
+        m_nameToCheckedRadioButtonMap.set(new NameToInputMap);
+    else {
+        HTMLInputElement* currentCheckedRadio = m_nameToCheckedRadioButtonMap->get(element->name().impl());
+        if (currentCheckedRadio && currentCheckedRadio != element)
+            currentCheckedRadio->setChecked(false);
+    }
+
+    m_nameToCheckedRadioButtonMap->set(element->name().impl(), inputElement);    
+}
+    
+HTMLInputElement* HTMLFormElement::CheckedRadioButtons::checkedButtonForGroup(const AtomicString& name) const
+{
+    if (!m_nameToCheckedRadioButtonMap)
+        return 0;
+    
+    return m_nameToCheckedRadioButtonMap->get(name.impl());
+}
+
+void HTMLFormElement::CheckedRadioButtons::removeButton(HTMLGenericFormElement* element)
+{
+    if (element->name().isEmpty() || !m_nameToCheckedRadioButtonMap)
+        return;
+    
+    NameToInputMap::iterator it = m_nameToCheckedRadioButtonMap->find(element->name().impl());
+    if (it == m_nameToCheckedRadioButtonMap->end() || it->second != element)
+        return;
+    
+    ASSERT(element->isRadioButton());
+    ASSERT(element->isChecked());
+    
+    m_nameToCheckedRadioButtonMap->remove(it);
+    if (m_nameToCheckedRadioButtonMap->isEmpty())
+        m_nameToCheckedRadioButtonMap.clear();
 }
 
 } // namespace

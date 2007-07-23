@@ -1,3 +1,46 @@
+2007-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5045711> 
+        http://bugs.webkit.org/show_bug.cgi?id=12938
+        Google calendar settings page crashes
+        
+        Move handling of checked radio buttons to a new class, HTMLFormElement::CheckedRadioButtons. 
+        Each <form> element has an instance of this class. For radio buttons without a containing 
+        form, the document has an instance of HTMLFormElement::CheckedRadioButtons where the
+        state of those radio buttons will be stored.
+        be stored.
+        
+        This also fixes another bug where removing a checked radio button that does not have a
+        containing form would not remove the radio button from the checked radio buttons map,
+        which could lead to a crash due to a dangling pointer.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        (WebCore::Document::checkedRadioButtons):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::CheckedRadioButtons::didCheckButton):
+        (WebCore::HTMLFormElement::CheckedRadioButtons::checkedButtonForGroup):
+        (WebCore::HTMLFormElement::CheckedRadioButtons::removeButtonIfChecked):
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::checkedRadioButtons):
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::insertedIntoTree):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::checkedRadioButtons):
+        (WebCore::HTMLInputElement::isKeyboardFocusable):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        * manual-tests/remove-form-node-with-radio-buttons-crash.html: Added.
+
 2007-07-23  David Hyatt  <hyatt@apple.com>
 
         Fix for 5350587, hang in iExploder text 8101.  The code that painted outlines for continuations was buggy
