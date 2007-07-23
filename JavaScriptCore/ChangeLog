@@ -1,3 +1,24 @@
+2007-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        -fixed <rdar://problem/5353293> REGRESSION (r24287): 1% i-Bench JS slowdown from JavaScript compatibility fix (14719)
+        http://bugs.webkit.org/show_bug.cgi?id=14719
+        
+        My fix for this actually resulted in JS iBench being 1% faster than before the regression
+        and the Celtic Kane benchmark being 5% faster than before the regression.
+        
+        * kjs/nodes.cpp:
+        (VarDeclNode::handleSlowCase): factored out the slow code path to be out of line.
+        (VarDeclNode::evaluate): I did a couple of things:
+        (1) Don't check if the variable is already declared by looking for the property in
+        the variable object, that code path was dead code.
+        (2) Special-case the common case where the top of the scope and the variable object
+        are the same; in that case the variable must always be in the variable object.
+        (3) Don't return a jsString() of the variable name, nothing uses the return value
+        from this node types evaluate method.
+        * kjs/nodes.h:
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

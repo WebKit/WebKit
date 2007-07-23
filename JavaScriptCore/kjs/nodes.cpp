@@ -1587,70 +1587,67 @@ VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
 {
 }
 
-// ECMA 12.2
-JSValue *VarDeclNode::evaluate(ExecState *exec)
+JSValue* VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSValue* val)
 {
-  JSObject* variable = exec->context()->variableObject();
+    ScopeChainIterator iter = chain.begin();
+    ScopeChainIterator end = chain.end();        
+    
+    // we must always have something in the scope chain
+    ASSERT(iter != end);
+    
+    PropertySlot slot;
+    JSObject* base;
+    
+    do {
+        base = *iter;
+        if (base->getPropertySlot(exec, ident, slot))
+            break;
+        
+        ++iter;
+    } while (iter != end);
+    
+    unsigned flags = 0;
+    base->getPropertyAttributes(ident, flags);
+    if (varType == VarDeclNode::Constant)
+        flags |= ReadOnly;
+    
+    base->put(exec, ident, val, flags);
+    return 0;
+}
 
-  JSValue* val;
-  if (init) {
-      val = init->evaluate(exec);
-      KJS_CHECKEXCEPTIONVALUE
-      
-      if (variable->getDirect(ident) || ident == exec->propertyNames().arguments) {
-          const ScopeChain& chain = exec->context()->scopeChain();
-          ScopeChainIterator iter = chain.begin();
-          ScopeChainIterator end = chain.end();        
+// ECMA 12.2
+JSValue* VarDeclNode::evaluate(ExecState* exec)
+{
+    JSValue* val;
+    if (init) {
+        val = init->evaluate(exec);
+        KJS_CHECKEXCEPTIONVALUE
+            
+        const ScopeChain& chain = exec->context()->scopeChain();
+        JSObject* variableObject = exec->context()->variableObject();
 
-          // we must always have something in the scope chain
-          ASSERT(iter != end);
+        ASSERT(!chain.isEmpty());
+        ASSERT(variableObject->getDirect(ident) || ident == exec->propertyNames().arguments);
 
-          PropertySlot slot;
-          JSObject* base;
+        // if the variable object is the top of the scope chain, then that must
+        // be where this variable is declared, processVarDecls would have put 
+        // it there. Don't search the scope chain, to optimize this very common case.
+        if (chain.top() != variableObject)
+            return handleSlowCase(exec, chain, val);
 
-          do {
-              base = *iter;
-              if (base->getPropertySlot(exec, ident, slot))
-                  break;
+        unsigned flags = 0;
+        variableObject->getPropertyAttributes(ident, flags);
+        if (varType == VarDeclNode::Constant)
+            flags |= ReadOnly;
+        
+        variableObject->put(exec, ident, val, flags);
+    } 
 
-             ++iter;
-          } while (iter != end);
-
-          unsigned flags = 0;
-          base->getPropertyAttributes(ident, flags);
-          if (varType == VarDeclNode::Constant)
-              flags |= ReadOnly;
-
-          base->put(exec, ident, val, flags);
-          return jsString(ident.ustring());
-      }
-    } else {
-      // already declared? - check with getDirect so you can override
-      // built-in properties of the global object with var declarations.
-      // Also check for 'arguments' property. The 'arguments' cannot be found with
-      // getDirect, because it's created lazily by
-      // ActivationImp::getOwnPropertySlot.
-      // Since variable declarations are always in function scope, 'variable'
-      // will always contain instance of ActivationImp and ActivationImp will
-      // always have 'arguments' property
-      if (variable->getDirect(ident) || ident == exec->propertyNames().arguments)
-          return 0;
-      val = jsUndefined();
-  }
-
-#ifdef KJS_VERBOSE
-  printInfo(exec,(UString("new variable ")+ident.ustring()).cstring().c_str(),val);
-#endif
-  // We use Internal to bypass all checks in derived objects, e.g. so that
-  // "var location" creates a dynamic property instead of activating window.location.
-  int flags = Internal;
-  if (exec->context()->codeType() != EvalCode)
-    flags |= DontDelete;
-  if (varType == VarDeclNode::Constant)
-    flags |= ReadOnly;
-  variable->put(exec, ident, val, flags);
-
-  return jsString(ident.ustring());
+    // no caller of this function actually uses the return value. 
+    // FIXME: It would be better to change the inheritence hierarchy so this
+    // node doesn't even have an evaluate method, but instead a differently named
+    // one with a void return.
+    return 0;
 }
 
 void VarDeclNode::processVarDecls(ExecState *exec)
