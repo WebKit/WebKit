@@ -47,6 +47,10 @@
 - (void)paintHighlightForBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;
 @end
 
+@interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
+- (void)_updateSelectionForInputManager;
+@end
+
 @interface WebHTMLView (WebPrivate)
 
 + (NSArray *)supportedMIMETypes;

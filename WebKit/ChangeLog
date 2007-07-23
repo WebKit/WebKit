@@ -1,3 +1,13 @@
+2007-07-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Expose [WebHTMLView hasMarkedText] to 
+        fix <rdar://problem/4830074> autocomplete breaks Japanese typing
+
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-07-22  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated for recent changes.
