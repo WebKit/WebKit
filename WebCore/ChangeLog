@@ -1,3 +1,21 @@
+2007-07-23  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5350587, hang in iExploder text 8101.  The code that painted outlines for continuations was buggy
+        in that it assumed the chain was always inline-block-inline, but this is only true for the innermost chained
+        continuation.  To make this more robust, we always just use the inline's containing block's containing block,
+        which should be guaranteed to enclose all renderers in the continuation chain.  In addition, there is now a
+        null check (to guarantee no more hangs) and an assert (to check if we hit this situation again where the block
+        used to paint does not properly enclose the continuation chain).
+
+        Reviewed by beth
+
+        fast/inline/outline-continuation.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::RenderInline::paint):
+
 2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.

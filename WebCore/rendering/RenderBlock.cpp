@@ -128,19 +128,14 @@ void RenderBlock::setStyle(RenderStyle* _style)
 
     RenderFlow::setStyle(_style);
 
-    // ### we could save this call when the change only affected
-    // non inherited properties
-    RenderObject *child = firstChild();
-    while (child != 0)
-    {   
-        if (child->isAnonymousBlock())
-        {
+    // FIXME: We could save this call when the change only affected non-inherited properties
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isAnonymousBlock()) {
             RenderStyle* newStyle = new (renderArena()) RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
             child->setStyle(newStyle);
         }
-        child = child->nextSibling();
     }
 
     m_lineHeight = -1;
@@ -1699,10 +1694,12 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
     for (RenderFlowSequencedSet::iterator it = continuations->begin(); it != end; ++it) {
         // Need to add in the coordinates of the intervening blocks.
         RenderFlow* flow = *it;
-        for (RenderBlock* block = flow->containingBlock(); block != this; block = block->containingBlock()) {
+        RenderBlock* block = flow->containingBlock();
+        for ( ; block && block != this; block = block->containingBlock()) {
             tx += block->xPos();
             ty += block->yPos();
-        }        
+        }
+        ASSERT(block);   
         flow->paintOutline(info.context, tx, ty);
     }
     
