@@ -28,6 +28,7 @@
         <li><a href="/quality/testing.html">Regression Testing</a></li>
         <li><a href="/quality/leakhunting.html">Leak Hunting</a></li>
         <li><a href="/quality/testwriting.html">Writing New Tests</a></li>
+        <li><a href="/quality/crashlogs.html">Getting a Crash Log</a></li>
 
         <li class="subtitle">Bugs</li>
 

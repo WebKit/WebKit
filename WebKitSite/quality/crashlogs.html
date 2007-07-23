@@ -1,0 +1,69 @@
+<?php
+    $title = "Getting a Useful Crash Log";
+    include("../header.inc");
+?>
+<h2>Getting a Useful Crash Log</h2>
+<p>Crash logs are incredibly useful when trying to track down a bug, especially if it's not immediately reproducible.</p>
+
+<div class="mac-instructions" id="mac">
+    <h4>Mac OS X</h4>
+    <p>Obtaining a crash log on Mac OS X is incredibly easy since it automatically creates easily accessible crash logs for you.</p>
+    <ol>
+        <li>
+            <p>If WebKit has just crashed or you can easily reproduce the crash, press the Report button on the CrashReporter dialog box
+            to view the crash information.</p>
+            <img src="mac_reportbox.jpg" alt="Mac OS X Crash report box">
+        </li>
+        <li>
+            <p>Copy and paste the entire contents of the top portion of the CrashReporter window into your favorite text editor and
+            upload it as an attachment in Bugzilla.</p>
+            <img src="mac_viewtrace.jpg" alt="Mac OS X Crash log">
+        </li>
+        <li>
+            <p>If the crash report dialog does not appear or the crash is hard to reproduce, you can get the crash log from the
+            <tt>Safari.crash.log</tt> file located in <tt>~/Library/Logs/CrashReporter/</tt>. This file is a plain text file and can
+            be viewed in the default Console.app or your favorite text editor.</p>
+
+            <p><strong>All</strong> of Safari's crashes are logged to this file so please only attach the last crash in it.
+                Crashes are separated by a series of asterisks (&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;)
+                for easy identification.</p>
+        </li>
+    </ol>
+</div>
+
+<div class="windows-instructions" id="win">
+    <h4>Windows XP</h4>
+    <p>Windows XP does not automatically log crashes like OS X, but it does include Dr. Watson, an easy to set up tool that can be
+        configured to log them.</p>
+    <ol>
+        <li>
+            <p>In the Start menu's Run box or from a DOS or Cygwin prompt, enter the command <tt>drwtsn32 -i</tt>.</p>
+            <img src="win_installwatson.jpg" alt="Dr Watson install command">
+        </li>
+        <li>
+            <p>A dialog box will appear informing you that Dr. Watson has been installed as the default debugger. Press OK.</p>
+            <img src="win_watsoninstalled.jpg" alt="Dr Watson was installed box">
+        </li>
+        <li>
+            <p>Crash information will now be logged to the <tt>drwtsn32.log</tt> and <tt>user.dmp</tt> files in
+            <tt>C:\Documents and Settings\All Users\Application Data\Microsoft\Dr Watson\</tt>.</p>
+
+            <p><strong>All</strong> crashes you experience on Windows XP are logged to <tt>drwtsn32.log</tt>.  Dr. Watson will also create
+                a <tt>user.dmp</tt> file that contains a dump of the memory WebKit was using when it crashed. This is generally
+                more useful for debugging a crash than the crash log, but be careful as it is overwritten with every crash.</p>
+
+            <p>When reporting a WebKit bug, please only upload the relevant WebKit portion of the <tt>drwtsn32.log</tt> file as
+                well as the entire <tt>user.dmp</tt> file if possible.</p>
+        </li>
+        <li>
+            <p>Running <tt>drwtsn32</tt> without any options or switches will bring up a window that allows you to change various
+                setting such as moving the log folder to a more easily accessible location or throwing a visual alert letting
+                you know it caught the crash.</p>
+            <img src="win_watsongui.jpg" alt="Dr Watson window">
+        </li>
+    </ol>
+</div>
+
+<?php
+    include("../footer.inc");
+?>

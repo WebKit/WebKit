@@ -1,3 +1,17 @@
+2007-07-22  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add information on getting a useful crash log on Mac and Windows.
+
+        * nav.inc:
+        * quality/crashlogs.html: Added.
+        * quality/mac_reportbox.jpg: Added.
+        * quality/mac_viewtrace.jpg: Added.
+        * quality/win_installwatson.jpg: Added.
+        * quality/win_watsongui.jpg: Added.
+        * quality/win_watsoninstalled.jpg: Added.
+
 2007-07-20  Mark Rowe  <mrowe@apple.com>
 
         Replace symlink with a PHP-level include to allow use of git on Windows without cygwin.
