@@ -1,17 +1,12 @@
 <div>
-    This tests a subset of pseudo-kotoeri behaviour:
-    <ul>
-        <li>All keydown events never result in keypress during composition</li>
-        <li>During composition all keydown events should have keyCode 229, this is necessary to match the behaviour of windows browsers, including WebKit/Win</li>
-    </ul>
-    To test this manually switch to the Kotoeri/Hiragana input method, and type 'toukyou'&lt;enter&gt;&lt;enter&gt;.<br />
-    You should see only a single keypress event, as the very last reported event.
+    This tests that the hangul IM behaviour in which enter both confirms a composition but still sends a keypress for the &lt;enter&gt;.<br />
+    To test manually, switch to the 2-Set Korean IM and type at least two characters and press &lt;enter&gt;, if the behaviour is correct a single keypress event should be fired as the last event.
 </div>
-<input id="targetInput" onkeydown="keyDown()" onkeypress="keyPress()">
+<input id="targetInput" onkeydown="keyDown()" onkeypress="keyPress()"></input>
 <ul id="console"></console>
 
 <script src="logger.js"></script>
-<script src="kotoeri.js"></script>
+<script src="hangul.js"></script>
 <script>
     var shouldBeCompositionEvent = false;
     function keyDown() {
@@ -37,26 +32,17 @@
         else
             log("Received valid keypress event");
     }
-    
+
+
     var targetInput = document.getElementById('targetInput');
     targetInput.focus();
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-        textInputController.setInputMethodHandler(kotoeri);
+        textInputController.setInputMethodHandler(hangul);
         shouldBeCompositionEvent = true;
         eventSender.keyDown('t');
         eventSender.keyDown('o');
-        eventSender.keyDown('u');
-        eventSender.keyDown('k');
-        eventSender.keyDown('y');
-        eventSender.keyDown('o');
-        eventSender.keyDown('u');
-        eventSender.keyDown('\n');
         shouldBeCompositionEvent = false;
         eventSender.keyDown('\n');
-        if (targetInput.value != "toukyou")
-            log("FAILED: Input field should countain the text 'toukyou'");
-        else
-            log("PASSED: Successfully typed 'toukyou'");
     }
 </script> 

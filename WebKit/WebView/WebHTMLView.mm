@@ -5475,10 +5475,6 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (void)insertText:(id)string
 {
-    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
-    // If insertText: is called by interpretKeyEvents, we assume that's the only thing it will do;
-    // we don't handle multiple calls to this the way we do in doCommandBySelector:, and we also
-    // don't handle a mix of doCommandBySelector: and insertText:. 
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
     if (parameters)
@@ -5524,9 +5520,18 @@ BOOL isTextInput(Frame *coreFrame)
         eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
         eventHandled = coreFrame && coreFrame->editor()->insertText(eventText, event);
     }
-
-    if (parameters)
-        parameters->eventWasHandled = eventHandled;
+    
+    if (!parameters)
+        return;
+    
+    if (isFromInputMethod) {
+        // Allow doCommandBySelector: to be called after insertText: by resetting interpretKeyEventsParameters
+        _private->interpretKeyEventsParameters = parameters;
+        parameters->consumedByIM = YES;
+        return;
+    }
+    
+    parameters->eventWasHandled = eventHandled;
 }
 
 - (BOOL)_selectionIsInsideMarkedText

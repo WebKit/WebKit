@@ -1378,53 +1378,60 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
 
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
-    
-    PlatformKeyboardEvent keyEvent = initialKeyEvent;
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
     EventTargetNode* node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return false;
+        
+    if (initialKeyEvent.isKeyUp())
+        return !node->dispatchKeyEvent(initialKeyEvent);
+        
+    m_frame->loader()->resetMultipleFormSubmissionProtection();
     
-    if (!keyEvent.isKeyUp())
-        m_frame->loader()->resetMultipleFormSubmissionProtection();
+    // Prepare the keyPress in advance of the keyDown so we can fire the input method
+    // in advance of keyDown
+    PlatformKeyboardEvent keyPressEvent = initialKeyEvent;    
+    keyPressEvent.setIsAutoRepeat(true);
+    RefPtr<KeyboardEvent> keypress = new KeyboardEvent(keyPressEvent, m_frame->document()->defaultView());
+    keypress->setTarget(node);
     
-    // When performing composition we don't want to send keypress events for autorepeats
-    int windowKey = keyEvent.WindowsKeyCode();
-    if (m_frame->markedTextRange() && !keyEvent.isKeyUp()) {
-        keyEvent.setIsAutoRepeat(false);
-        keyEvent.setWindowsKeyCode(CompositionEventKeyCode);
-    }
+    // Run input method in advance of DOM event handling.  This may result in the IM
+    // modifying the page prior the keydown event, however this behaviour is necessary
+    // in order to match IE
+    m_frame->editor()->handleInputMethodKeypress(keypress.get());
     
-    bool result = !node->dispatchKeyEvent(keyEvent);
+    bool handledByInputMethod = keypress->defaultHandled();
     
-    if (keyEvent.isAutoRepeat() || keyEvent.isKeyUp()) 
-        return result;
+    PlatformKeyboardEvent keyDownEvent = initialKeyEvent; 
+    
+    if (handledByInputMethod) 
+        keyDownEvent.setWindowsKeyCode(CompositionEventKeyCode);
+        
+    // We always send keyDown and keyPress for all events, including autorepeat keys
+    keyDownEvent.setIsAutoRepeat(false);
+    
+    bool result = !node->dispatchKeyEvent(keyDownEvent);
     
     // Focus may have change during the keyDown handling, so refetch node
     node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return result;
     
-    keyEvent.setWindowsKeyCode(windowKey);
-    
-    // Create a keypress event from the keydown event
-    RefPtr<KeyboardEvent> keypress;
-    PlatformKeyboardEvent key = keyEvent;
-    key.setIsAutoRepeat(true);
-    keypress = new KeyboardEvent(key, m_frame->document()->defaultView());
-    keypress->setTarget(node);
-    
-    m_frame->editor()->handleInputMethodKeypress(keypress.get());
-    
     if (keypress->defaultHandled())
         return true;
     
-    if (m_frame->markedTextRange())
+    if (handledByInputMethod)
         return result;
     
+    // If the default handling has been prevented on the keydown, we prevent it on
+    // the keypress as well
+    if (result)
+        keypress->setDefaultHandled();
+    
     ExceptionCode ec;
-    node->dispatchEvent(keypress, ec, true);
+    !node->dispatchEvent(keypress, ec, true);
+    
     return result || keypress->defaultHandled() || keypress->defaultPrevented();
 }
 

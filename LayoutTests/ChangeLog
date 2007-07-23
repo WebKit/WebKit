@@ -1,3 +1,18 @@
+2007-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Added initial pseudo-hangul IM, and tests for behaviour of hangul (<rdar://problem/5352152>)
+        Updated keydown-keypress-preventDefault to be correct, and to have an demonstrate that keys have been inserted.
+        Updated kotoeri test to perform more validation and check against updated behaviour
+
+        * editing/input/mac/hangul-enter-confirms-and-sends-keypress-expected.txt: Added.
+        * editing/input/mac/hangul-enter-confirms-and-sends-keypress.html: Added.
+        * editing/input/mac/hangul.js: Added.
+        * editing/input/mac/kotoeri-enter-to-confirm-and-newline.html:
+        * fast/events/keydown-keypress-preventDefault-expected.txt:
+        * fast/events/keydown-keypress-preventDefault.html:
+
 2007-07-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

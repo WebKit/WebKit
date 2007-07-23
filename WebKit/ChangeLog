@@ -1,3 +1,13 @@
+2007-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        We have to be able to support insertText: followed by doCommandBySelector: in 
+        order to support the 2- and 3-Set Korean and RuSwitcher IMs at least.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
 2007-07-23  Alice Liu  <alice.liu@apple.com>
 
         Reverting change 24535 now that a solution has been found that doesn't 

@@ -1,3 +1,23 @@
+2007-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5353577> WebKit key event behaviour needs to better match other browsers keyevent behaviour
+        <rdar://problem/5352152> REGRESSION (24399-24479): Pressing Enter in a search field at apple.com no longer starts a search with Korean IM
+        <rdar://problem/5352649> WebKit should send keyDown event on autorepeat keyDowns
+        http://bugs.webkit.org/show_bug.cgi?id=14690
+
+        Perform Input Method call first so that our behaviour is determined by whether or not 
+        the input method has actually handle the event, rather than by making guesses based 
+        on the existences of marked text.  This fixes issues with IMs that have side effects
+        even on events they do not handle.
+
+        Refactored the code in order to improve clarity given the hoisting required by performing
+        the IM call earlier.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+
 2007-07-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
