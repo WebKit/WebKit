@@ -31,8 +31,9 @@
 #include "IWebIconDatabase.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WTF/PassRefPtr.h>
-#include <WTF/RefPtr.h>
+#include <WebCore/BString.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class HistoryItem;
@@ -74,10 +75,10 @@ public:
         /* [retval][out] */ DATE *lastVisited);
     
     virtual HRESULT STDMETHODCALLTYPE setAlternateTitle( 
-        /* [retval][out] */ BSTR *title);
+        /* [in] */ BSTR title);
     
     virtual HRESULT STDMETHODCALLTYPE alternateTitle( 
-        /* [in] */ BSTR title);
+        /* [retval][out] */ BSTR* title);
     
     virtual HRESULT STDMETHODCALLTYPE icon( 
         /* [out, retval] */ OLE_HANDLE *hBitmap);
@@ -105,6 +106,7 @@ protected:
     ULONG m_refCount;
 
     RefPtr<WebCore::HistoryItem> m_historyItem;
+    WebCore::BString m_alternateTitle;
 };
 
 #endif

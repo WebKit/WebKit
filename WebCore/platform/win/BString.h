@@ -51,6 +51,7 @@ namespace WebCore {
 
         BString(const BString&);
         BString& operator=(const BString&);
+        BString& operator=(const BSTR&);
 
         operator BSTR() const { return m_bstr; }
 

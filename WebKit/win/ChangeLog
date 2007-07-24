@@ -1,3 +1,18 @@
+2007-07-23  Adam Roben  <aroben@apple.com>
+
+        Implement IWebHistoryItem::[set]AlternateTitle
+
+        The argument types were reversed for these two methods, so I fixed that as
+        well.
+
+        Reviewed by Geoff and Oliver.
+
+        * Interfaces/IWebHistoryItem.idl:
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::setAlternateTitle): Implemented.
+        (WebHistoryItem::alternateTitle): Implemented.
+        * WebHistoryItem.h:
+
 2007-07-23  Ada Chan  <adachan@apple.com>
 
         Reviewed by Steve.

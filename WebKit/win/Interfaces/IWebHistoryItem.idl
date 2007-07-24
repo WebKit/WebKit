@@ -127,7 +127,7 @@ interface IWebHistoryItem : IUnknown
         @abstract A title that may be used by the client to display this item.
         - (void)setAlternateTitle:(NSString *)alternateTitle;
     */
-    HRESULT setAlternateTitle([out, retval] BSTR* title);
+    HRESULT setAlternateTitle([in] BSTR title);
 
     /*
         @method title
@@ -135,7 +135,7 @@ interface IWebHistoryItem : IUnknown
         @result The alternate title for this item.
         - (NSString *)alternateTitle;
     */
-    HRESULT alternateTitle([in] BSTR title);
+    HRESULT alternateTitle([out, retval] BSTR* title);
 
     /*!
         @method icon

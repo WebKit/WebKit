@@ -420,17 +420,22 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitedTimeInterval(
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setAlternateTitle( 
-    /* [retval][out] */ BSTR* /*title*/)
+    /* [in] */ BSTR title)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    m_alternateTitle = title;
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::alternateTitle( 
-    /* [in] */ BSTR /*title*/)
+    /* [retval][out] */ BSTR* title)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!title) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *title = m_alternateTitle;
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::icon( 

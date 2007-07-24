@@ -1,3 +1,13 @@
+2007-07-23  Adam Roben  <aroben@apple.com>
+
+        Add an assignment operator for BString that takes a BSTR
+
+        Reviewed by Geoff and Oliver.
+
+        * platform/win/BString.cpp:
+        (WebCore::BString::operator=):
+        * platform/win/BString.h:
+
 2007-07-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Geoff.

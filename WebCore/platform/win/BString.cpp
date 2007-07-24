@@ -107,13 +107,18 @@ void BString::adoptBSTR(BSTR bstr)
 
 BString& BString::operator=(const BString& other)
 {
-    if (this != &other) {
+    if (this != &other)
+        *this = other.m_bstr;
+    return *this;
+}
+
+BString& BString::operator=(const BSTR& other)
+{
+    if (other != m_bstr) {
         SysFreeString(m_bstr);
-        if (!other.m_bstr)
-            m_bstr = 0;
-        else
-            m_bstr = SysAllocString(other.m_bstr);
+        m_bstr = other ? SysAllocString(other) : 0;
     }
+
     return *this;
 }
 
