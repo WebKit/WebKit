@@ -1,3 +1,20 @@
+2007-07-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14714 REGRESSION: 
+        ASSERTION FAILED: i < size() in Vector.h:401 on negative -webkit-
+        column-width
+        - and -
+        http://bugs.webkit.org/show_bug.cgi?id=14718 REGRESSION: ASSERTION 
+        FAILED: i < size() in Vector.h:401 on zero -webkit-column-count
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcColumnWidth): Make 1 the minimum value 
+        for column-width and column-count. Since the spec does not address 
+        what to do with negative values for these properties, we are 
+        patching the rendering code instead of the parser.
+
 2007-07-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Steve.
