@@ -1,3 +1,11 @@
+2007-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Remove http/tests/multipart/invalid-image-data.html which no longer fails on Leopard.
+        
+        * mac/leopard/Skipped:
+
 2007-07-23  Justin Garcia  <justin.garcia@apple.com>
 
         <rdar://problem/5228167> REGRESSION: editing/execCommand/5119244.html failing on Leopard
