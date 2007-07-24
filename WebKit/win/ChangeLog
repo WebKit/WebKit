@@ -1,3 +1,12 @@
+2007-07-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Removed touch of WebKit.rc to prevent rebuilds of the rc file.
+        The autoversion info can get slightly out of date now, but this isn't a huge problem relative to the rebuilds.
+        
+        Rubber-stamped by Adam.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-07-23  Steve Falkenburg  <sfalken@apple.com>
 
         Fixes to versioning script.
