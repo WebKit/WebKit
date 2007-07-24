@@ -1,3 +1,18 @@
+2007-07-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Geoff.
+        
+        <rdar://problem/5354455> Word selection when right-clicking can be confusing (14728)
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent): In non-editable content,
+        only do word selection over text.  In editable content, we will continue
+        to select images, line breaks and other elements on right-clicks, to match 
+        TextEdit.  For now, in editable content, we'll live with the cases where 
+        positionForPoint creates selections that aren't underneath the mouse.  These
+        aren't regressions because we've always done word selection on right clicks
+        in editable content.
+
 2007-07-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

@@ -1306,7 +1306,11 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     IntPoint viewportPos = v->windowToContents(event.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(HitTestRequest(false, true), viewportPos, event);
 
-    if (!m_frame->selectionController()->contains(viewportPos)) {
+    if (!m_frame->selectionController()->contains(viewportPos) && 
+        // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
+        // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
+        // available for text selections.  But only if we're above text.
+        (m_frame->selectionController()->isContentEditable() || mev.targetNode() && mev.targetNode()->isTextNode())) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordFromMouseEvent(mev);
     }

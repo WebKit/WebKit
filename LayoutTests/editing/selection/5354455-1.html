@@ -1,0 +1,20 @@
+<p>This tests to make sure that right clicking on a paragraph break in editable content selects it.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
+<div id="div" contenteditable="true">
+<div><span id="text">The paragraph break should be selected.</span></div>
+<br>
+</div>
+
+<script>
+if (window.layoutTestController) {
+    paragraph = document.getElementById("text");
+    x = paragraph.offsetParent.offsetLeft + paragraph.offsetLeft + paragraph.offsetWidth + 10;
+    y = paragraph.offsetParent.offsetTop + paragraph.offsetTop + paragraph.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    // Give the editable region focus.
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    // Right click on the paragraph break to select it.
+    eventSender.contextClick();   
+}
+</script>
+
