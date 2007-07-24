@@ -37,6 +37,7 @@ typedef CGFontIndex CGGlyph;
 typedef wchar_t UChar;
 
 void wkSetFontSmoothingLevel(int type);
+int wkGetFontSmoothingLevel();
 uint32_t wkSetFontSmoothingStyle(CGContextRef cg);
 void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
