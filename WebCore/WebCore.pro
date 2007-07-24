@@ -90,7 +90,7 @@ gdk-port {
                   platform/graphics/cairo     \
                   platform/graphics/svg/cairo \
                   platform/network/curl       \
-                  ../WebKit/gtk/Api           \ 
+                  ../WebKit/gtk/Api           \
                   ../WebKit/gtk/WebCoreSupport
 }
 
@@ -1365,7 +1365,7 @@ QMAKE_EXTRA_COMPILERS += xmlnames
 # GENERATOR 6-A:
 cssprops.output = tmp/CSSPropertyNames.c
 cssprops.input = WALDOCSSPROPS
-cssprops.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makeprop && rm ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssprops.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && rm ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.CONFIG = target_predeps no_link
 cssprops.clean = ${QMAKE_FILE_OUT} tmp/CSSPropertyNames.h
 QMAKE_EXTRA_COMPILERS += cssprops
@@ -1373,7 +1373,7 @@ QMAKE_EXTRA_COMPILERS += cssprops
 # GENERATOR 6-B:
 cssvalues.output = tmp/CSSValueKeywords.c
 cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makevalues && rm CSSValueKeywords.in CSSValueKeywords.strip CSSValueKeywords.gperf
+cssvalues.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && rm CSSValueKeywords.in CSSValueKeywords.gperf
 cssvalues.CONFIG = target_predeps no_link
 cssvalues.clean = ${QMAKE_FILE_OUT} tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += cssvalues

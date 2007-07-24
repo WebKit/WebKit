@@ -565,13 +565,13 @@ all : \
 
 # CSS property names and value keywords
 
-CSSPropertyNames.h : css/CSSPropertyNames.in css/makeprop
+CSSPropertyNames.h : css/CSSPropertyNames.in css/makeprop.pl
 	cat $< > CSSPropertyNames.in
-	sh "$(WebCore)/css/makeprop"
+	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.h : css/CSSValueKeywords.in css/makevalues
+CSSValueKeywords.h : css/CSSValueKeywords.in css/makevalues.pl
 	cat $< > CSSValueKeywords.in
-	sh "$(WebCore)/css/makevalues"
+	perl "$(WebCore)/css/makevalues.pl"
 
 # DOCTYPE strings
 

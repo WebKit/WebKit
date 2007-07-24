@@ -1,3 +1,17 @@
+2007-07-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Adam Roben & David Kilzer.
+
+        replace the makeprop and makevalues shell scripts by equivalent perl versions. This is required to remove the last shell dependency when building QtWebKit on Windows.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/makeprop: Added.
+        * css/makeprop.pl: Removed.
+        * css/makevalues: Added.
+        * css/makevalues.pl: Removed.
+
 2007-07-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

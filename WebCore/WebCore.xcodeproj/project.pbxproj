@@ -4777,9 +4777,9 @@
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
 		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
-		93CA4C9B09DF93FA00DF8677 /* makeprop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop; sourceTree = "<group>"; };
+		93CA4C9B09DF93FA00DF8677 /* makeprop.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop.pl; sourceTree = "<group>"; };
 		93CA4C9C09DF93FA00DF8677 /* maketokenizer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = maketokenizer; sourceTree = "<group>"; };
-		93CA4C9D09DF93FA00DF8677 /* makevalues */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues; sourceTree = "<group>"; };
+		93CA4C9D09DF93FA00DF8677 /* makevalues.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues.pl; sourceTree = "<group>"; };
 		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		93CA4CA309DF93FA00DF8677 /* tokenizer.flex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer.flex; sourceTree = "<group>"; };
@@ -9798,9 +9798,9 @@
 				A80E6CC30A1989CA007FB8C5 /* FontValue.h */,
 				93CA4C9909DF93FA00DF8677 /* html4.css */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
-				93CA4C9B09DF93FA00DF8677 /* makeprop */,
+				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
-				93CA4C9D09DF93FA00DF8677 /* makevalues */,
+				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
 				4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */,
 				4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */,
 				A8EA80010A19516E00A8EF5F /* MediaList.cpp */,
