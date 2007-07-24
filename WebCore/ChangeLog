@@ -1,3 +1,63 @@
+2007-07-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14684
+          Hebrew text in Safari chrome is reversed (LTR instead of RTL)
+
+        Test: fast/text/drawBidiText.html
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * manual-tests/chrome-bidi-text.html: Added.
+        * manual-tests/resources/chrome-bidi-text-window.html: Added.
+        * platform/BidiReorderCharacters.cpp: Removed.
+        * platform/BidiReorderCharacters.h: Removed.
+        * platform/BidiResolver.h:
+        (WebCore::BidiCharacterRun::start): Added accessor method.
+        (WebCore::BidiCharacterRun::stop): Ditto.
+        (WebCore::BidiCharacterRun::level): Ditto.
+        (WebCore::BidiCharacterRun::next): Ditto.
+        (WebCore::::appendRun): Added default implementation.
+        * platform/TextStyle.h:
+        (WebCore::TextStyle::setDirectionalOverride): Added accessor method.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextRunIterator::TextRunIterator): Added. A BidiResolver-
+        compliant iterator over the characters in a TextRun.
+        (WebCore::TextRunIterator::offset):
+        (WebCore::TextRunIterator::increment):
+        (WebCore::TextRunIterator::atEnd):
+        (WebCore::TextRunIterator::current):
+        (WebCore::TextRunIterator::direction):
+        (WebCore::TextRunIterator::operator==):
+        (WebCore::TextRunIterator::operator!=):
+        (WebCore::GraphicsContext::drawBidiText): Added. Applies the Unicode
+        Bidi Algorithm to the text and draws the resulting unidirectional runs
+        in the right order and with the right directionality.
+        * platform/graphics/GraphicsContext.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint): Replaced the use of a character buffer
+        and BidiReorderCharacters with calling to drawBidiText(). Removed special
+        handling of '-webkit-rtl-ordering:visual' because that CSS property is an
+        implementation detail of WebCore's visual Hebrew support, and the UA stylesheet
+        sets it to 'logical' for this form control. Authors can specify the ordering
+        using the 'direction' and 'unicode-bidi' properties.
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::isOneLeftToRightRun): Added. Checks if the text consists of
+        a single left-to-right run, in which case it requires no bidi processing.
+        (WebCore::doDrawTextAtPoint): Changed to call drawBidiText if the text
+        is not entirely left-to-right.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject): Replaced the use of a
+        character buffer in BidiReorderCharacters with calling to drawBidiText().
+        Removed special handling of '-webkit-rtl-ordering:visual' for the same reason
+        stated above.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground): Ditto. Also changed the
+        run-rounding modes used when drawing to match those used when measuring.
+
 2007-07-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Steve.

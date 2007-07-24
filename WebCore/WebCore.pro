@@ -590,7 +590,6 @@ SOURCES += \
     platform/AtomicString.cpp \
     platform/Base64.cpp \
     platform/BidiContext.cpp \
-    platform/BidiReorderCharacters.cpp \
     platform/ContextMenu.cpp \
     platform/CString.cpp \
     platform/DeprecatedCString.cpp \

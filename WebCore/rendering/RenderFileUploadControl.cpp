@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
-#include "BidiReorderCharacters.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -177,17 +176,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         const String& displayedFilename = m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());        
         unsigned length = displayedFilename.length();
         const UChar* string = displayedFilename.characters();
-        TextStyle textStyle(0, 0, 0, false, true);
-        CharacterBuffer characterBuffer;
-
-        if (style()->direction() == RTL && style()->unicodeBidi() == Override)
-            textStyle.setRTL(true);
-        else if ((style()->direction() == RTL || style()->unicodeBidi() != Override) && !style()->visuallyOrdered()) {
-            // If necessary, reorder characters by running the string through the bidi algorithm
-            characterBuffer.append(string, length);
-            bidiReorderCharacters(characterBuffer, style()->direction() == RTL, style()->unicodeBidi() == Override, style()->visuallyOrdered());
-            string = characterBuffer.data();
-        }
+        TextStyle textStyle(0, 0, 0, style()->direction() == RTL, style()->unicodeBidi() == Override);
         TextRun textRun(string, length);
         
         // Determine where the filename should be placed
@@ -209,7 +198,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.context->setFillColor(style()->color());
         
         // Draw the filename
-        paintInfo.context->drawText(textRun, IntPoint(textX, textY), textStyle);
+        paintInfo.context->drawBidiText(textRun, IntPoint(textX, textY), textStyle);
         
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed

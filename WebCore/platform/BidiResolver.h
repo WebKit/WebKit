@@ -86,10 +86,13 @@ struct BidiCharacterRun {
         }
     }
 
+    int start() const { return m_start; }
+    int stop() const { return m_stop; }
+    unsigned char level() const { return m_level; }
     bool reversed(bool visuallyOrdered) { return m_level % 2 && !visuallyOrdered; }
     bool dirOverride(bool visuallyOrdered) { return m_override || visuallyOrdered; }
 
-    BidiCharacterRun* next() { return m_next; }
+    BidiCharacterRun* next() const { return m_next; }
 
     unsigned char m_level;
     int m_start;
@@ -157,6 +160,26 @@ protected:
     Run* m_lastRun;
     int m_runCount;
 };
+
+template <class Iterator, class Run>
+void BidiResolver<Iterator, Run>::appendRun()
+{
+    if (emptyRun || eor.atEnd())
+        return;
+
+    Run* bidiRun = new Run(sor.offset(), eor.offset() + 1, context(), m_direction);
+    if (!m_firstRun)
+        m_firstRun = bidiRun;
+    else
+        m_lastRun->m_next = bidiRun;
+    m_lastRun = bidiRun;
+    m_runCount++;
+
+    eor.increment(*this);
+    sor = eor;
+    m_direction = WTF::Unicode::OtherNeutral;
+    m_status.eor = WTF::Unicode::OtherNeutral;
+}
 
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)

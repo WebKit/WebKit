@@ -50,6 +50,7 @@ public:
 
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setRTL(bool b) { m_rtl = b; }
+    void setDirectionalOverride(bool override) { m_directionalOverride = override; }
     
 private:
     bool m_allowTabs;

@@ -2727,8 +2727,6 @@
 		B2FA3E170AB75A6F000E5AC4 /* JSSVGViewElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */; };
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
-		B402007C0C4D217800210AA6 /* BidiReorderCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */; };
-		B402007D0C4D217800210AA6 /* BidiReorderCharacters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */; };
 		B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B402FD090C4C9C3900210AA6 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
@@ -6058,8 +6056,6 @@
 		B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGViewElement.h; sourceTree = "<group>"; };
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
-		B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiReorderCharacters.h; sourceTree = "<group>"; };
-		B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BidiReorderCharacters.cpp; sourceTree = "<group>"; };
 		B402FD090C4C9C3900210AA6 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
 		BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableSectionElement.cpp; sourceTree = "<group>"; };
@@ -9525,8 +9521,6 @@
 				E11D51920B2E7A5F0056C188 /* Base64.cpp */,
 				514AF320BE854014A7DA49FB /* BidiContext.h */,
 				A579C284B928484FB9A446BC /* BidiContext.cpp */,
-				B402007A0C4D217800210AA6 /* BidiReorderCharacters.h */,
-				B402007B0C4D217800210AA6 /* BidiReorderCharacters.cpp */,
 				B402FD090C4C9C3900210AA6 /* BidiResolver.h */,
 				65F5382009B2B55700F3DC4A /* character-sets.txt */,
 				93C7B5F30B52D89100B5477E /* CharacterNames.h */,
@@ -11701,7 +11695,6 @@
 				BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */,
-				B402007C0C4D217800210AA6 /* BidiReorderCharacters.h in Headers */,
 				0F31CBF92B654730BA0535E8 /* BidiContext.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 			);
@@ -13142,7 +13135,6 @@
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
 				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
 				F971E27FD70F4382BC66D792 /* BidiContext.cpp in Sources */,
-				B402007D0C4D217800210AA6 /* BidiReorderCharacters.cpp in Sources */,
 				1432E8490C51493F00B1500F /* GCController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

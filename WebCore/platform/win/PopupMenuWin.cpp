@@ -21,7 +21,6 @@
 #include "config.h"
 #include "PopupMenu.h"
 
-#include "BidiReorderCharacters.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "FontData.h"
@@ -492,17 +491,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        TextStyle textStyle(0, 0, 0, false, true);
-        CharacterBuffer characterBuffer;
-
-        if (clientStyle->direction() == RTL && clientStyle->unicodeBidi() == Override)
-            textStyle.setRTL(true);
-        else if ((clientStyle->direction() == RTL || clientStyle->unicodeBidi() != Override) && !clientStyle->visuallyOrdered()) {
-            // If necessary, reorder characters by running the string through the bidi algorithm
-            characterBuffer.append(string, length);
-            bidiReorderCharacters(characterBuffer, clientStyle->direction() == RTL, clientStyle->unicodeBidi() == Override, clientStyle->visuallyOrdered());
-            string = characterBuffer.data();
-        }
+        TextStyle textStyle(0, 0, 0, clientStyle->direction() == RTL, clientStyle->unicodeBidi() == Override);
         TextRun textRun(string, length);
 
         context.setFillColor(optionTextColor);
@@ -520,7 +509,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         if (itemStyle->visibility() != HIDDEN) {
             int textX = client()->clientPaddingLeft();
             int textY = itemRect.y() + itemFont.ascent() + (itemRect.height() - itemFont.height()) / 2;
-            context.drawText(textRun, IntPoint(textX, textY), textStyle);
+            context.drawBidiText(textRun, IntPoint(textX, textY), textStyle);
         }
     }
 

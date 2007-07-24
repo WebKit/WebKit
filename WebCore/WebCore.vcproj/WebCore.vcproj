@@ -2898,14 +2898,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\BidiReorderCharacters.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\BidiReorderCharacters.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\BidiResolver.h"
 				>
 			</File>

@@ -1,3 +1,38 @@
+2007-07-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test, updated tests and updated results for
+          http://bugs.webkit.org/show_bug.cgi?id=14684
+          Hebrew text in Safari chrome is reversed (LTR instead of RTL)
+
+        * fast/forms/HTMLOptionElement_label05-expected.checksum:
+        * fast/forms/HTMLOptionElement_label05-expected.png:
+        * fast/forms/listbox-deselect-scroll-expected.checksum:
+        * fast/forms/listbox-deselect-scroll-expected.png:
+        * fast/forms/listbox-width-change-expected.checksum:
+        * fast/forms/listbox-width-change-expected.png:
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.png:
+        * fast/forms/select-change-popup-to-listbox-expected.checksum:
+        * fast/forms/select-change-popup-to-listbox-expected.png:
+        * fast/forms/select-initial-position-expected.checksum:
+        * fast/forms/select-initial-position-expected.png:
+        * fast/text/drawBidiText-expected.checksum: Added.
+        * fast/text/drawBidiText-expected.png: Added.
+        * fast/text/drawBidiText-expected.txt: Added.
+        * fast/text/drawBidiText.html: Added.
+        * fast/text/international/bidi-listbox-atsui-expected.checksum:
+        * fast/text/international/bidi-listbox-atsui-expected.png:
+        * fast/text/international/bidi-listbox-atsui-expected.txt:
+        * fast/text/international/bidi-listbox-atsui.html: Removed the
+        visual ordering cases.
+        * fast/text/international/bidi-listbox-expected.checksum:
+        * fast/text/international/bidi-listbox-expected.png:
+        * fast/text/international/bidi-listbox-expected.txt:
+        * fast/text/international/bidi-listbox.html: Removed the visual ordering
+        cases because the patch removed special handling of visual ordering.
+
 2007-07-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Geoff.

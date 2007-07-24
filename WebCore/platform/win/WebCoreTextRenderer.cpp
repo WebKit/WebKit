@@ -30,8 +30,20 @@
 #include "GraphicsContext.h"
 #include "StringTruncator.h"
 #include "TextStyle.h"
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
+
+static bool isOneLeftToRightRun(const TextRun& run)
+{
+    unsigned i;
+    for (i = 0; i < run.length(); i++) {
+        WTF::Unicode::Direction direction = WTF::Unicode::direction(run[i]);
+        if (direction == WTF::Unicode::RightToLeft || direction > WTF::Unicode::OtherNeutral)
+            return false;
+    }
+    return true;
+}
 
 static void doDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& color, int underlinedIndex)
 {
@@ -39,7 +51,12 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     TextStyle style;
 
     context.setFillColor(color);
-    font.drawText(&context, run, style, point);
+    if (isOneLeftToRightRun(run))
+        font.drawText(&context, run, style, point);
+    else {
+        context.setFont(font);
+        context.drawBidiText(run, point, style);
+    }
 
     if (underlinedIndex >= 0) {
         ASSERT(underlinedIndex < static_cast<int>(text.length()));

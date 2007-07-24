@@ -26,12 +26,51 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "BidiResolver.h"
 #include "Font.h"
 #include "TextStyle.h"
 
 using namespace std;
 
 namespace WebCore {
+
+class TextRunIterator {
+public:
+    TextRunIterator()
+        : m_textRun(0)
+        , m_offset(0)
+    {
+    }
+
+    TextRunIterator(const TextRun* textRun, unsigned offset)
+        : m_textRun(textRun)
+        , m_offset(offset)
+    {
+    }
+
+    TextRunIterator(const TextRunIterator& other)
+        : m_textRun(other.m_textRun)
+        , m_offset(other.m_offset)
+    {
+    }
+
+    unsigned offset() const { return m_offset; }
+    void increment(BidiResolver<TextRunIterator, BidiCharacterRun>&) { m_offset++; }
+    bool atEnd() const { return m_offset >= m_textRun->length(); }
+    UChar current() const { return (*m_textRun)[m_offset]; }
+    WTF::Unicode::Direction direction() const { return atEnd() ? WTF::Unicode::OtherNeutral : WTF::Unicode::direction(current()); }
+
+    bool operator==(const TextRunIterator& other)
+    {
+        return m_offset == other.m_offset && m_textRun == other.m_textRun;
+    }
+
+    bool operator!=(const TextRunIterator& other) { return !operator==(other); }
+
+private:
+    const TextRun* m_textRun;
+    int m_offset;
+};
 
 struct GraphicsContextState {
     GraphicsContextState() 
@@ -213,6 +252,41 @@ void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const 
         return;
     
     font().drawText(this, run, style, point, from, to);
+}
+
+void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, const TextStyle& style)
+{
+    if (paintingDisabled())
+        return;
+
+    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    WTF::Unicode::Direction paragraphDirection = style.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+
+    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, new BidiContext(style.ltr() ? 0 : 1, paragraphDirection, style.directionalOverride())));
+
+    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, 0), TextRunIterator(&run, run.length()));
+
+    if (!bidiResolver.runCount())
+        return;
+
+    FloatPoint currPoint = point;
+    BidiCharacterRun* bidiRun = bidiResolver.firstRun();
+    while (bidiRun) {
+        TextStyle subrunStyle(style);
+        subrunStyle.setRTL(bidiRun->level() % 2);
+        subrunStyle.setDirectionalOverride(bidiRun->dirOverride(false));
+
+        TextRun subrun(run.data(bidiRun->start()), bidiRun->stop() - bidiRun->start());
+
+        font().drawText(this, subrun, subrunStyle, currPoint);
+
+        bidiRun = bidiRun->next();
+        // FIXME: Have Font::drawText return the width of what it drew so that we don't have to re-measure here.
+        if (bidiRun)
+            currPoint.move(font().floatWidth(subrun, subrunStyle), 0.f);
+    }
+
+    bidiResolver.deleteRuns();
 }
 
 void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const TextStyle& style, const Color& backgroundColor, int from, int to)
