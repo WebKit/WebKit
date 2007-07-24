@@ -26,9 +26,10 @@
 #ifndef WebKitGraphics_h
 #define WebKitGraphics_h
 
+#include <windows.h>
+
 typedef struct CGColor* CGColorRef;
 typedef struct CGContext* CGContextRef;
-typedef struct tagPOINT POINT;
 
 typedef wchar_t WCHAR;
 typedef __nullterminated const WCHAR* LPCWSTR;
@@ -42,7 +43,22 @@ struct WebFontDescription {
     bool italic;
 };
 
+struct WebTextRenderInfo
+{
+    DWORD structSize;
+    CGContextRef cgContext;
+    LPCTSTR text;
+    int length;
+    POINT pt;
+    const WebFontDescription* description;
+    CGColorRef color;
+    int underlinedIndex;
+    bool drawAsPassword;
+    int overrideSmoothingLevel; // pass in -1 if caller does not want to override smoothing level
+};
+
 void DrawTextAtPoint(CGContextRef, LPCTSTR text, int length, POINT, const WebFontDescription&, CGColorRef, int underlinedIndex = -1, bool drawAsPassword = false);
+void WebDrawText(WebTextRenderInfo*);
 float TextFloatWidth(LPCTSTR text, int length, const WebFontDescription&);
 void FontMetrics(const WebFontDescription&, int* ascent, int* descent, int* lineSpacing);
 

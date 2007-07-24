@@ -1,3 +1,15 @@
+2007-07-23  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve.
+        
+        Added a new text drawing method that allows caller to override the font smoothing level.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+        * WebKitGraphics.h:
+
 2007-07-22  Adam Roben  <aroben@apple.com>
 
         Implement IDOMElement::setAttribute

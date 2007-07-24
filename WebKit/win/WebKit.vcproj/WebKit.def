@@ -89,6 +89,7 @@ EXPORTS
         WebLocalizedLPCTSTR
         SetWebLocalizedStringMainBundle
         DrawTextAtPoint
+        WebDrawText
         FontMetrics
         TextFloatWidth
         CenterTruncateStringToWidth
