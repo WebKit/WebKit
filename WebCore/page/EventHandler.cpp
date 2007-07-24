@@ -1434,7 +1434,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
         keypress->setDefaultHandled();
     
     ExceptionCode ec;
-    !node->dispatchEvent(keypress, ec, true);
+    node->dispatchEvent(keypress, ec, true);
     
     return result || keypress->defaultHandled() || keypress->defaultPrevented();
 }

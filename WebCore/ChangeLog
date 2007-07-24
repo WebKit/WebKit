@@ -1,3 +1,12 @@
+2007-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve.
+
+        Windows build fix, remove superfluous !
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+
 2007-07-23  Adam Roben  <aroben@apple.com>
 
         Add an assignment operator for BString that takes a BSTR
