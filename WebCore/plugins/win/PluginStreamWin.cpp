@@ -209,6 +209,9 @@ void PluginStreamWin::destroyStream()
     ASSERT (m_reason != WebReasonNone);
     ASSERT (!m_deliveryData || m_deliveryData->size() == 0);
 
+    if (m_tempFileHandle != INVALID_HANDLE_VALUE)
+        ::CloseHandle(m_tempFileHandle);
+
     if (m_stream.ndata != 0) {
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(!m_path.isNull());
@@ -233,9 +236,6 @@ void PluginStreamWin::destroyStream()
     m_pluginView->disconnectStream(this);
 
     m_pluginView = 0;
-
-    if (m_tempFileHandle != INVALID_HANDLE_VALUE)
-        ::CloseHandle(m_tempFileHandle);
 
     if (!m_path.isNull())
         ::DeleteFileA(m_path.data());

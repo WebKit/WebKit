@@ -1,3 +1,15 @@
+2007-07-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Steve.
+        
+        <rdar://problem/5355403>
+        REGRESSION: 303A2 does not display pdf files with AdobeReader 8.1
+        
+        Close the file before handing off the file name to the plug-in.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::destroyStream):
+
 2007-07-24  Alp Toker  <alp.toker@collabora.co.uk>
 
         Reviewed by Adam.
