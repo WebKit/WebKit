@@ -271,6 +271,9 @@ public:
      */
     void addPendingSheet() { m_pendingStylesheets++; }
 
+    bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
+    void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
+
     /**
      * Called when one or more stylesheets in the document may have been added, removed or changed.
      *
@@ -730,6 +733,7 @@ protected:
     bool m_usesSiblingRules;
     bool m_usesFirstLineRules;
     bool m_usesFirstLetterRules;
+    bool m_gotoAnchorNeededAfterStylesheetsLoad;
 
     String m_title;
     bool m_titleSetExplicitly;

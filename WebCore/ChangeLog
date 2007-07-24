@@ -1,3 +1,23 @@
+2007-07-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/5242145> REGRESSION: Clicking on symbol in documentation often doesn't scroll to symbol
+
+        A renderer for the anchor wasn't always available at the time parsing finished. So we need
+        to bail out of gotoAnchor if stylesheets are pending and remember to call gotoAnchor later
+        once all of the pending stylesheets load.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_gotoAnchorNeededAfterStylesheetsLoad to false.
+        (WebCore::Document::stylesheetLoaded): If we have no more pending stylesheets, call gotoAnchor if needed.
+        * dom/Document.h:
+        (WebCore::Document::gotoAnchorNeededAfterStylesheetsLoad): New method.
+        (WebCore::Document::setGotoAnchorNeededAfterStylesheetsLoad): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor): Bail early if the document still has pending stylesheets.
+        * loader/FrameLoader.h: Make gotoAnchor() public.
+
 2007-07-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

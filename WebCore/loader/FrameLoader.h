@@ -322,6 +322,7 @@ namespace WebCore {
         KJS::JSValue* executeScript(const String& URL, int baseLine, const String& script);
         KJS::JSValue* executeScript(const String& script, bool forceUserGesture = false);
 
+        void gotoAnchor();
         bool gotoAnchor(const String& name); // returns true if the anchor was found
         void scrollToAnchor(const KURL&);
 
@@ -471,8 +472,6 @@ namespace WebCore {
         void cachePageForHistoryItem(HistoryItem*);
 
         void receivedFirstData();
-
-        void gotoAnchor();
 
         void updatePolicyBaseURL();
         void setPolicyBaseURL(const String&);
