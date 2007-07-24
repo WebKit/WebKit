@@ -33,6 +33,11 @@
 @class WebFrame;
 @class WebNetscapePluginStream;
 
+// Because the Adobe 7.x Acrobat plug-in has a hard coded check for a view named 
+// "WebNetscapePluginDocumentView", this class must retain the old name in order 
+// for the plug-in to function correctly. (rdar://problem/4699455)
+#define WebNetscapePluginEmbeddedView WebNetscapePluginDocumentView
+
 @interface WebNetscapePluginEmbeddedView : WebBaseNetscapePluginView 
 {
 }

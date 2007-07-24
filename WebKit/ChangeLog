@@ -1,3 +1,13 @@
+2007-07-24  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/4699455> REGRESSION (Safari 2->Safari 3): Adobe Reader 7.0.8 plug-in doesn't work
+        
+        * Plugins/WebNetscapePluginEmbeddedView.h: Added a #define that renames this class to "WebNetscapePluginDocumentView"
+        This is necessary because the Adobe 7.x Acrobat plug-in has a hard coded check for a view named "WebNetscapePluginDocumentView"
+        and will not function correctly if it doesn't find a view in the hierarchy without the old class name.
+
 2007-07-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.
