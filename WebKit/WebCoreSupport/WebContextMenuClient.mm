@@ -281,8 +281,10 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:contextMenuItemSelected:forElement:)]) {
         NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:parentMenu->hitTestResult()];
-        [delegate webView:m_webView contextMenuItemSelected:item->releasePlatformDescription() forElement:element];
+        NSMenuItem *platformItem = item->releasePlatformDescription();
+        [delegate webView:m_webView contextMenuItemSelected:platformItem forElement:element];
         [element release];
+        [platformItem release];
     }
 }
 

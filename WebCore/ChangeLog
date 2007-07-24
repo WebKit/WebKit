@@ -1,3 +1,17 @@
+2007-07-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Antti.
+
+        <rdar://problem/5356666> NSMenuItem's seen leaking on buildbot
+
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::releasePlatformDescription): Transfer ownership from the RetainPtr's CF-based retain
+        count to the Foundation retain count so that callers of releasePlatformDescription can use -[NSObject release]
+        to dispose of it in a manner that won't leak under Obj-C GC.
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::appendItem): Release platformItem as we were transferred its ownership by releasePlatformDescription.
+        (WebCore::ContextMenu::insertItem): ditto.
+
 2007-07-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

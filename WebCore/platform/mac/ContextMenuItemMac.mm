@@ -78,7 +78,9 @@ ContextMenuItem::~ContextMenuItem()
 
 NSMenuItem* ContextMenuItem::releasePlatformDescription()
 {
-    return m_platformDescription.releaseRef();
+    NSMenuItem* item = [m_platformDescription.get() retain];
+    m_platformDescription = 0;
+    return item;
 }
 
 ContextMenuItemType ContextMenuItem::type() const
