@@ -71,6 +71,11 @@ public:
 
     virtual void adjustSliderThumbSize(RenderObject*) const;
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const; 
+    
+    virtual int popupInternalPaddingLeft(RenderStyle*) const;
+    virtual int popupInternalPaddingRight(RenderStyle*) const;
+    virtual int popupInternalPaddingTop(RenderStyle*) const;
+    virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
 protected:
     // Methods for each appearance value.
@@ -138,7 +143,6 @@ private:
     const IntSize* buttonSizes() const;
     const int* buttonMargins(NSControlSize) const;
 
-    void setPopupPaddingFromControlSize(RenderStyle*, NSControlSize) const;
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins(NSControlSize) const;
     const int* popupButtonPadding(NSControlSize) const;

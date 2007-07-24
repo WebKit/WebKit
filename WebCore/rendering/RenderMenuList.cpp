@@ -93,7 +93,12 @@ static TextDirection textDirectionForParagraph(StringImpl* paragraph)
 void RenderMenuList::adjustInnerStyle()
 {
     m_innerBlock->style()->setBoxFlex(1.0f);
-
+    
+    m_innerBlock->style()->setPaddingLeft(Length(theme()->popupInternalPaddingLeft(style()), Fixed));
+    m_innerBlock->style()->setPaddingRight(Length(theme()->popupInternalPaddingRight(style()), Fixed));
+    m_innerBlock->style()->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
+    m_innerBlock->style()->setPaddingBottom(Length(theme()->popupInternalPaddingBottom(style()), Fixed));
+        
     if (PopupMenu::itemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
@@ -220,17 +225,27 @@ String RenderMenuList::text() const
 
 IntRect RenderMenuList::controlClipRect(int tx, int ty) const
 {
-    // Clip to the content box, since the arrow sits in the padding space, and we don't want to draw over it.
-    return IntRect(tx + borderLeft() + paddingLeft(), 
+    // Clip to the intersection of the content box and the content box for the inner box
+    // This will leave room for the arrows which sit in the inner box padding,
+    // and if the inner box ever spills out of the outer box, that will get clipped too.
+    IntRect outerBox(tx + borderLeft() + paddingLeft(), 
                    ty + borderTop() + paddingTop(),
-                   contentWidth(), contentHeight());
+                   contentWidth(), 
+                   contentHeight());
+    
+    IntRect innerBox(tx + borderLeft() + paddingLeft() + m_innerBlock->paddingLeft(), 
+                   ty + borderTop() + paddingTop() + m_innerBlock->paddingTop(),
+                   m_innerBlock->contentWidth(), 
+                   m_innerBlock->contentHeight());
+
+    return intersection(outerBox, innerBox);
 }
 
 void RenderMenuList::calcPrefWidths()
 {
     m_minPrefWidth = 0;
     m_maxPrefWidth = 0;
-
+    
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else
@@ -249,7 +264,8 @@ void RenderMenuList::calcPrefWidths()
         m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() + 
+                m_innerBlock->paddingLeft() + m_innerBlock->paddingRight() + m_innerBlock->borderLeft() + m_innerBlock->borderRight();
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;
 

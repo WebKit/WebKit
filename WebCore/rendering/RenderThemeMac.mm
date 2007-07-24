@@ -37,8 +37,13 @@
 #import "WebCoreSystemInterface.h"
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
+#import <math.h>
+
+using std::min;
 
 // The methods in this file are specific to the Mac OS X platform.
+
+// FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeSafari. 
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 {
@@ -702,15 +707,7 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
     return padding[size];
 }
 
-void RenderThemeMac::setPopupPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
-{
-    style->setPaddingLeft(Length(popupButtonPadding(size)[leftPadding], Fixed));
-    style->setPaddingRight(Length(popupButtonPadding(size)[rightPadding], Fixed));
-    style->setPaddingTop(Length(popupButtonPadding(size)[topPadding], Fixed));
-    style->setPaddingBottom(Length(popupButtonPadding(size)[bottomPadding], Fixed));
-}
-
-bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     setPopupButtonCellState(o, r);
 
@@ -721,10 +718,22 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins());
+    if (r.width() >= minimumMenuListSize(o->style()))
+        inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins());
+
+#ifndef BUILDING_ON_TIGER
+    // On Leopard, the cell will draw outside of the given rect, so we have to clip to the rect
+    paintInfo.context->save();
+    paintInfo.context->clip(inflatedRect);
+#endif
 
     [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->getDocumentView()];
     [popupButton setControlView:nil];
+
+#ifndef BUILDING_ON_TIGER
+    paintInfo.context->restore();
+#endif
+
     return false;
 }
 
@@ -854,13 +863,17 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const RenderObject::Pa
     // Draw the gradients to give the styled popup menu a button appearance
     paintMenuListButtonGradients(o, paintInfo, bounds);
 
-    float fontScale = o->style()->fontSize() / baseFontSize;
+    // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
+    float fontScale = min(o->style()->fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
     float leftEdge = bounds.right() - arrowPaddingRight - arrowWidth;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
 
+    if (bounds.width() < arrowWidth + arrowPaddingLeft)
+        return false;
+    
     paintInfo.context->setFillColor(o->style()->color());
     paintInfo.context->setStrokeStyle(NoStroke);
 
@@ -907,7 +920,8 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     NSControlSize controlSize = controlSizeForFont(style);
 
     style->resetBorder();
-
+    style->resetPadding();
+    
     // Height is locked to auto.
     style->setHeight(Length(Auto));
 
@@ -921,9 +935,6 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     // Set the button's vertical size.
     setButtonSize(style);
 
-    // Add in the padding that we'd like to use.
-    setPopupPaddingFromControlSize(style, controlSize);
-
     // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
     // system font for the control size instead.
@@ -932,18 +943,50 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     style->setBoxShadow(0);
 }
 
+int RenderThemeMac::popupInternalPaddingLeft(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[leftPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingLeft;
+    return 0;
+}
+
+int RenderThemeMac::popupInternalPaddingRight(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[rightPadding];
+    if (style->appearance() == MenulistButtonAppearance) {
+        float fontScale = style->fontSize() / baseFontSize;
+        float arrowWidth = baseArrowWidth * fontScale;
+        return static_cast<int>(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator));
+    }
+    return 0;
+}
+
+int RenderThemeMac::popupInternalPaddingTop(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[topPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingTop;
+    return 0;
+}
+
+int RenderThemeMac::popupInternalPaddingBottom(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[bottomPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingBottom;
+    return 0;
+}
+
 void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     float fontScale = style->fontSize() / baseFontSize;
-    float arrowWidth = baseArrowWidth * fontScale;
 
-    // We're overriding the padding to allow for the arrow control.  WinIE doesn't honor padding on selects, so
-    // this shouldn't cause problems on the web.  If IE7 changes that, we should reconsider this.
-    style->setPaddingLeft(Length(styledPopupPaddingLeft, Fixed));
-    style->setPaddingRight(Length(int(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator)), Fixed));
-    style->setPaddingTop(Length(styledPopupPaddingTop, Fixed));
-    style->setPaddingBottom(Length(styledPopupPaddingBottom, Fixed));
-
+    style->resetPadding();
     style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 15;

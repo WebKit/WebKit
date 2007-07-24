@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x22
         RenderMenuList {SELECT} at (2,2) size 54x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,2) size 23x13
-            RenderText at (0,0) size 23x13
-              text run at (0,0) width 23: "blaa"
+          RenderBlock (anonymous) at (0,0) size 54x18
+            RenderText at (8,2) size 23x13
+              text run at (8,2) width 23: "blaa"
         RenderText {#text} at (58,1) size 486x18
           text run at (58,1) width 486: " Press ctrl-a to activate the select. Works as layout test too using eventSender."
       RenderBlock {DIV} at (0,22) size 784x72

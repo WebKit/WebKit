@@ -135,9 +135,9 @@ layer at (8,8) size 769x1776
                 RenderText {#text} at (0,0) size 259x18
                   text run at (0,0) width 259: "How does your browser fare on this test?"
                 RenderMenuList {SELECT} at (2,20) size 454x18 [color=#000000] [bgcolor=#FFFFFF]
-                  RenderBlock (anonymous) at (8,2) size 423x13
-                    RenderText at (0,0) size 214x13
-                      text run at (0,0) width 214: "Document renders exactly as described."
+                  RenderBlock (anonymous) at (0,0) size 454x18
+                    RenderText at (8,2) size 214x13
+                      text run at (8,2) width 214: "Document renders exactly as described."
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {LABEL} at (0,0) size 222x18
                   RenderText {#text} at (0,42) size 70x18

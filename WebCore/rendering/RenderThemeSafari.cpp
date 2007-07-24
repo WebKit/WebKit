@@ -34,7 +34,11 @@
 #include "RetainPtr.h"
 #include "cssstyleselector.h"
 #include <CoreGraphics/CoreGraphics.h>
+ 
+using std::min;
 
+// FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeMac. 
+ 
 namespace WebCore {
 
 using namespace SafariTheme;
@@ -581,14 +585,6 @@ const int* RenderThemeSafari::popupButtonPadding(NSControlSize size) const
     return padding[size];
 }
 
-void RenderThemeSafari::setPopupPaddingFromControlSize(RenderStyle* style, NSControlSize size) const
-{
-    style->setPaddingLeft(Length(popupButtonPadding(size)[leftPadding], Fixed));
-    style->setPaddingRight(Length(popupButtonPadding(size)[rightPadding], Fixed));
-    style->setPaddingTop(Length(popupButtonPadding(size)[topPadding], Fixed));
-    style->setPaddingBottom(Length(popupButtonPadding(size)[bottomPadding], Fixed));
-}
-
 bool RenderThemeSafari::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& info, const IntRect& r)
 {
     NSControlSize controlSize = controlSizeFromRect(r, popupButtonSizes());
@@ -597,7 +593,8 @@ bool RenderThemeSafari::paintMenuList(RenderObject* o, const RenderObject::Paint
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(controlSize));
+    if (r.width() >= minimumMenuListSize(o->style()))
+        inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(controlSize));
 
     paintThemePart(DropDownButtonPart, info.context->platformContext(), inflatedRect, controlSize, determineState(o));
 
@@ -728,12 +725,16 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const RenderObject:
                              r.height() - o->style()->borderTopWidth() - o->style()->borderBottomWidth());
     // Draw the gradients to give the styled popup menu a button appearance
     paintMenuListButtonGradients(o, paintInfo, bounds);
-
-    float fontScale = o->style()->fontSize() / baseFontSize;
+    
+    // Since we actually know the size of the control here, we restrict the font scale to make sure the arrow will fit vertically in the bounds
+    float fontScale = min(o->style()->fontSize() / baseFontSize, bounds.height() / baseArrowHeight);
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
     float leftEdge = bounds.right() - arrowPaddingRight - arrowWidth;
+
+    if (bounds.width() < arrowWidth + arrowPaddingLeft)
+        return false;
 
     paintInfo.context->setFillColor(o->style()->color());
     paintInfo.context->setStrokeColor(NoStroke);
@@ -773,7 +774,8 @@ void RenderThemeSafari::adjustMenuListStyle(CSSStyleSelector* selector, RenderSt
     NSControlSize controlSize = controlSizeForFont(style);
 
     style->resetBorder();
-
+    style->resetPadding();
+    
     // Height is locked to auto.
     style->setHeight(Length(Auto));
 
@@ -787,27 +789,56 @@ void RenderThemeSafari::adjustMenuListStyle(CSSStyleSelector* selector, RenderSt
     // Set the button's vertical size.
     setButtonSize(style);
 
-    // Add in the padding that we'd like to use.
-    setPopupPaddingFromControlSize(style, controlSize);
-
     // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
     // system font for the control size instead.
     setFontFromControlSize(selector, style, controlSize);
 }
 
+int RenderThemeSafari::popupInternalPaddingLeft(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[leftPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingLeft;
+    return 0;
+}
+
+int RenderThemeSafari::popupInternalPaddingRight(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[rightPadding];
+    if (style->appearance() == MenulistButtonAppearance) {
+        float fontScale = style->fontSize() / baseFontSize;
+        float arrowWidth = baseArrowWidth * fontScale;
+        return static_cast<int>(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator));
+    }
+    return 0;
+}
+
+int RenderThemeSafari::popupInternalPaddingTop(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[topPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingTop;
+    return 0;
+}
+
+int RenderThemeSafari::popupInternalPaddingBottom(RenderStyle* style) const
+{
+    if (style->appearance() == MenulistAppearance)
+        return popupButtonPadding(controlSizeForFont(style))[bottomPadding];
+    if (style->appearance() == MenulistButtonAppearance)
+        return styledPopupPaddingBottom;
+    return 0;
+}
+
 void RenderThemeSafari::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     float fontScale = style->fontSize() / baseFontSize;
-    float arrowWidth = baseArrowWidth * fontScale;
-
-    // We're overriding the padding to allow for the arrow control.  WinIE doesn't honor padding on selects, so
-    // this shouldn't cause problems on the web.  If IE7 changes that, we should reconsider this.
-    style->setPaddingLeft(Length(styledPopupPaddingLeft, Fixed));
-    style->setPaddingRight(Length(int(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator)), Fixed));
-    style->setPaddingTop(Length(styledPopupPaddingTop, Fixed));
-    style->setPaddingBottom(Length(styledPopupPaddingBottom, Fixed));
-
+    
+    style->resetPadding();
     style->setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 15;

@@ -1,3 +1,51 @@
+2007-07-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt and Adam.
+
+        Fix for <rdar://problem/5130590> REGRESSION: style="width:1px" on <select> element no longer hides the element
+
+        Removed hack that forced large padding on popup buttons.  Now we put that padding in the inner block, so that
+        the specified width will be honored.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Set the padding on the inner block based on the metrics provided by the theme.
+        (WebCore::RenderMenuList::controlClipRect): Clip to the intersection of the inner content box and the outer content box.
+         This will leave room for the arrows which sit in the inner box padding, and if the inner box ever spills out of the outer box, 
+         that will get clipped too.
+        (WebCore::RenderMenuList::calcPrefWidths):  Add in the inner box's padding and border to the pref widths.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuList): Only inflate the rect for the shadow if the rect is big enough to fit the whole control.
+         Also, on Leopard, the NSCell will draw outside of a small rect, so add a clip for that case.
+        (WebCore::RenderThemeMac::paintMenuListButton): Restrict font scale to make sure the arrows will actually fit in the bounds vertically.
+         Don't draw the arrows if they won't fit horizontally.  Reset padding.  Since WinIE doesn't honor padding for popups, its not critical to
+         support padding at this time.
+        (WebCore::RenderThemeMac::adjustMenuListStyle): Don't set the padding here.  Instead, we're going to set the padding on the inner block of the select.
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle): ditto.
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft): Added.  Provides internal padding values for RenderMenuList.
+        (WebCore::RenderThemeMac::popupInternalPaddingRight): ditto.
+        (WebCore::RenderThemeMac::popupInternalPaddingTop): ditto.
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom): ditto.
+        * rendering/RenderThemeMac.h:
+
+        * rendering/RenderThemeSafari.cpp:  The same changes that were made to RenderThemeMac were made here, with variations for the arrow differences.
+          This code should be refactored and shared, but now did not seem like the right time to do that refactoring.
+        (WebCore::RenderThemeSafari::paintMenuList):
+        (WebCore::RenderThemeSafari::paintMenuListButton):
+        (WebCore::RenderThemeSafari::adjustMenuListStyle):
+        (WebCore::RenderThemeSafari::popupInternalPaddingLeft):
+        (WebCore::RenderThemeSafari::popupInternalPaddingRight):
+        (WebCore::RenderThemeSafari::popupInternalPaddingTop):
+        (WebCore::RenderThemeSafari::popupInternalPaddingBottom):
+        (WebCore::RenderThemeSafari::adjustMenuListButtonStyle):
+        * rendering/RenderThemeSafari.h:
+
+        * rendering/RenderTheme.h: Added to provide internal padding values for RenderMenuList.
+        (WebCore::RenderTheme::popupInternalPaddingLeft):
+        (WebCore::RenderTheme::popupInternalPaddingRight):
+        (WebCore::RenderTheme::popupInternalPaddingTop):
+        (WebCore::RenderTheme::popupInternalPaddingBottom):
+
 2007-07-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Adam Roben & David Kilzer.

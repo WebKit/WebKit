@@ -438,9 +438,9 @@ layer at (0,0) size 785x3543
         RenderText {#text} at (0,1) size 76x18
           text run at (0,1) width 76: "KEYGEN: "
         RenderMenuList {KEYGEN} at (78,2) size 148x18 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,2) size 117x13
-            RenderText at (0,0) size 99x13
-              text run at (0,0) width 99: "2048 (High Grade)"
+          RenderBlock (anonymous) at (0,0) size 148x18
+            RenderText at (8,2) size 99x13
+              text run at (8,2) width 99: "2048 (High Grade)"
         RenderInline {FONT} at (0,0) size 171x18 [color=#008000]
           RenderText {#text} at (228,1) size 171x18
             text run at (228,1) width 171: "All of this should be green."
@@ -544,9 +544,9 @@ layer at (0,0) size 785x3543
           text run at (0,1) width 95: "OPTGROUP: "
         RenderInline {FONT} at (0,0) size 232x18 [color=#008000]
           RenderMenuList {SELECT} at (97,2) size 53x18 [color=#000000] [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,2) size 22x13
-              RenderText at (0,0) size 22x13
-                text run at (0,0) width 22: "One"
+            RenderBlock (anonymous) at (0,0) size 53x18
+              RenderText at (8,2) size 22x13
+                text run at (8,2) width 22: "One"
           RenderText {#text} at (152,1) size 175x18
             text run at (152,1) width 175: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
@@ -556,9 +556,9 @@ layer at (0,0) size 785x3543
           text run at (0,1) width 68: "OPTION: "
         RenderInline {FONT} at (0,0) size 233x18 [color=#008000]
           RenderMenuList {SELECT} at (70,2) size 54x18 [color=#000000] [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,2) size 23x13
-              RenderText at (0,0) size 22x13
-                text run at (0,0) width 22: "One"
+            RenderBlock (anonymous) at (0,0) size 54x18
+              RenderText at (8,2) size 22x13
+                text run at (8,2) width 22: "One"
           RenderText {#text} at (126,1) size 175x18
             text run at (126,1) width 175: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
@@ -634,8 +634,8 @@ layer at (0,0) size 785x3543
           text run at (0,1) width 68: "SELECT: "
         RenderInline {FONT} at (0,0) size 211x18 [color=#008000]
           RenderMenuList {SELECT} at (70,2) size 36x18 [color=#000000] [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,2) size 5x13
-              RenderBR at (0,0) size 0x13 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (0,0) size 36x18
+              RenderBR at (8,2) size 0x13 [bgcolor=#FFFFFF]
           RenderText {#text} at (108,1) size 171x18
             text run at (108,1) width 171: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0

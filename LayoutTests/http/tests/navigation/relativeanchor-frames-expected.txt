@@ -57,9 +57,9 @@ layer at (0,0) size 800x600
                   text run at (18,229) width 130: " option #2"
                 RenderBR {BR} at (148,258) size 0x0
                 RenderMenuList {SELECT} at (2,268) size 255x18 [bgcolor=#FFFFFF]
-                  RenderBlock (anonymous) at (8,2) size 224x13
-                    RenderText at (0,0) size 63x13
-                      text run at (0,0) width 63: "Initial Value"
+                  RenderBlock (anonymous) at (0,0) size 255x18
+                    RenderText at (8,2) size 63x13
+                      text run at (8,2) width 63: "Initial Value"
                 RenderBR {BR} at (259,281) size 0x0
                 RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
                 RenderText {#text} at (0,0) size 0x0

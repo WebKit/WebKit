@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 499x18
+        text run at (0,0) width 499: "This tests that select elements with a narrow width (1px) are rendered correctly."
+      RenderBR {BR} at (499,14) size 0x0
+      RenderMenuList {SELECT} at (0,20) size 1x18 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (0,0) size 31x18
+          RenderText at (8,2) size 20x13
+            text run at (8,2) width 20: "test"
+      RenderBR {BR} at (1,33) size 0x0
+      RenderMenuList {SELECT} at (0,42) size 2x18 [bgcolor=#0000FF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 29x16
+          RenderText at (8,1) size 20x13
+            text run at (8,1) width 20: "test"
+      RenderText {#text} at (0,0) size 0x0

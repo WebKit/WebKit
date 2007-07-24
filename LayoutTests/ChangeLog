@@ -1,3 +1,111 @@
+2007-07-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt and Adam.
+
+        Added and updated tests for <rdar://problem/5130590> REGRESSION: style="width:1px" on <select> element no longer hides the element
+        The metrics have changed for the anonymous block inside popup buttons.
+
+        * fast/forms/menulist-narrow-width-expected.checksum: Added.
+        * fast/forms/menulist-narrow-width-expected.png: Added.
+        * fast/forms/menulist-narrow-width-expected.txt: Added.
+        * fast/forms/menulist-narrow-width.html: Added.
+
+        * editing/pasteboard/4641033-expected.txt:
+        * editing/pasteboard/4944770-1-expected.txt:
+        * editing/pasteboard/4944770-2-expected.txt:
+        * editing/pasteboard/select-element-1-expected.txt:
+        * editing/selection/caret-before-select-expected.txt:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/selection/select-box-expected.txt:
+        * editing/selection/select-element-paragraph-boundary-expected.txt:
+        * fast/block/float/float-avoidance-expected.txt:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/001-expected.png:
+        * fast/forms/001-expected.txt:
+        * fast/forms/003-expected.txt:
+        * fast/forms/004-expected.txt:
+        * fast/forms/HTMLOptionElement_label01-expected.txt:
+        * fast/forms/HTMLOptionElement_label02-expected.txt:
+        * fast/forms/HTMLOptionElement_label03-expected.txt:
+        * fast/forms/HTMLOptionElement_label04-expected.txt:
+        * fast/forms/HTMLOptionElement_label06-expected.txt:
+        * fast/forms/HTMLOptionElement_label07-expected.txt:
+        * fast/forms/control-restrict-line-height-expected.txt:
+        * fast/forms/disabled-select-change-index-expected.txt:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/menulist-separator-painting-expected.txt:
+        * fast/forms/menulist-width-change-expected.txt:
+        * fast/forms/option-script-expected.txt:
+        * fast/forms/option-strip-whitespace-expected.txt:
+        * fast/forms/option-text-clip-expected.txt:
+        * fast/forms/select-accesskey-expected.txt:
+        * fast/forms/select-align-expected.txt:
+        * fast/forms/select-baseline-expected.txt:
+        * fast/forms/select-change-listbox-to-popup-expected.txt:
+        * fast/forms/select-disabled-appearance-expected.txt:
+        * fast/forms/select-initial-position-expected.txt:
+        * fast/forms/select-selected-expected.txt:
+        * fast/forms/select-size-expected.txt:
+        * fast/forms/select-style-expected.txt:
+        * fast/forms/select-visual-hebrew-expected.txt:
+        * fast/forms/select-writing-direction-natural-expected.txt:
+        * fast/forms/stuff-on-my-optgroup-expected.txt:
+        * fast/html/keygen-expected.txt:
+        * fast/invalid/014-expected.txt:
+        * fast/invalid/residual-style-expected.txt:
+        * fast/parser/document-write-option-expected.txt:
+        * fast/replaced/replaced-breaking-expected.txt:
+        * fast/replaced/replaced-breaking-mixture-expected.txt:
+        * fast/replaced/three-selects-break-expected.txt:
+        * fast/replaced/width100percent-expected.txt:
+        * fast/text/international/bidi-menulist-expected.txt:
+        * http/tests/navigation/anchor-basic-expected.txt:
+        * http/tests/navigation/anchor-frames-expected.txt:
+        * http/tests/navigation/anchor-goback-expected.txt:
+        * http/tests/navigation/anchor-subframeload-expected.txt:
+        * http/tests/navigation/javascriptlink-basic-expected.txt:
+        * http/tests/navigation/javascriptlink-frames-expected.txt:
+        * http/tests/navigation/javascriptlink-goback-expected.txt:
+        * http/tests/navigation/javascriptlink-subframeload-expected.txt:
+        * http/tests/navigation/metaredirect-basic-expected.txt:
+        * http/tests/navigation/metaredirect-frames-expected.txt:
+        * http/tests/navigation/metaredirect-goback-expected.txt:
+        * http/tests/navigation/metaredirect-subframeload-expected.txt:
+        * http/tests/navigation/post-goback2-expected.txt:
+        * http/tests/navigation/postredirect-goback2-expected.txt:
+        * http/tests/navigation/redirect302-basic-expected.txt:
+        * http/tests/navigation/redirect302-frames-expected.txt:
+        * http/tests/navigation/redirect302-goback-expected.txt:
+        * http/tests/navigation/redirect302-subframeload-expected.txt:
+        * http/tests/navigation/relativeanchor-basic-expected.txt:
+        * http/tests/navigation/relativeanchor-frames-expected.txt:
+        * http/tests/navigation/relativeanchor-goback-expected.txt:
+        * http/tests/navigation/slowmetaredirect-basic-expected.txt:
+        * http/tests/navigation/slowtimerredirect-basic-expected.txt:
+        * http/tests/navigation/success200-basic-expected.txt:
+        * http/tests/navigation/success200-frames-expected.txt:
+        * http/tests/navigation/success200-frames-loadsame-expected.txt:
+        * http/tests/navigation/success200-goback-expected.txt:
+        * http/tests/navigation/success200-loadsame-expected.txt:
+        * http/tests/navigation/success200-reload-expected.txt:
+        * http/tests/navigation/success200-subframeload-expected.txt:
+        * http/tests/navigation/timerredirect-basic-expected.txt:
+        * http/tests/navigation/timerredirect-frames-expected.txt:
+        * http/tests/navigation/timerredirect-goback-expected.txt:
+        * http/tests/navigation/timerredirect-subframeload-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug18359-expected.txt:
+        * tables/mozilla/bugs/bug2479-3-expected.txt:
+        * tables/mozilla/bugs/bug2479-4-expected.txt:
+        * tables/mozilla/bugs/bug29326-expected.txt:
+        * tables/mozilla/bugs/bug33855-expected.txt:
+        * tables/mozilla/bugs/bug4382-expected.txt:
+        * tables/mozilla/bugs/bug96334-expected.txt:
+        * tables/mozilla/core/margins-expected.txt:
+        * tables/mozilla/dom/tableDom-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+
 2007-07-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

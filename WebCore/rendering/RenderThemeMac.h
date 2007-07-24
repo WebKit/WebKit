@@ -69,6 +69,11 @@ public:
     virtual int minimumMenuListSize(RenderStyle*) const;
 
     virtual void adjustSliderThumbSize(RenderObject*) const;
+    
+    virtual int popupInternalPaddingLeft(RenderStyle*) const;
+    virtual int popupInternalPaddingRight(RenderStyle*) const;
+    virtual int popupInternalPaddingTop(RenderStyle*) const;
+    virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
 protected:
     // Methods for each appearance value.
@@ -146,7 +151,6 @@ private:
     const int* buttonMargins() const;
     void setButtonCellState(const RenderObject*, const IntRect&);
 
-    void setPopupPaddingFromControlSize(RenderStyle*, NSControlSize) const;
     void setPopupButtonCellState(const RenderObject*, const IntRect&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
