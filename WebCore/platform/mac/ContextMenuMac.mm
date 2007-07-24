@@ -114,6 +114,7 @@ void ContextMenu::appendItem(ContextMenuItem& item)
         setMenuItemTarget(platformItem);
 
     [m_platformDescription.get() addObject:platformItem];
+    [platformItem release];
 }
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)

@@ -1,3 +1,12 @@
+2007-07-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5356666> NSMenuItem's seen leaking on buildbot
+
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::appendItem): Release the platformItem after we take ownership of it from the ContextMenuItem.
+
 2007-07-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
