@@ -1,3 +1,20 @@
+2007-07-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/5228164> REGRESSION: editing/deleting/5144139-2.html fails on Leopard
+        
+        Removed the use of the &#x23B7 entity, which is available on 
+        Leopard but not Tiger.  Perhaps because it is not available in Ahem
+        but is available in some fallback font that ships with Leopard but not Tiger.  
+        It's OK to remove because its use wasn't necessary to test the fix for 5144139.
+
+        * editing/deleting/5144139-2-expected.checksum:
+        * editing/deleting/5144139-2-expected.png:
+        * editing/deleting/5144139-2-expected.txt:
+        * editing/deleting/5144139-2.html:
+        * mac/leopard/Skipped:
+
 2007-07-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
