@@ -1,3 +1,11 @@
+2007-07-23  Steve Falkenburg  <sfalken@apple.com>
+
+        Fixes to versioning script.
+        
+        Reviewed by Ada.
+
+        * WebKit.vcproj/auto-version.sh:
+
 2007-07-23  Adam Roben  <aroben@apple.com>
 
         Implement IWebHistoryItem::[set]AlternateTitle

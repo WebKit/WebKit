@@ -30,14 +30,21 @@ VERSIONFILE=$VERSIONPATH/autoversion.h
 mkdir -p "$VERSIONPATH"
 
 PRODUCTVERSION=`cat "$SRCPATH/PRODUCTVERSION"`
-MAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)/\1/' "$SRCPATH/PRODUCTVERSION"`
-MINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)/\2/' "$SRCPATH/PRODUCTVERSION"`
+MAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/' "$SRCPATH/PRODUCTVERSION"`
+MINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/' "$SRCPATH/PRODUCTVERSION"`
+TINYVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/' "$SRCPATH/PRODUCTVERSION"`
+if [ "$TINYVERSION" == "" ]; then
+    TINYVERSION=0
+fi
 
 echo -n `cat "$SRCPATH/VERSION"` > "$VERSIONFILE"
 
-BLDMAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\.\([^\.]*\)/\1/' "$VERSIONFILE"`
-BLDMINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\.\([^\.]*\)/\2/' "$VERSIONFILE"`
-BLDVARIANTVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\.\([^\.]*\)/\3/' "$VERSIONFILE"`
+BLDMAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/' "$VERSIONFILE"`
+BLDMINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/' "$VERSIONFILE"`
+BLDVARIANTVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/' "$VERSIONFILE"`
+if [ "$BLDVARIANTVERSION" == "" ]; then
+    BLDVARIANTVERSION=0
+fi
 SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed 's/^Revision: \(.*\)/\1/'`
 
 BLDNMBR=`cat "$VERSIONFILE"`
@@ -68,6 +75,8 @@ echo -n '#define __VERSION_MAJOR__ ' >> "$VERSIONFILE"
 echo $MAJORVERSION >> "$VERSIONFILE"
 echo -n '#define __VERSION_MINOR__ ' >> "$VERSIONFILE"
 echo $MINORVERSION >> "$VERSIONFILE"
+echo -n '#define __VERSION_TINY__ ' >> "$VERSIONFILE"
+echo $TINYVERSION >> "$VERSIONFILE"
 
 echo -n '#define __BUILD_NUMBER_MAJOR__ ' >> "$VERSIONFILE"
 echo $BLDMAJORVERSION >> "$VERSIONFILE"
