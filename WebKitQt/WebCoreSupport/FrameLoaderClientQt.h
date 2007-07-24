@@ -87,15 +87,6 @@ namespace WebCore {
         virtual void forceLayout();
         virtual void forceLayoutForNonHTML();
 
-        virtual void updateHistoryForCommit();
-
-        virtual void updateHistoryForBackForwardNavigation();
-        virtual void updateHistoryForReload();
-        virtual void updateHistoryForStandardLoad();
-        virtual void updateHistoryForInternalLoad();
-
-        virtual void updateHistoryAfterClientRedirect();
-
         virtual void setCopiesOnScroll();
 
         virtual LoadErrorResetToken* tokenForLoadErrorReset();

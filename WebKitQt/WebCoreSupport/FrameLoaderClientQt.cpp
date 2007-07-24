@@ -194,42 +194,6 @@ void FrameLoaderClientQt::forceLayoutForNonHTML()
 }
 
 
-void FrameLoaderClientQt::updateHistoryForCommit()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::updateHistoryForBackForwardNavigation()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::updateHistoryForReload()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::updateHistoryForStandardLoad()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::updateHistoryForInternalLoad()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::updateHistoryAfterClientRedirect()
-{
-    notImplemented();
-}
-
-
 void FrameLoaderClientQt::setCopiesOnScroll()
 {
     // apparently mac specific 
