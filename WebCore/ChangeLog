@@ -1,3 +1,16 @@
+2007-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5335354>
+        REGRESSION(r21359-r21368): Can't edit inside RTEF editable region
+        
+        If Document::open is called and there's a pending load that has not yet started,
+        that load should be cancelled.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
 2007-07-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Hyatt.

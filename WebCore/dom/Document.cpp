@@ -1263,13 +1263,18 @@ void Document::open()
             setBaseURL(parent->baseURL());
     }
 
-    if ((frame() && frame()->loader()->isLoadingMainResource()) || (tokenizer() && tokenizer()->executingScript()))
-        return;
-
+    if (m_frame) {
+        if (m_frame->loader()->isLoadingMainResource() || (tokenizer() && tokenizer()->executingScript()))
+            return;
+    
+        if (m_frame->loader()->state() == FrameStateProvisional)
+            m_frame->loader()->stopAllLoaders();
+    }
+    
     implicitOpen();
 
-    if (frame())
-        frame()->loader()->didExplicitOpen();
+    if (m_frame)
+        m_frame->loader()->didExplicitOpen();
 }
 
 void Document::cancelParsing()
