@@ -1,5 +1,17 @@
 2007-07-23  Justin Garcia  <justin.garcia@apple.com>
 
+        <rdar://problem/5228167> REGRESSION: editing/execCommand/5119244.html failing on Leopard
+        
+        Removed another use of the &#x23B7 entity.  See below.
+
+        * editing/execCommand/5119244-expected.checksum:
+        * editing/execCommand/5119244-expected.png:
+        * editing/execCommand/5119244-expected.txt:
+        * editing/execCommand/5119244.html:
+        * mac/leopard/Skipped:
+
+2007-07-23  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Oliver.
         
         <rdar://problem/5228164> REGRESSION: editing/deleting/5144139-2.html fails on Leopard

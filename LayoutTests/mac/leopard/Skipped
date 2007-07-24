@@ -35,9 +35,6 @@ css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 fast/lists/w3-list-styles.html
 
-# <rdar://problem/5228167> Leopard regression test failures: editing/execCommand/5119244.html
-editing/execCommand/5119244.html
-
 # <rdar://problem/5228233> Leopard regression test failures: fast/table/absolute-table-at-bottom
 fast/table/absolute-table-at-bottom.html
 
