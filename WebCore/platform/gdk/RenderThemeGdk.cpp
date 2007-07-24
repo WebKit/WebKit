@@ -4,6 +4,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,13 +34,6 @@
 
 #define THEME_COLOR 204
 #define THEME_FONT  210
-
-// Generic state constants
-#define TS_NORMAL    1
-#define TS_HOVER     2
-#define TS_ACTIVE    3
-#define TS_DISABLED  4
-#define TS_FOCUSED   5
 
 // Button constants
 #define BP_BUTTON    1
@@ -131,21 +125,15 @@ bool RenderThemeGdk::supportsFocus(EAppearance appearance)
     return false;
 }
 
-unsigned RenderThemeGdk::determineState(RenderObject* o)
+GtkStateType RenderThemeGdk::determineState(RenderObject* o)
 {
-    unsigned result = TS_NORMAL;
+    GtkStateType result = GTK_STATE_NORMAL;
     if (!isEnabled(o))
-        result = TS_DISABLED;
-    else if (isReadOnlyControl(o))
-        result = TFS_READONLY; // Readonly is supported on textfields.
-    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
-        result = TS_FOCUSED;
+        result = GTK_STATE_INSENSITIVE;
     else if (isPressed(o))
-        result = TS_ACTIVE;
+        result = GTK_STATE_ACTIVE;
     else if (isHovered(o))
-        result = TS_HOVER;
-    if (isChecked(o))
-        result += 4; // 4 unchecked states, 4 checked states.
+        result = GTK_STATE_PRELIGHT;
     return result;
 }
 
@@ -187,10 +175,10 @@ bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
 {
     // FIXME: is it the right thing to do?
     GtkWidget *checkbox = gtkCheckbox();
-    gtk_paint_box(checkbox->style, i.context->gdkDrawable(),
-                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                  NULL, checkbox, "checkbutton",
-                  rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_paint_check(checkbox->style, i.context->gdkDrawable(),
+                    determineState(o), isChecked(o) ? GTK_SHADOW_IN : GTK_SHADOW_OUT,
+                    NULL, checkbox, "checkbutton",
+                    rect.x(), rect.y(), rect.width(), rect.height());
 
     return false;
 }
@@ -219,20 +207,20 @@ bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
 { 
     // FIXME: is it the right thing to do?
     GtkWidget *radio = gtkRadioButton();
-    gtk_paint_box(radio->style, i.context->gdkDrawable(),
-                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                  NULL, radio, "radiobutton",
-                  rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_paint_option(radio->style, i.context->gdkDrawable(),
+                     determineState(o), isChecked(o) ? GTK_SHADOW_IN : GTK_SHADOW_OUT,
+                     NULL, radio, "radiobutton",
+                     rect.x(), rect.y(), rect.width(), rect.height());
 
     return false;
 }
 
-bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo& i, const IntRect& rect) 
+bool RenderThemeGdk::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect) 
 { 
     // FIXME: should use theme-aware drawing. This should honor the state as well
     GtkWidget *button = gtkButton();
     gtk_paint_box(button->style, i.context->gdkDrawable(),
-                  GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                  determineState(o), isChecked(o) ? GTK_SHADOW_IN : GTK_SHADOW_OUT,
                   NULL, button, "button",
                   rect.x(), rect.y(), rect.width(), rect.height());
     return false;
@@ -266,7 +254,7 @@ void RenderThemeGdk::systemFont(int propId, FontDescription&) const
 GtkWidget* RenderThemeGdk::gtkButton() const
 {
     if (!m_gtkButton) {
-        m_gtkButton = gtk_button_new_with_label("WebKit rocks");
+        m_gtkButton = gtk_button_new();
         gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkButton);
         gtk_widget_realize(m_gtkButton);
     }
@@ -277,7 +265,7 @@ GtkWidget* RenderThemeGdk::gtkButton() const
 GtkWidget* RenderThemeGdk::gtkCheckbox() const
 {
     if (!m_gtkCheckbox) {
-        m_gtkCheckbox = gtk_check_button_new_with_label("WebKit rocks"); 
+        m_gtkCheckbox = gtk_check_button_new();
         gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkCheckbox);
         gtk_widget_realize(m_gtkCheckbox);
     }
@@ -288,7 +276,7 @@ GtkWidget* RenderThemeGdk::gtkCheckbox() const
 GtkWidget* RenderThemeGdk::gtkRadioButton() const
 {
     if (!m_gtkRadioButton) {
-        m_gtkRadioButton = gtk_radio_button_new_with_label(NULL, "WebKit rocks");
+        m_gtkRadioButton = gtk_radio_button_new(NULL);
         gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkRadioButton);
         gtk_widget_realize(m_gtkRadioButton);
     }

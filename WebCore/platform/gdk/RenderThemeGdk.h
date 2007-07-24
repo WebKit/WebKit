@@ -69,7 +69,7 @@ private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
-    unsigned determineState(RenderObject*);
+    GtkStateType determineState(RenderObject*);
     bool supportsFocus(EAppearance);
 
     ThemeData getThemeData(RenderObject*);

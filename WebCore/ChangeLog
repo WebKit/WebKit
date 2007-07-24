@@ -1,3 +1,24 @@
+2007-07-24  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14711
+        RenderThemeGdk's buttons are state-agnostic (pressed, hovered)
+
+        Remove unnecessary label from widget instances.
+        Render check and radio widgets correctly.
+        Determine the widget state and render it appropriately.
+
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::determineState):
+        (WebCore::RenderThemeGdk::paintCheckbox):
+        (WebCore::RenderThemeGdk::paintRadio):
+        (WebCore::RenderThemeGdk::paintButton):
+        (WebCore::RenderThemeGdk::gtkButton):
+        (WebCore::RenderThemeGdk::gtkCheckbox):
+        (WebCore::RenderThemeGdk::gtkRadioButton):
+        * platform/gdk/RenderThemeGdk.h:
+
 2007-07-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.
