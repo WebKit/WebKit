@@ -1,3 +1,15 @@
+2007-07-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/5355781>
+        REGRESSION: reproducible crash in CoreFoundation!CFRunLoopFinished on Flash pages
+        
+        Null check the loader.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::start):
+
 2007-07-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt and Adam.

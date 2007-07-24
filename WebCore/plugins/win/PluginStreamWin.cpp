@@ -98,7 +98,8 @@ PluginStreamWin::~PluginStreamWin()
 void PluginStreamWin::start()
 {
     m_loader = SubresourceLoader::create(m_frame, this, m_resourceRequest);
-    m_loader->setShouldBufferData(false);
+    if (m_loader)
+        m_loader->setShouldBufferData(false);
 }
 
 void PluginStreamWin::stop()
