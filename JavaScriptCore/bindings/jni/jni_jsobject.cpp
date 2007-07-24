@@ -337,9 +337,14 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     // If rootObject is !NULL We must have been called via netscape.javascript.JavaJSObject.getWindow(),
     // otherwise we are being called after creating a JavaJSObject in
     // JavaJSObject::convertValueToJObject().
-    if (rootObject)
-        return ptr_to_jlong(rootObject->interpreter()->globalObject());
-
+    if (rootObject) {
+        JSObject* globalObject = rootObject->interpreter()->globalObject();
+        // We call gcProtect here to get the object into the root object's "protect set" which
+        // is used to test if a native handle is valid as well as getting the root object given the handle.
+        rootObject->gcProtect(globalObject);
+        return ptr_to_jlong(globalObject);
+    }
+    
     return nativeHandle;
 }
 

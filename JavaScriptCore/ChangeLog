@@ -1,3 +1,15 @@
+2007-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5121461> REGRESSION: Unable to load JigZone puzzle
+        
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::createNative):
+        
+        Call RootObject::gcProtect on the global object, thereby putting it in the
+        "protect count" set which is used for checking if a native handle is valid.
+        
 2007-07-23  Darin Adler  <darin@apple.com>
 
         * pcre/pcre_compile.c: Roll back a tiny accidental change in the unused !JAVASCRIPT
