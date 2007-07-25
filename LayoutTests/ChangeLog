@@ -3,7 +3,15 @@
         Reviewed by .
 
         * mac/leopard/Skipped:
-        Adding to skip list to avoid false failure
+        Removing some tests that were removed earlier, but checked back 
+        in accidentally.  Not sure how they got back into my file though. 
+
+2007-07-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by .
+
+        * mac/leopard/Skipped:
+        Adding to skip list to avoid false failure / Broken pipe.
 
 2007-07-25  Kevin McCullough  <kmccullough@apple.com>
 
