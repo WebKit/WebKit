@@ -1,5 +1,13 @@
 2007-07-24  Adele Peterson  <adele@apple.com>
 
+        Updating test to put JS code in the onload handler helps to avoid intermittent failures.
+        <rdar://problem/5313531> REGRESSION(Leopard): editing/pasteboard/copy-in-password-field.html sometimes fails
+
+        * editing/pasteboard/copy-in-password-field-expected.txt:
+        * editing/pasteboard/copy-in-password-field.html:
+
+2007-07-24  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Test for <rdar://problem/5308492> Computed width for elements with box-sizing: border-box is not equal to the width set in the CSS
