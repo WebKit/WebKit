@@ -1,3 +1,13 @@
+2007-07-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - <rdar://problem/5329440> REGRESSION: Clicking links with the feed:// protocol in Safari 3 does nothing
+        - Check for file:// urls when clicking links, not block all schemes that are treated as local.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+
 2007-07-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam and Justin.

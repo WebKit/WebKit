@@ -1,3 +1,16 @@
+2007-07-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - <rdar://problem/5329440> REGRESSION: Clicking links with the feed:// protocol in Safari 3 does nothing
+        - Tests that feed:// urls can still be followed when clicked.
+
+        * http/tests/security/feed-urls-from-remote-expected.txt: Added.
+        * http/tests/security/feed-urls-from-remote.html: Added.
+        * http/tests/security/resources/feed.html: Added.
+        * http/tests/security/resources/feed.xml: Added.
+        * win/Skipped:
+
 2007-07-24  Brady Eidson <beidson@apple.com>
 
         Reviewed by Adam Roben

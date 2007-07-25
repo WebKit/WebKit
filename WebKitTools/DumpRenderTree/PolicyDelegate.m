@@ -26,10 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import "PolicyDelegate.h"
 
+#import "DumpRenderTree.h"
+#import "DumpRenderTreeDraggingInfo.h"
+#import <WebKit/WebPolicyDelegate.h>
 
-@interface ResourceLoadDelegate : NSObject {
+@implementation PolicyDelegate
+- (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation
+                                                           request:(NSURLRequest *)request
+                                                             frame:(WebFrame *)frame
+                                                  decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    NSString *frameName = [frame name];
+    NSString *requestURL = [[request URL] absoluteString];
+    printf("Frame %s attempted to load %s\n", [frameName UTF8String], [requestURL UTF8String]);
+    [listener ignore];
 }
+
 
 @end
