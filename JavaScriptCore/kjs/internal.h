@@ -47,7 +47,9 @@ namespace KJS {
 
   class StringImp : public JSCell {
   public:
-    StringImp(const UString& v) : val(v) { }
+    StringImp(const UString& v) : val(v) { Collector::reportExtraMemoryCost(v.cost()); }
+    enum HasOtherOwnerType { HasOtherOwner };
+    StringImp(const UString& value, HasOtherOwnerType) : val(value) { }
     UString value() const { return val; }
 
     JSType type() const { return StringType; }

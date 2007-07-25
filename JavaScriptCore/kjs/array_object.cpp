@@ -77,6 +77,7 @@ ArrayInstance::ArrayInstance(JSObject *proto, unsigned initialLength)
   , storageLength(initialLength < sparseArrayCutoff ? initialLength : 0)
   , storage(allocateStorage(storageLength))
 {
+  Collector::reportExtraMemoryCost(storageLength * sizeof(JSValue*));
 }
 
 ArrayInstance::ArrayInstance(JSObject *proto, const List &list)
@@ -90,6 +91,8 @@ ArrayInstance::ArrayInstance(JSObject *proto, const List &list)
   for (unsigned i = 0; i < l; ++i) {
     storage[i] = it++;
   }
+  // When the array is created non-empty its cells are filled so it's really no worse than
+  // a property map. Therefore don't report extra memory cost.
 }
 
 ArrayInstance::~ArrayInstance()

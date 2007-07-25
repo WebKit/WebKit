@@ -51,6 +51,12 @@ StringInstance::StringInstance(JSObject *proto)
   setInternalValue(jsString(""));
 }
 
+StringInstance::StringInstance(JSObject *proto, StringImp* string)
+  : JSWrapperObject(proto)
+{
+  setInternalValue(string);
+}
+
 StringInstance::StringInstance(JSObject *proto, const UString &string)
   : JSWrapperObject(proto)
 {
@@ -424,7 +430,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     if (!thisObj || !thisObj->inherits(&StringInstance::info))
       return throwError(exec, TypeError);
 
-    return jsString(static_cast<StringInstance*>(thisObj)->internalValue()->toString(exec));
+    return static_cast<StringInstance*>(thisObj)->internalValue();
   }
 
   UString u, u2, u3;

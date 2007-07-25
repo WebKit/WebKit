@@ -145,7 +145,7 @@ XMLHttpRequestState XMLHttpRequest::getReadyState() const
     return m_state;
 }
 
-String XMLHttpRequest::getResponseText() const
+KJS::UString XMLHttpRequest::getResponseText() const
 {
     return m_responseText;
 }
@@ -164,7 +164,7 @@ Document* XMLHttpRequest::getResponseXML() const
             m_responseXML->open();
             m_responseXML->setURL(m_url.url());
             // FIXME: set Last-Modified and cookies (currently, those are only available for HTMLDocuments).
-            m_responseXML->write(m_responseText);
+            m_responseXML->write(String(m_responseText));
             m_responseXML->finishParsing();
             m_responseXML->close();
             
@@ -252,7 +252,7 @@ XMLHttpRequest::XMLHttpRequest(Document* d)
     , m_async(true)
     , m_loader(0)
     , m_state(Uninitialized)
-    , m_responseText("", 0)
+    , m_responseText("")
     , m_createdDocument(false)
     , m_aborted(false)
 {
@@ -469,13 +469,29 @@ void XMLHttpRequest::abort()
 
     m_decoder = 0;
 
-    if (hadLoader) {
-        {
-            KJS::JSLock lock;
-            gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
-        }
-        deref();
+    if (hadLoader)
+        dropProtection();
+}
+
+void XMLHttpRequest::dropProtection()        
+{
+    {
+        KJS::JSLock lock;
+        KJS::JSValue* wrapper = KJS::ScriptInterpreter::getDOMObject(this);
+        KJS::gcUnprotectNullTolerant(wrapper);
+    
+        // the XHR object itself holds on to the responseText, and
+        // thus has extra cost even independent of any
+        // responseText or responseXML objects it has handed
+        // out. But it is protected from GC while loading, so this
+        // can't be recouped until the load is done, so only
+        // report the extra cost at that point.
+    
+        if (wrapper)
+            KJS::Collector::reportExtraMemoryCost(m_responseText.size() * 2);
     }
+
+    deref();
 }
 
 void XMLHttpRequest::overrideMIMEType(const String& override)
@@ -636,13 +652,8 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     changeState(Loaded);
     m_decoder = 0;
 
-    if (hadLoader) {
-        {
-            KJS::JSLock lock;
-            gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
-        }
-        deref();
-    }
+    if (hadLoader)
+        dropProtection();
 }
 
 void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)

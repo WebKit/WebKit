@@ -298,6 +298,13 @@ JSValue* jsStringOrNull(const String& s)
     return jsString(s);
 }
 
+JSValue* jsOwnedStringOrNull(const KJS::UString& s)
+{
+    if (s.isNull())
+        return jsNull();
+    return jsOwnedString(s);
+}
+
 JSValue* jsStringOrUndefined(const String& s)
 {
     if (s.isNull())

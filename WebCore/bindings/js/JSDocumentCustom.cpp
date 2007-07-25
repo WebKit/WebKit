@@ -64,6 +64,13 @@ JSValue* toJS(ExecState* exec, Document* doc)
     // back/forward cache.
     if (doc->frame())
         Window::retrieveWindow(doc->frame())->putDirect("document", ret, DontDelete|ReadOnly);
+    else {
+        size_t nodeCount = 0;
+        for (Node* n = doc; n; n = n->traverseNextNode())
+            nodeCount++;
+        
+        Collector::reportExtraMemoryCost(nodeCount * sizeof(Node));
+    }
 
     interp->putDOMObject(doc, ret);
 

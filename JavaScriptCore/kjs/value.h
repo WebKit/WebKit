@@ -162,8 +162,13 @@ public:
 
 JSValue *jsNumberCell(double);
 
-JSCell *jsString(const UString &); // returns empty string if passed null string
-JSCell *jsString(const char * = ""); // returns empty string if passed 0
+JSCell *jsString(const UString&); // returns empty string if passed null string
+JSCell *jsString(const char* = ""); // returns empty string if passed 0
+
+// should be used for strings that are owned by an object that will
+// likely outlive the JSValue this makes, such as the parse tree or a
+// DOM object that contains a UString
+JSCell *jsOwnedString(const UString&); 
 
 extern const double NaN;
 extern const double Inf;

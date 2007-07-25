@@ -81,9 +81,10 @@ struct CollectorHeap {
   
   size_t numLiveObjects;
   size_t numLiveObjectsAtLastCollect;
+  size_t extraCost;
 };
 
-static CollectorHeap heap = {NULL, 0, 0, 0, 0, 0};
+static CollectorHeap heap = {NULL, 0, 0, 0, 0, 0, 0};
 
 size_t Collector::mainThreadOnlyObjectCount = 0;
 bool Collector::memoryFull = false;
@@ -162,6 +163,22 @@ static void freeBlock(CollectorBlock* block)
 #endif
 }
 
+void Collector::recordExtraCost(size_t cost)
+{
+    // Our frequency of garbage collection tries to balance memory use against speed
+    // by collecting based on the number of newly created values. However, for values
+    // that hold on to a great deal of memory that's not in the form of other JS values,
+    // that is not good enough - in some cases a lot of those objects can pile up and
+    // use crazy amounts of memory without a GC happening. So we track these extra
+    // memory costs. Only unusually large objects are noted, and we only keep track
+    // of this extra cost until the next GC. In garbage collected languages, most values
+    // are either very short lived temporaries, or have extremely long lifetimes. So
+    // if a large value survives one garbage collection, there is not much point to
+    // collecting more frequently as long as it stays alive.
+
+    heap.extraCost += cost;
+}
+
 void* Collector::allocate(size_t s)
 {
   ASSERT(JSLock::lockCount() > 0);
@@ -173,8 +190,9 @@ void* Collector::allocate(size_t s)
   size_t numLiveObjects = heap.numLiveObjects;
   size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
   size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
+  size_t newCost = numNewObjects + heap.extraCost;
 
-  if (numNewObjects >= ALLOCATIONS_PER_COLLECTION && numNewObjects >= numLiveObjectsAtLastCollect) {
+  if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect) {
     collect();
     numLiveObjects = heap.numLiveObjects;
   }
@@ -853,6 +871,7 @@ bool Collector::collect()
 
   heap.numLiveObjects = numLiveObjects;
   heap.numLiveObjectsAtLastCollect = numLiveObjects;
+  heap.extraCost = 0;
   
   memoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
 

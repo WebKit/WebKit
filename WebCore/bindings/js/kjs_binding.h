@@ -146,6 +146,11 @@ namespace KJS {
     JSValue* jsStringOrNull(const WebCore::String&); // null if the string is null
     JSValue* jsStringOrUndefined(const WebCore::String&); // undefined if the string is null
     JSValue* jsStringOrFalse(const WebCore::String&); // boolean false if the string is null
+
+    // see JavaScriptCore for explanation should be used for UString that is already owned
+    // by another object, so that collecting the JSString wrapper is unlikely to save memory.
+    JSValue* jsOwnedStringOrNull(const KJS::UString&); 
+
     WebCore::String valueToStringWithNullCheck(ExecState*, JSValue*); // null String if the value is null
     WebCore::String valueToStringWithUndefinedOrNullCheck(ExecState*, JSValue*); // null String if the value is null or undefined
 

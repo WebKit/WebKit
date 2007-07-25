@@ -104,7 +104,7 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState* exec, int token) const
         case ReadyState:
             return jsNumber(m_impl->getReadyState());
         case ResponseText:
-            return jsStringOrNull(m_impl->getResponseText());
+            return jsOwnedStringOrNull(m_impl->getResponseText());
         case ResponseXML:
             if (Document* responseXML = m_impl->getResponseXML())
                 return toJS(exec, responseXML);

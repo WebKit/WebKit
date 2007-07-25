@@ -39,6 +39,10 @@ namespace KJS {
     static void* allocate(size_t s);
     static bool collect();
 
+    static const size_t minExtraCostSize = 256;
+
+    static void reportExtraMemoryCost(size_t cost);
+
     static size_t size();
     static bool isOutOfMemory() { return memoryFull; }
 
@@ -69,14 +73,15 @@ namespace KJS {
   private:
     static const CollectorBlock* cellBlock(const JSCell*);
     static CollectorBlock* cellBlock(JSCell*);
-    static size_t cellOffset(const JSCell* cell);
+    static size_t cellOffset(const JSCell*);
 
     Collector();
 
+    static void recordExtraCost(size_t);
     static void markProtectedObjects();
     static void markMainThreadOnlyObjects();
     static void markCurrentThreadConservatively();
-    static void markOtherThreadConservatively(Thread* thread);
+    static void markOtherThreadConservatively(Thread*);
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void* start, void* end);
 
@@ -153,6 +158,12 @@ namespace KJS {
   inline void Collector::markCell(JSCell* cell)
   {
     cellBlock(cell)->marked.set(cellOffset(cell));
+  }
+
+  inline void Collector::reportExtraMemoryCost(size_t cost)
+  { 
+    if (cost > minExtraCostSize) 
+      recordExtraCost(cost / (CELL_SIZE * 2)); 
   }
 
 } // namespace KJS

@@ -356,7 +356,7 @@ JSValue *NumberNode::evaluate(ExecState *)
 
 JSValue *StringNode::evaluate(ExecState *)
 {
-  return jsString(value);
+  return jsOwnedString(value);
 }
 
 // ------------------------------ RegExpNode -----------------------------------
@@ -364,8 +364,8 @@ JSValue *StringNode::evaluate(ExecState *)
 JSValue *RegExpNode::evaluate(ExecState *exec)
 {
   List list;
-  list.append(jsString(pattern));
-  list.append(jsString(flags));
+  list.append(jsOwnedString(pattern));
+  list.append(jsOwnedString(flags));
 
   JSObject *reg = exec->lexicalInterpreter()->builtinRegExp();
   return reg->construct(exec,list);
@@ -532,7 +532,7 @@ JSValue *PropertyNameNode::evaluate(ExecState*)
   if (str.isNull()) {
     s = jsString(UString::from(numeric));
   } else {
-    s = jsString(str.ustring());
+    s = jsOwnedString(str.ustring());
   }
 
   return s;
@@ -1988,7 +1988,7 @@ Completion ForInNode::execute(ExecState *exec)
       if (!v->hasProperty(exec, name))
           continue;
 
-      JSValue *str = jsString(name.ustring());
+      JSValue *str = jsOwnedString(name.ustring());
 
       if (lexpr->isResolveNode()) {
         const Identifier &ident = static_cast<ResolveNode *>(lexpr.get())->identifier();

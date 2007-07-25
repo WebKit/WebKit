@@ -1,3 +1,52 @@
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed <rdar://problem/5300291> Optimize GC to reclaim big, temporary objects (like XMLHttpRequest.responseXML) quickly
+        
+        With this plus related JavaScriptCore changes, a number of XMLHttpRequest situations that
+        result in huge data sets are addressed, including a single huge responseXML on an XMR done
+        repeatedly, or accessing responseText repeatedly during loading of a single large XHR.
+        
+        In addition to the GC changes in JavaScriptCore, I changed responseText to be stored as a
+        KJS::UString instead of a WebCore::String so that the JavaScript responseText value can
+        share the buffer (indeed multiple intermediate responseTexts can share its buffer).
+
+        
+        First of all, here's some manual test cases that will each blow out the process VM without this fix,
+        but will settle into decent steady state with.
+        
+        * manual-tests/memory: Added.
+        * manual-tests/memory/MessageUidsAlreadyDownloaded2: Added.
+        * manual-tests/memory/string-growth.html: Added.
+        * manual-tests/memory/xhr-multiple-requests-responseText.html: Added.
+        * manual-tests/memory/xhr-multiple-requests-responseXML.html: Added.
+        * manual-tests/memory/xhr-multiple-requests.html: Added.
+        * manual-tests/memory/xhr-repeated-string-access.xml: Added.
+
+        And here's the actual code changes:
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): Record extra cost if the document is frameless (counting the nodes
+        doesn't make a measurable performance difference here in any case I could find)
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty): Adjust for the fact that ressponseText
+        is now stored as a UString.
+        * bindings/js/kjs_binding.cpp:
+        (KJS::jsOwnedStringOrNull): New helper.
+        * bindings/js/kjs_binding.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseText): It's a UString!
+        (WebCore::XMLHttpRequest::getResponseXML): handle the fact that m_responseText
+        is a UString.
+        (WebCore::XMLHttpRequest::XMLHttpRequest): ditto.
+        (WebCore::XMLHttpRequest::abort): call dropProtection
+        (WebCore::XMLHttpRequest::didFinishLoading): call dropProtection
+        (WebCore::XMLHttpRequest::dropProtection): after removing our GC protection,
+        report extra cost of this XHR's responseText buffer.
+        * xml/XMLHttpRequest.h:
+
 2007-07-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.

@@ -169,14 +169,19 @@ const JSObject *JSCell::getObject() const
     return isObject() ? static_cast<const JSObject *>(this) : 0;
 }
 
-JSCell *jsString(const char *s)
+JSCell* jsString(const char* s)
 {
     return new StringImp(s ? s : "");
 }
 
-JSCell *jsString(const UString &s)
+JSCell* jsString(const UString& s)
 {
     return s.isNull() ? new StringImp("") : new StringImp(s);
+}
+
+JSCell* jsOwnedString(const UString& s)
+{
+    return s.isNull() ? new StringImp("", StringImp::HasOtherOwner) : new StringImp(s, StringImp::HasOtherOwner);
 }
 
 // This method includes a PIC branch to set up the NumberImp's vtable, so we quarantine

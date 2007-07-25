@@ -1,3 +1,86 @@
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - JavaScriptCore part of fix for <rdar://problem/5300291> Optimize GC to reclaim big, temporary objects (like XMLHttpRequest.responseXML) quickly
+        
+        Also, as a side effect of optimizations included in this patch:
+        - 7% speedup on JavaScript iBench
+        - 4% speedup on "Celtic Kane" JS benchmark
+        
+        The basic idea is explained in a big comment in collector.cpp. When unusually 
+        large objecs are allocated, we push the next GC closer on the assumption that
+        most objects are short-lived.
+        
+        I also did the following two optimizations in the course of tuning
+        this not to be a performance regression:
+
+        1) Change UString::Rep to hold a self-pointer as the baseString in
+        the unshared case, instead of a null pointer; this removes a
+        number of null checks in hot code because many places already
+        wanted to use the rep itself or the baseString as appropriate.
+        
+        2) Avoid creating duplicate StringImpls when creating a
+        StringInstance (the object wrapper for a JS string) or calling
+        their methods. Since a temporary wrapper object is made every time
+        a string method is called, this resulted in two useless extra
+        StringImpls being allocated for no reason whenever a String method
+        was invoked on a string value. Now we bypass those.
+        
+        * kjs/collector.cpp:
+        (KJS::):
+        (KJS::Collector::recordExtraCost): Basics of the extra cost mechanism.
+        (KJS::Collector::allocate): ditto
+        (KJS::Collector::collect): ditto
+        * kjs/collector.h:
+        (KJS::Collector::reportExtraMemoryCost): ditto
+        * kjs/array_object.cpp:
+        (ArrayInstance::ArrayInstance): record extra cost
+        * kjs/internal.cpp:
+        (KJS::StringImp::toObject): don't create a whole new StringImpl just
+        to be the internal value of a StringInstance! StringImpls are immutable
+        so there's no point tot his.
+        * kjs/internal.h:
+        (KJS::StringImp::StringImp): report extra cost
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::StringInstance): new version that takes a StringImp
+        (KJS::StringProtoFunc::callAsFunction): don't create a whole new StringImpl
+        just to convert self to string! we already have one in the internal value
+        * kjs/string_object.h: report extra cost        
+        * kjs/ustring.cpp: All changes to handle baseString being self instead of null in the 
+        unshared case.
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        (KJS::UString::usedCapacity):
+        (KJS::UString::usedPreCapacity):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::expandPreCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        (KJS::UString::copyForWriting):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::baseIsSelf): new method, now that baseString is
+        self instead of null in the unshared case we can't just null check.
+        (KJS::UString::Rep::data): adjusted as mentioned above
+        (KJS::UString::cost): new method to compute the cost for a UString, for
+        use by StringImpl.
+
+        * kjs/value.cpp:
+        (KJS::jsString): style fixups.
+        (KJS::jsOwnedString): new method, use this for strings allocated from UStrings
+        held by the parse tree. Tracking their cost as part of string cost is pointless,
+        because garbage collecting them will not actually free the relevant string buffer.
+        * kjs/value.h: prototyped jsOwnedString.
+        * kjs/nodes.cpp:
+        (StringNode::evaluate): use jsOwnedString as appropriate
+        (RegExpNode::evaluate): ditto
+        (PropertyNameNode::evaluate): ditto
+        (ForInNode::execute): ditto
+        
+        * JavaScriptCore.exp: Exported some new symbols.
+
 2007-07-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
