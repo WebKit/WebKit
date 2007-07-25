@@ -1,3 +1,18 @@
+2007-07-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam and Justin.
+
+        <rdar://problem/5141779> WebView editableDOMRangeForPoint: & moveDragCaretToPoint: returns last position in DOMText range
+
+        editableDOMRangeForPoint:, moveDragCaretToPoint:, and removeDragCaret now call directly into
+        WebCore without relying on bridge look up through the now removed _bridgeAtPoint:.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebView.mm:
+        (-[WebView moveDragCaretToPoint:]):
+        (-[WebView removeDragCaret]):
+        (-[WebView editableDOMRangeForPoint:]):
+
 2007-07-24  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders.

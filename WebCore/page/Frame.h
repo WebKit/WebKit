@@ -33,6 +33,7 @@
 #include "DragImage.h"
 #include "RenderLayer.h"
 #include "TextGranularity.h"
+#include "VisiblePosition.h"
 #include <wtf/unicode/Unicode.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -347,7 +348,9 @@ public:
     String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*);
     String searchForLabelsBeforeElement(const Vector<String>& labels, Element*);
     String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
-
+    
+    VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
+    Document* documentAtPoint(const IntPoint& windowPoint);
 #if PLATFORM(MAC)
 
 // === undecided, may or may not belong here

@@ -47,6 +47,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
+#include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -2268,6 +2269,23 @@ void Editor::markBadGrammar(const Selection& selection)
 #ifndef BUILDING_ON_TIGER
     markMisspellingsOrBadGrammar(this, selection, false);
 #endif
+}
+    
+    
+PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
+{
+    Document* document = m_frame->documentAtPoint(windowPoint);
+    if (!document)
+        return 0;
+    
+    Frame* frame = document->frame();
+    ASSERT(frame);
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+    IntPoint framePoint = frameView->windowToContents(windowPoint);
+    Selection selection(frame->visiblePositionForPoint(framePoint));
+    return selection.toRange();
 }
 
 } // namespace WebCore

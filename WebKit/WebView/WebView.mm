@@ -335,7 +335,6 @@ static int pluginDatabaseClientCount = 0;
 - (WebFrameBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
-- (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
 + (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
@@ -2537,14 +2536,14 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {
-    [[[self mainFrame] _bridge] moveDragCaretToPoint:[self convertPoint:point toView:[[[self mainFrame] frameView] documentView]]];
+    if (Page* page = core(self))
+        page->dragController()->placeDragCaret(IntPoint([self convertPoint:point toView:nil]));
 }
 
 - (void)removeDragCaret
 {
-    if (!_private->page)
-        return;
-    _private->page->dragCaretController()->clear();
+    if (Page* page = core(self))
+        page->dragController()->dragEnded();
 }
 
 - (void)setMainFrameURL:(NSString *)URLString
@@ -3181,8 +3180,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
-    WebFrameBridge *bridge = [self _bridgeAtPoint:point];
-    return [bridge editableDOMRangeForPoint:[self convertPoint:point toView:[[[bridge webFrame] frameView] documentView]]];
+    Page* page = core(self);
+    if (!page)
+        return nil;
+    return kit(page->mainFrame()->editor()->rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
 }
 
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
@@ -3560,11 +3561,6 @@ static WebFrameView *containingFrameView(NSView *view)
     WebFrameView *frameView = containingFrameView(view);
     ASSERT(frameView);
     return frameView;
-}
-
-- (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point
-{
-    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
 }
 
 + (void)_preflightSpellCheckerNow:(id)sender

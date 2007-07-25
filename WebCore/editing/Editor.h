@@ -208,6 +208,7 @@ public:
     void setStartNewKillRingSequence(bool) { }
 #endif
 
+    PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;

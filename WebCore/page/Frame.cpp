@@ -45,6 +45,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
@@ -1936,6 +1937,34 @@ void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeT
     editor()->respondToChangedSelection(oldSelection);
 }
 
+VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
+{
+    HitTestResult result = eventHandler()->hitTestResultAtPoint(framePoint, true);
+    Node* node = result.innerNode();
+    if (!node)
+        return VisiblePosition();
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return VisiblePosition();
+    VisiblePosition visiblePos = renderer->positionForCoordinates(result.localPoint().x(), result.localPoint().y());
+    if (visiblePos.isNull())
+        visiblePos = VisiblePosition(Position(node, 0));
+    return visiblePos;
+}
+    
+Document* Frame::documentAtPoint(const IntPoint& point)
+{  
+    if (!view()) 
+        return 0;
+    
+    IntPoint pt = view()->windowToContents(point);
+    HitTestResult result = HitTestResult(pt);
+    
+    if (renderer())
+        result = eventHandler()->hitTestResultAtPoint(pt, false);
+    return result.innerNode() ? result.innerNode()->document() : 0;
+}
+    
 FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement* ownerElement,
                            FrameLoaderClient* frameLoaderClient)
     : m_page(page)

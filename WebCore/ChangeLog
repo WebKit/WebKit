@@ -1,3 +1,35 @@
+2007-07-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam and Justin.
+
+        <rdar://problem/5141779> WebView editableDOMRangeForPoint: & moveDragCaretToPoint: returns last position in DOMText range
+
+        Remove bridge implementation for editableDOMRangeForPoint: and moveDragCaretToPoint:. 
+        Now use cross-platform code Editor::rangeForPoint and DragController::placeDragCaret instead.
+        This required lifting local code from DragController.cpp into the shared methods
+        Frame::visiblePositionForPoint and Frame::documentAtPoint.
+
+        * WebCore.exp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeForPoint):
+        * editing/Editor.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnded):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::operationForLoad):
+        (WebCore::setSelectionToDragCaret):
+        (WebCore::DragController::concludeDrag):
+        (WebCore::DragController::placeDragCaret):
+        * page/DragController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint):
+        (WebCore::Frame::documentAtPoint):
+        * page/Frame.h:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+
 2007-07-24  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.

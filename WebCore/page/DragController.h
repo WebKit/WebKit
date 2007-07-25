@@ -79,7 +79,9 @@ namespace WebCore {
         DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
         
         bool mayStartDragAtEventLocation(const Frame*, const IntPoint& framePos);
-        void dragEnded() { m_dragInitiator = 0; m_didInitiateDrag = false; }
+        void dragEnded();
+        
+        void placeDragCaret(const IntPoint&);
         
         bool startDrag(Frame* src, Clipboard*, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, bool isDHTMLDrag);
         static const IntSize& maxDragImageSize();

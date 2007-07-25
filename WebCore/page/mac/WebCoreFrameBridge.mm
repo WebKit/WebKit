@@ -1119,12 +1119,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return visiblePos;
 }
 
-- (void)moveDragCaretToPoint:(NSPoint)point
-{   
-    Selection dragCaret([self _visiblePositionForPoint:point]);
-    m_frame->dragCaretController()->setSelection(dragCaret);
-}
-
 - (DOMRange *)dragCaretDOMRange
 {
     return [DOMRange _wrapRange:m_frame->dragCaretController()->toRange().get()];
@@ -1133,12 +1127,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (BOOL)isDragCaretRichlyEditable
 {
     return m_frame->dragCaretController()->isContentRichlyEditable();
-}
-
-- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
-{
-    VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _wrapRange:Selection(position).toRange().get()];
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point
