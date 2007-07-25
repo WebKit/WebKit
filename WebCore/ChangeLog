@@ -1,3 +1,21 @@
+2007-07-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/4796657> table deletion outline does not always follow the table size as editing occurs inside
+
+        Change the outline element to position itself automaticlly using the top, left, bottom and right CSS properties.
+        This made the container element redundant, so it has been removed. Now the outline element and the delete button
+        both get appended to the target element and positioned based on that container element. This removes the need
+        to update the width and height when the target contents changed.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show): Change the style properties and remove the container element.
+        (WebCore::DeleteButtonController::hide): Remove the button and outline from the target element.
+        * editing/DeleteButtonController.h: Removed updateOutlineStyle, respondToChangedContents and m_containerElement.
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents): Remove the call to DeleteButtonController respondToChangedContents.
+
 2007-07-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

@@ -47,7 +47,6 @@ public:
     HTMLElement* target() const { return m_target.get(); };
 
     void respondToChangedSelection(const Selection& oldSelection);
-    void respondToChangedContents();
 
     void show(HTMLElement*);
     void hide();
@@ -59,11 +58,8 @@ public:
     void deleteTarget();
 
 private:
-    void updateOutlineStyle();
-
     Frame* m_frame;
     RefPtr<HTMLElement> m_target;
-    RefPtr<HTMLElement> m_containerElement;
     RefPtr<HTMLElement> m_outlineElement;
     RefPtr<DeleteButton> m_buttonElement;
     bool m_wasStaticPositioned;

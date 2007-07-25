@@ -455,7 +455,6 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
     
     if (client())
         client()->respondToChangedContents();  
-    m_deleteButtonController->respondToChangedContents();
 }
 
 const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const

@@ -146,24 +146,6 @@ void DeleteButtonController::respondToChangedSelection(const Selection& oldSelec
         hide();
 }
 
-void DeleteButtonController::respondToChangedContents()
-{
-    if (!enabled())
-        return;
-
-    updateOutlineStyle();
-}
-
-void DeleteButtonController::updateOutlineStyle()
-{
-    if (!m_target || !m_target->renderer() || !m_outlineElement)
-        return;
-
-    CSSMutableStyleDeclaration* style = m_outlineElement->getInlineStyleDecl();
-    style->setProperty(CSS_PROP_WIDTH, String::number(m_target->renderer()->overflowWidth()) + "px");
-    style->setProperty(CSS_PROP_HEIGHT, String::number(m_target->renderer()->overflowHeight()) + "px");
-}
-
 void DeleteButtonController::show(HTMLElement* element)
 {
     hide();
@@ -179,39 +161,28 @@ void DeleteButtonController::show(HTMLElement* element)
 
     m_target = element;
 
-    m_containerElement = new HTMLDivElement(m_target->document());
-    m_containerElement->setId(containerElementIdentifier);
-
-    CSSMutableStyleDeclaration* style = m_containerElement->getInlineStyleDecl();
-    style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-    style->setProperty(CSS_PROP_TOP, String::number(-m_target->renderer()->borderTop()) + "px");
-    style->setProperty(CSS_PROP_LEFT, String::number(-m_target->renderer()->borderLeft()) + "px");
-    style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
-
     m_outlineElement = new HTMLDivElement(m_target->document());
     m_outlineElement->setId(outlineElementIdentifier);
 
     const int borderWidth = 4;
     const int borderRadius = 6;
 
-    style = m_outlineElement->getInlineStyleDecl();
+    CSSMutableStyleDeclaration* style = m_outlineElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
     style->setProperty(CSS_PROP_CURSOR, CSS_VAL_DEFAULT);
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP_Z_INDEX, String::number(-1));
-    style->setProperty(CSS_PROP_TOP, String::number(-borderWidth) + "px");
-    style->setProperty(CSS_PROP_LEFT, String::number(-borderWidth) + "px");
+    style->setProperty(CSS_PROP_Z_INDEX, String::number(-1000000));
+    style->setProperty(CSS_PROP_TOP, String::number(-borderWidth - m_target->renderer()->borderTop()) + "px");
+    style->setProperty(CSS_PROP_RIGHT, String::number(-borderWidth - m_target->renderer()->borderRight()) + "px");
+    style->setProperty(CSS_PROP_BOTTOM, String::number(-borderWidth - m_target->renderer()->borderBottom()) + "px");
+    style->setProperty(CSS_PROP_LEFT, String::number(-borderWidth - m_target->renderer()->borderLeft()) + "px");
     style->setProperty(CSS_PROP_BORDER, String::number(borderWidth) + "px solid rgba(0, 0, 0, 0.6)");
     style->setProperty(CSS_PROP__WEBKIT_BORDER_RADIUS, String::number(borderRadius) + "px");
 
-    updateOutlineStyle();
-
     ExceptionCode ec = 0;
-    m_containerElement->appendChild(m_outlineElement.get(), ec);
+    m_target->appendChild(m_outlineElement.get(), ec);
     ASSERT(ec == 0);
     if (ec) {
         hide();
@@ -223,6 +194,7 @@ void DeleteButtonController::show(HTMLElement* element)
 
     const int buttonWidth = 30;
     const int buttonHeight = 30;
+    const int buttonBottomShadowOffset = 2;
 
     style = m_buttonElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
@@ -230,21 +202,15 @@ void DeleteButtonController::show(HTMLElement* element)
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP_LEFT, String::number(-buttonWidth / 2) + "px");
-    style->setProperty(CSS_PROP_TOP, String::number(-buttonHeight / 2) + "px");
+    style->setProperty(CSS_PROP_Z_INDEX, String::number(1000000));
+    style->setProperty(CSS_PROP_TOP, String::number((-buttonHeight / 2) - m_target->renderer()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
+    style->setProperty(CSS_PROP_LEFT, String::number((-buttonWidth / 2) - m_target->renderer()->borderLeft() - (borderWidth / 2)) + "px");
     style->setProperty(CSS_PROP_WIDTH, String::number(buttonWidth) + "px");
     style->setProperty(CSS_PROP_HEIGHT, String::number(buttonHeight) + "px");
 
     m_buttonElement->setCachedImage(new CachedImage(Image::loadPlatformResource("deleteButton")));
 
-    m_containerElement->appendChild(m_buttonElement.get(), ec);
-    ASSERT(ec == 0);
-    if (ec) {
-        hide();
-        return;
-    }
-
-    m_target->appendChild(m_containerElement.get(), ec);
+    m_target->appendChild(m_buttonElement.get(), ec);
     ASSERT(ec == 0);
     if (ec) {
         hide();
@@ -267,8 +233,11 @@ void DeleteButtonController::show(HTMLElement* element)
 void DeleteButtonController::hide()
 {
     ExceptionCode ec = 0;
-    if (m_containerElement)
-        m_containerElement->parentNode()->removeChild(m_containerElement.get(), ec);
+    if (m_outlineElement)
+        m_outlineElement->parentNode()->removeChild(m_outlineElement.get(), ec);
+
+    if (m_buttonElement)
+        m_buttonElement->parentNode()->removeChild(m_buttonElement.get(), ec);
 
     if (m_target && m_wasStaticPositioned)
         m_target->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_STATIC);
@@ -281,7 +250,6 @@ void DeleteButtonController::hide()
     m_target = 0;
     m_outlineElement = 0;
     m_buttonElement = 0;
-    m_containerElement = 0;
 }
 
 void DeleteButtonController::enable()
