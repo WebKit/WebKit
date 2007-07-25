@@ -35,7 +35,6 @@
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
-#import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -116,7 +115,6 @@ static FrameLoadDelegate *frameLoadDelegate;
 static UIDelegate *uiDelegate;
 static EditingDelegate *editingDelegate;
 static ResourceLoadDelegate *resourceLoadDelegate;
-static PolicyDelegate *policyDelegate;
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -382,12 +380,7 @@ WebView *createWebView()
     [webView setFrameLoadDelegate:frameLoadDelegate];
     [webView setEditingDelegate:editingDelegate];
     [webView setResourceLoadDelegate:resourceLoadDelegate];
-
-    // Register the same schemes that Safari does
-    [WebView registerURLSchemeAsLocal:@"feed"];
-    [WebView registerURLSchemeAsLocal:@"feeds"];
-    [WebView registerURLSchemeAsLocal:@"feedsearch"];
-
+    
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
     [[webView backForwardList] setPageCacheSize:0];
@@ -521,7 +514,6 @@ void dumpRenderTree(int argc, const char *argv[])
     uiDelegate = [[UIDelegate alloc] init];
     editingDelegate = [[EditingDelegate alloc] init];    
     resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
-    policyDelegate = [[PolicyDelegate alloc] init];
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
@@ -594,7 +586,6 @@ void dumpRenderTree(int argc, const char *argv[])
     [editingDelegate release];
     [resourceLoadDelegate release];
     [uiDelegate release];
-    [policyDelegate release];
     
     [localPasteboards release];
     localPasteboards = nil;
@@ -1011,7 +1002,6 @@ void dump(void)
             || aSelector == @selector(setCallCloseOnWebViews:)
             || aSelector == @selector(setCanOpenWindows)
             || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
-            || aSelector == @selector(setCustomPolicyDelegate:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(setUseDashboardCompatibilityMode:)
@@ -1066,8 +1056,6 @@ void dump(void)
         return @"setCallCloseOnWebViews";
     if (aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
         return @"setCloseRemainingWindowsWhenComplete";
-    if (aSelector == @selector(setCustomPolicyDelegate:))
-        return @"setCustomPolicyDelegate";
     if (aSelector == @selector(setUseDashboardCompatibilityMode:))
         return @"setUseDashboardCompatiblityMode";
     if (aSelector == @selector(encodeHostName:))
@@ -1105,14 +1093,6 @@ void dump(void)
 - (void)setCloseRemainingWindowsWhenComplete:(BOOL)closeWindows
 {
     closeRemainingWindowsWhenComplete = closeWindows;
-}
-
-- (void)setCustomPolicyDelegate:(BOOL)setDelegate
-{
-    if (setDelegate)
-        [[mainFrame webView] setPolicyDelegate:policyDelegate];
-    else
-        [[mainFrame webView] setPolicyDelegate:nil];
 }
 
 - (void)keepWebHistory
