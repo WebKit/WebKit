@@ -100,7 +100,11 @@ bool PluginTokenizer::writeRawData(const char* data, int len)
         Frame* frame = m_doc->frame();
         Settings* settings = frame->settings();
         if (frame && settings && settings->arePluginsEnabled()) {
-            frame->loader()->client()->redirectDataToPlugin(static_cast<RenderWidget*>(m_embedElement->renderer())->widget());
+            m_doc->updateLayout();
+            
+            if (RenderWidget* renderer = static_cast<RenderWidget*>(m_embedElement->renderer()))
+                frame->loader()->client()->redirectDataToPlugin(renderer->widget());
+            
             finish();
         }
         

@@ -1,3 +1,15 @@
+2007-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5344471>
+        CrashTracer: [USER] 1 crash in Mail at WebCore::PluginTokenizer::writeRawData(char const*, int)
+        
+        Make sure to layout so we'll have a renderer. Also null-check the renderer for extra safety.
+        
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+
 2007-07-25  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Maciej, Darin.
