@@ -1,3 +1,11 @@
+2007-07-24  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        <rdar://problem/5313504> - Some Back/Forward tests fail on Leopard
+
+        * mac/leopard/Skipped: Remove from the skipped list as they work now
+
 2007-07-24  Alice Liu  <alice.liu@apple.com>
 
         Adding to the Leopard skip list to avoid a test that hangs due to a CFNetwork bug. 
