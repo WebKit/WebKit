@@ -1,3 +1,14 @@
+2007-07-25  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11756
+          <rdar://problem/5286420>
+
+        Fix a typo error to really compare the present domain to the domain of the parent of the targeted frame.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::canTarget):
+
 2007-07-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

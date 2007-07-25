@@ -2224,7 +2224,7 @@ bool FrameLoader::canTarget(Frame* target) const
     // Allow if the domain of the parent of the targeted frame equals this domain.
     String parentDomain;
     if (Document* parentDocument = parent->document())
-        domain = parentDocument->domain();
+        parentDomain = parentDocument->domain();
     return equalIgnoringCase(parentDomain, domain);
 }
 
