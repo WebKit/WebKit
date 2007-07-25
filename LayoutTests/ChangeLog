@@ -1,5 +1,14 @@
 2007-07-24  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5308492> Computed width for elements with box-sizing: border-box is not equal to the width set in the CSS
+
+        * fast/css/getComputedStyle-border-box-expected.txt: Added.
+        * fast/css/getComputedStyle-border-box.html: Added.
+
+2007-07-24  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt and Adam.
 
         Added and updated tests for <rdar://problem/5130590> REGRESSION: style="width:1px" on <select> element no longer hides the element

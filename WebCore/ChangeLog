@@ -1,3 +1,14 @@
+2007-07-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5308492> Computed width for elements with box-sizing: border-box is not equal to the width set in the CSS
+
+        Test: fast/css/getComputedStyle-border-box.html
+
+        * css/CSSComputedStyleDeclaration.cpp: (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+          For the width and height properties, when you get the value from the renderer, use the renderer's box sizing value to determine the size.
+
 2007-07-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
