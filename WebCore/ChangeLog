@@ -1,3 +1,11 @@
+2007-07-24  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Remove unused .strip files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-07-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

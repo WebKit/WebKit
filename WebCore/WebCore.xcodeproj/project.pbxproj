@@ -3628,13 +3628,11 @@
 		656580ED09D12B20000E61D7 /* CSSPropertyNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSPropertyNames.c; sourceTree = "<group>"; };
 		656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.gperf; sourceTree = "<group>"; };
 		656580EF09D12B20000E61D7 /* CSSPropertyNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPropertyNames.h; sourceTree = "<group>"; };
-		656580F109D12B20000E61D7 /* CSSPropertyNames.strip */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.strip; sourceTree = "<group>"; };
 		6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocTypeStrings.cpp; sourceTree = "<group>"; };
 		6565814409D13043000E61D7 /* CSSGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGrammar.cpp; sourceTree = "<group>"; };
 		6565814609D13043000E61D7 /* CSSValueKeywords.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSValueKeywords.c; sourceTree = "<group>"; };
 		6565814709D13043000E61D7 /* CSSValueKeywords.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.gperf; sourceTree = "<group>"; };
 		6565814809D13043000E61D7 /* CSSValueKeywords.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueKeywords.h; sourceTree = "<group>"; };
-		6565814A09D13043000E61D7 /* CSSValueKeywords.strip */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.strip; sourceTree = "<group>"; };
 		6565814B09D13043000E61D7 /* HTMLEntityNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = HTMLEntityNames.c; sourceTree = "<group>"; };
 		6565814C09D13043000E61D7 /* tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = tokenizer.cpp; sourceTree = "<group>"; };
 		656581AC09D14EE6000E61D7 /* CharsetData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CharsetData.cpp; sourceTree = "<group>"; };
@@ -7115,11 +7113,9 @@
 				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
 				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
 				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
-				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
 				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
-				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
 				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
 				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
@@ -11734,7 +11730,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
