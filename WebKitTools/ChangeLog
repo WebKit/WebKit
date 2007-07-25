@@ -1,3 +1,11 @@
+2007-07-25  Adam Treat  <treat@kde.org>
+
+        Reviewed by Niko.
+
+        Fix build for some reported systems.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+
 2007-07-23  Adam Treat  <treat@kde.org>
 
         Reviewed by Nikolas.

@@ -40,6 +40,11 @@ public:
     void mouseReleaseEvent(QMouseEvent *e) {
         QWebFrame::mouseReleaseEvent(e);
     }
+
+protected:
+    HackWebFrame(QWebPage *parent, QWebFrameData *frameData) : QWebFrame(parent, frameData) {}
+    HackWebFrame(QWebFrame *parent, QWebFrameData *frameData) : QWebFrame(parent, frameData) {}
+    ~HackWebFrame() {}
 };
 
 LayoutTestController::LayoutTestController() : QObject()
