@@ -1818,10 +1818,11 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         referrer = m_outgoingReferrer;
  
     ASSERT(frame()->document());
-    if (!canLoad(url, frame()->document()) &&
-        !canLoad(url, referrer)) {
-        FrameLoader::reportLocalLoadFailed(m_frame->page(), url.url());
-        return;
+    if (url.url().startsWith("file:", false)) {
+        if (!canLoad(url, frame()->document()) && !canLoad(url, referrer)) {
+            FrameLoader::reportLocalLoadFailed(m_frame->page(), url.url());
+            return;
+        }
     }
 
     if (shouldHideReferrer(url, referrer))

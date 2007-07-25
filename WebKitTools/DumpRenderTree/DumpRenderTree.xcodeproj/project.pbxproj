@@ -67,6 +67,8 @@
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A008AF5CD400138E45 /* ImageDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A7525808AF4A3600138E45 /* ImageDiff.m */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
+		D23AE9660C56BB2100C47236 /* PolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */; };
+		D23AE9690C56BB2900C47236 /* PolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */; };
 		E1330800099624DA00AC0A91 /* AppleScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E13307FE099624DA00AC0A91 /* AppleScriptController.h */; };
 		E1330801099624DA00AC0A91 /* AppleScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = E13307FF099624DA00AC0A91 /* AppleScriptController.m */; };
 /* End PBXBuildFile section */
@@ -120,10 +122,10 @@
 		6508A26C0BFAB71B00AD2696 /* FrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadDelegate.h; sourceTree = "<group>"; };
 		6508A26D0BFAB71B00AD2696 /* FrameLoadDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FrameLoadDelegate.m; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = file; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 		93442CF508F8BA4900BFE8CA /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputController.m; sourceTree = "<group>"; };
-		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
+		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = "AHEM____.TTF"; path = "DumpRenderTree.qtproj/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		A803FCB709CAAAB0009B2A37 /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
 		A803FCB809CAAAB1009B2A37 /* EventSendingController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EventSendingController.m; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTree.h; sourceTree = "<group>"; };
@@ -138,6 +140,8 @@
 		B5A7525808AF4A3600138E45 /* ImageDiff.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageDiff.m; sourceTree = "<group>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyDelegate.h; sourceTree = "<group>"; };
+		D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PolicyDelegate.m; sourceTree = "<group>"; };
 		E13307FE099624DA00AC0A91 /* AppleScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleScriptController.h; sourceTree = "<group>"; };
 		E13307FF099624DA00AC0A91 /* AppleScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleScriptController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -240,6 +244,8 @@
 				6508A26D0BFAB71B00AD2696 /* FrameLoadDelegate.m */,
 				A803FFF309CAAFE0009B2A37 /* EditingDelegate.h */,
 				A803FFF409CAAFE0009B2A37 /* EditingDelegate.m */,
+				D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */,
+				D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */,
 				1A6CA8630B7120CF00A24B62 /* ResourceLoadDelegate.h */,
 				1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */,
 				1422A1B80AF6EDD600E1A883 /* UIDelegate.h */,
@@ -308,6 +314,7 @@
 				1422A1BA0AF6EDD600E1A883 /* UIDelegate.h in Headers */,
 				6508A2990BFABB8100AD2696 /* FrameLoadDelegate.h in Headers */,
 				6508A29A0BFABB8200AD2696 /* ResourceLoadDelegate.h in Headers */,
+				D23AE9690C56BB2900C47236 /* PolicyDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,6 +388,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
@@ -434,6 +442,7 @@
 				1A6CA8DE0B7122D100A24B62 /* ResourceLoadDelegate.m in Sources */,
 				1422A1BB0AF6EDD600E1A883 /* UIDelegate.m in Sources */,
 				6508A2980BFABB8000AD2696 /* FrameLoadDelegate.m in Sources */,
+				D23AE9660C56BB2100C47236 /* PolicyDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,7 +546,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -553,7 +562,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
