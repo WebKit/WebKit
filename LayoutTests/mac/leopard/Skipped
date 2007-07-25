@@ -42,6 +42,9 @@ fast/table/absolute-table-at-bottom.html
 fast/text/atsui-multiple-renderers.html
 fast/text/international/thai-line-breaks.html
 
+# <rdar://problem/5335898> REGRESSION (9A492-9A494): Stationery templates never finish loading due to CFNetwork not giving failure for unknown protocols
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+
 # <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
 dom/html/level2/html/HTMLDocument12.html
 
