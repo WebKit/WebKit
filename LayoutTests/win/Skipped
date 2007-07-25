@@ -389,9 +389,6 @@ http/tests/navigation/anchor-frames.html
 # DRT doesn't support tests with multiple windows <rdar://problem/5133670>
 http/tests/navigation/new-window-redirect-history.html
 
-# <rdar://problem/5359323> http/tests/security/feed-urls-from-remote.html fails on win
-http/tests/security/feed-urls-from-remote.html
-
 # Console messages are not being printed out for failed canLoad checks <rdar://problem/5128314>
 http/tests/security/local-CSS-from-remote.html
 http/tests/security/local-JavaScript-from-remote.html
