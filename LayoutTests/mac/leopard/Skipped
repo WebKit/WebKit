@@ -42,9 +42,6 @@ fast/table/absolute-table-at-bottom.html
 fast/text/atsui-multiple-renderers.html
 fast/text/international/thai-line-breaks.html
 
-# <rdar://problem/5313531> editing/pasteboard/copy-in-password-field.html sometimes fails on Leopard
-editing/pasteboard/copy-in-password-field.html
-
 # <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
 dom/html/level2/html/HTMLDocument12.html
 
