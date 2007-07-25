@@ -49,6 +49,8 @@
 #include <initguid.h>
 // {79A193A5-D783-4c73-9AD9-D10678B943DE}
 DEFINE_GUID(IID_DOMNode, 0x79a193a5, 0xd783, 0x4c73, 0x9a, 0xd9, 0xd1, 0x6, 0x78, 0xb9, 0x43, 0xde);
+// {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}
+DEFINE_GUID(IID_DOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 0x1e, 0x8, 0xe2, 0x3e);
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -171,10 +173,15 @@ HRESULT STDMETHODCALLTYPE DOMNode::attributes(
 }
 
 HRESULT STDMETHODCALLTYPE DOMNode::ownerDocument( 
-    /* [retval][out] */ IDOMDocument** /*result*/)
+    /* [retval][out] */ IDOMDocument** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    if (!m_node)
+        return E_FAIL;
+    *result = DOMDocument::createInstance(m_node->ownerDocument());
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE DOMNode::insertBefore( 
@@ -688,7 +695,10 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getComputedStyle(
     if (!elt || !result)
         return E_POINTER;
 
-    DOMElement* domEle = static_cast<DOMElement*>(elt);
+    COMPtr<DOMElement> domEle;
+    HRESULT hr = elt->QueryInterface(IID_DOMElement, (void**)&domEle);
+    if (FAILED(hr))
+        return hr;
     Element* element = domEle->element();
 
     WebCore::DOMWindow* dv = m_document->defaultView();
@@ -754,6 +764,8 @@ HRESULT STDMETHODCALLTYPE DOMElement::QueryInterface(REFIID riid, void** ppvObje
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IDOMElement))
         *ppvObject = static_cast<IDOMElement*>(this);
+    else if (IsEqualGUID(riid, IID_DOMElement))
+        *ppvObject = static_cast<DOMElement*>(this);
     else if (IsEqualGUID(riid, IID_IDOMElementPrivate))
         *ppvObject = static_cast<IDOMElementPrivate*>(this);
     else if (IsEqualGUID(riid, IID_IDOMNodeExtensions))

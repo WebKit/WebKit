@@ -221,9 +221,10 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body(
         return E_FAIL;
 
     HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
-    COMPtr<IDOMElement> domEle = DOMHTMLElement::createInstance(htmlDoc->body());
-    if (domEle)
-        return domEle->QueryInterface(IID_IDOMHTMLElement, (void**) bodyElement);
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc->body()));
+    if (domElement)
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) bodyElement);
     return E_FAIL;
 }
     
@@ -509,10 +510,12 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAcceptCharset(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::action( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    ASSERT(m_element && m_element->hasTagName(formTag));
+    WebCore::String actionString = static_cast<HTMLFormElement*>(m_element)->action();
+    *result = BString(actionString.characters(), actionString.length()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAction( 
@@ -537,10 +540,12 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setEnctype(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::method( 
-        /* [retval][out] */ BSTR* /*method*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    ASSERT(m_element && m_element->hasTagName(formTag));
+    WebCore::String methodString = static_cast<HTMLFormElement*>(m_element)->method();
+    *result = BString(methodString.characters(), methodString.length()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setMethod( 
@@ -898,10 +903,18 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setDefaultChecked(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::form( 
-        /* [retval][out] */ IDOMHTMLElement** /*result*/)
+        /* [retval][out] */ IDOMHTMLElement** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    ASSERT(m_element && m_element->hasTagName(inputTag));
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(inputElement->form()));
+    if (domElement)
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) result);
+    return E_FAIL;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::accept( 
@@ -1268,10 +1281,18 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setDefaultValue(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::form( 
-        /* [retval][out] */ IDOMHTMLElement** /*result*/)
+        /* [retval][out] */ IDOMHTMLElement** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    ASSERT(m_element && m_element->hasTagName(textareaTag));
+    HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(textareaElement->form()));
+    if (domElement)
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) result);
+    return E_FAIL;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::accessKey( 

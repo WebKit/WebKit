@@ -1,3 +1,21 @@
+2007-07-25  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam and Steve.
+        
+        Implemented some DOM methods and other fixes for <rdar://problem/5311601>.
+        
+        * DOMCoreClasses.cpp:
+        (DOMNode::ownerDocument): implemented
+        (DOMDocument::getComputedStyle): get the DOMElement via QueryInterface
+        (DOMElement::QueryInterface):
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::body): fixed leak
+        (DOMHTMLFormElement::action): implemented
+        (DOMHTMLFormElement::method): ditto
+        (DOMHTMLInputElement::form): ditto
+        (DOMHTMLTextAreaElement::form): ditto
+        * Interfaces/DOMHTML.idl: IDOMHTMLInputElement should inherit from IDOMHTMLElement
+
 2007-07-24  Steve Falkenburg  <sfalken@apple.com>
 
         Removed touch of WebKit.rc to prevent rebuilds of the rc file.

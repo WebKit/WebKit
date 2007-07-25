@@ -611,7 +611,7 @@ interface IDOMHTMLOptionElement : IDOMHTMLElement
     uuid(80C40AC5-1755-4894-812F-479269C262A2),
     pointer_default(unique)
 ]
-interface IDOMHTMLInputElement : IDOMElement
+interface IDOMHTMLInputElement : IDOMHTMLElement
 {
     /*
         - (NSString *)defaultValue;
