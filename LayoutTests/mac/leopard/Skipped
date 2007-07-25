@@ -1,6 +1,9 @@
 # <rdar://problem/5313520> editing/pasteboard/4076267-2.html fails on Leopard
 editing/pasteboard/4076267-2.html
 
+# <rdar://problem/5360135> REGRESSION (Leopard only): editing/selection/5354455-1.html is causing subsequent tests to fail
+editing/selection/5354455-1
+
 # <rdar://problem/5313523> http/tests/incremental/slow-utf8-text.pl fails on Leopard
 http/tests/incremental/slow-utf8-text.pl
 

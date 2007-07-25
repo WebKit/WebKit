@@ -1,3 +1,10 @@
+2007-07-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by .
+
+        * mac/leopard/Skipped:
+        Adding to skip list to avoid false failure
+
 2007-07-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
