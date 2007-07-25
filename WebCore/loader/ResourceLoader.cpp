@@ -89,7 +89,13 @@ void ResourceLoader::releaseResources()
 
     m_identifier = 0;
 
-    m_handle = 0;
+    if (m_handle) {
+        // Clear out the ResourceHandle's client so that it doesn't try to call
+        // us back after we release it.
+        m_handle->setClient(0);
+        m_handle = 0;
+    }
+
     m_resourceData = 0;
     m_deferredRequest = ResourceRequest();
 }

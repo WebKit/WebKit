@@ -264,8 +264,9 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                                                                                        sender:(id<NSURLAuthenticationChallengeSender>)delegate()];
     d->m_currentWebChallenge = core(webChallenge);
     [webChallenge release];
-    
-    client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
+
+    if (client())
+        client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
 }
 
 void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
@@ -274,7 +275,8 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
     ASSERT(!d->m_currentWebChallenge.isNull());
     ASSERT(d->m_currentWebChallenge == challenge);
 
-    client()->didCancelAuthenticationChallenge(this, d->m_currentWebChallenge);
+    if (client())
+        client()->didCancelAuthenticationChallenge(this, d->m_currentWebChallenge);
 }
 
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
@@ -304,7 +306,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (challenge != d->m_currentWebChallenge)
         return;
 
-    client()->receivedCancellation(this, challenge);
+    if (client())
+        client()->receivedCancellation(this, challenge);
 }
 
 } // namespace WebCore
@@ -335,7 +338,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return nil;
     ++inNSURLConnectionCallback;
     ResourceRequest request = newRequest;
@@ -384,7 +387,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return;
     ++inNSURLConnectionCallback;
     m_handle->client()->didReceiveResponse(m_handle, r);
@@ -393,7 +396,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return;
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
@@ -405,7 +408,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return;
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
@@ -417,7 +420,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return;
     ++inNSURLConnectionCallback;
     m_handle->client()->didFinishLoading(m_handle);
@@ -426,7 +429,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return;
     ++inNSURLConnectionCallback;
     m_handle->client()->didFail(m_handle, error);
@@ -439,7 +442,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (isInitializingConnection)
         LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (4067625)");
 #endif
-    if (!m_handle)
+    if (!m_handle || !m_handle->client())
         return nil;
     ++inNSURLConnectionCallback;
     

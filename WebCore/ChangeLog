@@ -1,3 +1,42 @@
+2007-07-25  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Maciej, Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14030
+
+        Add ResourceHandle::setClient to resolve some messiness with handle
+        releasing. Clear the client when ResourceLoader is going to release
+        the handle to prevent crashes in the case where somebody still holds a
+        reference (this doesn't seem to currently happen in practice). Add
+        NULL-checking for ResourceHandle implementations using the client.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::fireBlockedFailure):
+        (WebCore::ResourceHandle::setClient):
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::didReceiveResponse):
+        (WebCore::didReceiveData):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::willCacheResponse):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+
 2007-07-25  Maxime Britto  <mbritto@pleyo.com>
 
         Reviewed by Darin.

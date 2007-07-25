@@ -148,8 +148,11 @@ public:
     
     void clearAuthentication();
     void cancel();
-    
+
+    // The client may be 0, in which case no callbacks will be made.
     ResourceHandleClient* client() const;
+    void setClient(ResourceHandleClient*);
+
     void setDefersLoading(bool);
       
     const ResourceRequest& request() const;

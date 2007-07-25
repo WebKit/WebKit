@@ -64,13 +64,19 @@ void ResourceHandle::scheduleBlockedFailure()
 
 void ResourceHandle::fireBlockedFailure(Timer<ResourceHandle>* timer)
 {
-    client()->wasBlocked(this);
+    if (client())
+        client()->wasBlocked(this);
     delete timer;
 }
 
 ResourceHandleClient* ResourceHandle::client() const
 {
     return d->m_client;
+}
+
+void ResourceHandle::setClient(ResourceHandleClient* client)
+{
+    d->m_client = client;
 }
 
 const ResourceRequest& ResourceHandle::request() const
