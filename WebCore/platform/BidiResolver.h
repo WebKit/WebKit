@@ -311,6 +311,7 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::deleteRuns()
 {
+    emptyRun = true;
     if (!m_firstRun)
         return;
 

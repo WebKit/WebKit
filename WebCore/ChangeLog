@@ -1,3 +1,18 @@
+2007-07-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14758
+          REGRESSION: Repeated text after line break on facebook.com
+
+        Test: fast/text/reset-emptyRun.html
+
+        * platform/BidiResolver.h:
+        (WebCore::::deleteRuns): Re-add a line that was removed for no reason at all
+        during refactoring in r24485.
+        * rendering/bidi.cpp:
+        (WebCore::BidiState::deleteRuns): Ditto.
+
 2007-07-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam and Justin.

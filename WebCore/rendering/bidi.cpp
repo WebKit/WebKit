@@ -181,6 +181,7 @@ void BidiRun::operator delete(void* ptr, size_t sz)
 template <>
 void BidiState::deleteRuns()
 {
+    emptyRun = true;
     if (!m_firstRun)
         return;
 

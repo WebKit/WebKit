@@ -1,10 +1,19 @@
+2007-07-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14758
+          REGRESSION: Repeated text after line break on facebook.com
+
+        * fast/text/reset-emptyRun-expected.checksum: Added.
+        * fast/text/reset-emptyRun-expected.png: Added.
+        * fast/text/reset-emptyRun-expected.txt: Added.
+        * fast/text/reset-emptyRun.html: Added.
+
 2007-07-25  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by .
-
-        - Forgot to checking the changes to the skipped list so the win bot doesn't fail.
-
-        * win/Skipped:
+        * win/Skipped: Added feed-urls-from-remote.html since it requires a feature not
+        yet implemented in the Windows version of DumpRenderTree.
 
 2007-07-24  Brady Eidson <beidson@apple.com>
 
