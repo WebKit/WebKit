@@ -9,7 +9,7 @@ isEmpty(OUTPUT_DIR) {
 !gdk-port:CONFIG += qt-port
 qt-port:DEFINES += BUILDING_QT__=1
 qt-port:!building-libs {
-    QMAKE_LFLAGS = -L$$OUTPUT_DIR/lib $$QMAKE_LFLAGS
+    QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
     LIBS += -lQtWebKit
 }
 gdk-port:CONFIG += link_pkgconfig

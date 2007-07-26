@@ -1,3 +1,11 @@
+2007-07-26  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Use QMAKE_LIBDIR instead of QMAKE_LFLAGS to specify the library search path for QtWebKit, as the former is portable and correctly transformed to /LIBPATH: with msvc for example.
+
+        * WebKit.pri:
+
 2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
