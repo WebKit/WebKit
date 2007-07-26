@@ -1,3 +1,18 @@
+2007-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Stop the test from dumping load callbacks as they differ on Tiger and Leopard. 
+        This is done by removing the call to dumpResourceLoadCallbacks and moving the test away
+        from the "loading" directory.
+        
+        * http/tests/loading/cached-scripts-expected.txt: Removed.
+        * http/tests/loading/cached-scripts.html: Removed.
+        * http/tests/loading/resources/cached-scripts-subframe.html: Removed.
+        * http/tests/misc/cached-scripts-expected.txt: Copied from http/tests/loading/cached-scripts-expected.txt.
+        * http/tests/misc/cached-scripts.html: Copied from http/tests/loading/cached-scripts.html.
+        * http/tests/misc/resources/cached-scripts-subframe.html: Copied from http/tests/loading/resources/cached-scripts-subframe.html.
+
 2007-07-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
