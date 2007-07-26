@@ -1,3 +1,12 @@
+2007-07-26  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Add a signal for history notification.
+
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2007-07-24  Adam Treat  <treat@kde.org>
 
         Reviewed by Niko and Lars.

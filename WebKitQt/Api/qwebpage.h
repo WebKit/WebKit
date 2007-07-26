@@ -166,6 +166,8 @@ signals:
      */
     void initialLayoutComplete();
 
+    void addToHistory(const QUrl&);
+
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
