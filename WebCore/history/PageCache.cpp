@@ -46,6 +46,9 @@ PageCache* pageCache()
 
 PageCache::PageCache()
     : m_capacity(0)
+    , m_size(0)
+    , m_head(0)
+    , m_tail(0)
     , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowOrReschedule)
 {
 }
@@ -58,41 +61,75 @@ void PageCache::setCapacity(int capacity)
     prune();
 }
 
-void PageCache::add(PassRefPtr<HistoryItem> historyItem, PassRefPtr<CachedPage> cachedPage)
+void PageCache::add(PassRefPtr<HistoryItem> prpItem, PassRefPtr<CachedPage> cachedPage)
 {
-    historyItem->setInPageCache(true);
-    m_LRUList.add(historyItem.get());
-    m_cachedPages.set(historyItem, cachedPage);
+    HistoryItem* item = prpItem.releaseRef(); // Balanced in remove().
 
+    // Remove stale cache entry if necessary.
+    if (item->m_cachedPage)
+        remove(item);
+
+    item->m_cachedPage = cachedPage;
+    addToLRUList(item);
+    ++m_size;
+    
     prune();
 }
 
-void PageCache::remove(HistoryItem* historyItem)
+void PageCache::remove(HistoryItem* item)
 {
-    if (!historyItem->isInPageCache()) {
-        ASSERT(!m_cachedPages.contains(historyItem));
+    // Safely ignore attempts to remove items not in the cache.
+    if (!item->m_cachedPage)
         return;
-    }
 
-    historyItem->setInPageCache(false);
-    m_LRUList.remove(historyItem);
-    CachedPageMap::iterator it = m_cachedPages.find(historyItem);
-    ASSERT(it != m_cachedPages.end());
-    if (it != m_cachedPages.end()) {
-        autorelease(it->second.release());
-        m_cachedPages.remove(it);
-    }
-}
+    autorelease(item->m_cachedPage.release());
+    removeFromLRUList(item);
+    --m_size;
 
-CachedPage* PageCache::get(HistoryItem* historyItem)
-{
-    return m_cachedPages.get(historyItem).get();
+    item->deref(); // Balanced in add().
 }
 
 void PageCache::prune()
 {
-    while (m_cachedPages.size() > m_capacity)
-        remove(*m_LRUList.begin());
+    while (m_size > m_capacity) {
+        ASSERT(m_tail && m_tail->m_cachedPage);
+        remove(m_tail);
+    }
+}
+
+void PageCache::addToLRUList(HistoryItem* item)
+{
+    item->m_next = m_head;
+    item->m_prev = 0;
+
+    if (m_head) {
+        ASSERT(m_tail);
+        m_head->m_prev = item;
+    } else {
+        ASSERT(!m_tail);
+        m_tail = item;
+    }
+
+    m_head = item;
+}
+
+void PageCache::removeFromLRUList(HistoryItem* item)
+{
+    if (!item->m_next) {
+        ASSERT(item == m_tail);
+        m_tail = item->m_prev;
+    } else {
+        ASSERT(item != m_tail);
+        item->m_next->m_prev = item->m_prev;
+    }
+
+    if (!item->m_prev) {
+        ASSERT(item == m_head);
+        m_head = item->m_next;
+    } else {
+        ASSERT(item != m_head);
+        item->m_prev->m_next = item->m_next;
+    }
 }
 
 void PageCache::releaseAutoreleasedPagesNowOrReschedule(Timer<PageCache>* timer)

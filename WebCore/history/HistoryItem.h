@@ -26,6 +26,7 @@
 #ifndef HistoryItem_h
 #define HistoryItem_h
 
+#include "CachedPage.h"
 #include "FormData.h"
 #include "IntPoint.h"
 #include "KURL.h"
@@ -55,6 +56,8 @@ typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 extern void (*notifyHistoryItemChanged)();
 
 class HistoryItem : public Shared<HistoryItem> {
+    friend class PageCache;
+
 public: 
     HistoryItem();
     HistoryItem(const String& urlString, const String& title, double lastVisited);
@@ -171,6 +174,11 @@ private:
     // info used to support RSS feeds
     String m_rssFeedReferrer;
 
+    // PageCache controls these fields.
+    HistoryItem* m_next;
+    HistoryItem* m_prev;
+    RefPtr<CachedPage> m_cachedPage;
+    
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
     OwnPtr<HashMap<String, RetainPtr<id> > > m_transientProperties;

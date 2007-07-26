@@ -1,3 +1,39 @@
+2007-07-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/5241167> REGRESSION: PLT 1% slower due to r21793 
+        (global page cache cap)
+        
+        I just measured a .1%-.2% regression in PLT average, but a .4% win in 
+        PLT fastest run, so I think this regression is licked.
+
+        Surprisingly, the combination of wtf data structures I originally used 
+        for PageCache turned out to be too slow, so I reworked PageCache to use
+        a hand-crafted linked list for LRU tracking (instead of ListHashSet), 
+        to store its CachedPages in the HistoryItems to which they corresponded 
+        (instead of using a HashMap), and to ref/deref HistoryItems manually
+        (instead of using RefPtr, which would ref once for every reference in 
+        the linked list).
+
+        * history/HistoryItem.h: Added data members for PageCache data. Made
+        PageCache a friend so it could access them. Ideally (from an 
+        encapsulation perspective), we would store this data an independent 
+        structure, but that's just too slow.
+
+        * history/PageCache.cpp: Added a hand-crafted linked list for LRU 
+        tracking.
+        (WebCore::PageCache::PageCache):
+        (WebCore::PageCache::add): Adopt the HistoryItem's ref when it's added.
+        (WebCore::PageCache::remove): deref() the Historyitem when it's 
+        removed.
+        (WebCore::PageCache::prune):
+        (WebCore::PageCache::addToLRUList):
+        (WebCore::PageCache::removeFromLRUList):
+
+        * history/PageCache.h:
+        (WebCore::PageCache::get): Inlined just in case.
+
 2007-07-26  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
