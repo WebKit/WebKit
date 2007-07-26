@@ -1,5 +1,13 @@
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by.
+
+        - Fixed bot breakage.
+
+        * fast/dom/Window/window-resize.html:
+
+2007-07-26  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Darin, Geoff and Sam.
 
         - <rdar://problem/5150461> Resizing the window larger than the screen causes no resize.
