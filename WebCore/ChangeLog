@@ -1,3 +1,15 @@
+2007-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5327912> 
+        iDisk: Web iDisk & main iDisk appear blank
+        
+        Prepend any remaining text that scripts might have written.
+        
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+
 2007-07-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim, Darin, Oliver.

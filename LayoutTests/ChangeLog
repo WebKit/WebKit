@@ -1,3 +1,15 @@
+2007-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5327912> 
+        iDisk: Web iDisk & main iDisk appear blank
+
+        * http/tests/loading/cached-scripts-expected.txt: Added.
+        * http/tests/loading/cached-scripts.html: Added.
+        * http/tests/loading/resources: Added.
+        * http/tests/loading/resources/cached-scripts-subframe.html: Added.
+
 2007-07-25  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by .
