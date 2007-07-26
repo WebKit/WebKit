@@ -1931,7 +1931,7 @@ void Document::stylesheetLoaded()
 
     updateStyleSelector();
 
-    if (!m_pendingStylesheets && m_gotoAnchorNeededAfterStylesheetsLoad)
+    if (!m_pendingStylesheets && m_gotoAnchorNeededAfterStylesheetsLoad && m_frame)
         m_frame->loader()->gotoAnchor();
 }
 

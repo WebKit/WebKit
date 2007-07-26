@@ -1,3 +1,14 @@
+2007-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5361106> Crash in user style sheet when loading webpage
+
+        Null check m_frame.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::stylesheetLoaded):
+
 2007-07-26  Geoffrey Garen  <ggaren@apple.com>
 
         Used `svn merge -r24646:24645' to revert project changes I accidentally
