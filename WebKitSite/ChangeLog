@@ -1,3 +1,12 @@
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam.
+        
+        Added WebKit Project Goals.
+
+        * nav.inc: added a nav link.
+        * projects/goals.html: Added.
+
 2007-07-22  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Adam Roben.

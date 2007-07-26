@@ -2,6 +2,7 @@
     <ul id="navlist">
         <li><a href="/">Home</a></li>
         <li><a href="/blog/">Surfin&#8217; Safari Blog</a></li>
+        <li><a href="/projects/goals.html">Project Goals</a></li>
         <li><a href="/contact.html">Keeping in Touch</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit">Trac</a></li>
 
