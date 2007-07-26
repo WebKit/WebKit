@@ -3,4 +3,4 @@ SOURCES += main.cpp
 
 include(../../WebKit.pri)
 
-QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
+QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

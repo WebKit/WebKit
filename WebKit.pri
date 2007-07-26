@@ -8,7 +8,10 @@ isEmpty(OUTPUT_DIR) {
 
 !gdk-port:CONFIG += qt-port
 qt-port:DEFINES += BUILDING_QT__=1
-qt-port:!building-libs:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
+qt-port:!building-libs {
+    QMAKE_LFLAGS = -L$$OUTPUT_DIR/lib $$QMAKE_LFLAGS
+    LIBS += -lQtWebKit
+}
 gdk-port:CONFIG += link_pkgconfig
 gdk-port:PKGCONFIG += cairo gdk-2.0 gtk+-2.0 libcurl
 gdk-port:DEFINES += BUILDING_GDK__=1 BUILDING_CAIRO__
