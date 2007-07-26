@@ -1,3 +1,11 @@
+2007-07-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff. 
+
+        Build fix.
+
+        * platform/network/cf/ResourceRequest.h:
+
 2007-07-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

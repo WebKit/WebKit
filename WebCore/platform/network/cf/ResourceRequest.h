@@ -65,7 +65,7 @@ namespace WebCore {
         CFURLRequestRef cfURLRequest() const;       
 
     private:
-        friend class ResourceRequestBase;
+        friend struct ResourceRequestBase;
 
         void doUpdatePlatformRequest();
         void doUpdateResourceRequest();
