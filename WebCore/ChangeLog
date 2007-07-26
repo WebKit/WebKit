@@ -1,3 +1,17 @@
+2007-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5349389> 
+        Some frame load delegate methods not called when loading a page from the BF cache
+        
+        These calls were moved to FrameLoader::begin, which is never called for pages loaded
+        from the BF cache. This happened in revision 24490.
+         
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        Call delegate methods if the load is from the BF cache.
+
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin, Geoff and Sam.

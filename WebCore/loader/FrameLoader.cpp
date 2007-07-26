@@ -2447,6 +2447,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     // Handle adding the URL to the back/forward list.
     DocumentLoader* dl = m_documentLoader.get();
+    String ptitle = dl->title(); 
 
     switch (m_loadType) {
         case FrameLoadTypeForward:
@@ -2501,6 +2502,15 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         return;
 
     m_committedFirstRealDocumentLoad = true;
+    
+    // For non-cached pages, these methods are called in FrameLoader::begin.
+    if (cachedPage) {
+        dispatchDidCommitLoad(); 
+            
+        // If we have a title let the WebView know about it. 
+        if (!ptitle.isNull()) 
+            m_client->dispatchDidReceiveTitle(ptitle);         
+    }
 }
 
 bool FrameLoader::privateBrowsingEnabled() const
