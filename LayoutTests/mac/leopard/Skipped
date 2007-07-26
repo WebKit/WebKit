@@ -1,3 +1,6 @@
+# <rdar://problem/5361188> fast/js/window-resize.html fails on windows
+fast/js/window-resize.html
+
 # <rdar://problem/5313520> editing/pasteboard/4076267-2.html fails on Leopard
 editing/pasteboard/4076267-2.html
 
@@ -8,7 +11,7 @@ editing/selection/5354455-1.html
 http/tests/incremental/slow-utf8-text.pl
 
 # <rdar://problem/5228256> Leopard regression test failures: security/block-test
-security/block-test.html
+#security/block-test.html
 
 # <rdar://problem/5228259> Leopard regression test failures: svg/W3C-SVG-1.1/animate-elem...
 svg/W3C-SVG-1.1/animate-elem-06-t.svg

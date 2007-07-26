@@ -1,5 +1,17 @@
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin, Geoff and Sam.
+
+        - <rdar://problem/5150461> Resizing the window larger than the screen causes no resize.
+
+        - Tests to ensure we resize/move the window out of bounds correctly.
+
+        * fast/dom/Window/window-resize-expected.txt: Added.
+        * fast/dom/Window/window-resize.html: Added.
+        * mac/leopard/Skipped:
+
+2007-07-26  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Brady.
 
         - Added leopard-specific results for <rdar://problem/5228256> REGRESSION(Leopard): layout test failures: security/block-test

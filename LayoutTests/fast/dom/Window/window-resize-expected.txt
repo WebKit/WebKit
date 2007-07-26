@@ -1,0 +1,29 @@
+This test makes sure that we have similar behavior as other browsers when resizing and moving a window outside of the screen. This test will fail in some dimentions when run manually because of inconsistencies of when the window can and cannot go behind the doc.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASSED: resizeTo: Too Big
+PASSED: resizeTo: Too Small
+PASSED: resizeBy: Too Small
+PASSED: resizeBy: Too Big
+PASSED: moveTo: Top Left
+PASSED: moveTo: Top
+PASSED: moveTo: Top Right
+PASSED: moveTo: Right
+PASSED: moveTo: Bottom Right
+PASSED: moveTo: Bottom
+PASSED: moveTo: Bottom Left
+PASSED: moveTo: Left
+PASSED: moveBy: Top Left
+PASSED: moveBy: Top
+PASSED: moveBy: Top Right
+PASSED: moveBy: Right
+PASSED: moveBy: Bottom Right
+PASSED: moveBy: Bottom
+PASSED: moveBy: Bottom Left
+PASSED: moveBy: Left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

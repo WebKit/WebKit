@@ -1,3 +1,14 @@
+2007-07-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin, Geoff and Sam.
+
+        - <rdar://problem/5150461> Resizing the window larger than the screen causes no resize.
+        - We now better match the behavior of other browsers.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::constrainToVisible):
+        (KJS::WindowFunc::callAsFunction):
+
 2007-07-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Adele Peterson.

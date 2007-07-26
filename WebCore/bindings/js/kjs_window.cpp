@@ -1194,25 +1194,32 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
     }
 }
 
-static void constrainToVisible(const FloatRect& screen, WindowFeatures& windowFeatures)
+// FIXME instead of the screen should we actually check the workspace?
+static void constrainToVisible(const FloatRect& screen, FloatRect& window)
 {
-    windowFeatures.x += screen.x();
-    if (windowFeatures.x < screen.x() || windowFeatures.x >= screen.right())
-        windowFeatures.x = screen.x(); // only safe choice until size is determined
+    float x = window.x() + screen.x();
+    if (x < screen.x() || x >= screen.right())
+        x = screen.x(); // only safe choice until size is determined
+    window.setX(x);
     
-    windowFeatures.y += screen.y();
-    if (windowFeatures.y < screen.y() || windowFeatures.y >= screen.bottom())
-        windowFeatures.y = screen.y(); // only safe choice until size is determined
+    float y = window.y() + screen.y();
+    if (y < screen.y() || y >= screen.bottom())
+        y = screen.y(); // only safe choice until size is determined
+    window.setY(y);
     
-    if (windowFeatures.height > screen.height()) // should actually check workspace
-        windowFeatures.height = screen.height();
-    if (windowFeatures.height < 100)
-        windowFeatures.height = 100;
+    float height = window.height();
+    if (height > screen.height())
+        height = screen.height();
+    if (height < 100)
+        height = 100;
+    window.setHeight(height);
     
-    if (windowFeatures.width > screen.width()) // should actually check workspace
-        windowFeatures.width = screen.width();
-    if (windowFeatures.width < 100)
-        windowFeatures.width = 100;
+    float width = window.width();
+    if (width > screen.width())
+        width = screen.width();
+    if (width < 100)
+        width = 100;
+    window.setWidth(width);
 }
 
 JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -1293,7 +1300,13 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       WindowFeatures windowFeatures;
       String features = valueToStringWithUndefinedOrNullCheck(exec, args[2]);
       parseWindowFeatures(features, windowFeatures);
-      constrainToVisible(screenRect(page->mainFrame()->view()), windowFeatures);
+      FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
+      constrainToVisible(screenRect(page->mainFrame()->view()), windowRect);
+
+      windowFeatures.x = windowRect.x();
+      windowFeatures.y = windowRect.y();
+      windowFeatures.height = windowRect.height();
+      windowFeatures.width = windowRect.width();
 
       frame = createWindow(exec, frame, urlString, frameName, windowFeatures, 0);
 
@@ -1315,44 +1328,40 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
   case Window::MoveBy:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->chrome()->windowRect();
-      r.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
+      FloatRect fr = page->chrome()->windowRect();
+      fr.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (screenRect(page->mainFrame()->view()).contains(r))
-        page->chrome()->setWindowRect(r);
+      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
   case Window::MoveTo:
     if (args.size() >= 2 && page) {
-      FloatRect r = page->chrome()->windowRect();
+      FloatRect fr = page->chrome()->windowRect();
       FloatRect sr = screenRect(page->mainFrame()->view());
-      r.setLocation(sr.location());
-      r.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
+      fr.setLocation(sr.location());
+      fr.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (sr.contains(r))
-        page->chrome()->setWindowRect(r);
+      constrainToVisible(sr, fr);
+      page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
   case Window::ResizeBy:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = r.size() + FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
-      FloatRect sg = screenRect(page->mainFrame()->view());
-      // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
-           && dest.width() >= 100 && dest.height() >= 100)
-        page->chrome()->setWindowRect(FloatRect(r.location(), dest));
+      FloatRect fr = FloatRect(r.location(), dest);
+      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
   case Window::ResizeTo:
     if (args.size() >= 2 && page) {
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
-      FloatRect sg = screenRect(page->mainFrame()->view());
-      // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
-           dest.width() >= 100 && dest.height() >= 100)
-        page->chrome()->setWindowRect(FloatRect(r.location(), dest));
+      FloatRect fr = FloatRect(r.location(), dest);
+      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
   case Window::SetTimeout:

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script language="JavaScript" type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    window.moveTo(0,0);
+
+    description("This test makes sure that we have similar behavior as other\
+    browsers when resizing and moving a window outside of the screen.  This test\
+    will fail in some dimentions when run manually because of inconsistencies of\
+    when the window can and cannot go behind the doc.");
+    
+    var result;
+    var testName;
+    var x;
+    var y;
+
+    // resizeTo /////////////////////////
+
+    testName = "resizeTo: Too Big";
+    x = screen.width*2;
+    y = screen.height*2;
+    window.resizeTo(x, y);
+    result = window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    
+    testName = "resizeTo: Too Small";
+    x = 50;
+    y = 50;
+    window.resizeTo(x, y);
+    result = window.outerWidth == 100;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    // resizeBy /////////////////////////
+
+    testName = "resizeBy: Too Small";
+    x = -100;
+    y = -100;
+    window.resizeBy(x, y);
+    result = window.outerWidth == 100;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "resizeBy: Too Big";
+    x = screen.width*2;
+    y = screen.height*2;
+    window.resizeBy(x, y);
+    result = window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    window.moveTo(0,0);
+    window.resizeTo(screen.width, screen.height);
+
+    // moveTo /////////////////////////
+
+    testName = "moveTo: Top Left";
+    x = -100;
+    y = -100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.screenX == screen.availLeft;
+    else
+        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+
+    testName = "moveTo: Top";
+    x = 0;
+    y = -100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.screenY ==  0 && window.screenX == screen.availLeft;
+    else
+        result = window.screenY ==  screen.availTop && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveTo: Top Right";
+    x = 100;
+    y = -100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.outerWidth == screen.width;
+    else
+        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    
+    testName = "moveTo: Right";
+    x = 100;
+    y = 0;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.outerWidth == screen.width;
+    else
+        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveTo: Bottom Right";
+    x = 100;
+    y = 100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height && window.outerWidth == screen.width;
+    else
+        result = window.outerHeight == screen.availHeight && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveTo: Bottom";
+    x = 0;
+    y = 100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height && window.screenX == 0;
+    else
+        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveTo: Bottom Left";
+    x = -100;
+    y = 100;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height && window.screenX == 0;
+    else
+        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveTo: Left";
+    x = -100;
+    y = 0;
+    window.moveTo(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.screenX == 0;
+    else
+        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    window.moveTo(0,0);
+    window.resizeTo(screen.width, screen.height);
+
+    // moveBy /////////////////////////
+ 
+     testName = "moveBy: Top Left";
+    x = -100;
+    y = -100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.screenX == 0;
+    else
+        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Top";
+    x = 0;
+    y = -100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.screenX == 0;
+    else
+        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Top Right";
+    x = 100;
+    y = -100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.outerWidth == screen.width;
+    else
+        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    
+    testName = "moveBy: Right";
+    x = 100;
+    y = 0;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.screenY == 0 && window.outerWidth == screen.width;
+    else    
+        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Bottom Right";
+    x = 100;
+    y = 100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height && window.outerWidth == screen.width;
+    else
+        result = window.outerHeight == screen.availHeight && window.outerWidth == screen.width;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Bottom";
+    x = 0;
+    y = 100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height;
+    else
+        result = window.outerHeight == screen.availHeight;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Bottom Left";
+    x = -1000;
+    y = 100;
+    window.moveBy(x, y);
+    if (window.layoutTestController)
+        result = window.outerHeight == screen.height && window.screenX == 0;
+    else
+        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+
+    testName = "moveBy: Left";
+    x = -100;
+    y = 0;
+    window.moveBy(x, y);
+    result = window.screenX == screen.availLeft;
+    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+ 
+    window.moveTo(0,0);
+    window.resizeTo(800,600);
+ 
+    var successfullyParsed = true;
+
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

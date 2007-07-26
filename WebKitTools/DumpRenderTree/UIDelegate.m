@@ -39,6 +39,16 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 @implementation UIDelegate
 
+- (void)webView:(WebView *)sender setFrame:(NSRect)frame
+{
+    m_frame = frame;
+}
+
+- (NSRect)webViewFrame:(WebView *)sender;
+{
+    return m_frame;
+}
+
 - (void)webView:(WebView *)sender addMessageToConsole:(NSDictionary *)dictionary
 {
     NSString *message = [dictionary objectForKey:@"message"];

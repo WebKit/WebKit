@@ -1,5 +1,18 @@
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin, Geoff, Sam.
+
+        - <rdar://problem/5150461> Resizing the window larger than the screen causes no resize.
+
+        - Added delegate methods to intercept and fake the frame location so methods like resizeTo and moveTo can change the window location without actually making the window appear on-screen.
+
+        * DumpRenderTree/UIDelegate.h:
+        * DumpRenderTree/UIDelegate.m:
+        (-[UIDelegate webView:setFrame:]):
+        (-[UIDelegate webViewFrame:]):
+
+2007-07-26  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         - Lars wanted this check for Qt but it breaks platform specific layout tests.
