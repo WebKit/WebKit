@@ -13157,20 +13157,6 @@
 					"-sub_library",
 					libobjc,
 				);
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
-				);
 			};
 			name = Debug;
 		};
@@ -13184,20 +13170,6 @@
 					"-lobjc",
 					"-sub_library",
 					libobjc,
-				);
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
 				);
 			};
 			name = Release;
@@ -13219,20 +13191,6 @@
 					__TEXT,
 					__text,
 					/AppleInternal/OrderFiles/WebCore.order,
-				);
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
 				);
 			};
 			name = Production;

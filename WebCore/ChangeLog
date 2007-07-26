@@ -1,5 +1,12 @@
 2007-07-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Used `svn merge -r24646:24645' to revert project changes I accidentally
+        checked in.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2007-07-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         Fixed <rdar://problem/5241167> REGRESSION: PLT 1% slower due to r21793 
