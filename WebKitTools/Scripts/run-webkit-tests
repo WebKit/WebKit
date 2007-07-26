@@ -461,7 +461,7 @@ for my $test (@tests) {
 
     my $expected;
     my $expectedDir = expectedDirectoryForTest($base);
-    if ($isText) {
+    if (isQt() && $isText) {
       $expectedDir = $testDirectory;
     }
 

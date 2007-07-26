@@ -1,3 +1,11 @@
+2007-07-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Lars wanted this check for Qt but it breaks platform specific layout tests.
+
+        * Scripts/run-webkit-tests:
+
 2007-07-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim, Darin, Oliver.
