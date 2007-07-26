@@ -1,3 +1,16 @@
+2007-07-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed NULL-dereference crash seen on buildbot.
+        
+        No bug filed because this is a part of <rdar://problem/5241167>.
+
+        * history/PageCache.h:
+        (WebCore::PageCache::get): NULL-check HistoryItems passed to get()
+        and remove(), to match the old semantics of HashMap. For clarity,
+        ASSERT that add() is not called with NULL arguments.
+
 2007-07-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
