@@ -82,7 +82,7 @@ public:
     void overrideMIMEType(const String& override);
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;
-    KJS::UString getResponseText() const;
+    const KJS::UString& getResponseText() const;
     Document* getResponseXML() const;
 
     void setOnReadyStateChangeListener(EventListener*);

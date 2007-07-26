@@ -1,5 +1,15 @@
 2007-07-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark.
+
+        - follow-up to previous change
+        
+        * kjs/ustring.cpp:
+        (KJS::UString::operator=): Make sure to reset the length when
+        replacing the buffer contents for a single-owned string.
+
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - JavaScriptCore part of fix for <rdar://problem/5300291> Optimize GC to reclaim big, temporary objects (like XMLHttpRequest.responseXML) quickly

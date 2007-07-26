@@ -1,3 +1,16 @@
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - follow-up to previous change to avoid assertion failures in debug
+        
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseText): hold JSLock when needed
+        (WebCore::XMLHttpRequest::open): ditto
+        (WebCore::XMLHttpRequest::didFinishLoading): ditto
+        (WebCore::XMLHttpRequest::didReceiveData): ditto
+        * xml/XMLHttpRequest.h:
+
 2007-07-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
