@@ -1,3 +1,15 @@
+2007-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5362783>
+        In Mail, a crash occurs at WTF::fastMalloc() when attempting to create a new HTML message from http://nytimes.com/
+        
+        If the cache is disabled and there is already a resource with the given URL, return it instead of creating a new one.
+        
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+
 2007-07-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff. 

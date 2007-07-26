@@ -137,6 +137,11 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
+    if (cache()->disabled()) {
+        if (CachedResource* resource = m_docResources.get(fullURL.url()))
+            return resource;
+    }
+                                                          
     if (m_frame && m_frame->loader()->isReloading())
         setCachePolicy(CachePolicyReload);
 
@@ -144,6 +149,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 
     CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, skipCanLoadCheck, sendResourceLoadCallbacks);
     if (resource) {
+        ASSERT(!cache()->disabled() || !m_docResources.contains(resource->url()));
         m_docResources.set(resource->url(), resource);
         checkCacheObjectStatus(resource);
     }
