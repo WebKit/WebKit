@@ -32,13 +32,9 @@
 
 #include <QAction>
 
-#include <qwebframe.h>
-#include <qwebpage.h>
-#include <FrameLoaderClientQt.h>
 #include <Document.h>
 #include <Frame.h>
-#include <FrameLoader.h>
-#include <FrameLoaderClient.h>
+#include <FrameView.h>
 
 namespace WebCore {
 
@@ -125,9 +121,8 @@ void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 #ifndef QT_NO_MENU
     //qDebug("Switch menu(%p) %p to %p", this, (QMenu*)m_menu, menu);
     if (menu == 0) {
-        FrameLoaderClient *f = m_hitTestResult.innerNode()->document()->frame()->loader()->client();
-        QWidget *page = static_cast<FrameLoaderClientQt*>(f)->webFrame()->page();
-        m_menu->exec(page->mapToGlobal(m_hitTestResult.point()));
+        FrameView *v = m_hitTestResult.innerNode()->document()->frame()->view();
+        m_menu->exec(v->containingWindow()->mapToGlobal(v->contentsToWindow(m_hitTestResult.point())));
     }
     if (menu != m_menu) {
         delete m_menu;

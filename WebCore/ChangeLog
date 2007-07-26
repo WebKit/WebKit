@@ -1,3 +1,12 @@
+2007-07-26  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Launch the context menu in the right place.
+
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::setPlatformDescription):
+
 2007-07-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
