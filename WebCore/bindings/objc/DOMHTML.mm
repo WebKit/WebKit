@@ -166,22 +166,22 @@
 @end
 
 @implementation DOMHTMLInputElement (FormPromptAdditions)
-- (BOOL)_isEdited
+- (BOOL)_isUserEdited
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer && [self _isTextField])
-        return renderer->isEdited();
+        return static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
     
     return NO;
 }
 @end
 
 @implementation DOMHTMLTextAreaElement (FormPromptAdditions)
-- (BOOL)_isEdited
+- (BOOL)_isUserEdited
 {
     WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer)
-        return renderer->isEdited();
+        return static_cast<WebCore::RenderTextControl *>(renderer)->isUserEdited();
     
     return NO;
 }

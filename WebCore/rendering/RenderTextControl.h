@@ -56,6 +56,9 @@ public:
     virtual void setEdited(bool isEdited) { m_dirty = isEdited; }
     virtual bool isTextField() const { return !m_multiLine; }
     virtual bool isTextArea() const { return m_multiLine; }
+    
+    bool isUserEdited() const { return m_userEdited; }
+    void setUserEdited(bool isUserEdited) { m_userEdited = isUserEdited; }
 
     int selectionStart();
     int selectionEnd();
@@ -135,6 +138,7 @@ private:
     bool m_dirty;
     bool m_multiLine;
     bool m_placeholderVisible;
+    bool m_userEdited;
 
     RefPtr<SearchPopupMenu> m_searchPopup;
     bool m_searchPopupIsVisible;

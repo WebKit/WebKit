@@ -1,3 +1,32 @@
+2007-07-26  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        <rdar://problem/5359921> WebCore should maintain a dirty flag for confirmation on unsaved changes
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isUserEdited]):
+        (-[DOMHTMLTextAreaElement _isUserEdited]):
+        Renamed _isEdited to _isUserEdited since the functionality is now different
+        
+        * bindings/objc/DOMPrivate.h:
+        Renamed _isEdited to _isUserEdited.
+        
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        Defaulted m_userEdited to false
+        
+        (WebCore::RenderTextControl::updateFromElement):
+        Set m_userEdited to false, since the change wasn't triggered first by an edit
+        
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        Set m_userEdited to true, since it has been touched by the user
+        
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::isUserEdited):
+        (WebCore::RenderTextControl::setUserEdited):
+        Added two new methods to set/return the userEdited boolean value.
+        
 2007-07-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

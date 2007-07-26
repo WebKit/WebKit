@@ -58,6 +58,7 @@ RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     , m_dirty(false)
     , m_multiLine(multiLine)
     , m_placeholderVisible(false)
+    , m_userEdited(false)
     , m_searchPopup(0)
     , m_searchPopupIsVisible(false)
     , m_searchEventTimer(this, &RenderTextControl::searchEventTimerFired)
@@ -384,6 +385,7 @@ void RenderTextControl::updateFromElement()
             if (Frame* frame = document()->frame())
                 frame->editor()->clearUndoRedoOperations();
             m_dirty = false;
+            m_userEdited = false;
         }
         element->setValueMatchesRenderer();
     }
@@ -502,6 +504,7 @@ void RenderTextControl::subtreeHasChanged()
 {
     bool wasDirty = m_dirty;
     m_dirty = true;
+    m_userEdited = true;
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
     if (m_multiLine) {
         element->setValueMatchesRenderer(false);
