@@ -153,9 +153,13 @@ JSValue* QtInstance::defaultValue(JSType hint) const
 
 JSValue* QtInstance::stringValue() const
 {
-    char buf[1024];
-    snprintf(buf, sizeof(buf), "QObject %p (%s)", _object.operator->(), _object->metaObject()->className());
-    return jsString(buf);
+    QByteArray buf;
+    buf = "QObject ";
+    buf.append(QByteArray::number(quintptr(_object.operator->())));
+    buf.append(" (");
+    buf.append(_object->metaObject()->className());
+    buf.append(")");
+    return jsString(buf.constData());
 }
 
 JSValue* QtInstance::numberValue() const

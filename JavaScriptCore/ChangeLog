@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Replace the use of snprintf with QByteArray to compile under msvc 2005 express.
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::stringValue):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Don't use pthread.h unless thread support is enabled.
 
         * kjs/collector.cpp:
