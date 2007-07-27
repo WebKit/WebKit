@@ -1,3 +1,14 @@
+2007-07-27  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14773: REGRESSION (r24630): ASSERT_NOT_REACHED in DOMHTMLInputElement::name on Windows
+        http://bugs.webkit.org/show_bug.cgi?id=14773
+
+        Reviewed by Steve.
+
+        * Interfaces/DOMHTML.idl: Change IDOMHTMLInputElement back to
+        inheriting from IDOMElement. Safari 3 Beta uses this interface, so we
+        can't change its vtable.
+
 2007-07-25  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam and Steve.
