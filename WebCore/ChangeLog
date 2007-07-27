@@ -1,3 +1,12 @@
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
+        Fix entity handling in the main document content (attributes still broken)
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+
 2007-07-27  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Zack and Lars.

@@ -1635,7 +1635,6 @@ void XMLTokenizer::parse()
 {
     while (!m_parserStopped && !m_parserPaused && !m_stream.atEnd()) {
         m_stream.readNext();
-            qDebug() << m_stream.tokenType() << m_stream.text().toString();
         switch (m_stream.tokenType()) {
         case QXmlStreamReader::StartDocument: {
             startDocument();
@@ -1673,7 +1672,18 @@ void XMLTokenizer::parse()
         }
             break;
         case QXmlStreamReader::EntityReference: {
-            //qDebug()<<"---------------- Entity";
+            //qDebug()<<"---------- ENTITY = "<<m_stream.name().toString()
+            //        <<", t = "<<m_stream.text().toString();
+            if (isXHTMLDocument()) {
+                QString entity = m_stream.name().toString();
+                UChar c = decodeNamedEntity(entity.toUtf8().constData());
+                if (m_currentNode->isTextNode() || enterText()) {
+                    ExceptionCode ec = 0;
+                    String str(&c, 1);
+                    //qDebug()<<" ------- adding entity "<<str;
+                    static_cast<Text*>(m_currentNode)->appendData(str, ec);
+                }
+            }
         }
             break;
         case QXmlStreamReader::ProcessingInstruction: {
