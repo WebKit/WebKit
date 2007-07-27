@@ -61,6 +61,10 @@
 #include <windows.h>
 #endif
 
+#if PLATFORM(QT)
+#include <QDateTime>
+#endif
+
 namespace KJS {
 
 // Default number of ticks before a timeout check should be done.
@@ -749,6 +753,9 @@ static inline unsigned getCurrentTime() {
     struct timeval tv;
     gettimeofday(&tv, 0);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#elif PLATFORM(QT)
+    QDateTime t = QDateTime::currentDateTime();
+    return t.toTime_t() * 1000 + t.time().msec();
 #elif PLATFORM(WIN_OS)
     return timeGetTime();
 #else

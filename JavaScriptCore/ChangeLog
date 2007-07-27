@@ -2,6 +2,18 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Implemented currentTime() in the interpreter by using QDateTime, so that we don't need timeGetTime() on Windows and therefore also don't need to link against Winmm.dll.
+
+        * kjs/interpreter.cpp:
+        (KJS::getCurrentTime):
+        * kjs/testkjs.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Replace the use of snprintf with QByteArray to compile under msvc 2005 express.
 
         * bindings/qt/qt_instance.cpp:
