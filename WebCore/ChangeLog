@@ -2,6 +2,16 @@
 
         Reviewed by Zack and Lars.
 
+        Fixing qualified name parsing - from Lars.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        (WebCore::):
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Parse dtd's
 
         * dom/XMLTokenizer.cpp:

@@ -50,6 +50,8 @@
 #ifndef USE_QXMLSTREAM
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
+#else
+#include <QDebug>
 #endif
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
@@ -1284,7 +1286,7 @@ void XMLTokenizer::insertErrorMessageBlock()
         RefPtr<Element> par = doc->createElementNS(xhtmlNamespaceURI, "p", ec);
         reportElement->appendChild(par, ec);
         par->setAttribute(styleAttr, "white-space: normal");
-        par->appendChild(doc->createTextNode("This doc ument was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
+        par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
     }
 #endif
     doc->updateRendering();
@@ -1574,11 +1576,11 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
 }
 
 #ifdef USE_QXMLSTREAM
-static inline QString prefixFromQName(const QString& qName)
+static inline String prefixFromQName(const QString& qName)
 {
     const int offset = qName.indexOf(QLatin1Char(':'));
-    if (offset == -1)
-        return QString();
+    if (offset <= 0)
+        return String();
     else
         return qName.left(offset);
 }
