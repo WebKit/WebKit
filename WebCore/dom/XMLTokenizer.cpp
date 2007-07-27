@@ -579,6 +579,11 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
 
         xmlParseChunk(m_context, reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
     }
+#else
+    if (parseString.length()) {
+        m_stream.addData(parseString);
+        parse();
+    }
 #endif
     
     return false;
@@ -1273,7 +1278,7 @@ void XMLTokenizer::insertErrorMessageBlock()
         RefPtr<Element> par = doc->createElementNS(xhtmlNamespaceURI, "p", ec);
         reportElement->appendChild(par, ec);
         par->setAttribute(styleAttr, "white-space: normal");
-        par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
+        par->appendChild(doc->createTextNode("This doc ument was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
     }
 #endif
     doc->updateRendering();
@@ -1470,8 +1475,11 @@ bool parseXMLDocumentFragment(const String& string, DocumentFragment* fragment, 
     
     int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, (const xmlChar*)string.utf8().data(), 0);
     return result == 0;
+#else
+    tokenizer.write(string, false);
+    tokenizer.finish();
+    return tokenizer.hasError();
 #endif
-    return false;
 }
 
 // --------------------------------
@@ -1505,6 +1513,23 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
         state->attributes.set(attrQName, attrValue);
     }
 }
+#else
+static void attributesStartElementNsHandler(AttributeParseState *state, const QXmlStreamAttributes &attrs)
+{
+    if (attrs.count() <= 0)
+        return;
+
+    state->gotAttributes = true;
+
+    for(int i = 0; i < attrs.count(); i++) {
+        const QXmlStreamAttribute &attr = attrs[i];
+        String attrLocalName = attr.name().toString();
+        String attrValue     = attr.value().toString();
+        String attrURI       = attr.namespaceUri().toString();
+        String attrQName     = attr.qualifiedName().toString();
+        state->attributes.set(attrQName, attrValue);
+    }
+}
 #endif
 
 HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
@@ -1523,9 +1548,297 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     if (parser->myDoc)
         xmlFreeDoc(parser->myDoc);
     xmlFreeParserCtxt(parser);
+#else
+    QXmlStreamReader stream;
+    QString dummy = QString("<?xml version=\"1.0\"?><attrs %1 />").arg(string);
+    stream.addData(dummy);
+    while (!stream.atEnd()) {
+        stream.readNext();
+        if (stream.isStartElement()) {
+            attributesStartElementNsHandler(&state, stream.attributes());
+        }
+    }
 #endif
     attrsOK = state.gotAttributes;
     return state.attributes;
 }
 
+#ifdef USE_QXMLSTREAM
+static inline QString prefixFromQName(const QString& qName)
+{
+    const int offset = qName.indexOf(QLatin1Char(':'));
+    if (offset == -1)
+        return QString();
+    else
+        return qName.left(offset);
 }
+static inline void handleElementNamespaces(Element* newElement, const QXmlStreamNamespaceDeclarations &ns,
+                                           ExceptionCode& ec)
+{
+    for (int i = 0; i < ns.count(); ++i) {
+        const QXmlStreamNamespaceDeclaration &decl = ns[i];
+        String namespaceQName = "xmlns";
+        String namespaceURI = decl.namespaceUri().toString();
+        if (!decl.prefix().isEmpty())
+            namespaceQName = QLatin1String("xmlns:") + decl.prefix().toString();
+        newElement->setAttributeNS("http://www.w3.org/2000/xmlns/", namespaceQName, namespaceURI, ec);
+        if (ec) // exception setting attributes
+            return;
+    }
+}
+
+static inline void handleElementAttributes(Element* newElement, const QXmlStreamAttributes &attrs, ExceptionCode& ec)
+{
+    for (int i = 0; i < attrs.count(); ++i) {
+        const QXmlStreamAttribute &attr = attrs[i];
+        String attrLocalName = attr.name().toString();
+        String attrValue     = attr.value().toString();
+        String attrURI       = attr.namespaceUri().toString();
+        String attrQName     = attr.qualifiedName().toString();
+
+        newElement->setAttributeNS(attrURI, attrQName, attrValue, ec);
+        if (ec) // exception setting attributes
+            return;
+    }
+}
+void WebCore::XMLTokenizer::parse()
+{
+    while (!m_parserStopped && !m_parserPaused && !m_stream.atEnd()) {
+        m_stream.readNext();
+        switch (m_stream.tokenType()) {
+        case QXmlStreamReader::StartDocument: {
+            startDocument();
+        }
+            break;
+        case QXmlStreamReader::EndDocument: {
+            endDocument();
+        }
+            break;
+        case QXmlStreamReader::StartElement: {
+            parseStartElement();
+        }
+            break;
+        case QXmlStreamReader::EndElement: {
+            parseEndElement();
+        }
+            break;
+        case QXmlStreamReader::Characters: {
+            if (m_stream.isCDATA()) {
+                //cdata
+                parseCdata();
+            } else {
+                //characters
+                parseCharacters();
+            }
+        }
+            break;
+        case QXmlStreamReader::Comment: {
+            parseComment();
+        }
+            break;
+        case QXmlStreamReader::DTD: {
+            //qDebug()<<"DTD";
+        }
+            break;
+        case QXmlStreamReader::EntityReference: {
+            //qDebug()<<"Entity";
+        }
+            break;
+        case QXmlStreamReader::ProcessingInstruction: {
+            parseProcessingInstruction();
+        }
+            break;
+        default:
+            //qDebug()<<"Invalid state = "<<m_stream.tokenType();;
+            break;
+        }
+    }
+}
+
+void XMLTokenizer::startDocument()
+{
+    initializeParserContext();
+    ExceptionCode ec = 0;
+
+    m_doc->setXMLStandalone(m_stream.isStandaloneDocument(), ec);
+}
+
+void XMLTokenizer::parseStartElement()
+{
+    m_sawFirstElement = true;
+
+    exitText();
+
+    String localName = m_stream.name().toString();
+    String uri       = m_stream.namespaceUri().toString();
+    String prefix    = prefixFromQName(m_stream.qualifiedName().toString());
+
+    if (m_parsingFragment && uri.isNull()) {
+        if (!prefix.isNull())
+            uri = m_prefixToNamespaceMap.get(prefix);
+        else
+            uri = m_defaultNamespaceURI;
+    }
+
+    ExceptionCode ec = 0;
+    QualifiedName qName(prefix, localName, uri);
+    RefPtr<Element> newElement = m_doc->createElement(qName, true, ec);
+    if (!newElement) {
+        stopParsing();
+        return;
+    }
+
+    handleElementNamespaces(newElement.get(), m_stream.namespaceDeclarations(), ec);
+    if (ec) {
+        stopParsing();
+        return;
+    }
+
+    handleElementAttributes(newElement.get(), m_stream.attributes(), ec);
+    if (ec) {
+        stopParsing();
+        return;
+    }
+
+    if (newElement->hasTagName(scriptTag))
+        static_cast<HTMLScriptElement*>(newElement.get())->setCreatedByParser(true);
+
+    if (newElement->hasTagName(HTMLNames::scriptTag)
+#if ENABLE(SVG)
+        || newElement->hasTagName(SVGNames::scriptTag)
+#endif
+        )
+        m_scriptStartLine = lineNumber();
+
+    if (!m_currentNode->addChild(newElement.get())) {
+        stopParsing();
+        return;
+    }
+
+    setCurrentNode(newElement.get());
+    if (m_view && !newElement->attached())
+        newElement->attach();
+}
+
+void XMLTokenizer::parseEndElement()
+{
+    exitText();
+
+    Node* n = m_currentNode;
+    RefPtr<Node> parent = n->parentNode();
+    n->closeRenderer();
+
+    // don't load external scripts for standalone documents (for now)
+    if (n->isElementNode() && m_view && (static_cast<Element*>(n)->hasTagName(scriptTag) 
+#if ENABLE(SVG)
+                                         || static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag)
+#endif
+                                         )) {
+
+
+        ASSERT(!m_pendingScript);
+
+        m_requestingScript = true;
+
+        Element* scriptElement = static_cast<Element*>(n);
+        String scriptHref;
+
+        if (static_cast<Element*>(n)->hasTagName(scriptTag))
+            scriptHref = scriptElement->getAttribute(srcAttr);
+#if ENABLE(SVG)
+        else if (static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag))
+            scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
+#endif
+        if (!scriptHref.isEmpty()) {
+            // we have a src attribute
+            const AtomicString& charset = scriptElement->getAttribute(charsetAttr);
+            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, charset))) {
+                m_scriptElement = scriptElement;
+                m_pendingScript->ref(this);
+
+                // m_pendingScript will be 0 if script was already loaded and ref() executed it
+                if (m_pendingScript)
+                    pauseParsing();
+            } else
+                m_scriptElement = 0;
+
+        } else {
+            String scriptCode = "";
+            for (Node* child = scriptElement->firstChild(); child; child = child->nextSibling()) {
+                if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
+                    scriptCode += static_cast<CharacterData*>(child)->data();
+            }
+            m_view->frame()->loader()->executeScript(m_doc->URL(), m_scriptStartLine - 1, scriptCode);
+        }
+        m_requestingScript = false;
+    }
+
+    setCurrentNode(parent.get());
+}
+
+void XMLTokenizer::parseCharacters()
+{
+    if (m_currentNode->isTextNode() || enterText()) {
+        ExceptionCode ec = 0;
+        static_cast<Text*>(m_currentNode)->appendData(m_stream.text().toString(), ec);
+    }
+}
+
+void XMLTokenizer::parseProcessingInstruction()
+{
+    exitText();
+
+    // ### handle exceptions
+    int exception = 0;
+    RefPtr<ProcessingInstruction> pi = m_doc->createProcessingInstruction(
+        m_stream.processingInstructionTarget().toString(),
+        m_stream.processingInstructionData().toString(), exception);
+    if (exception)
+        return;
+
+    if (!m_currentNode->addChild(pi.get()))
+        return;
+    if (m_view && !pi->attached())
+        pi->attach();
+
+    // don't load stylesheets for standalone documents
+    if (m_doc->frame()) {
+        m_sawXSLTransform = !m_sawFirstElement && !pi->checkStyleSheet();
+        if (m_sawXSLTransform)
+            stopParsing();
+    }
+}
+
+void XMLTokenizer::parseCdata()
+{
+    exitText();
+
+    //qDebug()<<"CDATA with "<<m_stream.text().toString();
+    RefPtr<Node> newNode = new CDATASection(m_doc, m_stream.text().toString());
+    if (!m_currentNode->addChild(newNode.get()))
+        return;
+    if (m_view && !newNode->attached())
+        newNode->attach();
+}
+
+void XMLTokenizer::parseComment()
+{
+    exitText();
+
+    RefPtr<Node> newNode = new Comment(m_doc, m_stream.text().toString());
+    m_currentNode->addChild(newNode.get());
+    if (m_view && !newNode->attached())
+        newNode->attach();
+}
+
+void XMLTokenizer::endDocument()
+{
+}
+
+bool XMLTokenizer::hasError() const
+{
+    return m_stream.hasError();
+}
+#endif
+}
+

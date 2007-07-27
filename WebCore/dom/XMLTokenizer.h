@@ -96,6 +96,16 @@ namespace WebCore {
         void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
         void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
 #else
+        void parse();
+        void startDocument();
+        void parseStartElement();
+        void parseEndElement();
+        void parseCharacters();
+        void parseProcessingInstruction();
+        void parseCdata();
+        void parseComment();
+        void endDocument();
+        bool hasError() const;
 #endif
 
         void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
