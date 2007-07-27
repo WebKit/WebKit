@@ -1,3 +1,9 @@
+2007-07-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * Scripts/run-webkit-tests: Remove exception for leaks bug that has been fixed on Leopard.
+
 2007-07-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

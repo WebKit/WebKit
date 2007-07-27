@@ -905,8 +905,6 @@ sub countAndPrintLeaks($$$)
     # We are excluding the following reported leaks so they don't get in our way when looking for WebKit leaks:
 
     my @typesToExclude = (
-        "THRD", # bug in 'leaks', Radar 3387783
-        "DRHT" # ditto (endian little hate i)
     );
 
     my @callStacksToExclude = (
@@ -929,6 +927,10 @@ sub countAndPrintLeaks($$$)
             "_objc_msgForward", # leak in NSSpellChecker, Radar 4965278
             "gldGetString" # leak in OpenGL, Radar 5013699
         );
+         push @typesToExclude, (
+            "THRD", # bug in 'leaks', Radar 3387783
+            "DRHT" # ditto (endian little hate i)
+        );
     }
 
     if (isLeopard()) {
@@ -943,8 +945,8 @@ sub countAndPrintLeaks($$$)
     }
 
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
-    my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "' " .
-                        "--exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'";
+    my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
+    $excludeString .= " --exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'" if @typesToExclude;
 
     print " ? checking for leaks in $dumpToolName\n";
     my $leaksOutput = `$leaksTool $excludeString $dumpToolPID`;
