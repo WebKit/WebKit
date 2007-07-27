@@ -96,6 +96,8 @@ struct WebHTMLViewInterpretKeyEventsParameters;
     
     CFRunLoopTimerRef updateActiveStateTimer;
     CFRunLoopTimerRef updateMouseoverTimer;
+
+    SEL selectorForDoCommandBySelector;
 }
 - (void)clear;
 @end

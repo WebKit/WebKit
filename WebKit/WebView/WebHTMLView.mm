@@ -112,14 +112,12 @@ using namespace HTMLNames;
 
 extern "C" {
 
-// Fake URL scheme.
-static NSString *WebDataProtocolScheme = @"webkit-fake-url";
+// Need to declare these attribute names because AppKit exports them but does not make them available in API or SPI headers.
 
-// need to declare this because AppKit does not make it available as API or SPI
 extern NSString *NSMarkedClauseSegmentAttributeName; 
 extern NSString *NSTextInputReplacementRangeAttributeName; 
 
-// Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
+// Kill ring calls. Would be better to use NSKillRing.h, but that's not available as API or SPI.
 
 void _NSInitializeKillRing(void);
 void _NSAppendToKillRing(NSString *);
@@ -206,6 +204,8 @@ void _NSResetKillRingOperationFlag(void);
 #define MIN_BOLD_WEIGHT 9
 #define STANDARD_BOLD_WEIGHT 10
 
+// Fake URL scheme.
+#define WebDataProtocolScheme @"webkit-fake-url"
 
 // <rdar://problem/4985524> References to WebCoreScrollView as a subview of a WebHTMLView may be present
 // in some NIB files, so NSUnarchiver must be still able to look up this now-unused class.
@@ -214,7 +214,6 @@ void _NSResetKillRingOperationFlag(void);
 
 @implementation WebCoreScrollView
 @end
-
 
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
 static BOOL forceNSViewHitTest;
@@ -281,8 +280,7 @@ static CachedResourceClient* promisedDataClient()
 @end
 
 // Handles the complete: text command
-@interface WebTextCompleteController : NSObject
-{
+@interface WebTextCompleteController : NSObject {
 @private
     WebHTMLView *_view;
     NSWindow *_popupWindow;
@@ -1897,8 +1895,105 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [super finalize];
 }
 
+// Returns YES if the delegate returns YES (so we should do no more work).
+- (BOOL)callDelegateDoCommandBySelectorIfNeeded:(SEL)selector
+{
+    BOOL callerAlreadyCalledDelegate = _private->selectorForDoCommandBySelector == selector;
+    _private->selectorForDoCommandBySelector = 0;
+    if (callerAlreadyCalledDelegate)
+        return NO;
+
+    WebView *webView = [self _webView];
+    id editingDelegate = [webView editingDelegate];
+    if (![editingDelegate respondsToSelector:@selector(webView:doCommandBySelector:)])
+        return NO;
+
+    return [editingDelegate webView:webView doCommandBySelector:selector];
+}
+
+- (void)callWebCoreCommand:(SEL)selector
+{
+    if ([self callDelegateDoCommandBySelectorIfNeeded:selector])
+        return;
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    // Capitalize the first letter of the selector, since we use capitalized command
+    // names in the Editor object (why?). And remove the trailing colon.
+    const char* selectorName = sel_getName(selector);
+    size_t selectorNameLength = strlen(selectorName);
+    ASSERT(selectorNameLength >= 2);
+    ASSERT(selectorName[selectorNameLength - 1] == ':');
+    Vector<char, 256> commandName(selectorNameLength - 1 + 1);
+    commandName[0] = toupper(selectorName[0]);
+    memcpy(&commandName[1], &selectorName[1], selectorNameLength - 2);
+    commandName[selectorNameLength - 1] = 0;
+
+    coreFrame->editor()->execCommand(commandName.data());
+}
+
+// These commands are forwarded to the Editor object in WebCore.
+// Ideally we'd do this for all editing commands; more of the code
+// should be moved from here to there, and more commands should be
+// added to this list.
+
+#define WEBCORE_COMMAND(command) - (void)command:(id)sender { [self callWebCoreCommand:_cmd]; }
+
+WEBCORE_COMMAND(deleteWordBackward)
+WEBCORE_COMMAND(deleteWordForward)
+WEBCORE_COMMAND(insertBacktab)
+WEBCORE_COMMAND(insertLineBreak)
+WEBCORE_COMMAND(insertNewline)
+WEBCORE_COMMAND(insertTab)
+WEBCORE_COMMAND(moveBackward)
+WEBCORE_COMMAND(moveBackwardAndModifySelection)
+WEBCORE_COMMAND(moveDown)
+WEBCORE_COMMAND(moveDownAndModifySelection)
+WEBCORE_COMMAND(moveForward)
+WEBCORE_COMMAND(moveForwardAndModifySelection)
+WEBCORE_COMMAND(moveLeft)
+WEBCORE_COMMAND(moveLeftAndModifySelection)
+WEBCORE_COMMAND(moveParagraphBackwardAndModifySelection)
+WEBCORE_COMMAND(moveParagraphForwardAndModifySelection)
+WEBCORE_COMMAND(moveRight)
+WEBCORE_COMMAND(moveRightAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfDocument)
+WEBCORE_COMMAND(moveToBeginningOfDocumentAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfLine)
+WEBCORE_COMMAND(moveToBeginningOfLineAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfParagraph)
+WEBCORE_COMMAND(moveToBeginningOfParagraphAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfSentence)
+WEBCORE_COMMAND(moveToBeginningOfSentenceAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfDocument)
+WEBCORE_COMMAND(moveToEndOfDocumentAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfLine)
+WEBCORE_COMMAND(moveToEndOfLineAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfParagraph)
+WEBCORE_COMMAND(moveToEndOfParagraphAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfSentence)
+WEBCORE_COMMAND(moveToEndOfSentenceAndModifySelection)
+WEBCORE_COMMAND(moveUp)
+WEBCORE_COMMAND(moveUpAndModifySelection)
+WEBCORE_COMMAND(moveWordBackward)
+WEBCORE_COMMAND(moveWordBackwardAndModifySelection)
+WEBCORE_COMMAND(moveWordForward)
+WEBCORE_COMMAND(moveWordForwardAndModifySelection)
+WEBCORE_COMMAND(moveWordLeft)
+WEBCORE_COMMAND(moveWordLeftAndModifySelection)
+WEBCORE_COMMAND(moveWordRight)
+WEBCORE_COMMAND(moveWordRightAndModifySelection)
+
+#undef WEBCORE_COMMAND
+
+#define COMMAND_PROLOGUE if ([self callDelegateDoCommandBySelectorIfNeeded:_cmd]) return;
+
 - (IBAction)takeFindStringFromSelection:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _hasSelection]) {
         NSBeep();
         return;
@@ -1938,6 +2033,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)selectAll:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self selectAll];
 }
 
@@ -1948,7 +2045,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 // might be using the jumpToSelection: selector, and we don't want to break them.
 - (void)jumpToSelection:(id)sender
 {
-    [self centerSelectionInVisibleArea:sender];
+    COMMAND_PROLOGUE
+
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
 }
 
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
@@ -3381,240 +3481,16 @@ noPromisedData:
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
 }
 
-- (void)moveBackward:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveBackward");
-}
-
-- (void)moveBackwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveBackwardAndModifySelection");
-}
-
-- (void)moveDown:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveDown");
-}
-
-- (void)moveDownAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveDownAndModifySelection");
-}
-
-- (void)moveForward:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveForward");
-}
-
-- (void)moveForwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveForwardAndModifySelection");
-}
-
-- (void)moveLeft:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveLeft");
-}
-
-- (void)moveLeftAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveLeftAndModifySelection");
-}
-
-- (void)moveRight:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveRight");
-}
-
-- (void)moveRightAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveRightAndModifySelection");
-}
-
-- (void)moveToBeginningOfDocument:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfDocument");
-}
-
-- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfDocumentAndModifySelection");
-}
-
-- (void)moveToBeginningOfSentence:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfSentence");
-}
-
-- (void)moveToBeginningOfSentenceAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfSentenceAndModifySelection");
-}
-
-- (void)moveToBeginningOfLine:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfLine");
-}
-
-- (void)moveToBeginningOfLineAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfLineAndModifySelection");
-}
-
-- (void)moveToBeginningOfParagraph:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfParagraph");
-}
-
-- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToBeginningOfParagraphAndModifySelection");
-}
-
-- (void)moveToEndOfDocument:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfDocument");
-}
-
-- (void)moveToEndOfDocumentAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfDocumentAndModifySelection");
-}
-
-- (void)moveToEndOfSentence:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfSentence");
-}
-
-- (void)moveToEndOfSentenceAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfSentenceAndModifySelection");
-}
-
-- (void)moveToEndOfLine:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfLine");
-}
-
-- (void)moveToEndOfLineAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfLineAndModifySelection");
-}
-
-- (void)moveToEndOfParagraph:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfParagraph");
-}
-
-- (void)moveToEndOfParagraphAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveToEndOfParagraphAndModifySelection");
-}
-
-- (void)moveParagraphBackwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveParagraphBackwardAndModifySelection");
-}
-
-- (void)moveParagraphForwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveParagraphForwardAndModifySelection");
-}
-
-- (void)moveUp:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveUp");
-}
-
-- (void)moveUpAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveUpAndModifySelection");
-}
-
-- (void)moveWordBackward:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordBackward");
-}
-
-- (void)moveWordBackwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordBackwardAndModifySelection");
-}
-
-- (void)moveWordForward:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordForward");
-}
-
-- (void)moveWordForwardAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordForwardAndModifySelection");
-}
-
-- (void)moveWordLeft:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordLeft");
-}
-
-- (void)moveWordLeftAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordLeftAndModifySelection");
-}
-
-- (void)moveWordRight:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordRight");
-}
-
-- (void)moveWordRightAndModifySelection:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("MoveWordRightAndModifySelection");
-}
-
 - (void)pageUp:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameView *frameView = [self _frameView];
     if (!frameView)
         return;
@@ -3624,6 +3500,8 @@ noPromisedData:
 
 - (void)pageDown:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameView *frameView = [self _frameView];
     if (!frameView)
         return;
@@ -3633,6 +3511,8 @@ noPromisedData:
 
 - (void)pageUpAndModifySelection:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameView *frameView = [self _frameView];
     if (!frameView)
         return;
@@ -3642,6 +3522,8 @@ noPromisedData:
 
 - (void)pageDownAndModifySelection:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
@@ -3678,38 +3560,42 @@ noPromisedData:
 
 - (void)selectParagraph:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _expandSelectionToGranularity:ParagraphGranularity];
 }
 
 - (void)selectLine:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _expandSelectionToGranularity:LineGranularity];
 }
 
 - (void)selectSentence:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _expandSelectionToGranularity:SentenceGranularity];
 }
 
 - (void)selectWord:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _expandSelectionToGranularity:WordGranularity];
 }
 
 - (void)delete:(id)sender
 {
-#ifdef USING_WEBCORE_DELETE
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->performDelete();
-#else
+    COMMAND_PROLOGUE
+
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame->editor()->canDelete()) {
         NSBeep();
         return;
     }
     [self _deleteSelection];
-#endif
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -3918,6 +3804,8 @@ noPromisedData:
 
 - (void)copyFont:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Put RTF with font attributes on the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
@@ -3927,6 +3815,8 @@ noPromisedData:
 
 - (void)pasteFont:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Read RTF with font attributes from the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
     [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:EditActionPasteFont];
@@ -3934,6 +3824,8 @@ noPromisedData:
 
 - (void)pasteAsRichText:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Since rich text always beats plain text when both are on the pasteboard, it's not
     // clear how this is different from plain old paste.
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:NO];
@@ -4033,6 +3925,8 @@ noPromisedData:
 
 - (void)changeFont:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _applyStyleToSelection:[self _styleFromFontManagerOperation] withUndoAction:EditActionSetFont];
 }
 
@@ -4142,6 +4036,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeAttributes:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _applyStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:EditActionChangeAttributes];
 }
 
@@ -4172,6 +4068,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeDocumentBackgroundColor:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Mimicking NSTextView, this method sets the background color for the
     // entire document. There is no NSTextView API for setting the background
     // color on the selected range only. Note that this method is currently
@@ -4188,6 +4086,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeColor:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // FIXME: in NSTextView, this method calls changeDocumentBackgroundColor: when a
     // private call has earlier been made by [NSFontFontEffectsBox changeColor:], see 3674493. 
     // AppKit will have to be revised to allow this to work with anything that isn't an 
@@ -4209,50 +4109,36 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)alignCenter:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _alignSelectionUsingCSSValue:@"center" withUndoAction:EditActionCenter];
 }
 
 - (void)alignJustified:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _alignSelectionUsingCSSValue:@"justify" withUndoAction:EditActionJustify];
 }
 
 - (void)alignLeft:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _alignSelectionUsingCSSValue:@"left" withUndoAction:EditActionAlignLeft];
 }
 
 - (void)alignRight:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _alignSelectionUsingCSSValue:@"right" withUndoAction:EditActionAlignRight];
-}
-
-- (void)insertTab:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertTab");
-}
-
-- (void)insertBacktab:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertBacktab");
-}
-
-- (void)insertNewline:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertNewline");
-}
-
-- (void)insertLineBreak:(id)sender
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertLineBreak");
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->execCommand("InsertNewline");
 }
@@ -4272,21 +4158,29 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)uppercaseWord:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _changeWordCaseWithSelector:@selector(uppercaseString)];
 }
 
 - (void)lowercaseWord:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _changeWordCaseWithSelector:@selector(lowercaseString)];
 }
 
 - (void)capitalizeWord:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
 - (void)deleteForward:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _isEditable])
         return;
     Frame* coreFrame = core([self _frame]);
@@ -4296,6 +4190,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteBackward:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _isEditable])
         return;
     Frame* coreFrame = core([self _frame]);
@@ -4305,26 +4201,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
 {
+    COMMAND_PROLOGUE
+
     LOG_ERROR("unimplemented, doing deleteBackward instead");
-    [self deleteBackward:sender];
-}
 
-- (void)deleteWordForward:(id)sender
-{
+    if (![self _isEditable])
+        return;
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
-        coreFrame->editor()->execCommand("DeleteWordForward");
-}
-
-- (void)deleteWordBackward:(id)sender
-{
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->execCommand("DeleteWordBackward");
+        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
+    COMMAND_PROLOGUE
+
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, LineBoundary, true, false);
@@ -4332,6 +4223,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteToEndOfLine:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
     Frame* coreFrame = core([self _frame]);
@@ -4344,6 +4237,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
+    COMMAND_PROLOGUE
+
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, ParagraphBoundary, true, false);
@@ -4351,6 +4246,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
     // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
     Frame* coreFrame = core([self _frame]);
@@ -4362,6 +4259,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)complete:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
     if (!_private->compController)
@@ -4371,6 +4270,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)checkSpelling:(id)sender
 {
+    COMMAND_PROLOGUE
+
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         LOG_ERROR("No NSSpellChecker");
@@ -4382,6 +4283,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)showGuessPanel:(id)sender
 {
+    COMMAND_PROLOGUE
+
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         LOG_ERROR("No NSSpellChecker");
@@ -4422,11 +4325,15 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeSpelling:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [self _changeSpellingToWord:[[sender selectedCell] stringValue]];
 }
 
 - (void)ignoreSpelling:(id)sender
 {
+    COMMAND_PROLOGUE
+
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         LOG_ERROR("No NSSpellChecker");
@@ -4443,6 +4350,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)performFindPanelAction:(id)sender
 {
+    COMMAND_PROLOGUE
+
     // Implementing this will probably require copying all of NSFindPanel.h and .m.
     // We need *almost* the same thing as AppKit, but not quite.
     LOG_ERROR("unimplemented");
@@ -4450,6 +4359,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)startSpeaking:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *range = [self _selectedRange];
     if (!range || [range collapsed])
@@ -4459,23 +4370,31 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)stopSpeaking:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [NSApp stopSpeaking:sender];
 }
 
 - (void)insertNewlineIgnoringFieldEditor:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->execCommand("InsertNewline");
 }
 
 - (void)insertTabIgnoringFieldEditor:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->execCommand("InsertTab");
 }
 
 - (void)subscript:(id)sender
 {
+    COMMAND_PROLOGUE
+
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"sub"];
     [self _applyStyleToSelection:style withUndoAction:EditActionSubscript];
@@ -4483,6 +4402,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)superscript:(id)sender
 {
+    COMMAND_PROLOGUE
+
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"super"];
     [self _applyStyleToSelection:style withUndoAction:EditActionSuperscript];
@@ -4490,6 +4411,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)unscript:(id)sender
 {
+    COMMAND_PROLOGUE
+
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"baseline"];
     [self _applyStyleToSelection:style withUndoAction:EditActionUnscript];
@@ -4497,6 +4420,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)underline:(id)sender
 {
+    COMMAND_PROLOGUE
+
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
@@ -4511,6 +4436,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)yank:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
         
@@ -4524,6 +4451,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)yankAndSelect:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
 
@@ -4537,6 +4466,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)setMark:(id)sender
 {
+    COMMAND_PROLOGUE
+
     [[self _bridge] setMarkDOMRange:[self _selectedRange]];
 }
 
@@ -4554,12 +4485,18 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)deleteToMark:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
 
     DOMRange *mark = [[self _bridge] markDOMRange];
     if (mark == nil) {
-        [self delete:sender];
+        if (!coreFrame->editor()->canDelete()) {
+            NSBeep();
+            return;
+        }
+        [self _deleteSelection];
     } else {
         DOMRange *selection = [self _selectedRange];
         DOMRange *r;
@@ -4573,11 +4510,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             coreFrame->editor()->deleteRange([r _range], true, true, false, deleteSelectionAction, CharacterGranularity);
 
     }
-    [self setMark:sender];
+    [[self _bridge] setMarkDOMRange:[self _selectedRange]];
 }
 
 - (void)selectToMark:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     DOMRange *selection = [self _selectedRange];
@@ -4592,6 +4531,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)swapWithMark:(id)sender
 {
+    COMMAND_PROLOGUE
+
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     DOMRange *selection = [self _selectedRange];
@@ -4609,6 +4550,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)transpose:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
 
@@ -4637,6 +4580,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)toggleBaseWritingDirection:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
     
@@ -4661,6 +4606,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)changeBaseWritingDirection:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
     
@@ -4677,11 +4624,15 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)indent:(id)sender
 {
+    COMMAND_PROLOGUE
+
     core([self _frame])->editor()->indent();
 }
 
 - (void)outdent:(id)sender
 {
+    COMMAND_PROLOGUE
+
     core([self _frame])->editor()->outdent();
 }
 
@@ -4970,6 +4921,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)copy:(id)sender
 {
+    COMMAND_PROLOGUE
+
 #ifdef USING_WEBCORE_COPY
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
@@ -4988,6 +4941,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)cut:(id)sender
 {
+    COMMAND_PROLOGUE
+
 #ifdef USING_WEBCORE_CUT
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
@@ -5011,6 +4966,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)paste:(id)sender
 {
+    COMMAND_PROLOGUE
+
 #ifdef USING_WEBCORE_PASTE
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
@@ -5030,6 +4987,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)pasteAsPlainText:(id)sender
 {
+    COMMAND_PROLOGUE
+
     if (![self _canEdit])
         return;
     [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
@@ -5084,6 +5043,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Flip the y coordinate from the top of the menu bar screen -- see 4636390
     return CGPointMake(point.x, NSMaxY([[screens objectAtIndex:0] frame]) - point.y);
 }
+
 #endif
 
 - (void)_lookUpInDictionaryFromMenu:(id)sender
@@ -5213,6 +5173,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     _private->promisedDragTIFFDataSource = source;
 }
 
+#undef COMMAND_PROLOGUE
+
 @end
 
 @implementation WebHTMLView (WebNSTextInputSupport)
@@ -5235,10 +5197,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return validAttributes;
 }
 
-
 // Utility function to make sure we don't return anything through the NSTextInput
 // API when an editable region is not currently focused.
-BOOL isTextInput(Frame *coreFrame)
+static BOOL isTextInput(Frame* coreFrame)
 {
     return coreFrame && !coreFrame->selectionController()->isNone() && coreFrame->selectionController()->isContentEditable();
 }
@@ -5501,8 +5462,11 @@ BOOL isTextInput(Frame *coreFrame)
                 eventWasHandled = coreFrame->editor()->execCommand("InsertTab", event);
             else if (selector == @selector(insertBacktab:))
                 eventWasHandled = coreFrame->editor()->execCommand("InsertBacktab", event);
-            else
+            else {
+                _private->selectorForDoCommandBySelector = selector;
                 [super doCommandBySelector:selector];
+                _private->selectorForDoCommandBySelector = 0;
+            }
         }
 
         if (parameters)

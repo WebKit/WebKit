@@ -1,3 +1,30 @@
+2007-07-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher and Oliver Hunt.
+
+        - fix <rdar://problem/5355815> webView:doCommandBySelector: isn't getting called for copy:
+
+        Added code so that webView:doCommandBySelector: is called for every command.
+
+        * WebView/WebHTMLView.mm: Made 44 of the commands use the WEBCORE_COMMAND macro instead
+        of being handwritten. For all the others, added invocation of COMMAND_PROLOGUE macro at
+        the start of the command.
+        (-[WebHTMLView callDelegateDoCommandBySelectorIfNeeded:]): Added.
+        (-[WebHTMLView callWebCoreCommand:]): Added.
+        (-[WebHTMLView delete:]): Removed unused code path -- easy to bring back some day, but
+        we don't need it compiled in.
+        (-[WebHTMLView deleteBackwardByDecomposingPreviousCharacter:]): Changed so this doesn't
+        call deleteBackward: any more so we don't call the delegate two times.
+        (-[WebHTMLView deleteToMark:]): Changed so this doesn't call delete: any more so we don't
+        call the delegate two times.
+        (-[WebHTMLView selectToMark:]): Changed so this doesn't call setMark: any more so we don't
+        call the delegate two times.
+        (-[WebHTMLView doCommandBySelector:]): Added code to set the private variable
+        selectorForDoCommandBySelector. This allows callDelegateDoCommandBySelectorIfNeeded to
+        detect that we've already called the delegate and avoids calling it twice.
+
+        * WebView/WebHTMLViewInternal.h: Added the selectorForDoCommandBySelector field.
+
 2007-07-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver.
