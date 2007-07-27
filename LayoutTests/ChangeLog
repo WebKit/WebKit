@@ -1,3 +1,12 @@
+2007-07-26  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        <rdar://problem/5350019> REGRESSION: Pages on milliyet.com are added to Back list when visited, causing Back button to just reload
+
+        * http/tests/navigation/lockedhistory-iframe-expected.txt: Added.
+        * http/tests/navigation/lockedhistory-iframe.html: Added.
+
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
