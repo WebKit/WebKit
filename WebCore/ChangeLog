@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix compilation under Qt/Windows.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Changed extendedAttributes to be a variable instead of a hash directly. Required to work with ActiveState perl.
 
         * bindings/scripts/IDLStructure.pm:
