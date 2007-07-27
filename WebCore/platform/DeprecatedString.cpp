@@ -1791,7 +1791,7 @@ DeprecatedString &DeprecatedString::format(const char *format, ...)
     va_start(args, format);
     
     // Do the format once to get the length.
-#if PLATFORM(WIN_OS) 
+#if COMPILER(MSVC) 
     int result = _vscprintf(format, args);
 #else
     char ch;

@@ -32,7 +32,7 @@ using std::swap;
 namespace WebCore {
 
 // FIXME: This belongs in some header file where multiple clients can share it.
-#if PLATFORM(WIN_OS)
+#if COMPILER(MSVC)
 int snprintf(char* str, size_t size, const char* format, ...)
 {
     va_list args;

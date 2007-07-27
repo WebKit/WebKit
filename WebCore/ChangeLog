@@ -2,6 +2,18 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix snprintf hack for the Qt/Windows build with mingw-gcc. MingW has snprintf, so we don't need this helper function.
+
+        * page/FrameTree.cpp:
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::format):
+        * platform/String.cpp:
+        (WebCore::String::format):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Make the DocTypeStrings.cpp generation work with MingW. Cleaned it up to be a regular extra compiler at the same time.
 
         * WebCore.pro:

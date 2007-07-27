@@ -276,7 +276,7 @@ String String::format(const char *format, ...)
     Vector<char, 256> buffer;
 
     // Do the format once to get the length.
-#if PLATFORM(WIN_OS)
+#if COMPILER(MSVC)
     int result = _vscprintf(format, args);
 #else
     char ch;
