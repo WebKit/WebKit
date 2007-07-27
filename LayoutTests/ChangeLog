@@ -1,3 +1,13 @@
+2007-07-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Don't display the expected and resulting values for screenTop and screenY
+        as they depend on the physical screen size.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+
 2007-07-27  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

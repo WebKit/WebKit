@@ -7,7 +7,7 @@
             document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
         }
 
-        function shouldBe(a, b)
+        function shouldBe(a, b, shouldNotPrintValues)
         {
             var evalA, evalB;
             try {
@@ -17,13 +17,23 @@
                 evalA = e;
             }
 
-            var message = (evalA === evalB)
-                            ? "PASS: " + a + " should be '" + evalB + "' and is."
-                            : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
-            if (window.layoutTestController) {
-                alert(String(message).replace(/\n/g, ""));
+            var message;
+            if (evalA === evalB) {
+                message = "PASS";
+                if (!shouldNotPrintValues) {
+                    message += ": " + a + " should be '" + evalB + "' and is.";
+                } else {
+                    message += ": " + a + " matched the expected value.";
+                }
             } else {
-                log(String(message).replace(/\n/g, ""));
+               message = "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+            }
+
+            message = String(message).replace(/\n/g, "");
+            if (window.layoutTestController) {
+                alert(message);
+            } else {
+                log(message);
             }
         }
     </script>
@@ -395,9 +405,9 @@
             shouldBe("window.plugins", "pluginsOld");
             shouldBe("window.screen", "screenOld");
             shouldBe("window.screenLeft", "screenLeftOld");
-            shouldBe("window.screenTop", "screenTopOld");
+            shouldBe("window.screenTop", "screenTopOld", true); // The result is based on the physical screen size, so don't display the values.
             shouldBe("window.screenX", "screenXOld");
-            shouldBe("window.screenY", "screenYOld");
+            shouldBe("window.screenY", "screenYOld", true); // The result is based on the physical screen size, so don't display the values.
             shouldBe("window.scrollbars", "scrollbarsOld");
             shouldBe("window.scrollX", "scrollXOld");
             shouldBe("window.scrollY", "scrollYOld");

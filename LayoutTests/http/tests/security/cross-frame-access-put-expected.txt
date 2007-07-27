@@ -469,9 +469,9 @@ ALERT: PASS: window.personalbar should be '[object BarInfo]' and is.
 ALERT: PASS: window.plugins should be 'undefined' and is.
 ALERT: PASS: window.screen should be '[object Screen]' and is.
 ALERT: PASS: window.screenLeft should be '0' and is.
-ALERT: PASS: window.screenTop should be '1600' and is.
+ALERT: PASS: window.screenTop matched the expected value.
 ALERT: PASS: window.screenX should be '0' and is.
-ALERT: PASS: window.screenY should be '1600' and is.
+ALERT: PASS: window.screenY matched the expected value.
 ALERT: PASS: window.scrollbars should be '[object BarInfo]' and is.
 ALERT: PASS: window.scrollX should be '0' and is.
 ALERT: PASS: window.scrollY should be '0' and is.
