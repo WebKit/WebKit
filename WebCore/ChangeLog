@@ -2,6 +2,17 @@
 
         Reviewed by Zack and Lars.
 
+        Correctly or semi-correctly parse the public and system id.
+
+        Patch from Lars.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Fix uri parsing for attributes.
 
         * dom/XMLTokenizer.cpp:

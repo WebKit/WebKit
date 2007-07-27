@@ -1832,7 +1832,6 @@ void XMLTokenizer::parseCdata()
 {
     exitText();
 
-    qDebug()<<"CDATA with "<<m_stream.text().toString();
     RefPtr<Node> newNode = new CDATASection(m_doc, m_stream.text().toString());
     if (!m_currentNode->addChild(newNode.get()))
         return;
@@ -1859,24 +1858,91 @@ bool XMLTokenizer::hasError() const
     return m_stream.hasError();
 }
 
+static QString parseId(const QString &dtd, int *pos, bool *ok)
+{
+    *ok = true;
+    int start = *pos + 1;
+    int end = start;
+    if (dtd.at(*pos) == QLatin1Char('\''))
+        while (start < dtd.length() && dtd.at(end) != QLatin1Char('\''))
+            ++end;
+    else if (dtd.at(*pos) == QLatin1Char('\"'))
+        while (start < dtd.length() && dtd.at(end) != QLatin1Char('\"'))
+            ++end;
+    else {
+        *ok = false;
+        return QString();
+    }
+    *pos = end + 1;
+    return dtd.mid(start, end - start);
+}
+
 void XMLTokenizer::parseDtd()
 {
+    QString dtd = m_stream.text().toString();
+
+    int start = dtd.indexOf("<!DOCTYPE ") + 10;
+    while (start < dtd.length() && dtd.at(start).isSpace())
+        ++start;
+    int end = start;
+    while (start < dtd.length() && !dtd.at(end).isSpace())
+        ++end;
+    QString name = dtd.mid(start, end - start);
+
+    start = end;
+    while (start < dtd.length() && dtd.at(start).isSpace())
+        ++start;
+    end = start;
+    while (start < dtd.length() && !dtd.at(end).isSpace())
+        ++end;
+    QString id = dtd.mid(start, end - start);
+    start = end;
+    while (start < dtd.length() && dtd.at(start).isSpace())
+        ++start;
+    QString publicId;
+    QString systemId;
+    if (id == QLatin1String("PUBLIC")) {
+        bool ok;
+        publicId = parseId(dtd, &start, &ok);
+        if (!ok) {
+            handleError(fatal, "Invalid DOCTYPE", lineNumber(), columnNumber());
+            return;
+        }
+        while (start < dtd.length() && dtd.at(start).isSpace())
+            ++start;
+        systemId = parseId(dtd, &start, &ok);
+        if (!ok) {
+            handleError(fatal, "Invalid DOCTYPE", lineNumber(), columnNumber());
+            return;
+        }
+    } else if (id == QLatin1String("SYSTEM")) {
+        bool ok;
+        systemId = parseId(dtd, &start, &ok);
+        if (!ok) {
+            handleError(fatal, "Invalid DOCTYPE", lineNumber(), columnNumber());
+            return;
+        }
+    } else if (id == QLatin1String("[") || id == QLatin1String(">")) {
+    } else {
+        handleError(fatal, "Invalid DOCTYPE", lineNumber(), columnNumber());
+        return;
+    }
+    
+    //qDebug() << dtd << name << publicId << systemId;
     const QXmlStreamNotationDeclarations& decls = m_stream.notationDeclarations();
 
-    for (int i = 0; i < decls.count(); ++i) {
-        const QXmlStreamNotationDeclaration& decl = decls[i];
-        QStringRef extId = decl.publicId();
-        if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
-            || (extId == "-//W3C//DTD XHTML 1.1//EN")
-            || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN")
-            || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN")
-            || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
-            || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
-            || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
-            || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")) {
-            setIsXHTMLDocument(true); // controls if we replace entities or not.
-        }
+    if ((publicId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
+        || (publicId == "-//W3C//DTD XHTML 1.1//EN")
+        || (publicId == "-//W3C//DTD XHTML 1.0 Strict//EN")
+        || (publicId == "-//W3C//DTD XHTML 1.0 Frameset//EN")
+        || (publicId == "-//W3C//DTD XHTML Basic 1.0//EN")
+        || (publicId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
+        || (publicId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
+        || (publicId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")) {
+        setIsXHTMLDocument(true); // controls if we replace entities or not.
     }
+    m_doc->setDocType(new DocumentType(m_doc, name, publicId, systemId));
+    
 }
 #endif
 }
