@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        On make install on Windows copy the dll into the bin dir.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Link in libxml and libxslt on Windows.
 
         * WebCore.pro:

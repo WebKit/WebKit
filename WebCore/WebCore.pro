@@ -1458,6 +1458,13 @@ qt-port {
     prf.files = $$PWD/../WebKitQt/Api/qtwebkit.prf
     prf.path = $$[QT_INSTALL_PREFIX]/mkspecs/features
 
+    win32-* {
+        dlltarget.commands = $(COPY_FILE) $(DESTDIR)$(TARGET) $$[QT_INSTALL_BINS]
+        dlltarget.CONFIG = no_path
+        INSTALLS += dlltarget
+    }
+
+
     INSTALLS += target headers prf
 
     unix {
