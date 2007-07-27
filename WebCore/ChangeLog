@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Use $(MOVE) instead of mv to eliminated the shell dependency and replaced the long shell line to call bison and modify the css grammar file with a few lines of portable perl code.
+
+        * WebCore.pro:
+        * css/makegrammar.pl: Added.
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         On make install on Windows copy the dll into the bin dir.
 
         * WebCore.pro:

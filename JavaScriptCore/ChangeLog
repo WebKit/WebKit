@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Use $(MOVE) instead of mv to eliminated the shell dependency and replaced the long shell line to call bison and modify the css grammar file with a few lines of portable perl code.
+
+        * JavaScriptCore.pri:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Implemented currentTime() in the interpreter by using QDateTime, so that we don't need timeGetTime() on Windows and therefore also don't need to link against Winmm.dll.
 
         * kjs/interpreter.cpp:

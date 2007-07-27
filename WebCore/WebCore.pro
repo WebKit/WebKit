@@ -1339,10 +1339,8 @@ tokenizer.CONFIG += target_predeps no_link
 QMAKE_EXTRA_COMPILERS += tokenizer
 
 # GENERATOR 4: CSS grammar
-CSS_GRAMMAR_GUARD_A = \\\"\\043ifndef CSSGRAMMAR_H\\n\\043define CSSGRAMMAR_H\\n\\\"
-CSS_GRAMMAR_GUARD_B = \\\"\\043endif\\n\\\"
 cssbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && touch tmp/${QMAKE_FILE_BASE}.h && perl -e \"printf $$CSS_GRAMMAR_GUARD_A\" > tmp/${QMAKE_FILE_BASE}.h && cat ${QMAKE_FILE_BASE}.tab.h >> tmp/${QMAKE_FILE_BASE}.h && perl -e \"printf $$CSS_GRAMMAR_GUARD_B\" >> tmp/${QMAKE_FILE_BASE}.h && $(DEL_FILE) ${QMAKE_FILE_BASE}.tab.h
+cssbison.commands = perl $$PWD/css/makegrammar.pl ${QMAKE_FILE_NAME} tmp/${QMAKE_FILE_BASE}
 cssbison.depend = ${QMAKE_FILE_NAME}
 cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
@@ -1441,7 +1439,7 @@ QMAKE_EXTRA_COMPILERS += stylesheets
 
 # GENERATOR 10: XPATH grammar
 xpathbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && mv ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
+xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && $(MOVE) ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
 xpathbison.depend = ${QMAKE_FILE_NAME}
 xpathbison.input = XPATHBISON
 xpathbison.CONFIG = target_predeps

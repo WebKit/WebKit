@@ -117,7 +117,7 @@ QMAKE_EXTRA_COMPILERS += keywordlut
 
 # GENERATOR 2: bison grammar
 kjsbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-kjsbison.commands = bison -d -p kjsyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && mv ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
+kjsbison.commands = bison -d -p kjsyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
 kjsbison.depend = ${QMAKE_FILE_NAME}
 kjsbison.input = KJSBISON
 kjsbison.variable_out = GENERATED_SOURCES
