@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Make the DocTypeStrings.cpp generation work with MingW. Cleaned it up to be a regular extra compiler at the same time.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         MingW build fixes: Do the "OBJECTS_TRAILING_SLASH" trick not only for win32-msvc but for all win32 mkspecs. Added LIB/INCLUDE hack from Qt to make us pick up 3rdparty libraries such as libxml from these environment variables.
 
         * WebCore.pro:

@@ -145,6 +145,8 @@ FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT
 
 TOKENIZER = $$PWD/css/tokenizer.flex
 
+DOCTYPESTRINGS = $$PWD/html/DocTypeStrings.gperf
+
 CSSBISON = $$PWD/css/CSSGrammar.y
 
 HTML_NAMES = $$PWD/html/HTMLTagNames.in
@@ -1341,7 +1343,7 @@ QMAKE_EXTRA_COMPILERS += luttable
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = tmp/${QMAKE_FILE_BASE}.cpp
 tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$PWD/css/maketokenizer > ${QMAKE_FILE_OUT}
-tokenizer.dependency_Type = TYPE_C
+tokenizer.dependency_type = TYPE_C
 tokenizer.input = TOKENIZER
 tokenizer.CONFIG += target_predeps no_link
 QMAKE_EXTRA_COMPILERS += tokenizer
@@ -1422,12 +1424,14 @@ entities.CONFIG = target_predeps no_link
 entities.clean = ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += entities
 
-# PRE-GENERATOR 8-B:
-doctypestrings.target = $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
-doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > $$doctypestrings.target && echo // bogus >> $$doctypestrings.target && gperf -CEot -L ANSI-C --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < $$PWD/html/DocTypeStrings.gperf >> $$doctypestrings.target
-QMAKE_EXTRA_TARGETS += doctypestrings
-PRE_TARGETDEPS += $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
-CLEAN_FILES += $$doctypestrings.target
+# GENERATOR 8-B:
+doctypestrings.output = tmp/${QMAKE_FILE_BASE}.cpp
+doctypestrings.input = DOCTYPESTRINGS
+doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CEot -L ANSI-C --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
+doctypestrings.dependency_type = TYPE_C
+doctypestrings.CONFIG += target_predeps no_link
+doctypestrings.clean = ${QMAKE_FILE_OUT}
+QMAKE_EXTRA_COMPILERS += doctypestrings
 
 # GENERATOR 8-C:
 colordata.output = tmp/ColorData.c
