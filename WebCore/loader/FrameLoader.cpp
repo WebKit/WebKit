@@ -3278,7 +3278,10 @@ void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    bool isRedirect = m_quickRedirectComing;
+    // FIXME:
+    // some functions check m_quickRedirectComing, and others check for
+    // FrameLoadTypeRedirectWithLockedHistory.  
+    bool isRedirect = m_quickRedirectComing || m_policyLoadType == FrameLoadTypeRedirectWithLockedHistory;
     m_quickRedirectComing = false;
 
     if (!shouldContinue)
