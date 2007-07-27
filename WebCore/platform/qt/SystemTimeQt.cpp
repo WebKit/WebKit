@@ -28,17 +28,13 @@
 #include "config.h"
 #include "SystemTime.h"
 
-#include <sys/time.h>
+#include <qdatetime.h>
 
 namespace WebCore {
 
 double currentTime()
 {
-    struct timeval tv;
-    struct timezone tz;
-
-    gettimeofday(&tv, &tz);
-    return (double)tv.tv_sec + (double)(tv.tv_usec / 1000000.0);
+    return QDateTime::currentDateTime().toTime_t();
 }
 
 }
