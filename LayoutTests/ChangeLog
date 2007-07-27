@@ -1,5 +1,26 @@
 2007-07-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoff Garen.
+
+        - Test that cross frame access to a window on a different port is denied.
+        - Adds test for out behavior of the above if document.domain is explicitly
+          set to the same domain for both frames. We currently fail this test and
+          a radar has been filed.
+        - Clean up cross-frame-access-protocol.html to work in FireFox as well.
+
+        * http/conf/apache2-httpd.conf: Listen on port 8080 now as well
+        * http/conf/cygwin-httpd.conf: Listen on port 8080 now as well
+        * http/conf/httpd.conf: Listen on port 8080 now as well
+        * http/tests/security/cross-frame-access-port-domain-expected.txt: Added.
+        * http/tests/security/cross-frame-access-port-domain.html: Added.
+        * http/tests/security/cross-frame-access-port-expected.txt: Added.
+        * http/tests/security/cross-frame-access-port.html: Added.
+        * http/tests/security/cross-frame-access-protocol.html:
+        * http/tests/security/resources/cross-frame-iframe-for-port-domain-test.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-port-test.html: Added.
+
+2007-07-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Don't display the expected and resulting values for screenTop and screenY

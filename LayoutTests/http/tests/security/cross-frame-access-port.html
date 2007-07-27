@@ -17,7 +17,7 @@
         log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
 
     var iframe = document.getElementById('aFrame');
-    iframe.src = "https://127.0.0.1:8443/ssl/resources/cross-frame-access-protocol-iframe.html";
+    iframe.src = "http://127.0.0.1:8080/security/resources/cross-frame-iframe-for-port-test.html";
 
     var testDone = false;
 
@@ -25,7 +25,7 @@
 
     setTimeout(function() {
         if (!testDone) {
-            log("FAIL: Cross frame access to https from http was allowed.");
+            log("FAIL: Cross frame access to a different port was allowed.");
             if (window.layoutTestController)
                 layoutTestController.notifyDone();
         }
@@ -40,7 +40,7 @@
         } catch (e) {
         }
 
-        log("PASS: Cross frame access to https from http was denied!");
+        log("PASS: Cross frame access to different port was denied!");
         testDone = true;
         if (window.layoutTestController)
             layoutTestController.notifyDone();
