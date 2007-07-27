@@ -915,7 +915,7 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathEvaluator.idl
 }
 
-!mac:CONFIG += link_pkgconfig
+unix:!mac:CONFIG += link_pkgconfig
 PKGCONFIG += libxml-2.0
 
 contains(DEFINES, ENABLE_XSLT=1) {

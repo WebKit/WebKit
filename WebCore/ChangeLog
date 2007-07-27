@@ -2,6 +2,14 @@
 
         Reviewed by Zack.
 
+        Don't use pkg-config on Windows for the Qt build
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
         Fix compilation with MSVC.
 
         * platform/graphics/qt/ImageDecoderQt.cpp:
