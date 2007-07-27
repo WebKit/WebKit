@@ -77,6 +77,7 @@ sub expectedDirectoryForTest($);
 sub toURL($);
 sub toWindowsPath($);
 sub closeCygpaths();
+sub validateSkippedArg($$;$);
 
 # Argument handling
 my $shouldCheckLeaks = '';
@@ -93,12 +94,12 @@ my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $showHelp = 0;
-my $treatSkipped = "default";
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
 my $testOnlySVGs = '';
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $threaded = 0;
+my $treatSkipped = "default";
 my $verbose = 0;
 my $useValgrind = 0;
 my $strictTesting = 0;
@@ -166,7 +167,7 @@ my $getOptionsResult = GetOptions(
     'results-directory|o=s' => \$testResultsDirectory,
     'singly|1' => sub { $testsPerDumpTool = 1; },
     'nthly=i' => \$testsPerDumpTool,
-    'skipped=s' => \$treatSkipped,
+    'skipped=s' => \&validateSkippedArg,
     'slowest' => \$report10Slowest,
     'svg' => \$testOnlySVGs, 
     'threaded|t' => \$threaded,
@@ -177,7 +178,7 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
 );
 
-if (!$getOptionsResult || $showHelp || ($treatSkipped ne "default" && $treatSkipped ne "ignore" && $treatSkipped ne "only")) {
+if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
     exit 1;
 }
@@ -1297,4 +1298,13 @@ sub toURL($)
     return $path unless isCygwin();
     
     return "file:///" . convertPathUsingCygpath($path, "-m");
+}
+
+sub validateSkippedArg($$;$)
+{
+    my ($option, $value, $value2) = @_;
+    my %validSkippedValues = map { $_ => 1 } qw(default ignore only);
+    $value = lc($value);
+    die "Invalid argument '" . $value . "' for option $option" unless $validSkippedValues{$value};
+    $treatSkipped = $value;
 }

@@ -1,3 +1,11 @@
+2007-07-27  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Geoff and Darin.
+
+        Use a subroutine for validating the --skipped switch.
+
+        * Scripts/run-webkit-tests:
+
 2007-07-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
