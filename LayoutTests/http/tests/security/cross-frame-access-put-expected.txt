@@ -461,17 +461,17 @@ ALERT: PASS: window.onselect should be 'null' and is.
 ALERT: PASS: window.onsubmit should be 'null' and is.
 ALERT: PASS: window.onunload should be 'null' and is.
 ALERT: PASS: window.opener should be 'null' and is.
-ALERT: PASS: window.outerHeight should be '600' and is.
-ALERT: PASS: window.outerWidth should be '800' and is.
+ALERT: PASS: window.outerHeight should be '0' and is.
+ALERT: PASS: window.outerWidth should be '0' and is.
 ALERT: PASS: window.pageXOffset should be '0' and is.
 ALERT: PASS: window.pageYOffset should be '0' and is.
 ALERT: PASS: window.personalbar should be '[object BarInfo]' and is.
 ALERT: PASS: window.plugins should be 'undefined' and is.
 ALERT: PASS: window.screen should be '[object Screen]' and is.
-ALERT: PASS: window.screenLeft should be '-10000' and is.
-ALERT: PASS: window.screenTop should be '-10000' and is.
-ALERT: PASS: window.screenX should be '-10000' and is.
-ALERT: PASS: window.screenY should be '-10000' and is.
+ALERT: PASS: window.screenLeft should be '0' and is.
+ALERT: PASS: window.screenTop should be '900' and is.
+ALERT: PASS: window.screenX should be '0' and is.
+ALERT: PASS: window.screenY should be '900' and is.
 ALERT: PASS: window.scrollbars should be '[object BarInfo]' and is.
 ALERT: PASS: window.scrollX should be '0' and is.
 ALERT: PASS: window.scrollY should be '0' and is.

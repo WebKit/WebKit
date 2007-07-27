@@ -2,6 +2,11 @@
 <html>
 <head>
     <script type="text/javascript">
+        function log(s)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+        }
+
         function shouldBe(a, b)
         {
             var evalA, evalB;
@@ -15,8 +20,11 @@
             var message = (evalA === evalB)
                             ? "PASS: " + a + " should be '" + evalB + "' and is."
                             : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
-
-            alert(String(message).replace(/\n/g, ""));
+            if (window.layoutTestController) {
+                alert(String(message).replace(/\n/g, ""));
+            } else {
+                log(String(message).replace(/\n/g, ""));
+            }
         }
     </script>
 </head>
