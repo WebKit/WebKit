@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Relax the regular expression that tries to find constant declarations in the IDL source to not require leading whitespace. This makes it work with preprocessors that happen to eliminate leading whitespace.
+
+        * bindings/scripts/IDLParser.pm:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Try to use the moc as preprocessor for the IDL bindings generator
 
         * WebCore.pro:

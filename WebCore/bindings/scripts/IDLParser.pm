@@ -277,7 +277,7 @@ sub ParseInterface
                 $setterException =~ s/\s+//g;
                 @{$newDataNode->getterExceptions} = split(/,/, $getterException);
                 @{$newDataNode->setterExceptions} = split(/,/, $setterException);
-            } elsif (($line !~ s/^\s*$//g) and ($line !~ /^\s+const/)) {
+            } elsif (($line !~ s/^\s*$//g) and ($line !~ /^\s*const/)) {
                 $line =~ /$IDLStructure::interfaceMethodSelector/ or die "Parsing error!\nSource:\n$line\n)";
 
                 my $methodExtendedAttributes = (defined($1) ? $1 : " "); chop($methodExtendedAttributes);
@@ -326,7 +326,7 @@ sub ParseInterface
 
                 my $arrayRef = $dataNode->functions;
                 push(@$arrayRef, $newDataNode);
-            } elsif ($line =~ /^\s+const/) {
+            } elsif ($line =~ /^\s*const/) {
                 $line =~ /$IDLStructure::constantSelector/;
                 my $constType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));
                 my $constName = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
