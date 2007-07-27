@@ -39,7 +39,7 @@ struct( domClass => {
     constants => '@',    # List of 'domConstant'
     functions => '@',    # List of 'domFunction'
     attributes => '@',    # List of 'domAttribute'    
-    extendedAttributes => '%', # Extended attributes
+    extendedAttributes => '$', # Extended attributes
 });
 
 # Used to represent domClass contents (name of method, signature)
@@ -61,7 +61,7 @@ struct( domAttribute => {
 struct( domSignature => {
     name => '$',      # Variable name
     type => '$',      # Variable type
-    extendedAttributes => '%' # Extended attributes
+    extendedAttributes => '$' # Extended attributes
 });
 
 # Used to represent string constants
