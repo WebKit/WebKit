@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Link in libxml and libxslt on Windows.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Temporarily disable the ICO support for the Qt build on Windows.
 
         * WebCore.pro:

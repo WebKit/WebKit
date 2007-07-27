@@ -62,6 +62,10 @@ macx {
     LIBS += -lxml2 -lxslt
 }
 
+win32-* {
+    LIBS += -llibxml2 -llibxslt
+}
+
 qt-port {
 !win32-* {
     LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
