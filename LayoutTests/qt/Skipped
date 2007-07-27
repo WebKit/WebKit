@@ -32,6 +32,12 @@ fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 fast/dom/Window/alert-undefined.html
 
+# tests that require xslt support
+fast/xsl
+dom/xhtml/level3/core/canonicalform08.xhtml
+dom/xhtml/level3/core/canonicalform09.xhtml
+fast/dom/global-constructors.html
+fast/dom/Window/get-set-properties.html
 
 # missing stuff in DRT
 fast/frames/inline-object-inside-frameset.html

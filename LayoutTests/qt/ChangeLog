@@ -1,3 +1,11 @@
+2007-07-27  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Zack and Lars.
+
+        add xlst related tests to Skipped list.
+
+        * Skipped:
+
 2007-07-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.
