@@ -1,3 +1,11 @@
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix compilation with MSVC.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+
 2007-07-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Anders Carlsson.

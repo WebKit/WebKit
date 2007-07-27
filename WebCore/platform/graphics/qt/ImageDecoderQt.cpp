@@ -252,7 +252,7 @@ int ImageDecoderQt::repetitionCount() const
 }
 
 
-bool ImageDecoderQt::ImageDecoderQt::supportsAlpha() const
+bool ImageDecoderQt::supportsAlpha() const
 {
     return hasFirstImageHeader() && m_imageList[0].m_image.hasAlphaChannel();
 }
