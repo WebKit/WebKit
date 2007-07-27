@@ -17,7 +17,7 @@ DEPENDPATH += css dom loader editing history html \
 include($$OUTPUT_DIR/config.pri)
 
 CONFIG -= warn_on
-QMAKE_CXXFLAGS += -Wreturn-type
+*-g++:QMAKE_CXXFLAGS += -Wreturn-type
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols

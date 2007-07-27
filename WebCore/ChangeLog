@@ -1,5 +1,13 @@
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Lars.
+
+        Use -Wreturn-type only when compiling with g++
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Zack.
 
         Don't use pkg-config on Windows for the Qt build
