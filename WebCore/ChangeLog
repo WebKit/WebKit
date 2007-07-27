@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix build with moc as preprocessor. Don't rely the preprocessor preserving whitespace at the beginning of lines.
+
+        * bindings/scripts/IDLParser.pm:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Make make-css-file-arrays.pl work on Windows by not calling /usr/bin/gcc as preprocessor for the Qt build.
 
         * WebCore.pro:

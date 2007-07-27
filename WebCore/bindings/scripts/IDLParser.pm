@@ -173,7 +173,7 @@ sub ParseInterface
     $data =~ /};/g;
     $data = substr($data, index($data, $sectionName), pos($data) - length($data));
 
-    $data =~ s/[\n\r]//g;
+    $data =~ s/[\n\r]/ /g;
 
     # Beginning of the regexp parsing magic
     if ($sectionName eq "exception") {
@@ -238,7 +238,7 @@ sub ParseInterface
             push(@$arrayRef, $line);
         }
 
-        $interfaceData =~ s/[\n\r]//g;
+        $interfaceData =~ s/[\n\r]/ /g;
         my @interfaceMethods = split(/;/, $interfaceData);
 
         foreach my $line (@interfaceMethods) {
