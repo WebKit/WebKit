@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Don't use stdout redirection for make_names.pl as it doesn't work under Windows perl (outside cygwin).
+
+        * ksvg2/scripts/make_names.pl:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Fix DocTypeStrings.cpp generation to work on Windows with cmd.exe
 
         * WebCore.pro:
