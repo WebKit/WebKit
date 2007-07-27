@@ -53,7 +53,7 @@ win32-g++ {
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
-#!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
+gdk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
 gdk-port:DEFINES += ENABLE_SVG=1

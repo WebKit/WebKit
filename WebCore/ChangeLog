@@ -1,3 +1,11 @@
+2007-07-27  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Enable XSLT support for the gtk port.
+
+        * WebCore.pro:
+
 2007-07-27  Zack Rusin  <zack@kde.org>
 
         Reviewed by Zack and Lars.
