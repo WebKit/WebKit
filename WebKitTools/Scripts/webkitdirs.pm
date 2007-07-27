@@ -539,11 +539,36 @@ sub buildVisualStudioProject($)
     return $result;
 }
 
+sub qtMakeCommand()
+{
+    chomp(my $mkspec = `qmake -query QMAKE_MKSPECS`);
+    $mkspec .= "/default";
+
+    my $compiler = "";
+    open SPEC, "<$mkspec/qmake.conf" or return "make";
+    while (<SPEC>) {
+        if ($_ =~ /QMAKE_CC\s*=\s*([^\s]+)/) {
+            $compiler = $1;
+        }
+    }
+    close SPEC;
+
+    #print "default spec: " . $mkspec . "\n";
+    #print "compiler found: " . $compiler . "\n";
+
+    if ($compiler eq "cl") {
+        return "nmake";
+    }
+
+    return "make";
+}
+
 sub buildQMakeProject($$)
 {
     my ($project, $colorize) = @_;
 
     my @buildArgs = ("-r");
+    my $make = qtMakeCommand();
 
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     for my $i (0 .. $#ARGV) {
@@ -569,8 +594,16 @@ sub buildQMakeProject($$)
     print "Calling '$qmakebin @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
 
-    system "mkdir -p " . baseProductDir() . "/$config";
-    chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
+    my $dir = baseProductDir();
+    if (! -d $dir) {
+        mkdir $dir or die "Failed to create product directory " . $dir;
+    }
+    $dir = $dir . "/$config";
+    if (! -d $dir) {
+        mkdir $dir or die "Failed to create build directory " . $dir;
+    }
+
+    chdir $dir or die "Failed to cd into " . $dir . "\n";
 
     my $result = system $qmakebin, @buildArgs;
     if($result ne 0) {
@@ -580,10 +613,10 @@ sub buildQMakeProject($$)
     my $clean = $ENV{"WEBKIT_FULLBUILD"};
 
     if(defined $clean) {
-      system "make clean";
+      system "$make clean";
     }
 
-    $result = system "make";
+    $result = system "$make";
     chdir ".." or die;
     return $result;
 }
