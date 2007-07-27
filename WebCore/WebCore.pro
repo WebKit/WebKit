@@ -8,6 +8,8 @@ TEMPLATE = lib
 qt-port:TARGET = QtWebKit
 gdk-port:TARGET = WebKitGdk
 OBJECTS_DIR = tmp
+OBJECTS_DIR_WTR = $$OBJECTS_DIR/
+win32-msvc*: OBJECTS_DIR_WTR ~= s|/|\|
 INCLUDEPATH += tmp $$OUTPUT_DIR/WebCore/tmp
 
 DESTDIR = $$OUTPUT_DIR/lib
@@ -1329,7 +1331,7 @@ QMAKE_EXTRA_COMPILERS += tokenizer
 CSS_GRAMMAR_GUARD_A = \"\\043ifndef CSSGRAMMAR_H\\n\\043define CSSGRAMMAR_H\\n\"
 CSS_GRAMMAR_GUARD_B = \"\\043endif\\n\"
 cssbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && touch tmp/${QMAKE_FILE_BASE}.h && perl -e \'printf $$CSS_GRAMMAR_GUARD_A\' > tmp/${QMAKE_FILE_BASE}.h && cat ${QMAKE_FILE_BASE}.tab.h >> tmp/${QMAKE_FILE_BASE}.h && perl -e \'printf $$CSS_GRAMMAR_GUARD_B\' >> tmp/${QMAKE_FILE_BASE}.h && rm ${QMAKE_FILE_BASE}.tab.h
+cssbison.commands = bison -d -p cssyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && mv ${QMAKE_FILE_BASE}.tab.c tmp/${QMAKE_FILE_BASE}.cpp && touch tmp/${QMAKE_FILE_BASE}.h && perl -e \'printf $$CSS_GRAMMAR_GUARD_A\' > tmp/${QMAKE_FILE_BASE}.h && cat ${QMAKE_FILE_BASE}.tab.h >> tmp/${QMAKE_FILE_BASE}.h && perl -e \'printf $$CSS_GRAMMAR_GUARD_B\' >> tmp/${QMAKE_FILE_BASE}.h && $(DEL_FILE) ${QMAKE_FILE_BASE}.tab.h
 cssbison.depend = ${QMAKE_FILE_NAME}
 cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
@@ -1365,7 +1367,7 @@ QMAKE_EXTRA_COMPILERS += xmlnames
 # GENERATOR 6-A:
 cssprops.output = tmp/CSSPropertyNames.c
 cssprops.input = WALDOCSSPROPS
-cssprops.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && rm ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.CONFIG = target_predeps no_link
 cssprops.clean = ${QMAKE_FILE_OUT} tmp/CSSPropertyNames.h
 QMAKE_EXTRA_COMPILERS += cssprops
@@ -1373,7 +1375,7 @@ QMAKE_EXTRA_COMPILERS += cssprops
 # GENERATOR 6-B:
 cssvalues.output = tmp/CSSValueKeywords.c
 cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && rm CSSValueKeywords.in CSSValueKeywords.gperf
+cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) CSSValueKeywords.in CSSValueKeywords.strip CSSValueKeywords.gperf
 cssvalues.CONFIG = target_predeps no_link
 cssvalues.clean = ${QMAKE_FILE_OUT} tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += cssvalues
@@ -1381,7 +1383,7 @@ QMAKE_EXTRA_COMPILERS += cssvalues
 # GENERATOR 7-A:
 svgcssproperties.output = tmp/ksvgcssproperties.h
 svgcssproperties.input = SVGCSSPROPERTIES
-svgcssproperties.commands = cp $$PWD/ksvg2/css/CSSPropertyNames.in tmp/ksvgcssproperties.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in && rm ksvgcssproperties.in ksvgcssproperties.gperf
+svgcssproperties.commands = $(COPY_FILE) ${QMAKE_FILE_IN} ${QMAKE_VAR_OBJECTS_DIR_WTR}ksvgcssproperties.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in && $(DEL_FILE) ksvgcssproperties.in ksvgcssproperties.gperf
 svgcssproperties.CONFIG = target_predeps no_link
 svgcssproperties.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssproperties.c
 QMAKE_EXTRA_COMPILERS += svgcssproperties
@@ -1389,7 +1391,7 @@ QMAKE_EXTRA_COMPILERS += svgcssproperties
 # GENERATOR 7-B:
 svgcssvalues.output = tmp/ksvgcssvalues.h
 svgcssvalues.input = SVGCSSVALUES
-svgcssvalues.commands = perl -ne \'print lc\' $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && rm ksvgcssvalues.in ksvgcssvalues.gperf
+svgcssvalues.commands = perl -ne \'print lc\' $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && $(DEL_FILE) ksvgcssvalues.in ksvgcssvalues.gperf
 svgcssvalues.CONFIG = target_predeps no_link
 svgcssvalues.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssvalues.c tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += svgcssvalues

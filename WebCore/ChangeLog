@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Beautiful hacks to make more of the extra compiler magic work under Windows outside of cygwin.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Correctly propagate the custom preprocessor option through the idl parser and the codegenerator.
 
         * bindings/scripts/CodeGenerator.pm:
