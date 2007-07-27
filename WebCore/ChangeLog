@@ -1,3 +1,27 @@
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
+        Remove the libxml dependency when not compiling with XSLT.
+
+        Just ifdefing, displaying xml doesn't work.
+
+        * WebCore.pro:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::write):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::enterText):
+        (WebCore::XMLTokenizer::exitText):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::end):
+        (WebCore::XMLTokenizer::lineNumber):
+        (WebCore::XMLTokenizer::columnNumber):
+        (WebCore::XMLTokenizer::stopParsing):
+        (WebCore::XMLTokenizer::resumeParsing):
+        (WebCore::):
+        * dom/XMLTokenizer.h:
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

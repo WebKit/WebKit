@@ -25,14 +25,27 @@
 #ifndef XMLTokenizer_h
 #define XMLTokenizer_h
 
+#include "config.h"
+
 #include "CachedResourceClient.h"
 #include "SegmentedString.h"
 #include "StringHash.h"
 #include "Tokenizer.h"
-#include <libxml/tree.h>
-#include <libxml/xmlstring.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+
+#if PLATFORM(QT)
+#if !ENABLE(XSLT)
+#define USE_QXMLSTREAM
+#endif
+#endif
+
+#ifndef USE_QXMLSTREAM
+#include <libxml/tree.h>
+#include <libxml/xmlstring.h>
+#else
+#include <QtXml/qxmlstream.h>
+#endif
 
 namespace WebCore {
 
@@ -70,9 +83,11 @@ namespace WebCore {
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource* finishedObj);
 
+#ifndef USE_QXMLSTREAM
         // callbacks from parser SAX
         void error(ErrorType, const char* message, va_list args);
-        void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
+        void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
+                            const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
         void endElementNs();
         void characters(const xmlChar* s, int len);
         void processingInstruction(const xmlChar* target, const xmlChar* data);
@@ -80,6 +95,8 @@ namespace WebCore {
         void comment(const xmlChar* s);
         void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
         void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
+#else
+#endif
 
         void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
 
@@ -102,7 +119,11 @@ namespace WebCore {
 
         String m_originalSourceForTransform;
 
+#ifdef USE_QXMLSTREAM
+        QXmlStreamReader m_stream;
+#else
         xmlParserCtxtPtr m_context;
+#endif
         Node* m_currentNode;
         bool m_currentNodeIsReferenced;
 
@@ -129,8 +150,9 @@ namespace WebCore {
 
         typedef HashMap<String, String> PrefixForNamespaceMap;
         PrefixForNamespaceMap m_prefixToNamespaceMap;
-
+#ifndef USE_QXMLSTREAM
         OwnPtr<PendingCallbacks> m_pendingCallbacks;
+#endif
         SegmentedString m_pendingSrc;
     };
 

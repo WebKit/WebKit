@@ -53,7 +53,7 @@ win32-g++ {
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
-!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
+#!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
 gdk-port:DEFINES += ENABLE_SVG=1
@@ -139,7 +139,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
                 $$PWD/platform/image-decoders \
                 $$PWD/../WebKitQt/WebCoreSupport
-QT += network
+QT += network xml
 
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
 
@@ -939,11 +939,10 @@ contains(DEFINES, ENABLE_XPATH=1) {
 }
 
 unix:!mac:CONFIG += link_pkgconfig
-PKGCONFIG += libxml-2.0
 
 contains(DEFINES, ENABLE_XSLT=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
-    PKGCONFIG += libxslt
+    PKGCONFIG += libxml-2.0 libxslt
 }
 
 contains(DEFINES, ENABLE_XBL=1) {
