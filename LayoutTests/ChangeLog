@@ -1,3 +1,8 @@
+2007-07-26  Darin Adler  <darin@apple.com>
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        Checked in corrected results that match the checked-in test.
+
 2007-07-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Anders Carlsson.
@@ -11,14 +16,12 @@
 
         Reviewed by Sam.
 
-        - Updated results as they are affecte by my previous checkin.
+        - Updated results as they are affected by my previous checkin.
 
         * http/tests/security/cross-frame-access-put-expected.txt:
         * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
 
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
-
-        Reviewed by.
 
         - Fixed bot breakage.
 
