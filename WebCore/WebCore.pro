@@ -1414,7 +1414,7 @@ CLEAN_FILES += $$doctypestrings.target
 
 # GENERATOR 8-C:
 colordata.output = tmp/ColorData.c
-colordata.commands = echo \"$${LITERAL_HASH}include <string.h>\" > ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
+colordata.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 colordata.input = COLORDAT_GPERF
 colordata.CONFIG = target_predeps no_link
 QMAKE_EXTRA_COMPILERS += colordata
