@@ -1220,7 +1220,7 @@ void XMLTokenizer::end()
     }
 #else
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError) {
-        handleError(warning, qPrintable(m_stream.errorString()), lineNumber(),
+        handleError(fatal, qPrintable(m_stream.errorString()), lineNumber(),
                     columnNumber());
     }
 #endif
