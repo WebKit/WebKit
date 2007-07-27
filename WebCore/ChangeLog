@@ -1,3 +1,13 @@
+2007-07-27  Patrick Hanna  <phanna@email.unc.edu>
+
+        Reviewed by Darin Adler.
+
+        Change PluginBase::refresh to be static and update PluginsFunc::callAsFunction accordingly. Now we no longer
+        allocate an instance of a JSObject subclass on the stack which could lead to a crash during garbage collection.
+
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::PluginsFunc::callAsFunction):
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Done with and reviewed by Lars and Zack.
