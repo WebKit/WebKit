@@ -1569,7 +1569,7 @@ sub GenerateHashTable
             push(@implContent, ", ");
 
             if (defined($links[$i])) {
-                push(@implContent, "&${nameEntries}[$links[$i]]" . " \}");
+                push(@implContent, "&" . $nameEntries . "[$links[$i]]" . " \}");
             } else {
                 push(@implContent, "0 \}");
             }

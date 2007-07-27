@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix evaluation with ActiveState Perl 5.6. Somehow it tried to treat nameEntries as array.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Fix compilation with MSVC in the Qt build (missing header files).
 
         * loader/icon/IconDatabaseNone.cpp:
