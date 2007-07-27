@@ -1,3 +1,13 @@
+2007-07-27  Adam Treat  <treat@kde.org>
+
+        Reviewed by David Hyatt.
+
+        Fix crash when using QtWebKit canvas support.
+
+        * ChangeLog:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+
 2007-07-27  Darin Adler  <darin@apple.com>
 
         * rendering/RenderLayer.cpp: Rolled out accidentally-checked-in code.

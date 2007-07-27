@@ -170,6 +170,7 @@ void HTMLCanvasElement::reset()
     fastFree(m_data);
 #elif PLATFORM(QT)
     delete m_painter;
+    m_painter = 0;
     delete m_data;
 #endif
     m_data = 0;
