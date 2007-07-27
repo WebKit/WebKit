@@ -2,6 +2,20 @@
 
         Reviewed by Zack and Lars.
 
+        Implement error handling.
+
+        Add our copyrights
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::handleError):
+        (WebCore::XMLTokenizer::end):
+        (WebCore::):
+        * dom/XMLTokenizer.h:
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Making the stylesheets work (plus everything else basically)
 
         * dom/XMLTokenizer.cpp:

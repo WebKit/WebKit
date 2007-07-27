@@ -5,6 +5,7 @@
  * Copyright (C) 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -797,30 +798,6 @@ void XMLTokenizer::characters(const xmlChar* s, int len)
     }
 }
 
-void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
-{
-    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
-        switch (type) {
-            case warning:
-                m_errorMessages += String::format("warning on line %d at column %d: %s", lineNumber, columnNumber, m);
-                break;
-            case fatal:
-            case nonFatal:
-                m_errorMessages += String::format("error on line %d at column %d: %s", lineNumber, columnNumber, m);
-        }
-        
-        m_lastErrorLine = lineNumber;
-        m_lastErrorColumn = columnNumber;
-        ++m_errorCount;
-    }
-    
-    if (type != warning)
-        m_sawError = true;
-    
-    if (type == fatal)
-        stopParsing();    
-}
-
 void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
 {
     if (m_parserStopped)
@@ -1116,6 +1093,30 @@ static void ignorableWhitespaceHandler(void* ctx, const xmlChar* ch, int len)
 }
 #endif
 
+void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
+{
+    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
+        switch (type) {
+            case warning:
+                m_errorMessages += String::format("warning on line %d at column %d: %s", lineNumber, columnNumber, m);
+                break;
+            case fatal:
+            case nonFatal:
+                m_errorMessages += String::format("error on line %d at column %d: %s", lineNumber, columnNumber, m);
+        }
+        
+        m_lastErrorLine = lineNumber;
+        m_lastErrorColumn = columnNumber;
+        ++m_errorCount;
+    }
+    
+    if (type != warning)
+        m_sawError = true;
+    
+    if (type == fatal)
+        stopParsing();    
+}
+
 bool XMLTokenizer::enterText()
 {
     RefPtr<Node> newNode = new Text(m_doc, "");
@@ -1196,6 +1197,11 @@ void XMLTokenizer::end()
             xmlFreeDoc(m_context->myDoc);
         xmlFreeParserCtxt(m_context);
         m_context = 0;
+    }
+#else
+    if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError) {
+        handleError(warning, qPrintable(m_stream.errorString()), lineNumber(),
+                    columnNumber());
     }
 #endif
     
@@ -1514,7 +1520,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     }
 }
 #else
-static void attributesStartElementNsHandler(AttributeParseState *state, const QXmlStreamAttributes &attrs)
+static void attributesStartElementNsHandler(AttributeParseState* state, const QXmlStreamAttributes& attrs)
 {
     if (attrs.count() <= 0)
         return;
@@ -1522,7 +1528,7 @@ static void attributesStartElementNsHandler(AttributeParseState *state, const QX
     state->gotAttributes = true;
 
     for(int i = 0; i < attrs.count(); i++) {
-        const QXmlStreamAttribute &attr = attrs[i];
+        const QXmlStreamAttribute& attr = attrs[i];
         String attrLocalName = attr.name().toString();
         String attrValue     = attr.value().toString();
         String attrURI       = attr.namespaceUri().toString();
@@ -1648,8 +1654,14 @@ void WebCore::XMLTokenizer::parse()
             parseProcessingInstruction();
         }
             break;
-        default:
-            //qDebug()<<"Invalid state = "<<m_stream.tokenType();;
+        default: {
+            if (m_stream.error() != QXmlStreamReader::PrematureEndOfDocumentError) {
+                ErrorType type = (m_stream.error() == QXmlStreamReader::NotWellFormedError) ?
+                                 fatal : warning;
+                handleError(type, qPrintable(m_stream.errorString()), lineNumber(),
+                            columnNumber());
+            }
+        }
             break;
         }
     }

@@ -4,6 +4,7 @@
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
  * Copyright (C) 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
