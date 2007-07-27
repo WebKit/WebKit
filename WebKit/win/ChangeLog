@@ -1,3 +1,18 @@
+2007-07-27  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam.
+        
+        Added methods to track user edited text fields now that 
+        <rdar://problem/5359921> has been fixed.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::QueryInterface):
+        (DOMHTMLInputElement::isUserEdited):
+        (DOMHTMLTextAreaElement::QueryInterface):
+        (DOMHTMLTextAreaElement::isUserEdited):
+        * DOMHTMLClasses.h:
+        * Interfaces/DOMPrivate.idl:
+
 2007-07-27  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14773: REGRESSION (r24630): ASSERT_NOT_REACHED in DOMHTMLInputElement::name on Windows

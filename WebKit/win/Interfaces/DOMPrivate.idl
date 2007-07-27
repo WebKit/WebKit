@@ -109,6 +109,27 @@ interface IFormsAutoFillTransition : IUnknown
 }
 
 /*
+    // These changes are necessary to detect whether a form input was modified by a user
+    // or javascript
+    @interface DOMHTMLInputElement (FormPromptAdditions)
+
+    @interface DOMHTMLTextAreaElement (FormPromptAdditions)
+*/
+[
+    object,
+    oleautomation,
+    uuid(C8C5F0CD-07B0-4a32-BFA8-AE465E80DD3C),
+    pointer_default(unique)
+]
+interface IFormPromptAdditions : IUnknown
+{
+    /*
+        - (BOOL)_isUserEdited;
+    */
+    HRESULT isUserEdited([out, retval] BOOL* result);
+}
+
+/*
     All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
     They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
     replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,

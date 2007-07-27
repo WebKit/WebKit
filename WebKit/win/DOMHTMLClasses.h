@@ -1613,7 +1613,7 @@ public:
         /* [in] */ BSTR value);
 };
 
-class DOMHTMLInputElement : public DOMHTMLElement, public IDOMHTMLInputElement, public IFormsAutoFillTransition
+class DOMHTMLInputElement : public DOMHTMLElement, public IDOMHTMLInputElement, public IFormsAutoFillTransition, public IFormPromptAdditions
 {
 protected:
     DOMHTMLInputElement();
@@ -2011,9 +2011,13 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE setAutofilled( 
         /* [in] */ BOOL filled);
+
+    // IFormPromptAdditions
+    virtual HRESULT STDMETHODCALLTYPE isUserEdited( 
+        /* [retval][out] */ BOOL *result);
 };
 
-class DOMHTMLTextAreaElement : public DOMHTMLElement, public IDOMHTMLTextAreaElement
+class DOMHTMLTextAreaElement : public DOMHTMLElement, public IDOMHTMLTextAreaElement, public IFormPromptAdditions
 {
 protected:
     DOMHTMLTextAreaElement();
@@ -2332,6 +2336,10 @@ public:
         /* [in] */ BSTR value);
         
     virtual HRESULT STDMETHODCALLTYPE select( void);
+
+    // IFormPromptAdditions
+    virtual HRESULT STDMETHODCALLTYPE isUserEdited( 
+        /* [retval][out] */ BOOL *result);
 };
 
 #endif
