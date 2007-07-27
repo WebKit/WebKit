@@ -40,7 +40,7 @@ extern "C" {
 @typedef JSChar
 @abstract A Unicode character.
 */
-#if !defined(WIN32) && !defined(_WIN32)
+#if (!defined(WIN32) && !defined(_WIN32)) || defined(__BUILDING_QT)
     typedef unsigned short JSChar;
 #else
     typedef wchar_t JSChar;

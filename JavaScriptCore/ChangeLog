@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Always define JSChar to be unsigned short for the Qt builds, to ensure compatibility with UChar.
+
+        * API/JSStringRef.h:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Fix compilation with Qt on Windows with MingW: Implemented currentThreadStackBase() for this platform.
 
         * kjs/collector.cpp:
