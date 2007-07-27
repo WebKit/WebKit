@@ -33,7 +33,9 @@
 #include <setjmp.h>
 #include <algorithm>
 
+#if USE(MULTIPLE_THREADS)
 #include <pthread.h>
+#endif
 
 #if PLATFORM(DARWIN)
 
@@ -292,19 +294,27 @@ static inline void* currentThreadStackBase()
 #endif
 }
 
+#if USE(MULTIPLE_THREADS)
 static pthread_t mainThread;
+#endif
 
 void Collector::registerAsMainThread()
 {
+#if USE(MULTIPLE_THREADS)
     mainThread = pthread_self();
+#endif
 }
 
 static inline bool onMainThread()
 {
+#if USE(MULTIPLE_THREADS)
 #if PLATFORM(DARWIN)
     return pthread_main_np();
 #else
     return !!pthread_equal(pthread_self(), mainThread);
+#endif
+#else
+    return true;
 #endif
 }
 

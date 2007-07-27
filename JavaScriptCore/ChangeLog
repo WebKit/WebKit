@@ -2,6 +2,16 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Don't use pthread.h unless thread support is enabled.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::registerAsMainThread):
+        (KJS::onMainThread):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Removed TCSystemMalloc from the Qt build, it's not necessary it seems.
 
         * JavaScriptCore.pri:
