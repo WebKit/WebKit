@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix compilation with Qt on Windows with MingW: Implemented currentThreadStackBase() for this platform.
+
+        * kjs/collector.cpp:
+        (KJS::currentThreadStackBase):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Fix compilation with Qt on Windows with MingW: The MingW headers do not provide a prototype for a reentrant version of localtime. But since we don't use multiple threads for the Qt build we can use the plain localtime() function.
 
         * kjs/DateMath.cpp:

@@ -267,6 +267,14 @@ static inline void* currentThreadStackBase()
         MOV pTib, EAX
     }
     return (void*)pTib->StackBase;
+#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(GCC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
+    NT_TIB* pTib;
+    asm ( "movl %%fs:0x18, %0\n"
+          : "=r" (pTib)
+        );
+    return (void*)pTib->StackBase;
 #elif PLATFORM(UNIX)
     static void *stackBase = 0;
     static size_t stackSize = 0;
