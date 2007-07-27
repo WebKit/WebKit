@@ -236,8 +236,12 @@ sub ScanDirectory
 
     return if ($endCondition eq 1) and ($reportAllFiles eq 0);
 
-    my $sourceRoot = $ENV{SOURCE_ROOT} || "";
-    $thisDir = "$sourceRoot/$directory";
+    my $sourceRoot = $ENV{SOURCE_ROOT};
+    if ($sourceRoot) {
+        $thisDir = "$sourceRoot/$directory";
+    } else {
+        $thisDir = "$directory";
+    }
 
     opendir(DIR, $thisDir) or die "[ERROR] Can't open directory $thisDir: \"$!\"\n";
 

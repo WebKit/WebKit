@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        When constructing the absolute path when searching for IDL files in the list of search paths don't prepend a slash if $SOURCEROOT as environment variable is not set. In the Qt build we pass absolute search paths already and we don't set SOURCEROOT. Under Unix that gives a double slash for the directory which works fine, under Windows we get /c:\webkit\foo which of course does not work.
+
+        * bindings/scripts/CodeGenerator.pm:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Relax the regular expression that tries to find constant declarations in the IDL source to not require leading whitespace. This makes it work with preprocessors that happen to eliminate leading whitespace.
 
         * bindings/scripts/IDLParser.pm:
