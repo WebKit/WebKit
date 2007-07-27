@@ -1,6 +1,9 @@
 # -*- Mode:makefile -*-
 # WebCore - qmake build info
 CONFIG += building-libs
+# do not use implicit rules in nmake Makefiles to avoid the clash
+# of API/Node.c and dom/Node.cpp
+CONFIG += no_batch
 include($$PWD/../WebKit.pri)
 gdk-port:LIBS -= -lWebKitGdk
 
