@@ -1,3 +1,41 @@
+2007-07-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/5362989> Searching a pdf in some modes shows hilights for all instances 
+          of the word, even those not on the current page
+          
+        It turns out that there were three different issues here, all contributing to incorrect display
+        of multiple matches for PDF pages in certain display modes. (1) in non-continuous display modes,
+        we weren't updating the match rects when the displayed page is changed with page up/down (e.g.);
+        (2) the mechanism to update the match rects on scrolling was busted except for the first scroll
+        away from 0,0; (3) the PDFKit API returns selection bounds for non-displayed pages in non-continuous
+        modes just as if they were the displayed pages. This patch fixes all three issues.
+
+        * WebView/WebPDFView.h:
+        made ivar name even longer
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView setPDFDocument:]):
+        updated for ivar name change
+        (-[WebPDFView viewDidMoveToWindow]):
+        observe page-change notifications as well as the others; this is necessary because in the
+        non-continuous modes the view can be completely updated without any scrolling involved (problem 1)
+        (-[WebPDFView viewWillMoveToWindow:]):
+        stop observing page-change notifications
+        (-[WebPDFView rectsForTextMatches]):
+        skip any pages that aren't visible; this avoids treating matches on non-displayed non-continous
+        modes as if they were on the displayed page (problem 3)
+        (-[WebPDFView _PDFDocumentViewMightHaveScrolled:]):
+        after checking whether scroll position has changed since we last checked it, remember the new
+        one (d'oh!) (problem 2)
+
+        (-[WebPDFView _scaleOrDisplayModeOrPageChanged:]):
+        renamed to include page changes
+        
+        (-[WebPDFView _visiblePDFPages]):
+        new method, returns the set of pages that are at least partly visible
+
 2007-07-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam and Justin.

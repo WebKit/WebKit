@@ -61,6 +61,7 @@ using namespace EventNames;
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
 #define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
 #define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
+#define _webkit_PDFViewPageChangedNotification @"PDFViewChangedPage"
 
 @interface PDFDocument (PDFKitSecretsIKnow)
 - (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
@@ -87,6 +88,7 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 - (NSString *)_temporaryPDFDirectoryPath;
 - (void)_trackFirstResponder;
 - (void)_updatePreferencesSoon;
+- (NSSet *)_visiblePDFPages;
 @end;
 
 // PDFPrefUpdatingProxy is a class that forwards everything it gets to a target and updates the PDF viewing prefs
@@ -170,10 +172,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 {
     // Both setDocument: and _applyPDFDefaults will trigger scale and mode-changed notifications.
     // Those aren't reflecting user actions, so we need to ignore them.
-    _ignoreScaleAndDisplayModeNotifications = YES;
+    _ignoreScaleAndDisplayModeAndPageNotifications = YES;
     [PDFSubview setDocument:doc];
     [self _applyPDFDefaults];
-    _ignoreScaleAndDisplayModeNotifications = NO;
+    _ignoreScaleAndDisplayModeAndPageNotifications = NO;
 }
 
 #pragma mark NSObject OVERRIDES
@@ -421,13 +423,18 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
                              object:newWindow];
     
     [notificationCenter addObserver:self
-                           selector:@selector(_scaleOrDisplayModeChanged:) 
+                           selector:@selector(_scaleOrDisplayModeOrPageChanged:) 
                                name:_webkit_PDFViewScaleChangedNotification
                              object:PDFSubview];
     
     [notificationCenter addObserver:self
-                           selector:@selector(_scaleOrDisplayModeChanged:) 
+                           selector:@selector(_scaleOrDisplayModeOrPageChanged:) 
                                name:_webkit_PDFViewDisplayModeChangedNotification
+                             object:PDFSubview];
+    
+    [notificationCenter addObserver:self
+                           selector:@selector(_scaleOrDisplayModeOrPageChanged:) 
+                               name:_webkit_PDFViewPageChangedNotification
                              object:PDFSubview];
     
     [notificationCenter addObserver:self 
@@ -453,6 +460,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
                                 object:PDFSubview];
     [notificationCenter removeObserver:self
                                   name:_webkit_PDFViewDisplayModeChangedNotification
+                                object:PDFSubview];
+    [notificationCenter removeObserver:self
+                                  name:_webkit_PDFViewPageChangedNotification
                                 object:PDFSubview];
     
     [notificationCenter removeObserver:self
@@ -636,6 +646,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (NSArray *)rectsForTextMatches
 {
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:[textMatches count]];
+    NSSet *visiblePages = [self _visiblePDFPages];
     NSEnumerator *matchEnumerator = [textMatches objectEnumerator];
     PDFSelection *match;
     
@@ -643,6 +654,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         NSEnumerator *pages = [[match pages] objectEnumerator];
         PDFPage *page;
         while ((page = [pages nextObject]) != nil) {
+            
+            // Skip pages that aren't visible (needed for non-continuous modes, see 5362989)
+            if (![visiblePages containsObject:page])
+                continue;
+            
             NSRect selectionOnPageInPDFViewCoordinates = [PDFSubview convertRect:[match boundsForPage:page] fromPage:page];
             [result addObject:[NSValue valueWithRect:selectionOnPageInPDFViewCoordinates]];
         }
@@ -1279,6 +1295,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (NSEqualPoints(scrollPosition, lastScrollPosition))
         return;
     
+    lastScrollPosition = scrollPosition;
     WebView *webView = [self _webView];
     [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[[dataSource webFrame] frameView]];
 }
@@ -1299,10 +1316,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return NSPointInRect(point, selectionRect);
 }
 
-- (void)_scaleOrDisplayModeChanged:(NSNotification *)notification
+- (void)_scaleOrDisplayModeOrPageChanged:(NSNotification *)notification
 {
     ASSERT([notification object] == PDFSubview);
-    if (!_ignoreScaleAndDisplayModeNotifications) {
+    if (!_ignoreScaleAndDisplayModeAndPageNotifications) {
         [self _updatePreferencesSoon];
         // Notify UI delegate that the entire page has been redrawn, since (unlike for WebHTMLView)
         // we can't hook into the drawing mechanism itself. This fixes 5337529.
@@ -1418,6 +1435,40 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [prefs retain];
     [self performSelector:@selector(_updatePreferences:) withObject:prefs afterDelay:0];
     _willUpdatePreferencesSoon = YES;
+}
+
+- (NSSet *)_visiblePDFPages
+{
+    // Returns the set of pages that are at least partly visible, used to avoid processing non-visible pages
+    PDFDocument *pdfDocument = [PDFSubview document];
+    if (!pdfDocument)
+        return nil;
+    
+    NSRect pdfViewBounds = [PDFSubview bounds];
+    PDFPage *topLeftPage = [PDFSubview pageForPoint:NSMakePoint(NSMinX(pdfViewBounds), NSMaxY(pdfViewBounds)) nearest:YES];
+    PDFPage *bottomRightPage = [PDFSubview pageForPoint:NSMakePoint(NSMaxX(pdfViewBounds), NSMinY(pdfViewBounds)) nearest:YES];
+    
+    // only page-free documents should return nil for either of these two since we passed YES for nearest:
+    if (!topLeftPage) {
+        ASSERT(!bottomRightPage);
+        return nil;
+    }
+    
+    NSUInteger firstVisiblePageIndex = [pdfDocument indexForPage:topLeftPage];
+    NSUInteger lastVisiblePageIndex = [pdfDocument indexForPage:bottomRightPage];
+    
+    if (firstVisiblePageIndex > lastVisiblePageIndex) {
+        NSUInteger swap = firstVisiblePageIndex;
+        firstVisiblePageIndex = lastVisiblePageIndex;
+        lastVisiblePageIndex = swap;
+    }
+    
+    NSMutableSet *result = [NSMutableSet set];
+    NSUInteger pageIndex;
+    for (pageIndex = firstVisiblePageIndex; pageIndex <= lastVisiblePageIndex; ++pageIndex)
+        [result addObject:[pdfDocument pageAtIndex:pageIndex]];
+
+    return result;
 }
 
 @end

@@ -39,7 +39,7 @@
     NSString *path;
     id trackedFirstResponder;
     BOOL written;
-    BOOL _ignoreScaleAndDisplayModeNotifications;
+    BOOL _ignoreScaleAndDisplayModeAndPageNotifications;
     BOOL _willUpdatePreferencesSoon;
     PDFView *PDFSubviewProxy;
     WebDataSource *dataSource;
