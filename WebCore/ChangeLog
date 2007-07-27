@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Correctly propagate the custom preprocessor option through the idl parser and the codegenerator.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/generate-bindings.pl:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         When constructing the absolute path when searching for IDL files in the list of search paths don't prepend a slash if $SOURCEROOT as environment variable is not set. In the Qt build we pass absolute search paths already and we don't set SOURCEROOT. Under Unix that gives a double slash for the directory which works fine, under Windows we get /c:\webkit\foo which of course does not work.
 
         * bindings/scripts/CodeGenerator.pm:

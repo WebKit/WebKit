@@ -29,6 +29,7 @@ my $useGenerator = "";
 my $useOutputDir = "";
 my $useDirectories = "";
 my $useLayerOnTop = 0;
+my $preprocessor;
 
 my $codeGenerator = 0;
 
@@ -70,6 +71,7 @@ sub new
     $useGenerator = shift;
     $useOutputDir = shift;
     $useLayerOnTop = shift;
+    $preprocessor = shift;
 
     bless($reference, $object);
     return $reference;
@@ -93,7 +95,7 @@ sub ProcessDocument
 
     # Dynamically load external code generation perl module
     require $ifaceName . ".pm";
-    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop);
+    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useLayerOnTop, $preprocessor);
     unless (defined($codeGenerator)) {
         my $classes = $useDocument->classes;
         foreach my $class (@$classes) {
@@ -154,7 +156,7 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
 
             # Step #2: Parse the found IDL file (in quiet mode).
             my $parser = IDLParser->new(1);
-            my $document = $parser->Parse($foundFilename, $defines);
+            my $document = $parser->Parse($foundFilename, $defines, $preprocessor);
 
             foreach my $class (@{$document->classes}) {
                 # Step #3: Enter recursive parent search

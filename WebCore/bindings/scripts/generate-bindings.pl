@@ -65,5 +65,5 @@ my $parser = IDLParser->new(1);
 my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
 # Generate desired output for given IDL file.
-my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
+my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, 0, $preprocessor);
 $codeGen->ProcessDocument($document, $defines);
