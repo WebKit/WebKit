@@ -7,8 +7,11 @@ SUBDIRS += \
         WebCore \
         JavaScriptCore/kjs/testkjs.pro
 
-qt-port:SUBDIRS += \
-        WebKitQt/QtLauncher \
-        WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro
+qt-port {
+    SUBDIRS += WebKitQt/QtLauncher
+
+    !win32-*: SUBDIRS += WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro
+}
+
 gdk-port:SUBDIRS += \
         WebKitTools/GdkLauncher
