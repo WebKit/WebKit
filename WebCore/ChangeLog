@@ -1,5 +1,9 @@
 2007-07-27  Darin Adler  <darin@apple.com>
 
+        * rendering/RenderLayer.cpp: Rolled out accidentally-checked-in code.
+
+2007-07-27  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix <rdar://problem/5261393> In Mail the plain text alternatives to messages with attachments show weird little OBJ thingies

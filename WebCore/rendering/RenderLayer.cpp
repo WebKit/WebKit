@@ -845,31 +845,20 @@ void RenderLayer::autoscroll()
         
     Frame* currentFrame = renderer()->document()->frame();
     IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->eventHandler()->currentMousePosition());
-    scrollRectToVisible(IntRect(currentPos, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
-
+    
     if (currentFrame->eventHandler()->mouseDownMayStartSelect()) {
         // Convert the mouse position to local layer space.
-        int x = 0;
-        int y = 0;
+        int x, y;
         convertToLayerCoords(root(), x, y);
-        printf("x is %d, y is %d\n", x, y);
         HitTestRequest request(true, false, true);
-        currentPos = currentFrame->view()->windowToContents(currentFrame->eventHandler()->currentMousePosition());
-        printf("currentPos.x is %d, currentPos.y is %d\n", currentPos.x(), currentPos.y());
         HitTestResult result(currentPos - IntSize(x, y));
-        hitTest(request, result);
-        if (result.innerNode()) {
-            printf("hit something\n");
-            if (result.innerNode()->renderer()) {
-                printf("it had a renderer\n");
-                if (result.innerNode()->renderer()->shouldSelect()) {
-                    printf("it said shouldSelect\n");
-                    VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
-                    currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
-                }
-            }
+        if (hitTest(request, result) && result.innerNode()->renderer() && result.innerNode()->renderer()->shouldSelect()) {
+            VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
+            currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
         }
     }
+
+    scrollRectToVisible(IntRect(currentPos, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
 }
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)
@@ -1555,8 +1544,6 @@ static inline IntRect frameVisibleRect(RenderObject* renderer)
 
 bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
-    printf("hit test is x is %d, y is %d\n", result.point().x(), result.point().y());
-
     renderer()->document()->updateLayout();
     
     IntRect boundsRect(m_x, m_y, width(), height());
