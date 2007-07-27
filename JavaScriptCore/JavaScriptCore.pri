@@ -8,6 +8,8 @@ qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__
 gdk-port:DEFINES += BUILDING_GDK__
 
+win32-msvc*: INCLUDEPATH += $$PWD/os-win32
+
 include(pcre/pcre.pri)
 
 LUT_FILES += \
