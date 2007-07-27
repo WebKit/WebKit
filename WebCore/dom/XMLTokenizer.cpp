@@ -1605,14 +1605,15 @@ static inline void handleElementAttributes(Element* newElement, const QXmlStream
         const QXmlStreamAttribute &attr = attrs[i];
         String attrLocalName = attr.name().toString();
         String attrValue     = attr.value().toString();
-        String attrURI       = attr.namespaceUri().toString();
+        String attrURI       = attr.namespaceUri().isEmpty() ? String() : String(attr.namespaceUri().toString());
         String attrQName     = attr.qualifiedName().toString();
         newElement->setAttributeNS(attrURI, attrQName, attrValue, ec);
         if (ec) // exception setting attributes
             return;
     }
 }
-void WebCore::XMLTokenizer::parse()
+
+void XMLTokenizer::parse()
 {
     while (!m_parserStopped && !m_parserPaused && !m_stream.atEnd()) {
         m_stream.readNext();

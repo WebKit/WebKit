@@ -2,6 +2,15 @@
 
         Reviewed by Zack and Lars.
 
+        Fix uri parsing for attributes.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Fixing qualified name parsing - from Lars.
 
         * dom/XMLTokenizer.cpp:
