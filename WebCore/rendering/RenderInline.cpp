@@ -317,7 +317,11 @@ int RenderInline::width() const
 
 int RenderInline::height() const
 {
-    if (firstLineBox())
+    // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
+    // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
+    // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
+    ASSERT(firstLineBox() == !lastLineBox());  // Either both are null or both exist.
+    if (firstLineBox() && lastLineBox())
         return lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
     return 0;
 }

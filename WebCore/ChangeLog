@@ -1,3 +1,15 @@
+2007-07-26  David Hyatt  <hyatt@apple.com>
+
+        FIx for <rdar://problem/5289721> CrashTracer: [REGRESSION] 2658 crashes in Safari at com.apple.WebCore: WebCore::RenderInline::height const + 16
+
+        Adding a null check for now and an assert.  We don't know how/why this
+        bug happens, but hopefully the assert will help people to reproduce.
+
+        Reviewed by kevin
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::height):
+
 2007-07-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
