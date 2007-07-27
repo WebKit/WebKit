@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Make make-css-file-arrays.pl work on Windows by not calling /usr/bin/gcc as preprocessor for the Qt build.
+
+        * WebCore.pro:
+        * css/make-css-file-arrays.pl:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         More gperf commandline fixes for Windows.
 
         * WebCore.pro:

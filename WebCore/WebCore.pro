@@ -1421,7 +1421,7 @@ QMAKE_EXTRA_COMPILERS += colordata
 
 # GENERATOR 9:
 stylesheets.output = tmp/UserAgentStyleSheetsData.cpp
-stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl tmp/UserAgentStyleSheets.h tmp/UserAgentStyleSheetsData.cpp $$PWD/css/html4.css $$PWD/css/quirks.css $$PWD/css/svg.css $$PWD/css/view-source.css
+stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$${QMAKE_MOC} -E\" tmp/UserAgentStyleSheets.h tmp/UserAgentStyleSheetsData.cpp $$PWD/css/html4.css $$PWD/css/quirks.css $$PWD/css/svg.css $$PWD/css/view-source.css
 stylesheets.input = STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
