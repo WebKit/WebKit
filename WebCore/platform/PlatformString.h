@@ -168,6 +168,7 @@ public:
 
 #if PLATFORM(QT)
     String(const QString&);
+    String(const QStringRef&);
     operator QString() const;
 #endif
 

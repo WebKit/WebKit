@@ -1,3 +1,15 @@
+2007-07-27  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Zack and Lars.
+
+        Correctly convert a null QString into a null WebCore::String. Add a String(const QStringRef&) constructor so that we can avoid converting QStringRef via QString to WebCore::String.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+        * platform/PlatformString.h:
+        * platform/qt/StringQt.cpp:
+        (WebCore::String::String):
+
 2007-07-27  Zack Rusin  <zack@kde.org>
 
         Reviewed by Zack and Lars.
