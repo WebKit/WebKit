@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 !gdk-port:CONFIG += qt-port
-qt-port:SUBDIRS += WebKitQt/Plugins
+qt-port:!win32-*:SUBDIRS += WebKitQt/Plugins
 SUBDIRS += \
         JavaScriptCore/pcre/dftables.pro \
         WebCore \

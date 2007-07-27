@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Temporarily disable the ICO support for the Qt build on Windows.
+
+        * WebCore.pro:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Fix evaluation with ActiveState Perl 5.6. Somehow it tried to treat nameEntries as array.
 
         * bindings/scripts/CodeGeneratorJS.pm:

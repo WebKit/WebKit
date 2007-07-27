@@ -1,3 +1,11 @@
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
+        Temporarily disable the ICO support for the Qt build on Windows.
+
+        * WebKit.pro:
+
 2007-07-26  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

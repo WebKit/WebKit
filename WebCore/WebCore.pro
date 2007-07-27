@@ -63,8 +63,10 @@ macx {
 }
 
 qt-port {
-LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
-LIBS += -lqtwebico
+!win32-* {
+    LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
+    LIBS += -lqtwebico
+}
 
 INCLUDEPATH += \
                 $$PWD/platform/qt \
