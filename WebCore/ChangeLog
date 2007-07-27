@@ -1,3 +1,12 @@
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Work around bug in the moc when used as preprocessor for generating the bindings. -DFOO=1 is needed instead of -DFOO
+        to make the <hash>if FOO conditional match.
+
+        * WebCore.pro:
+
 2007-07-27  Patrick Hanna  <phanna@email.unc.edu>
 
         Reviewed by Darin Adler.
