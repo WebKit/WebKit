@@ -611,6 +611,10 @@ interface IDOMHTMLOptionElement : IDOMHTMLElement
     uuid(80C40AC5-1755-4894-812F-479269C262A2),
     pointer_default(unique)
 ]
+/* FIXME: The Safari app currently relies on IDOMHTMLInputElement inheriting from
+   IDOMElement. This can't be changed until a version of SafariWin which no longer 
+   makes this assumption is released.
+*/
 interface IDOMHTMLInputElement : IDOMElement
 {
     /*

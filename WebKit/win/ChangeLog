@@ -1,3 +1,11 @@
+2007-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add FIXME comment.
+        
+        * Interfaces/DOMHTML.idl:
+
 2007-07-27  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam.
