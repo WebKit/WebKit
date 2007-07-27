@@ -1,3 +1,18 @@
+2007-07-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5261393> In Mail the plain text alternatives to messages with attachments show weird little OBJ thingies
+
+        The "weird little thingies" are U+FFFC characters. It's good to render them as zero-width, the way we do
+        with control characters -- helps Mail and doesn't hurt web browsing.
+
+        Test: fast/text/zero-width-characters.html
+
+        * platform/CharacterNames.h: Add names for leftToRightMark, rightToLeftMark, and objectReplacementCharacter.
+        * platform/GlyphPageTreeNode.cpp: (WebCore::GlyphPageTreeNode::initializePage): Give objectReplacementCharacter
+        zero width in the same way we do it for the various other characters.
+
 2007-07-27  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

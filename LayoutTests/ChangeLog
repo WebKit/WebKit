@@ -1,3 +1,12 @@
+2007-07-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5261393> In Mail the plain text alternatives to messages with attachments show weird little OBJ thingies
+
+        * fast/text/zero-width-characters-expected.txt: Added.
+        * fast/text/zero-width-characters.html: Added.
+
 2007-07-26  Darin Adler  <darin@apple.com>
 
         * http/tests/security/cross-frame-access-put-expected.txt:

@@ -39,9 +39,12 @@ namespace WebCore {
     const UChar bullet = 0x2022;
     const UChar horizontalEllipsis = 0x2026;
     const UChar ideographicSpace = 0x3000;
+    const UChar leftToRightMark = 0x200E;
     const UChar leftToRightOverride = 0x202D;
     const UChar noBreakSpace = 0x00A0;
+    const UChar objectReplacementCharacter = 0xFFFC;
     const UChar popDirectionalFormatting = 0x202C;
+    const UChar rightToLeftMark = 0x200F;
     const UChar rightToLeftOverride = 0x202E;
     const UChar softHyphen = 0x00AD;
     const UChar whiteBullet = 0x25E6;

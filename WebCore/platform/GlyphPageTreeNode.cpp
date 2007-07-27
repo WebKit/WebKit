@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,10 +93,13 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     buffer[(int)'\n'] = ' ';
                     buffer[(int)'\t'] = ' ';
                     buffer[noBreakSpace] = ' ';
-                } else if (start == 8192) {
-                    // LRM/RLM must not render at all
-                    buffer[0x200e - start] = zeroWidthSpace;
-                    buffer[0x200f - start] = zeroWidthSpace;
+                } else if (start == (leftToRightMark & ~(GlyphPage::size - 1))) {
+                    // LRM/RLM must not render at all.
+                    buffer[leftToRightMark - start] = zeroWidthSpace;
+                    buffer[rightToLeftMark - start] = zeroWidthSpace;
+                } else if (start == (objectReplacementCharacter & ~(GlyphPage::size - 1))) {
+                    // Object replacement character must not render at all.
+                    buffer[objectReplacementCharacter - start] = zeroWidthSpace;
                 }
             } else {
                 bufferLength = GlyphPage::size * 2;
