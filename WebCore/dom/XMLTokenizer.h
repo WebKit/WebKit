@@ -106,6 +106,7 @@ namespace WebCore {
         void parseCdata();
         void parseComment();
         void endDocument();
+        void parseDtd();
         bool hasError() const;
 #endif
 

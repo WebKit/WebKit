@@ -2,6 +2,17 @@
 
         Reviewed by Zack and Lars.
 
+        Parse dtd's
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::resumeParsing):
+        (WebCore::):
+        * dom/XMLTokenizer.h:
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Implement error handling.
 
         Add our copyrights
