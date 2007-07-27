@@ -1268,7 +1268,7 @@ gdk-port:SOURCES += \
 
         # GENERATOR 5-C:
         svgnames_a.output = tmp/SVGNames.cpp
-        svgnames_a.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/ksvg2/svg/svgtags.in --attrs $$PWD/ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --output tmp
+        svgnames_a.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/ksvg2/svg/svgtags.in --attrs $$PWD/ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output tmp
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
@@ -1286,7 +1286,7 @@ gdk-port:SOURCES += \
 
         # GENERATOR 5-D:
         xlinknames.output = tmp/XLinkNames.cpp
-        xlinknames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --output tmp
+        xlinknames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --preprocessor \"$${QMAKE_MOC} -E\" --output tmp
         xlinknames.input = XLINK_NAMES
         xlinknames.dependency_type = TYPE_C
         xlinknames.CONFIG = target_predeps
@@ -1349,7 +1349,7 @@ QMAKE_EXTRA_TARGETS += grammar_h_dep
 
 # GENERATOR 5-A:
 htmlnames.output = tmp/HTMLNames.cpp
-htmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --attrsNullNamespace --output tmp
+htmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output tmp
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
@@ -1359,7 +1359,7 @@ QMAKE_EXTRA_COMPILERS += htmlnames
 
 # GENERATOR 5-B:
 xmlnames.output = tmp/XMLNames.cpp
-xmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --output tmp
+xmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --preprocessor \"$${QMAKE_MOC} -E\" --output tmp
 xmlnames.input = XML_NAMES
 xmlnames.dependency_type = TYPE_C
 xmlnames.CONFIG = target_predeps

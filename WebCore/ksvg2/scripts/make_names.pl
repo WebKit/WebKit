@@ -29,6 +29,7 @@
 use strict;
 use Getopt::Long;
 use File::Path;
+use Config;
 
 my $printFactory = 0;
 my $cppNamespace = "";
@@ -43,6 +44,7 @@ my @attrs = ();
 my $tagsNullNamespace = 0;
 my $attrsNullNamespace = 0;
 my $extraDefines = 0;
+my $preprocessor = "/usr/bin/gcc -E -P -x c++";
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
@@ -54,7 +56,8 @@ GetOptions('tags=s' => \$tagsFile,
     'factory' => \$printFactory,
     'tagsNullNamespace' => \$tagsNullNamespace,
     'attrsNullNamespace' => \$attrsNullNamespace,
-    'extraDefines=s' => \$extraDefines);
+    'extraDefines=s' => \$extraDefines,
+    'preprocessor=s' => \$preprocessor);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $namespace;
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
@@ -85,9 +88,9 @@ sub readNames
     my $namesFile = shift;
 
     if ($extraDefines eq 0) {
-        die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $namesFile or die;
+        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " " . $namesFile . "|" or die;
     } else {
-        die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", "-D", "$extraDefines", $namesFile or die;
+        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " -D" . $extraDefines . " " . $namesFile . "|" or die;
     }
 
     my @names = ();
