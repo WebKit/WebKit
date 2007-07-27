@@ -1,3 +1,12 @@
+2007-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Add a FIXME about caching pages with plug-ins that have outstanding NPObjects.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+
 2007-07-26  David Hyatt  <hyatt@apple.com>
 
         FIx for <rdar://problem/5289721> CrashTracer: [REGRESSION] 2658 crashes in Safari at com.apple.WebCore: WebCore::RenderInline::height const + 16

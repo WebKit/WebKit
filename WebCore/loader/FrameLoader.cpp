@@ -1646,6 +1646,11 @@ bool FrameLoader::canCachePage()
         && m_documentLoader->mainDocumentError().isNull()
         && !m_frame->tree()->childCount()
         && !m_frame->tree()->parent()
+        // FIXME: If we ever change this so that pages with plug-ins will be cached,
+        // we need to make sure that we don't cache pages that have outstanding NPObjects
+        // (objects created by the plug-in). Since there is no way to pause/resume a Netscape plug-in,
+        // they would need to be destroyed and then recreated, and there is no way that we can recreate
+        // the right NPObjects. See <rdar://problem/5197041> for more information.
         && !m_containsPlugIns
         && !m_URL.protocol().startsWith("https")
         && m_frame->document()
