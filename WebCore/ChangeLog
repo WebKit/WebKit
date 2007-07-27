@@ -2,6 +2,15 @@
 
         Reviewed by Zack and Lars.
 
+        Parse version and encoding of the xml document.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+
+2007-07-27  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Zack and Lars.
+
         Correctly or semi-correctly parse the public and system id.
 
         Patch from Lars.

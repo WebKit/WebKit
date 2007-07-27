@@ -583,8 +583,26 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
         xmlParseChunk(m_context, reinterpret_cast<const char*>(parseString.characters()), sizeof(UChar) * parseString.length(), 0);
     }
 #else
-    if (parseString.length()) {
-        m_stream.addData(parseString);
+    QString data(parseString);
+    if (!data.isEmpty()) {
+        if (!m_sawFirstElement) {
+            int idx = data.indexOf(QLatin1String("<?xml"));
+            if (idx != -1) {
+                int start = idx + 5;
+                int end = data.indexOf(QLatin1String("?>"), start);
+                QString content = data.mid(start, end-start);
+                bool ok = true;
+                HashMap<String, String> attrs = parseAttributes(content, ok);
+                String version = attrs.get("version");
+                String encoding = attrs.get("encoding");
+                ExceptionCode ec = 0;
+                if (!version.isEmpty())
+                    m_doc->setXMLVersion(version, ec);
+                if (!encoding.isEmpty())
+                    m_doc->setXMLEncoding(encoding);
+            }
+        }
+        m_stream.addData(data);
         parse();
     }
 #endif
