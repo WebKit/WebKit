@@ -5231,6 +5231,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
         CFRetain(validAttributes);
     }
+    LOG(TextInput, "validAttributesForMarkedText -> (...)");
     return validAttributes;
 }
 
@@ -5244,9 +5245,14 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (NSAttributedString *)textStorage
 {
-    if (!isTextInput(core([self _frame])))
+    if (!isTextInput(core([self _frame]))) {
+        LOG(TextInput, "textStorage -> nil");
         return nil;
+    }
     NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
+    
+    LOG(TextInput, "textStorage -> \"%s\"", result ? [[result string] UTF8String] : "");
+    
     // We have to return an empty string rather than null to prevent TSM from calling -string
     return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
 }
@@ -5261,10 +5267,14 @@ BOOL isTextInput(Frame *coreFrame)
     thePoint = [self convertPoint:thePoint fromView:nil];
 
     DOMRange *range = [bridge characterRangeAtPoint:thePoint];
-    if (!range)
+    if (!range) {
+        LOG(TextInput, "characterIndexForPoint:(%f, %f) -> NSNotFound", thePoint.x, thePoint.y);
         return NSNotFound;
+    }
     
-    return [bridge convertDOMRangeToNSRange:range].location;
+    unsigned result = [bridge convertDOMRangeToNSRange:range].location;
+    LOG(TextInput, "characterIndexForPoint:(%f, %f) -> %u", thePoint.x, thePoint.y, result);
+    return result;
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
@@ -5278,8 +5288,10 @@ BOOL isTextInput(Frame *coreFrame)
         theRange.length = 0;
     
     DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
-    if (!range)
-        return NSMakeRect(0,0,0,0);
+    if (!range) {
+        LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (0, 0, 0, 0)", theRange.location, theRange.length);
+        return NSMakeRect(0, 0, 0, 0);
+    }
     
     ASSERT([range startContainer]);
     ASSERT([range endContainer]);
@@ -5291,32 +5303,51 @@ BOOL isTextInput(Frame *coreFrame)
     if (window)
         resultRect.origin = [window convertBaseToScreen:resultRect.origin];
     
+    LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
 }
 
 - (NSRange)selectedRange
 {
-    if (!isTextInput(core([self _frame])))
-        return NSMakeRange(NSNotFound,0);
-    return [[self _bridge] selectedNSRange];
+    if (!isTextInput(core([self _frame]))) {
+        LOG(TextInput, "selectedRange -> (NSNotFound, 0)");
+        return NSMakeRange(NSNotFound, 0);
+    }
+    NSRange result = [[self _bridge] selectedNSRange];
+
+    LOG(TextInput, "selectedRange -> (%u, %u)", result.location, result.length);
+    return result;
 }
 
 - (NSRange)markedRange
 {
-    if (![self hasMarkedText])
-        return NSMakeRange(NSNotFound,0);
-    return [[self _bridge] markedTextNSRange];
+    if (![self hasMarkedText]) {
+        LOG(TextInput, "markedRange -> (NSNotFound, 0)");
+        return NSMakeRange(NSNotFound, 0);
+    }
+    NSRange result = [[self _bridge] markedTextNSRange];
+
+    LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
+    return result;
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
-    if (!isTextInput(core([self _frame])))
+    if (!isTextInput(core([self _frame]))) {
+        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
+    }
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *domRange = [bridge convertNSRangeToDOMRange:nsRange];
-    if (!domRange)
+    if (!domRange) {
+        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
-    return [NSAttributedString _web_attributedStringFromRange:core(domRange)];
+    }
+
+    NSAttributedString *result = [NSAttributedString _web_attributedStringFromRange:core(domRange)];
+    
+    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%s\"", nsRange.location, nsRange.length, [[result string] UTF8String]);
+    return result;
 }
 
 // test for 10.4 because of <rdar://problem/4243463>
@@ -5334,11 +5365,16 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (BOOL)hasMarkedText
 {
-    return [[self _bridge] markedTextDOMRange] != nil;
+    BOOL result = [[self _bridge] markedTextDOMRange] != nil;
+
+    LOG(TextInput, "hasMarkedText -> %u", result);
+    return result;
 }
 
 - (void)unmarkText
 {
+    LOG(TextInput, "unmarkText");
+
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
@@ -5371,6 +5407,10 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+
+    LOG(TextInput, "setMarkedText:\"%s\" selectedRange:(%u, %u)", isAttributedString ? [[string string] UTF8String] : [string UTF8String], newSelRange.location, newSelRange.length);
+
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
@@ -5389,11 +5429,10 @@ BOOL isTextInput(Frame *coreFrame)
     if (![self _isEditable])
         return;
 
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
-
     if (isAttributedString) {
         unsigned markedTextLength = [(NSString *)string length];
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, markedTextLength)];
+        LOG(TextInput, "    ReplacementRange: %s", [rangeString UTF8String]);
         // The AppKit adds a 'secret' property to the string that contains the replacement
         // range.  The replacement range is the range of the the text that should be replaced
         // with the new string.
@@ -5425,6 +5464,8 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (void)doCommandBySelector:(SEL)selector
 {
+    LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
+
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     // The same call to interpretKeyEvents can do more than one command.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
@@ -5475,6 +5516,10 @@ BOOL isTextInput(Frame *coreFrame)
 
 - (void)insertText:(id)string
 {
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+
+    LOG(TextInput, "insertText:\"%s\"", isAttributedString ? [[string string] UTF8String] : [string UTF8String]);
+
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
     if (parameters)
@@ -5483,13 +5528,14 @@ BOOL isTextInput(Frame *coreFrame)
     // We don't support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
     bool isFromInputMethod = [self hasMarkedText];
-    if ([string isKindOfClass:[NSAttributedString class]]) {
+    if (isAttributedString) {
         text = [string string];
         // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
         // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
         // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
         // NSAttributedString
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
+        LOG(TextInput, "    ReplacementRange: %s", [rangeString UTF8String]);
         if (rangeString) {
             [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
             isFromInputMethod = YES;

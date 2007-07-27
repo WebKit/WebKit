@@ -1,3 +1,27 @@
+2007-07-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14733
+        Add a logging channel for text input
+
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        (WebKitInitializeLoggingChannelsIfNecessary):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validAttributesForMarkedText]):
+        (-[WebHTMLView textStorage]):
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView selectedRange]):
+        (-[WebHTMLView markedRange]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView hasMarkedText]):
+        (-[WebHTMLView unmarkText]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+
 2007-07-26  Darin Adler  <darin@apple.com>
 
         - fix Tiger build

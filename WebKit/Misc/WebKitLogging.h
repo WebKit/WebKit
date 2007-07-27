@@ -59,6 +59,7 @@ extern WTFLogChannel WebKitLogBackForward;
 extern WTFLogChannel WebKitLogProgress;
 extern WTFLogChannel WebKitLogPluginEvents;
 extern WTFLogChannel WebKitLogIconDatabase;
+extern WTFLogChannel WebKitLogTextInput;
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
 

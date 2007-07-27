@@ -28,6 +28,7 @@
 
 #import "WebKitLogging.h"
 
+WTFLogChannel WebKitLogTextInput =              { 0x00000010, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogTiming =                 { 0x00000020, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogLoading =                { 0x00000040, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogFontCache =              { 0x00000100, "WebKitLogLevel", WTFLogChannelOff };
@@ -95,6 +96,7 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     initializeLogChannel(&WebKitLogProgress);
     initializeLogChannel(&WebKitLogPluginEvents);
     initializeLogChannel(&WebKitLogIconDatabase);
+    initializeLogChannel(&WebKitLogTextInput);
 }
 
 BOOL WebKitRunningOnMainThread()
