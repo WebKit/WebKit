@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix compilation with Qt on Windows with MingW: The MingW headers do not provide a prototype for a reentrant version of localtime. But since we don't use multiple threads for the Qt build we can use the plain localtime() function.
+
+        * kjs/DateMath.cpp:
+        (KJS::getDSTOffsetSimple):
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Use $(MOVE) instead of mv to eliminated the shell dependency and replaced the long shell line to call bison and modify the css grammar file with a few lines of portable perl code.
 
         * JavaScriptCore.pri:
