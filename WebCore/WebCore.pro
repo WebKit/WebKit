@@ -40,6 +40,8 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 
 DEFINES += BUILD_WEBKIT
 
+win32-*: DEFINES += ENABLE_ICONDATABASE=0
+
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
