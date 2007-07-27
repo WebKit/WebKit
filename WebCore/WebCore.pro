@@ -12,7 +12,7 @@ qt-port:TARGET = QtWebKit
 gdk-port:TARGET = WebKitGdk
 OBJECTS_DIR = tmp
 OBJECTS_DIR_WTR = $$OBJECTS_DIR/
-win32-msvc*: OBJECTS_DIR_WTR ~= s|/|\|
+win32-*: OBJECTS_DIR_WTR ~= s|/|\|
 INCLUDEPATH += tmp $$OUTPUT_DIR/WebCore/tmp
 
 DESTDIR = $$OUTPUT_DIR/lib
@@ -41,6 +41,14 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 DEFINES += BUILD_WEBKIT
 
 win32-*: DEFINES += ENABLE_ICONDATABASE=0
+
+# Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
+win32-g++ {
+    TMPPATH            = $$quote($$(INCLUDE))
+    QMAKE_INCDIR_POST += $$split(TMPPATH,";")
+    TMPPATH            = $$quote($$(LIB))
+    QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
+}
 
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
