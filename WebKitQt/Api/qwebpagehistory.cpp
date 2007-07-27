@@ -97,6 +97,12 @@ QWebPageHistory::QWebPageHistory(const QWebPageHistory &other)
     d = other.d;
 }
 
+QWebPageHistory &QWebPageHistory::operator=(const QWebPageHistory &other)
+{
+    d = other.d;
+    return *this;
+}
+
 QWebPageHistory::~QWebPageHistory()
 {
 }
