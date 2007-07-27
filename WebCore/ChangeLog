@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        More gperf commandline fixes for Windows.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         More quoting fixes for perl under Windows.
 
         * WebCore.pro:

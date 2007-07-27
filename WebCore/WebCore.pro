@@ -1398,7 +1398,7 @@ QMAKE_EXTRA_COMPILERS += svgcssvalues
 
 # GENERATOR 8-A:
 entities.output = tmp/HTMLEntityNames.c
-entities.commands = gperf -a -L ANSI-C -C -G -c -o -t -k '\*' -N findEntity -D -s 2 < $$PWD/html/HTMLEntityNames.gperf > tmp/HTMLEntityNames.c
+entities.commands = gperf -a -L ANSI-C -C -G -c -o -t --key-positions="*" -N findEntity -D -s 2 < $$PWD/html/HTMLEntityNames.gperf > tmp/HTMLEntityNames.c
 entities.input = ENTITIES_GPERF
 entities.dependency_type = TYPE_C
 entities.CONFIG = target_predeps no_link
@@ -1414,7 +1414,7 @@ CLEAN_FILES += $$doctypestrings.target
 
 # GENERATOR 8-C:
 colordata.output = tmp/ColorData.c
-colordata.commands = echo \"$${LITERAL_HASH}include <string.h>\" > ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C -k \'*\' -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
+colordata.commands = echo \"$${LITERAL_HASH}include <string.h>\" > ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 colordata.input = COLORDAT_GPERF
 colordata.CONFIG = target_predeps no_link
 QMAKE_EXTRA_COMPILERS += colordata
