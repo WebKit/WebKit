@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +73,3 @@
 /* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch
-
-#define USING_WEBCORE_CUT 1
-#define USING_WEBCORE_COPY 1
-//#define USING_WEBCORE_PASTE 1
-#define USING_WEBCORE_DELETE 1

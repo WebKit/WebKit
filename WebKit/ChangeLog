@@ -1,5 +1,18 @@
 2007-07-27  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * WebKitPrefix.h: Removed the USING_WEBCORE_XXX definitions.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView delete:]): Fixed this to use WebCore again; I accidentally revived a dead
+        code path that didn't work in the last patch!
+        (-[WebHTMLView deleteToMark:]): Ditto.
+        (-[WebHTMLView copy:]): Removed the unused side of the ifdef.
+        (-[WebHTMLView cut:]): Ditto.
+        (-[WebHTMLView paste:]): Ditto.
+
+2007-07-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Tim Hatcher and Oliver Hunt.
 
         - fix <rdar://problem/5355815> webView:doCommandBySelector: isn't getting called for copy:

@@ -3590,12 +3590,8 @@ noPromisedData:
 {
     COMMAND_PROLOGUE
 
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame->editor()->canDelete()) {
-        NSBeep();
-        return;
-    }
-    [self _deleteSelection];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->performDelete();
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -4492,11 +4488,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     DOMRange *mark = [[self _bridge] markDOMRange];
     if (mark == nil) {
-        if (!coreFrame->editor()->canDelete()) {
-            NSBeep();
-            return;
-        }
-        [self _deleteSelection];
+        if (Frame* coreFrame = core([self _frame]))
+            coreFrame->editor()->performDelete();
     } else {
         DOMRange *selection = [self _selectedRange];
         DOMRange *r;
@@ -4923,56 +4916,22 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     COMMAND_PROLOGUE
 
-#ifdef USING_WEBCORE_COPY
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
+    if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->copy();
-#else
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->editor()->tryDHTMLCopy())
-        return; // DHTML did the whole operation
-    if (!coreFrame->editor()->canCopy()) {
-        NSBeep();
-        return;
-    }
-    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-#endif
 }
 
 - (void)cut:(id)sender
 {
     COMMAND_PROLOGUE
 
-#ifdef USING_WEBCORE_CUT
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
+    if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->cut();
-#else
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->editor()->tryDHTMLCut())
-        return; // DHTML did the whole operation
-    if (!coreFrame->editor()->canCut()) {
-        NSBeep();
-        return;
-    }
-    DOMRange *range = [self _selectedRange];
-    if ([self _shouldDeleteRange:range]) {
-        [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-        if (coreFrame)
-            coreFrame->editor()->deleteSelectionWithSmartDelete([self _canSmartCopyOrDelete]);
-    }
-#endif
 }
 
 - (void)paste:(id)sender
 {
     COMMAND_PROLOGUE
 
-#ifdef USING_WEBCORE_PASTE
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->paste();
-#else
     Frame* coreFrame = core([self _frame]);
     if (coreFrame && coreFrame->editor()->tryDHTMLPaste())
         return; // DHTML did the whole operation
@@ -4982,7 +4941,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         coreFrame->editor()->pasteAsPlainText();
-#endif
 }
 
 - (void)pasteAsPlainText:(id)sender
