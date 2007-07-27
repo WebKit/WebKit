@@ -4,6 +4,7 @@
 
         http://bugs.webkit.org/show_bug.cgi?id=14733
         Add a logging channel for text input
+        <rdar://problem/5364667>
 
         * Misc/WebKitLogging.h:
         * Misc/WebKitLogging.m:
