@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Work around aliasing bugs in WebCore by compiling with -fno-strict-aliasing for gcc builds for now.
+
+        * WebCore.pro:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Use -Wreturn-type only when compiling with g++
 
         * WebCore.pro:
