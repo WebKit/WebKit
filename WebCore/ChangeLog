@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix cssmakeprops and cssmakevalue scripts to work on Windows without cygwin perl. Avoid inplace substitutions and direct invocation of /bin/sh. Also call gperf with arguments that GnuWin32's gperf understands.
+
+        * ksvg2/scripts/cssmakeprops:
+        * ksvg2/scripts/cssmakevalues:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Beautiful hacks to make more of the extra compiler magic work under Windows outside of cygwin.
 
         * WebCore.pro:

@@ -107,19 +107,28 @@ print HEADER "}\n";
 print HEADER "\n#endif\n";
 close HEADER;
 
-my $result = system("/bin/sh", "-c", "gperf -c -a -L 'ANSI-C' -G -D -E -C -o -t -k '*' -Nfind${ns}Prop -Hhash_prop -Wwordlist_prop -D -s 3 $filegperf > $filec");
+my $result = system("gperf -c -a -L ANSI-C -G -D -E -C -o -t --key-positions=\"*\" -Nfind${ns}Prop -Hhash_prop -Wwordlist_prop -D -s 3 $filegperf > $filec");
 if ($result) {
   unlink "$filec";
   exit $result;
 }
 
 # Avoid clashes in parser.cpp, which includes both CSSValueKeywords.c & CSSPropertyNames.c
-system("/bin/sh", "-c", "perl -pi -e \"s/TOTAL_KEYWORDS/PROP_TOTAL_KEYWORDS/g\" $filec");
-system("/bin/sh", "-c", "perl -pi -e \"s/MIN_WORD_LENGTH/PROP_MIN_WORD_LENGTH/g\" $filec");
-system("/bin/sh", "-c", "perl -pi -e \"s/MAX_WORD_LENGTH/PROP_MAX_WORD_LENGTH/g\" $filec");
-system("/bin/sh", "-c", "perl -pi -e \"s/MIN_HASH_VALUE/PROP_MIN_HASH_VALUE/g\" $filec");
-system("/bin/sh", "-c", "perl -pi -e \"s/MAX_HASH_VALUE/PROP_MAX_HASH_VALUE/g\" $filec");
-system("/bin/sh", "-c", "perl -pi -e \"s/lookup/lookupProp/g\" $filec");
+open F, "<$filec";
+my $tmp = "";
+while (<F>) {
+    s/TOTAL_KEYWORDS/PROP_TOTAL_KEYWORDS/;
+    s/MIN_WORD_LENGTH/PROP_MIN_WORD_LENGTH/;
+    s/MAX_WORD_LENGTH/PROP_MAX_WORD_LENGTH/;
+    s/MIN_HASH_VALUE/PROP_MIN_HASH_VALUE/;
+    s/MAX_HASH_VALUE/PROP_MAX_HASH_VALUE/;
+    s/lookup/lookupProp/g;
+    $tmp = $tmp . $_;
+}
+close F;
+open F, ">$filec";
+print F $tmp;
+close F;
 
 # read the hash mappings (is there a better way?)
 my %hmap = ();
