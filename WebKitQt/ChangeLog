@@ -1,3 +1,11 @@
+2007-07-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Don't create an app bundle on OSX to keep WebKitTools/Scripts/run-launcher working.
+
+        * QtLauncher/QtLauncher.pro:
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

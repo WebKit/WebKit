@@ -49,7 +49,7 @@ my @args = @ARGV;
 $ENV{LD_LIBRARY_PATH} = $productDir;
 
 if (isGdk()) {
-  $launcherPath = "$launcherPath/WebKitTools/GdkLauncher";
+  $launcherPath = "$launcherPath/WebKitTools/GdkLauncher/GdkLauncher";
 } elsif (isQt()) {
   $launcherPath = "$launcherPath/WebKitQt/QtLauncher/QtLauncher";
 } else {

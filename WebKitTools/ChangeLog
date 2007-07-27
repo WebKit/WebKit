@@ -1,3 +1,14 @@
+2007-07-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Correct the path of GdkLauncher and make checkFrameworks work on OSX
+        when building the Qt or Gtk+ port.
+
+        * GdkLauncher/GdkLauncher.pro: Don't create an app bundle on OSX
+        * Scripts/run-launcher:
+        * Scripts/webkitdirs.pm: Don't add WebKit if we build the Qt or Gtk+ port.
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Done with and reviewed by Lars and Zack.

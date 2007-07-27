@@ -319,7 +319,7 @@ sub checkFrameworks
 {
     return if isCygwin();
     my @frameworks = ("JavaScriptCore", "WebCore");
-    push(@frameworks, "WebKit") if isOSX();
+    push(@frameworks, "WebKit") if isOSX() and not isGdk() and not isQt();
     for my $framework (@frameworks) {
         my $path = builtDylibPathForName($framework);
         die "Can't find built framework at \"$path\".\n" unless -x $path;

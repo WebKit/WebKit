@@ -1,5 +1,6 @@
 TEMPLATE = app
 SOURCES += main.cpp
+CONFIG -= app_bundle
 
 include(../../WebKit.pri)
 
