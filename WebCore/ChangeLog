@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Fix compilation with MSVC in the Qt build (missing header files).
+
+        * loader/icon/IconDatabaseNone.cpp:
+        * platform/graphics/svg/SVGImage.cpp:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Disable the favicon database on Windows for now, to eliminate the sqlite dependency.
 
         * WebCore.pro:
