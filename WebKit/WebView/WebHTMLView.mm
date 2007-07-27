@@ -2642,7 +2642,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     LOG(View, "%@ drawing", self);
 
     const NSRect *rects;
-    WebNSInteger count;
+    NSInteger count;
     [self getRectsBeingDrawn:&rects count:&count];
 
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
@@ -5251,7 +5251,7 @@ BOOL isTextInput(Frame *coreFrame)
     return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
 }
 
-- (WebNSUInteger)characterIndexForPoint:(NSPoint)thePoint
+- (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
     NSWindow *window = [self window];
     WebFrameBridge *bridge = [self _bridge];
@@ -6022,7 +6022,7 @@ BOOL isTextInput(Frame *coreFrame)
     return nil;
 }
 
-- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(WebNSUInteger)limit
+- (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit
 {
     return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
 }

@@ -92,7 +92,7 @@
     NSValue *rangeAsValue;
     while ((rangeAsValue = [rangeEnumerator nextObject]) != nil) {
         NSRange range = [rangeAsValue rangeValue];
-        WebNSUInteger rectCount;
+        NSUInteger rectCount;
         NSRectArray rectArray = [[self layoutManager] rectArrayForCharacterRange:range 
                                                     withinSelectedCharacterRange:range 
                                                                  inTextContainer:[self textContainer] 

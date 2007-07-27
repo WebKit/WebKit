@@ -234,7 +234,7 @@ static unsigned listenerCount = 0;
 }
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                         baseLineNumber:(WebNSUInteger)lineNumber
+                                         baseLineNumber:(NSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame
@@ -256,7 +256,7 @@ static unsigned listenerCount = 0;
 }
 
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
-                                         baseLineNumber:(WebNSUInteger)lineNumber
+                                         baseLineNumber:(NSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame

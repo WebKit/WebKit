@@ -400,7 +400,7 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loade
 
     if (implementations.delegateImplementsDidReceiveContentLength) {
         if (id resource = [webView _objectForIdentifier:identifier]) 
-            implementations.didReceiveContentLengthFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:), webView, resource, (WebNSUInteger)lengthReceived, dataSource(loader));
+            implementations.didReceiveContentLengthFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:), webView, resource, (NSUInteger)lengthReceived, dataSource(loader));
     }
 }
 

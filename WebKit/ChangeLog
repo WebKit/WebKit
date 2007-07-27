@@ -1,3 +1,26 @@
+2007-07-26  Darin Adler  <darin@apple.com>
+
+        - fix Tiger build
+
+        * Misc/WebTypesInternal.h: For use inside the library, use NSInteger and
+        NSUInteger, just like on Leopard. WebNSInteger and WebNSUInteger are still
+        present, but they are used in public and private headers only.
+
+        * Carbon/CarbonWindowAdapter.m:
+        * Carbon/CarbonWindowFrame.m:
+        * DefaultDelegates/WebScriptDebugServer.m:
+        * History/WebBackForwardList.mm:
+        * Misc/WebDownload.m:
+        * Misc/WebSearchableTextView.m:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFView.mm:
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+        Update all implementation files and internal headers to use NSInteger and
+        NSUInteger rather than WebNSInteger and WebNSUInteger.
+
 2007-07-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker

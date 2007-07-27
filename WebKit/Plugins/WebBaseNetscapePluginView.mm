@@ -138,7 +138,7 @@ typedef struct {
 
 @interface NSData (WebPluginDataExtras)
 - (BOOL)_web_startsWithBlankLine;
-- (WebNSInteger)_web_locationAfterFirstBlankLine;
+- (NSInteger)_web_locationAfterFirstBlankLine;
 @end
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
@@ -496,7 +496,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 // knows about the true set of dirty rects.
                 NSView *opaqueAncestor = [self opaqueAncestor];
                 const NSRect *dirtyRects;
-                WebNSInteger dirtyRectCount, dirtyRectIndex;
+                NSInteger dirtyRectCount, dirtyRectIndex;
                 [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
 
                 for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
@@ -561,7 +561,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             // knows about the true set of dirty rects.
             NSView *opaqueAncestor = [self opaqueAncestor];
             const NSRect *dirtyRects;
-            WebNSInteger count;
+            NSInteger count;
             [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&count];
             Vector<CGRect, 16> convertedDirtyRects;
             convertedDirtyRects.resize(count);
@@ -2291,7 +2291,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if ([postData _web_startsWithBlankLine]) {
             postData = [postData subdataWithRange:NSMakeRange(1, [postData length] - 1)];
         } else {
-            WebNSInteger location = [postData _web_locationAfterFirstBlankLine];
+            NSInteger location = [postData _web_locationAfterFirstBlankLine];
             if (location != NSNotFound) {
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
@@ -3160,7 +3160,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 
-- (WebNSInteger)_web_locationAfterFirstBlankLine
+- (NSInteger)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
     unsigned length = [self length];

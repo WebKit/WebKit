@@ -314,7 +314,7 @@ static int pluginDatabaseClientCount = 0;
     NSString *mediaStyle;
     
     BOOL hasSpellCheckerDocumentTag;
-    WebNSInteger spellCheckerDocumentTag;
+    NSInteger spellCheckerDocumentTag;
 
     BOOL smartInsertDeleteEnabled;
         
@@ -789,7 +789,7 @@ static bool debugWidget = true;
     return menu;
 }
 
-- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInteger)modifierFlags
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(NSUInteger)modifierFlags
 {
     // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
     // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
@@ -2938,7 +2938,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return YES;
 }
 
-- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit
+- (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
 {
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
@@ -3302,7 +3302,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return (continuousSpellCheckingEnabled && [self _continuousCheckingAllowed]);
 }
 
-- (WebNSInteger)spellCheckerDocumentTag
+- (NSInteger)spellCheckerDocumentTag
 {
     if (!_private->hasSpellCheckerDocumentTag) {
         _private->spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];

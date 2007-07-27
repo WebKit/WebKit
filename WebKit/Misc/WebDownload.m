@@ -132,7 +132,7 @@
     [realDelegate download:download didReceiveResponse:response];
 }
 
-- (void)download:(NSURLDownload *)download didReceiveDataOfLength:(WebNSUInteger)length
+- (void)download:(NSURLDownload *)download didReceiveDataOfLength:(NSUInteger)length
 {
     [realDelegate download:download didReceiveDataOfLength:length];
 }

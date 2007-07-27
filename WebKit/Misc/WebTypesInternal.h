@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,8 @@
  */
 
 #ifdef BUILDING_ON_TIGER
-typedef int WebNSInteger;
-typedef unsigned int WebNSUInteger;
-#else
-typedef NSInteger WebNSInteger;
-typedef NSUInteger WebNSUInteger;
+typedef int NSInteger;
+typedef unsigned int NSUInteger;
 #endif
 
 #ifndef CGFLOAT_DEFINED

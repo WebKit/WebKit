@@ -76,32 +76,32 @@
 }
 
 // Given a content rectangle and style mask, return a corresponding frame rectangle.
-+ (NSRect)frameRectForContentRect:(NSRect)contentRect styleMask:(WebNSUInteger)style {
++ (NSRect)frameRectForContentRect:(NSRect)contentRect styleMask:(NSUInteger)style {
 
     // We don't bother figuring out a good value, because content rects weren't so meaningful for NSCarbonWindows in the past, but this might not be a good assumption anymore.  M.P. Warning - 12/5/00
     return contentRect;
 
 }
 
-+ (NSRect)contentRectForFrameRect:(NSRect)frameRect styleMask:(WebNSUInteger)style {
++ (NSRect)contentRectForFrameRect:(NSRect)frameRect styleMask:(NSUInteger)style {
 
     // We don't bother figuring out a good value, because content rects weren't so meaningful for NSCarbonWindows in the past, but this might not be a good assumption anymore.  KW - copied from +frameRectForContentRect:styleMask
     return frameRect;
 
 }
 
-+ (NSSize)minFrameSizeForMinContentSize:(NSSize)cSize styleMask:(WebNSUInteger)style {
++ (NSSize)minFrameSizeForMinContentSize:(NSSize)cSize styleMask:(NSUInteger)style {
     // See comments above.  We don't make any assumptions about the relationship between content rects and frame rects
     return cSize;
 }
 
-- (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(WebNSUInteger)style {
+- (NSRect)frameRectForContentRect:(NSRect)cRect styleMask:(NSUInteger)style {
     return [[self class] frameRectForContentRect: cRect styleMask:style];
 }
-- (NSRect)contentRectForFrameRect:(NSRect)fRect styleMask:(WebNSUInteger)style {
+- (NSRect)contentRectForFrameRect:(NSRect)fRect styleMask:(NSUInteger)style {
     return [[self class] contentRectForFrameRect: fRect styleMask:style];
 }
-- (NSSize)minFrameSizeForMinContentSize:(NSSize)cSize styleMask:(WebNSUInteger)style {
+- (NSSize)minFrameSizeForMinContentSize:(NSSize)cSize styleMask:(NSUInteger)style {
     return [[self class] minFrameSizeForMinContentSize:cSize styleMask: style];
 }
 
