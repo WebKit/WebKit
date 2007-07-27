@@ -26,8 +26,9 @@ KEYWORDLUT_FILES += \
 KJSBISON += \
     kjs/grammar.y
 
+gdk-port: SOURCES += wtf/TCSystemAlloc.cpp
+
 SOURCES += \
-    wtf/TCSystemAlloc.cpp \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
     wtf/FastMalloc.cpp \

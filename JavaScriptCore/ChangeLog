@@ -2,6 +2,14 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Removed TCSystemMalloc from the Qt build, it's not necessary it seems.
+
+        * JavaScriptCore.pri:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Added os-win32 to the include search path for the Qt windows build in order to provide the fake stdint.h header file.
 
         * JavaScriptCore.pri:
