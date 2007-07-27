@@ -1391,7 +1391,7 @@ QMAKE_EXTRA_COMPILERS += svgcssproperties
 # GENERATOR 7-B:
 svgcssvalues.output = tmp/ksvgcssvalues.h
 svgcssvalues.input = SVGCSSVALUES
-svgcssvalues.commands = perl -ne \'print lc\' $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && $(DEL_FILE) ksvgcssvalues.in ksvgcssvalues.gperf
+svgcssvalues.commands = perl -ne \"print lc\" $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && $(DEL_FILE) ksvgcssvalues.in ksvgcssvalues.gperf
 svgcssvalues.CONFIG = target_predeps no_link
 svgcssvalues.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssvalues.c tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += svgcssvalues
