@@ -1405,7 +1405,7 @@ QMAKE_EXTRA_COMPILERS += entities
 
 # PRE-GENERATOR 8-B:
 doctypestrings.target = $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
-doctypestrings.commands = echo \"$${LITERAL_HASH}include <string.h>\" > $$doctypestrings.target && gperf -CEot -L ANSI-C -k \'*\' -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < $$PWD/html/DocTypeStrings.gperf >> $$doctypestrings.target
+doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > $$doctypestrings.target && echo // bogus >> $$doctypestrings.target && gperf -CEot -L ANSI-C --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < $$PWD/html/DocTypeStrings.gperf >> $$doctypestrings.target
 QMAKE_EXTRA_TARGETS += doctypestrings
 PRE_TARGETDEPS += $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
 CLEAN_FILES += $$doctypestrings.target
