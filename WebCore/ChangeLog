@@ -2,6 +2,15 @@
 
         Done with and reviewed by Lars and Zack.
 
+        Make it possible to specify the preprocessor the bindings generator uses instead of hardcoding /usr/bin/gcc (which is of course no option on Windows). Also try to use a more portable and Windows friendly way of opening the reading pipe to the preprocessor.
+
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/generate-bindings.pl:
+
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
         Don't use stdout redirection for make_names.pl as it doesn't work under Windows perl (outside cygwin).
 
         * ksvg2/scripts/make_names.pl:

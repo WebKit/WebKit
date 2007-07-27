@@ -60,11 +60,19 @@ sub Parse
     my $object = shift;
     my $fileName = shift;
     my $defines = shift;
+    my $preprocessor = shift;
+
+    if (!$preprocessor) {
+        $preprocessor = "/usr/bin/gcc -E -P -x c++";
+    }
+
+    if (!$defines) {
+        $defines = "";
+    }
 
     print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
-    open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", 
-        (map { "-D$_" } split(/ /, $defines)), $fileName or die "Could not open $fileName";
+    open FILE, $preprocessor . " " . join(" ", (map { "-D$_" } split(/ /, $defines))) . " ". $fileName . "|" or die "Could not open $fileName";
     my @documentContent = <FILE>;
     close FILE;
 

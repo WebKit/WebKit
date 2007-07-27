@@ -41,11 +41,13 @@ my @idlDirectories;
 my $outputDirectory;
 my $generator;
 my $defines;
+my $preprocessor;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputdir=s' => \$outputDirectory,
            'generator=s' => \$generator,
-           'defines=s' => \$defines);
+           'defines=s' => \$defines,
+           'preprocessor=s' => \$preprocessor);
 
 my $idlFile = $ARGV[0];
 
@@ -60,7 +62,7 @@ $defines =~ s/^\s+|\s+$//g; # trim whitespace
 
 # Parse the given IDL file.
 my $parser = IDLParser->new(1);
-my $document = $parser->Parse($idlFile, $defines);
+my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
 # Generate desired output for given IDL file.
 my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
