@@ -1,3 +1,11 @@
+2007-07-27  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars and Zack.
+
+        For detecting the SVG support for the Qt build don't do the nm hack. Just always claim SVG support is enabled because that's what it is. The nm hack doesn't work on Windows anyway.
+
+        * Scripts/webkitdirs.pm:
+
 2007-07-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin, Geoff, Sam.

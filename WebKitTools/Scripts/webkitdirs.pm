@@ -332,8 +332,8 @@ sub hasSVGSupport
 
     my $path = shift;
 
-    if (isQt() and $path =~ /WebCore/) {
-        $path = $ENV{QTDIR}."/lib/libQtWebKit.so";
+    if (isQt()) {
+        return 1;
     }
 
     if (isGdk() and $path =~ /WebCore/) {
