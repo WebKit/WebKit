@@ -2709,7 +2709,10 @@ void FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame()
 
 void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 {
-    m_client->finishedLoading(loader);
+#if PLATFORM(WIN)
+    if (!m_creatingInitialEmptyDocument)
+#endif
+        m_client->finishedLoading(loader);
 }
 
 bool FrameLoader::isReplacing() const

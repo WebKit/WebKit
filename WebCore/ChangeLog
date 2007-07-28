@@ -1,3 +1,12 @@
+2007-07-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin. 
+
+        Temporary fix for Windows to prevent crashing on all frame pages.  Darin
+        is working on a more permanent fix.
+
+        * loader/FrameLoader.cpp:
+
 2007-07-27  Adam Treat  <treat@kde.org>
 
         Reviewed by David Hyatt.
