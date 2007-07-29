@@ -1,3 +1,14 @@
+2007-07-29  Adam Treat  <treat@kde.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Respect the margins when creating frames.
+        Set the scroll mode to always off like we did before the rendered
+        frames patch and the other ports do now.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+
 2007-07-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

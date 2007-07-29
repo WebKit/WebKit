@@ -75,7 +75,12 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     frameView->deref();
     frameView->setQWebFrame(qframe);
     if (!frameData->allowsScrolling)
-        frameView->suppressScrollbars(true);
+        frameView->setScrollbarsMode(ScrollbarAlwaysOff);
+    if (frameData->marginWidth != -1)
+        frameView->setMarginWidth(frameData->marginWidth);
+    if (frameData->marginHeight != -1)
+        frameView->setMarginHeight(frameData->marginHeight);
+
     frame->setView(frameView.get());
     frame->init();
     eventHandler = frame->eventHandler();
