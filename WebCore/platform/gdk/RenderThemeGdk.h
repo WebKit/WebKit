@@ -70,6 +70,7 @@ private:
     void close();
 
     GtkStateType determineState(RenderObject*);
+    GtkShadowType determineShadow(RenderObject*);
     bool supportsFocus(EAppearance);
 
     ThemeData getThemeData(RenderObject*);

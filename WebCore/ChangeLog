@@ -1,3 +1,21 @@
+2007-07-29  Alp Toker  <alp.toker@collabora.co.uk>
+
+        Reviewed by Brian Dash.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14711 (revisited)
+        RenderThemeGdk's buttons are state-agnostic (pressed, hovered)
+
+        Generalize shadow state into a function.
+        use a GtkHBox to work around a theme bug (thanks to Nigel Tao).
+
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::determineShadow):
+        (WebCore::RenderThemeGdk::paintCheckbox):
+        (WebCore::RenderThemeGdk::paintRadio):
+        (WebCore::RenderThemeGdk::paintButton):
+        (WebCore::RenderThemeGdk::gtkWindowContainer):
+        * platform/gdk/RenderThemeGdk.h:
+
 2007-07-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin. 
