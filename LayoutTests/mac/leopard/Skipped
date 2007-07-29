@@ -33,10 +33,6 @@ fast/lists/w3-list-styles.html
 # <rdar://problem/5228233> Leopard regression test failures: fast/table/absolute-table-at-bottom
 fast/table/absolute-table-at-bottom.html
 
-# <rdar://problem/5229705> REGRESSION: Thai characters render differently between leopard and tiger
-fast/text/atsui-multiple-renderers.html
-fast/text/international/thai-line-breaks.html
-
 # <rdar://problem/5335898> REGRESSION (9A492-9A494): Stationery templates never finish loading due to CFNetwork not giving failure for unknown protocols
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 

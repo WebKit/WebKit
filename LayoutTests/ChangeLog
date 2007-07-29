@@ -1,3 +1,17 @@
+2007-07-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin and John.
+
+        <rdar://problem/5229705> Thai characters render differently between leopard and tiger
+
+        Add Leopard-specific test results for tests containing Thai characters.
+
+        * mac/leopard/Skipped:
+        * mac/leopard/fast/text: Added.
+        * mac/leopard/fast/text/atsui-multiple-renderers-expected.txt: Added.
+        * mac/leopard/fast/text/international: Added.
+        * mac/leopard/fast/text/international/thai-line-breaks-expected.txt: Added.
+
 2007-07-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.
