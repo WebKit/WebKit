@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x402
+  RenderBlock {HTML} at (0,0) size 800x402
+    RenderBody {BODY} at (8,16) size 784x370
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 608x18
+          text run at (0,0) width 608: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
+      RenderBlock {P} at (0,34) size 784x160
+        RenderPartObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+              RenderSVGContainer {svg} at (0,-15) size 180x60
+                RenderSVGText {text} at (0,0) size 300x1 [color=#000080]
+                  RenderSVGInlineText {#text} at (0,-1) size 3x1
+                    text run at (0,-1) width 3: "PASS"
+      RenderBlock {P} at (0,210) size 784x160
+        RenderPartObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+              RenderSVGContainer {svg} at (0,39) size 143.40x69
+                RenderSVGText {text} at (0,800) size 300x1150 [color=#000080]
+                  RenderSVGInlineText {#text} at (0,-900) size 2390x1150
+                    text run at (0,-900) width 2390: "PASS"

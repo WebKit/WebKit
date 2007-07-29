@@ -25,11 +25,6 @@ svg/custom/control-points-for-S-and-T.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 
-# <rdar://problem/5228270> Leopard SVG regression test failures due to different metrics for scaled text blocks
-svg/hixie/text/003.html
-svg/hixie/text/003a.xml
-svg/hixie/viewbox/preserveAspectRatio/002.xml
-
 # <rdar://problem/5228138> Leopard regression test failures: tests that test Georgian numbering (due to font changes)
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html

@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-300,-400) size 4000x4000
+      RenderPath {rect} at (-300,-400) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M-100.00,-100.00L900.00,-100.00L900.00,900.00L-100.00,900.00"]
+      RenderPath {rect} at (-4,-4) size 608x408 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-26.00,-1.00L126.00,-1.00L126.00,101.00L-26.00,101.00"]
+      RenderPath {rect} at (100,0) size 400x400 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,100.00"]
+      RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,0.00L0.00,100.00"]
+      RenderSVGText {text} at (50,30) size 800x8 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-41,-6) size 82x8
+          text run at (-41,-6) width 82: "This should be a SQUARE."
+      RenderSVGText {text} at (50,40) size 800x6 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-33,-5) size 66x6
+          text run at (-33,-5) width 66: "It should be 400 pixels to a side."
+      RenderSVGText {text} at (50,48) size 800x6 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-38,-5) size 76x6
+          text run at (-38,-5) width 76: "There should be no red on this page."
+      RenderSVGText {text} at (50,90) size 800x6 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-44,-5) size 89x6
+          text run at (-44,-5) width 89: "The orange line should be 600 pixels long:"
+      RenderPath {line} at (0,366) size 600x4 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00L125.00,92.00"]
+      RenderSVGText {text} at (-25,90) size 800x3 [color=#FFA500]
+        RenderSVGInlineText {#text} at (0,-2) size 2x3
+          text run at (0,-2) width 2: "0"
+      RenderPath {line} at (-2,362) size 4x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00L-25.00,90.50"]
+      RenderSVGText {text} at (125,90) size 800x3 [color=#FFA500]
+        RenderSVGInlineText {#text} at (-5,-2) size 5x3
+          text run at (-5,-2) width 5: "600"
+      RenderPath {line} at (598,362) size 4x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,92.00L125.00,90.50"]
