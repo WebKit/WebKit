@@ -1,3 +1,15 @@
+2007-07-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        WebCore part of fix for <rdar://problem/5102522> REGRESSION: Can't tab to webview that doesn't have editable content (affects Safari, preview pane in Mail)
+
+        * WebCore.exp:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setInitialFocus): Added.
+        (WebCore::FocusController::advanceFocus): Don't give the focus back to the chrome if this is the initial focus.
+        * page/FocusController.h:
+
 2007-07-29  Adam Treat  <treat@kde.org>
 
         Reviewed by Alexey Proskuryakov.

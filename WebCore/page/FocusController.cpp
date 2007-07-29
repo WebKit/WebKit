@@ -109,12 +109,17 @@ static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEve
     return node;
 }
 
+bool FocusController::setInitialFocus(KeyboardEvent* event)
+{
+    return advanceFocus((event && event->shiftKey()) ? FocusDirectionBackward : FocusDirectionForward, event, true);
+}
+
 bool FocusController::advanceFocus(KeyboardEvent* event)
 {
     return advanceFocus((event && event->shiftKey()) ? FocusDirectionBackward : FocusDirectionForward, event);
 }
 
-bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* event)
+bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
     Frame* frame = focusedOrMainFrame();
     ASSERT(frame);
@@ -151,7 +156,7 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
 
     if (!node) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
-        if (m_page->chrome()->canTakeFocus(direction)) {
+        if (!initialFocus && m_page->chrome()->canTakeFocus(direction)) {
             document->setFocusedNode(0);
             setFocusedFrame(0);
             m_page->chrome()->takeFocus(direction);

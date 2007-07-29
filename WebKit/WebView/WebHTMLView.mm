@@ -3127,7 +3127,7 @@ noPromisedData:
     page->focusController()->setFocusedFrame(frame);
     if (Document* document = frame->document())
         document->setFocusedNode(0);
-    page->focusController()->advanceFocus(frame->eventHandler()->currentKeyboardEvent().get());
+    page->focusController()->setInitialFocus(frame->eventHandler()->currentKeyboardEvent().get());
     return YES;
 }
 
