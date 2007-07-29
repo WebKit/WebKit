@@ -1,5 +1,25 @@
 2007-07-28  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        - Rename test for clarity and consistency.
+        - Move resource from ssl/resources to security/resources as it is
+          only being used by the security tests.
+
+        * http/tests/security/cross-frame-access-port-domain-expected.txt: Removed.
+        * http/tests/security/cross-frame-access-port-domain.html: Removed.
+        * http/tests/security/cross-frame-access-port-explicit-domain-expected.txt: Copied from http/tests/security/cross-frame-access-port-domain-expected.txt.
+        * http/tests/security/cross-frame-access-port-explicit-domain.html: Copied from http/tests/security/cross-frame-access-port-domain.html.
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/cross-frame-access-protocol.html:
+        * http/tests/security/resources/cross-frame-iframe-for-port-domain-test.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-for-port-explicit-domain-test.html: Copied from http/tests/security/resources/cross-frame-iframe-for-port-domain-test.html.
+        * http/tests/security/resources/cross-frame-iframe-for-protocol-test.html: Copied from http/tests/ssl/resources/cross-frame-access-protocol-iframe.html.
+        * http/tests/ssl/resources: Removed.
+        * http/tests/ssl/resources/cross-frame-access-protocol-iframe.html: Removed.
+
+2007-07-28  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         - Factor access testing code used in protocol and port tests to cross-frame-access.js.
