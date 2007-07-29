@@ -1,6 +1,6 @@
 2007-07-29  Alp Toker  <alp.toker@collabora.co.uk>
 
-        Reviewed by Brian Dash.
+        Reviewed by bdash.
 
         http://bugs.webkit.org/show_bug.cgi?id=14711 (revisited)
         RenderThemeGdk's buttons are state-agnostic (pressed, hovered)
