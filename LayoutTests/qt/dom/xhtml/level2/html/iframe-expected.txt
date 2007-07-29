@@ -7,8 +7,8 @@ layer at (0,0) size 800x70
       RenderPartObject {iframe} at (0,0) size 64x54 [border: (2px inset #000000)]
         layer at (0,0) size 60x50
           RenderView at (0,0) size 60x50
-        layer at (0,0) size 60x19
-          RenderBlock {HTML} at (0,0) size 60x19
-            RenderBody {BODY} at (0,0) size 60x19
-              RenderImage {IMG} at (0,3) size 17x11
+        layer at (0,0) size 60x50
+          RenderBlock {HTML} at (0,0) size 60x50
+            RenderBody {BODY} at (0,0) size 60x50
+              RenderImage {IMG} at (0,0) size 17x11
       RenderText {#text} at (0,0) size 0x0

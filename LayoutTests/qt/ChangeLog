@@ -1,3 +1,13 @@
+2007-07-29  Adam Treat  <treat@kde.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        We actually match Mac expected results now.
+        I think this is related to quirks mode change ref in r21769.
+
+        * dom/xhtml/level2/html/frame-expected.txt:
+        * dom/xhtml/level2/html/iframe-expected.txt:
+
 2007-07-27  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Zack and Lars.
