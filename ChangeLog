@@ -1,3 +1,10 @@
+2007-07-29  Brian Mastenbrook  <brian@mastenbrook.net>
+
+        Build fix for WebKit/Gtk to compile on Fedora 7 as described in
+        http://bugs.webkit.org/show_bug.cgi?id=14557
+
+        * WebKit.pri: cairo-ft is used by the WebKit/Gtk port
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Done with and reviewed by Lars and Zack.
