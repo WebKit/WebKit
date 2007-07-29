@@ -1,49 +1,16 @@
 <html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
 <iframe id="aFrame"></iframe>
 <pre id="console"></pre>
 <script>
-    function log(s)
-    {
-        document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    var targetWindow = frames[0];
-    if (!targetWindow.document.body)
-        log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
-
-    var iframe = document.getElementById('aFrame');
-    iframe.src = "http://127.0.0.1:8080/security/resources/cross-frame-iframe-for-port-test.html";
-
-    var testDone = false;
-
-    setTimeout(test, 1);
-
-    setTimeout(function() {
-        if (!testDone) {
-            log("FAIL: Cross frame access to a different port was allowed.");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-    }, 5000);
-
-    function test() {
-        try {
-            if (targetWindow.document.body) {
-                setTimeout(test, 1);
-                return;
-            }
-        } catch (e) {
-        }
-
-        log("PASS: Cross frame access to different port was denied!");
-        testDone = true;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
+    var url = "http://127.0.0.1:8080/security/resources/cross-frame-iframe-for-port-test.html";
+    var iframeId ="aFrame";
+    var passMessage = "PASS: Cross frame access to different port was denied!";
+    var failMessage = "FAIL: Cross frame access to a different port was allowed.";
+    cannotAccessFrame(url, iframeId, passMessage, failMessage);
 </script>
+</body>
 </html>

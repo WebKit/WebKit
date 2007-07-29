@@ -1,3 +1,22 @@
+2007-07-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        - Factor access testing code used in protocol and port tests to cross-frame-access.js.
+        - Add cross-frame-iframe-for-protocol-explicit-domain-test.html which is parallel test to
+          cross-frame-iframe-for-port-domain-test.html but for different protocols.
+
+        * http/tests/security/cross-frame-access-port-domain-expected.txt:
+        * http/tests/security/cross-frame-access-port-domain.html:
+        * http/tests/security/cross-frame-access-port.html:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain-expected.txt: Added.
+        * http/tests/security/cross-frame-access-protocol-explicit-domain.html: Added.
+        * http/tests/security/cross-frame-access-protocol.html:
+        * http/tests/security/resources/cross-frame-access.js:
+        * http/tests/security/resources/cross-frame-iframe-for-port-domain-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-port-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-protocol-explicit-domain-test.html: Added.
+
 2007-07-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin and John.

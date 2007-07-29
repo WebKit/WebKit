@@ -77,3 +77,93 @@ function toString(expression, valueForException)
         return valueForException;
     }
 }
+
+// Frame Access Tests
+
+function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var targetWindow = frames[0];
+    if (!targetWindow.document.body)
+        log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
+
+    var iframe = document.getElementById(iframeId);
+    iframe.src = iframeURL;
+
+    var testDone = false;
+
+    setTimeout(test, 1);
+
+    setTimeout(function() {
+        if (!testDone) {
+            if (targetWindow.document.getElementById('accessMe'))
+                targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
+            log(passMessage);
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }, 2000);
+
+    function test() {
+        try {
+            if (targetWindow.document.body) {
+                setTimeout(test, 1);
+                return;
+            }
+        } catch (e) {
+        }
+
+        log(failMessage);
+        testDone = true;
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+
+function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var targetWindow = frames[0];
+    if (!targetWindow.document.body)
+        log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
+
+    var iframe = document.getElementById(iframeId);
+    iframe.src = iframeURL;
+
+    var testDone = false;
+
+    setTimeout(test, 1);
+
+    setTimeout(function() {
+        if (!testDone) {
+            if (targetWindow.document.getElementById('accessMe'))
+                targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
+            log(failMessage);
+            window.stop();
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }, 2000);
+
+    function test() {
+        try {
+            if (targetWindow.document.body) {
+                setTimeout(test, 1);
+                return;
+            }
+        } catch (e) {
+        }
+
+        log(passMessage);
+        testDone = true;
+        window.stop();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
