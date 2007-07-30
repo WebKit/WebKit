@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
@@ -348,9 +348,15 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
     if (absolute) {
         parse(str, (allASCII && !strippedStart && (charsToChopOffEnd == 0)) ? &rel : 0);
     } else {
-        // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid.
+        // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid
+        // unless the relative URL is a single fragment.
         if (!base.isHierarchical()) {
-            m_isValid = false;
+            if (str[0] == '#') {
+                DeprecatedString newURL = base.urlString.left(base.queryEndPos) + str;
+                parse(newURL.ascii(), &newURL);
+            } else
+                m_isValid = false;
+            
             if (strBuffer)
                 fastFree(strBuffer);
             return;
@@ -1053,16 +1059,24 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     int fragmentEnd;
 
     if (!hierarchical) {
-        while (url[pathEnd] != '\0' && url[pathEnd] != '?') {
+        while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#')
             pathEnd++;
+        
+        queryStart = pathEnd;
+        queryEnd = queryStart;
+        if (url[queryStart] == '?') {
+            while (url[queryEnd] != '\0' && url[queryEnd] != '#')
+                queryEnd++;
         }
-        queryStart = queryEnd = pathEnd;
-
-        while (url[queryEnd] != '\0') {
-            queryEnd++;
-        }
-
-        fragmentStart = fragmentEnd = queryEnd;
+        
+        fragmentStart = queryEnd;
+        fragmentEnd = fragmentStart;
+        if (url[fragmentStart] == '#') {
+            fragmentStart++;
+            fragmentEnd = fragmentStart;
+            while (url[fragmentEnd] != '\0')
+                fragmentEnd++;
+        }        
     }
     else {
         while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
@@ -1082,7 +1096,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         if (url[fragmentStart] == '#') {
             fragmentStart++;
             fragmentEnd = fragmentStart;
-            while(url[fragmentEnd] != '\0') {
+            while (url[fragmentEnd] != '\0') {
                 fragmentEnd++;
             }
         }

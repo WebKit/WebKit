@@ -1,3 +1,20 @@
+2007-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4942372> REGRESSION: Anchor links in Mail don't work anymore
+        
+        Make it possible for KURL to handle addig fragments to non-hierarchical URLs
+        such as mailto: and cid:.
+    
+        * platform/KURL.cpp:
+        (WebCore::KURL::init):
+        If the base URL is not hierarchical but the relative URL is a fragment, then 
+        allow parsing it.
+        
+        (WebCore::KURL::parse):
+        If the URL is not hierarchical, set the fragment start and end positions correctly.
+
 2007-07-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
