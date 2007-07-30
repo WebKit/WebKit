@@ -1,3 +1,30 @@
+2007-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5363896>
+        REGRESSION: Setting document.domain does not override port-based cross-frame security checks -- breaks SAP NetWeaver
+
+        Updates the results for:
+            http/tests/security/cross-frame-access-port-explicit-domain.html
+            http/tests/security/cross-frame-access-protocol-explicit-domain.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow): Use the new setDomainInternal method.
+        (KJS::Window::isSafeScript): Don't set check the port or protocol 
+        if both documents have explicitly set document.domain in the DOM
+        and the those domains are equal.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setDomain): Remove force parameter and change 
+        all calls that relied on it use the new setDomainInternal method
+        which does the same thing.
+        (WebCore::Document::setDomainInternal): 
+        * dom/Document.h: Add new m_domainWasSetInDOM variable and accessor.
+        (WebCore::Document::domainWasSetInDOM):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCallImplicitClose): Use the new setDomainInternal method. 
+
 2007-07-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tristan.

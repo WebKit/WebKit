@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8080/security/resources/cross-frame-iframe-for-port-explicit-domain-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-port-explicit-domain.html. Domains, protocols and ports must match.
-
 This test currently fails because we check the port and protocol even if document.domain is explicitly set (rdar://problem/5366437).
 
 
-Fail: Cross frame access to a different port, after explicitly setting document.domain, was denied.
+PASS: Cross frame access to a different port, after explicitly setting document.domain, was allowed!
 

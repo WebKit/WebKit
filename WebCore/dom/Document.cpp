@@ -261,6 +261,7 @@ Document::Document(DOMImplementation* impl, Frame* frame)
 #if ENABLE(XBL)
     , m_bindingManager(new XBLBindingManager(this))
 #endif
+    , m_domainWasSetInDOM(false)
     , m_savedRenderer(0)
     , m_secureForms(0)
     , m_designMode(inherit)
@@ -2512,29 +2513,40 @@ String Document::domain() const
     return m_domain;
 }
 
-void Document::setDomain(const String &newDomain, bool force /*=false*/)
+void Document::setDomain(const String& newDomain)
 {
-    if (force) {
-        m_domain = newDomain;
-        return;
-    }
-    if (m_domain.isEmpty()) // not set yet (we set it on demand to save time and space)
-        m_domain = KURL(URL()).host(); // Initially set to the host
+    m_domainWasSetInDOM = true;
+
+    // Not set yet (we set it on demand to save time and space)
+    // Initially set to the host
+    if (m_domain.isEmpty())
+        m_domain = KURL(URL()).host();
 
     // Both NS and IE specify that changing the domain is only allowed when
     // the new domain is a suffix of the old domain.
+
+    // FIXME: We should add logging indicating why a domain was not allowed. 
+
     int oldLength = m_domain.length();
     int newLength = newDomain.length();
-    if (newLength < oldLength) // e.g. newDomain=kde.org (7) and m_domain=www.kde.org (11)
-    {
+    // e.g. newDomain=kde.org (7) and m_domain=www.kde.org (11)
+    if (newLength < oldLength) {
         String test = m_domain.copy();
-        if (test[oldLength - newLength - 1] == '.') // Check that it's a subdomain, not e.g. "de.org"
-        {
-            test.remove(0, oldLength - newLength); // now test is "kde.org" from m_domain
-            if (test == newDomain)                 // and we check that it's the same thing as newDomain
+        // Check that it's a subdomain, not e.g. "de.org"
+        if (test[oldLength - newLength - 1] == '.') {
+            // Now test is "kde.org" from m_domain
+            // and we check that it's the same thing as newDomain
+            test.remove(0, oldLength - newLength);
+            if (test == newDomain)
                 m_domain = newDomain;
         }
     }
+}
+
+void Document::setDomainInternal(const String& newDomain)
+{
+    m_domainWasSetInDOM = false;
+    m_domain = newDomain;
 }
 
 bool Document::isValidName(const String &name)

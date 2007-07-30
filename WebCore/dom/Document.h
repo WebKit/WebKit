@@ -538,8 +538,10 @@ public:
     Element* ownerElement() const;
     
     String referrer() const;
+
     String domain() const;
-    void setDomain(const String& newDomain, bool force = false); // not part of the DOM
+    void setDomain(const String& newDomain);
+    void setDomainInternal(const String& newDomain);
 
     String policyBaseURL() const { return m_policyBaseURL; }
     void setPolicyBaseURL(const String& s) { m_policyBaseURL = s; }
@@ -821,6 +823,8 @@ public:
     SVGDocumentExtensions* accessSVGExtensions();
 #endif
 
+    bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
+
 private:
     bool shouldBeAllowedToLoadLocalResources() const;
 
@@ -832,6 +836,8 @@ private:
     JSEditor* m_jsEditor;
 
     mutable String m_domain;
+    bool m_domainWasSetInDOM;
+
     RenderObject* m_savedRenderer;
     int m_secureForms;
     

@@ -1,3 +1,27 @@
+2007-07-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Update tests for <rdar://problem/5363896>
+        REGRESSION: Setting document.domain does not override port-based cross-frame security checks -- breaks SAP NetWeaver
+
+        - Also changes frame access test to use shared resource iframes.
+
+        * http/tests/security/cross-frame-access-port-expected.txt:
+        * http/tests/security/cross-frame-access-port-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-port-explicit-domain.html:
+        * http/tests/security/cross-frame-access-port.html:
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain.html:
+        * http/tests/security/cross-frame-access-protocol.html:
+        * http/tests/security/resources/cross-frame-iframe-for-port-explicit-domain-test.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-for-port-test.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-for-protocol-explicit-domain-test.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-for-protocol-test.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-with-explicit-domain-set.html: Added.
+        * http/tests/security/resources/cross-frame-iframe.html: Added.
+
 2007-07-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.
