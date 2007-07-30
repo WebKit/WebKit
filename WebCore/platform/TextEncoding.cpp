@@ -104,7 +104,7 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
 #elif USE(QT4_UNICODE)
     QString str(reinterpret_cast<const QChar*>(characters), length);
     str = str.normalized(QString::NormalizationForm_C);
-    return newTextCodec(*this)->encode(str.utf16(), str.length(), allowEntities);
+    return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), allowEntities);
 #endif
 }
 

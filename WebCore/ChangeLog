@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Removed the __BUILDING_QT ifdef in JSStringRef.h and changed UChar for the Qt build to use wchar_t on Windows.
+
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+
+2007-07-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Don't link against libxml/libxslt unless we really need it.
 
         * WebCore.pro:

@@ -1,3 +1,12 @@
+2007-07-30  Simon Hausmann  <hausmann@kde.org>
+
+        Done with and reviewed by Lars.
+
+        Removed the __BUILDING_QT ifdef in JSStringRef.h and changed UChar for the Qt build to use wchar_t on Windows.
+
+        * API/JSStringRef.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+
 2007-07-27  Simon Hausmann  <hausmann@kde.org>
 
         Done with and reviewed by Lars and Zack.

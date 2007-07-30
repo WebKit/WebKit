@@ -55,7 +55,12 @@ namespace QUnicodeTables {
 }
 #endif
 
+// ugly hack to make UChar compatible with JSChar in API/JSStringRef.h
+#if defined(Q_OS_WIN)
+typedef wchar_t UChar;
+#else
 typedef uint16_t UChar;
+#endif
 typedef uint32_t UChar32;
 
 // some defines from ICU needed one or two places
