@@ -1,3 +1,13 @@
+2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14806
+        Implement can_go_backward and can_go_forward in webkitgtkpage.cpp
+
+        * gtk/Api/webkitgtkpage.cpp: Implement webkit_gtk_page_can_go_backward() and
+        webkit_gtk_page_can_go_forward() functions.
+
 2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org> 
 
         Reviewed by Alp Toker.

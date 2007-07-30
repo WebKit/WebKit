@@ -328,6 +328,20 @@ void webkit_gtk_page_go_forward(WebKitGtkPage* page)
     frame_data->frame->loader()->goBackOrForward(1);
 }
 
+gboolean webkit_gtk_page_can_go_backward(WebKitGtkPage* page)
+{
+    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(pageData->main_frame);
+    return frameData->frame->loader()->canGoBackOrForward(-1);
+}
+
+gboolean webkit_gtk_page_can_go_forward(WebKitGtkPage* page)
+{
+    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(pageData->main_frame);
+    return frameData->frame->loader()->canGoBackOrForward(1);
+}
+
 void webkit_gtk_page_open(WebKitGtkPage* page, const gchar* url)
 {
     WebKitGtkPagePrivate* page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
