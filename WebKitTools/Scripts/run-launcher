@@ -51,7 +51,7 @@ $ENV{LD_LIBRARY_PATH} = $productDir;
 if (isGdk()) {
   $launcherPath = "$launcherPath/WebKitTools/GdkLauncher/GdkLauncher";
 } elsif (isQt()) {
-  $launcherPath = "$launcherPath/WebKitQt/QtLauncher/QtLauncher";
+  $launcherPath = "$launcherPath/bin/QtLauncher";
 } else {
   die;
 }

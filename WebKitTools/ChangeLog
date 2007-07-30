@@ -1,3 +1,11 @@
+2007-07-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Link QtLauncher into $$OUTPUT_DIR/bin
+
+        * Scripts/run-launcher:
+
 2007-07-27  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Geoff and Darin.
