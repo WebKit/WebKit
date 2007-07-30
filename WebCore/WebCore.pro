@@ -65,15 +65,6 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #INCLUDEPATH += $$PWD/../JavaScriptCore
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
-macx {
-    INCLUDEPATH += /usr/include/libxml2
-    LIBS += -lxml2 -lxslt
-}
-
-win32-* {
-    LIBS += -llibxml2 -llibxslt
-}
-
 qt-port {
 !win32-* {
     LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
@@ -943,6 +934,15 @@ unix:!mac:CONFIG += link_pkgconfig
 contains(DEFINES, ENABLE_XSLT=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
     PKGCONFIG += libxml-2.0 libxslt
+
+    macx {
+        INCLUDEPATH += /usr/include/libxml2
+        LIBS += -lxml2 -lxslt
+    }
+
+    win32-msvc* {
+        LIBS += -llibxml2 -llibxslt
+    }
 }
 
 contains(DEFINES, ENABLE_XBL=1) {

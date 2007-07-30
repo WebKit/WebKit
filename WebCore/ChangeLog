@@ -1,3 +1,11 @@
+2007-07-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Don't link against libxml/libxslt unless we really need it.
+
+        * WebCore.pro:
+
 2007-07-29  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Oliver Hunt.
