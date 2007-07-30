@@ -1,6 +1,6 @@
 2007-07-30  Darin Adler  <darin@apple.com>
 
-        Reviewed by Tim Matcher.
+        Reviewed by Tim Hatcher.
 
         * DumpRenderTree/DumpRenderTree.m: (dump): Fix dumping for documents that include null
         characters. This turned out not to be needed for the test case that motivated me to
