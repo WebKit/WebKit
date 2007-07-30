@@ -1,3 +1,16 @@
+2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org> 
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14810
+        Bad n_params on load_finished's g_signal_new in webkitgtkpage.cpp
+
+        This is the proper fix for #14810.
+
+        * gtk/Api/webkitgtkframe.cpp:
+        * gtk/Api/webkitgtkpage.cpp: Fix the marshaller type of the "load_finished" signal and
+        correct the class_offset parameters.
+
 2007-07-29  Diego Escalante Urrelo  <diegoe@gnome.org>
 
         Reviewed by Alp Toker.
