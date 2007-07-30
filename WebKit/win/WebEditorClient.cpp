@@ -275,6 +275,9 @@ bool WebEditorClient::shouldInsertText(String /*str*/, Range* /* replacingRange 
 bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* /*style*/, Range* /*toElementsInDOMRange*/)
 { notImplemented(); return true; }
 
+bool WebEditorClient::shouldMoveRangeAfterDelete(Range* /*range*/, Range* /*rangeToBeReplaced*/)
+{ notImplemented(); return true; }
+
 bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration* /*currentStyle*/, CSSStyleDeclaration* /*toProposedStyle*/)
 { notImplemented(); return false; }
 

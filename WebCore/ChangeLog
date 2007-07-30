@@ -1,3 +1,22 @@
+2007-07-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+        
+        <rdar://problem/5098931> Attachments are lost when they are moved into a ToDo after a delete
+        
+        Added an editor client method for asking whether or not it is
+        OK to merge content after a delete.
+
+        * bridge/EditorClient.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Ask if the 
+        merge is allowed.
+        * platform/gdk/EditorClientGdk.cpp: 
+        (WebCore::EditorClientGdk::shouldMoveRangeAfterDelete): Added a method stub.
+        * platform/gdk/EditorClientGdk.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h: 
+        (WebCore::SVGEmptyEditorClient::shouldMoveRangeAfterDelete): Ditto.
+
 2007-07-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.

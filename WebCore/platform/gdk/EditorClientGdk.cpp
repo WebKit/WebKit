@@ -107,6 +107,12 @@ bool EditorClientGdk::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
     return false;
 }
 
+bool EditorClientGdk::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
+{
+    notImplemented();
+    return true;
+}
+
 void EditorClientGdk::didBeginEditing()
 {
     notImplemented();

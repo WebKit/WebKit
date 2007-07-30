@@ -87,6 +87,11 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return YES;
 }
 
+- (BOOL)webView:(WebView *)webView shouldMoveRangeAfterDelete:(DOMRange *)range replacingRange:(DOMRange *)rangeToBeReplaced
+{
+    return YES;
+}
+
 - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
 {
     return YES;

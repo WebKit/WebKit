@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "Frame.h"
 #include "Logging.h"
@@ -536,6 +537,11 @@ void DeleteSelectionCommand::mergeParagraphs()
         m_endingPosition = startOfParagraphToMove.deepEquivalent();
         return;
     }
+    
+    RefPtr<Range> range = new Range(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(endOfParagraphToMove.deepEquivalent()));
+    RefPtr<Range> rangeToBeReplaced = new Range(document(), rangeCompliantEquivalent(mergeDestination.deepEquivalent()), rangeCompliantEquivalent(mergeDestination.deepEquivalent()));
+    if (!document()->frame()->editor()->client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
+        return;
     
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).

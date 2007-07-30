@@ -225,6 +225,12 @@ bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
         shouldApplyStyle:kit(style) toElementsInDOMRange:kit(range)];
 }
 
+bool WebEditorClient::shouldMoveRangeAfterDelete(Range* range, Range* rangeToBeReplaced)
+{
+    return [[m_webView _editingDelegateForwarder] webView:m_webView
+        shouldMoveRangeAfterDelete:kit(range) replacingRange:kit(rangeToBeReplaced)];
+}
+
 bool WebEditorClient::shouldBeginEditing(Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView

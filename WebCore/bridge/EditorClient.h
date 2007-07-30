@@ -86,6 +86,7 @@ public:
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
 //  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;
 //  virtual bool doCommandBySelector(SEL selector) = 0;
+    virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;

@@ -1,3 +1,26 @@
+2007-07-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+        
+        <rdar://problem/5098931> Attachments are lost when they are moved into a ToDo after a delete
+        
+        Mail needs to be asked if it is OK to do the content movement that happens 
+        after a deleting in a situation like this one: 
+        <div contenteditable="plaintext-only">foo</div><div>^bar</div> 
+        so that they can prevent the move or so that they can save content that 
+        will be stripped by the move. This could have been done with shouldInsertNode 
+        and a new WebViewInsertAction for "moves", but WebKit clients like Mail and 
+        DashCode think that a shouldInsert* means that the user pasted something and
+        perform actions only appropriate for pastes.  This change is less risky because
+        it won't require those clients to change their code.
+
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldMoveRangeAfterDelete:replacingRange:]):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldMoveRangeAfterDelete):
+        * WebView/WebEditingDelegatePrivate.h:
+
 2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org>
 
         Reviewed by Adam.
