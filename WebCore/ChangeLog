@@ -1,3 +1,21 @@
+2007-07-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5352526>
+        http://bugs.webkit.org/show_bug.cgi?id=14704
+        REGRESSION: sync XMLHttpRequest.send() raises an exception for failed authentication
+
+        Test: http/tests/xmlhttprequest/failed-auth.html
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Make the fake response better match the real one
+        in case of failed authentication. Unfortunately, NSURLConnection doesn't give us the real response.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): If the response has an HTTP code in it, then the error wasn't
+        a network one, and an exception shouldn't be raised.
+
 2007-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

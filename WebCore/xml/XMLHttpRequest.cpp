@@ -436,7 +436,9 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
         m_loader = 0;
         
-        if (error.isNull() || request.url().isLocalFile())
+        // No exception for file:/// resources, see <rdar://problem/4962298>.
+        // Also, if we have an HTTP response, then it wasn't a network error in fact.
+        if (error.isNull() || request.url().isLocalFile() || response.httpStatusCode() > 0)
             processSyncLoadResults(data, response);
         else
             ec = NETWORK_ERR;

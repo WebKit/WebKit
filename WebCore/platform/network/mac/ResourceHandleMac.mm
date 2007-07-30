@@ -240,9 +240,16 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     else {
         response = ResourceResponse(request.url(), String(), 0, String(), String());
         if ([nsError domain] == NSURLErrorDomain)
-            response.setHTTPStatusCode([nsError code]);
+            switch ([nsError code]) {
+                case NSURLErrorUserCancelledAuthentication:
+                    // FIXME: we should really return the actual HTTP response, but sendSynchronousRequest doesn't provide us with one.
+                    response.setHTTPStatusCode(401);
+                    break;
+                default:
+                    response.setHTTPStatusCode([nsError code]);
+            }
         else
-            response.setHTTPStatusCode(404);       
+            response.setHTTPStatusCode(404);
     }
     
     data.resize([result length]);

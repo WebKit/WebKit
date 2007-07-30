@@ -1,3 +1,19 @@
+2007-07-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5352526>
+        http://bugs.webkit.org/show_bug.cgi?id=14704
+        REGRESSION: sync XMLHttpRequest.send() raises an exception for failed authentication
+
+        * http/tests/xmlhttprequest/failed-auth-expected.txt: Added.
+        * http/tests/xmlhttprequest/failed-auth.html: Added.
+        This test has other cases from bug 13075 commented out, as they still fail.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html: Added.
+        This test already passed, but I think it's useful to cover this case, too.
+
 2007-07-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
