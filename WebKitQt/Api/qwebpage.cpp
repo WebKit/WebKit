@@ -118,6 +118,9 @@ QWebPage::QWebPage(QWidget *parent)
     setSettings(QWebSettings::global());
     QPalette pal = palette();
     pal.setBrush(QPalette::Background, Qt::white);
+
+    setAttribute(Qt::WA_OpaquePaintEvent);
+
     setPalette(pal);
     setAcceptDrops(true);
 }
@@ -358,15 +361,20 @@ void QWebPage::paintEvent(QPaintEvent *ev)
     time.start();
 #endif
 
-    QRect clip = ev->rect();
-
     QPainter p(this);
 
-    mainFrame()->render(&p, clip);
+    QVector<QRect> vector = ev->region().rects();
+    if (!vector.isEmpty()) {
+        for (int i = 0; i < vector.size(); ++i) {
+            mainFrame()->render(&p, vector.at(i));
+        }
+    } else {
+        mainFrame()->render(&p, ev->rect());
+    }
 
 #ifdef    QWEBKIT_TIME_RENDERING
     int elapsed = time.elapsed();
-    qDebug()<<"paint event on "<<clip<<", took to render =  "<<elapsed;
+    qDebug()<<"paint event on "<<ev->region()<<", took to render =  "<<elapsed;
 #endif
 }
 

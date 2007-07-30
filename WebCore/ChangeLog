@@ -1,3 +1,22 @@
+2007-07-29  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Correctly set the update rect for the scrollbars when they are invalidated.
+        Do not paint entire page for each scroll delta.  Cache the dirty regions
+        when webkit calls ScrollView::updateContents as webkit expects the paint
+        routine to use the dirty regions bounding rect.
+
+        These changes greatly reduce the cpu load as we are no longer painting the
+        entire page for each 1px scroll :P
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::paint):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidateRect):
+
 2007-07-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

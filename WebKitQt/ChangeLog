@@ -1,5 +1,23 @@
 2007-07-29  Adam Treat  <treat@kde.org>
 
+        Reviewed by George Staikos.
+
+        Change QWebPage::paintEvent to draw using the individual rects provided
+        via the QRegion and set the widget to use opaque paint events.
+
+        These changes greatly reduce the cpu load as we are no longer painting the
+        entire page for each 1px scroll :P
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+        * Api/qwebpage.cpp:
+        (QWebPage::QWebPage):
+        (QWebPage::paintEvent):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::addToDirtyRegion):
+
+2007-07-29  Adam Treat  <treat@kde.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Respect the margins when creating frames.

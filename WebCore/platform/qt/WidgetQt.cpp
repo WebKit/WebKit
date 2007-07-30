@@ -192,15 +192,8 @@ void Widget::invalidate()
 
 void Widget::invalidateRect(const IntRect& r)
 {
-    if (data->m_widget)
+    if (data->m_widget) //plugins
         return data->m_widget->update(r);
-
-    // Get the root widget.
-    ScrollView* outermostView = parent();
-    while (outermostView && outermostView->parent())
-        outermostView = outermostView->parent();
-    if (!outermostView)
-        return;
 
     IntRect windowRect = convertToContainingWindow(r);
 
@@ -208,12 +201,11 @@ void Widget::invalidateRect(const IntRect& r)
     IntRect clipRect = windowClipRect();
     windowRect.intersect(clipRect);
 
-    if (qwidget())
-        qwidget()->update(r);
-    else if (parent())
-        parent()->updateContents(r);
-
-    outermostView->addToDirtyRegion(windowRect);
+    if (qwidget()) { //regular frameview
+        qwidget()->update(windowRect);
+    } else if (parent()) { //scrollbars
+        parent()->qwidget()->update(windowRect);
+    }
 }
 
 void Widget::removeFromParent()

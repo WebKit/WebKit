@@ -156,23 +156,15 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    //FIXME update here?
-
-    if (!m_hasStaticBackground) // The main frame can just blit the WebView window
-       // FIXME: Find a way to blit subframes without blitting overlapping content
-       m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(), scrollViewRect, clipRect);
-    else  {
-       // We need to go ahead and repaint the entire backing store.  Do it now before moving the
-       // plugins.
-       m_view->addToDirtyRegion(updateRect);
-       m_view->updateBackingStore();
+    if (!m_hasStaticBackground) {
+       m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
+                                  scrollViewRect, clipRect);
+    } else  {
+       // We need to go ahead and repaint the entire backing store.
+       m_view->update();
     }
 
     m_view->geometryChanged();
-
-    // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
-    // be very fast).
-    m_view->containingWindow()->update();
 }
 
 IntRect ScrollView::ScrollViewPrivate::windowClipRect() const
@@ -209,18 +201,30 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     IntRect containingWindowRect = rect;
     containingWindowRect.setLocation(windowPoint);
 
+    //In QWebPage::paintEvent we paint the ev->region().rects()
+    //individually.  Unfortunately, webkit expects we'll draw the
+    //boundingrect of all update rects instead.  This is unfortunate,
+    //because if we want to draw the scrollbar rects along with the update
+    //rects this results in redrawing the entire page for a 1px scroll.
+    //In light of this we cache the update rects that webkit sends us here
+    //and send the bound along to QWebPage.  The cache is cleared everytime
+    //an actual paint occurs in ScrollView::paint...
+
     // Cache the dirty spot.
-    addToDirtyRegion(containingWindowRect);
+    if (!m_data->m_dirtyRegion.isEmpty())
+        m_data->m_dirtyRegion = m_data->m_dirtyRegion.united(QRegion(containingWindowRect));
+    else
+        m_data->m_dirtyRegion = QRegion(containingWindowRect);
 
     if (now)
-        containingWindow()->repaint(containingWindowRect);
+        containingWindow()->repaint(m_data->m_dirtyRegion.boundingRect());
     else
-        containingWindow()->update(containingWindowRect);
+        containingWindow()->update(m_data->m_dirtyRegion.boundingRect());
 }
 
 void ScrollView::update()
 {
-    containingWindow()->update();
+    containingWindow()->update(frameGeometry());
 }
 
 int ScrollView::visibleWidth() const
@@ -592,6 +596,8 @@ void ScrollView::removeChild(Widget* child)
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 {
     Q_ASSERT(isFrameView());
+
+    m_data->m_dirtyRegion = QRegion(); //clear the cache...
 
     if (context->paintingDisabled())
         return;
