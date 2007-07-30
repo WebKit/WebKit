@@ -859,7 +859,8 @@ void dump(void)
                 errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
             printf("ERROR: nil result from %s", errorMessage);
         } else {
-            fputs([result UTF8String], stdout);
+            NSData *data = [result dataUsingEncoding:NSUTF8StringEncoding];
+            fwrite([data bytes], 1, [data length], stdout);
             if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive)
                 dumpFrameScrollPosition(mainFrame);
         }
