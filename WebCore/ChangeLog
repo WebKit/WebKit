@@ -1,3 +1,11 @@
+2007-07-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5274937> Safari 3 breaks Missing Sync's WebKit code by crashing
+
+        * loader/MainResourceLoader.cpp: (WebCore::MainResourceLoader::continueAfterContentPolicy): Nil check for the FrameLoader.
+
 2007-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
