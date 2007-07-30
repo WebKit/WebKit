@@ -215,8 +215,8 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* page_class)
             NULL,
             NULL,
             webkit_gtk_marshal_VOID__OBJECT_BOOLEAN,
-            G_TYPE_NONE, 1,
-            WEBKIT_GTK_TYPE_FRAME);
+            G_TYPE_NONE, 2,
+            WEBKIT_GTK_TYPE_FRAME, G_TYPE_BOOLEAN);
 
     webkit_gtk_page_signals[TITLE_CHANGED] = g_signal_new("title_changed",
             G_TYPE_FROM_CLASS(page_class),
