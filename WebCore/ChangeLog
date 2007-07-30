@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        On Windows make sure the dll also ends up in $$OUTPUT_DIR/bin, so that QtLauncher can find it.
+
+        * WebCore.pro:
+
+2007-07-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Removed the __BUILDING_QT ifdef in JSStringRef.h and changed UChar for the Qt build to use wchar_t on Windows.
 
         * platform/TextEncoding.cpp:
