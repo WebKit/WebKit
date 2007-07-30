@@ -1,3 +1,15 @@
+2007-07-29  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5369282> REGRESSION: DOMHTMLInput throwing exception due to missing _isEdited method
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isEdited]):
+        (-[DOMHTMLTextAreaElement _isEdited]):
+        * bindings/objc/DOMPrivate.h:
+        Renamed _isUserEdited to _isEdited.
+
 2007-07-29  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
