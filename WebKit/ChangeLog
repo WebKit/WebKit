@@ -1,3 +1,16 @@
+2007-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5370710> 
+        REGRESSION: After switching from Bookmark view, the Find Banner won't appear while displaying a PDF file
+
+        Implement hasHTMLView.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::hasHTMLView):
+
 2007-07-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tristan.

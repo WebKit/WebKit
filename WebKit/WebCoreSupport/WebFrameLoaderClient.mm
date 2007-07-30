@@ -193,6 +193,12 @@ void WebFrameLoaderClient::setDocumentViewFromCachedPage(CachedPage* cachedPage)
     [m_webFrame->_private->webFrameView _setDocumentView:cachedView];
 }
 
+bool WebFrameLoaderClient::hasHTMLView() const
+{
+    NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
+    return [view isKindOfClass:[WebHTMLView class]];
+}
+
 void WebFrameLoaderClient::forceLayout()
 {
     NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];

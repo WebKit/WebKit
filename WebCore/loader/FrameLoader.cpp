@@ -2508,8 +2508,8 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     m_committedFirstRealDocumentLoad = true;
     
-    // For non-cached pages, these methods are called in FrameLoader::begin.
-    if (cachedPage) {
+    // For non-cached HTML pages, these methods are called in FrameLoader::begin.
+    if (cachedPage || !m_client->hasHTMLView()) {
         dispatchDidCommitLoad(); 
             
         // If we have a title let the WebView know about it. 

@@ -76,6 +76,8 @@ namespace WebCore {
         virtual bool hasWebView() const = 0; // mainly for assertions
         virtual bool hasFrameView() const = 0; // ditto
 
+        virtual bool hasHTMLView() const { return true; }
+
         virtual bool privateBrowsingEnabled() const = 0;
 
         virtual void makeDocumentView() = 0;

@@ -1,3 +1,20 @@
+2007-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5370710> 
+        REGRESSION: After switching from Bookmark view, the Find Banner won't appear while displaying a PDF file
+
+        Add a hasHTMLView to FrameLoaderClient. This is only useful for clients who can show different views for different
+        MIME types and URL schemes.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        Call delegate methods here if the current view is not a HTML view.
+        
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::hasHTMLView):
+
 2007-07-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

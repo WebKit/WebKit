@@ -66,6 +66,7 @@ private:
 
     virtual void makeDocumentView();
     virtual void makeRepresentation(WebCore::DocumentLoader*);
+    virtual bool hasHTMLView() const;
     virtual void setDocumentViewFromCachedPage(WebCore::CachedPage*);
     virtual void forceLayout();
     virtual void forceLayoutForNonHTML();
