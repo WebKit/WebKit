@@ -104,6 +104,12 @@ bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
     return true;
 }
 
+bool EditorClientQt::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
+{
+    notImplemented();
+    return true;
+}
+
 void EditorClientQt::didBeginEditing()
 {
     m_editing = true;

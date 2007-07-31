@@ -1,3 +1,11 @@
+2007-07-30  Adam Treat  <treat@kde.org>
+
+        Fix build.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldMoveRangeAfterDelete):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-07-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
