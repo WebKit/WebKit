@@ -1,3 +1,15 @@
+2007-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5371515>
+        BitmapImage::getTIFFRepresentation() bug results in favicons not working at many sites
+
+        Don't bail out if a single frame is invalid.
+        
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::getTIFFRepresentation):
+
 2007-07-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

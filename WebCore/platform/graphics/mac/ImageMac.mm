@@ -82,20 +82,26 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     // in certain circumstances that call will spam the console with an error message
     if (!numFrames)
         return 0;
-    CFMutableDataRef data = CFDataCreateMutable(0, 0);
-    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numFrames, 0);
-    if (!destination)
-        return 0;
 
+    Vector<CGImageRef> images;
     for (unsigned i = 0; i < numFrames; ++i ) {
         CGImageRef cgImage = frameAtIndex(i);
-        if (!cgImage) {
-            CFRelease(destination);
-            return 0;    
-        }
-        CGImageDestinationAddImage(destination, cgImage, 0);
+        if (cgImage)
+            images.append(cgImage);
     }
+
+    unsigned numValidFrames = images.size();
+    
+    CFMutableDataRef data = CFDataCreateMutable(0, 0);
+    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numValidFrames, 0);
+    
+    if (!destination)
+        return 0;
+    
+    for (unsigned i = 0; i < numValidFrames; ++i)
+        CGImageDestinationAddImage(destination, images[i], 0);
+
     CGImageDestinationFinalize(destination);
     CFRelease(destination);
 
