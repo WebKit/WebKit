@@ -232,6 +232,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_containsPlugIns(false)
     , m_redirectionTimer(this, &FrameLoader::redirectionTimerFired)
     , m_checkCompletedTimer(this, &FrameLoader::checkCompletedTimerFired)
+    , m_checkLoadCompleteTimer(this, &FrameLoader::checkLoadCompleteTimerFired)
     , m_opener(0)
     , m_openedByDOM(false)
     , m_creatingInitialEmptyDocument(false)
@@ -808,6 +809,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_scheduledRedirection.clear();
 
     m_checkCompletedTimer.stop();
+    m_checkLoadCompleteTimer.stop();
 
     m_receivedData = false;
 
@@ -1209,6 +1211,18 @@ void FrameLoader::scheduleCheckCompleted()
 {
     if (!m_checkCompletedTimer.isActive())
         m_checkCompletedTimer.startOneShot(0);
+}
+
+void FrameLoader::checkLoadCompleteTimerFired(Timer<FrameLoader>*)
+{
+    if (m_frame->page())
+        checkLoadComplete();
+}
+
+void FrameLoader::scheduleCheckLoadComplete()
+{
+    if (!m_checkLoadCompleteTimer.isActive())
+        m_checkLoadCompleteTimer.startOneShot(0);
 }
 
 void FrameLoader::checkCallImplicitClose()
@@ -2261,10 +2275,13 @@ void FrameLoader::stopAllLoaders()
     m_inStopAllLoaders = false;    
 }
 
-void FrameLoader::stopForUserCancel()
+void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
 {
     stopAllLoaders();
-    if (m_frame->page())
+    
+    if (deferCheckLoadComplete)
+        scheduleCheckLoadComplete();
+    else if (m_frame->page())
         checkLoadComplete();
 }
 

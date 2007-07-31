@@ -1,3 +1,20 @@
+2007-07-31  Matt Perry  <mpComplete@gmail.com>
+
+        Reviewed by Brady and Darin, tweaked by Brady, landed by Brady
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14757 and <rdar://problem/5364692>
+        HTMLTokenizer::processingData implementation is incorrect
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processingData): Made it also return true if the HTMLTokenizer was inside the write() call.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::checkLoadCompleteTimerFired):
+        (WebCore::FrameLoader::scheduleCheckLoadComplete):
+        (WebCore::FrameLoader::stopForUserCancel): Changed a call to checkLoadComplete to be asynchronous, since
+        stopForUserCancel can be called while parsing.
+        * loader/FrameLoader.h:
+
 2007-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

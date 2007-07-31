@@ -219,7 +219,9 @@ void DOMWindow::stop()
     if (!m_frame)
         return;
 
-    m_frame->loader()->stopForUserCancel();
+    // We must check whether the load is complete asynchronously, because we might still be parsing
+    // the document until the callstack unwinds.
+    m_frame->loader()->stopForUserCancel(true);
 }
 
 void DOMWindow::alert(const String& message)

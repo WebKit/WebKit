@@ -1502,7 +1502,7 @@ void HTMLTokenizer::stopParsing()
 
 bool HTMLTokenizer::processingData() const
 {
-    return m_timer.isActive();
+    return m_timer.isActive() || inWrite;
 }
 
 void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
