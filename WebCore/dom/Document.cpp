@@ -413,6 +413,10 @@ Document::~Document()
         delete m_jsEditor;
         m_jsEditor = 0;
     }
+    
+    unsigned count = sizeof(m_nameCollectionInfo) / sizeof(m_nameCollectionInfo[0]);
+    for (unsigned i = 0; i < count; i++)
+        deleteAllValues(m_nameCollectionInfo[i]);
 }
 
 void Document::resetLinkColor()
@@ -3390,15 +3394,15 @@ PassRefPtr<HTMLCollection> Document::documentNamedItems(const String &name)
 
 HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Type type, const String& name)
 {
-    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo>& map = m_nameCollectionInfo[type - HTMLCollection::UnnamedCollectionTypes];
+    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo*>& map = m_nameCollectionInfo[type - HTMLCollection::UnnamedCollectionTypes];
     
     AtomicString atomicName(name);
     
-    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo>::iterator iter = map.find(atomicName.impl());
+    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo*>::iterator iter = map.find(atomicName.impl());
     if (iter == map.end())
-        iter = map.add(atomicName.impl(), HTMLCollection::CollectionInfo()).first;
+        iter = map.add(atomicName.impl(), new HTMLCollection::CollectionInfo).first;
     
-    return &iter->second;
+    return iter->second;
 }
 
 PassRefPtr<NameNodeList> Document::getElementsByName(const String &elementName)

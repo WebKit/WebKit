@@ -1,3 +1,18 @@
+2007-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5371582>
+        REGRESSION: PLT .5% slower due to r24451 (copying HTMLCollection objects)
+        
+        Make the hash maps store CollectionInfo pointers to reduce amount of copying when
+        inserting/rehashing etc.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::nameCollectionInfo):
+        * dom/Document.h:
+
 2007-07-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
