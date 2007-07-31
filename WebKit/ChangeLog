@@ -1,3 +1,11 @@
+2007-07-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5367919> A crash occurs at WebCore::Frame::isFrameSet() when attempting to print a iframe before it loads at http://www.monster.com/
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView knowsPageRange:]): Nil check for frame.
+
 2007-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

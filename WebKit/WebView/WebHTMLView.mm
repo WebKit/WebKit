@@ -3312,7 +3312,10 @@ noPromisedData:
     // according to the paper size
     float minLayoutWidth = 0.0f;
     float maxLayoutWidth = 0.0f;
-    if (!core([self _frame])->isFrameSet()) {
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return NO;
+    if (!frame->isFrameSet()) {
         float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
         minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
         maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;
