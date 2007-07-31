@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1128
+layer at (0,0) size 785x1341
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1128
-  RenderBlock {HTML} at (0,0) size 785x1128
-    RenderBody {BODY} at (8,8) size 769x1099
+layer at (0,0) size 785x1341
+  RenderBlock {HTML} at (0,0) size 785x1341
+    RenderBody {BODY} at (8,8) size 769x1312
       RenderBlock {H1} at (0,0) size 769x37 [color=#FF0000]
         RenderText {#text} at (0,0) size 525x37
           text run at (0,0) width 525: "This should be red: hsl(0, 100%, 50%)"
@@ -68,3 +68,15 @@ layer at (0,0) size 785x1128
       RenderBlock {H1} at (0,1062) size 769x37 [color=#7FFF7F]
         RenderText {#text} at (0,0) size 728x37
           text run at (0,0) width 728: "This should be light green, too: hsl(-600, 100%, 75%)"
+      RenderBlock (anonymous) at (0,1120) size 769x18
+        RenderText {#text} at (0,0) size 295x18
+          text run at (0,0) width 295: "Check Hues values with a floating point angle."
+      RenderBlock {H1} at (0,1159) size 769x37 [color=#FF0000]
+        RenderText {#text} at (0,0) size 549x37
+          text run at (0,0) width 549: "This should be red: hsl(0.0, 100%, 50%)"
+      RenderBlock {H1} at (0,1217) size 769x37 [color=#00FF00]
+        RenderText {#text} at (0,0) size 627x37
+          text run at (0,0) width 627: "This should be green: hsl(120.00, 100%, 50%)"
+      RenderBlock {H1} at (0,1275) size 769x37 [color=#0000FF]
+        RenderText {#text} at (0,0) size 626x37
+          text run at (0,0) width 626: "This should be blue: hsl(240.000, 100%, 50%)"

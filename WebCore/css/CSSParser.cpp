@@ -2514,7 +2514,7 @@ bool CSSParser::parseHSLParameters(Value* value, double* colorArray, bool parseA
     ValueList* args = value->function->args;
     Value* v = args->current();
     // Get the first value
-    if (!validUnit(v, FInteger, true))
+    if (!validUnit(v, FNumber, true))
         return false;
     // normalize the Hue value and change it to be between 0 and 1.0
     colorArray[0] = (((static_cast<int>(v->fValue) % 360) + 360) % 360) / 360.0;

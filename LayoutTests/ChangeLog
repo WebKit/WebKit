@@ -1,3 +1,19 @@
+2007-07-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Updated tests for http://bugs.webkit.org/show_bug.cgi?id=14825
+        Non-integer hsl() colours are ignored
+
+        * fast/css/hsl-color-expected.checksum:
+        * fast/css/hsl-color-expected.png:
+        * fast/css/hsl-color-expected.txt:
+        * fast/css/hsl-color.html: Add non-integer hue tests
+        * fast/css/hsla-color-expected.checksum:
+        * fast/css/hsla-color-expected.png:
+        * fast/css/hsla-color-expected.txt:
+        * fast/css/hsla-color.html: Add non-integer hue tests 
+
 2007-07-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,14 @@
+2007-07-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14825
+        Non-integer hsl() colours are ignored
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseHSLParameters): Parse hue as a Number,
+        not an Integer. 
+
 2007-07-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
