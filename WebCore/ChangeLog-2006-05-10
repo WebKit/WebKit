@@ -1786,7 +1786,7 @@
 
         Reviewed by Darin.
 
-        Fix for http://bugs.webkit.org/show_bug.cgi?id=8651:
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=8445:
         [DOMHTMLSelectElement multiple] returns no when the select element is multiple
 
         Correct the logic errors, which are clearly indicated by the changeset given
