@@ -271,6 +271,7 @@ static CachedResourceClient* promisedDataClient()
 
 @interface NSView (WebHTMLViewFileInternal)
 - (void)_web_setPrintingModeRecursive;
+- (void)_web_setPrintingModeRecursiveAndAdjustViewSize;
 - (void)_web_clearPrintingModeRecursive;
 - (void)_web_layoutIfNeededRecursive;
 @end
@@ -1385,6 +1386,22 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [super _web_clearPrintingModeRecursive];
 }
 
+- (void)_web_setPrintingModeRecursiveAndAdjustViewSize
+{
+    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
+    [super _web_setPrintingModeRecursiveAndAdjustViewSize];
+}
+
+- (void)_layoutForPrinting
+{
+    // Set printing mode temporarily so we can adjust the size of the view. This will allow
+    // AppKit's pagination code to use the correct height for the page content. Leaving printing
+    // mode on indefinitely would interfere with Mail's printing mechanism (at least), so we just
+    // turn it off again after adjusting the size.
+    [self _web_setPrintingModeRecursiveAndAdjustViewSize];
+    [self _web_clearPrintingModeRecursive];
+}
+
 - (void)_layoutIfNeeded
 {
     ASSERT(!_private->subviewsSetAside);
@@ -1787,6 +1804,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (void)_web_setPrintingModeRecursive
 {
     [_subviews makeObjectsPerformSelector:@selector(_web_setPrintingModeRecursive)];
+}
+
+- (void)_web_setPrintingModeRecursiveAndAdjustViewSize
+{
+    [_subviews makeObjectsPerformSelector:@selector(_web_setPrintingModeRecursiveAndAdjustViewSize)];
 }
 
 - (void)_web_clearPrintingModeRecursive

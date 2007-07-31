@@ -115,4 +115,9 @@
 // SPI for DumpRenderTree
 - (void)_updateActiveState;
 
+// SPI for printing (should be converted to API someday). When the WebHTMLView isn't being printed
+// directly, this method must be called before paginating, or the computed height might be incorrect.
+// Typically this would be called from inside an override of -[NSView knowsPageRange:].
+- (void)_layoutForPrinting;
+
 @end

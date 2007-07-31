@@ -1,3 +1,24 @@
+2007-07-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/5216176> Need WebKit SPI to allow clients using embedded WebViews to avoid 
+          clipping ends of some printed pages
+          
+        This provides Mail, and other clients that print views that embed WebViews, a way to ensure that
+        the HTML is laid out for printing before pagination occurs.
+
+        * WebView/WebHTMLViewPrivate.h:
+        new SPI method -_layoutForPrinting
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]):
+        new method, just like existing _web_setPrintingModeRecursive except passes YES for adjustViewSize
+        (-[WebHTMLView _layoutForPrinting]):
+        new SPI method, sets printing mode temporarily to adjust the view size for printing 
+        (-[NSView _web_setPrintingModeRecursiveAndAdjustViewSize]):
+        new helper method to do the recursion
+
 2007-07-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
