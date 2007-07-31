@@ -1,3 +1,43 @@
+2007-07-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Breaking up fast/replaced/width100percent.html into separate tests for the different elements.
+
+        * fast/replaced/width100percent-button-expected.checksum: Added.
+        * fast/replaced/width100percent-button-expected.png: Added.
+        * fast/replaced/width100percent-button-expected.txt: Added.
+        * fast/replaced/width100percent-button.html: Added.
+        * fast/replaced/width100percent-checkbox-expected.checksum: Added.
+        * fast/replaced/width100percent-checkbox-expected.png: Added.
+        * fast/replaced/width100percent-checkbox-expected.txt: Added.
+        * fast/replaced/width100percent-checkbox.html: Added.
+        * fast/replaced/width100percent-image-expected.checksum: Added.
+        * fast/replaced/width100percent-image-expected.png: Added.
+        * fast/replaced/width100percent-image-expected.txt: Added.
+        * fast/replaced/width100percent-image.html: Added.
+        * fast/replaced/width100percent-menulist-expected.checksum: Added.
+        * fast/replaced/width100percent-menulist-expected.png: Added.
+        * fast/replaced/width100percent-menulist-expected.txt: Added.
+        * fast/replaced/width100percent-menulist.html: Added.
+        * fast/replaced/width100percent-radio-expected.checksum: Added.
+        * fast/replaced/width100percent-radio-expected.png: Added.
+        * fast/replaced/width100percent-radio-expected.txt: Added.
+        * fast/replaced/width100percent-radio.html: Added.
+        * fast/replaced/width100percent-textarea-expected.checksum: Added.
+        * fast/replaced/width100percent-textarea-expected.png: Added.
+        * fast/replaced/width100percent-textarea-expected.txt: Added.
+        * fast/replaced/width100percent-textarea.html: Added.
+        * fast/replaced/width100percent-textfield-expected.checksum: Added.
+        * fast/replaced/width100percent-textfield-expected.png: Added.
+        * fast/replaced/width100percent-textfield-expected.txt: Added.
+        * fast/replaced/width100percent-textfield.html: Added.
+
+        * fast/replaced/width100percent.html: Removed.
+        * fast/replaced/width100percent-expected.checksum: Removed.
+        * fast/replaced/width100percent-expected.png: Removed.
+        * fast/replaced/width100percent-expected.txt: Removed.
+
 2007-07-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
