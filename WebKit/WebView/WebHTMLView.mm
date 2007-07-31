@@ -3781,12 +3781,12 @@ noPromisedData:
     if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
         return NO;
     
-    NSString *string = [event charactersIgnoringModifiers];
-    if ([string isEqualToString:@"b"]) {
+    NSString *string = [event characters];
+    if ([string caseInsensitiveCompare:@"b"] == NSOrderedSame) {
         [self _toggleBold];
         return YES;
     }
-    if ([string isEqualToString:@"i"]) {
+    if ([string caseInsensitiveCompare:@"i"] == NSOrderedSame) {
         [self _toggleItalic];
         return YES;
     }

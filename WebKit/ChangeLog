@@ -1,3 +1,12 @@
+2007-07-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5308020> REGRESSION: Command-N with Dvorak-Qwerty keyboard layout stopped working inside web page text fields
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        The input method may have modified the character we get, so don't use charactersIgnoringModifiers to interpret the character we get.
+
 2007-07-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
