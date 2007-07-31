@@ -1,5 +1,15 @@
 2007-07-31  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Beth.
+
+        Updated this test to force display to happen earlier. This works around a bug in DRT that draws the scrollbars in a different way from Safari.
+
+        * fast/replaced/width100percent-textarea-expected.checksum:
+        * fast/replaced/width100percent-textarea-expected.png:
+        * fast/replaced/width100percent-textarea.html:
+
+2007-07-31  Adele Peterson  <adele@apple.com>
+
         Reviewed by Sam.
 
         Breaking up fast/replaced/width100percent.html into separate tests for the different elements.
