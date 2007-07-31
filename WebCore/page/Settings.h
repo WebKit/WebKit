@@ -113,8 +113,8 @@ namespace WebCore {
         void setUsesDashboardBackwardCompatibilityMode(bool);
         bool usesDashboardBackwardCompatibilityMode() const { return m_usesDashboardBackwardCompatibilityMode; }
         
-        void setNeedsAcrobatFrameReloadingQuirk(bool);
-        bool needsAcrobatFrameReloadingQuirk() const { return m_needsAcrobatFrameReloadingQuirk; }
+        void setNeedsAdobeFrameReloadingQuirk(bool);
+        bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
         
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
@@ -163,7 +163,7 @@ namespace WebCore {
         bool m_shouldPrintBackgrounds : 1;
         bool m_textAreasAreResizable : 1;
         bool m_usesDashboardBackwardCompatibilityMode : 1;
-        bool m_needsAcrobatFrameReloadingQuirk : 1;
+        bool m_needsAdobeFrameReloadingQuirk : 1;
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;

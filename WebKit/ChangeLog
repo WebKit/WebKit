@@ -1,3 +1,16 @@
+2007-07-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver and Beth.
+
+        <rdar://problem/5211271> ADOBE Leopard 9A410: At the first Launching InDesign after deactivate, EULA page gets blanked.
+
+        Check for more Adobe applications that need the frame reload quirk. Also cache the answer
+        so the version check dosen't happen more than once.
+
+        * WebView/WebView.mm:
+        (-[WebView _needsAdobeFrameReloadingQuirk]):
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2007-07-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

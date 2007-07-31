@@ -1,3 +1,18 @@
+2007-07-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver and Beth.
+
+        <rdar://problem/5211271> ADOBE Leopard 9A410: At the first Launching InDesign after deactivate, EULA page gets blanked.
+
+        Rename needsAcrobatFrameReloadingQuirk to needsAdobeFrameReloadingQuirk, since this now applies to more Adobe applications.
+
+        * WebCore.exp:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setNeedsAdobeFrameReloadingQuirk):
+        * page/Settings.h:
+        (WebCore::Settings::needsAcrobatFrameReloadingQuirk):
+
 2007-07-31  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Brady and Darin, tweaked by Brady, landed by Brady

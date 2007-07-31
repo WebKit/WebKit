@@ -849,6 +849,28 @@ static bool debugWidget = true;
     return _private->formDelegate;
 }
 
+- (BOOL)_needsAdobeFrameReloadingQuirk
+{
+    static BOOL checked = NO;
+    static BOOL needsQuirk = NO;
+
+    if (checked)
+        return needsQuirk;
+
+    needsQuirk = WKAppVersionCheckLessThan(@"com.adobe.Acrobat", -1, 9.0)
+        || WKAppVersionCheckLessThan(@"com.adobe.Acrobat.Pro", -1, 9.0)
+        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9.0)
+        || WKAppVersionCheckLessThan(@"com.adobe.distiller", -1, 9.0)
+        || WKAppVersionCheckLessThan(@"com.adobe.Contribute", -1, 4.2)
+        || WKAppVersionCheckLessThan(@"com.adobe.dreamweaver-9.0", -1, 9.1)
+        || WKAppVersionCheckLessThan(@"com.macromedia.fireworks", -1, 9.1)
+        || WKAppVersionCheckLessThan(@"com.adobe.InCopy", -1, 5.1)
+        || WKAppVersionCheckLessThan(@"com.adobe.InDesign", -1, 5.1)
+        || WKAppVersionCheckLessThan(@"com.adobe.Soundbooth", -1, 2);
+
+    return needsQuirk;
+}
+
 - (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)preferences
 {
     if (!_private->page)
@@ -888,10 +910,7 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
-    settings->setNeedsAcrobatFrameReloadingQuirk(WKAppVersionCheckLessThan(@"com.adobe.Acrobat", -1, 9)
-        || WKAppVersionCheckLessThan(@"com.adobe.Acrobat.Pro", -1, 9)
-        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9)
-        || WKAppVersionCheckLessThan(@"com.adobe.distiller", -1, 9));
+    settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification

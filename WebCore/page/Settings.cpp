@@ -56,7 +56,7 @@ Settings::Settings(Page* page)
     , m_shouldPrintBackgrounds(false)
     , m_textAreasAreResizable(false)
     , m_usesDashboardBackwardCompatibilityMode(false)
-    , m_needsAcrobatFrameReloadingQuirk(false)
+    , m_needsAdobeFrameReloadingQuirk(false)
     , m_isDOMPasteAllowed(false)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
@@ -227,11 +227,11 @@ void Settings::setUsesDashboardBackwardCompatibilityMode(bool usesDashboardBackw
     m_usesDashboardBackwardCompatibilityMode = usesDashboardBackwardCompatibilityMode;
 }
 
-// FIXME: This quirk is needed because of Radar 4674537. We need to phase it out once Adobe
+// FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
 // can fix the bug from their end.
-void Settings::setNeedsAcrobatFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
+void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
 {
-    m_needsAcrobatFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
+    m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
