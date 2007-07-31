@@ -1,3 +1,15 @@
+2007-07-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5369009>
+        Crash due to infinite recursion in moveParagraphs deleting line from a Mail message
+
+        * editing/deleting/5369009-expected.checksum: Added.
+        * editing/deleting/5369009-expected.png: Added.
+        * editing/deleting/5369009-expected.txt: Added.
+        * editing/deleting/5369009.html: Added.
+
 2007-07-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

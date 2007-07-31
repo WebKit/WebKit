@@ -69,7 +69,7 @@ private:
 class ReplaceSelectionCommand : public CompositeEditCommand {
 public:
     ReplaceSelectionCommand(Document*, PassRefPtr<DocumentFragment>,
-        bool selectReplacement = true, bool smartReplace = false, bool matchStyle = false, bool preventNesting = true,
+        bool selectReplacement = true, bool smartReplace = false, bool matchStyle = false, bool preventNesting = true, bool movingParagraph = false,
         EditAction = EditActionPaste);
     
     virtual void doApply();
@@ -89,6 +89,7 @@ private:
     bool shouldMergeEnd(bool);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
     
+    void negateStyleRulesThatAffectAppearance();
     void removeRedundantStyles(Node*);
     
     void handlePasteAsQuotationNode();
@@ -106,6 +107,7 @@ private:
     bool m_matchStyle;
     RefPtr<DocumentFragment> m_documentFragment;
     bool m_preventNesting;
+    bool m_movingParagraph;
     EditAction m_editAction;
 };
 

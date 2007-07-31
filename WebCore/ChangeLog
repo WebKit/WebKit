@@ -1,3 +1,29 @@
+2007-07-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5369009> Crash due to infinite recursion in moveParagraphs on delete
+        
+        After the delete, we moved content into the previous block, and a style
+        rule turned a style span in the moved content into a block, throwing
+        moveParagraphs into infinite recursion, as it continually tried and failed
+        to get the style span into the same paragraph as the content just before it.
+        
+        Added a method to ReplaceSelectionCommand to keep inserted style spans 
+        from turning into blocks because of style rules.  Will add code to prevent
+        other kinds of content from changing appearance because of style rules,
+        post-Leopard (5371536). Also added a bool to ReplaceSelectionCommand's 
+        constructor to guard against infinite recursion.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/JSEditor.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::negateStyleRulesThatEffectAppearance):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+
 2007-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
