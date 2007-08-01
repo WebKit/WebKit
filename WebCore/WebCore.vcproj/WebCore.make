@@ -1,5 +1,7 @@
-!if !defined(BUILDSTYLE)
+!IF !defined(BUILDSTYLE)
 BUILDSTYLE=Release
+!ELSEIF "$(BUILDSTYLE)"=="Debug"
+BUILDSTYLE=Debug_Internal
 !ENDIF
 
 install:

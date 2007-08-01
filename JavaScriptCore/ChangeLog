@@ -1,3 +1,12 @@
+2007-08-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Build mod: Fix sln to match configs in vcproj.
+        
+        Reviewed by Adam.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+
 2007-07-30  Simon Hausmann  <hausmann@kde.org>
 
         Done with and reviewed by Lars.
