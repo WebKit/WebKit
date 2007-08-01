@@ -276,8 +276,13 @@ void DeleteButtonController::deleteTarget()
     RefPtr<Node> element = m_target;
     hide();
 
+    // Because the deletion UI only appears when the selection is entirely
+    // within the target, we unconditionally update the selection to be
+    // a caret where the target had been.
+    Position pos = positionBeforeNode(element.get());
     RefPtr<RemoveNodeCommand> command = new RemoveNodeCommand(element.get());
     command->apply();
+    m_frame->selectionController()->setSelection(VisiblePosition(pos));
 }
 
 } // namespace WebCore

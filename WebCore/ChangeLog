@@ -1,3 +1,17 @@
+2007-07-31  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/5362659> CrashTracer: [USER] 11 crashes in Mail at WebCore::InsertLineBreakCommand::doApply()
+
+        The problem was that deleting with the X control leaves the selection inside the fragment that was deleted.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::deleteTarget):
+        Because the deletion UI only appears when the selection is entirely
+        within the target, we unconditionally update the selection to be
+        a caret where the target had been.
+
 2007-07-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
