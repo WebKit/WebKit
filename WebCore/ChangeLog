@@ -1,3 +1,14 @@
+2007-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Speculative fix for <rdar://problem/5359695> 
+        REGRESSION (Tiger Beta): Multiple crashes in WebCore::Widget::getView() const + 6
+                
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+        Null check the frame view.
+
 2007-07-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver and Beth.

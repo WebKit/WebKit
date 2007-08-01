@@ -1071,6 +1071,9 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     if (!m_frame->document())
         return false;
 
+    if (!m_frame->view())
+        return false;
+    
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(true, false), event);
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
