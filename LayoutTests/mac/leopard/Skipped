@@ -39,9 +39,6 @@ editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 # <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
 dom/html/level2/html/HTMLDocument12.html
 
-# <rdar://problem/5313537> fast/encoding/char-encoding.html sometimes fails on Leopard
-fast/encoding/char-encoding.html
-
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html

@@ -1,3 +1,9 @@
+2007-07-31  Oliver Hunt  <oliver@apple.com>
+
+        fast/encoding/char-encoding.html no longer needs to be in the Leopard skiplist
+
+        * mac/leopard/Skipped:
+
 2007-07-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
