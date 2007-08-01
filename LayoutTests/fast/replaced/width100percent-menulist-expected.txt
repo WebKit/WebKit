@@ -14,16 +14,16 @@ layer at (0,0) size 800x600
                 RenderBlock (anonymous) at (0,0) size 51x18
                   RenderText at (8,2) size 20x13
                     text run at (8,2) width 20: "one"
-            RenderTableCell {TD} at (55,1) size 33x24 [r=0 c=1 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,3) size 31x18 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (55,1) size 2x24 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (1,3) size 0x18 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (0,0) size 31x18
                   RenderText at (8,2) size 20x13
                     text run at (8,2) width 20: "two"
-            RenderTableCell {TD} at (89,1) size 33x24 [r=0 c=2 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,3) size 31x18 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (58,1) size 2x24 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (1,3) size 0x18 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (0,0) size 31x18
                   RenderText at (8,2) size 28x13
                     text run at (8,2) width 28: "three"
-            RenderTableCell {TD} at (123,3) size 660x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (61,3) size 722x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "

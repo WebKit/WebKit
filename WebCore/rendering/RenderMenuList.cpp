@@ -249,7 +249,7 @@ void RenderMenuList::calcPrefWidths()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else
-        m_maxPrefWidth = max(m_optionsWidth, theme()->minimumMenuListSize(style()));
+        m_maxPrefWidth = max(m_optionsWidth, theme()->minimumMenuListSize(style())) + m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));
@@ -264,8 +264,7 @@ void RenderMenuList::calcPrefWidths()
         m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() + 
-                m_innerBlock->paddingLeft() + m_innerBlock->paddingRight() + m_innerBlock->borderLeft() + m_innerBlock->borderRight();
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;
 

@@ -41,6 +41,8 @@ public:
 
     virtual const char* renderName() const { return "RenderTextControl"; }
 
+    virtual bool hasControlClip() const { return m_cancelButton; }
+    virtual IntRect controlClipRect(int tx, int ty) const;
     virtual void calcHeight();
     virtual void calcPrefWidths();
     virtual void removeLeftoverAnonymousBoxes() { }

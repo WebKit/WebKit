@@ -668,6 +668,13 @@ bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult
     return false;
 }
 
+IntRect RenderTextControl::controlClipRect(int tx, int ty) const
+{
+    IntRect clipRect = contentBox();
+    clipRect.move(tx, ty);
+    return clipRect;
+}
+
 void RenderTextControl::layout()
 {
     int oldHeight = m_height;
@@ -753,7 +760,15 @@ void RenderTextControl::calcPrefWidths()
             if (factor <= 0)
                 factor = 20;
         }
-        m_maxPrefWidth = static_cast<int>(ceilf(charWidth * factor)) + scrollbarSize;
+        m_maxPrefWidth = static_cast<int>(ceilf(charWidth * factor)) + scrollbarSize +
+                         m_innerText->renderer()->paddingLeft() + m_innerText->renderer()->paddingRight();
+                
+        if (m_resultsButton)
+            m_maxPrefWidth += m_resultsButton->renderer()->borderLeft() + m_resultsButton->renderer()->borderRight() +
+                              m_resultsButton->renderer()->paddingLeft() + m_resultsButton->renderer()->paddingRight();
+        if (m_cancelButton)
+            m_maxPrefWidth += m_cancelButton->renderer()->borderLeft() + m_cancelButton->renderer()->borderRight() +
+                              m_cancelButton->renderer()->paddingLeft() + m_cancelButton->renderer()->paddingRight();
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
@@ -769,15 +784,7 @@ void RenderTextControl::calcPrefWidths()
         m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() +
-                m_innerText->renderer()->paddingLeft() + m_innerText->renderer()->paddingRight();
-
-    if (m_resultsButton)
-        toAdd += m_resultsButton->renderer()->borderLeft() + m_resultsButton->renderer()->borderRight() +
-                 m_resultsButton->renderer()->paddingLeft() + m_resultsButton->renderer()->paddingRight();
-    if (m_cancelButton)
-        toAdd += m_cancelButton->renderer()->borderLeft() + m_cancelButton->renderer()->borderRight() +
-                 m_cancelButton->renderer()->paddingLeft() + m_cancelButton->renderer()->paddingRight();
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
 
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;

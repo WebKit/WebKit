@@ -1,3 +1,31 @@
+2007-07-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated tests for <rdar://problem/5339395> REGRESSION:http://sudokucraving.com does not render grid correctly
+
+        * fast/forms/input-appearance-minWidth.html: Removed. This test is covered by fast/replaced/width100percent-textfield.html.
+        * fast/forms/input-appearance-minWidth-expected.checksum: Removed.
+        * fast/forms/input-appearance-minWidth-expected.png: Removed.
+        * fast/forms/input-appearance-minWidth-expected.txt: Removed.
+
+        * fast/forms/input-table-expected.checksum:
+        * fast/forms/input-table-expected.png:
+        * fast/forms/input-table-expected.txt:
+        * fast/replaced/width100percent-menulist-expected.checksum:
+        * fast/replaced/width100percent-menulist-expected.png:
+        * fast/replaced/width100percent-menulist-expected.txt:
+        * fast/replaced/width100percent-searchfield-expected.checksum: Added.
+        * fast/replaced/width100percent-searchfield-expected.png: Added.
+        * fast/replaced/width100percent-searchfield-expected.txt: Added.
+        * fast/replaced/width100percent-searchfield.html: Added.
+        * fast/replaced/width100percent-textarea-expected.checksum:
+        * fast/replaced/width100percent-textarea-expected.png:
+        * fast/replaced/width100percent-textarea-expected.txt:
+        * fast/replaced/width100percent-textfield-expected.checksum:
+        * fast/replaced/width100percent-textfield-expected.png:
+        * fast/replaced/width100percent-textfield-expected.txt:
+
 2007-07-31  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Brady

@@ -1,3 +1,18 @@
+2007-07-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+         Fix for <rdar://problem/5339395> REGRESSION:http://sudokucraving.com does not render grid correctly
+
+        * rendering/RenderTextControl.h: (WebCore::RenderTextControl::hasControlClip): Clip for search fields.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::controlClipRect): Added a control clip so the search field's cancel button and magnifier glass
+         never draw outside the control's bounds.
+        (WebCore::RenderTextControl::calcPrefWidths): Only include the inner box's padding when calculating the min/max width without using calcContentBoxWidth.
+         Our old behavior was causing that inner padding to get counted twice.  Also, no need to add in the border
+         for an inner box that can't be controlled from outside this class.
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::calcPrefWidths): ditto.
+
 2007-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
