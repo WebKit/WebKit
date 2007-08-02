@@ -364,7 +364,7 @@ unsigned UString::Rep::computeHash(const char *s)
 inline size_t UString::expandedSize(size_t size, size_t otherSize) const
 {
     // Do the size calculation in two parts, being careful to avoid overflow
-    static const size_t maximumAllowableSize = SIZE_T_MAX / sizeof(UChar);
+    static const size_t maximumAllowableSize = std::numeric_limits<size_t>::max() / sizeof(UChar);
     if (size > maximumAllowableSize)
         return 0;
 

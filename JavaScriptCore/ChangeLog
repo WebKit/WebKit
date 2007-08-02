@@ -1,5 +1,12 @@
 2007-08-02  Mark Rowe  <mrowe@apple.com>
 
+        Build fix.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::expandedSize):  Use std::numeric_limits<size_t>::max() rather than the non-portable SIZE_T_MAX.
+
+2007-08-02  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/5352887> "Out of memory" error during repeated JS string concatenation leaks hundreds of MBs of RAM
