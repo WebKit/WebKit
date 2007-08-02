@@ -1,3 +1,17 @@
+2007-08-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/5376156> Mail crash in DeleteButtonController::hide() when dropping selected image on DIV's border
+
+        Add the container element back so the selection can not touch the deletion UI nodes. The container
+        has style to prevent user selection, user drag and user modification.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show): Make the container node, and append the button and outline elements.
+        (WebCore::DeleteButtonController::hide): Remove the container elements and null out the other nodes.
+        * editing/DeleteButtonController.h:
+
 2007-08-01  Steve Falkenburg  <sfalken@apple.com>
 
         Build mod: Fix sln to match configs in vcproj.
