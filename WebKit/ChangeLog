@@ -1,3 +1,28 @@
+2007-08-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson and Kevin Decker.
+
+        - fix <rdar://problem/5377432> Removal of MakeDataExecutable from 64-bit breaks WebKit build
+
+        The trick was to ifdef out more of the code that's only needed to support CFM, which exists
+        only for 32-bit PowerPC.
+
+        * Plugins/WebNetscapePluginPackage.h: Define a SUPPORT_CFM symbol in this internal header when
+        we support CFM. We support it only on 32-bit PowerPC. Only define the isBundle, isCFM, and
+        connID fields when SUPPORT_CFM is on. Also use ResFileRefNum instead of SInt16.
+        * Plugins/WebNetscapePluginPackage.m: Only compile the function pointer and transition vector
+        functions when SUPPORT_CFM is on.
+        (-[WebNetscapePluginPackage openResourceFile]): Put the non-bundle case inside a SUPPORT_CFM
+        ifdef, since all non-CFM plug-ins are bundles.
+        (-[WebNetscapePluginPackage closeResourceFile:]): Ditto.
+        (-[WebNetscapePluginPackage _initWithPath:]): Use SUPPORT_CFM to compile out the code for
+        non-bundle and bundle-based CFM plug-ins, and code that sets isBundle and isCFM.
+        (-[WebNetscapePluginPackage executableType]): Put the CFM case inside SUPPORT_CFM.
+        (-[WebNetscapePluginPackage load]): Put the non-bundle and CFM cases inside SUPPORT_CFM.
+        There was a bit of dead code here.
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]): Put the non-bundle case inside
+        SUPPORT_CFM.
+
 2007-07-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver and Beth.

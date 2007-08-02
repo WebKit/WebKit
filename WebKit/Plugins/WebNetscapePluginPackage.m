@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNetscapePluginPackage.h>
+#import "WebNetscapePluginPackage.h"
 
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebNSObjectExtras.h"
 #import "WebNetscapeDeprecatedFunctions.h"
-
 #import <JavaScriptCore/npruntime_impl.h>
 
-typedef void (* FunctionPointer) (void);
-typedef void (* TransitionVector) (void);
+#ifdef SUPPORT_CFM
+typedef void (* FunctionPointer)(void);
+typedef void (* TransitionVector)(void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
 static TransitionVector tVectorForFunctionPointer(FunctionPointer);
+#endif
 
 #define PluginNameOrDescriptionStringNumber     126
 #define MIMEDescriptionStringNumber             127
@@ -82,28 +82,32 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 }
 #endif
 
-- (SInt16)openResourceFile
+- (ResFileRefNum)openResourceFile
 {
-    FSRef fref;
-    OSErr err;
-    
-    if (isBundle)
-        return CFBundleOpenBundleResourceMap(cfBundle);
-    else {
-        err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
+#ifdef SUPPORT_CFM
+    if (!isBundle) {
+        FSRef fref;
+        OSErr err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr)
             return -1;
         
         return FSOpenResFile(&fref, fsRdPerm);
     }
+#endif
+
+    return CFBundleOpenBundleResourceMap(cfBundle);
 }
 
-- (void)closeResourceFile:(SInt16)resRef
+- (void)closeResourceFile:(ResFileRefNum)resRef
 {
-    if (isBundle)
-        CFBundleCloseBundleResourceMap(cfBundle, resRef);
-    else
+#ifdef SUPPORT_CFM
+    if (!isBundle) {
         CloseResFile(resRef);
+        return;
+    }
+#endif
+
+    CFBundleCloseBundleResourceMap(cfBundle, resRef);
 }
 
 - (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
@@ -196,14 +200,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     OSType type = 0;
 
-    // Bundle
     if (bundle) {
-        isBundle = YES;
+        // Bundle
         CFBundleGetPackageInfo(cfBundle, &type, NULL);
-    }
-    // Single-file plug-in with resource fork
-    else {
-#ifdef __ppc__
+#ifdef SUPPORT_CFM
+        isBundle = YES;
+#endif
+    } else {
+#ifdef SUPPORT_CFM
+        // Single-file plug-in with resource fork
         type = [[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] fileHFSTypeCode];
         isBundle = NO;
         isCFM = YES;
@@ -223,10 +228,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         // Check the length of the data before calling memcmp. We think this fixes 3782543.
         if (data == nil || [data length] < 8)
             return NO;
-        isCFM = memcmp([data bytes], "Joy!peff", 8) == 0;
-#ifndef __ppc__
-        // CFM is PPC-only.
-        if (isCFM)
+        BOOL hasCFMHeader = memcmp([data bytes], "Joy!peff", 8) == 0;
+#ifdef SUPPORT_CFM
+        isCFM = hasCFMHeader;
+#else
+        if (hasCFMHeader)
             return NO;
 #endif
         if (![self isNativeLibraryData:data])
@@ -257,10 +263,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (WebExecutableType)executableType
 {
+#ifdef SUPPORT_CFM
     if (isCFM)
         return WebCFMExecutableType;
-    else
-        return WebMachOExecutableType;
+#endif
+    return WebMachOExecutableType;
 }
 
 - (void)launchRealPlayer
@@ -295,43 +302,49 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
     NP_InitializeFuncPtr NP_Initialize = NULL;
-    MainFuncPtr pluginMainFunc = NULL;
     NPError npErr;
+
+#ifdef SUPPORT_CFM
+    MainFuncPtr pluginMainFunc = NULL;
+#endif
 
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+    CFAbsoluteTime currentTime;
+    CFAbsoluteTime duration;
 #endif
     LOG(Plugins, "%f Load timing started for: %@", start, [self name]);
 
     if (isLoaded)
         return YES;
     
+#ifdef SUPPORT_CFM
     if (isBundle) {
+#endif
         if (!CFBundleLoadExecutable(cfBundle))
             goto abort;
 #if !LOG_DISABLED
-        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-        CFAbsoluteTime duration = currentTime - start;
+        currentTime = CFAbsoluteTimeGetCurrent();
+        duration = currentTime - start;
 #endif
         LOG(Plugins, "%f CFBundleLoadExecutable took %f seconds", currentTime, duration);
         isLoaded = YES;
         
+#ifdef SUPPORT_CFM
         if (isCFM) {
             pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
             if (!pluginMainFunc)
                 goto abort;
         } else {
+#endif
             NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
             NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
             if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown)
                 goto abort;
+#ifdef SUPPORT_CFM
         }
     } else {
-#ifdef __LP64__
-        // CFM is not supported in 64-bit
-        goto abort;
-#else
         // single CFM file
         FSSpec spec;
         FSRef fref;
@@ -353,8 +366,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             goto abort;
         }
 #if !LOG_DISABLED
-        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-        CFAbsoluteTime duration = currentTime - start;
+        currentTime = CFAbsoluteTimeGetCurrent();
+        duration = currentTime - start;
 #endif
         LOG(Plugins, "%f WebGetDiskFragment took %f seconds", currentTime, duration);
         isLoaded = YES;
@@ -366,9 +379,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
         // NOTE: pluginMainFunc is freed after it is called. Be sure not to return before that.
         
-        isCFM = TRUE;
-#endif /* __LP64__ */
+        isCFM = YES;
     }
+#endif /* SUPPORT_CFM */
     
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     resourceRef = [self openResourceFile];
@@ -377,6 +390,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     // swap function tables
+#ifdef SUPPORT_CFM
     if (isCFM) {
         browserFuncs.version = NP_VERSION_MINOR;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
@@ -443,8 +457,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             goto abort;
         }
 #if !LOG_DISABLED
-        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-        CFAbsoluteTime duration = currentTime - mainStart;
+        currentTime = CFAbsoluteTimeGetCurrent();
+        duration = currentTime - mainStart;
 #endif
         LOG(Plugins, "%f main took %f seconds", currentTime, duration);
         
@@ -475,7 +489,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
 
     } else {
-        // no function pointer conversion necessary for mach-o
+
+#endif
+
+        // no function pointer conversion necessary for Mach-O
         browserFuncs.version = NP_VERSION_MINOR;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
         browserFuncs.geturl = NPN_GetURL;
@@ -530,8 +547,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if (npErr != NPERR_NO_ERROR)
             goto abort;
 #if !LOG_DISABLED
-        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-        CFAbsoluteTime duration = currentTime - initializeStart;
+        currentTime = CFAbsoluteTimeGetCurrent();
+        duration = currentTime - initializeStart;
 #endif
         LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
 
@@ -563,11 +580,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         } else {
             LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
         }
+
+#ifdef SUPPORT_CFM
     }
+#endif
 
 #if !LOG_DISABLED
-    CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-    CFAbsoluteTime duration = currentTime - start;
+    currentTime = CFAbsoluteTimeGetCurrent();
+    duration = currentTime - start;
 #endif
     LOG(Plugins, "%f Total load time: %f seconds", currentTime, duration);
 
@@ -676,6 +696,7 @@ abort:
 
 @end
 
+#ifdef SUPPORT_CFM
 
 // function pointer converters
 
@@ -711,6 +732,8 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     return (TransitionVector)newGlue;
 }
 
+#endif
+
 @implementation WebNetscapePluginPackage (Internal)
 
 - (void)_unloadWithShutdown:(BOOL)shutdown
@@ -732,13 +755,13 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
     if (resourceRef != -1)
         [self closeResourceFile:resourceRef];
 
+#ifdef SUPPORT_CFM
     if (isBundle)
+#endif
         CFBundleUnloadExecutable(cfBundle);
-#ifndef __LP64__
-    else {
-        // CFM is not supported in 64-bit
+#ifdef SUPPORT_CFM
+    else
         WebCloseConnection(&connID);
-    }
 #endif
 
     LOG(Plugins, "Plugin Unloaded");

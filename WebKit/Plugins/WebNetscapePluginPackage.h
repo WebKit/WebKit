@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBasePluginPackage.h>
+#import "WebBasePluginPackage.h"
+
+#ifdef BUILDING_ON_TIGER
+typedef short ResFileRefNum;
+#endif
+
+#if defined(__ppc__) && !defined(__LP64__)
+#define SUPPORT_CFM
+#endif
 
 typedef enum {
     WebCFMExecutableType,
@@ -35,21 +43,13 @@ typedef enum {
 
 @interface WebNetscapePluginPackage : WebBasePluginPackage
 {
-    BOOL isBundle;
-    BOOL isCFM;
-    
     NPPluginFuncs pluginFuncs;
     NPNetscapeFuncs browserFuncs;
     
     uint16 pluginSize;
     uint16 pluginVersion;
-        
-#ifndef __LP64__
-    // CFM is not supported in 64-bit
-    CFragConnectionID connID;
-#endif
     
-    SInt16 resourceRef;
+    ResFileRefNum resourceRef;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -70,6 +70,12 @@ typedef enum {
     BOOL isLoaded;
     BOOL needsUnload;
     unsigned int instanceCount;
+        
+#ifdef SUPPORT_CFM
+    BOOL isBundle;
+    BOOL isCFM;
+    CFragConnectionID connID;
+#endif
 }
 
 // Netscape plug-in packages must be explicitly opened and closed by each plug-in instance.
