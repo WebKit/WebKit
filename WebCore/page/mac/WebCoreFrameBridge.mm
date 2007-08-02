@@ -362,14 +362,26 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     String text = m_frame->selectedText();
     text.replace('\\', m_frame->backslashAsCurrencySymbol());
-    return [[(NSString*)text copy] autorelease];
+    return text;
 }
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
-    String text = plainText([range _range]);
-    text.replace('\\', m_frame->backslashAsCurrencySymbol());
-    return [[(NSString*)text copy] autorelease];
+    // This will give a system malloc'd buffer that can be turned directly into an NSString
+    unsigned length;
+    UChar* buf = plainTextToMallocAllocatedBuffer([range _range], length);
+    
+    if (!buf)
+        return [NSString string];
+    
+    UChar backslashAsCurrencySymbol = m_frame->backslashAsCurrencySymbol();
+    if (backslashAsCurrencySymbol != '\\')
+        for (unsigned n = 0; n < length; n++) 
+            if (buf[n] == '\\')
+                buf[n] = backslashAsCurrencySymbol;
+
+    // Transfer buffer ownership to NSString
+    return [[[NSString alloc] initWithCharactersNoCopy:buf length:length freeWhenDone:YES] autorelease];
 }
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
@@ -803,8 +815,11 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor
 {
+    float a = [backgroundColor alphaComponent];
     if (m_frame && m_frame->view()) {
         NSColor *deviceColor = [backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+        float a2 = [deviceColor alphaComponent];
+        if (a && a2);
         Color color = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
                                      (int)(255 * [deviceColor blueComponent]),
                                      (int)(255 * [deviceColor greenComponent]),

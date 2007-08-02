@@ -1237,12 +1237,56 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
 }
 
 // --------
+    
+UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength) 
+{
+    // Do this in pieces to avoid massive reallocations if there is a large amount of text.
+    // Use system malloc for buffers since they can consume lots of memory and current TCMalloc is unable return it back to OS
+    static const unsigned cMaxSegmentSize = 1 << 16;
+    bufferLength = 0;
+    Vector<pair<UChar*, unsigned> >* textSegments = 0;
+    Vector<UChar> textBuffer;
+    textBuffer.reserveCapacity(cMaxSegmentSize);
+    for (TextIterator it(r); !it.atEnd(); it.advance()) {
+        if (textBuffer.size() && textBuffer.size() + it.length() > cMaxSegmentSize) {
+            if (!textSegments)
+                textSegments = new Vector<pair<UChar*, unsigned> >;
+            pair<UChar*, unsigned> newSegment(static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar))), textBuffer.size());
+            memcpy(newSegment.first, textBuffer.data(), textBuffer.size() * sizeof(UChar));
+            textSegments->append(newSegment);
+            textBuffer.clear();
+        }
+        textBuffer.append(it.characters(), it.length());
+        bufferLength += it.length();
+    }
+    
+    if (!bufferLength)
+        return 0;
+    
+    // Since we know the size now, we can make a single buffer out of the pieces with one big alloc
+    UChar* resultBuffer = static_cast<UChar*>(malloc(bufferLength * sizeof(UChar)));
+    UChar* resultPos = resultBuffer;
+    if (textSegments) {
+        for (unsigned n = 0; n < textSegments->size(); n++) {
+            const pair<UChar*, unsigned>& s = textSegments->at(n);
+            memcpy(resultPos, s.first, s.second * sizeof(UChar));
+            free(s.first);
+            resultPos += s.second;
+        }
+        delete textSegments;
+    }
+    memcpy(resultPos, textBuffer.data(), textBuffer.size() * sizeof(UChar));
+    return resultBuffer;
+}
 
 DeprecatedString plainText(const Range* r)
 {
-    DeprecatedString result("");
-    for (TextIterator it(r); !it.atEnd(); it.advance())
-        result.append(reinterpret_cast<const DeprecatedChar*>(it.characters()), it.length());
+    unsigned length;
+    UChar* buf = plainTextToMallocAllocatedBuffer(r, length);
+    if (!buf)
+        return DeprecatedString("");
+    DeprecatedString result(reinterpret_cast<const DeprecatedChar*>(buf), length);
+    free(buf);
     return result;
 }
 

@@ -1,3 +1,35 @@
+2007-08-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5355951>
+        plainText() fragments TCMalloc heap badly on large pages
+        
+        also likely fixes some cases of
+        <rdar://problem/5335382>
+        CrashTracer: [REGRESSION] 73 crashes in Safari at com.apple.WebCore: WebCore::DeprecatedStringData::increaseUnicodeSize + 52
+        
+        If you load http://dscoder.com/test.txt with WebKit build with TCMalloc and system malloc you see that
+        Safari RPRVT with TCMalloc is 118.8MB
+        Safari RPRVT with system malloc is 69.7MB
+        
+        Difference is almost entirely caused by heap fragmentation from a full document plainText() call (for indexing purposes).
+        
+        The patch helps in two ways:
+        - construct plainText string in pieces to avoid O(n^2) reallocs
+        - allocate buffers using system malloc so they can be returned back to OS and don't fragment and grow TCMalloc heap
+    
+        This shrinks http://dscoder.com/test.txt RPRVT to 79.0MB and makes full document plainText() take 50ms instead of 500ms.
+        The benefits are not limited to extreme cases, web pages above ~200kB can show substantial improvement in RPRVT.
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        (WebCore::plainText):
+        * editing/TextIterator.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge selectedString]):
+        (-[WebCoreFrameBridge stringForRange:]):
+
 2007-08-02  David Hyatt  <hyatt@apple.com>
 
         Fix for 5374437, allow comment nodes to be the child of a document.
