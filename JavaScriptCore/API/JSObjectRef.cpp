@@ -42,7 +42,7 @@
 
 using namespace KJS;
 
-JSClassRef JSClassCreate(JSClassDefinition* definition)
+JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
     JSLock lock;
     JSClassRef jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)

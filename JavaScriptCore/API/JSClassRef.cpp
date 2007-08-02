@@ -56,7 +56,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     , convertToType(definition->convertToType)
     , cachedPrototype(0)
 {
-    if (JSStaticValue* staticValue = definition->staticValues) {
+    if (const JSStaticValue* staticValue = definition->staticValues) {
         staticValues = new StaticValuesTable();
         while (staticValue->name) {
             // FIXME: <rdar://problem/4949018>
@@ -66,7 +66,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
         }
     }
     
-    if (JSStaticFunction* staticFunction = definition->staticFunctions) {
+    if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
         staticFunctions = new StaticFunctionsTable();
         while (staticFunction->name) {
             // FIXME: <rdar://problem/4949018>
@@ -110,7 +110,7 @@ void clearReferenceToPrototype(JSObjectRef prototype)
 
 JSClassRef OpaqueJSClass::create(const JSClassDefinition* definition)
 {
-    if (JSStaticFunction* staticFunctions = definition->staticFunctions) {
+    if (const JSStaticFunction* staticFunctions = definition->staticFunctions) {
         // copy functions into a prototype class
         JSClassDefinition protoDefinition = kJSClassDefinitionEmpty;
         protoDefinition.staticFunctions = staticFunctions;

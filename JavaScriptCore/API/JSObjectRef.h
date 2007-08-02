@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -344,8 +344,8 @@ typedef struct {
     const char*                         className;
     JSClassRef                          parentClass;
         
-    JSStaticValue*                      staticValues;
-    JSStaticFunction*                   staticFunctions;
+    const JSStaticValue*                staticValues;
+    const JSStaticFunction*             staticFunctions;
     
     JSObjectInitializeCallback          initialize;
     JSObjectFinalizeCallback            finalize;
@@ -376,7 +376,7 @@ extern const JSClassDefinition kJSClassDefinitionEmpty;
 @param definition A JSClassDefinition that defines the class.
 @result A JSClass with the given definition. Ownership follows the Create Rule.
 */
-JSClassRef JSClassCreate(JSClassDefinition* definition);
+JSClassRef JSClassCreate(const JSClassDefinition* definition);
 
 /*!
 @function

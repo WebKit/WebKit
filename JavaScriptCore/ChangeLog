@@ -1,3 +1,17 @@
+2007-08-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        - fix <rdar://problem/5375186> pointers to pieces of class definition passed to JSClassCreate should all be const
+
+        * API/JSObjectRef.h: Added const.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass): Added const.
+        (OpaqueJSClass::create): Added const.
+        * API/JSObjectRef.cpp:
+        (JSClassCreate): Added const.
+
 2007-08-01  Steve Falkenburg  <sfalken@apple.com>
 
         Build mod: Fix sln to match configs in vcproj.
