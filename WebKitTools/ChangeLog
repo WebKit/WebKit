@@ -1,3 +1,11 @@
+2007-08-02  Adam Roben  <aroben@apple.com>
+
+        Don't delete the stderr file right after creating it
+
+        Reviewed by NOBODY.
+
+        * Scripts/run-webkit-tests:
+
 2007-08-01  Adam Roben  <aroben@apple.com>
 
         When DRT crashes, record stderr and restart DRT

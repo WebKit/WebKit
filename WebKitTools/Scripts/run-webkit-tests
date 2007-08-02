@@ -622,11 +622,12 @@ for my $test (@tests) {
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
         mkpath $dir;
 
+        deleteExpectedAndActualResults($base);
+
         open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
         print CRASH <ERROR>;
         close CRASH;
 
-        deleteExpectedAndActualResults($base);
         recordActualResultsAndDiff($base, $actual);
 
         closeDumpTool();
