@@ -1,3 +1,17 @@
+2007-08-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5374437, allow comment nodes to be the child of a document.
+        Refine the check to always make a root element to check documentElement()
+        rather than firstChild(), since a comment node could be present as the
+        firstChild() now.
+
+        Reviewed by Tim Hatcher
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::childAllowed):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::finished):
+
 2007-08-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

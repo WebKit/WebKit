@@ -1406,7 +1406,7 @@ void HTMLParser::startBody()
 void HTMLParser::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
-    if (current && current->isDocumentNode() && !current->firstChild())
+    if (current && current->isDocumentNode() && !document->documentElement())
         insertNode(new HTMLHtmlElement(document));
 
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
