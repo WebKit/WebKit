@@ -55,6 +55,7 @@ use File::Spec::Functions;
 use FindBin;
 use Getopt::Long;
 use IPC::Open2;
+use IPC::Open3;
 use Time::HiRes qw(time);
 
 use lib $FindBin::Bin;
@@ -63,6 +64,7 @@ use POSIX;
 
 sub openDumpTool();
 sub closeDumpTool();
+sub dumpToolCrashed();
 sub closeHTTPD();
 sub countAndPrintLeaks($$$);
 sub fileNameWithNumber($$);
@@ -74,10 +76,14 @@ sub slowestcmp($$);
 sub splitpath($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($);
+sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
 sub closeCygpaths();
 sub validateSkippedArg($$;$);
+sub htmlForExpectedAndActualResults($);
+sub deleteExpectedAndActualResults($);
+sub recordActualResultsAndDiff($$);
 
 # Argument handling
 my $shouldCheckLeaks = '';
@@ -110,6 +116,7 @@ my $root;
 my $expectedTag = "expected";
 my $actualTag = "actual";
 my $diffsTag = "diffs";
+my $errorTag = "stderr";
 
 my $programName = basename($0);
 my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
@@ -606,7 +613,24 @@ for my $test (@tests) {
       }
     }
 
-    if (!defined $expected) {
+    if (dumpToolCrashed()) {
+        $result = "crash";
+
+        printFailureMessageForTest($test, "crashed");
+
+        my $dir = "$testResultsDirectory/$base";
+        $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+        mkpath $dir;
+
+        open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
+        print CRASH <ERROR>;
+        close CRASH;
+
+        deleteExpectedAndActualResults($base);
+        recordActualResultsAndDiff($base, $actual);
+
+        closeDumpTool();
+    } elsif (!defined $expected) {
         if ($verbose) {
             print "new " . ($resetResults ? "result" : "test") ."\n";
             $atLineStart = 1;
@@ -621,8 +645,7 @@ for my $test (@tests) {
             print EXPECTED $actual;
             close EXPECTED;
         }
-        unlink "$testResultsDirectory/$base-$actualTag.txt";
-        unlink "$testResultsDirectory/$base-$diffsTag.txt";
+        deleteExpectedAndActualResults($base);
         unless ($resetResults) {
             # Always print the file name for new tests, as they will probably need some manual inspection.
             # in verbose mode we already printed the test case, so no need to do it again.
@@ -639,28 +662,19 @@ for my $test (@tests) {
             $atLineStart = 1;
         }
         $result = "match";
-        unlink "$testResultsDirectory/$base-$actualTag.txt";
-        unlink "$testResultsDirectory/$base-$diffsTag.txt";
+        deleteExpectedAndActualResults($base);
     } else {
-        unless ($verbose) {
-            print "\n" unless $atLineStart;
-            print "$test -> ";
-        }
-        print "failed\n";
-        $atLineStart = 1;
-
         $result = "mismatch";
+
+        printFailureMessageForTest($test, "failed");
 
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
         my $testName = $1;
         mkpath $dir;
 
-        open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.txt" or die;
-        print ACTUAL $actual;
-        close ACTUAL;
-
-        system "diff -u \"$expectedDir/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+        deleteExpectedAndActualResults($base);
+        recordActualResultsAndDiff($base, $actual);
 
         if ($pixelTests && $diffPNG && $diffPNG ne "") {
             $imagesPresent{$base} = 1;
@@ -790,10 +804,10 @@ my %text = (
     match => "succeeded",
     mismatch => "had incorrect layout",
     new => "were new",
-    fail => "failed (tool did not execute successfully)",
+    crash => "crashed",
 );
 
-for my $type ("match", "mismatch", "new", "fail") {
+for my $type ("match", "mismatch", "new", "crash") {
     my $c = $counts{$type};
     if ($c) {
         my $t = $text{$type};
@@ -824,17 +838,9 @@ if ($counts{mismatch}) {
     for my $test (@{$tests{mismatch}}) {
         my $base = $test;
         $base =~ s/\.[a-zA-Z]+$//;
-        my $expectedDir = expectedDirectoryForTest($base);
-        copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
         print HTML "<tr>\n";            
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
-        if (-s "$testResultsDirectory/$base-$diffsTag.txt") {
-            print HTML "<td><a href=\"$base-$expectedTag.txt\">expected</a></td>\n";
-            print HTML "<td><a href=\"$base-$actualTag.txt\">actual</a></td>\n";
-            print HTML "<td><a href=\"$base-$diffsTag.txt\">diffs</a></td>\n";
-        } else {
-            print HTML "<td></td><td></td><td></td>\n";
-        }
+        print HTML htmlForExpectedAndActualResults($base);
         if ($pixelTests) {
             if ($imagesPresent{$base}) {
                 print HTML "<td><a href=\"$base-$expectedTag.png\">expected image</a></td>\n";
@@ -848,15 +854,17 @@ if ($counts{mismatch}) {
     print HTML "</table>\n";
 }
 
-if ($counts{fail}) {
-    print HTML "<p>Tests that caused the DumpRenderTree tool to fail:</p>\n";
+if ($counts{crash}) {
+    print HTML "<p>Tests that caused the DumpRenderTree tool to crash:</p>\n";
     print HTML "<table>\n";
-    for my $test (@{$tests{fail}}) {
+    for my $test (@{$tests{crash}}) {
         my $base = $test;
         $base =~ s/\.[a-zA-Z]+$//;
         my $expectedDir = expectedDirectoryForTest($base);
         print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML htmlForExpectedAndActualResults($base);
+        print HTML "<td><a href=\"$base-$errorTag.txt\">stderr</a></td>\n";
         print HTML "</tr>\n";
     }
     print HTML "</table>\n";
@@ -1092,7 +1100,7 @@ sub openDumpTool()
     if ($useValgrind) {
       $dumpTool = "valgrind";
     }
-    $dumpToolPID = open2(\*IN, \*OUT, $dumpTool, @args) or die "Failed to start tool: $dumpTool\n";
+    $dumpToolPID = open3(\*OUT, \*IN, \*ERROR, $dumpTool, @args) or die "Failed to start tool: $dumpTool\n";
     $isDumpToolOpen = 1;
 }
 
@@ -1102,8 +1110,17 @@ sub closeDumpTool()
 
     close IN;
     close OUT;
+    close ERROR;
     waitpid $dumpToolPID, 0;
     $isDumpToolOpen = 0;
+}
+
+sub dumpToolCrashed()
+{
+    return 0 unless $isDumpToolOpen;
+
+    my $pid = waitpid(-1, WNOHANG);
+    return $pid == $dumpToolPID;
 }
 
 sub openHTTPDIfNeeded()
@@ -1236,6 +1253,18 @@ sub expectedDirectoryForTest($)
     return (-f "$platformTestDirectory/$base-$expectedTag.txt") ? $platformTestDirectory : $expectedDirectory;
 }
 
+sub printFailureMessageForTest($$)
+{
+    my ($test, $description) = @_;
+
+    unless ($verbose) {
+        print "\n" unless $atLineStart;
+        print "$test -> ";
+    }
+    print "$description\n";
+    $atLineStart = 1;
+}
+
 my %cygpaths = ();
 
 sub openCygpathIfNeeded($)
@@ -1307,4 +1336,40 @@ sub validateSkippedArg($$;$)
     $value = lc($value);
     die "Invalid argument '" . $value . "' for option $option" unless $validSkippedValues{$value};
     $treatSkipped = $value;
+}
+
+sub htmlForExpectedAndActualResults($)
+{
+    my ($base) = @_;
+
+    return "<td></td><td></td><td></td>\n" unless -s "$testResultsDirectory/$base-$diffsTag.txt";
+
+    return "<td><a href=\"$base-$expectedTag.txt\">expected</a></td>\n"
+         . "<td><a href=\"$base-$actualTag.txt\">actual</a></td>\n"
+         . "<td><a href=\"$base-$diffsTag.txt\">diffs</a></td>\n";
+}
+
+sub deleteExpectedAndActualResults($)
+{
+    my ($base) = @_;
+
+    unlink "$testResultsDirectory/$base-$actualTag.txt";
+    unlink "$testResultsDirectory/$base-$diffsTag.txt";
+    unlink "$testResultsDirectory/$base-$errorTag.txt";
+}
+
+sub recordActualResultsAndDiff($$)
+{
+    my ($base, $actual) = @_;
+
+    return unless length($actual);
+
+    open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.txt" or die "Couldn't open actual results file for $base";
+    print ACTUAL $actual;
+    close ACTUAL;
+
+    my $expectedDir = expectedDirectoryForTest($base);
+    copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
+
+    system "diff -u \"$testResultsDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 }

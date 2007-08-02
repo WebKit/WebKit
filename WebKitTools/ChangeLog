@@ -1,3 +1,25 @@
+2007-08-01  Adam Roben  <aroben@apple.com>
+
+        When DRT crashes, record stderr and restart DRT
+
+        This prevents a DRT crash from causing the next few hundred tests to
+        "fail" because DRT is no longer running. 
+
+        I also changed the terminology that run-webkit-tests uses in its
+        output a bit, so that crashing tests are referred to as "crashes"
+        instead of "failures".
+
+        Reviewed by Mark.
+
+        * Scripts/run-webkit-tests: Detect a crash and record it as a tool
+        failure.
+        (sub openDumpTool): Use open3 so that we can access stderr.
+        (sub dumpToolCrashed): Added.
+        (sub printFailureMessageForTest): Added.
+        (sub htmlForExpectedAndActualResults): Added.
+        (sub deleteExpectedAndActualResults): Added.
+        (sub recordActualResultsAndDiff): Added.
+
 2007-07-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
