@@ -815,11 +815,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor
 {
-    float a = [backgroundColor alphaComponent];
     if (m_frame && m_frame->view()) {
         NSColor *deviceColor = [backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-        float a2 = [deviceColor alphaComponent];
-        if (a && a2);
         Color color = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
                                      (int)(255 * [deviceColor blueComponent]),
                                      (int)(255 * [deviceColor greenComponent]),
