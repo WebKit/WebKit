@@ -1,3 +1,12 @@
+2007-08-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        <rdar://problem/5381463> - setMIMETypesShownAsHTML mutates while enumerating
+
+        * WebView/WebView.mm:
+        (+[WebView setMIMETypesShownAsHTML:]): Copy the dictionary before we work with it.
+
 2007-08-02  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Kevin McCullough.

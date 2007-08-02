@@ -1726,7 +1726,7 @@ NSMutableDictionary *countInvocations;
 
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes
 {
-    NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
+    NSDictionary *viewTypes = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] copy];
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
     id key;
     while ((key = [enumerator nextObject])) {
@@ -1740,6 +1740,7 @@ NSMutableDictionary *countInvocations;
                 representationClass:[WebHTMLRepresentation class] 
                 forMIMEType:[MIMETypes objectAtIndex:i]];
     }
+    [viewTypes release];
 }
 
 + (NSURL *)URLFromPasteboard:(NSPasteboard *)pasteboard
