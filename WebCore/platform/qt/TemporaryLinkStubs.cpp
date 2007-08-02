@@ -67,9 +67,6 @@
 
 using namespace WebCore;
 
-
-bool WebCore::historyContains(DeprecatedString const&) { return false; }
-
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }

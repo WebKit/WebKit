@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        Add an interface to manage global history for clients
+
+        * WebCore.pro:
+        * platform/qt/TemporaryLinkStubs.cpp:
+
+2007-08-01  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
         Do not call update or paint from inside a paint event.
 
         * platform/qt/ScrollViewQt.cpp:

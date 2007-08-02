@@ -1,3 +1,18 @@
+2007-08-01  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Add an interface to manage global history for clients
+
+        * Api/headers.pri:
+        * Api/qwebhistoryinterface.cpp: Added.
+        (WebCore::historyContains):
+        (gCleanupInterface):
+        (QWebHistoryInterface::setDefaultInterface):
+        (QWebHistoryInterface::defaultInterface):
+        (QWebHistoryInterface::QWebHistoryInterface):
+        * Api/qwebhistoryinterface.h: Added.
+
 2007-07-30  Adam Treat  <treat@kde.org>
 
         Fix build.
