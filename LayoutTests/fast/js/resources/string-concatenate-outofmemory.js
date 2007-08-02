@@ -14,8 +14,8 @@ debug(
 function ensureStringIsUsable(testName, stringName, str) {
     str[str.length - 1];
     try { [str, str].join(str); } catch (o) { }
-    "a" + str;
-    str + "a";
+    try { "a" + str; } catch (o) { }
+    try { str + "a"; } catch (o) { }
     debug('PASS: String ' + stringName + ' was functional after ' + testName + ' raised out of memory exception.');
 }
 
@@ -39,6 +39,7 @@ try {
     ensureStringIsUsable('expandPreCapacity', 's', s);
     ensureStringIsUsable('expandPreCapacity', 't', t);
 }
+delete t;
 
 s = "a";
 try {

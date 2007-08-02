@@ -1,5 +1,12 @@
 2007-08-02  Mark Rowe  <mrowe@apple.com>
 
+        Layout test fix, rubber-stamped by Oliver.
+
+        * fast/js/resources/string-concatenate-outofmemory.js:  Don't let an out of memory exception during verification cause a failure.
+        The exception is a perfectly valid success case as it shows that access the string did not cause a crash.
+
+2007-08-02  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/5352887> "Out of memory" error during repeated JS string concatenation leaks hundreds of MBs of RAM
