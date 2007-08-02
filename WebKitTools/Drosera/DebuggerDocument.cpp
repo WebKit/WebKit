@@ -161,7 +161,7 @@ void DebuggerDocument::stepOut(JSContextRef context)
 
 void DebuggerDocument::showConsole(JSContextRef context)
 {
-    DebuggerDocument::callGlobalFunction(context, "showConsole", 0, 0);
+    DebuggerDocument::callGlobalFunction(context, "showConsoleWindow", 0, 0);
 }
 
 void DebuggerDocument::closeCurrentFile(JSContextRef context)

@@ -1,3 +1,12 @@
+2007-08-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim. 
+
+        - It would help if I actually called the right function.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::showConsole):
+
 2007-08-02  Adam Roben  <aroben@apple.com>
 
         Don't delete the stderr file right after creating it
