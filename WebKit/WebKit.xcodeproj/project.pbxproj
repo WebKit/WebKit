@@ -246,7 +246,7 @@
 		9398110B0824BF01008DF038 /* WebDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 6578F5DF045F817400000128 /* WebDownload.m */; };
 		9398110D0824BF01008DF038 /* WebLocalizableStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */; };
 		9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE52D4B0473032500CA289C /* WebKitSystemBits.m */; };
-		939811120824BF01008DF038 /* WebNSURLExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.m */; };
+		939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */; };
 		939811130824BF01008DF038 /* WebHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DA2608052CC18700A97B31 /* WebHistory.mm */; };
 		939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.m */; };
 		939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BE887C00056D3A6E009BB3E7 /* WebNSEventExtras.m */; };
@@ -505,7 +505,7 @@
 		BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitPluginContainerView.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSURLExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSURLExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE887BFF056D3A6E009BB3E7 /* WebNSEventExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSEventExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE887C00056D3A6E009BB3E7 /* WebNSEventExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSEventExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultEditingDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -776,7 +776,7 @@
 				EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */,
 				EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */,
 				BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */,
-				BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.m */,
+				BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */,
 				65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */,
 				65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */,
 				65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */,
@@ -1483,7 +1483,7 @@
 				9398110B0824BF01008DF038 /* WebDownload.m in Sources */,
 				9398110D0824BF01008DF038 /* WebLocalizableStrings.m in Sources */,
 				9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */,
-				939811120824BF01008DF038 /* WebNSURLExtras.m in Sources */,
+				939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */,
 				939811130824BF01008DF038 /* WebHistory.mm in Sources */,
 				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
 				939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */,
