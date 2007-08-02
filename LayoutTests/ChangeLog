@@ -1,3 +1,14 @@
+2007-08-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5352887> "Out of memory" error during repeated JS string concatenation leaks hundreds of MBs of RAM
+
+        Update test to check that accessing the string after the "Out of memory" exception was raised does not crash.
+
+        * fast/js/resources/string-concatenate-outofmemory.js:
+        * fast/js/string-concatenate-outofmemory-expected.txt:
+
 2007-07-31  Oliver Hunt  <oliver@apple.com>
 
         fast/encoding/char-encoding.html no longer needs to be in the Leopard skiplist
@@ -20449,7 +20460,7 @@ tract()
 
 2006-10-20  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Gøff.
+        Reviewed by Geoff.
 
         Add test case for timer crash.
         

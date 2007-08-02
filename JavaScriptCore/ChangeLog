@@ -1,3 +1,31 @@
+2007-08-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5352887> "Out of memory" error during repeated JS string concatenation leaks hundreds of MBs of RAM
+
+        A call to fastRealloc was failing which lead to UString::expandCapacity leaking the buffer it was trying to reallocate.
+        It also resulted in the underlying UString::rep having both a null baseString and buf field, which meant that attempting
+        to access the contents of the string after the failed memory reallocation would crash.
+
+        A third issue is that expandedSize size was calculating the new length in a way that led to an integer overflow occurring.
+        Attempting to allocate a string more than 190,000,000 characters long would fail a the integer overflow would lead to a
+        memory allocation of around 3.6GB being attempted rather than the expected 390MB.  Sizes that would lead to an overflow
+        are now  returned as zero and callers are updated to treat this as though the memory allocation has failed.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): Check whether the append failed and raise an "Out of memory" exception if it did.
+        * kjs/ustring.cpp:
+        (KJS::allocChars): Wrapper around fastMalloc that takes a length in characters.  It will return 0 when asked to allocate a zero-length buffer.
+        (KJS::reallocChars): Wrapper around fastRealloc that takes a length in characters.  It will return 0 when asked to allocate a zero-length buffer.
+        (KJS::UString::expandedSize): Split the size calculation in two and guard against overflow during each step.
+        (KJS::UString::expandCapacity): Don't leak r->buf if reallocation fails.  Instead free the memory and use the null representation.
+        (KJS::UString::expandPreCapacity): If fastMalloc fails then use the null representation rather than crashing in memcpy.
+        (KJS::UString::UString): If calls to expandCapacity, expandPreCapacity or fastMalloc fail then use the null representation rather than crashing in memcpy.
+        (KJS::UString::append): Ditto.
+        (KJS::UString::operator=): Ditto.
+        * kjs/ustring.h: Change return type of expandedSize from int to size_t.
+
 2007-08-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin McCullough.
