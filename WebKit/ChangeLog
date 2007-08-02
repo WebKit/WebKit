@@ -1,3 +1,13 @@
+2007-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        
+        * Misc/WebNSURLExtras.mm:
+        (+[NSURL _web_URLWithUserTypedString:relativeToURL:]):
+        (-[NSURL _web_userVisibleString]):
+        (-[NSURL _web_URLWithLowercasedScheme]):
+        (-[NSURL _web_dataForURLComponentType:]):
+
 2007-08-01  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by .

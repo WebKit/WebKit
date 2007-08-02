@@ -357,13 +357,13 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
 
-    const UInt8 *inBytes = [userTypedData bytes];
+    const UInt8 *inBytes = (const UInt8 *)[userTypedData bytes];
     int inLength = [userTypedData length];
     if (inLength == 0) {
         return [NSURL URLWithString:@""];
     }
     
-    char *outBytes = malloc(inLength * 3); // large enough to %-escape every character
+    char *outBytes = (char *)malloc(inLength * 3); // large enough to %-escape every character
     char *p = outBytes;
     int outLength = 0;
     int i;
@@ -431,14 +431,14 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 - (NSString *)_web_userVisibleString
 {
     NSData *data = [self _web_originalData];
-    const unsigned char *before = [data bytes];
+    const unsigned char *before = (const unsigned char*)[data bytes];
     int length = [data length];
 
     bool needsHostNameDecoding = false;
 
     const unsigned char *p = before;
     int bufferLength = (length * 3) + 1;
-    char *after = malloc(bufferLength); // large enough to %-escape every character
+    char *after = (char *)malloc(bufferLength); // large enough to %-escape every character
     char *q = after;
     int i;
     for (i = 0; i < length; i++) {
@@ -593,7 +593,7 @@ typedef struct {
     CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, URL_BYTES_BUFFER_LENGTH);
     if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
-        buffer = malloc(bytesToAllocate);
+        buffer = (UInt8 *)malloc(bytesToAllocate);
         bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, bytesToAllocate);
         ASSERT(bytesFilled == bytesToAllocate);
     }
@@ -659,7 +659,7 @@ typedef struct {
     CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, allBytesBuffer, URLComponentTypeBufferLength);
     if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
-        allBytesBuffer = malloc(bytesToAllocate);
+        allBytesBuffer = (UInt8 *)malloc(bytesToAllocate);
         bytesFilled = CFURLGetBytes((CFURLRef)self, allBytesBuffer, bytesToAllocate);
     }
     
@@ -677,7 +677,7 @@ typedef struct {
     
     NSData *componentData = [NSData dataWithBytes:allBytesBuffer + range.location length:range.length]; 
     
-    const unsigned char *bytes = [componentData bytes];
+    const unsigned char *bytes = (const unsigned char *)[componentData bytes];
     NSMutableData *resultData = [NSMutableData data];
     // NOTE: add leading '?' to query strings non-zero length query strings.
     // NOTE: retain question-mark only query strings.
