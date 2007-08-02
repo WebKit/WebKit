@@ -220,18 +220,18 @@ static String toGeorgian(int number)
     int length = 0;
 
     if (number > 9999)
-        letters[length++] = 0x10EF;
+        letters[length++] = 0x10F5;
 
     if (int thousands = (number / 1000) % 10) {
         static const UChar georgianThousands[9] = {
-            0x10E8, 0x10E9, 0x10EA, 0x10EB, 0x10EC, 0x10ED, 0x10EE, 0x10F4, 0x10F5
+            0x10E9, 0x10EA, 0x10EB, 0x10EC, 0x10ED, 0x10EE, 0x10F4, 0x10EF, 0x10F0
         };
         letters[length++] = georgianThousands[thousands - 1];
     }
 
     if (int hundreds = (number / 100) % 10) {
         static const UChar georgianHundreds[9] = {
-            0x10E0, 0x10E1, 0x10E2, 0x10E3, 0x10F3, 0x10E4, 0x10E5, 0x10E6, 0x10E7
+            0x10E0, 0x10E1, 0x10E2, 0x10F3, 0x10E4, 0x10E5, 0x10E6, 0x10E7, 0x10E8
         };
         letters[length++] = georgianHundreds[hundreds - 1];
     }

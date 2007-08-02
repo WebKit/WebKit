@@ -1,5 +1,24 @@
 2007-08-02  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Darin.
+        
+        <rdar://problem/5228138>
+        REGRESSION(Leopard): test failures: tests that test Georgian numbering
+        
+        Correct counter test results for Georgian numbers.
+        Add leopard specific versions needed due to font changes (actual characters instead of boxes).
+
+        * css2.1/t1202-counter-09-b-expected.txt:
+        * css2.1/t1202-counters-09-b-expected.txt:
+        * mac/leopard/Skipped:
+        * mac/leopard/css2.1: Added.
+        * mac/leopard/css2.1/t1202-counter-09-b-expected.txt: Added.
+        * mac/leopard/css2.1/t1202-counters-09-b-expected.txt: Added.
+        * mac/leopard/fast/lists: Added.
+        * mac/leopard/fast/lists/w3-list-styles-expected.txt: Added.
+
+2007-08-02  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Geoff.
         
         Fix <rdar://problem/5228233>

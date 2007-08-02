@@ -1,3 +1,16 @@
+2007-08-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5228138>
+        REGRESSION(Leopard): test failures: tests that test Georgian numbering
+
+        Fix to Georgian number tables to get CSS2.1 test results right. Font has relevant characters now 
+        which revealed that results were actually wrong. 
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toGeorgian):
+
 2007-08-02  Ada Chan  <adachan@apple.com>
 
         Reviewed by Steve.

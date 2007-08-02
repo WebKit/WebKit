@@ -25,11 +25,6 @@ svg/custom/control-points-for-S-and-T.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 
-# <rdar://problem/5228138> Leopard regression test failures: tests that test Georgian numbering (due to font changes)
-css2.1/t1202-counter-09-b.html
-css2.1/t1202-counters-09-b.html
-fast/lists/w3-list-styles.html
-
 # <rdar://problem/5335898> REGRESSION (9A492-9A494): Stationery templates never finish loading due to CFNetwork not giving failure for unknown protocols
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 
