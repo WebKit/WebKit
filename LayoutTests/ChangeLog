@@ -1,3 +1,18 @@
+2007-08-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Fix <rdar://problem/5228233>
+        REGRESSION(Leopard): layout test failures: fast/table/absolute-table-at-bottom
+        
+        Remove an arrow symbol unrelated to what is being tested. It has different metrics on Leopard.
+
+        * fast/table/absolute-table-at-bottom-expected.checksum:
+        * fast/table/absolute-table-at-bottom-expected.png:
+        * fast/table/absolute-table-at-bottom-expected.txt:
+        * fast/table/absolute-table-at-bottom.html:
+        * mac/leopard/Skipped:
+
 2007-08-02  Mark Rowe  <mrowe@apple.com>
 
         Layout test fix, rubber-stamped by Oliver.
