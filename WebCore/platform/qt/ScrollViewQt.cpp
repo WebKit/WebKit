@@ -216,14 +216,21 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     else
         m_data->m_dirtyRegion = QRegion(containingWindowRect);
 
-    if (now)
+    bool painting = containingWindow()->testAttribute(Qt::WA_WState_InPaintEvent);
+    if (painting && now) {
+        QWebPage *page = qobject_cast<QWebPage*>(containingWindow());
+        QPainter p(page);
+        page->mainFrame()->render(&p, m_data->m_dirtyRegion.boundingRect());
+    } else if (now) {
         containingWindow()->repaint(m_data->m_dirtyRegion.boundingRect());
-    else
+    } else {
         containingWindow()->update(m_data->m_dirtyRegion.boundingRect());
+    }
 }
 
 void ScrollView::update()
 {
+    Q_ASSERT(!containingWindow()->testAttribute(Qt::WA_WState_InPaintEvent));
     containingWindow()->update(frameGeometry());
 }
 

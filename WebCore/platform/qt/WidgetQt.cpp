@@ -43,6 +43,7 @@
 
 #include "qwebframe.h"
 #include "qwebpage.h"
+#include <QPainter>
 
 #include <QDebug>
 
@@ -201,10 +202,19 @@ void Widget::invalidateRect(const IntRect& r)
     IntRect clipRect = windowClipRect();
     windowRect.intersect(clipRect);
 
-    if (qwidget()) { //regular frameview
-        qwidget()->update(windowRect);
-    } else if (parent()) { //scrollbars
-        parent()->qwidget()->update(windowRect);
+    QWidget *canvas = qwidget(); //regular frameview
+    if (!canvas && parent())
+        canvas = parent()->qwidget(); //scrollbars
+
+    Q_ASSERT(canvas);
+
+    bool painting = canvas->testAttribute(Qt::WA_WState_InPaintEvent);
+    if (painting) {
+        QWebPage *page = qobject_cast<QWebPage*>(canvas);
+        QPainter p(page);
+        page->mainFrame()->render(&p, windowRect);
+    } else {
+        canvas->update(windowRect);
     }
 }
 

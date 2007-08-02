@@ -1,3 +1,14 @@
+2007-08-01  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Do not call update or paint from inside a paint event.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateContents):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidateRect):
+
 2007-08-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.
