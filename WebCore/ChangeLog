@@ -1,3 +1,15 @@
+2007-08-02  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve.
+
+        <rdar://problem/5079175> Added parameters headerHeight and footerHeight to 
+        computePageRectsForFrame() so we can account for the header and footer when
+        calculating page heights for this frame.
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+        * bridge/win/FrameWin.h:
+
 2007-08-02  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Kevin McCullough.

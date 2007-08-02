@@ -736,4 +736,47 @@ interface IWebUIDelegate2 : IWebUIDelegate
     first WebView that displayed a directory listing, so this will only be called once.
 */
     HRESULT ftpDirectoryTemplatePath([in] IWebView* webView, [out, retval] BSTR* path);
+
+/*!
+    @method webViewHeaderHeight:
+    @param webView The WebView sending the delegate method
+    @abstract Reserve a height for the printed page header.
+    @result The height to reserve for the printed page header, return 0.0 to not reserve any space for a header.
+    @discussion The height returned will be used to calculate the rect passed to webView:drawHeaderInRect:.
+
+    - (float)webViewHeaderHeight:(WebView *)sender;
+*/
+    HRESULT webViewHeaderHeight([in] IWebView* webView, [out, retval] float* result);
+
+/*!
+    @method webViewFooterHeight:
+    @param webView The WebView sending the delegate method
+    @abstract Reserve a height for the printed page footer.
+    @result The height to reserve for the printed page footer, return 0.0 to not reserve any space for a footer.
+    @discussion The height returned will be used to calculate the rect passed to webView:drawFooterInRect:.
+
+    - (float)webViewFooterHeight:(WebView *)sender;
+*/
+    HRESULT webViewFooterHeight([in] IWebView* webView, [out, retval] float* result);
+
+/*!
+    @method webView:drawHeaderInRect:
+    @param webView The WebView sending the delegate method
+    @param rect The NSRect reserved for the header of the page
+    @abstract The delegate should draw a header for the sender in the supplied rect.
+
+    - (void)webView:(WebView *)sender drawHeaderInRect:(NSRect)rect;
+*/
+    HRESULT drawHeaderInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext);
+
+/*!
+    @method webView:drawFooterInRect:
+    @param webView The WebView sending the delegate method
+    @param rect The NSRect reserved for the footer of the page
+    @abstract The delegate should draw a footer for the sender in the supplied rect.
+
+    - (void)webView:(WebView *)sender drawFooterInRect:(NSRect)rect;
+*/
+    HRESULT drawFooterInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext, [in] UINT pageIndex, [in] UINT pageCount);
+
 }

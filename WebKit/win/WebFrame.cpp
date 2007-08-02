@@ -2426,6 +2426,25 @@ HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode(
     return S_OK;
 }
 
+void WebFrame::headerAndFooterHeights(float* headerHeight, float* footerHeight)
+{
+    if (headerHeight)
+        *headerHeight = 0;
+    if (footerHeight)
+        *footerHeight = 0;
+    float height = 0;
+    COMPtr<IWebUIDelegate> ui;
+    if (FAILED(d->webView->uiDelegate(&ui)))
+        return;
+    COMPtr<IWebUIDelegate2> ui2;
+    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
+        return;
+    if (headerHeight && SUCCEEDED(ui2->webViewHeaderHeight(d->webView, &height)))
+        *headerHeight = height;
+    if (footerHeight && SUCCEEDED(ui2->webViewFooterHeight(d->webView, &height)))
+        *footerHeight = height;
+}
+
 const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
 {
     ASSERT(m_inPrintingMode);
@@ -2440,7 +2459,10 @@ const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
     if (!printDC)
         return m_pageRects;
 
-    m_pageRects = computePageRectsForFrame(coreFrame, printerRect(printDC), 1.0);
+    // adjust the page rect by the header and footer
+    float headerHeight = 0, footerHeight = 0;
+    headerAndFooterHeights(&headerHeight, &footerHeight);
+    m_pageRects = computePageRectsForFrame(coreFrame, printerRect(printDC), headerHeight, footerHeight, 1.0);
     
     return m_pageRects;
 }
@@ -2491,9 +2513,10 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     if (!coreFrame || !coreFrame->document())
         return E_FAIL;
 
+    UINT pageCount = (UINT) m_pageRects.size();
     PlatformGraphicsContext* pctx = (PlatformGraphicsContext*)ctx;
 
-    if (m_pageRects.size() == 0 || startPage > m_pageRects.size()) {
+    if (!pageCount || startPage > pageCount) {
         ASSERT_NOT_REACHED();
         return E_FAIL;
     }
@@ -2502,8 +2525,18 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         startPage--;
 
     if (endPage == 0)
-        endPage = (UINT)m_pageRects.size();
+        endPage = pageCount;
 
+    COMPtr<IWebUIDelegate> ui;
+    if (FAILED(d->webView->uiDelegate(&ui)))
+        return E_FAIL;
+    // FIXME: we can return early after the updated app is released
+    COMPtr<IWebUIDelegate2> ui2;
+    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
+        ui2 = 0;
+
+    float headerHeight = 0, footerHeight = 0;
+    headerAndFooterHeights(&headerHeight, &footerHeight);
     GraphicsContext spoolCtx(pctx);
 
     for (UINT ii = startPage; ii < endPage; ii++) {
@@ -2522,12 +2555,29 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         CGFloat scale = (float)mediaBox.size.width/ (float)pageRect.width();
         CGAffineTransform ctm = CGContextGetBaseCTM(pctx);
         ctm = CGAffineTransformScale(ctm, -scale, -scale);
-        ctm = CGAffineTransformTranslate(ctm, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()));
+        ctm = CGAffineTransformTranslate(ctm, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight)); // reserves space for header
         CGContextScaleCTM(pctx, scale, scale);
-        CGContextTranslateCTM(pctx, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()));
+        CGContextTranslateCTM(pctx, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight));   // reserves space for header
         CGContextSetBaseCTM(pctx, ctm);
 
         coreFrame->paint(&spoolCtx, pageRect);
+
+        if (ui2) {
+            CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);
+
+            int x = pageRect.x();
+            int y = 0;
+            if (headerHeight) {
+                RECT headerRect = {x, y, x+pageRect.width(), y+(int)headerHeight};
+                ui2->drawHeaderInRect(d->webView, &headerRect, (OLE_HANDLE)(LONG64)pctx);
+            }
+
+            if (footerHeight) {
+                y = (int)(mediaBox.size.height/scale - footerHeight);
+                RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
+                ui2->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
+            }
+        }
 
         CGContextEndPage(pctx);
         CGContextRestoreGState(pctx);

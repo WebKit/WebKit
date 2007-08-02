@@ -1,3 +1,22 @@
+2007-08-02  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Steve.
+        
+        <rdar://problem/5079175> Printing header and footer
+
+        * Interfaces/IWebUIDelegate.idl: added methods for header/footer drawing.
+        * WebFrame.cpp:
+        (WebFrame::headerAndFooterHeights): ask client for the header and 
+        footer heights via IWebUIDelegate2 methods.
+        (WebFrame::computePageRects): pass in header and footer heights when
+        calculating page rect heights.
+        (WebFrame::spoolPages): ask client to draw header and footer via
+        IWebUIDelegate2 methods.
+        * WebFrame.h:
+        * WebKitGraphics.cpp:
+        (DrawTextAtPoint): the code assumes color has 4 components - might as well
+        assert it.
+
 2007-08-01  Steve Falkenburg  <sfalken@apple.com>
 
         Build mod: Fix sln to match configs in vcproj.
