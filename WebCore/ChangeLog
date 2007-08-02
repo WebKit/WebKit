@@ -1,3 +1,13 @@
+2007-08-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        fixed <rdar://problem/5310312> REGRESSION: javascript is mis-escaped at http://labs.zarate.org/passwd causing bookmarklet to break
+        
+        * WebCore.exp:
+        expose some calls for WebKit to call. 
+        * manual-tests/JavaScript-bookmarklets.html: Added.
+
 2007-08-01  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.

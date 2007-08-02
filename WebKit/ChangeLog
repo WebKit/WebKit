@@ -1,3 +1,17 @@
+2007-08-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        * Misc/WebNSURLExtras.mm:
+        (+[NSURL _web_URLWithUserTypedString:relativeToURL:]):
+        (-[NSURL _web_userVisibleString]):
+        (-[NSURL _web_URLWithLowercasedScheme]):
+        (-[NSURL _web_dataForURLComponentType:]):
+        These 4 changes are just casting changes.
+
+        (-[NSString _webkit_stringByReplacingValidPercentEscapes]):
+        This change replaces the call to an NSURL method with a webcore one that doesn't abort the escaping effort once an illegal character is encountered. 
+
 2007-08-01  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
