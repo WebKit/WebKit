@@ -1,3 +1,15 @@
+2007-08-02  George Staikos  <staikos@kde.org>
+
+        Reviewed by Simon.
+
+        Add an interface for the useragent string.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentStringForUrl):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::userAgent):
+
 2007-08-01  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.

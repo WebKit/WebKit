@@ -178,6 +178,7 @@ protected:
     virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+    virtual QString userAgentStringForUrl(const QUrl& forUrl) const;
 
     virtual void resizeEvent(QResizeEvent*);
     virtual void paintEvent(QPaintEvent*);

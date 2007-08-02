@@ -545,9 +545,12 @@ void FrameLoaderClientQt::setTitle(const String& title, const KURL& url)
 }
 
 
-String FrameLoaderClientQt::userAgent(const KURL&)
+String FrameLoaderClientQt::userAgent(const KURL& url)
 {
-    return "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/418.9.1 (KHTML, like Gecko) Safari/419.3 Qt";
+    if (m_webFrame) {
+        return m_webFrame->page()->userAgentStringForUrl(QUrl((QString)url.url()));
+    }
+    return String();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveIcon()
