@@ -1,3 +1,16 @@
+2007-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5374393> 
+        Image change on disk not noticed by WebView; -[WebCache setDisabled:] used to cause a reload every time
+        
+        This is essentially a better fix for the crash in <rdar://problem/5362783>.
+        
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        If the resource already exists in the m_docResources map, remove it and disassociate it from the doc loader.
+
 2007-08-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.
