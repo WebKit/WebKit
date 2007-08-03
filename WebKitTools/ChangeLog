@@ -1,3 +1,13 @@
+2007-08-02  Adam Roben  <aroben@apple.com>
+
+        Fix fast/dom/Window/alert-undefined.html
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.cpp:
+        (WaitUntilDoneDelegate::runJavaScriptAlertPanelWithMessage): Don't let
+        Windows translate a null BSTR into "(null)"
+
 2007-08-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim. 
