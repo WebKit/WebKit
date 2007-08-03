@@ -166,6 +166,12 @@ void fastMallocSetIsMultiThreaded()
 
 } // namespace WTF
 
+#if PLATFORM(DARWIN)
+// This symbol is present in the JavaScriptCore exports file even when FastMalloc is disabled.
+// It will never be used in this case, so it's type and value are less interesting than its presence.
+extern "C" const int jscore_fastmalloc_introspection = 0;
+#endif
+
 #else
 
 #if HAVE(STDINT_H)
@@ -190,6 +196,10 @@ void fastMallocSetIsMultiThreaded()
 #include <string.h>
 
 #if WTF_CHANGES
+#if PLATFORM(DARWIN)
+#include "MallocZoneSupport.h"
+#endif
+
 namespace WTF {
 
 #define malloc fastMalloc
@@ -199,6 +209,33 @@ namespace WTF {
 
 #define MESSAGE LOG_ERROR
 #define CHECK_CONDITION ASSERT
+
+#if PLATFORM(DARWIN)
+class TCMalloc_PageHeap;
+class TCMalloc_ThreadCache;
+class TCMalloc_Central_FreeListPadded;
+
+class FastMallocZone {
+public:
+    static void init();
+
+    static kern_return_t enumerate(task_t, void*, unsigned typeMmask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
+
+private:
+    FastMallocZone(TCMalloc_PageHeap*, TCMalloc_ThreadCache**, TCMalloc_Central_FreeListPadded*);
+    static size_t size(malloc_zone_t*, const void*);
+    static void* zoneMalloc(malloc_zone_t*, size_t);
+    static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size);
+    static void zoneFree(malloc_zone_t*, void*);
+    static void* zoneRealloc(malloc_zone_t*, void*, size_t);
+
+    malloc_zone_t m_zone;
+    TCMalloc_PageHeap* m_pageHeap;
+    TCMalloc_ThreadCache** m_threadHeaps;
+    TCMalloc_Central_FreeListPadded* m_centralCaches;
+};
+
+#endif
 
 #endif
 
@@ -707,6 +744,14 @@ class TCMalloc_PageHeap {
     return reinterpret_cast<Span*>(pagemap_.get(p));
   }
 
+#ifdef WTF_CHANGES
+  inline Span* GetDescriptorEnsureSafe(PageID p)
+  {
+      pagemap_.Ensure(p, 1);
+      return GetDescriptor(p);
+  }
+#endif
+
   // Dump state to stderr
 #ifndef WTF_CHANGES
   void Dump(TCMalloc_Printer* out);
@@ -755,6 +800,9 @@ class TCMalloc_PageHeap {
       pagemap_.set(span->start + span->length - 1, span);
     }
   }
+#if defined(WTF_CHANGES) && PLATFORM(DARWIN)
+  friend class FastMallocZone;
+#endif
 };
 
 void TCMalloc_PageHeap::init()
@@ -1060,6 +1108,15 @@ class TCMalloc_ThreadCache_FreeList {
     if (length_ < lowater_) lowater_ = length_;
     return result;
   }
+
+#ifdef WTF_CHANGES
+  template <class Finder, class Reader>
+  void enumerateFreeObjects(Finder& finder, const Reader& reader)
+  {
+      for (void* nextObject = list_; nextObject; nextObject = *reader(reinterpret_cast<void**>(nextObject)))
+          finder.visit(nextObject);
+  }
+#endif
 };
 
 //-------------------------------------------------------------------
@@ -1115,6 +1172,15 @@ class TCMalloc_ThreadCache {
   static void*                 CreateCacheIfNecessary();
   static void                  DeleteCache(void* ptr);
   static void                  RecomputeThreadCacheSize();
+
+#ifdef WTF_CHANGES
+  template <class Finder, class Reader>
+  void enumerateFreeObjects(Finder& finder, const Reader& reader)
+  {
+      for (unsigned sizeClass = 0; sizeClass < kNumClasses; sizeClass++)
+          list_[sizeClass].enumerateFreeObjects(finder, reader);
+  }
+#endif
 };
 
 //-------------------------------------------------------------------
@@ -1146,6 +1212,21 @@ class TCMalloc_Central_FreeList {
 
   // Lock -- exposed because caller grabs it before touching this object
   SpinLock lock_;
+
+#ifdef WTF_CHANGES
+  template <class Finder, class Reader>
+  void enumerateFreeObjects(Finder& finder, const Reader& reader)
+  {
+    for (Span* span = &empty_; span && span != &empty_; span = (span->next ? reader(span->next) : 0))
+      ASSERT(!span->objects);
+
+    ASSERT(!nonempty_.objects);
+    for (Span* span = reader(nonempty_.next); span && span != &nonempty_; span = (span->next ? reader(span->next) : 0)) {
+      for (void* nextObject = span->objects; nextObject; nextObject = *reader(reinterpret_cast<void**>(nextObject)))
+        finder.visit(nextObject);
+    }
+  }
+#endif
 
  private:
   // We keep linked lists of empty and non-emoty spans.
@@ -1559,6 +1640,9 @@ void TCMalloc_ThreadCache::InitModule() {
     }
     pageheap->init();
     phinited = 1;
+#if defined(WTF_CHANGES) && PLATFORM(DARWIN)
+    FastMallocZone::init();
+#endif
   }
 }
 
@@ -2403,6 +2487,231 @@ extern "C" {
   }
 #endif
 
+}
+
+#endif
+
+#if defined(WTF_CHANGES) && PLATFORM(DARWIN)
+#include <wtf/HashSet.h>
+
+class FreeObjectFinder {
+    const RemoteMemoryReader& m_reader;
+    HashSet<void*> m_freeObjects;
+
+public:
+    FreeObjectFinder(const RemoteMemoryReader& reader) : m_reader(reader) { }
+
+    void visit(void* ptr) { m_freeObjects.add(ptr); }
+    bool isFreeObject(void* ptr) const { return m_freeObjects.contains(ptr); }
+    size_t freeObjectCount() const { return m_freeObjects.size(); }
+
+    void findFreeObjects(TCMalloc_ThreadCache* threadCache)
+    {
+        for (; threadCache; threadCache = threadCache->next_)
+            threadCache->enumerateFreeObjects(*this, m_reader);
+    }
+
+    void findFreeObjects(TCMalloc_Central_FreeListPadded* centralFreeList, size_t numSizes)
+    {
+        for (unsigned i = 0; i < numSizes; i++)
+            centralFreeList[i].enumerateFreeObjects(*this, m_reader);
+    }
+};
+
+class PageMapFreeObjectFinder {
+    const RemoteMemoryReader& m_reader;
+    FreeObjectFinder& m_freeObjectFinder;
+
+public:
+    PageMapFreeObjectFinder(const RemoteMemoryReader& reader, FreeObjectFinder& freeObjectFinder)
+        : m_reader(reader)
+        , m_freeObjectFinder(freeObjectFinder)
+    { }
+
+    int visit(void* ptr) const
+    {
+        if (!ptr)
+            return 1;
+
+        Span* span = m_reader(reinterpret_cast<Span*>(ptr));
+        if (span->free) {
+            void* ptr = reinterpret_cast<void*>(span->start << kPageShift);
+            m_freeObjectFinder.visit(ptr);
+        } else if (span->sizeclass) {
+            // Walk the free list of the small-object span, keeping track of each object seen
+            for (void* nextObject = span->objects; nextObject; nextObject = *m_reader(reinterpret_cast<void**>(nextObject)))
+                m_freeObjectFinder.visit(nextObject);
+        }
+        return span->length;
+    }
+};
+
+class PageMapMemoryUsageRecorder {
+    task_t m_task;
+    void* m_context;
+    unsigned m_typeMask;
+    vm_range_recorder_t* m_recorder;
+    const RemoteMemoryReader& m_reader;
+    const FreeObjectFinder& m_freeObjectFinder;
+    mutable HashSet<void*> m_seenPointers;
+
+public:
+    PageMapMemoryUsageRecorder(task_t task, void* context, unsigned typeMask, vm_range_recorder_t* recorder, const RemoteMemoryReader& reader, const FreeObjectFinder& freeObjectFinder)
+        : m_task(task)
+        , m_context(context)
+        , m_typeMask(typeMask)
+        , m_recorder(recorder)
+        , m_reader(reader)
+        , m_freeObjectFinder(freeObjectFinder)
+    { }
+
+    int visit(void* ptr) const
+    {
+        if (!ptr)
+            return 1;
+
+        Span* span = m_reader(reinterpret_cast<Span*>(ptr));
+        if (m_seenPointers.contains(ptr))
+            return span->length;
+        m_seenPointers.add(ptr);
+
+        // Mark the memory used for the Span itself as an administrative region
+        vm_range_t ptrRange = { reinterpret_cast<vm_address_t>(ptr), sizeof(Span) };
+        if (m_typeMask & (MALLOC_PTR_REGION_RANGE_TYPE | MALLOC_ADMIN_REGION_RANGE_TYPE))
+            (*m_recorder)(m_task, m_context, MALLOC_ADMIN_REGION_RANGE_TYPE, &ptrRange, 1);
+
+        ptrRange.address = span->start << kPageShift;
+        ptrRange.size = span->length * kPageSize;
+
+        // Mark the memory region the span represents as candidates for containing pointers
+        if (m_typeMask & (MALLOC_PTR_REGION_RANGE_TYPE | MALLOC_ADMIN_REGION_RANGE_TYPE))
+            (*m_recorder)(m_task, m_context, MALLOC_PTR_REGION_RANGE_TYPE, &ptrRange, 1);
+
+        if (!span->free && (m_typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE)) {
+            // If it's an allocated large object span, mark it as in use
+            if (span->sizeclass == 0 && !m_freeObjectFinder.isFreeObject(reinterpret_cast<void*>(ptrRange.address)))
+                (*m_recorder)(m_task, m_context, MALLOC_PTR_IN_USE_RANGE_TYPE, &ptrRange, 1);
+            else if (span->sizeclass) {
+                const size_t byteSize = ByteSizeForClass(span->sizeclass);
+                unsigned totalObjects = (span->length << kPageShift) / byteSize;
+                ASSERT(span->refcount <= totalObjects);
+                char* ptr = reinterpret_cast<char*>(span->start << kPageShift);
+
+                // Mark each allocated small object within the span as in use
+                for (unsigned i = 0; i < totalObjects; i++) {
+                    char* thisObject = ptr + (i * byteSize);
+                    if (m_freeObjectFinder.isFreeObject(thisObject))
+                        continue;
+
+                    vm_range_t objectRange = { reinterpret_cast<vm_address_t>(thisObject), byteSize };
+                    (*m_recorder)(m_task, m_context, MALLOC_PTR_IN_USE_RANGE_TYPE, &objectRange, 1);
+                }
+            }
+        }
+
+        return span->length;
+    }
+};
+
+kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typeMask, vm_address_t zoneAddress, memory_reader_t reader, vm_range_recorder_t recorder)
+{
+    RemoteMemoryReader memoryReader(task, reader);
+
+    InitSizeClasses();
+
+    FastMallocZone* mzone = memoryReader(reinterpret_cast<FastMallocZone*>(zoneAddress));
+    TCMalloc_PageHeap* pageHeap = memoryReader(mzone->m_pageHeap);
+    TCMalloc_ThreadCache** threadHeapsPointer = memoryReader(mzone->m_threadHeaps);
+    TCMalloc_ThreadCache* threadHeaps = memoryReader(*threadHeapsPointer);
+
+    TCMalloc_Central_FreeListPadded* centralCaches = memoryReader(mzone->m_centralCaches, sizeof(TCMalloc_Central_FreeListPadded) * kNumClasses);
+
+    // Rebuild the linked list in our address space, mapping over the remote pointers as needed
+    for (TCMalloc_ThreadCache* threadHeap = threadHeaps; threadHeap->next_; threadHeap = threadHeap->next_) {
+        threadHeap->next_ = memoryReader(threadHeap->next_);
+        threadHeap->next_->prev_ = threadHeap;
+    }
+
+    FreeObjectFinder finder(memoryReader);
+    finder.findFreeObjects(threadHeaps);
+    finder.findFreeObjects(centralCaches, kNumClasses);
+
+    TCMalloc_PageHeap::PageMap* pageMap = &pageHeap->pagemap_;
+    PageMapFreeObjectFinder pageMapFinder(memoryReader, finder);
+    pageMap->visit(pageMapFinder, memoryReader);
+
+    PageMapMemoryUsageRecorder usageRecorder(task, context, typeMask, recorder, memoryReader, finder);
+    pageMap->visit(usageRecorder, memoryReader);
+
+    return 0;
+}
+
+size_t FastMallocZone::size(malloc_zone_t* zone, const void* ptr)
+{
+    if (!ptr || !pageheap)
+        return 0;
+
+    const PageID p = reinterpret_cast<uintptr_t>(ptr) >> kPageShift;
+    Span* span = pageheap->GetDescriptorEnsureSafe(p);
+    if (!span)
+        return 0;
+
+    if (span->sizeclass == 0)
+        return span->length * kPageSize;
+
+    return ByteSizeForClass(span->sizeclass);
+}
+
+void* FastMallocZone::zoneMalloc(malloc_zone_t* zone, size_t size)
+{
+    return fastMalloc(size);
+}
+
+void* FastMallocZone::zoneCalloc(malloc_zone_t*, size_t numItems, size_t size)
+{
+    return fastCalloc(numItems, size);
+}
+
+void FastMallocZone::zoneFree(malloc_zone_t*, void* ptr)
+{
+    return fastFree(ptr);
+}
+
+void* FastMallocZone::zoneRealloc(malloc_zone_t*, void* ptr, size_t size)
+{
+    return fastRealloc(ptr, size);
+}
+
+
+#undef malloc
+#undef free
+#undef realloc
+#undef calloc
+
+extern "C" {
+malloc_introspection_t jscore_fastmalloc_introspection = { &FastMallocZone::enumerate, 0, 0, 0, 0, 0, 0, 0 };
+}
+
+FastMallocZone::FastMallocZone(TCMalloc_PageHeap* pageHeap, TCMalloc_ThreadCache** threadHeaps, TCMalloc_Central_FreeListPadded* centralCaches)
+    : m_pageHeap(pageHeap)
+    , m_threadHeaps(threadHeaps)
+    , m_centralCaches(centralCaches)
+{
+    memset(&m_zone, 0, sizeof(m_zone));
+    m_zone.zone_name = "JavaScriptCore FastMalloc";
+    m_zone.size = &FastMallocZone::size;
+    m_zone.malloc = &FastMallocZone::zoneMalloc;
+    m_zone.calloc = &FastMallocZone::zoneCalloc;
+    m_zone.realloc = &FastMallocZone::zoneRealloc;
+    m_zone.free = &FastMallocZone::zoneFree;
+    m_zone.introspect = &jscore_fastmalloc_introspection;
+    malloc_zone_register(&m_zone);
+}
+
+
+void FastMallocZone::init()
+{
+    static FastMallocZone zone(getPageHeap(), &thread_heaps, static_cast<TCMalloc_Central_FreeListPadded*>(central_cache));
 }
 
 #endif

@@ -156,6 +156,21 @@ class TCMalloc_PageMap2 {
     }
     return true;
   }
+
+#ifdef WTF_CHANGES
+  template<class Visitor, class MemoryReader>
+  void visit(const Visitor& visitor, const MemoryReader& reader)
+  {
+    for (int i = 0; i < ROOT_LENGTH; i++) {
+      if (!root_[i])
+        continue;
+
+      Leaf* l = reader(reinterpret_cast<Leaf*>(root_[i]));
+      for (int j = 0; j < LEAF_LENGTH; j += visitor.visit(l->values[j]))
+        ;
+    }
+  }
+#endif
 };
 
 // Three-level radix tree
@@ -240,6 +255,27 @@ class TCMalloc_PageMap3 {
     }
     return true;
   }
+
+#ifdef WTF_CHANGES
+  template<class Visitor, class MemoryReader>
+  void visit(const Visitor& visitor, const MemoryReader& reader) {
+    Node* root = reader(root_);
+    for (int i = 0; i < INTERIOR_LENGTH; i++) {
+      if (!root->ptrs[i])
+        continue;
+
+      Node* n = reader(root->ptrs[i]);
+      for (int j = 0; j < INTERIOR_LENGTH; j++) {
+        if (!n->ptrs[j])
+          continue;
+
+        Leaf* l = reader(reinterpret_cast<Leaf*>(n->ptrs[j]));
+        for (int k = 0; k < LEAF_LENGTH; k += visitor.visit(l->values[k]))
+          ;
+      }
+    }
+  }
+#endif
 };
 
 #endif  // TCMALLOC_PAGEMAP_H__

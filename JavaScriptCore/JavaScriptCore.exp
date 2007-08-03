@@ -1,3 +1,5 @@
+_jscore_collector_introspection
+_jscore_fastmalloc_introspection
 _JSCheckScriptSyntax
 _JSClassCreate
 _JSClassRelease

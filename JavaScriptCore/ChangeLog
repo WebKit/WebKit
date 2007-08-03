@@ -1,5 +1,64 @@
 2007-08-02  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/4212199> 'leaks' reports false leaks in WebKit (because the WTF allocator uses mmap?)
+
+        Implement malloc zone introspection routines to allow leaks, heap, and friends to request information
+        about specific memory regions that were allocated by FastMalloc or the JavaScriptCore collector.
+
+        This requires tool-side support before the regions will be displayed.  The addition of that support is
+        tracked by <rdar://problems/5353057&5353060>.
+
+        * JavaScriptCore.exp: Export the two variables that are used by leaks to introspect the allocators.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/AllInOneFile.cpp:
+        * kjs/CollectorHeapIntrospector.cpp: Added.
+        (KJS::):
+        (KJS::CollectorHeapIntrospector::init): 
+        (KJS::CollectorHeapIntrospector::CollectorHeapIntrospector): Create and register our zone with the system.
+        (KJS::CollectorHeapIntrospector::enumerate): Iterate over the CollectorBlocks that are in use and report them to the caller as being used.
+        * kjs/CollectorHeapIntrospector.h: Added.
+        (KJS::CollectorHeapIntrospector::size): Return zero to indicate the specified pointer does not belong to this zone.
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread): Register the CollectorHeapIntrospector with the system when the first thread is registered with the collector.
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::GetDescriptorEnsureSafe):
+        (WTF::TCMalloc_ThreadCache_FreeList::enumerateFreeObjects): Enumerate the objects on the free list.
+        (WTF::TCMalloc_ThreadCache::enumerateFreeObjects): Ditto.
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects): Ditto.
+        (WTF::TCMalloc_ThreadCache::InitModule): Register the FastMallocZone with the system when initializing TCMalloc.
+        (WTF::FreeObjectFinder::FreeObjectFinder):
+        (WTF::FreeObjectFinder::visit): Add an object to the free list.
+        (WTF::FreeObjectFinder::isFreeObject):
+        (WTF::FreeObjectFinder::freeObjectCount):
+        (WTF::FreeObjectFinder::findFreeObjects): Find the free objects within a thread cache or free list.
+        (WTF::PageMapFreeObjectFinder::PageMapFreeObjectFinder): Find the free objects within a TC_PageMap.
+        (WTF::PageMapFreeObjectFinder::visit): Called once per allocated span.  Record whether the span or any subobjects are free.
+        (WTF::PageMapMemoryUsageRecorder::PageMapMemoryUsageRecorder):
+        (WTF::PageMapMemoryUsageRecorder::visit): Called once per allocated span.  Report the range of memory as being allocated, and the span or
+        its subobjects as being used if they do not appear on the free list.
+        (WTF::FastMallocZone::enumerate): Map the key remote TCMalloc data structures into our address space.  We then locate all free memory ranges
+        before reporting the other ranges as being in use.
+        (WTF::FastMallocZone::size): Determine whether the given pointer originates from within our allocation zone.  If so,
+        we return its allocation size.
+        (WTF::FastMallocZone::zoneMalloc):
+        (WTF::FastMallocZone::zoneCalloc):
+        (WTF::FastMallocZone::zoneFree):
+        (WTF::FastMallocZone::zoneRealloc):
+        (WTF::):
+        (WTF::FastMallocZone::FastMallocZone): Create and register our zone with the system.
+        (WTF::FastMallocZone::init):
+        * wtf/MallocZoneSupport.h: Added.
+        (WTF::RemoteMemoryReader::RemoteMemoryReader): A helper class to ease the process of mapping memory in a different process into
+        our local address space
+        (WTF::RemoteMemoryReader::operator()):
+        * wtf/TCPageMap.h:
+        (TCMalloc_PageMap2::visit): Walk over the heap and visit each allocated span.
+        (TCMalloc_PageMap3::visit): Ditto.
+
+2007-08-02  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * kjs/ustring.cpp:

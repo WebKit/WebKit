@@ -24,12 +24,16 @@
 // that see a significant speed gain from this.
 
 #define KDE_USE_FINAL 1
+#include "config.h"
 
 #include "function.cpp"
 #include "debugger.cpp"
 #include "array_object.cpp"
 #include "bool_object.cpp"
 #include "collector.cpp"
+#if PLATFORM(DARWIN)
+#include "CollectorHeapIntrospector.cpp"
+#endif
 #include "CommonIdentifiers.cpp"
 #include "Context.cpp"
 #include "date_object.cpp"
