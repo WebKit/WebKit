@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css">
+    <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -14,7 +15,7 @@
 
     description("This test makes sure that we have similar behavior as other\
     browsers when resizing and moving a window outside of the screen.  This test\
-    will fail in some dimentions when run manually because of inconsistencies of\
+    will fail in some dimensions when run manually because of inconsistencies of\
     when the window can and cannot go behind the doc.");
     
     var result;
@@ -23,210 +24,276 @@
     var y;
 
     // resizeTo /////////////////////////
+    debug('');
+    debug('window.resizeTo Tests');
+    debug('');
 
-    testName = "resizeTo: Too Big";
     x = screen.width*2;
     y = screen.height*2;
     window.resizeTo(x, y);
-    result = window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
-    
-    testName = "resizeTo: Too Small";
+    debug("Testing - resizeTo: Too Big");
+    shouldBe('window.outerWidth', 'screen.width');
+
+    debug('');
+
     x = 50;
     y = 50;
     window.resizeTo(x, y);
-    result = window.outerWidth == 100;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - resizeTo: Too Small");
+    shouldBe('window.outerWidth', '100');
 
     // resizeBy /////////////////////////
+    debug('');
+    debug('window.resizeBy Tests');
+    debug('');
 
-    testName = "resizeBy: Too Small";
     x = -100;
     y = -100;
     window.resizeBy(x, y);
-    result = window.outerWidth == 100;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - resizeBy: Too Small");
+    shouldBe('window.outerWidth', '100');
 
-    testName = "resizeBy: Too Big";
+    debug('');
+
     x = screen.width*2;
     y = screen.height*2;
     window.resizeBy(x, y);
-    result = window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - resizeBy: Too Big");
+    shouldBe('window.outerWidth', 'screen.width');
 
     window.moveTo(0,0);
     window.resizeTo(screen.width, screen.height);
 
     // moveTo /////////////////////////
+    debug('');
+    debug('window.moveTo Tests');
+    debug('');
 
-    testName = "moveTo: Top Left";
     x = -100;
     y = -100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.screenX == screen.availLeft;
-    else
-        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Top Left");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.screenX', 'screen.availLeft');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
+    debug('');
 
-    testName = "moveTo: Top";
     x = 0;
     y = -100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.screenY ==  0 && window.screenX == screen.availLeft;
-    else
-        result = window.screenY ==  screen.availTop && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Top");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.screenX', 'screen.availLeft');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveTo: Top Right";
+    debug('');
+
     x = 100;
     y = -100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.outerWidth == screen.width;
-    else
-        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
-    
-    testName = "moveTo: Right";
+    debug("Testing - moveTo: Top Right");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
+
+    debug('');
+
     x = 100;
     y = 0;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.outerWidth == screen.width;
-    else
-        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Right");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
 
-    testName = "moveTo: Bottom Right";
+    debug('');
+
     x = 100;
     y = 100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.outerHeight == screen.height && window.outerWidth == screen.width;
-    else
-        result = window.outerHeight == screen.availHeight && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Bottom Right");
+    if (window.layoutTestController) {
+        shouldBe('window.outerHeight', 'screen.height');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.outerHeight', 'screen.availHeight');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
 
-    testName = "moveTo: Bottom";
+    debug('');
+
     x = 0;
     y = 100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.outerHeight == screen.height && window.screenX == 0;
-    else
-        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Bottom");
+    if (window.layoutTestController) {
+        shouldBe('window.outerHeight', 'screen.height');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.outerHeight', 'screen.availHeight');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveTo: Bottom Left";
+    debug('');
+
     x = -100;
     y = 100;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.outerHeight == screen.height && window.screenX == 0;
-    else
-        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Bottom Left");
+    if (window.layoutTestController) {
+        shouldBe('window.outerHeight', 'screen.height');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.outerHeight', 'screen.availHeight');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveTo: Left";
+    debug('');
+
     x = -100;
     y = 0;
     window.moveTo(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.screenX == 0;
-    else
-        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveTo: Left");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
     window.moveTo(0,0);
     window.resizeTo(screen.width, screen.height);
 
     // moveBy /////////////////////////
- 
-     testName = "moveBy: Top Left";
+    debug('');
+    debug('window.moveBy Tests');
+    debug('');
+
     x = -100;
     y = -100;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.screenX == 0;
-    else
-        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveBy: Top Left");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveBy: Top";
+    debug('');
+
     x = 0;
     y = -100;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.screenX == 0;
-    else
-        result = window.screenY == screen.availTop && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveBy: Top");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveBy: Top Right";
+    debug('');
+
     x = 100;
     y = -100;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.outerWidth == screen.width;
-    else
-        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
-    
-    testName = "moveBy: Right";
+    debug("Testing - moveBy: Top Right");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
+
+    debug('');
+
     x = 100;
     y = 0;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.screenY == 0 && window.outerWidth == screen.width;
-    else    
-        result = window.screenY == screen.availTop && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveBy: Right");
+    if (window.layoutTestController) {
+        shouldBe('window.screenY', '0');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.screenY', 'screen.availTop');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
 
-    testName = "moveBy: Bottom Right";
+    debug('');
+
     x = 100;
     y = 100;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.outerHeight == screen.height && window.outerWidth == screen.width;
-    else
-        result = window.outerHeight == screen.availHeight && window.outerWidth == screen.width;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveBy: Bottom Right");
+    if (window.layoutTestController) {
+        shouldBe('window.outerHeight', 'screen.height');
+        shouldBe('window.outerWidth', 'screen.width');
+    } else {
+        shouldBe('window.outerHeight', 'screen.availHeight');
+        shouldBe('window.outerWidth', 'screen.width');
+    }
 
-    testName = "moveBy: Bottom";
+    debug('');
+
     x = 0;
     y = 100;
     window.moveBy(x, y);
+    debug("Testing - moveBy: Bottom");
     if (window.layoutTestController)
-        result = window.outerHeight == screen.height;
+        shouldBe('window.outerHeight', 'screen.height');
     else
-        result = window.outerHeight == screen.availHeight;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+        shouldBe('window.outerHeight', 'screen.availHeight');
 
-    testName = "moveBy: Bottom Left";
+    debug('');
+
     x = -1000;
     y = 100;
     window.moveBy(x, y);
-    if (window.layoutTestController)
-        result = window.outerHeight == screen.height && window.screenX == 0;
-    else
-        result = window.outerHeight == screen.availHeight && window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
+    debug("Testing - moveBy: Bottom Left");
+    if (window.layoutTestController) {
+        shouldBe('window.outerHeight', 'screen.height');
+        shouldBe('window.screenX', '0');
+    } else {
+        shouldBe('window.outerHeight', 'screen.availHeight');
+        shouldBe('window.screenX', 'screen.availLeft');
+    }
 
-    testName = "moveBy: Left";
+    debug('');
+
     x = -100;
     y = 0;
     window.moveBy(x, y);
-    result = window.screenX == screen.availLeft;
-    debug((result ? "PASSED: " : "Test FAILED: ") + testName);
- 
+    debug("Testing - moveBy: Left");
+    shouldBe('window.screenX', 'screen.availLeft');
+
+    debug('');
+
     window.moveTo(0,0);
     window.resizeTo(800,600);
- 
-    var successfullyParsed = true;
 
+    var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

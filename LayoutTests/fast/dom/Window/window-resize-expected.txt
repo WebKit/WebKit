@@ -1,28 +1,91 @@
-This test makes sure that we have similar behavior as other browsers when resizing and moving a window outside of the screen. This test will fail in some dimentions when run manually because of inconsistencies of when the window can and cannot go behind the doc.
+This test makes sure that we have similar behavior as other browsers when resizing and moving a window outside of the screen. This test will fail in some dimensions when run manually because of inconsistencies of when the window can and cannot go behind the doc.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASSED: resizeTo: Too Big
-PASSED: resizeTo: Too Small
-PASSED: resizeBy: Too Small
-PASSED: resizeBy: Too Big
-PASSED: moveTo: Top Left
-PASSED: moveTo: Top
-PASSED: moveTo: Top Right
-PASSED: moveTo: Right
-PASSED: moveTo: Bottom Right
-PASSED: moveTo: Bottom
-PASSED: moveTo: Bottom Left
-PASSED: moveTo: Left
-PASSED: moveBy: Top Left
-PASSED: moveBy: Top
-PASSED: moveBy: Top Right
-PASSED: moveBy: Right
-PASSED: moveBy: Bottom Right
-PASSED: moveBy: Bottom
-PASSED: moveBy: Bottom Left
-PASSED: moveBy: Left
+
+window.resizeTo Tests
+
+Testing - resizeTo: Too Big
+PASS window.outerWidth is screen.width
+
+Testing - resizeTo: Too Small
+PASS window.outerWidth is 100
+
+window.resizeBy Tests
+
+Testing - resizeBy: Too Small
+PASS window.outerWidth is 100
+
+Testing - resizeBy: Too Big
+PASS window.outerWidth is screen.width
+
+window.moveTo Tests
+
+Testing - moveTo: Top Left
+PASS window.screenY is 0
+PASS window.screenX is screen.availLeft
+
+Testing - moveTo: Top
+PASS window.screenY is 0
+PASS window.screenX is screen.availLeft
+
+Testing - moveTo: Top Right
+PASS window.screenY is 0
+PASS window.outerWidth is screen.width
+
+Testing - moveTo: Right
+PASS window.screenY is 0
+PASS window.outerWidth is screen.width
+
+Testing - moveTo: Bottom Right
+PASS window.outerHeight is screen.height
+PASS window.outerWidth is screen.width
+
+Testing - moveTo: Bottom
+PASS window.outerHeight is screen.height
+PASS window.screenX is 0
+
+Testing - moveTo: Bottom Left
+PASS window.outerHeight is screen.height
+PASS window.screenX is 0
+
+Testing - moveTo: Left
+PASS window.screenY is 0
+PASS window.screenX is 0
+
+window.moveBy Tests
+
+Testing - moveBy: Top Left
+PASS window.screenY is 0
+PASS window.screenX is 0
+
+Testing - moveBy: Top
+PASS window.screenY is 0
+PASS window.screenX is 0
+
+Testing - moveBy: Top Right
+PASS window.screenY is 0
+PASS window.outerWidth is screen.width
+
+Testing - moveBy: Right
+PASS window.screenY is 0
+PASS window.outerWidth is screen.width
+
+Testing - moveBy: Bottom Right
+PASS window.outerHeight is screen.height
+PASS window.outerWidth is screen.width
+
+Testing - moveBy: Bottom
+PASS window.outerHeight is screen.height
+
+Testing - moveBy: Bottom Left
+PASS window.outerHeight is screen.height
+PASS window.screenX is 0
+
+Testing - moveBy: Left
+PASS window.screenX is screen.availLeft
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

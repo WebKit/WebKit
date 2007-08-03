@@ -1,3 +1,13 @@
+2007-08-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Change test to use shared shouldBe function to
+        show failures more clearly. 
+
+        * fast/dom/Window/window-resize-expected.txt:
+        * fast/dom/Window/window-resize.html:
+
 2007-08-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
