@@ -1,3 +1,11 @@
+2007-08-03  Adam Roben  <aroben@apple.com>
+
+        Updated Skipped files for Windows and Leopard.
+
+        * mac/leopard/Skipped: Removed a test that has been moved (and only
+        fails on Windows), and added new failures.
+        * win/Skipped: Added new failures and annotated some old ones.
+
 2007-08-02  Adam Roben  <aroben@apple.com>
 
         Fix a typo in fast/events/no-blur-on-page

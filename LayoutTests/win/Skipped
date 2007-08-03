@@ -70,12 +70,10 @@ editing/style/5091898.html
 fast/block/positioning/047.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/font_property_normal.html
-fast/css/ignore-text-zoom
 fast/css/rtl-ordering.html
 fast/css/text-security.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
-fast/events/standalone-image-drag-to-editable.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
@@ -215,7 +213,8 @@ editing/undo/undo-delete.html
 editing/undo/undo-forward-delete-boundary.html
 editing/undo/undo-forward-delete.html
 
-# DRT doesn't implement textInputController <rdar://problem/
+# DRT doesn't implement textInputController <rdar://problem/5074430>
+editing/deleting/5300379.html
 editing/deleting/delete-to-end-of-paragraph.html
 editing/deleting/smart-delete-003.html
 editing/deleting/smart-delete-004.html
@@ -228,8 +227,15 @@ editing/input/replace-invalid-range.html
 editing/input/text-input-controller.html
 editing/input/wrapped-line-char-rect.html
 editing/selection/4947387.html
+editing/selection/5195166-1.html
+editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
+fast/dom/character-index-for-point.html
+fast/forms/attributed-strings.html
+fast/text/attributed-substring-from-range-001.html
+fast/text/attributed-substring-from-range.html
+fast/text/justified-text-rect.html
 
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
@@ -246,7 +252,6 @@ fast/events/5056619.html
 fast/forms/textfield-drag-into-disabled.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
-
 
 # editing/pasteboard/drag-selected-image-to-contenteditable.html fails on boomer <rdar://problem/5143967>
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
@@ -269,15 +274,6 @@ svg/custom/use-events-crash.svg
 
 # editing/style/style-boundary-005.html fails on boomer <rdar://problem/5143715>
 editing/style/style-boundary-005.html
-
-# No textInputController <rdar://problem/5074430>
-fast/dom/character-index-for-point.html
-fast/forms/attributed-strings.html
-fast/text/attributed-substring-from-range-001.html
-fast/text/attributed-substring-from-range.html
-fast/text/justified-text-rect.html
-editing/selection/5195166-1.html
-editing/selection/5195166-2.html
 
 # Pixel depth and color depth different on boomer <rdar://problem/5137719>
 fast/dom/Window/window-screen-properties.html
@@ -461,11 +457,7 @@ fast/forms/select-double-onchange.html
 fast/forms/dragging-to-file-input.html
 
 # <rdar://problem/5230478> FrameLoadDelegate callbacks are not dumped in DRT
-http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/bad-server-subframe.html
-http/tests/loading/basic.html
-http/tests/loading/empty-subframe.html
-http/tests/loading/simple-subframe.html
+http/tests/loading
 
 # <rdar://problem/5233929> frame-loading-via-document-write.html is failing
 fast/dom/frame-loading-via-document-write.html
@@ -489,6 +481,36 @@ editing/input/emacs-ctrl-o.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/emacs-cntl-y-001.html
+
+# eventSender.contextClick is unimplemented <rdar://problem/5132001>
+editing/selection/5109817.html
+editing/selection/5354455-1.html
+editing/selection/5354455-2.html
+
+# eventSender.textZoomIn is unimplemented <rdar://problem/5382277>
+fast/css/ignore-text-zoom.html
+
+# <rdar://problem/5361188>
+fast/dom/Window/window-resize.html
+
+# layoutTestController.setCustomPolicyDelegate is unimplemented <rdar://problem/5382546>
+http/tests/security/feed-urls-from-remote.html
+
+# These tests time out <rdar://problem/5382558>
+http/tests/security/cross-frame-access-protocol-explicit-domain.html
+http/tests/security/cross-frame-access-protocol.html
+
+# Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
+http/tests/security/cross-frame-access-put.html
+
+# XHR.responseText is null instead of empty string <rdar://problem/5383104>
+http/tests/xmlhttprequest/zero-length-response.html
+
+# selection is wrong <rdar://problem/5383368>
+fast/dom/delete-contents.html
+
+# Drag/drop of image is failing <rdar://problem/5383382>
+fast/events/standalone-image-drag-to-editable.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

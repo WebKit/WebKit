@@ -1,6 +1,3 @@
-# <rdar://problem/5361188> fast/js/window-resize.html fails on windows
-fast/js/window-resize.html
-
 # <rdar://problem/5313520> editing/pasteboard/4076267-2.html fails on Leopard
 editing/pasteboard/4076267-2.html
 
@@ -44,3 +41,12 @@ fast/xsl/xslt-string-parameters.html
 # <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
 fast/forms/hidden-listbox.html
 fast/forms/hidden-input-file.html
+
+# XHR.responseText is null instead of empty string <rdar://problem/5383104>
+http/tests/xmlhttprequest/zero-length-response.html
+
+# selection is wrong <rdar://problem/5383368>
+fast/dom/delete-contents.html
+
+# Drag/drop of image is failing <rdar://problem/5383382>
+fast/events/standalone-image-drag-to-editable.html
