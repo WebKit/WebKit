@@ -679,6 +679,11 @@ void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceRespon
 
 }
 
+void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)
+{
+    m_response = challenge.failureResponse();
+}
+
 void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int len)
 {
     if (m_state < Sent)

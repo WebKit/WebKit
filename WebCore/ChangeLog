@@ -1,5 +1,23 @@
 2007-08-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver.
+
+        <rdar://problem/5383286>
+        XMLHTTPRequest does not return 401 when user cancels authentication dialog (affects .Mac)
+        
+        * loader/ResourceLoader.h:
+        Make receivedCancellation virtual.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::receivedCancellation):
+        Call SubresourceLoaderClient::receivedCancellation.
+        
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::receivedCancellation):
+        Save the failure response.
+
+2007-08-03  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/5374393> 

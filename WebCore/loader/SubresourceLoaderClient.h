@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class AuthenticationChallenge;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -47,6 +48,9 @@ public:
     virtual void didReceiveData(SubresourceLoader*, const char*, int) { }
     virtual void didFinishLoading(SubresourceLoader*) { }
     virtual void didFail(SubresourceLoader*, const ResourceError&) { }
+    
+    virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&) { }
+
 };
 
 }

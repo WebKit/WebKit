@@ -113,6 +113,7 @@ private:
     virtual void didReceiveData(SubresourceLoader*, const char* data, int size);
     virtual void didFail(SubresourceLoader*, const ResourceError&);
     virtual void didFinishLoading(SubresourceLoader*);
+    virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&);
 
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&);
 
