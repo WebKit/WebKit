@@ -1,4 +1,1 @@
-onblur should not fire if an element has focus when navigating away from the page
-rdar://problem/5326303
-
-
+SUCCESS
