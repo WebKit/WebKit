@@ -83,6 +83,9 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
 
 CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
+    if (!url.isValid())
+        return 0;
+    
     // Look up the resource in our map.
     CachedResource* resource = m_resources.get(url.url());
 

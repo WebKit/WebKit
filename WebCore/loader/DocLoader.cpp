@@ -136,10 +136,13 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
-
+    
     if (cache()->disabled()) {
-        if (CachedResource* resource = m_docResources.get(fullURL.url()))
+        if (CachedResource* resource = m_docResources.get(fullURL.url())) {
+            if (type != resource->type())
+                return 0;
             return resource;
+        }
     }
                                                           
     if (m_frame && m_frame->loader()->isReloading())

@@ -1,3 +1,19 @@
+2007-08-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5375190> Mail crashed in WebCore::CachedImage::imageSize() const when viewing a particular message
+
+        Fix the uncached load path to confirm that the type of resource being 
+        returned actually matches the type that was requested.
+
+        Also make sure we never create a resource in the Cache for invalid urls.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+
 2007-08-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
