@@ -1,5 +1,17 @@
 2007-08-03  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14879
+          REGRESSION: First item in select (pop-up menu) is displayed even if another item was selected via JavaScript
+
+        * fast/forms/menulist-deselect-update-expected.checksum: Added.
+        * fast/forms/menulist-deselect-update-expected.png: Added.
+        * fast/forms/menulist-deselect-update-expected.txt: Added.
+        * fast/forms/menulist-deselect-update.html: Added.
+
+2007-08-03  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=14653

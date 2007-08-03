@@ -1,3 +1,15 @@
+2007-08-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14879
+          REGRESSION: First item in select (pop-up menu) is displayed even if another item was selected via JavaScript
+
+        Test: fast/forms/menulist-deselect-update.html
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelected): Reordered to allow setSelectedIndex() to call setChanged().
+
 2007-08-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

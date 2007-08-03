@@ -180,10 +180,9 @@ void HTMLOptionElement::setSelected(bool selected)
 {
     if (m_selected == selected)
         return;
-    m_selected = selected;
     if (HTMLSelectElement* select = getSelect())
         select->setSelectedIndex(selected ? index() : -1, false);
-
+    m_selected = selected;
 }
 
 void HTMLOptionElement::setSelectedState(bool selected)
