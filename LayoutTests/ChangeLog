@@ -1,3 +1,14 @@
+2007-08-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14653
+          REGRESSION (r23994): No caret is drawn after clicking a search field's placeholder text
+          <rdar://problem/5383841>
+
+        * fast/forms/search-click-in-placeholder-expected.txt: Added.
+        * fast/forms/search-click-in-placeholder.html: Added.
+
 2007-08-03  Adam Roben  <aroben@apple.com>
 
         Updated Skipped files for Windows and Leopard.

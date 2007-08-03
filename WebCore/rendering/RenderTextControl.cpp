@@ -53,6 +53,18 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+class RenderTextControlInnerBlock : public RenderBlock {
+public:
+    RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
+
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int tx, HitTestAction);
+};
+
+bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, HitTestBlockBackground);
+}
+
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     : RenderBlock(node)
     , m_dirty(false)
@@ -316,7 +328,7 @@ void RenderTextControl::createSubtreeIfNeeded()
         // For non-search fields, there is no intermediate m_innerBlock as the shadow node.
         // m_innerText will be the shadow node in that case.
         m_innerText = new HTMLTextFieldInnerTextElement(document(), m_innerBlock ? 0 : node());
-        RenderBlock* textBlockRenderer = new (renderArena()) RenderBlock(m_innerText.get());
+        RenderTextControlInnerBlock* textBlockRenderer = new (renderArena()) RenderTextControlInnerBlock(m_innerText.get());
         m_innerText->setRenderer(textBlockRenderer);
         m_innerText->setAttached();
         m_innerText->setInDocument(true);

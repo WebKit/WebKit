@@ -1,3 +1,25 @@
+2007-08-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14653
+          REGRESSION (r23994): No caret is drawn after clicking a search field's placeholder text
+          <rdar://problem/5383841>
+
+        Test: fast/forms/search-click-in-placeholder.html
+
+        Defined a subclass of RenderBlock that never hit-tests children for use in
+        text controls. This avoids returning placeholder text as the hit node.
+        Since text controls cannot contain inline elements, there is no harm in
+        doing that unconditionally, and not just in the case that the field is
+        showing placeholder text.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::~RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::nodeAtPoint):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+
 2007-08-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff
