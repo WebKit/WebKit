@@ -29,10 +29,46 @@
 #include <Foundation/Foundation.h>
 #include <wtf/Assertions.h>
 
+@class PowerNotifier;
+
 namespace WebCore {
 
+static PowerNotifier *powerNotifier;
 static CFRunLoopTimerRef sharedTimer;
 static void (*sharedTimerFiredFunction)();
+static void timerFired(CFRunLoopTimerRef, void*);
+
+}
+
+@interface PowerNotifier : NSObject
+@end
+
+@implementation PowerNotifier
+
+- (id)init
+{
+    self = [super init];
+    
+    if (self)
+        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
+                                                               selector:@selector(didWake:)
+                                                                   name:NSWorkspaceDidWakeNotification 
+                                                                 object:nil];
+    
+    return self;
+}
+
+- (void)didWake:(NSNotification *)notification
+{
+    if (WebCore::sharedTimer) {
+        WebCore::stopSharedTimer();
+        WebCore::timerFired(0, 0);
+    }
+}
+
+@end
+
+namespace WebCore {
 
 void setSharedTimerFiredFunction(void (*f)())
 {
@@ -61,6 +97,12 @@ void setSharedTimerFireTime(double fireTime)
     CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
+    
+    if (!powerNotifier) {
+        powerNotifier = [[PowerNotifier alloc] init];
+        CFRetain(powerNotifier);
+        [powerNotifier release];
+    }
 }
 
 void stopSharedTimer()

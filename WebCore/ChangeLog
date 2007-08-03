@@ -1,3 +1,19 @@
+2007-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5286444>
+        http://bugs.webkit.org/show_bug.cgi?id=14269
+        REGRESSION: Gmail links stop working after computer sleep
+        
+        Add a PowerNotifier object that takes care of resetting and firing the shared timer when coming
+        back from sleep.
+        
+        * platform/mac/SharedTimerMac.cpp:
+        (-[PowerNotifier init]):
+        (-[PowerNotifier didWake:]):
+        (WebCore::setSharedTimerFireTime):
+
 2007-08-04  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.
