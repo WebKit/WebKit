@@ -1,3 +1,42 @@
+2007-08-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff
+
+        Fix for <rdar://problem/5369332> Xcode crashes while selecting a hyperlink within a AppleScript dictionary (WebCore::Font::drawGlyphBuffer)
+
+        There were many places where we were not correctly retaining/releasing the
+        NSFont object stored in the C++ PlatformFontData object, this resulted in
+        the GC incorrectly collecting the NSFont.
+
+        This patch fixes the problem by prevent direct modification of the PlatformFontData
+        font pointer, allowing us to enforce correct CFRetain/Release behaviour.
+
+        * platform/FontData.h:
+        (WebCore::FontData::getNSFont):
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::initFontData):
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+        (WebCore::FontData::platformWidthForGlyph):
+        (WebCore::FontData::checkShapesArabic):
+        * platform/mac/FontMac.mm:
+        (WebCore::initializeATSUStyle):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::setFont):
+
 2007-08-03  Antti Koivisto  <antti@apple.com>
 
         Oops, this change wasn't supposed to be commited.

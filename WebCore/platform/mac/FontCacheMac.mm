@@ -120,7 +120,7 @@ void FontCache::platformInit()
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     const FontPlatformData& platformData = font.primaryFont()->platformData();
-    NSFont *nsFont = platformData.font;
+    NSFont *nsFont = platformData.font();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters)
         length:length freeWhenDone:NO];
@@ -223,7 +223,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     FontPlatformData* result = new FontPlatformData;
     
     // Use the correct font for print vs. screen.
-    result->font = fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont];
+    result->setFont(fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont]);
     result->syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result->syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
     return result;

@@ -107,17 +107,17 @@ static void initializeATSUStyle(const FontData* fontData)
         if (status != noErr)
             LOG_ERROR("ATSUCreateStyle failed (%d)", status);
     
-        ATSUFontID fontID = wkGetNSFontATSUFontId(fontData->m_font.font);
+        ATSUFontID fontID = wkGetNSFontATSUFontId(fontData->m_font.font());
         if (fontID == 0) {
             ATSUDisposeStyle(fontData->m_ATSUStyle);
-            LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font);
+            LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font());
             return;
         }
         
         CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
         if (fontData->m_font.syntheticOblique)
             transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
-        Fixed fontSize = FloatToFixed([fontData->m_font.font pointSize]);
+        Fixed fontSize = FloatToFixed([fontData->m_font.font() pointSize]);
         // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
         Fract kerningInhibitFactor = FloatToFract(1.0);
         ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
@@ -138,7 +138,7 @@ static void initializeATSUStyle(const FontData* fontData)
         // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
         // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
         // See bugzilla 5166.
-        if ([[fontData->m_font.font coveredCharacterSet] characterIsMember:'a']) {
+        if ([[fontData->m_font.font() coveredCharacterSet] characterIsMember:'a']) {
             ATSUFontFeatureType featureTypes[] = { kLigaturesType };
             ATSUFontFeatureSelector featureSelectors[] = { kCommonLigaturesOffSelector };
             status = ATSUSetFontFeatures(fontData->m_ATSUStyle, 1, featureTypes, featureSelectors);
@@ -191,7 +191,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                 // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
                 // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
                 // does in any of its device-metrics modes.
-                shouldRound = [renderer->m_font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
+                shouldRound = [renderer->m_font.font() renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
                 if (syntheticBoldPass)
                     syntheticBoldOffset = FloatToFixed(renderer->m_syntheticBoldOffset);
             }
@@ -609,16 +609,16 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
     if (!isPrinterFont()) {
-        drawFont = [platformData.font screenFont];
-        if (drawFont != platformData.font)
+        drawFont = [platformData.font() screenFont];
+        if (drawFont != platformData.font())
             // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
             LOG_ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
-                [[[platformData.font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
+                [[[platformData.font() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     } else {
-        drawFont = [platformData.font printerFont];
-        if (drawFont != platformData.font)
+        drawFont = [platformData.font() printerFont];
+        if (drawFont != platformData.font())
             NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
-                [[[platformData.font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
+                [[[platformData.font() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     }
     
     CGContextSetFont(cgContext, wkGetCGFontFromNSFont(drawFont));

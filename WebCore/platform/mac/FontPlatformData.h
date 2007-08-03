@@ -41,11 +41,11 @@ struct FontPlatformData {
     class Deleted {};
 
     FontPlatformData(Deleted)
-    : font((NSFont*)-1), syntheticBold(false), syntheticOblique(false)
+    : syntheticBold(false), syntheticOblique(false), m_font((NSFont*)-1)
     {}
 
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false)
-    : font(f), syntheticBold(b), syntheticOblique(o)
+    : syntheticBold(b), syntheticOblique(o), m_font(f)
     {
         if (f) 
             CFRetain(f);
@@ -53,31 +53,42 @@ struct FontPlatformData {
 
     FontPlatformData(const FontPlatformData& f)
     {
-        font = (f.font && f.font != (NSFont*)-1) ? (NSFont*)CFRetain(f.font) : f.font;
+        m_font = (f.m_font && f.m_font != (NSFont*)-1) ? (NSFont*)CFRetain(f.m_font) : f.m_font;
         syntheticBold = f.syntheticBold;
         syntheticOblique = f.syntheticOblique;
     }
 
     ~FontPlatformData()
     {
-        if (font && font != (NSFont*)-1)
-            CFRelease(font);
+        if (m_font && m_font != (NSFont*)-1)
+            CFRelease(m_font);
     }
 
-    NSFont *font;
     bool syntheticBold;
     bool syntheticOblique;
 
     unsigned hash() const
     { 
-        uintptr_t hashCodes[2] = { (uintptr_t)font, syntheticBold << 1 | syntheticOblique };
+        uintptr_t hashCodes[2] = { (uintptr_t)m_font, syntheticBold << 1 | syntheticOblique };
         return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
     bool operator==(const FontPlatformData& other) const
     { 
-        return font == other.font && syntheticBold == other.syntheticBold && syntheticOblique == other.syntheticOblique;
+        return m_font == other.m_font && syntheticBold == other.syntheticBold && syntheticOblique == other.syntheticOblique;
     }
+    NSFont *font() const { return m_font; }
+    void setFont(NSFont* font) {
+        if (m_font == font)
+            return;
+        if (font && font != (NSFont*)-1)
+            CFRetain(font);
+        if (m_font && m_font != (NSFont*)-1)
+            CFRelease(m_font);
+        m_font = font;
+    }
+private:
+    NSFont *m_font;
 };
 
 }
