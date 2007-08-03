@@ -1372,7 +1372,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/perl -w";
-			shellScript = "if ($ENV{BUNDLE_VERSION} =~ /4\\.|4$/) {\n    die \"Can't set WebKit's version to something that ends in a 4!\\nIf we do, someone's going to think it's Netscape 4.\\nRadar bug 3787996 has some details.\\n\";\n}\n";
+			shellScript = "if ($ENV{FULL_VERSION} =~ /4\\.|4$/) {\n    die \"Can't set WebKit's version to something that ends in a 4!\\nIf we do, someone's going to think it's Netscape 4.\\nRadar bug 3787996 has some details.\\n\";\n}\n";
 		};
 		1C6CB0510AA63EB000D23BFD /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;
