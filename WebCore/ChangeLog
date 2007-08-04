@@ -1,3 +1,13 @@
+2007-08-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5345862> CrashTracer: [USER] 4 crashes in Safari at com.apple.WebCore: WebCore::Frame::isContentEditable const + 10
+
+        Couldn't reproduce the problem, but a nil check for the frame should fix this.
+
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::adjustRenderStyle):
+
 2007-08-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
