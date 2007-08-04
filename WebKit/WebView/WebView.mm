@@ -1103,7 +1103,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     
     // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
-    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     MIMETypeRegistry::getSupportedNonImageMIMETypes().remove(MIMEType);
 }
 
@@ -1114,7 +1114,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
     // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
-    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
         MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
     
@@ -2503,7 +2503,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     
     // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
     // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
-    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    // to fix <rdar://problem/5372989> - a future revamping of the entire system is neccesary for future robustness
     if ([viewClass class] == [WebHTMLView class])
         MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
 }
