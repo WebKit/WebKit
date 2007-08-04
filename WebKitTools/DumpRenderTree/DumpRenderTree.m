@@ -91,6 +91,7 @@
 
 BOOL windowIsKey = YES;
 WebFrame *mainFrame = 0;
+BOOL shouldDumpSubframesAsText;
 BOOL shouldDumpEditingCallbacks;
 BOOL shouldDumpResourceLoadCallbacks;
 BOOL shouldDumpFrameLoadCallbacks;
@@ -138,6 +139,7 @@ static BOOL dumpSelectionRect;
 BOOL dumpTitleChanges = NO;
 static BOOL dumpBackForwardList;
 static BOOL dumpChildFrameScrollPositions;
+static BOOL dumpChildFramesAsText;
 static int dumpPixels;
 static int paint;
 static int dumpAllPixels;
@@ -665,6 +667,38 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
+static NSString *dumpFramesAsText(WebFrame *frame)
+{
+    if (!frame)
+        return @"";
+
+    DOMDocument *document = [frame DOMDocument];
+    if (!document)
+        return @"";
+
+    DOMElement *documentElement = [document documentElement];
+    if (!documentElement)
+        return @"";
+
+    NSMutableString *result = [[[NSMutableString alloc] init] autorelease];
+
+    // Add header for all but the main frame.
+    if ([frame parentFrame])
+        result = [NSMutableString stringWithFormat:@"\n--------\nFrame: '%@'\n--------\n", [frame name]];
+
+    [result appendFormat:@"%@\n", [documentElement innerText]];
+
+    if (dumpChildFramesAsText) {
+        NSArray *kids = [frame childFrames];
+        if (kids) {
+            for (unsigned i = 0; i < [kids count]; i++)
+                [result appendString:dumpFramesAsText([kids objectAtIndex:i])];
+        }
+    }
+
+    return result;
+}
+
 static void convertMIMEType(NSMutableString *mimeType)
 {
     if ([mimeType isEqualToString:@"application/x-javascript"])
@@ -830,8 +864,7 @@ void dump(void)
 
         dumpAsText |= [[[[mainFrame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
         if (dumpAsText) {
-            DOMElement *documentElement = [[mainFrame DOMDocument] documentElement];
-            result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
+            result = dumpFramesAsText(mainFrame);
         } else if (dumpDOMAsWebArchive) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             result = serializeWebArchiveToXML(webArchive);
@@ -987,6 +1020,7 @@ void dump(void)
             || aSelector == @selector(dumpAsText)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
+            || aSelector == @selector(dumpChildFramesAsText)
             || aSelector == @selector(dumpDOMAsWebArchive)
             || aSelector == @selector(dumpEditingCallbacks)
             || aSelector == @selector(dumpFrameLoadCallbacks)
@@ -1224,6 +1258,11 @@ void dump(void)
 - (void)dumpChildFrameScrollPositions
 {
     dumpChildFrameScrollPositions = YES;
+}
+
+- (void)dumpChildFramesAsText
+{
+    dumpChildFramesAsText = YES;
 }
 
 - (void)dumpEditingCallbacks
@@ -1516,6 +1555,7 @@ static void runTest(const char *pathOrURL)
     dumpDOMAsWebArchive = NO;
     dumpSourceAsWebArchive = NO;
     dumpChildFrameScrollPositions = NO;
+    dumpChildFramesAsText = NO;
     shouldDumpEditingCallbacks = NO;
     shouldDumpResourceLoadCallbacks = NO;
     shouldDumpFrameLoadCallbacks = NO;

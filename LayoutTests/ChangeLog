@@ -1,3 +1,16 @@
+2007-08-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Dump contents of subframes using new layoutTestController.dumpChildFramesAsText()
+        function.
+
+        * http/tests/security/cross-frame-access-port-expected.txt:
+        * http/tests/security/cross-frame-access-port-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain-expected.txt:
+        * http/tests/security/resources/cross-frame-access.js:
+
 2007-08-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

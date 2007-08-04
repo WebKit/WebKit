@@ -1,3 +1,25 @@
+2007-08-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Recursively dump all frames as text using new
+        layoutTestController.dumpChildFramesAsText() function.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpFramesAsText):
+        (dump):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpChildFramesAsText]):
+        (runTest):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.cpp:
+        (dumpChildFramesAsTextCallback):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-08-02  Adam Roben  <aroben@apple.com>
 
         Fix fast/dom/Window/alert-undefined.html

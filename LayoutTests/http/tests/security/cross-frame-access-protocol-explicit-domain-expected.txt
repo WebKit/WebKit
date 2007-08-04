@@ -3,3 +3,10 @@ This test currently fails because we check the port and protocol even if documen
 
 PASS: Cross frame access to https from http, after explicitly setting document.domain, was allowed!
 
+
+--------
+Frame: 'aFrame'
+--------
+PASS: Cross frame access to https from http, after explicitly setting document.domain, was allowed!
+
+Inner iframe with explicit document.domain set.

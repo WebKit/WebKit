@@ -83,6 +83,7 @@ function toString(expression, valueForException)
 function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
         layoutTestController.waitUntilDone();
     }
 
@@ -126,6 +127,7 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
 function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
         layoutTestController.waitUntilDone();
     }
 

@@ -43,6 +43,7 @@ extern bool done;
 extern bool shouldDumpEditingCallbacks;
 extern bool shouldDumpTitleChanges;
 extern bool shouldDumpChildFrameScrollPositions;
+extern bool shouldDumpChildFramesAsText;
 extern bool shouldDumpBackForwardList;
 extern bool testRepaint;
 extern bool repaintSweepHorizontally;

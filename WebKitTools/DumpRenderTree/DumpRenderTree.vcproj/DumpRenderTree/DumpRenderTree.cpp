@@ -84,6 +84,7 @@ bool waitToDump = false;
 bool shouldDumpEditingCallbacks = false;
 bool shouldDumpTitleChanges = false;
 bool shouldDumpChildFrameScrollPositions = false;
+bool shouldDumpChildFramesAsText = false;
 bool shouldDumpBackForwardList = false;
 bool testRepaint = false;
 bool repaintSweepHorizontally = false;
@@ -229,6 +230,65 @@ void dumpFrameScrollPosition(IWebFrame* frame)
             VariantClear(&var);
         }
     }
+}
+
+static wstring dumpFramesAsText(IWebFrame* frame)
+{
+    if (!frame)
+        return L"";
+
+    COMPtr<IDOMDocument> document;
+    if (FAILED(frame->DOMDocument(&document)))
+        return L"";
+
+    COMPtr<IDOMElement> documentElement;
+    if (FAILED(document->documentElement(&documentElement)))
+        return L"";
+
+    wstring result;
+
+    // Add header for all but the main frame.
+    COMPtr<IWebFrame> parent;
+    if (FAILED(frame->parentFrame(&parent)))
+        return L"";
+    if (parent) {
+        BSTR name = L"";
+        if (FAILED(frame->name(&name)))
+            return L"";
+
+        result.append(L"\n--------\nFrame: '");
+        result.append(name ? name : L"");
+        result.append(L"'\n--------\n");
+
+        SysFreeString(name);
+    }
+
+    BSTR innerText = 0;
+    COMPtr<IDOMElementPrivate> docPrivate;
+    if (SUCCEEDED(documentElement->QueryInterface(&docPrivate)))
+        docPrivate->innerText(&innerText);
+
+    result.append(innerText ? innerText : L"");
+    result.append(L"\n");
+
+    SysFreeString(innerText);
+
+    if (shouldDumpChildFramesAsText) {
+        COMPtr<IEnumVARIANT> enumKids;
+        if (FAILED(frame->childFrames(&enumKids)))
+            return L"";
+        VARIANT var;
+        VariantInit(&var);
+        while (enumKids->Next(1, &var, 0) == S_OK) {
+            ASSERT(V_VT(&var) == VT_UNKNOWN);
+            COMPtr<IWebFrame> framePtr;
+            V_UNKNOWN(&var)->QueryInterface(IID_IWebFrame, (void**)&framePtr);
+            result.append(dumpFramesAsText(framePtr.get()));
+            VariantClear(&var);
+        }
+    }
+
+    return result;
 }
 
 static int compareHistoryItems(const void* item1, const void* item2)
@@ -420,16 +480,8 @@ void dump()
         if (dumpAsText) {
             ::InvalidateRect(webViewWindow, 0, TRUE);
             ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
-
-            COMPtr<IDOMDocument> document;
-            frame->DOMDocument(&document);
-
-            COMPtr<IDOMElement> documentElement;
-            document->documentElement(&documentElement);
-
-            COMPtr<IDOMElementPrivate> docPrivate;
-            if (SUCCEEDED(documentElement->QueryInterface(&docPrivate)))
-                docPrivate->innerText(&resultString);
+            wstring result = dumpFramesAsText(frame);
+            resultString = SysAllocStringLen(result.data(), result.size());
         } else {
             bool isSVGW3CTest = strstr(currentTest, "svg\\W3C-SVG-1.1");
             unsigned width;
@@ -462,9 +514,7 @@ void dump()
             buffer[bufferSize] = '\0';
             printf("%s", buffer);
             free(buffer);
-            if (dumpAsText)
-                printf("\n");
-            else
+            if (!dumpAsText)
                 dumpFrameScrollPosition(frame);
         }
         if (shouldDumpBackForwardList)
@@ -514,6 +564,7 @@ static void runTest(const char* pathOrURL)
     shouldDumpEditingCallbacks = false;
     shouldDumpTitleChanges = false;
     shouldDumpChildFrameScrollPositions = false;
+    shouldDumpChildFramesAsText = false;
     shouldDumpBackForwardList = false;
     testRepaint = false;
     repaintSweepHorizontally = false;
