@@ -1,3 +1,31 @@
+2007-08-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14824 and <rdar://problem/5372989>
+
+        Two issues - 
+        1 - The WebCore MIMEType registry was designed assuming the list of types would never change
+            That is false, as WebKit has API and SPI calls which directly mutate the MIMETypeRegistry
+        2 - DOMImplementation didn't consult the registry for any MIMEType that started with "text/", 
+            instead maintaining it's own hard coded rules
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isTextMIMEType): For now, call through to the MIMETypeRegistry
+          until we decided a different fate for this function
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedNonImageMimeTypes):  "SupportedNonImageMIMETypes" is really a misnomer for 
+          "MIMETypes we should show as HTML" but that line has slowly been blurred since Tiger.  In an attempt
+          to start to unblur it, remove "text/" and "text/plain"
+        (WebCore::MIMETypeRegistry::shouldTreatAsText):  The decision is very close to the old DOMImplementation 
+          method, except we don't automatically hand off "text/" types as true if they are in the set of supported
+          MIMETypes
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes): Non-const (can be changed!)
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes): Non-const (can be changed!)
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes): Non-const (can be changed!)
+        * platform/MIMETypeRegistry.h:
+
 2007-08-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

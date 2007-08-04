@@ -103,6 +103,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PlatformMouseEvent.h>
@@ -1099,6 +1100,11 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 {
     [[WebFrameView _viewTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
     [[WebDataSource _repTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
+    
+    // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
+    // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
+    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    MIMETypeRegistry::getSupportedNonImageMIMETypes().remove(MIMEType);
 }
 
 + (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
@@ -1106,6 +1112,12 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     NSString *MIMEType = [self _generatedMIMETypeForURLScheme:URLScheme];
     [self registerViewClass:viewClass representationClass:representationClass forMIMEType:MIMEType];
 
+    // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
+    // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
+    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    if ([viewClass class] == [WebHTMLView class])
+        MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
+    
     // This is used to make _representationExistsForURLScheme faster.
     // Without this set, we'd have to create the MIME type each time.
     if (schemesWithRepresentationsSet == nil) {
@@ -2488,6 +2500,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     [[WebFrameView _viewTypesAllowImageTypeOmission:YES] setObject:viewClass forKey:MIMEType];
     [[WebDataSource _repTypesAllowImageTypeOmission:YES] setObject:representationClass forKey:MIMEType];
+    
+    // FIXME: We also need to maintain MIMEType registrations (which can be dynamically changed)
+    // in the WebCore MIMEType registry.  For now we're doing this in a safe, limited manner
+    // to fix <INSERT RADAR HERE> - a future revamping of the entire system is neccesary for future robustness
+    if ([viewClass class] == [WebHTMLView class])
+        MIMETypeRegistry::getSupportedNonImageMIMETypes().add(MIMEType);
 }
 
 - (void)setGroupName:(NSString *)groupName

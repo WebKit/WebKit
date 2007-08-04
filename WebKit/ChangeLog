@@ -1,3 +1,17 @@
+2007-08-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14824 and <rdar://problem/5372989>
+
+        When unregistering a MIMEType, remove it from the WebCore registry unconditionally
+        When registrying a MIMEType whose view class is WebHTMLView, add it to the WebCore registry
+
+        * WebView/WebView.mm:
+        (+[WebView _unregisterViewClassAndRepresentationClassForMIMEType:]): 
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (+[WebView registerViewClass:representationClass:forMIMEType:]):
+
 2007-08-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
