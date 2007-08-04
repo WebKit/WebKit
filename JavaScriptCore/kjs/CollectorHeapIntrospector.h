@@ -30,6 +30,7 @@
 #define CollectorHeapIntrospector_h
 
 #include <malloc/malloc.h>
+#include "Assertions.h"
 
 namespace KJS {
 
@@ -39,10 +40,23 @@ class CollectorHeapIntrospector {
 public:
     static void init(CollectorHeap*);
     static kern_return_t enumerate(task_t, void* context, unsigned typeMask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
+    static size_t goodSize(malloc_zone_t*, size_t size) { return size; }
+    static boolean_t check(malloc_zone_t*) { return true; }
+    static void  print(malloc_zone_t*, boolean_t) { }
+    static void log(malloc_zone_t*, void*) { }
+    static void forceLock(malloc_zone_t*);
+    static void forceUnlock(malloc_zone_t*);
+    static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
 
 private:
     CollectorHeapIntrospector(CollectorHeap*);
     static size_t size(malloc_zone_t*, const void*) { return 0; }
+    static void* zoneMalloc(malloc_zone_t*, size_t) { LOG_ERROR("malloc is not supported"); return 0; }
+    static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size) { LOG_ERROR("calloc is not supported"); return 0; }
+    static void zoneFree(malloc_zone_t*, void*) { LOG_ERROR("free is not supported"); }
+    static void* zoneRealloc(malloc_zone_t*, void*, size_t) { LOG_ERROR("realloc is not supported"); return 0; }
+    static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }
+    static void zoneDestroy(malloc_zone_t*) { }
 
     malloc_zone_t m_zone;
     CollectorHeap* m_heap;

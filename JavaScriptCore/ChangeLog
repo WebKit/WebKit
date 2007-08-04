@@ -1,5 +1,38 @@
 2007-08-04  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5385145> r24843 introduces a crash on calling fork() (14878)
+        http://bugs.webkit.org/show_bug.cgi?id=14878
+
+        Provide no-op functions for all members of the malloc_zone_t and malloc_introspection_t structures that we
+        register to avoid crashes in system code that assumes they will be non-null.
+
+        * kjs/CollectorHeapIntrospector.cpp:
+        (KJS::CollectorHeapIntrospector::CollectorHeapIntrospector):
+        (KJS::CollectorHeapIntrospector::forceLock): Grab the lock.
+        (KJS::CollectorHeapIntrospector::forceUnlock): Release the lock.
+        * kjs/CollectorHeapIntrospector.h:
+        (KJS::CollectorHeapIntrospector::goodSize):
+        (KJS::CollectorHeapIntrospector::check):
+        (KJS::CollectorHeapIntrospector::print):
+        (KJS::CollectorHeapIntrospector::log):
+        (KJS::CollectorHeapIntrospector::statistics):
+        (KJS::CollectorHeapIntrospector::size):
+        (KJS::CollectorHeapIntrospector::zoneMalloc):
+        (KJS::CollectorHeapIntrospector::zoneCalloc):
+        (KJS::CollectorHeapIntrospector::zoneFree):
+        * wtf/FastMalloc.cpp:
+        (WTF::FastMallocZone::goodSize):
+        (WTF::FastMallocZone::check):
+        (WTF::FastMallocZone::print):
+        (WTF::FastMallocZone::log):
+        (WTF::FastMallocZone::forceLock): Grab the TCMalloc locks.
+        (WTF::FastMallocZone::forceUnlock): Release the TCMalloc locks.
+        (WTF::FastMallocZone::FastMallocZone):
+
+2007-08-04  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Anders.
 
         * pcre/pcre_compile.c: Remove non-ASCII character from a comment.

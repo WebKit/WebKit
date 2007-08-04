@@ -35,7 +35,8 @@
 namespace KJS {
 
 extern "C" {
-malloc_introspection_t jscore_collector_introspection = { &CollectorHeapIntrospector::enumerate, 0, 0, 0, 0, 0, 0, 0 };
+malloc_introspection_t jscore_collector_introspection = { &CollectorHeapIntrospector::enumerate, &CollectorHeapIntrospector::goodSize, &CollectorHeapIntrospector::check, &CollectorHeapIntrospector::print,
+    &CollectorHeapIntrospector::log, &CollectorHeapIntrospector::forceLock, &CollectorHeapIntrospector::forceUnlock, &CollectorHeapIntrospector::statistics };
 }
 
 void CollectorHeapIntrospector::init(CollectorHeap* heap)
@@ -49,6 +50,12 @@ CollectorHeapIntrospector::CollectorHeapIntrospector(CollectorHeap* heap)
     memset(&m_zone, 0, sizeof(m_zone));
     m_zone.zone_name = "JavaScriptCore Collector";
     m_zone.size = &CollectorHeapIntrospector::size;
+    m_zone.malloc = &CollectorHeapIntrospector::zoneMalloc;
+    m_zone.calloc = &CollectorHeapIntrospector::zoneCalloc;
+    m_zone.realloc = &CollectorHeapIntrospector::zoneRealloc;
+    m_zone.free = &CollectorHeapIntrospector::zoneFree;
+    m_zone.valloc = &CollectorHeapIntrospector::zoneValloc;
+    m_zone.destroy = &CollectorHeapIntrospector::zoneDestroy;
     m_zone.introspect = &jscore_collector_introspection;
     malloc_zone_register(&m_zone);
 }
@@ -79,5 +86,17 @@ kern_return_t CollectorHeapIntrospector::enumerate(task_t task, void* context, u
 
     return 0;
 }
+
+void CollectorHeapIntrospector::forceLock(malloc_zone_t*)
+{
+    JSLock::lock();
+}
+
+void CollectorHeapIntrospector::forceUnlock(malloc_zone_t*)
+{
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+    JSLock::unlock();
+}
+
 
 } // namespace KJS

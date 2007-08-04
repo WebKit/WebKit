@@ -220,6 +220,13 @@ public:
     static void init();
 
     static kern_return_t enumerate(task_t, void*, unsigned typeMmask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
+    static size_t goodSize(malloc_zone_t*, size_t size) { return size; }
+    static boolean_t check(malloc_zone_t*) { return true; }
+    static void  print(malloc_zone_t*, boolean_t) { }
+    static void log(malloc_zone_t*, void*) { }
+    static void forceLock(malloc_zone_t*);
+    static void forceUnlock(malloc_zone_t*);
+    static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
 
 private:
     FastMallocZone(TCMalloc_PageHeap*, TCMalloc_ThreadCache**, TCMalloc_Central_FreeListPadded*);
@@ -228,6 +235,8 @@ private:
     static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size);
     static void zoneFree(malloc_zone_t*, void*);
     static void* zoneRealloc(malloc_zone_t*, void*, size_t);
+    static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }
+    static void zoneDestroy(malloc_zone_t*) { }
 
     malloc_zone_t m_zone;
     TCMalloc_PageHeap* m_pageHeap;
@@ -2646,6 +2655,21 @@ kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typ
     return 0;
 }
 
+void FastMallocZone::forceLock(malloc_zone_t*)
+{
+    pageheap_lock.Lock();
+    for (size_t i = 0; i < kNumClasses; i++)
+        central_cache[i].lock_.Lock();
+}
+
+void FastMallocZone::forceUnlock(malloc_zone_t*)
+{
+    for (size_t i = 0; i < kNumClasses; i++)
+        central_cache[i].lock_.Unlock();
+    pageheap_lock.Unlock();
+}
+
+
 size_t FastMallocZone::size(malloc_zone_t* zone, const void* ptr)
 {
     if (!ptr || !pageheap)
@@ -2689,7 +2713,8 @@ void* FastMallocZone::zoneRealloc(malloc_zone_t*, void* ptr, size_t size)
 #undef calloc
 
 extern "C" {
-malloc_introspection_t jscore_fastmalloc_introspection = { &FastMallocZone::enumerate, 0, 0, 0, 0, 0, 0, 0 };
+malloc_introspection_t jscore_fastmalloc_introspection = { &FastMallocZone::enumerate, &FastMallocZone::goodSize, &FastMallocZone::check, &FastMallocZone::print,
+    &FastMallocZone::log, &FastMallocZone::forceLock, &FastMallocZone::forceUnlock, &FastMallocZone::statistics };
 }
 
 FastMallocZone::FastMallocZone(TCMalloc_PageHeap* pageHeap, TCMalloc_ThreadCache** threadHeaps, TCMalloc_Central_FreeListPadded* centralCaches)
@@ -2704,6 +2729,8 @@ FastMallocZone::FastMallocZone(TCMalloc_PageHeap* pageHeap, TCMalloc_ThreadCache
     m_zone.calloc = &FastMallocZone::zoneCalloc;
     m_zone.realloc = &FastMallocZone::zoneRealloc;
     m_zone.free = &FastMallocZone::zoneFree;
+    m_zone.valloc = &FastMallocZone::zoneValloc;
+    m_zone.destroy = &FastMallocZone::zoneDestroy;
     m_zone.introspect = &jscore_fastmalloc_introspection;
     malloc_zone_register(&m_zone);
 }
