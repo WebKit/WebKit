@@ -1,3 +1,13 @@
+2007-08-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+        
+        Layout test for <rdar://problem/5386550> REGRESSION (r24866): text/plain documents are always downloaded
+
+        * fast/loader/plain-text-document-expected.txt: Added.
+        * fast/loader/plain-text-document.html: Added.
+        * fast/loader/plain-text-document.txt: Added.
+
 2007-08-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
