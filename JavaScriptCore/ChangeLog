@@ -1,3 +1,15 @@
+2007-08-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Adam.
+        
+        <rdar://problem/5368990> REGRESSION: newsgator.com sign-on 6x slower than Safari 3 beta due to GC changes (14808)
+
+        * kjs/string_object.cpp:
+        (KJS::replace): if the string didn't change (very common in some cases) reuse the original string value.
+        (KJS::StringProtoFunc::callAsFunction): Pass in the StringImp* when replacing, not just the UString.
+        * kjs/string_object.h:
+        (KJS::StringInstance::internalValue): covariant override to return StringImp for convenience
+
 2007-08-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

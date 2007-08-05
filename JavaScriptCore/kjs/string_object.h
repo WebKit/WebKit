@@ -41,6 +41,9 @@ namespace KJS {
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
+
+    StringImp* internalValue() const { return static_cast<StringImp*>(JSWrapperObject::internalValue());}
+
   private:
     static JSValue *lengthGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
     static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
