@@ -1,3 +1,16 @@
+2007-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5369110> CrashTracer: [USER] reproducible crash opening particular mail messages
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): Make sure to retain
+        self for the body of this method. Otherwise, the willSendRequest could trigger events which will
+        cancel the connection, and we access ivars after this point.
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]): retain and release
+        in the right order.
+
 2007-08-04  Adam Roben  <aroben@apple.com>
 
         Another workaround for <rdar://problem/5386894>

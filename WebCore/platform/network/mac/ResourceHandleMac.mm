@@ -345,6 +345,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
+    // the willSendRequest call may cancel this load, in which case self could be deallocated
+    RetainPtr<WebCoreResourceHandleAsDelegate> protect(self);
+
     if (!m_handle || !m_handle->client())
         return nil;
     ++inNSURLConnectionCallback;
@@ -352,8 +355,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle->client()->willSendRequest(m_handle, request, redirectResponse);
     --inNSURLConnectionCallback;
 #ifndef BUILDING_ON_TIGER
+    NSURL *copy = [[request.nsURLRequest() URL] copy];
     [m_url release];
-    m_url = [[request.nsURLRequest() URL] copy];    
+    m_url = copy;
 #endif
     
     return request.nsURLRequest();
@@ -514,8 +518,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
+    NSURL *copy = [[newRequest URL] copy];
     [m_url release];
-    m_url = [[newRequest URL] copy];
+    m_url = copy;
 
     return newRequest;
 }
