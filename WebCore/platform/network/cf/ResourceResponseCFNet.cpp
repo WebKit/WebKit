@@ -117,6 +117,18 @@ void ResourceResponse::doUpdateResourceResponse()
         m_httpStatusCode = 0;
 
     m_suggestedFilename = suggestedFilenameForResponse(m_cfResponse.get(), m_httpHeaderFields);
+
+    // FIXME: This is a workaround for <rdar://problem/5386894> CFURLResponseGetMIMEType returns
+    // text/html for local .xhtml and .xml files. This code should be removed once that bug is fixed.
+    if (m_url.isLocalFile() && m_mimeType == "text/html") {
+        const String& path = m_url.path();
+        static const String xhtmlExt(".xhtml");
+        static const String xmlExt(".xml");
+        if (path.endsWith(xhtmlExt, false))
+            m_mimeType = "application/xhtml+xml";
+        else if (path.endsWith(xmlExt, false))
+            m_mimeType = "text/xml";
+    }
 }
 
 }

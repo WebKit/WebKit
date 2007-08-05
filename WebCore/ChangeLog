@@ -1,3 +1,16 @@
+2007-08-04  Adam Roben  <aroben@apple.com>
+
+        Workaround for <rdar://problem/5386894> CFURLResponseGetMIMEType returns "text/html" for local .xhtml and .xml files
+
+        Reviewed by Sam.
+
+        This fixes ~350 failing tests.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Use a workaround
+        identical to the one in ResourceResponseMac.mm, but include .xml files
+        as well.
+
 2007-08-04  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Oliver.
