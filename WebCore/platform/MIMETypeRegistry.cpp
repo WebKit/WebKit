@@ -112,6 +112,8 @@ static void initialiseSupportedNonImageMimeTypes()
       "text/html",
       "text/xml",
       "text/xsl",
+      "text/plain",
+      "text/",
       "application/x-javascript",
       "application/xml",
       "application/xhtml+xml",
@@ -182,11 +184,6 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
     return mimeType.startsWith("application/x-java-applet", false) 
         || mimeType.startsWith("application/x-java-bean", false) 
         || mimeType.startsWith("application/x-java-vm", false);
-}
-
-bool MIMETypeRegistry::shouldTreatAsText(const String& mimeType)
-{
-    return mimeType == "application/x-javascript" || (mimeType.startsWith("text/") && !isSupportedNonImageMIMEType(mimeType));
 }
 
 HashSet<String> &MIMETypeRegistry::getSupportedImageMIMETypes()

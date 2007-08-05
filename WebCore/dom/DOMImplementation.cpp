@@ -37,7 +37,6 @@
 #include "Image.h"
 #include "ImageDocument.h"
 #include "MediaList.h"
-#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginDocument.h"
 #include "PlugInInfoStore.h"
@@ -330,7 +329,12 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 
 bool DOMImplementation::isTextMIMEType(const String& mimeType)
 {
-    return MIMETypeRegistry::shouldTreatAsText(mimeType);
+    if (mimeType == "application/x-javascript" ||
+        (mimeType.startsWith("text/") && mimeType != "text/html" &&
+         mimeType != "text/xml" && mimeType != "text/xsl"))
+        return true;
+    
+    return false;
 }
 
 PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
