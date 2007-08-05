@@ -124,10 +124,13 @@ void ResourceResponse::doUpdateResourceResponse()
         const String& path = m_url.path();
         static const String xhtmlExt(".xhtml");
         static const String xmlExt(".xml");
+        static const String svgExt(".svg");
         if (path.endsWith(xhtmlExt, false))
             m_mimeType = "application/xhtml+xml";
         else if (path.endsWith(xmlExt, false))
             m_mimeType = "text/xml";
+        else if (path.endsWith(svgExt, false))
+            m_mimeType = "image/svg+xml";
     }
 }
 

@@ -1,5 +1,17 @@
 2007-08-04  Adam Roben  <aroben@apple.com>
 
+        Another workaround for <rdar://problem/5386894>
+
+        Reviewed by Sam.
+
+        This fixed ~150 failing tests.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Hardcode the
+        MIME type for .svg files as well.
+
+2007-08-04  Adam Roben  <aroben@apple.com>
+
         Workaround for <rdar://problem/5386894> CFURLResponseGetMIMEType returns "text/html" for local .xhtml and .xml files
 
         Reviewed by Sam.
