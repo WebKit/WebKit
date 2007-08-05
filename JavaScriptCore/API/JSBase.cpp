@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,5 +79,9 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
 void JSGarbageCollect(JSContextRef)
 {
     JSLock lock;
-    Collector::collect();
+    if (!Collector::isBusy())
+        Collector::collect();
+    // FIXME: Perhaps we should trigger a second mark and sweep
+    // once the garbage collector is done if this is called when
+    // the collector is busy.
 }

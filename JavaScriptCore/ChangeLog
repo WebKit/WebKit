@@ -1,3 +1,18 @@
+2007-08-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5371862> crash in Dashcode due to Quartz Composer JavaScript garbage collector reentrancy
+
+        * API/JSBase.cpp: (JSGarbageCollect): Don't call collector() if isBusy() returns true.
+
+        * kjs/collector.h: Added isBusy(), removed the unused return value from collect()
+        * kjs/collector.cpp: Added an "operation in progress" flag to the allocator.
+        (KJS::Collector::allocate): Call abort() if an operation is already in progress. Set the new flag instead
+        of using the debug-only GCLock.
+        (KJS::Collector::collect): Ditto.
+        (KJS::Collector::isBusy): Added.
+
 2007-08-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Adam.

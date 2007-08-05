@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,16 +22,16 @@
 #include "config.h"
 #include "collector.h"
 
+#include "internal.h"
+#include "list.h"
+#include "value.h"
+#include <algorithm>
+#include <setjmp.h>
+#include <stdlib.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FastMallocInternal.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/UnusedParam.h>
-#include "internal.h"
-#include "list.h"
-#include "value.h"
-
-#include <setjmp.h>
-#include <algorithm>
 
 #if USE(MULTIPLE_THREADS)
 #include <pthread.h>
@@ -68,7 +68,6 @@ using std::max;
 
 namespace KJS {
 
-
 // tunable parameters
 
 const size_t SPARE_EMPTY_BLOCKS = 2;
@@ -77,8 +76,10 @@ const size_t GROWTH_FACTOR = 2;
 const size_t LOW_WATER_FACTOR = 4;
 const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
+enum OperationInProgress { NoOperation, Allocation, Collection };
+
 struct CollectorHeap {
-  CollectorBlock **blocks;
+  CollectorBlock** blocks;
   size_t numBlocks;
   size_t usedBlocks;
   size_t firstBlockWithPossibleSpace;
@@ -86,34 +87,17 @@ struct CollectorHeap {
   size_t numLiveObjects;
   size_t numLiveObjectsAtLastCollect;
   size_t extraCost;
+
+  OperationInProgress operationInProgress;
 };
 
-static CollectorHeap heap = {NULL, 0, 0, 0, 0, 0, 0};
+static CollectorHeap heap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 
+// FIXME: I don't think this needs to be a static data member of the Collector class.
+// Just a private global like "heap" above would be fine.
 size_t Collector::mainThreadOnlyObjectCount = 0;
+
 bool Collector::memoryFull = false;
-
-#ifndef NDEBUG
-
-class GCLock {
-    static bool isLocked;
-
-public:
-    GCLock()
-    {
-        ASSERT(!isLocked);
-        isLocked = true;
-    }
-    
-    ~GCLock()
-    {
-        ASSERT(isLocked);
-        isLocked = false;
-    }
-};
-
-bool GCLock::isLocked = false;
-#endif
 
 static CollectorBlock* allocateBlock()
 {
@@ -190,6 +174,12 @@ void* Collector::allocate(size_t s)
   ASSERT(s <= CELL_SIZE);
   UNUSED_PARAM(s); // s is now only used for the above assert
 
+  ASSERT(heap.operationInProgress == NoOperation);
+  // FIXME: If another global variable access here doesn't hurt performance
+  // too much, we could abort() in NDEBUG builds, which could help ensure we
+  // don't spend any time debugging cases where we allocate inside an object's
+  // deallocation code.
+
   // collect if needed
   size_t numLiveObjects = heap.numLiveObjects;
   size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
@@ -201,8 +191,10 @@ void* Collector::allocate(size_t s)
     numLiveObjects = heap.numLiveObjects;
   }
   
+  ASSERT(heap.operationInProgress == NoOperation);
 #ifndef NDEBUG
-  GCLock lock;
+  // FIXME: Consider doing this in NDEBUG builds too (see comment above).
+  heap.operationInProgress = Allocation;
 #endif
   
   // slab allocator
@@ -251,6 +243,11 @@ allocateNewBlock:
 
   targetBlock->usedCells = static_cast<uint32_t>(targetBlockUsedCells + 1);
   heap.numLiveObjects = numLiveObjects + 1;
+
+#ifndef NDEBUG
+  // FIXME: Consider doing this in NDEBUG builds too (see comment above).
+  heap.operationInProgress = NoOperation;
+#endif
 
   return newCell;
 }
@@ -759,17 +756,14 @@ bool Collector::collect()
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
 
+  ASSERT(heap.operationInProgress == NoOperation);
+  if (heap.operationInProgress != NoOperation)
+    abort();
 
-#ifndef NDEBUG
-  GCLock lock;
-#endif
-  
-#if USE(MULTIPLE_THREADS)
-    bool currentThreadIsMainThread = onMainThread();
-#else
-    bool currentThreadIsMainThread = true;
-#endif
-    
+  heap.operationInProgress = Collection;
+
+  bool currentThreadIsMainThread = onMainThread();
+
   // MARK: first mark all referenced objects recursively starting out from the set of root objects
 
 #ifndef NDEBUG
@@ -900,6 +894,8 @@ bool Collector::collect()
   
   memoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
 
+  heap.operationInProgress = NoOperation;
+
   return deleted;
 }
 
@@ -907,12 +903,6 @@ size_t Collector::size()
 {
   return heap.numLiveObjects; 
 }
-
-#ifdef KJS_DEBUG_MEM
-void Collector::finalCheck()
-{
-}
-#endif
 
 size_t Collector::numInterpreters()
 {
@@ -975,6 +965,11 @@ HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
         counts->add(typeName(it->first));
 
     return counts;
+}
+
+bool Collector::isBusy()
+{
+    return heap.operationInProgress != NoOperation;
 }
 
 } // namespace KJS

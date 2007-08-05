@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@ namespace KJS {
   public:
     static void* allocate(size_t s);
     static bool collect();
+    static bool isBusy(); // true if an allocation or collection is in progress
 
     static const size_t minExtraCostSize = 256;
 
@@ -45,13 +46,6 @@ namespace KJS {
 
     static size_t size();
     static bool isOutOfMemory() { return memoryFull; }
-
-#ifdef KJS_DEBUG_MEM
-    /**
-     * Check that nothing is left when the last interpreter gets deleted
-     */
-    static void finalCheck();
-#endif
 
     static void protect(JSValue*);
     static void unprotect(JSValue*);
