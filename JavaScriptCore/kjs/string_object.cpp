@@ -566,13 +566,14 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     delete tmpReg;
     break;
   }
-  case Replace:
+  case Replace: {
     StringImp* sVal = thisObj->inherits(&StringInstance::info) ?
       static_cast<StringInstance*>(thisObj)->internalValue() :
       static_cast<StringImp*>(jsString(s));
 
     result = replace(exec, sVal, a0, a1);
     break;
+  }
   case Slice:
     {
       // The arg processing is very much like ArrayProtoFunc::Slice

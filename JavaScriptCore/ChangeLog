@@ -1,3 +1,10 @@
+2007-08-06  Matt Lilek  <pewtermoose@gmail.com>
+
+        Not reviewed, build fix.
+
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction):
+
 2007-08-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
