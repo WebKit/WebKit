@@ -503,15 +503,6 @@ http/tests/security/cross-frame-access-protocol.html
 # Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
 http/tests/security/cross-frame-access-put.html
 
-# XHR.responseText is null instead of empty string <rdar://problem/5383104>
-http/tests/xmlhttprequest/zero-length-response.html
-
-# selection is wrong <rdar://problem/5383368>
-fast/dom/delete-contents.html
-
-# Drag/drop of image is failing <rdar://problem/5383382>
-fast/events/standalone-image-drag-to-editable.html
-
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

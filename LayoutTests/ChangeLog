@@ -1,5 +1,10 @@
 2007-08-05  Darin Adler  <darin@apple.com>
 
+        * mac/leopard/Skipped: Removed 3 non-platform-specific failing tests.
+        * win/Skipped: Ditto.
+
+2007-08-05  Darin Adler  <darin@apple.com>
+
         - tried to fix <rdar://problem/5383382> Drag/drop of image is failing in fast/events/standalone-image-drag-to-editable.html
 
         * fast/events/standalone-image-drag-to-editable.html: Fixed race condition in test by using a frame
