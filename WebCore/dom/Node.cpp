@@ -435,13 +435,14 @@ void Node::registerNodeList(NodeList* list)
     if (!m_nodeLists)
         m_nodeLists = new NodeListsNodeData;
     m_nodeLists->m_registeredLists.add(list);
+    m_document->addNodeList();
 }
 
 void Node::unregisterNodeList(NodeList* list)
 {
-    if (!m_nodeLists)
-        return;
+    ASSERT(m_nodeLists);
     m_nodeLists->m_registeredLists.remove(list);
+    m_document->removeNodeList();
 }
 
 void Node::notifyLocalNodeListsAttributeChanged()

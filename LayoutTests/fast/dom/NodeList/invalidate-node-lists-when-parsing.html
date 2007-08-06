@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" >
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>5360748</title>
+
+        <script type="text/javascript">
+            function print(message)
+            {
+                var paragraph = document.createElement("li");
+                paragraph.appendChild(document.createTextNode(message));
+                document.getElementById("console").appendChild(paragraph);
+            }
+            function test()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+            }
+            function testForElement(testName) {
+                var found = containsElementWithId(document.body, "testElement");
+                return testName + ": " + (found ? "found" : "not found");
+            }
+            function containsElementWithId(el, id) {
+                var found = false;
+    
+                if (el.id == id) {
+                    found = true;
+                } else {
+                    var children = el.childNodes;
+                    for (var i=0; !found && i < children.length; i++)
+                        found = containsElementWithId(children[i], id);            
+                }
+                
+                return found;
+            }
+        </script>        
+    </head>
+    <body onload="test()">
+
+    <p>This test checks to see if the DOM ContainerNode's NodeList cache is correctly invalidated when new content is parsed.</p>
+    <p>If the test passes, you should see &quot;before: not found&quot; and &quot;after: found&quot;.</p>
+    <p>If the cache is not invalidated when the testElement is parsed, both before and after will be &quot;not found&quot;, which is a failure.</p>
+    <hr>
+    <p><ol id=console></ol></p>
+
+    <script type="text/javascript">
+        result1 = testForElement("before");    // expect not to see "testElement"
+    </script>
+
+    <p id="testElement"></p>
+    
+    <script type="text/javascript">
+        result2 = testForElement("after");    // expect to see "testElement"
+
+        // don't show the results until the tests are finished -- it changes the DOM and could affect the tests
+        print(result1);
+        print(result2);
+    </script>
+
+</body>
+</html>

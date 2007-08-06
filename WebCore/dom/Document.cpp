@@ -279,6 +279,7 @@ Document::Document(DOMImplementation* impl, Frame* frame)
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_inLowBandwidthDisplay(false)
 #endif    
+    , m_numNodeLists(0)
 {
     m_document.resetSkippingRef(this);
 
