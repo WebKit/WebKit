@@ -1,5 +1,12 @@
 2007-08-05  Darin Adler  <darin@apple.com>
 
+        - fix <rdar://problem/5383382> Drag/drop of image is failing in fast/events/standalone-image-drag-to-editable.html
+
+        * fast/events/standalone-image-drag-to-editable.html: Fixed race condition in test by using a frame
+        counter rather than running the test after a particular frame loads.
+
+2007-08-05  Darin Adler  <darin@apple.com>
+
         * fast/dom/delete-contents-expected.txt: Updated results, which changed due to r24831, which allows
         comments as children of <html>.
 
