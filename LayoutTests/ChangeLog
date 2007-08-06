@@ -1,3 +1,8 @@
+2007-08-05  Darin Adler  <darin@apple.com>
+
+        * fast/dom/delete-contents-expected.txt: Updated results, which changed due to r24831, which allows
+        comments as children of <html>.
+
 2007-08-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.
