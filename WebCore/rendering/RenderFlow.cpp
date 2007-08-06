@@ -219,7 +219,7 @@ void RenderFlow::destroy()
             // If we are an anonymous block, then our line boxes might have children
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
-            if (isAnonymousBlock() && !selfNeedsLayout()) {
+            if (isAnonymousBlock()) {
                 for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox()) {
                     while (InlineBox* childBox = box->firstChild())
                         childBox->remove();

@@ -222,6 +222,10 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 {
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
+    
+    // Delete our line boxes before we do the inline split into continuations.
+    block->deleteLineBoxTree();
+    
     bool madeNewBeforeBlock = false;
     if (block->isAnonymousBlock() && (!block->parent() || !block->parent()->createsAnonymousWrapper())) {
         // We can reuse this block and make it the preBlock of the next continuation.
@@ -241,7 +245,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     block->insertChildNode(newBlockBox, boxFirst);
     block->insertChildNode(post, boxFirst);
     block->setChildrenInline(false);
-
+    
     if (madeNewBeforeBlock) {
         RenderObject* o = boxFirst;
         while (o) {
