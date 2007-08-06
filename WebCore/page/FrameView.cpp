@@ -302,6 +302,11 @@ void FrameView::layout(bool allowSubtree)
         m_size.setWidth(visibleWidth());
         return;
     }
+    
+    // we shouldn't enter layout() while painting
+    ASSERT(!m_frame->isPainting());
+    if (m_frame->isPainting())
+        return;
 
     if (!allowSubtree && d->layoutRoot) {
         if (d->layoutRoot->renderer())
@@ -712,7 +717,9 @@ bool FrameView::needsLayout() const
     if (!m_frame)
         return false;
     RenderView* root = static_cast<RenderView*>(m_frame->renderer());
-    return layoutPending() || (root && root->needsLayout()) || d->layoutRoot;
+    Document * doc = m_frame->document();
+    // doc->hasChangedChild() condition can occur when using WebKit ObjC interface
+    return layoutPending() || (root && root->needsLayout()) || d->layoutRoot || (doc && doc->hasChangedChild());
 }
 
 void FrameView::setNeedsLayout()

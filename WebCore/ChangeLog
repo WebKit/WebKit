@@ -1,3 +1,35 @@
+2007-08-06  Antti  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/5378214>
+        Mail crashes at RenderLayer::paintLayer() when dragging a selection over To Do text
+        
+        ObjC interface does not guarantee that Document::updateRendering() gets called after
+        modification are made to document. This can lead to situation where paint()
+        is invoked with document still dirty which can then crash in number of interesting ways.
+        
+        - add hasChangedChild() as needsLayout() condition. layout() will then call recalcStyle() 
+          catching most cases and making sure document is not dirty when entering painting.
+        - protect recalcStyle() and layout() from being executed during painting. There are some
+          cases needsLayout() protection does not cover.
+        
+        No layout test, these states are very hard or impossible to reach using Javascript interface
+        (which generally guarantees that updateRendering() is done right after execution).
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        (WebCore::Frame::setPaintRestriction):
+        (WebCore::Frame::isPainting):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::needsLayout):
+
 2007-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

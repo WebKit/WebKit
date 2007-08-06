@@ -169,6 +169,7 @@ public:
     // should move to FrameView
     void paint(GraphicsContext*, const IntRect&);
     void setPaintRestriction(PaintRestriction);
+    bool isPainting() const;
 
     void setUserStyleSheetLocation(const KURL&);
     void setUserStyleSheet(const String& styleSheetData);

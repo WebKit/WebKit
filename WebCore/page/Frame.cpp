@@ -1380,11 +1380,18 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 #endif
     
     if (renderer()) {
+        ASSERT(d->m_view && !d->m_view->needsLayout());
+        ASSERT(!d->m_isPainting);
+        
+        d->m_isPainting = true;
+        
         // d->m_elementToDraw is used to draw only one element
         RenderObject *eltRenderer = d->m_elementToDraw ? d->m_elementToDraw->renderer() : 0;
         if (d->m_paintRestriction == PaintRestrictionNone)
             renderer()->document()->invalidateRenderedRectsForMarkersInRect(rect);
         renderer()->layer()->paint(p, rect, d->m_paintRestriction, eltRenderer);
+        
+        d->m_isPainting = false;
 
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (renderer()->document()->dashboardRegionsDirty())
@@ -1395,7 +1402,12 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 
 void Frame::setPaintRestriction(PaintRestriction pr)
 {
-  d->m_paintRestriction = pr;
+    d->m_paintRestriction = pr;
+}
+    
+bool Frame::isPainting() const
+{
+    return d->m_isPainting;
 }
 
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
@@ -1980,6 +1992,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isActive(false)
+    , m_isPainting(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_userStyleSheetLoader(0)

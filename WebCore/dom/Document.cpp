@@ -967,6 +967,12 @@ void Document::setDocumentChanged(bool b)
 
 void Document::recalcStyle(StyleChange change)
 {
+    // we should not enter style recalc while painting
+    if (frame() && frame()->isPainting()) {
+        ASSERT(!frame()->isPainting());
+        return;
+    }
+    
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
         
