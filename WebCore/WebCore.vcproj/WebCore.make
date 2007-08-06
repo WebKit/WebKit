@@ -1,6 +1,6 @@
 !IF !defined(BUILDSTYLE)
 BUILDSTYLE=Release
-!ELSEIF "$(BUILDSTYLE)"=="Debug"
+!ELSEIF "$(BUILDSTYLE)"=="DEBUG"
 BUILDSTYLE=Debug_Internal
 !ENDIF
 
