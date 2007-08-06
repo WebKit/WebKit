@@ -1,3 +1,10 @@
+2007-08-06  Darin Adler  <darin@apple.com>
+
+        - fix release build
+
+        * rendering/RenderText.h: (WebCore::RenderText::checkConsistency):
+        Add missing const.
+
 2007-08-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
