@@ -435,8 +435,8 @@ namespace KJS {
     static void globalClear();
 #endif
 
-    Rep *rep() const { return m_rep.get(); }
-    UString(PassRefPtr<Rep> r) : m_rep(r) { }
+    Rep* rep() const { return m_rep.get(); }
+    UString(PassRefPtr<Rep> r) : m_rep(r) { ASSERT(m_rep); }
 
     void copyForWriting();
 

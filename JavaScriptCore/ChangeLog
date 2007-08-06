@@ -1,5 +1,12 @@
 2007-08-06  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Geoff.
+
+        * kjs/ustring.h: Added an assertion which would have helped us find the
+        previous bug more easily.
+
+2007-08-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix <rdar://problem/5387589> 9A514: Quartz Composer crash on launch in KJS::jsString
