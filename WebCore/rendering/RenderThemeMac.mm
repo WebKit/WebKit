@@ -991,6 +991,8 @@ void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
 
     const int minHeight = 15;
     style->setMinHeight(Length(minHeight, Fixed));
+    
+    style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
 void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRect& r)

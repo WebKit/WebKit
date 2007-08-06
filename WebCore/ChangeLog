@@ -1,3 +1,15 @@
+2007-08-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5382483> REGRESSION: <select> element's text is clipped when a CSS line-height is specified
+
+        Don't honor line-height for styled popup buttons.  We already don't honor line-height for unstyled popups
+        and since IE and FF don't honor it at all for popups, we shouldn't either.
+
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        * rendering/RenderThemeSafari.cpp: (WebCore::RenderThemeSafari::adjustMenuListButtonStyle):
+
 2007-08-06  Antti  <antti@apple.com>
 
         Reviewed by Darin.

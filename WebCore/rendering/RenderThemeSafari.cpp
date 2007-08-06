@@ -843,6 +843,8 @@ void RenderThemeSafari::adjustMenuListButtonStyle(CSSStyleSelector* selector, Re
 
     const int minHeight = 15;
     style->setMinHeight(Length(minHeight, Fixed));
+    
+    style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
 const IntSize* RenderThemeSafari::menuListSizes() const

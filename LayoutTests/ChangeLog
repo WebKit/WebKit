@@ -1,3 +1,14 @@
+2007-08-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5382483> REGRESSION: <select> element's text is clipped when a CSS line-height is specified
+
+        * fast/forms/menulist-restrict-line-height-expected.checksum: Added.
+        * fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * fast/forms/menulist-restrict-line-height-expected.txt: Added.
+        * fast/forms/menulist-restrict-line-height.html: Added.
+
 2007-08-05  Darin Adler  <darin@apple.com>
 
         * mac/leopard/Skipped: Removed 3 non-platform-specific failing tests.
