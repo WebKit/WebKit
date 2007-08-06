@@ -1,7 +1,5 @@
 /*
- * This file is part of the line box implementation for KDE.
- *
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,9 +36,16 @@ public:
         , m_firstChild(0)
         , m_lastChild(0)
         , m_maxHorizontalVisualOverflow(0)
+#ifndef NDEBUG
+        , m_hasBadChildList(false)
+#endif
     {
         m_hasTextChildren = false;
     }
+
+#ifndef NDEBUG
+    virtual ~InlineFlowBox();
+#endif
 
     RenderFlow* flowObject();
 
@@ -49,8 +54,8 @@ public:
     InlineFlowBox* prevFlowBox() const { return static_cast<InlineFlowBox*>(m_prevLine); }
     InlineFlowBox* nextFlowBox() const { return static_cast<InlineFlowBox*>(m_nextLine); }
 
-    InlineBox* firstChild() { return m_firstChild; }
-    InlineBox* lastChild() { return m_lastChild; }
+    InlineBox* firstChild() { checkConsistency(); return m_firstChild; }
+    InlineBox* lastChild() { checkConsistency(); return m_lastChild; }
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
@@ -60,8 +65,8 @@ public:
     virtual void setConstructed()
     {
         InlineBox::setConstructed();
-        if (m_firstChild)
-            m_firstChild->setConstructed();
+        if (firstChild())
+            firstChild()->setConstructed();
     }
 
     void addToLine(InlineBox* child);
@@ -124,11 +129,31 @@ public:
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
-protected:
+    void checkConsistency() const;
+    void setHasBadChildList();
+
+private:
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;
     int m_maxHorizontalVisualOverflow;
+
+#ifndef NDEBUG
+    bool m_hasBadChildList;
+#endif
 };
+
+#ifdef NDEBUG
+inline void InlineFlowBox::checkConsistency() const
+{
+}
+#endif
+
+inline void InlineFlowBox::setHasBadChildList()
+{
+#ifndef NDEBUG
+    m_hasBadChildList = true;
+#endif
+}
 
 } // namespace WebCore
 

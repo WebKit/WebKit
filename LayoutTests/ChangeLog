@@ -1,3 +1,12 @@
+2007-08-06  Darin Adler  <darin@apple.com>
+
+        Beth made this reduction/test, Geoff and I both helped refine it.
+
+        - test for <rdar://problem/5366582> crash on it.eurosport.yahoo.com page
+
+        * fast/dynamic/inline-to-block-crash-expected.txt: Added.
+        * fast/dynamic/inline-to-block-crash.html: Added.
+
 2007-08-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,6 +39,17 @@
 using namespace std;
 
 namespace WebCore {
+
+#ifndef NDEBUG
+
+InlineFlowBox::~InlineFlowBox()
+{
+    if (!m_hasBadChildList)
+        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+            child->setHasBadParent();
+}
+
+#endif
 
 RenderFlow* InlineFlowBox::flowObject()
 {
@@ -94,24 +105,32 @@ int InlineFlowBox::getFlowSpacingWidth()
 void InlineFlowBox::addToLine(InlineBox* child) 
 {
     ASSERT(!child->parent());
+    ASSERT(!child->nextOnLine());
+    ASSERT(!child->prevOnLine());
+    checkConsistency();
 
-    if (!m_firstChild)
-        m_firstChild = m_lastChild = child;
-    else {
-        m_lastChild->m_next = child;
-        child->m_prev = m_lastChild;
+    child->setParent(this);
+    if (!m_firstChild) {
+        m_firstChild = child;
+        m_lastChild = child;
+    } else {
+        m_lastChild->setNextOnLine(child);
+        child->setPrevOnLine(m_lastChild);
         m_lastChild = child;
     }
     child->setFirstLineStyleBit(m_firstLine);
-    child->setParent(this);
     if (child->isText())
         m_hasTextChildren = true;
     if (child->object()->selectionState() != RenderObject::SelectionNone)
         root()->setHasSelectedChildren(true);
+
+    checkConsistency();
 }
 
 void InlineFlowBox::removeChild(InlineBox* child)
 {
+    checkConsistency();
+
     if (!m_dirty)
         dirtyLineBoxes();
 
@@ -127,19 +146,28 @@ void InlineFlowBox::removeChild(InlineBox* child)
         child->prevOnLine()->setNextOnLine(child->nextOnLine());
     
     child->setParent(0);
+
+    checkConsistency();
 }
 
 void InlineFlowBox::deleteLine(RenderArena* arena)
 {
-    InlineBox* child = m_firstChild;
+    InlineBox* child = firstChild();
     InlineBox* next = 0;
     while (child) {
         ASSERT(this == child->parent());
         next = child->nextOnLine();
+#ifndef NDEBUG
+        child->setParent(0);
+#endif
         child->deleteLine(arena);
         child = next;
     }
-    
+#ifndef NDEBUG
+    m_firstChild = 0;
+    m_lastChild = 0;
+#endif
+
     static_cast<RenderFlow*>(m_object)->removeLineBox(this);
     destroy(arena);
 }
@@ -148,7 +176,7 @@ void InlineFlowBox::extractLine()
 {
     if (!m_extracted)
         static_cast<RenderFlow*>(m_object)->extractLineBox(this);
-    for (InlineBox* child = m_firstChild; child; child = child->nextOnLine())
+    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
         child->extractLine();
 }
 
@@ -156,14 +184,14 @@ void InlineFlowBox::attachLine()
 {
     if (m_extracted)
         static_cast<RenderFlow*>(m_object)->attachLineBox(this);
-    for (InlineBox* child = m_firstChild; child; child = child->nextOnLine())
+    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
         child->attachLine();
 }
 
 void InlineFlowBox::adjustPosition(int dx, int dy)
 {
     InlineRunBox::adjustPosition(dx, dy);
-    for (InlineBox* child = m_firstChild; child; child = child->nextOnLine())
+    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
         child->adjustPosition(dx, dy);
 }
 
@@ -898,5 +926,21 @@ void InlineFlowBox::clearTruncation()
     for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
         box->clearTruncation();
 }
+
+#ifndef NDEBUG
+
+void InlineFlowBox::checkConsistency() const
+{
+    ASSERT(!m_hasBadChildList);
+    const InlineBox* prev = 0;
+    for (const InlineBox* child = m_firstChild; child; child = child->nextOnLine()) {
+        ASSERT(child->parent() == this);
+        ASSERT(child->prevOnLine() == prev);
+        prev = child;
+    }
+    ASSERT(prev == m_lastChild);
+}
+
+#endif
 
 } // namespace WebCore

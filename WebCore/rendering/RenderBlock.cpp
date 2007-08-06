@@ -289,7 +289,8 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 
     m_childrenInline = false;
 
-    deleteLineBoxTree();
+    if (!selfNeedsLayout())
+        deleteLineBoxTree();
 
     RenderObject *child = firstChild();
 

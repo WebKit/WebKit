@@ -1,7 +1,5 @@
 /*
- * This file is part of the line box implementation for KDE.
- *
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,6 +61,9 @@ public:
         , m_nextOnLineExists(false)
         , m_prevOnLineExists(false)
         , m_toAdd(0)
+#ifndef NDEBUG
+        , m_hasBadParent(false)
+#endif
     {
     }
 
@@ -94,10 +95,13 @@ public:
         , m_nextOnLineExists(false)
         , m_prevOnLineExists(false)
         , m_toAdd(0)
+#ifndef NDEBUG
+        , m_hasBadParent(false)
+#endif
     {
     }
 
-    virtual ~InlineBox() { }
+    virtual ~InlineBox();
 
     virtual void destroy(RenderArena*);
 
@@ -151,8 +155,16 @@ public:
 
     InlineBox* nextOnLine() const { return m_next; }
     InlineBox* prevOnLine() const { return m_prev; }
-    void setNextOnLine(InlineBox* next) { m_next = next; }
-    void setPrevOnLine(InlineBox* prev) { m_prev = prev; }
+    void setNextOnLine(InlineBox* next)
+    {
+        ASSERT(m_parent || !next);
+        m_next = next;
+    }
+    void setPrevOnLine(InlineBox* prev)
+    {
+        ASSERT(m_parent || !prev);
+        m_prev = prev;
+    }
     bool nextOnLineExists() const;
     bool prevOnLineExists() const;
 
@@ -163,10 +175,12 @@ public:
         
     RenderObject* object() const { return m_object; }
 
-    InlineFlowBox* parent() const { return m_parent; }
+    InlineFlowBox* parent() const
+    {
+        ASSERT(!m_hasBadParent);
+        return m_parent;
+    }
     void setParent(InlineFlowBox* par) { m_parent = par; }
-
-    bool isChildOfParent();
 
     RootInlineBox* root();
     
@@ -208,8 +222,9 @@ public:
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
-public: // FIXME: Would like to make this protected, but methods are accessing these
-        // members over in the part.
+    void setHasBadParent();
+
+public:
     RenderObject* m_object;
 
     int m_x;
@@ -218,35 +233,63 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
     int m_height;
     int m_baseline;
 
+private:
     InlineBox* m_next; // The next element on the same line as us.
     InlineBox* m_prev; // The previous element on the same line as us.
-    
+
     InlineFlowBox* m_parent; // The box that contains us.
     
     // Some of these bits are actually for subclasses and moved here to compact the structures.
+
     // for this class
+protected:
     bool m_firstLine : 1;
+private:
     bool m_constructed : 1;
+protected:
     bool m_dirty : 1;
     bool m_extracted : 1;
+
     // for InlineFlowBox
     bool m_includeLeftEdge : 1;
     bool m_includeRightEdge : 1;
     bool m_hasTextChildren : 1;
+
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
     bool m_hasSelectedChildren : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
     bool m_hasEllipsisBox : 1; 
+
     // for InlineTextBox
+public:
     bool m_reversed : 1;
     bool m_dirOverride : 1;
     bool m_treatAsText : 1; // Whether or not to treat a <br> as text for the purposes of line height.
+protected:
     mutable bool m_determinedIfNextOnLineExists : 1;
     mutable bool m_determinedIfPrevOnLineExists : 1;
     mutable bool m_nextOnLineExists : 1;
     mutable bool m_prevOnLineExists : 1;
     int m_toAdd : 13; // for justified text
+
+#ifndef NDEBUG
+private:
+    bool m_hasBadParent;
+#endif
 };
+
+#ifdef NDEBUG
+inline InlineBox::~InlineBox()
+{
+}
+#endif
+
+inline void InlineBox::setHasBadParent()
+{
+#ifndef NDEBUG
+    m_hasBadParent = true;
+#endif
+}
 
 } // namespace WebCore
 

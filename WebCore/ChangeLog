@@ -1,3 +1,83 @@
+2007-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5366582> crash on it.eurosport.yahoo.com page
+
+        Test: fast/dynamic/inline-to-block-crash.html
+
+        I added some consistency checks for the line box tree, which helped me figure out
+        what was going on with this bug pretty quickly.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::makeChildrenNonInline):
+        This is the actual fix. If the block needs layout, then don't try to delete the line
+        box tree because it's going to be rebuilt as part of layout. More importantly, the
+        child list in the tree is no good, so we will crash if we try to delete here.
+
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::destroy):
+        Here's a second fix. We have the same issue in the code that handles anonymous
+        blocks -- if it's already running as part of layout, we can't walk through the
+        already partly destroyed line box tree. This crashed in one of the layout tests.
+
+        * rendering/InlineBox.h: Made more fields private, since I wanted to do a bit more
+        work in setters. Made setNextOnLine() and setPrevOnLine() assert that the box has a
+        parent. Made parent() assert that the parent is good. Also removed the unused
+        isChildOfParent() function.
+        * rendering/InlineBox.cpp: (WebCore::InlineBox::~InlineBox): At destruction time, if
+        we are still attached to a parent, tag that parent as having a "bad" child list.
+
+        * rendering/InlineFlowBox.h: Added m_reasonForBadChildList, checkConsistency(),
+        setHasBadChildList(), and hasBadChildList(). Also changed firstChild() and lastChild() so
+        they call checkConsistency() and made all the fields private instead of protected.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine): Added consistency checks before and after adding a
+        box to the line. Also checked that next and prev start out as 0. Changed manipulation of
+        next and prev to use accessor functions.
+        (WebCore::InlineFlowBox::removeChild): Added consistency checks before and after removing
+        the box from the line.
+        (WebCore::InlineFlowBox::deleteLine): Use firstChild() instead of getting at m_firstChild
+        directly so we get a consistency check. Also set the parent to 0 before destroying so that
+        the assertion in ~InlineBox will work properly.
+        (WebCore::InlineFlowBox::extractLine): Ditto.
+        (WebCore::InlineFlowBox::attachLine): Ditto.
+        (WebCore::InlineFlowBox::adjustPosition): Ditto.
+        (WebCore::InlineFlowBox::checkConsistency): Added. Checks consistency of the child list by
+        looking at the parent, next, and prev pointers. Also asserts that we are not yet in the
+        "bad" child list state, which happens if one of our children is destroyed without removing
+        it from our list; that's normal, but once it happens we can't look at our child list again.
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp: Remove unnneeded destroy/new/delete functions -- these are
+        inherited from the InlineBox base class and don't need to be defined again.
+
+        * rendering/RenderFlow.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::~RenderFlow): Assert that there are no children to confirm that we
+        didn't leak something.
+        (WebCore::RenderFlow::extractLineBox): Added consistency checks before and after removing
+        a run of boxes from the list.
+        (WebCore::RenderFlow::attachLineBox): Added consistency checks before and after adding
+        a box to the list.
+        (WebCore::RenderFlow::removeLineBox): Added consistency checks before and after removing
+        a box from the list.
+        (WebCore::RenderFlow::createInlineBox): Added consistency checks before and after adding
+        a box to the list.
+        (WebCore::RenderFlow::checkConsistency): Added.
+
+        * rendering/RenderText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::~RenderText): Assert that there are no children to confirm that we
+        didn't leak something.
+        (WebCore::RenderText::extractTextBox): Added consistency checks before and after removing
+        a run of boxes from the list.
+        (WebCore::RenderText::attachTextBox): Added consistency checks before and after adding
+        a box to the list.
+        (WebCore::RenderText::removeTextBox): Added consistency checks before and after removing
+        a box from the list.
+        (WebCore::RenderText::deleteTextBoxes): Added code to call setHasBadChildList since this
+        destroys line boxes without informing the parent.
+        (WebCore::RenderText::checkConsistency): Added.
+
 2007-08-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

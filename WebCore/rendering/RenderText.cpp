@@ -71,6 +71,16 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     m_text = m_text->replace('\\', backslashAsCurrencySymbol());
 }
 
+#ifndef NDEBUG
+
+RenderText::~RenderText()
+{
+    ASSERT(!m_firstTextBox);
+    ASSERT(!m_lastTextBox);
+}
+
+#endif
+
 void RenderText::setStyle(RenderStyle* newStyle)
 {
     RenderStyle* oldStyle = style();
@@ -112,6 +122,8 @@ void RenderText::destroy()
 
 void RenderText::extractTextBox(InlineTextBox* box)
 {
+    checkConsistency();
+
     m_lastTextBox = box->prevTextBox();
     if (box == m_firstTextBox)
         m_firstTextBox = 0;
@@ -120,10 +132,14 @@ void RenderText::extractTextBox(InlineTextBox* box)
     box->setPreviousLineBox(0);
     for (InlineRunBox* curr = box; curr; curr = curr->nextLineBox())
         curr->setExtracted();
+
+    checkConsistency();
 }
 
 void RenderText::attachTextBox(InlineTextBox* box)
 {
+    checkConsistency();
+
     if (m_lastTextBox) {
         m_lastTextBox->setNextLineBox(box);
         box->setPreviousLineBox(m_lastTextBox);
@@ -135,10 +151,14 @@ void RenderText::attachTextBox(InlineTextBox* box)
         last = curr;
     }
     m_lastTextBox = last;
+
+    checkConsistency();
 }
 
 void RenderText::removeTextBox(InlineTextBox* box)
 {
+    checkConsistency();
+
     if (box == m_firstTextBox)
         m_firstTextBox = box->nextTextBox();
     if (box == m_lastTextBox)
@@ -147,17 +167,18 @@ void RenderText::removeTextBox(InlineTextBox* box)
         box->nextTextBox()->setPreviousLineBox(box->prevTextBox());
     if (box->prevTextBox())
         box->prevTextBox()->setNextLineBox(box->nextTextBox());
+
+    checkConsistency();
 }
 
 void RenderText::deleteTextBoxes()
 {
     if (firstTextBox()) {
         RenderArena* arena = renderArena();
-        InlineTextBox *curr = firstTextBox(), *next = 0;
-        while (curr) {
+        InlineTextBox* next;
+        for (InlineTextBox* curr = firstTextBox(); curr; curr = next) {
             next = curr->nextTextBox();
             curr->destroy(arena);
-            curr = next;
         }
         m_firstTextBox = m_lastTextBox = 0;
     }
@@ -1151,5 +1172,20 @@ InlineBox* RenderText::inlineBox(int offset, EAffinity affinity)
 
     return 0;
 }
+
+#ifndef NDEBUG
+
+void RenderText::checkConsistency() const
+{
+    const InlineTextBox* prev = 0;
+    for (const InlineTextBox* child = m_firstTextBox; child != 0; child = child->nextTextBox()) {
+        ASSERT(child->object() == this);
+        ASSERT(child->prevTextBox() == prev);
+        prev = child;
+    }
+    ASSERT(prev == m_lastTextBox);
+}
+
+#endif
 
 } // namespace WebCore

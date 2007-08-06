@@ -33,6 +33,9 @@ class StringImpl;
 class RenderText : public RenderObject {
 public:
     RenderText(Node*, PassRefPtr<StringImpl>);
+#ifndef NDEBUG
+    virtual ~RenderText();
+#endif
 
     virtual const char* renderName() const { return "RenderText"; }
 
@@ -126,6 +129,8 @@ public:
 
     int allowTabs() const { return !style()->collapseWhiteSpace(); }
 
+    void checkConsistency() const;
+
 protected:
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void calcPrefWidths(int leadWidth);
@@ -165,6 +170,12 @@ private:
     bool m_containsReversedText : 1;
     bool m_isAllASCII : 1;
 };
+
+#ifdef NDEBUG
+inline void RenderText::checkConsistency()
+{
+}
+#endif
 
 } // namespace WebCore
 

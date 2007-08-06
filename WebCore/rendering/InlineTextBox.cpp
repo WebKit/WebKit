@@ -38,37 +38,6 @@ using namespace std;
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static bool inInlineTextBoxDetach;
-#endif
-
-void InlineTextBox::destroy(RenderArena* renderArena)
-{
-#ifndef NDEBUG
-    inInlineTextBoxDetach = true;
-#endif
-    delete this;
-#ifndef NDEBUG
-    inInlineTextBoxDetach = false;
-#endif
-    
-    // Recover the size left there for us by operator delete and free the memory.
-    renderArena->free(*(size_t *)this, this);
-}
-
-void* InlineTextBox::operator new(size_t sz, RenderArena* renderArena) throw()
-{
-    return renderArena->allocate(sz);
-}
-
-void InlineTextBox::operator delete(void* ptr, size_t sz)
-{
-    ASSERT(inInlineTextBoxDetach);
-    
-    // Stash size where destroy can find it.
-    *static_cast<size_t*>(ptr) = sz;
-}
-
 int InlineTextBox::selectionTop()
 {
     return root()->selectionTop();
