@@ -1,3 +1,13 @@
+2007-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix <rdar://problem/5387589> 9A514: Quartz Composer crash on launch in KJS::jsString
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): Turn NULL for sourceURL into UString::null(), just as JSObjectMakeFunction already does.
+        (JSCheckScriptSyntax): Ditto.
+
 2007-08-06  Matt Lilek  <pewtermoose@gmail.com>
 
         Not reviewed, build fix.
