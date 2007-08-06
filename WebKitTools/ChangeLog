@@ -1,3 +1,14 @@
+2007-08-06  Nigel Tao  <nigeltao@gnome.org>
+
+        Reviewed by David Kilzer.
+
+        Fix bug 14745: WebKitTools/Scripts/run-launcher doesn't speak --gdk
+        http://bugs.webkit.org/show_bug.cgi?id=14745
+
+        * Scripts/run-launcher:
+        Scrub the "--gdk" out of the command line args, if given, so that
+        GdkLauncher doesn't try to interpret it as a URL.
+
 2007-08-03  Adam Roben  <aroben@apple.com>
 
         Catch SIGPIPE on Windows so that run-webkit-tests doesn't quit when DRT crashes

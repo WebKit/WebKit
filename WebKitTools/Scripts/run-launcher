@@ -50,6 +50,9 @@ $ENV{LD_LIBRARY_PATH} = $productDir;
 
 if (isGdk()) {
   $launcherPath = "$launcherPath/WebKitTools/GdkLauncher/GdkLauncher";
+  # Strip --gdk from the arg-list, since otherwise GdkLauncher will try to
+  # interpret it as a URL.
+  @args = grep(!/^(--gdk)$/, @args);
 } elsif (isQt()) {
   $launcherPath = "$launcherPath/bin/QtLauncher";
 } else {
