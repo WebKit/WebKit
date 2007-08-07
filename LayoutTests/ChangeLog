@@ -1,3 +1,43 @@
+2007-08-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Tests for <rdar://problem/5354689>
+
+        * http/tests/security/javascriptURL: Added.
+        * http/tests/security/javascriptURL/resources: Added.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-iframe.html: Added.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-opened-frame.html: Added.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-iframe.html: Added.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-opened-frame.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame.html: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe.html: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open.html: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe.html: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open-expected.txt: Added.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open.html: Added.
+        * http/tests/security/resources/cross-frame-access.js:
+
 2007-08-06  Darin Adler  <darin@apple.com>
 
         Beth made this reduction/test, Geoff and I both helped refine it.

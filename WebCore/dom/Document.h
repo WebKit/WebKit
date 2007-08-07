@@ -32,6 +32,7 @@
 #include "DocumentMarker.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
+#include "KURL.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -49,7 +50,6 @@ namespace WebCore {
     class Comment;
     class DOMImplementation;
     class DOMWindow;
-    class TextResourceDecoder;
     class DocLoader;
     class DocumentFragment;
     class DocumentType;
@@ -85,6 +85,7 @@ namespace WebCore {
     class StyleSheet;
     class StyleSheetList;
     class Text;
+    class TextResourceDecoder;
     class Tokenizer;
     class TreeWalker;
 #if ENABLE(XBL)
@@ -825,6 +826,9 @@ public:
 
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
+    void initSecurityPolicyURL();
+    const KURL& securityPolicyURL() const { return m_securityPolicyURL; }
+
 private:
     bool shouldBeAllowedToLoadLocalResources() const;
 
@@ -837,6 +841,8 @@ private:
 
     mutable String m_domain;
     bool m_domainWasSetInDOM;
+
+    KURL m_securityPolicyURL;
 
     RenderObject* m_savedRenderer;
     int m_secureForms;
@@ -883,6 +889,6 @@ private:
 #endif
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // Document_h

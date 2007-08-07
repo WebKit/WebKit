@@ -1,0 +1,20 @@
+<html>
+<body>
+    <p>Inner iframe on a foreign domain.</p>
+    <iframe id="aFrame"></iframe>
+    <script>
+        var url = "javascript:\"<html>"
+            + "<scr" + "ipt>"
+            +     "top.document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a javascript: URL on a different domain was allowed';"
+            + "</scri" + "pt>"
+            + "<body>"
+            +     "<p>Inner-inner iframe. This iframe (which is javascript: URL and whose parent is on a foreign domain) is the frame attempting to access"
+            +     " the main frame.  It should not have access to it.</p>"
+            + "</body>"
+            + "</html>\"";
+
+        var frame = document.getElementById('aFrame');
+        frame.src = url;
+    </script>
+</body>
+</html>

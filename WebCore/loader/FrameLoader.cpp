@@ -1576,6 +1576,9 @@ void FrameLoader::setOpener(Frame* opener)
     if (opener)
         opener->loader()->m_openedFrames.add(m_frame);
     m_opener = opener;
+
+    if (m_frame->document())
+        m_frame->document()->initSecurityPolicyURL();
 }
 
 bool FrameLoader::openedByDOM() const

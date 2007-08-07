@@ -100,9 +100,7 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
 
     setTimeout(function() {
         if (!testDone) {
-            if (targetWindow.document.getElementById('accessMe'))
-                targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
-            log(passMessage);
+            log(failMessage);
             if (window.layoutTestController)
                 layoutTestController.notifyDone();
         }
@@ -111,16 +109,20 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     function test() {
         try {
             if (targetWindow.document.body) {
-                setTimeout(test, 1);
-                return;
+                if (targetWindow.document.getElementById('accessMe')) {
+                    targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
+                    log(passMessage);
+                    testDone = true;
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                    return;
+                }
             }
         } catch (e) {
+            log("In catch");
         }
 
-        log(failMessage);
-        testDone = true;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        setTimeout(test, 1);
     }
 }
 
@@ -144,8 +146,6 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
 
     setTimeout(function() {
         if (!testDone) {
-            if (targetWindow.document.getElementById('accessMe'))
-                targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
             log(failMessage);
             window.stop();
             if (window.layoutTestController)
@@ -156,6 +156,16 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     function test() {
         try {
             if (targetWindow.document.body) {
+                if (targetWindow.document.getElementById('accessMe')) {
+                    targetWindow.document.getElementById('accessMe').innerHTML = failMessage;
+                    log(failMessage);
+                    testDone = true;
+                    window.stop();
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                    return;
+                }
+
                 setTimeout(test, 1);
                 return;
             }
@@ -167,5 +177,20 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
         window.stop();
         if (window.layoutTestController)
             layoutTestController.notifyDone();
+    }
+}
+
+function closeWindowAndNotifyDone(win)
+{
+    win.close();
+    setTimeout(doneHandler, 1);
+    function doneHandler() {
+        if (win.closed) {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+            return;
+        }
+
+        setTimeout(doneHandler, 1);
     }
 }

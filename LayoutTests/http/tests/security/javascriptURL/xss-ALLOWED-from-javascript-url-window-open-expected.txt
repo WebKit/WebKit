@@ -1,0 +1,3 @@
+Opener Frame
+
+PASS: Access from a window opened with a javascript: URL was allowed!

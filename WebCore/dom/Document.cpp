@@ -278,7 +278,7 @@ Document::Document(DOMImplementation* impl, Frame* frame)
     , m_useSecureKeyboardEntryWhenActive(false)
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_inLowBandwidthDisplay(false)
-#endif    
+#endif
 {
     m_document.resetSkippingRef(this);
 
@@ -328,6 +328,8 @@ Document::Document(DOMImplementation* impl, Frame* frame)
     m_overMinimumLayoutThreshold = false;
     
     m_jsEditor = 0;
+
+    initSecurityPolicyURL();
 
     static int docID = 0;
     m_docID = docID++;
@@ -3625,4 +3627,32 @@ bool Document::useSecureKeyboardEntryWhenActive() const
     return m_useSecureKeyboardEntryWhenActive;
 }
 
+void Document::initSecurityPolicyURL()
+{
+    if (!m_frame)
+        return;
+
+    FrameLoader* loader = m_frame->loader();
+    m_securityPolicyURL = loader->url();
+
+    // javascript: URLs create document using the "about" protocol
+    if (!m_securityPolicyURL.isEmpty() && m_securityPolicyURL.protocol() != "about" && m_securityPolicyURL.protocol() != "data")
+        return;
+
+    Frame* openerFrame = 0;
+    if (m_frame->tree()->parent())
+        openerFrame = m_frame->tree()->parent();
+    else if (loader->opener())
+        openerFrame = loader->opener();
+
+    if (!openerFrame)
+        return;
+
+    Document* openerDocument = openerFrame->document();
+    if (!openerDocument)
+        return;
+
+    m_securityPolicyURL = openerDocument->securityPolicyURL();
 }
+
+} // namespace WebCore

@@ -1,0 +1,73 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>This tests that the main frame has access to a javascript: URL loaded in an iframe inside another javascipt: URL loaded iframe.</p>
+    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <pre id='console'></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        var innerURL = 'javascript:\\\"<html>'
+            + "<body>"
+            +     '<p id=\\\\\\"accessMe\\\\\\">FAIL: Cross frame access to a javascript: URL 2 levels deep was denied.</p>'
+            +     "<p>Inner-inner iframe.</p>"
+            + "</body>"
+            + '</html>\\\"';
+
+        var url = "javascript:\"<html>"
+            + "<body>"
+            +     "<iframe src='" + innerURL + "'></iframe>"
+            +     "<p>Inner iframe.</p>"
+            + "</body>"
+            + "</html>\"";
+
+        var iframe = document.getElementById("aFrame");
+        iframe.src = url;
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }, 2000);
+
+        function test() {
+            var innerFrame = window.frames[0];
+
+            if (!innerFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            var innerInnerFrame = innerFrame.frames[0];
+            if (!innerInnerFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            try {
+                if (innerInnerFrame.document.getElementById('accessMe')) {
+                    innerInnerFrame.document.getElementById('accessMe').innerHTML = 'PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!';
+                    log('PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!');
+                    testDone = true;
+                    return;
+                }
+            } catch (e) {
+            }
+
+            setTimeout(test, 1);
+        }
+    </script>
+</body>
+</html>
