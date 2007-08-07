@@ -745,7 +745,7 @@ void ThrowNode::streamTo(SourceStream &s) const
 
 void TryNode::streamTo(SourceStream &s) const
 {
-  s << "try " << tryBlock;
+  s << SourceStream::Endl << "try " << tryBlock;
   if (catchBlock)
     s << SourceStream::Endl << "catch (" << exceptionIdent << ")" << catchBlock;
   if (finallyBlock)

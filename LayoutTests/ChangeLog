@@ -2,6 +2,16 @@
 
         Reviewed by Oliver.
 
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14891
+        Decompilation of try block immediately following "else" fails
+
+        * fast/js/toString-try-else-expected.txt: Added.
+        * fast/js/toString-try-else.html: Added.
+
+2007-08-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
         Update test to not timeout.
 
         * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level-expected.txt:
