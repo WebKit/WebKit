@@ -1,3 +1,23 @@
+2007-08-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Niko.
+
+        Switch from the generic union GdkEvent to the specific struct GdkEvent*. This is needed
+        to make WebKitGtkPage handle the events by reimplementing the default handlers in the near
+        future.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::FrameGdk::handleGdkEvent):
+        * platform/gdk/KeyEventGdk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gdk/MouseEventGdk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gdk/WheelEventGdk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-08-07  George Staikos  <staikos@kde.org>
 
         Some QStyles don't handle negative maximum well (crash)

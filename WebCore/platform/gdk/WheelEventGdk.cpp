@@ -32,27 +32,27 @@
 
 namespace WebCore {
 
-PlatformWheelEvent::PlatformWheelEvent(GdkEvent* event)
+PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 {
     m_deltaX = 0;
     m_deltaY = 0;
 
-    if (event->scroll.direction == GDK_SCROLL_UP)
+    if (event->direction == GDK_SCROLL_UP)
         m_deltaY = -120;
-    else if (event->scroll.direction == GDK_SCROLL_LEFT)
+    else if (event->direction == GDK_SCROLL_LEFT)
         m_deltaX = -120;
-    else if (event->scroll.direction == GDK_SCROLL_RIGHT)
+    else if (event->direction == GDK_SCROLL_RIGHT)
         m_deltaX = 120;
     else
         m_deltaY = 120;
 
-    m_position = IntPoint((int)event->scroll.x, (int)event->scroll.y);
-    m_globalPosition = IntPoint((int)event->scroll.x_root, (int)event->scroll.y_root);
+    m_position = IntPoint((int)event->x, (int)event->y);
+    m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
     m_isAccepted = false;
-    m_shiftKey = event->button.state & GDK_SHIFT_MASK;
-    m_ctrlKey = event->button.state & GDK_CONTROL_MASK;
-    m_altKey = event->button.state & GDK_MOD1_MASK;
-    m_metaKey = event->button.state & GDK_MOD2_MASK;
+    m_shiftKey = event->state & GDK_SHIFT_MASK;
+    m_ctrlKey = event->state & GDK_CONTROL_MASK;
+    m_altKey = event->state & GDK_MOD1_MASK;
+    m_metaKey = event->state & GDK_MOD2_MASK;
     m_isContinuous = false;
 }
 

@@ -45,7 +45,7 @@ typedef long LPARAM;
 #endif
 
 #if PLATFORM(GDK)
-typedef union _GdkEvent GdkEvent;
+typedef struct _GdkEventKey GdkEventKey;
 #endif
 
 #if PLATFORM(QT)
@@ -80,7 +80,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GDK)
-        PlatformKeyboardEvent(GdkEvent*);
+        PlatformKeyboardEvent(GdkEventKey*);
 #endif
 
 #if PLATFORM(QT)

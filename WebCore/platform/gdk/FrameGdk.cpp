@@ -167,7 +167,7 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
         }
 
         case GDK_SCROLL: {
-            PlatformWheelEvent wheelEvent(event);
+            PlatformWheelEvent wheelEvent(&event->scroll);
             view()->wheelEvent(wheelEvent);
             if (wheelEvent.isAccepted())
                 return;
@@ -199,19 +199,19 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             break;
         }
         case GDK_MOTION_NOTIFY:
-            eventHandler()->mouseMoved(PlatformMouseEvent(event));
+            eventHandler()->mouseMoved(PlatformMouseEvent(&event->motion));
             break;
         case GDK_BUTTON_PRESS:
         case GDK_2BUTTON_PRESS:
         case GDK_3BUTTON_PRESS:
-            eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+            eventHandler()->handleMousePressEvent(PlatformMouseEvent(&event->button));
             break;
         case GDK_BUTTON_RELEASE:
-            eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+            eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(&event->button));
             break;
         case GDK_KEY_PRESS:
         case GDK_KEY_RELEASE: {
-            PlatformKeyboardEvent keyEvent(event);
+            PlatformKeyboardEvent keyEvent(&event->key);
             keyPress(keyEvent);
         }
         default:

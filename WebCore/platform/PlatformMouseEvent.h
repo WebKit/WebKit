@@ -49,7 +49,8 @@ typedef long LPARAM;
 #endif
 
 #if PLATFORM(GDK)
-typedef union _GdkEvent GdkEvent;
+typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GdkEventMotion GdkEventMotion;
 #endif
 
 #if PLATFORM(QT)
@@ -118,7 +119,8 @@ namespace WebCore {
         bool activatedWebView() const { return m_activatedWebView; }
 #endif
 #if PLATFORM(GDK) 
-        PlatformMouseEvent(GdkEvent*);
+        PlatformMouseEvent(GdkEventButton*);
+        PlatformMouseEvent(GdkEventMotion*);
 #endif
 #if PLATFORM(QT)
         PlatformMouseEvent(QMouseEvent*, int clickCount);

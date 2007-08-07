@@ -458,17 +458,17 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEvent* event)
+PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
 {
     m_isKeyUp = event->type == GDK_KEY_RELEASE;
-    m_shiftKey = event->key.state & GDK_SHIFT_MASK != 0;
-    m_ctrlKey = event->key.state & GDK_CONTROL_MASK != 0;
-    m_altKey = event->key.state & GDK_MOD1_MASK != 0;
-    m_metaKey = event->key.state & GDK_MOD2_MASK != 0;
-    m_text = event->key.string;
-    m_unmodifiedText = event->key.string;
-    m_keyIdentifier = keyIdentifierForGdkKeyCode(event->key.keyval);
-    m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event->key.keyval);
+    m_shiftKey = event->state & GDK_SHIFT_MASK != 0;
+    m_ctrlKey = event->state & GDK_CONTROL_MASK != 0;
+    m_altKey = event->state & GDK_MOD1_MASK != 0;
+    m_metaKey = event->state & GDK_MOD2_MASK != 0;
+    m_text = event->string;
+    m_unmodifiedText = event->string;
+    m_keyIdentifier = keyIdentifierForGdkKeyCode(event->keyval);
+    m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event->keyval);
     m_autoRepeat = false;
     m_isKeypad = false;
 
