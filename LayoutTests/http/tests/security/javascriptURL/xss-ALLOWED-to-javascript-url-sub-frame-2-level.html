@@ -61,6 +61,8 @@
                     innerInnerFrame.document.getElementById('accessMe').innerHTML = 'PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!';
                     log('PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!');
                     testDone = true;
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
                     return;
                 }
             } catch (e) {

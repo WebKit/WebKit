@@ -1,5 +1,14 @@
 2007-08-06  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Update test to not timeout.
+
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html:
+
+2007-08-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej.
 
         Tests for <rdar://problem/5354689>
