@@ -1,3 +1,13 @@
+2007-08-07  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14815
+        [gtk] API implementation: reload
+
+        * gtk/Api/webkitgtkpage.cpp: Implement the webkit_gtk_page_reload()
+        function.
+
 2007-08-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

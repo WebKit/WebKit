@@ -351,6 +351,13 @@ void webkit_gtk_page_open(WebKitGtkPage* page, const gchar* url)
     frame_data->frame->loader()->load(ResourceRequest(KURL(string)));
 }
 
+void webkit_gtk_page_reload (WebKitGtkPage *page)
+{
+    WebKitGtkPagePrivate* page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitGtkFramePrivate* frame_data = WEBKIT_GTK_FRAME_GET_PRIVATE(page_data->main_frame);
+    frame_data->frame->loader()->reload();
+}
+
 void webkit_gtk_page_load_string(WebKitGtkPage* page, const gchar* content, const gchar* content_mime_type, const gchar* content_encoding, const gchar* base_url)
 {
     WebKitGtkPagePrivate* page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
