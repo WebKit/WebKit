@@ -502,55 +502,47 @@ void RenderContainer::layout()
     setNeedsLayout(false);
 }
 
-void RenderContainer::removeLeftoverAnonymousBoxes()
+void RenderContainer::removeLeftoverAnonymousBlock(RenderBlock* child)
 {
-    // we have to go over all child nodes and remove anonymous boxes, that do _not_
-    // have inline children to keep the tree flat
-    RenderObject* child = m_firstChild;
-    while( child ) {
-        RenderObject* next = child->nextSibling();
-        
-        if ( child->isRenderBlock() && child->isAnonymousBlock() && !child->continuation() && !child->childrenInline() && !child->isTableCell() ) {
-            RenderObject* firstAnChild = child->firstChild();
-            RenderObject* lastAnChild = child->lastChild();
-            if ( firstAnChild ) {
-                RenderObject* o = firstAnChild;
-                while( o ) {
-                    o->setParent( this );
-                    o = o->nextSibling();
-                }
-                firstAnChild->setPreviousSibling( child->previousSibling() );
-                lastAnChild->setNextSibling( child->nextSibling() );
-                if ( child->previousSibling() )
-                    child->previousSibling()->setNextSibling( firstAnChild );
-                if ( child->nextSibling() )
-                    child->nextSibling()->setPreviousSibling( lastAnChild );
-            } else {
-                if ( child->previousSibling() )
-                    child->previousSibling()->setNextSibling( child->nextSibling() );
-                if ( child->nextSibling() )
-                    child->nextSibling()->setPreviousSibling( child->previousSibling() );
-                
-            }
-            if (child == m_firstChild)
-                m_firstChild = firstAnChild;
-            if (child == m_lastChild)
-                m_lastChild = lastAnChild;
-            child->setParent( 0 );
-            child->setPreviousSibling( 0 );
-            child->setNextSibling( 0 );
-            if ( !child->isText() ) {
-                RenderContainer *c = static_cast<RenderContainer*>(child);
-                c->m_firstChild = 0;
-                c->m_next = 0;
-            }
-            child->destroy();
+    ASSERT(child->isAnonymousBlock());
+    ASSERT(!child->childrenInline());
+    
+    if (child->continuation()) 
+        return;
+    
+    RenderObject* firstAnChild = child->firstChild();
+    RenderObject* lastAnChild = child->lastChild();
+    if (firstAnChild) {
+        RenderObject* o = firstAnChild;
+        while(o) {
+            o->setParent(this);
+            o = o->nextSibling();
         }
-        child = next;
+        firstAnChild->setPreviousSibling(child->previousSibling());
+        lastAnChild->setNextSibling(child->nextSibling());
+        if (child->previousSibling())
+            child->previousSibling()->setNextSibling(firstAnChild);
+        if (child->nextSibling())
+            child->nextSibling()->setPreviousSibling(lastAnChild);
+    } else {
+        if (child->previousSibling())
+            child->previousSibling()->setNextSibling(child->nextSibling());
+        if (child->nextSibling())
+            child->nextSibling()->setPreviousSibling(child->previousSibling());
     }
-
-    if (parent()) // && isAnonymousBlock() && !continuation() && !childrenInline() && !isTableCell())
-        parent()->removeLeftoverAnonymousBoxes();
+    if (child == m_firstChild)
+        m_firstChild = firstAnChild;
+    if (child == m_lastChild)
+        m_lastChild = lastAnChild;
+    child->setParent(0);
+    child->setPreviousSibling(0);
+    child->setNextSibling(0);
+    if (!child->isText()) {
+        RenderContainer *c = static_cast<RenderContainer*>(child);
+        c->m_firstChild = 0;
+        c->m_next = 0;
+    }
+    child->destroy();
 }
 
 VisiblePosition RenderContainer::positionForCoordinates(int x, int y)

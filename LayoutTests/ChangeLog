@@ -1,3 +1,20 @@
+2007-08-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Tests for <rdar://problem/5102553>
+        Mail spins trying to display or edit a specific long plain text message in WebCore::TimerBase::...
+        
+        - added performance test. With debug build on MBP this takes about 1.5s to run.
+        - added test case that shows some additional progression from the patch (less leftover anonymous boxes).
+        
+        * fast/block/basic/stress-shallow-nested-expected.txt: Added.
+        * fast/block/basic/stress-shallow-nested.html: Added.
+        * fast/block/float/nestedAnonymousBlocks2-expected.checksum: Added.
+        * fast/block/float/nestedAnonymousBlocks2-expected.png: Added.
+        * fast/block/float/nestedAnonymousBlocks2-expected.txt: Added.
+        * fast/block/float/nestedAnonymousBlocks2.html: Added.
+
 2007-08-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

@@ -1,3 +1,31 @@
+2007-08-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix <rdar://problem/5102553>
+        Mail spins trying to display or edit a specific long plain text message in WebCore::TimerBase::...
+
+        Calling removeLeftoverAnonymousBoxes() from RenderBlock::addChildToFlow() made adding children
+        O(n^2) in simple cases (repeated <div><div></div></div> for example).
+        
+        I couldn't find any limited fix so here is a more complete one. It removes iterating/recursing 
+        removeLeftoverAnonymousBoxes() method altogether. Instead of hunting around wildly, just get 
+        rid of anonymous boxes with block children when they occur.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToFlow):
+        * rendering/RenderButton.h:
+        (WebCore::RenderButton::removeLeftoverAnonymousBlock):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeLeftoverAnonymousBlock):
+        * rendering/RenderContainer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::removeLeftoverAnonymousBlock):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::removeLeftoverAnonymousBlock):
+
 2007-08-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

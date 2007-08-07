@@ -219,8 +219,9 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     RenderContainer::addChild(newChild,beforeChild);
     // ### care about aligned stuff
 
-    if ( madeBoxesNonInline )
-        removeLeftoverAnonymousBoxes();
+    if (madeBoxesNonInline && parent() && isAnonymousBlock())
+        parent()->removeLeftoverAnonymousBlock(this);
+    // this object may be dead here
 }
 
 static void getInlineRun(RenderObject* start, RenderObject* boundary,

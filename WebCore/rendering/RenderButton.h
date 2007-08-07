@@ -38,7 +38,7 @@ public:
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject*);
-    virtual void removeLeftoverAnonymousBoxes() { }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool createsAnonymousWrapper() const { return true; }
 
     virtual void setStyle(RenderStyle*);

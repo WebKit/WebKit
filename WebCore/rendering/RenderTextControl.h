@@ -45,7 +45,7 @@ public:
     virtual IntRect controlClipRect(int tx, int ty) const;
     virtual void calcHeight();
     virtual void calcPrefWidths();
-    virtual void removeLeftoverAnonymousBoxes() { }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }

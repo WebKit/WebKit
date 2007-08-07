@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<div id=console></div>
+<script>
+var start = new Date().getTime();
+for (n = 0; n < 30000; n++)
+    document.write('<div><div></div></div>');
+var time = new Date().getTime() - start;
+document.getElementById('console').innerHTML = (time < 8000) 
+    ? "<span style='color:green'>PASS</span>"
+    : "<span style='color:red'>FAIL</span>";
+if (!window.layoutTestController)
+    document.getElementById('console').innerHTML += " time: " + time;
+</script>

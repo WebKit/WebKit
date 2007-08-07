@@ -52,7 +52,7 @@ public:
     virtual void layout();
     virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
 
-    virtual void removeLeftoverAnonymousBoxes();
+    virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
 
     RenderObject* beforeAfterContainer(RenderStyle::PseudoId);
     virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
