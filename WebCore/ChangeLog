@@ -1,5 +1,16 @@
 2007-08-06  David Hyatt  <hyatt@apple.com>
 
+        Make sure to clear out the parent of the ellipsis box so that it doesn't
+        trigger the consistency check for line boxes.
+
+        Reviewed by darin
+
+        * ChangeLog:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::detachEllipsisBox):
+
+2007-08-06  David Hyatt  <hyatt@apple.com>
+
         Back out fix for <rdar://problem/5366582> and replace it with the correct
         fix.  Make sure to delete the line box tree before splitting an inline flow
         into a continuation.  The added layout test for the original checkin covers
