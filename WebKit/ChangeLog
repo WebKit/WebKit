@@ -1,3 +1,17 @@
+2007-08-07  David Hyatt  <hyatt@apple.com>
+
+        Fix a botched backout of the Quicktime plugin clipping fix that broke Java.  The plugin view should not
+        be set to autosize with the parent view.  Also, cleanup of script objects was removed accidentally as
+        well.
+
+        Reviewed by olliej
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:DOMElement:loadManually:]):
+
 2007-08-07  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Mark Rowe.

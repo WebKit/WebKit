@@ -418,7 +418,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
-    [view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [attributes release];
     return view;
 }

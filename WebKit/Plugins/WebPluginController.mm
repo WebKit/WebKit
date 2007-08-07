@@ -30,6 +30,7 @@
 #import <WebKit/WebPluginController.h>
 
 #import <Foundation/NSURLRequest.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/PlatformString.h>
@@ -52,6 +53,8 @@
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewInternal.h>
+
+using namespace WebCore;
 
 @interface NSView (PluginSecrets)
 - (void)setContainingWindow:(NSWindow *)w;
@@ -229,6 +232,9 @@ static NSMutableSet *pluginViews = nil;
             [view pluginDestroy];
         }
         
+        if (Frame* frame = core([self webFrame]))
+            frame->cleanupScriptObjectsForPlugin(self);
+        
         [pluginViews removeObject:view];
         [_views removeObject:view];
     }
@@ -274,6 +280,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
             KJS::JSLock::DropAllLocks dropAllLocks;
             [aView pluginDestroy];
         }
+        
+        if (Frame* frame = core([self webFrame]))
+            frame->cleanupScriptObjectsForPlugin(self);
+        
         [pluginViews removeObject:aView];
     }
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
