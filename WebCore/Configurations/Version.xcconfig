@@ -1,7 +1,7 @@
-MAJOR_VERSION = 522;
-MINOR_VERSION = 15;
+MAJOR_VERSION = 523;
+MINOR_VERSION = 0;
 TINY_VERSION = 0;
-FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION);
+FULL_VERSION = $(MAJOR_VERSION);
 
 // The bundle version is set based on the current build configuration, see below.
 BUNDLE_VERSION = $(BUNDLE_VERSION_$(CONFIGURATION));
