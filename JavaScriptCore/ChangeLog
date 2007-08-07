@@ -8,7 +8,7 @@
         Test: fast/js/toString-try-else.html
 
         * kjs/nodes2string.cpp:
-        (TryNode::streamTo): Add newline before else.
+        (TryNode::streamTo): Add newline before "try".
 
 2007-08-07  Mark Rowe  <mrowe@apple.com>
 
