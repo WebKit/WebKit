@@ -1,5 +1,12 @@
 2007-08-07  Antti Koivisto  <antti@apple.com>
 
+        Remove a test that was a bit too slow on older hardware.
+        
+        * fast/block/basic/stress-shallow-nested-expected.txt: Removed.
+        * fast/block/basic/stress-shallow-nested.html: Removed.
+        
+2007-08-07  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Hyatt.
         
         Tests for <rdar://problem/5102553>
