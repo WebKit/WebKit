@@ -1,3 +1,20 @@
+2007-08-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5388774> REGRESSION: Hang occurs after clicking "Attach a file " link in a new .Mac message
+
+        Attempting to acquire the JSLock inside CollectorHeap::forceLock can lead to a deadlock if the thread currently
+        holding the lock is waiting on the thread that is forking.  It is not considered safe to use system frameworks
+        after a fork without first execing[*] so it is not particularly important to ensure that the collector and
+        fastMalloc allocators are unlocked in the child process.  If the child process wishes to use JavaScriptCore it
+        should exec after forking like it would to use any other system framework.
+        [*]: <http://lists.apple.com/archives/Cocoa-dev/2005/Jan/msg00676.html>
+
+        * kjs/CollectorHeapIntrospector.cpp: Remove forceLock and forceUnlock implementations.
+        * kjs/CollectorHeapIntrospector.h: Stub out forceLock and forceUnlock methods.
+        * wtf/FastMalloc.cpp: Ditto.
+
 2007-08-06  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Geoff.

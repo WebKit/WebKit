@@ -44,8 +44,8 @@ public:
     static boolean_t check(malloc_zone_t*) { return true; }
     static void  print(malloc_zone_t*, boolean_t) { }
     static void log(malloc_zone_t*, void*) { }
-    static void forceLock(malloc_zone_t*);
-    static void forceUnlock(malloc_zone_t*);
+    static void forceLock(malloc_zone_t*) { }
+    static void forceUnlock(malloc_zone_t*) { }
     static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
 
 private:

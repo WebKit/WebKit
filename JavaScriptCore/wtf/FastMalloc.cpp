@@ -224,8 +224,8 @@ public:
     static boolean_t check(malloc_zone_t*) { return true; }
     static void  print(malloc_zone_t*, boolean_t) { }
     static void log(malloc_zone_t*, void*) { }
-    static void forceLock(malloc_zone_t*);
-    static void forceUnlock(malloc_zone_t*);
+    static void forceLock(malloc_zone_t*) { }
+    static void forceUnlock(malloc_zone_t*) { }
     static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
 
 private:
@@ -2653,20 +2653,6 @@ kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typ
     pageMap->visit(usageRecorder, memoryReader);
 
     return 0;
-}
-
-void FastMallocZone::forceLock(malloc_zone_t*)
-{
-    pageheap_lock.Lock();
-    for (size_t i = 0; i < kNumClasses; i++)
-        central_cache[i].lock_.Lock();
-}
-
-void FastMallocZone::forceUnlock(malloc_zone_t*)
-{
-    for (size_t i = 0; i < kNumClasses; i++)
-        central_cache[i].lock_.Unlock();
-    pageheap_lock.Unlock();
 }
 
 
