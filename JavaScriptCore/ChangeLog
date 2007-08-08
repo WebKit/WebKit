@@ -1,3 +1,18 @@
+2007-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14897
+        Decompilation of double negation fails and produces invalid or incorrect code
+
+        Test: fast/js/function-decompilation-operators.html
+
+        * kjs/nodes2string.cpp:
+        (UnaryPlusNode::streamTo): Put space after unary operator.  Matches Firefox.
+        (NegateNode::streamTo): Diito.
+        (MultNode::streamTo): Put spaces around binary operator.  Matches Firefox.
+        (AddNode::streamTo): Ditto.
+
 2007-08-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
