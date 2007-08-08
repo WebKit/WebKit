@@ -1,5 +1,14 @@
 2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Niko.
+
+        Remove the custom painting in favor of the Widget::paint
+        implementation.
+
+        * gtk/Api/webkitgtkpage.cpp:
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Adam.
 
         Moved code from class FrameGdk into WebKitGtkFrame. Update the

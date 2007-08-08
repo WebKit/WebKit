@@ -166,9 +166,48 @@ void Widget::removeFromParent()
     notImplemented();
 }
 
-void Widget::paint(GraphicsContext*, IntRect const&)
+/*
+ * Strategy to painting a Widget:
+ *  1.) do not paint if there is no GtkWidget set
+ *  2.) We manipulate the GtkAllocation.{x,y} to take the
+ *      GraphicsContext translation into account. This works as long as we assume
+ *      that our GtkWidgets have GTK_NO_WINDOW set. This holds true
+ *      for the PlatformScrollbar.
+ */
+void Widget::paint(GraphicsContext* context, const IntRect&)
 {
-    notImplemented();
+    if (!gtkWidget())
+        return;
+
+    GtkWidget* widget = gtkWidget();
+    ASSERT(GTK_WIDGET_NO_WINDOW(widget));
+
+    IntPoint originalPosition = IntPoint(widget->allocation.x, widget->allocation.y);
+    IntPoint translatedPosition = context->translatePoint(originalPosition);
+    widget->allocation.x = translatedPosition.x();
+    widget->allocation.y = translatedPosition.y();
+
+    GdkEvent* event = gdk_event_new(GDK_EXPOSE);
+    event->expose = *context->gdkExposeEvent();
+    event->expose.region = gtk_widget_region_intersect(widget, event->expose.region);
+
+    
+    /*
+     * This will be unref'ed by gdk_event_free.
+     */
+    g_object_ref(event->expose.window);
+
+    /*
+     * If we are going to paint do the translation and GtkAllocation manipulation.
+     */
+    if (!gdk_region_empty(event->expose.region)) {
+        gdk_region_get_clipbox(event->expose.region, &event->expose.area);
+        gtk_widget_send_expose(widget, event);
+    }
+
+    widget->allocation.x = originalPosition.x();
+    widget->allocation.y = originalPosition.y();
+    gdk_event_free(event);
 }
 
 void Widget::setIsSelected(bool)

@@ -1,5 +1,25 @@
 2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Niko.
+
+        Implement Widget::paint for the Gtk port. This is needed to paint
+        Widgets in z-order. The original GdkEventExpose is stored within the
+        GraphicsContext and then used to draw the children. This is similiar
+        to gtk_container_propagate_expose but we try to honor the GraphicsConntext
+        translation.
+
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::paint):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::setGdkExposeEvent):
+        (WebCore::GraphicsContext::gdkExposeEvent):
+        (WebCore::GraphicsContext::gdkDrawable):
+        (WebCore::GraphicsContext::translatePoint):
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Oliver Hunt.
 
         Implement PlatformScrollbar by calling ScrollBar::setValue from 

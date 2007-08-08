@@ -70,17 +70,6 @@ static guint webkit_gtk_page_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitGtkPage, webkit_gtk_page, GTK_TYPE_LAYOUT)
 
-struct FrameGdkExposeData {
-    GtkContainer* container;
-    GdkEventExpose* expose;
-};
-
-static void frame_gdk_expose_child(GtkWidget* widget, gpointer _data)
-{
-    FrameGdkExposeData* data = (FrameGdkExposeData*)_data;
-    gtk_container_propagate_expose(data->container, widget, data->expose);
-} 
-
 static gboolean webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget* widget, GdkEvent* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
@@ -89,10 +78,9 @@ static gboolean webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget* widge
     case GDK_EXPOSE: {
         GdkRectangle clip;
         gdk_region_get_clipbox(event->expose.region, &clip);
-        gdk_window_begin_paint_region(event->any.window, event->expose.region);
         cairo_t* cr = gdk_cairo_create(event->any.window);
         GraphicsContext ctx(cr);
-        ctx.setGdkDrawable(event->any.window);
+        ctx.setGdkExposeEvent(&event->expose);
         if (frame->renderer()) {
             if (frame->view()->needsLayout())
                 frame->view()->layout();
@@ -100,13 +88,6 @@ static gboolean webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget* widge
             frame->paint(&ctx, rect);
         }
         cairo_destroy(cr);
-
-        /*
-         * Make sure children of the view get redrawn
-         */
-        FrameGdkExposeData data = { GTK_CONTAINER(frame->view()->gtkWidget()), &event->expose };
-        gtk_container_forall(GTK_CONTAINER(frame->view()->gtkWidget()), frame_gdk_expose_child, &data);
-        gdk_window_end_paint(event->any.window);
         break;
     }
 
