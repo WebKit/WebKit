@@ -528,12 +528,15 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
 
                 if (n->isTextNode() ||
                     (h->hasLocalName(trTag) &&
-                     isTableSection(parent) && grandparent->hasTagName(tableTag)) ||
+                     isTableSection(parent) && grandparent && grandparent->hasTagName(tableTag)) ||
                      ((!n->hasTagName(tdTag) && !n->hasTagName(thTag) &&
                        !n->hasTagName(formTag) && !n->hasTagName(scriptTag)) && isTableSection(node) &&
                      parent->hasTagName(tableTag))) {
                     node = (node->hasTagName(tableTag)) ? node :
                             ((node->hasTagName(trTag)) ? grandparent : parent);
+                    // This can happen with fragments
+                    if (!node)
+                        return false;
                     Node* parent = node->parentNode();
                     if (!parent)
                         return false;

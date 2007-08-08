@@ -1,3 +1,13 @@
+2007-08-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for <rdar://problem/5391576>
+        Malformed table innerHTML causes Safari to crash in HTMLParser::handleError (14894)
+
+        * fast/table/incomplete-table-in-fragment-2-expected.txt: Added.
+        * fast/table/incomplete-table-in-fragment-2.html: Added.
+
 2007-08-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej and Hyatt.

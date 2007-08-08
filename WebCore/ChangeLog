@@ -1,3 +1,21 @@
+2007-08-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix for <rdar://problem/5391576>
+        Malformed table innerHTML causes Safari to crash in HTMLParser::handleError (14894)
+        
+        Add null checks to protect against 
+        
+        e.innerHTML = "<tr>text</tr>";
+        
+        type cases. Normal assumptions about document tree structure don't hold when parsing 
+        fragments. Results don't match Firefox in all cases. It seems to have some sort of 
+        anything-goes fragment parsing mode.
+        
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+
 2007-08-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej and Hyatt.
