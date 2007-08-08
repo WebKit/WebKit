@@ -1,0 +1,52 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>Opener Frame</p>
+    <pre id="console"></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setCanOpenWindows();
+        }
+
+        var url = "data:text/html,<html><body><p>Opened Frame</p><p id='accessMe'></p><iframe></iframe></body></html>";
+        var openedWindow = window.open(url);
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Access to a window opened with a data: URL was denied.");
+                closeWindowAndNotifyDone(openedWindow);
+            }
+        }, 2000);
+
+        function test() {
+            var flag = openedWindow.frames[0];
+            if (!flag) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            try {
+                if (openedWindow.document.getElementById('accessMe')) {
+                    log("FAIL: Access to a window opened with a data: URL was allowed.");
+                    testDone = true;
+                    closeWindowAndNotifyDone(openedWindow);
+                    return;
+                }
+            } catch (e) {
+            }
+
+            log("PASS: Access to a window opened with a data: URL was denied.");
+            testDone = true;
+            closeWindowAndNotifyDone(openedWindow);
+        }
+    </script>
+</body>
+</html>

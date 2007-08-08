@@ -1,0 +1,57 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>Opener frame</p>
+    <iframe src="http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-window-location.html" style="width: 400px; height:200px;"></iframe>
+    <pre id="console"></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        var innerFrame = window.frames[0];
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }, 2000);
+
+        function test() {
+            // When the flag frame is not undefined, we know that the location change has completed and the page is loaded.
+            var flagFrame = innerFrame.frames[0];
+            if (!flagFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            try {
+                if (innerFrame.document.getElementById('accessMe')) {
+                    innerFrame.document.getElementById('accessMe').innerHTML = "FAIL: Cross frame access to a data: URL embed in a frame on a foreign domain allowed.";
+                    log("FAIL: Cross frame access to a data: URL embed in a frame on a foreign domain allowed.");
+                    testDone = true;
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                    return;
+                }
+            } catch (e) {
+            }
+
+            log("PASS: Cross frame access to a data: URL embed in a frame on a foreign domain denied!");
+            testDone = true;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</body>
+</html>

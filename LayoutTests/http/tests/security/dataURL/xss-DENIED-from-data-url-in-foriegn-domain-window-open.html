@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>Opener Frame</p>
+    <p id='accessMe'>Pass: Cross frame access from a data: URL on a different domain was denied.</p>
+    <pre id='console'></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setCanOpenWindows();
+        }
+
+        var openedWindow = window.open("http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html");
+
+        // Poll until javacript URL: subframe on window.open'ed frames has loaded as indicated by 'flag' iframe
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                closeWindowAndNotifyDone(openedWindow);
+            }
+        }, 2000);
+
+        function test() {
+            var innerFrameInOpenedWindow = openedWindow.frames['aFrame'];
+
+            if (!innerFrameInOpenedWindow) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            // When the flag frame is not undefined, we know that the inner-inner frame has loaded.
+            var flagFrame = innerFrameInOpenedWindow.frames['flag'];
+            if (!flagFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            testDone = true;
+            closeWindowAndNotifyDone(openedWindow);
+        }
+    </script>
+</body>
+</html>

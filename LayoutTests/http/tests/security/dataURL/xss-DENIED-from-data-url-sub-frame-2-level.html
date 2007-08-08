@@ -1,0 +1,70 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>This tests that a data: URL loaded in an iframe inside another data: URL loaded iframe doesn't have access to the main frame.</p>
+    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <p id='accessMe'>PASS: Cross frame access from a data: URL inside another data: URL was denied.</p>
+    <pre id='console'></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        var innerURL = 'data:text/html,<html>'
+            + "<body>"
+            +     "<p>Inner-inner iframe.</p>"
+            +     "<scr" + "ipt>"
+            +         'top.document.getElementById(\"accessMe\").innerHTML = \"FAIL: Cross frame access from a data: URL inside another data: URL was allowed.\";'
+            +     "</scri" + "pt>"
+            +     "<iframe></iframe>" // Flag iframe
+            + "</body>"
+            + '</html>';
+
+        var url = "data:text/html,<html>"
+            + "<body>"
+            +     "<p>Inner iframe.</p>"
+            +     "<iframe src='" + innerURL + "'></iframe>"
+            + "</body>"
+            + "</html>";
+
+        var iframe = document.getElementById("aFrame");
+        iframe.src = url;
+        
+        var innerFrame = window.frames[0];
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }, 2000);
+
+        function test() {
+            var innerInnerFrame = innerFrame.frames[0];
+            if (!innerInnerFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            var flag = innerInnerFrame.frames[0];
+            if (!flag) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            testDone = true;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</body>
+</html>

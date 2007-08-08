@@ -1,0 +1,76 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>This tests that a data: URL subframe can't access a sibling data: URL subframe.</p>
+    <iframe id="firstSubFrame" name="firstSubFrame"></iframe>
+    <iframe id="secondSubFrame" name="secondSubFrame"></iframe>
+    <pre id='console'></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        var firstURL = "data:text/html,<html>"
+            + "<body>"
+            +     "<p>Inner iframe.</p>"
+            +     "<p id='accessMe'>Pass: Cross frame access from a sibling data: URL was denied.</p>"
+            +     "<iframe></iframe>" // Flag iframe
+            + "</body>"
+            + "</html>";
+
+        var iframe = document.getElementById("firstSubFrame");
+        iframe.src = firstURL;
+
+        var innerFrame1 = window.frames[0];
+
+        var secondURL = "data:text/html,<html>"
+            + "<body>"
+            +     "<p>Inner iframe.</p>"
+            +     "<scr" + "ipt>"
+            +         "parent.frames['firstSubFrame'].document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access from a sibling data: URL was allowed.';"
+            +     "</scri" + "pt>"
+            +     "<iframe></iframe>" // Flag iframe
+            + "</body>"
+            + "</html>";
+
+        iframe = document.getElementById("secondSubFrame");
+        iframe.src = secondURL;
+
+        var innerFrame2 = window.frames[1];
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }, 2000);
+
+        function test() {
+            var flag1 = innerFrame1.frames[0];
+            if (!flag1) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            var flag2 = innerFrame2.frames[0];
+            if (!flag2) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            testDone = true;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</body>
+</html>

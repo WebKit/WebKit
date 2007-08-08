@@ -3640,7 +3640,7 @@ void Document::initSecurityPolicyURL()
     m_securityPolicyURL = loader->url();
 
     // javascript: URLs create document using the "about" protocol
-    if (!m_securityPolicyURL.isEmpty() && m_securityPolicyURL.protocol() != "about" && m_securityPolicyURL.protocol() != "data")
+    if (!m_securityPolicyURL.isEmpty() && m_securityPolicyURL.protocol() != "about")
         return;
 
     Frame* openerFrame = 0;

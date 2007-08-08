@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1: TypeError: Undefined value
+Opener Frame
+
+PASS: Access from a window opened with a data: URL was denied.
+
+

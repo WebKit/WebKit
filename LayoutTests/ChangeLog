@@ -1,3 +1,45 @@
+2007-08-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Tests for <rdar://problem/5354635>
+
+        * http/tests/security/dataURL: Added.
+        * http/tests/security/dataURL/resources: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessee-iframe.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessee-opened-frame.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html: Added.
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-window-location.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame.html: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html: Added.
+
 2007-08-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

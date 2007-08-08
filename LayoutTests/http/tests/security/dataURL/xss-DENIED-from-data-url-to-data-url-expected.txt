@@ -1,0 +1,23 @@
+This tests that a data: URL subframe can't access a child data: URL subframe of itself.
+
+
+
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.
+
+--------
+Frame: '<!--framePath //aFrame/<!--frame0-->-->'
+--------
+PASS: Cross frame access from a data: URL was denied.
+
+Inner-inner iframe.
+
+
+
+--------
+Frame: '<!--framePath //aFrame/<!--frame0-->/<!--frame0-->-->'
+--------
+

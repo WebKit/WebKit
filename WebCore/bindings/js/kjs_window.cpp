@@ -921,12 +921,16 @@ bool Window::isSafeScript(ExecState *exec) const
   if (actURL.isLocalFile())
     return true;
 
+  const KURL& thisURL = thisDocument->securityPolicyURL();
+
+  // data: URL's are not allowed access to anything other than themselves.
+  if (thisURL.protocol() == "data" || actURL.protocol() == "data")
+    return false;
+
   if (thisDocument->domainWasSetInDOM() && actDocument->domainWasSetInDOM()) {
     if (thisDocument->domain() == actDocument->domain())
       return true;
   }
-
-  const KURL& thisURL = thisDocument->securityPolicyURL();
 
   if (actURL.host() == thisURL.host() && actURL.protocol() == thisURL.protocol() && actURL.port() == thisURL.port())
     return true;

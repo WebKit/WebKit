@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessee-opened-frame.html from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html. Domains, protocols and ports must match.
+
+PASS: Cross frame access to a data: URL embed in a frame window.open'ed on foreign domain denied!
+

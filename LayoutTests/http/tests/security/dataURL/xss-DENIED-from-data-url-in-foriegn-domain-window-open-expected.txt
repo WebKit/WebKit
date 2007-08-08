@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: TypeError: Undefined value
+Opener Frame
+
+Pass: Cross frame access from a data: URL on a different domain was denied.
+
+
