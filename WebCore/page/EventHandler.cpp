@@ -826,6 +826,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
+    // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
+    // in case the scrollbar widget was destroyed when the mouse event was handled.
+    if (mev.scrollbar())
+        mev = prepareMouseEvent(HitTestRequest(true, true), mouseEvent);
+
     if (swallowEvent) {
         // scrollbars should get events anyway, even disabled controls might be scrollable
         if (mev.scrollbar())

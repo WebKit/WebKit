@@ -1,3 +1,12 @@
+2007-08-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Test for for <rdar://problem/5393798> 100% reproducible crash in WebCore::Scrollbar::setValue
+
+        * fast/events/mousedown_in_scrollbar-expected.txt: Added.
+        * fast/events/mousedown_in_scrollbar.html: Added.
+
 2007-08-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

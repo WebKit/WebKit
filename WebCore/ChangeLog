@@ -1,3 +1,13 @@
+2007-08-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Fix for <rdar://problem/5393798> 100% reproducible crash in WebCore::Scrollbar::setValue
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleMousePressEvent):
+          If the hit testing originally determined the event was in a scrollbar, 
+          refetch the MouseEventWithHitTestResults in case the scrollbar widget was destroyed when the mouse event was handled.
+
 2007-08-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
