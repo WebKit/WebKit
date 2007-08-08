@@ -131,24 +131,11 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
 
     frameData->client = new FrameLoaderClientGdk(frame);
     frameData->frame = new Frame(pageData->page, 0, frameData->client);
-    Settings* settings = WebKitGtk::core(page)->settings();
-    settings->setLoadsImagesAutomatically(true);
-    settings->setMinimumFontSize(5);
-    settings->setMinimumLogicalFontSize(5);
-    settings->setShouldPrintBackgrounds(true);
-    settings->setJavaScriptEnabled(true);
 
-    settings->setDefaultFixedFontSize(14);
-    settings->setDefaultFontSize(14);
-    settings->setSerifFontFamily("Times New Roman");
-    settings->setSansSerifFontFamily("Arial");
-    settings->setFixedFontFamily("Courier");
-    settings->setStandardFontFamily("Arial");
+    FrameView* frameView = new FrameView(frameData->frame);
+    frameData->frame->setView(frameView);
 
-    FrameView* frame_view = new FrameView(frameData->frame);
-    frameData->frame->setView(frame_view);
-
-    frame_view->setGtkWidget(GTK_LAYOUT(page));
+    frameView->setGtkWidget(GTK_LAYOUT(page));
     frameData->frame->init();
     frameData->page = page;
 

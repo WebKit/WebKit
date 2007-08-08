@@ -2,6 +2,16 @@
 
         Reviewed by Niko.
 
+        We only need to set the Settings of the Page once so do it in
+        WebKitGtkPage instead of WebKitGtkFrame.
+
+        * gtk/Api/webkitgtkframe.cpp:
+        * gtk/Api/webkitgtkpage.cpp:
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Niko.
+
         Instead of reimplementing the general event method, reimplement
         the specific mouse, expose, keyboard event methods.
 

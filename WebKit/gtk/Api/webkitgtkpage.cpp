@@ -348,6 +348,18 @@ static void webkit_gtk_page_init(WebKitGtkPage* page)
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(page));
     pageData->page = new Page(new ChromeClientGdk(page), new ContextMenuClientGdk, new EditorClientGdk(page), 0, new InspectorClientGdk);
 
+    Settings* settings = pageData->page->settings();
+    settings->setLoadsImagesAutomatically(true);
+    settings->setMinimumFontSize(5);
+    settings->setMinimumLogicalFontSize(5);
+    settings->setShouldPrintBackgrounds(true);
+    settings->setJavaScriptEnabled(true);
+    settings->setDefaultFixedFontSize(14);
+    settings->setDefaultFontSize(14);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setFixedFontFamily("Courier");
+    settings->setStandardFontFamily("Arial");
 
     GTK_WIDGET_SET_FLAGS(page, GTK_CAN_FOCUS);
     pageData->mainFrame = WEBKIT_GTK_FRAME(webkit_gtk_frame_new(page));
