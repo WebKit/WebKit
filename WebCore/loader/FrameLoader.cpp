@@ -4158,15 +4158,15 @@ void FrameLoader::updateHistoryForReload()
         LOG(History, "WebCoreHistory: Updating History for reload in frame %s", documentLoader()->title().utf8().data());
 #endif
 
-    if (m_previousHistoryItem) {
-        pageCache()->remove(m_previousHistoryItem.get());
+    if (m_currentHistoryItem) {
+        pageCache()->remove(m_currentHistoryItem.get());
     
         if (loadType() == FrameLoadTypeReload)
-            saveScrollPositionAndViewStateToItem(m_previousHistoryItem.get());
+            saveScrollPositionAndViewStateToItem(m_currentHistoryItem.get());
     
         // Sometimes loading a page again leads to a different result because of cookies. Bugzilla 4072
         if (documentLoader()->unreachableURL().isEmpty())
-            m_previousHistoryItem->setURL(documentLoader()->requestURL());
+            m_currentHistoryItem->setURL(documentLoader()->requestURL());
     }
     
     // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed

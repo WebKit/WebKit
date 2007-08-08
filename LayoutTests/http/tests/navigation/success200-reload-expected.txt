@@ -104,6 +104,7 @@ layer at (11,592) size 230x130
       text run at (3,0) width 185: "More initial text before user input."
       text run at (188,0) width 0: " "
     RenderBR {BR} at (3,13) size 0x13
+scrolled to 0,50
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/success200-reload.html  **nav target**

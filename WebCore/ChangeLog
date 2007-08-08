@@ -1,3 +1,14 @@
+2007-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed and landed by Brady
+
+        Fixes <http://bugs.webkit.org/show_bug.cgi?id=13422>
+
+        Bug 13422: REGRESSION: Page reload loses page position
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForReload):
+
 2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Niko.
