@@ -693,35 +693,45 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     break;
   case ToLowerCase:
   case ToLocaleLowerCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
-    u = s;
-    u.copyForWriting();
-    ::UChar* dataPtr = reinterpret_cast< ::UChar*>(u.rep()->data());
-    ::UChar* destIfNeeded;
-
-    int len = Unicode::toLower(dataPtr, u.size(), destIfNeeded);
-    if (len >= 0)
-        result = jsString(UString(reinterpret_cast<UChar*>(destIfNeeded ? destIfNeeded : dataPtr), len));
-    else
-        result = jsString(s);
-
-    free(destIfNeeded);
-    break;
+    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+        ? static_cast<StringInstance*>(thisObj)->internalValue()
+        : static_cast<StringImp*>(jsString(s));
+    int ssize = s.size();
+    if (!ssize)
+        return sVal;
+    Vector< ::UChar> buffer(ssize);
+    bool error;
+    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    if (error) {
+        buffer.resize(length);
+        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        if (error)
+            return sVal;
+    }
+    if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
+        return sVal;
+    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
   }
   case ToUpperCase:
   case ToLocaleUpperCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
-    u = s;
-    u.copyForWriting();
-    ::UChar* dataPtr = reinterpret_cast< ::UChar*>(u.rep()->data());
-    ::UChar* destIfNeeded;
-
-    int len = Unicode::toUpper(dataPtr, u.size(), destIfNeeded);
-    if (len >= 0)
-        result = jsString(UString(reinterpret_cast<UChar *>(destIfNeeded ? destIfNeeded : dataPtr), len));
-    else
-        result = jsString(s);
-
-    free(destIfNeeded);
-    break;
+    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+        ? static_cast<StringInstance*>(thisObj)->internalValue()
+        : static_cast<StringImp*>(jsString(s));
+    int ssize = s.size();
+    if (!ssize)
+        return sVal;
+    Vector< ::UChar> buffer(ssize);
+    bool error;
+    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    if (error) {
+        buffer.resize(length);
+        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        if (error)
+            return sVal;
+    }
+    if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
+        return sVal;
+    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
   }
   case LocaleCompare:
     if (args.size() < 1)

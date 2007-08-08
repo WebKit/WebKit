@@ -175,28 +175,6 @@ namespace WTF {
 #if QT_VERSION >= 0x040300
     // FIXME: handle surrogates correctly in all methods
     
-    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-        destIfNeeded = 0;
-        
-        const UChar *e = str + strLength;
-        UChar *s = str;
-        while (s < e) {
-            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(*s);
-            if (prop->lowerCaseSpecial || (((*s) & 0xf800) == 0xd800)) {
-                QString qstring = QString(reinterpret_cast<QChar *>(str), strLength).toLower();
-                strLength = qstring.length();
-                destIfNeeded = static_cast<UChar*>(malloc(strLength * sizeof(UChar)));
-                memcpy(destIfNeeded, qstring.constData(), strLength * sizeof(UChar));
-                return strLength;
-            }
-            *s = *s + prop->lowerCaseDiff;
-            ++s;
-        }
-
-        return strLength;
-    }
-
     inline UChar32 toLower(UChar32 ch)
     {
       return QChar::toLower(ch);
@@ -248,28 +226,6 @@ namespace WTF {
         if (r < re)
             *r = 0;
         return (r - result) + needed;
-    }
-
-    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-        destIfNeeded = 0;
-        
-        const UChar *e = str + strLength;
-        UChar *s = str;
-        while (s < e) {
-            const QUnicodeTables::Properties *prop = QUnicodeTables::properties(*s);
-            if (prop->upperCaseSpecial || (((*s) & 0xf800) == 0xd800)) {
-                QString qstring = QString(reinterpret_cast<QChar *>(str), strLength).toUpper();
-                strLength = qstring.length();
-                destIfNeeded = static_cast<UChar*>(malloc(strLength * sizeof(UChar)));
-                memcpy(destIfNeeded, qstring.constData(), strLength * sizeof(UChar));
-                return strLength;
-            }
-            *s = *s + prop->upperCaseDiff;
-            ++s;
-        }
-
-        return strLength;
     }
 
     inline UChar32 toUpper(UChar32 ch)
@@ -436,16 +392,6 @@ namespace WTF {
     
 #else
 
-    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-      destIfNeeded = 0;
-
-      for (int i = 0; i < strLength; ++i)
-        str[i] = QChar(str[i]).toLower().unicode();
-
-      return strLength;
-    }
-
     inline UChar32 toLower(UChar32 ch)
     {
       if (ch > 0xffff)
@@ -463,16 +409,6 @@ namespace WTF {
       for (int i = 0; i < srcLength; ++i)
         result[i] = QChar(src[i]).toLower().unicode();
       return srcLength;
-    }
-
-    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-      destIfNeeded = 0;
-
-      for (int i = 0; i < strLength; ++i)
-        str[i] = QChar(str[i]).toUpper().unicode();
-
-      return strLength;
     }
 
     inline UChar32 toUpper(UChar32 ch)

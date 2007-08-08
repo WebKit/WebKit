@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
@@ -54,16 +54,21 @@ namespace KJS {
 extern const double NaN;
 extern const double Inf;
 
+static const size_t overflowIndicator = std::numeric_limits<size_t>::max();
+static const size_t maxUChars = std::numeric_limits<size_t>::max() / sizeof(UChar);
+
 static inline UChar* allocChars(size_t length)
 {
-    if (!length)
+    ASSERT(length);
+    if (length > maxUChars)
         return 0;
     return static_cast<UChar*>(fastMalloc(sizeof(UChar) * length));
 }
 
-static inline UChar* reallocChars(void* buffer, size_t length)
+static inline UChar* reallocChars(UChar* buffer, size_t length)
 {
-    if (!length)
+    ASSERT(length);
+    if (length > maxUChars)
         return 0;
     return static_cast<UChar*>(fastRealloc(buffer, sizeof(UChar) * length));
 }
@@ -169,27 +174,6 @@ UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, &UString::Rep::empty, reinte
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
-
-UCharReference& UCharReference::operator=(UChar c)
-{
-  str->copyForWriting();
-  if (offset < str->rep()->len)
-    *(str->rep()->data() + offset) = c;
-  /* TODO: lengthen string ? */
-  return *this;
-}
-
-UChar& UCharReference::ref() const
-{
-  ASSERT(JSLock::lockCount() > 0);
-
-  if (offset < str->rep()->len)
-    return *(str->rep()->data() + offset);
-  else {
-    static UChar callerBetterNotModifyThis('\0');
-    return callerBetterNotModifyThis;
-  }
-}
 
 PassRefPtr<UString::Rep> UString::Rep::createCopying(const UChar *d, int l)
 {
@@ -363,14 +347,15 @@ unsigned UString::Rep::computeHash(const char *s)
 // put these early so they can be inlined
 inline size_t UString::expandedSize(size_t size, size_t otherSize) const
 {
-    // Do the size calculation in two parts, being careful to avoid overflow
-    static const size_t maximumAllowableSize = std::numeric_limits<size_t>::max() / sizeof(UChar);
-    if (size > maximumAllowableSize)
-        return 0;
+    // Do the size calculation in two parts, returning overflowIndicator if
+    // we overflow the maximum value that we can handle.
+
+    if (size > maxUChars)
+        return overflowIndicator;
 
     size_t expandedSize = ((size + 10) / 10 * 11) + 1;
-    if (maximumAllowableSize - expandedSize < otherSize)
-        return 0;
+    if (maxUChars - expandedSize < otherSize)
+        return overflowIndicator;
 
     return expandedSize + otherSize;
 }
@@ -693,6 +678,9 @@ UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, in
   for (int i = 0; i < separatorCount; i++)
     totalLength += separators[i].size();
 
+  if (totalLength == 0)
+    return "";
+
   UChar* buffer = allocChars(totalLength);
   if (!buffer)
       return null();
@@ -903,7 +891,17 @@ void UString::globalClear()
 
 UString &UString::operator=(const char *c)
 {
-  int l = c ? static_cast<int>(strlen(c)) : 0;
+    if (!c) {
+        m_rep = &Rep::null;
+        return *this;
+    }
+
+    int l = static_cast<int>(strlen(c));
+    if (!l) {
+        m_rep = &Rep::empty;
+        return *this;
+    }
+
   UChar *d;
   if (m_rep->rc == 1 && l <= m_rep->capacity && m_rep->baseIsSelf() && m_rep->offset == 0 && m_rep->preCapacity == 0) {
     d = m_rep->buf;
@@ -936,17 +934,11 @@ bool UString::is8Bit() const
   return true;
 }
 
-UChar UString::operator[](int pos) const
+const UChar UString::operator[](int pos) const
 {
   if (pos >= size())
     return '\0';
   return data()[pos];
-}
-
-UCharReference UString::operator[](int pos)
-{
-  /* TODO: boundary check */
-  return UCharReference(this, pos);
 }
 
 double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const
@@ -1204,20 +1196,6 @@ UString UString::substr(int pos, int len) const
     return *this;
 
   return UString(Rep::create(m_rep, pos, len));
-}
-
-void UString::copyForWriting()
-{
-  if (m_rep->rc > 1 || !m_rep->baseIsSelf()) {
-    int l = size();
-    UChar *n = allocChars(l);
-    if (!n)
-        m_rep = &Rep::null;
-    else {
-        memcpy(n, data(), l * sizeof(UChar));
-        m_rep = Rep::create(n, l);
-    }
-  }
 }
 
 bool operator==(const UString& s1, const UString& s2)

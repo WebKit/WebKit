@@ -1,3 +1,42 @@
+2007-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5383104> REGRESSION: XHR.responseText is null instead of empty string
+          in http/tests/xmlhttprequest/zero-length-response.html
+
+        The new code to handle out of memory conditions was turning a "" into a null string.
+
+        * kjs/ustring.h: Removed UCharReference, which has long been obsolete and unused.
+        Removed copyForWriting, which was only used for the upper/lowercasing code and for
+        UCharReference.
+        * kjs/ustring.cpp:
+        (KJS::allocChars): Removed special case that made this fail (return 0) when passed 0.
+        Instead assert that we're not passed 0. Also added an overflow check for two reasons:
+        1) for sizes that aren't checked this prevents us from allocating a buffer that's too
+        small, and 2) for sizes where we overflowed in the expandedSize function and returned
+        overflowIndicator, it guarantees we fail.
+        (KJS::reallocChars): Ditto.
+        (KJS::UString::expandedSize): Return a large number, overflowIndicator, rather than 0
+        for cases where we overflow.
+        (KJS::UString::spliceSubstringsWithSeparators): Added a special case for empty string so
+        we don't call allocChars with a length of 0.
+        (KJS::UString::operator=): Added special characters for both 0 and empty string so we
+        match the behavior of the constructor. This avoids calling allocChars with a length of 0
+        and making a null string rather than an empty string in that case, and also matches the
+        pattern used in the rest of the functions.
+        (KJS::UString::operator[]): Made the return value const so code that tries to use the
+        operator to modify the string will fail.
+
+        * kjs/string_object.cpp: (KJS::StringProtoFunc::callAsFunction): Rewrote uppercasing and
+        lowercasing functions so they don't need copyForWriting any more -- it wasn't really doing
+        any good for optimization purposes. Instead use a Vector and releaseBuffer.
+
+        * wtf/unicode/icu/UnicodeIcu.h: Eliminate one of the versions of toLower/toUpper -- we now
+        only need the version where both a source and destination buffer is passed in, not the one
+        that works in place.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+
 2007-08-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

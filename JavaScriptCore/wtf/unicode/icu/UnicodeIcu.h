@@ -131,26 +131,6 @@ namespace WTF {
       return realLength;
     }
 
-    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-      UErrorCode err = U_ZERO_ERROR;
-      int resultLength;
-      destIfNeeded = 0;
-
-      resultLength = u_strToLower(0, 0, str, strLength, "", &err);
-
-      if (resultLength <= strLength) {
-        err = U_ZERO_ERROR;
-        u_strToLower(str, resultLength, str, strLength, "", &err);
-      } else {
-        err = U_ZERO_ERROR;
-        destIfNeeded = static_cast<UChar*>(malloc(resultLength * sizeof(UChar)));
-        u_strToLower(destIfNeeded, resultLength, str, strLength, "", &err);
-      }
-
-      return U_FAILURE(err) ? -1 : resultLength;
-    }
-
     inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
     {
       UErrorCode status = U_ZERO_ERROR;
@@ -167,26 +147,6 @@ namespace WTF {
     inline UChar32 toUpper(UChar32 c)
     {
       return u_toupper(c);
-    }
-
-    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
-    {
-      UErrorCode err = U_ZERO_ERROR;
-      int resultLength;
-      destIfNeeded = 0;
-
-      resultLength = u_strToUpper(0, 0, str, strLength, "", &err);
-
-      if (resultLength <= strLength) {
-        err = U_ZERO_ERROR;
-        u_strToUpper(str, resultLength, str, strLength, "", &err);
-      } else {
-        err = U_ZERO_ERROR;
-        destIfNeeded = (UChar*)malloc(resultLength * sizeof(UChar));
-        u_strToUpper(destIfNeeded, resultLength, str, strLength, "", &err);
-      }
-
-      return U_FAILURE(err) ? -1 : resultLength;
     }
 
     inline int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
