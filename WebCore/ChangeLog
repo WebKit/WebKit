@@ -1,3 +1,23 @@
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Oliver Hunt.
+
+        Implement PlatformScrollbar by calling ScrollBar::setValue from 
+        gtkValueChange connected to the value-changed signal of the
+        GtkAdjustment.
+        Update 'value' of the GtkAdjustment in updateThumbPosition and
+        set upper, page-increment, step-increment and page_size in
+        updateThumbProportion.
+
+        This is from bug http://bugs.webkit.org/show_bug.cgi?id=14795.
+
+        * platform/gdk/PlatformScrollBar.h:
+        * platform/gdk/PlatformScrollBarGdk.cpp:
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::updateThumbPosition):
+        (PlatformScrollbar::updateThumbProportion):
+        (PlatformScrollbar::gtkValueChanged):
+
 2007-08-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak. Based on earlier review from Dave Hyatt.

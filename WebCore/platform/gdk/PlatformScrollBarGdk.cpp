@@ -37,14 +37,18 @@
 
 using namespace WebCore;
 
+
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation,
                                      ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
+    , m_adjustment(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)))
 { 
     GtkScrollbar* scrollBar = orientation == HorizontalScrollbar ?
-                              GTK_SCROLLBAR(::gtk_hscrollbar_new(NULL)) :
-                              GTK_SCROLLBAR(::gtk_vscrollbar_new(NULL));
+                              GTK_SCROLLBAR(::gtk_hscrollbar_new(m_adjustment)) :
+                              GTK_SCROLLBAR(::gtk_vscrollbar_new(m_adjustment));
     gtk_widget_show(GTK_WIDGET(scrollBar));
+    g_signal_connect(G_OBJECT(scrollBar), "value-changed", G_CALLBACK(PlatformScrollbar::gtkValueChanged), this);
+
     setGtkWidget(GTK_WIDGET(scrollBar));
 
     /*
@@ -89,12 +93,19 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
 
 void PlatformScrollbar::updateThumbPosition()
 { 
-    notImplemented();
+    if (m_adjustment->value != m_currentPos) {
+        m_adjustment->value = m_currentPos;
+        gtk_adjustment_value_changed(m_adjustment);
+    }
 }
 
 void PlatformScrollbar::updateThumbProportion()
 {
-    notImplemented();
+    m_adjustment->step_increment = m_lineStep;
+    m_adjustment->page_increment = m_pageStep;
+    m_adjustment->page_size = m_visibleSize;
+    m_adjustment->upper = m_totalSize;
+    gtk_adjustment_changed(m_adjustment);
 }
 
 void PlatformScrollbar::setRect(const IntRect& rect)
@@ -102,3 +113,7 @@ void PlatformScrollbar::setRect(const IntRect& rect)
     setFrameGeometry(rect);
 }
 
+void PlatformScrollbar::gtkValueChanged(GtkAdjustment*, PlatformScrollbar* that)
+{
+    that->setValue(gtk_adjustment_get_value(that->m_adjustment));
+}

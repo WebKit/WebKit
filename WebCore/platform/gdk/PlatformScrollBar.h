@@ -29,6 +29,8 @@
 #include "Widget.h"
 #include "ScrollBar.h"
 
+typedef struct _GtkAdjustment GtkAdjustment;
+
 namespace WebCore {
 
 class PlatformScrollbar : public Widget, public Scrollbar {
@@ -51,6 +53,10 @@ public:
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
+
+private:
+    static void gtkValueChanged(GtkAdjustment*, PlatformScrollbar*);
+    GtkAdjustment* m_adjustment;
 };
 
 }
