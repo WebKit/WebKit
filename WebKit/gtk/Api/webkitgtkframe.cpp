@@ -39,10 +39,10 @@ using namespace WebCore;
 
 extern "C" {
 
-extern void webkit_gtk_marshal_VOID__STRING_STRING (GClosure     *closure,
-                                                    GValue       *return_value,
+extern void webkit_gtk_marshal_VOID__STRING_STRING (GClosure*     closure,
+                                                    GValue*       return_value,
                                                     guint         n_param_values,
-                                                    const GValue *param_values,
+                                                    const GValue* param_values,
                                                     gpointer      invocation_hint,
                                                     gpointer      marshal_data);
 
@@ -60,19 +60,19 @@ G_DEFINE_TYPE(WebKitGtkFrame, webkit_gtk_frame, G_TYPE_OBJECT)
 
 static void webkit_gtk_frame_finalize(GObject* object)
 {
-    WebKitGtkFramePrivate *private_data = WEBKIT_GTK_FRAME_GET_PRIVATE(WEBKIT_GTK_FRAME(object));
-    delete private_data->frame;
+    WebKitGtkFramePrivate* privateData = WEBKIT_GTK_FRAME_GET_PRIVATE(WEBKIT_GTK_FRAME(object));
+    delete privateData->frame;
 }
 
-static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frame_class)
+static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frameClass)
 {
-    g_type_class_add_private(frame_class, sizeof(WebKitGtkFramePrivate));
+    g_type_class_add_private(frameClass, sizeof(WebKitGtkFramePrivate));
 
     /*
      * signals
      */
     webkit_gtk_frame_signals[CLEARED] = g_signal_new("cleared",
-            G_TYPE_FROM_CLASS(frame_class),
+            G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -81,7 +81,7 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frame_class)
             G_TYPE_NONE, 0);
 
     webkit_gtk_frame_signals[LOAD_DONE] = g_signal_new("load_done",
-            G_TYPE_FROM_CLASS(frame_class),
+            G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -91,7 +91,7 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frame_class)
             G_TYPE_BOOLEAN);
 
     webkit_gtk_frame_signals[TITLE_CHANGED] = g_signal_new("title_changed",
-            G_TYPE_FROM_CLASS(frame_class),
+            G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -101,7 +101,7 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frame_class)
             G_TYPE_STRING, G_TYPE_STRING);
 
     webkit_gtk_frame_signals[HOVERING_OVER_LINK] = g_signal_new("hovering_over_link",
-            G_TYPE_FROM_CLASS(frame_class),
+            G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -113,7 +113,7 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frame_class)
     /*
      * implementations of virtual methods
      */
-    G_OBJECT_CLASS(frame_class)->finalize = webkit_gtk_frame_finalize;
+    G_OBJECT_CLASS(frameClass)->finalize = webkit_gtk_frame_finalize;
 }
 
 static void webkit_gtk_frame_init(WebKitGtkFrame* frame)
@@ -123,18 +123,18 @@ static void webkit_gtk_frame_init(WebKitGtkFrame* frame)
 GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
 {
     WebKitGtkFrame* frame = WEBKIT_GTK_FRAME(g_object_new(WEBKIT_GTK_TYPE_FRAME, NULL));
-    WebKitGtkFramePrivate *frame_data = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
-    WebKitGtkPagePrivate  *page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
 
-    frame_data->client = new FrameLoaderClientGdk(frame);
-    frame_data->frame = new FrameGdk(page_data->page, 0, frame_data->client);
+    frameData->client = new FrameLoaderClientGdk(frame);
+    frameData->frame = new FrameGdk(pageData->page, 0, frameData->client);
 
-    FrameView* frame_view = new FrameView(frame_data->frame);
-    frame_data->frame->setView(frame_view);
+    FrameView* frame_view = new FrameView(frameData->frame);
+    frameData->frame->setView(frame_view);
 
     frame_view->setGtkWidget(GTK_LAYOUT(page));
-    frame_data->frame->init();
-    frame_data->page = page;
+    frameData->frame->init();
+    frameData->page = page;
 
     return G_OBJECT(frame);
 }
@@ -142,7 +142,7 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
 WebKitGtkPage*
 webkit_gtk_frame_get_page(WebKitGtkFrame* frame)
 {
-    WebKitGtkFramePrivate* frame_data = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
-    return frame_data->page;
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    return frameData->page;
 }
 }

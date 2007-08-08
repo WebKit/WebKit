@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        Change variable names to follow the Coding-Style. Replace occurences
+        of a_b with aB and place the '*' correctly.
+
+        * gtk/Api/webkitgtkframe.cpp:
+        * gtk/Api/webkitgtkpage.cpp:
+        * gtk/Api/webkitgtkprivate.h:
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Reimplement GtkWidget::event and handle the keyboard and mouse
         events inside WebKitGtkPage.
 
