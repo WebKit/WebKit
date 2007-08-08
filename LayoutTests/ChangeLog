@@ -1,3 +1,13 @@
+2007-08-07  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Oliver.
+
+        Move plain-text-document.txt to the resources subdirectory.
+
+        * fast/loader/plain-text-document.html: Updated URL to plain-text-document.txt.
+        * fast/loader/plain-text-document.txt: Removed.
+        * fast/loader/resources/plain-text-document.txt: Copied from fast/loader/plain-text-document.txt.
+
 2007-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
