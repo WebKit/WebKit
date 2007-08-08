@@ -848,6 +848,7 @@ gdk-port {
         platform/TextCodecICU.cpp \
         platform/TextBreakIteratorICU.cpp \
         page/gdk/EventHandlerGdk.cpp \
+        page/gdk/FrameGdk.cpp \
         page/gdk/ContextMenuClientGdk.cpp \
         page/gdk/DragControllerGdk.cpp \
         page/gdk/InspectorClientGdk.cpp \
@@ -862,7 +863,6 @@ gdk-port {
         platform/gdk/FontDataGdk.cpp \
         platform/gdk/FontGdk.cpp \
         platform/gdk/FontPlatformDataGdk.cpp \
-        platform/gdk/FrameGdk.cpp \
         platform/gdk/GlyphPageTreeNodeGdk.cpp \
         platform/gdk/KeyEventGdk.cpp \
         platform/gdk/LoggingGdk.cpp \

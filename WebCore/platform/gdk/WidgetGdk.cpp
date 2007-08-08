@@ -31,7 +31,6 @@
 
 #include "Cursor.h"
 #include "Font.h"
-#include "FrameGdk.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RenderObject.h"

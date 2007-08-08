@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        Moved code from class FrameGdk into WebKitGtkFrame. Update the
+        webkitgrkprivate.h header file to not include FrameGdk.h.
+
+        * gtk/Api/webkitgtkframe.cpp:
+        * gtk/Api/webkitgtkprivate.h:
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Change variable names to follow the Coding-Style. Replace occurences
         of a_b with aB and place the '*' correctly.
 

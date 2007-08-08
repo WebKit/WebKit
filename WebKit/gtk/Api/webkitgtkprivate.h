@@ -44,7 +44,7 @@
 
 #include "Settings.h"
 #include "Page.h"
-#include "FrameGdk.h"
+#include "Frame.h"
 #include "FrameLoaderClientGdk.h"
 
 namespace WebKitGtk {
@@ -74,7 +74,7 @@ extern "C" {
     #define WEBKIT_GTK_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_GTK_TYPE_FRAME, WebKitGtkFramePrivate))
     typedef struct _WebKitGtkFramePrivate WebKitGtkFramePrivate;
     struct _WebKitGtkFramePrivate {
-        WebCore::FrameGdk* frame;
+        WebCore::Frame* frame;
         WebCore::FrameLoaderClientGdk* client;
         WebKitGtkPage* page;
     };

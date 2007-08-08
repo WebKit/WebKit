@@ -42,7 +42,6 @@
 #include "Editor.h"
 #include "FileChooser.h"
 #include "Font.h"
-#include "FrameGdk.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
@@ -77,6 +76,19 @@
 #include <stdio.h>
 
 using namespace WebCore;
+
+// This function loads resources from WebKit
+// This does not belong here and I'm not sure where
+// it should go
+// I don't know what the plans or design is
+// for none code resources
+Vector<char> loadResourceIntoArray(const char* resourceName)
+{
+    Vector<char> resource;
+    //if (strcmp(resourceName,"missingImage") == 0) {
+    //}
+    return resource;
+}
 
 namespace WebCore {
     class Page;
@@ -163,7 +175,6 @@ String FileChooser::basenameForWidth(const Font&, int width) const { notImplemen
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
-void Frame::setNeedsReapplyStyles() { }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest&) { notImplemented(); return false; }
 bool ResourceHandle::loadsBlocked() { notImplemented(); return false; }

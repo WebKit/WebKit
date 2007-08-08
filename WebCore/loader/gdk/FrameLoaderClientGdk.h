@@ -37,8 +37,6 @@ typedef struct _WebKitGtkFrame WebKitGtkFrame;
 
 namespace WebCore {
 
-    class FrameGdk;
-
     class FrameLoaderClientGdk : public FrameLoaderClient {
     public:
         FrameLoaderClientGdk(WebKitGtkFrame*);

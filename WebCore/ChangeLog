@@ -2,6 +2,26 @@
 
         Reviewed by Adam.
 
+        Kill class FrameGdk and move the stubs to page/gdk/FrameGdk.cpp and the
+        remainings into WebKitGtkFrame.
+        The DRT functionality of class FrameGdk is currently lost.
+
+        * WebCore.pro:
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        * loader/gdk/FrameLoaderClientGdk.h:
+        * page/gdk/FrameGdk.cpp: Renamed from WebCore/platform/gdk/FrameGdk.cpp.
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        (WebCore::Frame::dragImageForSelection):
+        (WebCore::Frame::dashboardRegionsChanged):
+        * platform/gdk/FrameGdk.h: Removed.
+        * platform/gdk/TemporaryLinkStubs.cpp: Removed Frame stub, added the loadResourceIntoArray stub
+        * platform/gdk/WidgetGdk.cpp:
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Remove the event handling code and move it to WebKit/gtk/Api/webkitgtkpage.cpp
 
         * platform/gdk/FrameGdk.cpp:

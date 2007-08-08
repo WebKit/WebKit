@@ -31,7 +31,7 @@
 #include "webkitgtkpage.h"
 #include "webkitgtkprivate.h"
 
-#include "FrameGdk.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
 
@@ -61,6 +61,7 @@ G_DEFINE_TYPE(WebKitGtkFrame, webkit_gtk_frame, G_TYPE_OBJECT)
 static void webkit_gtk_frame_finalize(GObject* object)
 {
     WebKitGtkFramePrivate* privateData = WEBKIT_GTK_FRAME_GET_PRIVATE(WEBKIT_GTK_FRAME(object));
+    privateData->frame->loader()->cancelAndClear();
     delete privateData->frame;
 }
 
@@ -127,7 +128,20 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
 
     frameData->client = new FrameLoaderClientGdk(frame);
-    frameData->frame = new FrameGdk(pageData->page, 0, frameData->client);
+    frameData->frame = new Frame(pageData->page, 0, frameData->client);
+    Settings* settings = WebKitGtk::core(page)->settings();
+    settings->setLoadsImagesAutomatically(true);
+    settings->setMinimumFontSize(5);
+    settings->setMinimumLogicalFontSize(5);
+    settings->setShouldPrintBackgrounds(true);
+    settings->setJavaScriptEnabled(true);
+
+    settings->setDefaultFixedFontSize(14);
+    settings->setDefaultFontSize(14);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setFixedFontFamily("Courier");
+    settings->setStandardFontFamily("Arial");
 
     FrameView* frame_view = new FrameView(frameData->frame);
     frameData->frame->setView(frame_view);

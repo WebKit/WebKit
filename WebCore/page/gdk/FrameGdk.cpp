@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,30 +26,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameGdk_h
-#define FrameGdk_h
-
-#include "EditorClient.h"
+#include "config.h"
 #include "Frame.h"
-#include <gdk/gdk.h>
-#include "ResourceHandleClient.h"
+#include "NotImplemented.h"
+
 
 namespace WebCore {
 
-class Element;
-class FrameGdk;
-class FrameLoaderClientGdk;
-class FormData;
-
-
-class FrameGdk : public Frame {
-public:
-    FrameGdk(Page*, HTMLFrameOwnerElement*, FrameLoaderClientGdk*);
-    virtual ~FrameGdk();
-
-    void dumpRenderTree() const;
-};
-
+void Frame::issueTransposeCommand()
+{
+    notImplemented();
 }
 
-#endif
+void Frame::cleanupPlatformScriptObjects()
+{
+    notImplemented();
+}
+
+DragImageRef Frame::dragImageForSelection() 
+{
+    notImplemented();
+    return 0;
+}
+
+void Frame::dashboardRegionsChanged()
+{
+    notImplemented();
+}
+
+void Frame::setNeedsReapplyStyles()
+{
+   notImplemented(); 
+}
+}
