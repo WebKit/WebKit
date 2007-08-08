@@ -70,101 +70,77 @@ static guint webkit_gtk_page_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitGtkPage, webkit_gtk_page, GTK_TYPE_LAYOUT)
 
-static gboolean webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget* widget, GdkEvent* event)
+static gboolean webkit_gtk_page_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
-
-    switch (event->type) {
-    case GDK_EXPOSE: {
-        GdkRectangle clip;
-        gdk_region_get_clipbox(event->expose.region, &clip);
-        cairo_t* cr = gdk_cairo_create(event->any.window);
-        GraphicsContext ctx(cr);
-        ctx.setGdkExposeEvent(&event->expose);
-        if (frame->renderer()) {
-            if (frame->view()->needsLayout())
-                frame->view()->layout();
-            IntRect rect(clip.x, clip.y, clip.width, clip.height);
-            frame->paint(&ctx, rect);
-        }
-        cairo_destroy(cr);
-        break;
+    GdkRectangle clip;
+    gdk_region_get_clipbox(event->region, &clip);
+    cairo_t* cr = gdk_cairo_create(event->window);
+    GraphicsContext ctx(cr);
+    ctx.setGdkExposeEvent(event);
+    if (frame->renderer()) {
+        if (frame->view()->needsLayout())
+            frame->view()->layout();
+        IntRect rect(clip.x, clip.y, clip.width, clip.height);
+        frame->paint(&ctx, rect);
     }
-
-    case GDK_CONFIGURE: {
-        frame->view()->updateGeometry(event->configure.width, event->configure.height);
-        frame->forceLayout();
-        break;
-    }
-
-    case GDK_SCROLL: {
-        PlatformWheelEvent wheelEvent(&event->scroll);
-        frame->view()->wheelEvent(wheelEvent);
-        if (wheelEvent.isAccepted())
-            return TRUE;
-
-        HitTestRequest hitTestRequest(true, true);
-        HitTestResult hitTestResult(wheelEvent.pos());
-        frame->renderer()->layer()->hitTest(hitTestRequest, hitTestResult);
-        Node* node = hitTestResult.innerNode();
-        if (!node)
-            return TRUE;
-        /*
-         * FIXME: Does this belong here?
-         * Default to scrolling the page
-         * not sure why its null
-         * broke anyway when its not null
-         * doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
-         */
-        break;
-    }
-    case GDK_DRAG_ENTER:
-    case GDK_DRAG_LEAVE:
-    case GDK_DRAG_MOTION:
-    case GDK_DRAG_STATUS:
-    case GDK_DROP_START:
-    case GDK_DROP_FINISHED: {
-        //bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-        //void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-        //bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-        break;
-    }
-    case GDK_MOTION_NOTIFY:
-        frame->eventHandler()->mouseMoved(PlatformMouseEvent(&event->motion));
-        break;
-    case GDK_BUTTON_PRESS:
-    case GDK_2BUTTON_PRESS:
-    case GDK_3BUTTON_PRESS:
-        frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(&event->button));
-        break;
-    case GDK_BUTTON_RELEASE:
-        frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(&event->button));
-        break;
-    case GDK_KEY_PRESS:
-    case GDK_KEY_RELEASE:
-        frame->eventHandler()->keyEvent(PlatformKeyboardEvent(&event->key));
-        break;
-    default:
-        break;
-    }
+    cairo_destroy(cr);
 
     return FALSE;
 }
 
-static void webkit_gtk_page_rendering_area_resize_callback(GtkWidget*, GtkAllocation* allocation, WebKitGtkPage* page)
+static gboolean webkit_gtk_page_key_event(GtkWidget* widget, GdkEventKey* event)
 {
-    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
-    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(pageData->mainFrame);
-
-    frameData->frame->view()->updateGeometry(allocation->width, allocation->height);
-    frameData->frame->forceLayout();
-    frameData->frame->view()->adjustViewSize();
-    frameData->frame->sendResizeEvent();
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+    frame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+    return FALSE;
 }
 
-static void webkit_gtk_page_register_rendering_area_events(GtkWidget* win, WebKitGtkPage* page)
+static gboolean webkit_gtk_page_button_event(GtkWidget* widget, GdkEventButton* event)
 {
-    gdk_window_set_events(GTK_IS_LAYOUT(win) ? GTK_LAYOUT(win)->bin_window : win->window,
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+
+    if (event->type == GDK_BUTTON_RELEASE)
+        frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+    else
+        frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+    return FALSE;
+}
+
+static gboolean webkit_gtk_page_motion_event(GtkWidget* widget, GdkEventMotion* event)
+{
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+    frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
+    return FALSE;
+}
+
+static gboolean webkit_gtk_page_scroll_event(GtkWidget* widget, GdkEventScroll* event)
+{
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+
+    PlatformWheelEvent wheelEvent(event);
+    frame->eventHandler()->handleWheelEvent(wheelEvent);
+    return FALSE;
+}
+
+static void webkit_gtk_page_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
+{
+    GTK_WIDGET_CLASS(webkit_gtk_page_parent_class)->size_allocate(widget,allocation);
+
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+    frame->view()->updateGeometry(allocation->width, allocation->height);
+    frame->forceLayout();
+    frame->view()->adjustViewSize();
+    frame->sendResizeEvent();
+}
+
+
+static void webkit_gtk_page_realize(GtkWidget* widget)
+{
+    GTK_WIDGET_CLASS(webkit_gtk_page_parent_class)->realize(widget);
+
+    gdk_window_set_events(GTK_LAYOUT(widget)->bin_window,
                           (GdkEventMask)(GDK_EXPOSURE_MASK
                             | GDK_BUTTON_PRESS_MASK
                             | GDK_BUTTON_RELEASE_MASK
@@ -237,6 +213,8 @@ static void webkit_gtk_page_finalize(GObject* object)
     delete pageData->settings;
     g_object_unref(pageData->mainFrame);
     delete pageData->userAgent;
+
+    G_OBJECT_CLASS(webkit_gtk_page_parent_class)->finalize(object);
 }
 
 static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
@@ -352,7 +330,17 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
     pageClass->java_script_console_message = webkit_gtk_page_real_java_script_console_message;
 
     G_OBJECT_CLASS(pageClass)->finalize = webkit_gtk_page_finalize;
-    GTK_WIDGET_CLASS(pageClass)->event = webkit_gtk_page_rendering_area_handle_gdk_event;
+
+    GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(pageClass);
+    widgetClass->realize = webkit_gtk_page_realize;
+    widgetClass->expose_event = webkit_gtk_page_expose_event;
+    widgetClass->key_press_event = webkit_gtk_page_key_event;
+    widgetClass->key_release_event = webkit_gtk_page_key_event;
+    widgetClass->button_press_event = webkit_gtk_page_button_event;
+    widgetClass->button_release_event = webkit_gtk_page_button_event;
+    widgetClass->motion_notify_event = webkit_gtk_page_motion_event;
+    widgetClass->scroll_event = webkit_gtk_page_scroll_event;
+    widgetClass->size_allocate = webkit_gtk_page_size_allocate;
 }
 
 static void webkit_gtk_page_init(WebKitGtkPage* page)
@@ -362,10 +350,6 @@ static void webkit_gtk_page_init(WebKitGtkPage* page)
 
 
     GTK_WIDGET_SET_FLAGS(page, GTK_CAN_FOCUS);
-
-    g_signal_connect_after(G_OBJECT(page), "realize", G_CALLBACK(webkit_gtk_page_register_rendering_area_events), page);
-    g_signal_connect_after(G_OBJECT(page), "size-allocate", G_CALLBACK(webkit_gtk_page_rendering_area_resize_callback), page);
-
     pageData->mainFrame = WEBKIT_GTK_FRAME(webkit_gtk_frame_new(page));
 }
 
