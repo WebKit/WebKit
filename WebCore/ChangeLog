@@ -2,6 +2,15 @@
 
         Reviewed by Niko.
 
+        Be paranoid and disconnect from the signal before going away.
+
+        * platform/gdk/PlatformScrollBarGdk.cpp:
+        (PlatformScrollbar::~PlatformScrollbar):
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Niko.
+
         Use GraphicsContext::translatePoint in RenderThemeGdk to paint at the
         right position.
         This is needed as the Gtk+ theming code does not know about the translation

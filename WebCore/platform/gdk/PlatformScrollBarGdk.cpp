@@ -67,6 +67,7 @@ PlatformScrollbar::~PlatformScrollbar()
     /*
      * the Widget does not take over ownership.
      */
+    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), (gpointer)PlatformScrollbar::gtkValueChanged, this);
     gtk_widget_destroy(gtkWidget());
     g_object_unref(G_OBJECT(gtkWidget()));
 }
