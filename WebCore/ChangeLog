@@ -1,3 +1,13 @@
+2007-08-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5390681> WebKit asserts when deleting To Do content selected with a double-click
+
+        * dom/Position.cpp:
+        (WebCore::Position::leadingWhitespacePosition): Added checks to prevent expansion across editable an boundary.
+        (WebCore::Position::trailingWhitespacePosition): Ditto.
+
 2007-08-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

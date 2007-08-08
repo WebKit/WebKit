@@ -1,3 +1,14 @@
+2007-08-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5390681> WebKit asserts when deleting To Do content selected with a double-click
+
+        * editing/deleting/5390681-expected.checksum: Added.
+        * editing/deleting/5390681-expected.png: Added.
+        * editing/deleting/5390681-expected.txt: Added.
+        * editing/deleting/5390681.html: Added.
+
 2007-08-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.
