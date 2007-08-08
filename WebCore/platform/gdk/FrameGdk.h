@@ -46,9 +46,6 @@ public:
     FrameGdk(Page*, HTMLFrameOwnerElement*, FrameLoaderClientGdk*);
     virtual ~FrameGdk();
 
-    void handleGdkEvent(GdkEvent*);
-    bool keyPress(const PlatformKeyboardEvent& keyEvent);
-
     void dumpRenderTree() const;
 };
 

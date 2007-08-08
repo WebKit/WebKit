@@ -1,3 +1,12 @@
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Remove the event handling code and move it to WebKit/gtk/Api/webkitgtkpage.cpp
+
+        * platform/gdk/FrameGdk.cpp:
+        * platform/gdk/FrameGdk.h:
+
 2007-08-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Niko.

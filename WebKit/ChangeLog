@@ -1,3 +1,16 @@
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Reimplement GtkWidget::event and handle the keyboard and mouse
+        events inside WebKitGtkPage.
+
+        * gtk/Api/webkitgtkpage.cpp:
+        (FrameGdkExposeData::frame_gdk_expose_child):
+        (FrameGdkExposeData::webkit_gtk_page_rendering_area_handle_gdk_event):
+        (FrameGdkExposeData::webkit_gtk_page_register_rendering_area_events):
+        (FrameGdkExposeData::webkit_gtk_page_class_init):
+
 2007-08-07  David Hyatt  <hyatt@apple.com>
 
         Fix a botched backout of the Quicktime plugin clipping fix that broke Java.  The plugin view should not

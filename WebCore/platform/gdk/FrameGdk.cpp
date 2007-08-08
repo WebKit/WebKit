@@ -72,17 +72,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
     return resource;
 }
 
-struct FrameGdkExposeData {
-    GtkContainer *container;
-    GdkEventExpose *expose;
-};
-
-static void frame_gdk_expose_child(GtkWidget *widget, gpointer _data)
-{
-    FrameGdkExposeData* data = (FrameGdkExposeData*)_data;
-    int width, height;
-    gtk_container_propagate_expose(data->container, widget, data->expose);
-} 
 
 namespace WebCore {
 
@@ -121,102 +110,6 @@ void FrameGdk::dumpRenderTree() const
         printf("%s\n", utf8);
     else
         printf("FrameGdk::dumpRenderTree() no data\n");
-}
-
-bool FrameGdk::keyPress(const PlatformKeyboardEvent& keyEvent)
-{
-    if (!eventHandler())
-        return false;
-
-    return eventHandler()->keyEvent(keyEvent);
-}
-
-void FrameGdk::handleGdkEvent(GdkEvent* event)
-{
-    switch (event->type) {
-
-        case GDK_EXPOSE: {
-            GdkRectangle clip;
-            gdk_region_get_clipbox(event->expose.region, &clip);
-            gdk_window_begin_paint_region(event->any.window, event->expose.region);
-            cairo_t* cr = gdk_cairo_create(event->any.window);
-            GraphicsContext ctx(cr);
-            ctx.setGdkDrawable(event->any.window);
-            if (renderer()) {
-                if (view()->needsLayout())
-                    view()->layout();
-                IntRect rect(clip.x, clip.y, clip.width, clip.height);
-                paint(&ctx, rect);
-            }
-            cairo_destroy(cr);
-
-            /*
-             * Make sure children of the view get redrawn
-             */
-            FrameGdkExposeData data = { GTK_CONTAINER(view()->gtkWidget()), &event->expose };
-            gtk_container_forall(GTK_CONTAINER(view()->gtkWidget()), frame_gdk_expose_child, &data);
-            gdk_window_end_paint(event->any.window);
-            
-            break;
-        }
-
-        case GDK_CONFIGURE: {
-            view()->updateGeometry(event->configure.width, event->configure.height);
-            forceLayout();
-            break;
-        }
-
-        case GDK_SCROLL: {
-            PlatformWheelEvent wheelEvent(&event->scroll);
-            view()->wheelEvent(wheelEvent);
-            if (wheelEvent.isAccepted())
-                return;
-
-            HitTestRequest hitTestRequest(true, true);
-            HitTestResult hitTestResult(wheelEvent.pos());
-            renderer()->layer()->hitTest(hitTestRequest, hitTestResult);
-            Node* node = hitTestResult.innerNode();
-            if (!node)
-                return;
-            /*
-             * FIXME: Does this belong here?
-             * Default to scrolling the page
-             * not sure why its null
-             * broke anyway when its not null
-             * doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
-             */
-            break;
-        }
-        case GDK_DRAG_ENTER:
-        case GDK_DRAG_LEAVE:
-        case GDK_DRAG_MOTION:
-        case GDK_DRAG_STATUS:
-        case GDK_DROP_START:
-        case GDK_DROP_FINISHED: {
-            //bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-            //void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-            //bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-            break;
-        }
-        case GDK_MOTION_NOTIFY:
-            eventHandler()->mouseMoved(PlatformMouseEvent(&event->motion));
-            break;
-        case GDK_BUTTON_PRESS:
-        case GDK_2BUTTON_PRESS:
-        case GDK_3BUTTON_PRESS:
-            eventHandler()->handleMousePressEvent(PlatformMouseEvent(&event->button));
-            break;
-        case GDK_BUTTON_RELEASE:
-            eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(&event->button));
-            break;
-        case GDK_KEY_PRESS:
-        case GDK_KEY_RELEASE: {
-            PlatformKeyboardEvent keyEvent(&event->key);
-            keyPress(keyEvent);
-        }
-        default:
-            break;
-    }
 }
 
 void Frame::issueTransposeCommand()

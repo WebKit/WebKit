@@ -36,9 +36,15 @@
 #include "ChromeClientGdk.h"
 #include "ContextMenuClientGdk.h"
 #include "EditorClientGdk.h"
+#include "EventHandler.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
+#include "GraphicsContext.h"
 #include "InspectorClientGdk.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "PlatformKeyboardEvent.h"
+#include "PlatformWheelEvent.h"
 #include "SubstituteData.h"
 
 
@@ -64,12 +70,105 @@ static guint webkit_gtk_page_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitGtkPage, webkit_gtk_page, GTK_TYPE_LAYOUT)
 
-static void webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget*, GdkEvent* event, WebKitGtkPage* page)
-{
-    WebKitGtkPagePrivate* page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
-    WebKitGtkFramePrivate* frame_data = WEBKIT_GTK_FRAME_GET_PRIVATE(page_data->main_frame);
+struct FrameGdkExposeData {
+    GtkContainer *container;
+    GdkEventExpose *expose;
+};
 
-    frame_data->frame->handleGdkEvent(event);
+static void frame_gdk_expose_child(GtkWidget *widget, gpointer _data)
+{
+    FrameGdkExposeData* data = (FrameGdkExposeData*)_data;
+    gtk_container_propagate_expose(data->container, widget, data->expose);
+} 
+
+static gboolean webkit_gtk_page_rendering_area_handle_gdk_event(GtkWidget* widget, GdkEvent* event)
+{
+    Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
+
+    switch (event->type) {
+    case GDK_EXPOSE: {
+        GdkRectangle clip;
+        gdk_region_get_clipbox(event->expose.region, &clip);
+        gdk_window_begin_paint_region(event->any.window, event->expose.region);
+        cairo_t* cr = gdk_cairo_create(event->any.window);
+        GraphicsContext ctx(cr);
+        ctx.setGdkDrawable(event->any.window);
+        if (frame->renderer()) {
+            if (frame->view()->needsLayout())
+                frame->view()->layout();
+            IntRect rect(clip.x, clip.y, clip.width, clip.height);
+            frame->paint(&ctx, rect);
+        }
+        cairo_destroy(cr);
+
+        /*
+         * Make sure children of the view get redrawn
+         */
+        FrameGdkExposeData data = { GTK_CONTAINER(frame->view()->gtkWidget()), &event->expose };
+        gtk_container_forall(GTK_CONTAINER(frame->view()->gtkWidget()), frame_gdk_expose_child, &data);
+        gdk_window_end_paint(event->any.window);
+
+        break;
+    }
+
+    case GDK_CONFIGURE: {
+        frame->view()->updateGeometry(event->configure.width, event->configure.height);
+        frame->forceLayout();
+        break;
+    }
+
+    case GDK_SCROLL: {
+        PlatformWheelEvent wheelEvent(&event->scroll);
+        frame->view()->wheelEvent(wheelEvent);
+        if (wheelEvent.isAccepted())
+            return TRUE;
+
+        HitTestRequest hitTestRequest(true, true);
+        HitTestResult hitTestResult(wheelEvent.pos());
+        frame->renderer()->layer()->hitTest(hitTestRequest, hitTestResult);
+        Node* node = hitTestResult.innerNode();
+        if (!node)
+            return TRUE;
+        /*
+         * FIXME: Does this belong here?
+         * Default to scrolling the page
+         * not sure why its null
+         * broke anyway when its not null
+         * doScroll(renderer(), wheelEvent.deltaX(), wheelEvent.deltaY());
+         */
+        break;
+    }
+    case GDK_DRAG_ENTER:
+    case GDK_DRAG_LEAVE:
+    case GDK_DRAG_MOTION:
+    case GDK_DRAG_STATUS:
+    case GDK_DROP_START:
+    case GDK_DROP_FINISHED: {
+        //bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
+        //void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
+        //bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
+        break;
+    }
+    case GDK_MOTION_NOTIFY:
+        frame->eventHandler()->mouseMoved(PlatformMouseEvent(&event->motion));
+        break;
+    case GDK_BUTTON_PRESS:
+    case GDK_2BUTTON_PRESS:
+    case GDK_3BUTTON_PRESS:
+        frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(&event->button));
+        break;
+    case GDK_BUTTON_RELEASE:
+        frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(&event->button));
+        break;
+    case GDK_KEY_PRESS:
+    case GDK_KEY_RELEASE:
+        frame->eventHandler()->keyEvent(PlatformKeyboardEvent(&event->key));
+        break;
+    default:
+        break;
+    }
+
+    return FALSE;
 }
 
 static void webkit_gtk_page_rendering_area_resize_callback(GtkWidget*, GtkAllocation* allocation, WebKitGtkPage* page)
@@ -96,14 +195,6 @@ static void webkit_gtk_page_register_rendering_area_events(GtkWidget* win, WebKi
                             | GDK_BUTTON1_MOTION_MASK
                             | GDK_BUTTON2_MOTION_MASK
                             | GDK_BUTTON3_MOTION_MASK));
-
-    g_signal_connect(GTK_OBJECT(win), "expose-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "key-press-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "key-release-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "button-press-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "button-release-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "motion-notify-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
-    g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(webkit_gtk_page_rendering_area_handle_gdk_event), page);
 }
 
 static WebKitGtkFrame* webkit_gtk_page_real_create_frame(WebKitGtkPage*, WebKitGtkFrame* parent, WebKitGtkFrameData*)
@@ -279,7 +370,9 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* page_class)
     page_class->java_script_confirm = webkit_gtk_page_real_java_script_confirm;
     page_class->java_script_prompt = webkit_gtk_page_real_java_script_prompt;
     page_class->java_script_console_message = webkit_gtk_page_real_java_script_console_message;
+
     G_OBJECT_CLASS(page_class)->finalize = webkit_gtk_page_finalize;
+    GTK_WIDGET_CLASS(page_class)->event = webkit_gtk_page_rendering_area_handle_gdk_event;
 }
 
 static void webkit_gtk_page_init(WebKitGtkPage* page)
