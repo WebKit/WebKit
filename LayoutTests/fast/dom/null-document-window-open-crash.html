@@ -12,7 +12,7 @@ function log(s)
 
 function test()
 {
-    window.open("data:text/html,<script>parent.pass()</script>", "iframe");
+    window.open("javascript:'<script>parent.pass()</script>'", "iframe");
 }
 
 function pass()

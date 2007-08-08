@@ -44,35 +44,34 @@ function logInner(tag, event)
 </script>
 
 <iframe 
-    src="data:text/html,<html><body onload='parent.logInner(%22iframe%22, event)'>Inner</body></html>" 
+    src="resources/iframe-object-onload-iframe-1.html" 
     onload="logOuter('Fired event on iframe', event)">
 </iframe>
 
 <iframe 
-    src="data:text/html,<body onload='parent.logInner(%22iframe%22, event); event.preventDefault()'>preventDefault</body>" 
+    src="resources/iframe-object-onload-iframe-2.html" 
     onload="logOuter('Fired event on iframe even though default was prevented', event)">
 </iframe>
 
 <iframe
-    src="data:text/html,<body onload='parent.logInner(%22object%22, event); event.stopPropagation()'>stopPropagation</body>" 
+    src="resources/iframe-object-onload-iframe-3.html" 
     onload="logOuter('Fired event on object even though propagation was stopped', event)">
 </iframe>
 
 <object 
     type="text/html"
-    data="data:text/html,<html><body onload='parent.logInner(%22object%22, event)'>Inner</body></html>" 
+    data="resources/iframe-object-onload-object-1.html" 
     onload="logOuter('Fired event on object', event)">
 </object>
 
 <object 
     type="text/html"
-    data="data:text/html,<body onload='parent.logInner(%22object%22, event); event.preventDefault()'>preventDefault</body>" 
+    data="resources/iframe-object-onload-object-2.html" 
     onload="logOuter('Fired event on object even though default was prevented', event)">
 </object>
 
 <object 
     type="text/html"
-    data="data:text/html,<body onload='parent.logInner(%22object%22, event); event.stopPropagation()'>stopPropagation</body>" 
+    data="resources/iframe-object-onload-object-3.html" 
     onload="logOuter('Fired event on object even though propagation was stopped', event)">
 </object>
-

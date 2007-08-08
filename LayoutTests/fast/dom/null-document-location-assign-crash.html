@@ -12,7 +12,7 @@ function log(s)
 
 function test()
 {
-    frames[0].location.assign("data:text/html,<script>parent.pass()</script>");
+    frames[0].location.assign("javascript:'<script>parent.pass()</script>'");
 }
 
 function pass()

@@ -1,3 +1,46 @@
+2007-08-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Make tests not depend on data: URLs in preparation of
+        data: URL policy change. 
+
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe.html:
+        * editing/pasteboard/resources: Added.
+        * editing/pasteboard/resources/drag-image-to-contenteditable-iframe.html: Added.
+        * fast/dom/HTMLDocument/frameless-location-bugzilla10837.html:
+        * fast/dom/HTMLDocument/resources: Added.
+        * fast/dom/HTMLDocument/resources/frameless-location-bugzilla10837-iframe.html: Added.
+        * fast/dom/exception-no-frame-inline-script-crash.html:
+        * fast/dom/exception-no-frame-timeout-crash.html:
+        * fast/dom/null-document-location-assign-crash.html:
+        * fast/dom/null-document-location-href-put-crash.html:
+        * fast/dom/null-document-location-put-crash.html:
+        * fast/dom/null-document-location-replace-crash.html:
+        * fast/dom/null-document-window-open-crash.html:
+        * fast/dom/resources/exception-no-frame-inline-script-crash-iframe.html: Added.
+        * fast/dom/resources/exception-no-frame-timeout-crash-iframe.html: Added.
+        * fast/events/frame-programmatic-focus.html:
+        * fast/events/iframe-object-onload.html:
+        * fast/events/mouseover-mouseout.html:
+        * fast/events/mouseover-mouseout2.html:
+        * fast/events/resources/iframe-object-onload-iframe-1.html: Added.
+        * fast/events/resources/iframe-object-onload-iframe-2.html: Added.
+        * fast/events/resources/iframe-object-onload-iframe-3.html: Added.
+        * fast/events/resources/iframe-object-onload-object-1.html: Added.
+        * fast/events/resources/iframe-object-onload-object-2.html: Added.
+        * fast/events/resources/iframe-object-onload-object-3.html: Added.
+        * fast/events/resources/mouseover-mouseout-iframe.html: Added.
+        * fast/events/resources/mouseover-mouseout2-iframe-1.html: Added.
+        * fast/events/resources/mouseover-mouseout2-iframe-2.html: Added.
+        * fast/events/resources/mouseover-mouseout2-iframe-3.html: Added.
+        * fast/events/resources/mouseover-mouseout2-iframe-4.html: Added.
+        * fast/events/resources/mouseover-mouseout2-iframe-5.html: Added.
+        * fast/loader/opaque-base-url-expected.txt:
+        * fast/loader/opaque-base-url.html:
+        * plugins/plugin-remove-subframe.html:
+        * plugins/resources/plugin-remove-subframe-iframe.html: Added.
+
 2007-08-07  Antti Koivisto  <antti@apple.com>
 
         Remove a test that was a bit too slow on older hardware.

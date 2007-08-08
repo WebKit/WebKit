@@ -3,17 +3,6 @@
     layoutTestController.waitUntilDone();
 </script>
 <frameset cols="1,1">
-    <frame src="data:text/html,
-        <div id='result'>
-        FAILED
-        </div>
-        <script>
-            var f = parent.frames[1];
-            var d = f.document;
-            f.location = 'data:text/html,%3Cbody onload=%22if (window.layoutTestController) layoutTestController.notifyDone();%22%3Efoo%3C/body%3E';
-            var test = d.location;
-            document.getElementById('result').innerHTML = 'PASSED';
-        </script>
-    ">
+    <frame src="resources/frameless-location-bugzilla10837-iframe.html">
     <frame src="about:blank">
 </frameset>

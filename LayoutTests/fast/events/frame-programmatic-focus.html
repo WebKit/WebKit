@@ -33,7 +33,7 @@
 </head>
 <body onload="test()">
     <input>
-    <iframe id="frame" src="data:text/html,<input>" style="width: 100px; height: 100px; margin: 0px; border: 2px solid black;"></iframe>
+    <iframe id="frame" src='javascript:"<input>"' style="width: 100px; height: 100px; margin: 0px; border: 2px solid black;"></iframe>
     <p>This page tests that frames receive focus events when one of their child
     elements is programmatically focused, and receive blur events when an
     element not in that frame is programmatically focused.</p>

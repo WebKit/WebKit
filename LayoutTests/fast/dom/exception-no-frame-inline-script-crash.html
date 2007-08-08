@@ -8,23 +8,4 @@ inline in the document.
 <p>PASS: You didn't crash.
 </p>
 
-<iframe id="iframe" 
-        src='data:text/html,
-                <script>
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
-
-                function crash()
-                {
-                    /* Ensure we have no frame when the exception is thrown. */
-                    var iframe = parent.document.getElementById("iframe");
-                    iframe.parentNode.removeChild(iframe);
-                    
-                    /* Throw an exception. */
-                    throw "crash";
-                }
-                
-                crash();
-                </script>
-            '
-></iframe>
+<iframe id="iframe" src='resources/exception-no-frame-inline-script-crash-iframe.html'></iframe>

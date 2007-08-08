@@ -8,23 +8,9 @@ from a timeout.
 <p>PASS: You didn't crash.
 </p>
 
-<iframe id="iframe" 
-        src='data:text/html,
-                <script>
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
 
-                function crash()
-                {
-                    /* Ensure we have no frame when the exception is thrown. */
-                    var iframe = parent.document.getElementById("iframe");
-                    iframe.parentNode.removeChild(iframe);
-                    
-                    /* Throw an exception. */
-                    throw "crash";
-                }
-                
-                setTimeout(crash, 0);
-                </script>
-            '
-></iframe>
+<iframe id="iframe" src='exception-no-frame-timeout-crash-iframe.html'></iframe>
