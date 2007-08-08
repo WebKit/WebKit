@@ -179,11 +179,12 @@ void RenderThemeGdk::setCheckboxSize(RenderStyle* style) const
 bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     // FIXME: is it the right thing to do?
-    GtkWidget *checkbox = gtkCheckbox();
+    GtkWidget* checkbox = gtkCheckbox();
+    IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_check(checkbox->style, i.context->gdkDrawable(),
                     determineState(o), determineShadow(o),
                     NULL, checkbox, "checkbutton",
-                    rect.x(), rect.y(), rect.width(), rect.height());
+                    pos.x(), pos.y(), rect.width(), rect.height());
 
     return false;
 }
@@ -211,11 +212,12 @@ void RenderThemeGdk::setRadioSize(RenderStyle* style) const
 bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 { 
     // FIXME: is it the right thing to do?
-    GtkWidget *radio = gtkRadioButton();
+    GtkWidget* radio = gtkRadioButton();
+    IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_option(radio->style, i.context->gdkDrawable(),
                      determineState(o), determineShadow(o),
                      NULL, radio, "radiobutton",
-                     rect.x(), rect.y(), rect.width(), rect.height());
+                     pos.x(), pos.y(), rect.width(), rect.height());
 
     return false;
 }
@@ -223,11 +225,12 @@ bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
 bool RenderThemeGdk::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect) 
 { 
     // FIXME: should use theme-aware drawing. This should honor the state as well
-    GtkWidget *button = gtkButton();
+    GtkWidget* button = gtkButton();
+    IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_box(button->style, i.context->gdkDrawable(),
                   determineState(o), determineShadow(o),
                   NULL, button, "button",
-                  rect.x(), rect.y(), rect.width(), rect.height());
+                  pos.x(), pos.y(), rect.width(), rect.height());
     return false;
 }
 

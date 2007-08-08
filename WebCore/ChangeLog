@@ -2,6 +2,20 @@
 
         Reviewed by Niko.
 
+        Use GraphicsContext::translatePoint in RenderThemeGdk to paint at the
+        right position.
+        This is needed as the Gtk+ theming code does not know about the translation
+        of the GraphicsContext.
+
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::paintCheckbox):
+        (WebCore::RenderThemeGdk::paintRadio):
+        (WebCore::RenderThemeGdk::paintButton):
+
+2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Niko.
+
         Implement Widget::paint for the Gtk port. This is needed to paint
         Widgets in z-order. The original GdkEventExpose is stored within the
         GraphicsContext and then used to draw the children. This is similiar
