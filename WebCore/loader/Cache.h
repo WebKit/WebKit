@@ -119,9 +119,9 @@ public:
     // Called to adjust the cache totals when a resource changes size.
     void adjustSize(bool live, int delta, int decodedDelta);
 
-    // Track the size of all resources that are in the cache and still referenced by a Web page. 
-    void insertInLiveResourcesList(CachedResource*);
-    void removeFromLiveResourcesList(CachedResource*);
+    // Track decoded resources that are in the cache and referenced by a Web page.
+    void insertInLiveDecodedResourcesList(CachedResource*);
+    void removeFromLiveDecodedResourcesList(CachedResource*);
 
     void addToLiveResourcesSize(CachedResource*);
     void removeFromLiveResourcesSize(CachedResource*);
@@ -157,7 +157,7 @@ private:
     Vector<LRUList, 32> m_allResources;
     
     // List just for live resources with decoded data.  Access to this list is based off of painting the resource.
-    LRUList m_liveResources;
+    LRUList m_liveDecodedResources;
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).

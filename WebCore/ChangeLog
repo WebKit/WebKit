@@ -1,3 +1,31 @@
+2007-08-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak. Based on earlier review from Dave Hyatt.
+
+        First chunk of work for <rdar://problem/5326009> Make non-browser 
+        WebKit clients have no memory cache, or a very tiny one
+        
+        Layout tests pass.
+        
+        Removed decodedSizeWillChange mechanism because my last patch to
+        change the live resources list to a strict LRU model made that code
+        vestigial.
+        
+        Renamed "liveResourcesList" and related stuff => 
+        "liveDecodedResourcesList" because only live resources with decoded 
+        data are kept in the list.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::decodedSizeChanged): Only add ourselves to the
+        list if we're live, our decoded size has grown, and we're not in the 
+        list already. (Otherwise, either we're not live, we're not decoded,
+        or we're already in the list.)
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::liveResourceAccessed): Only re-insert
+        ourselves into the list if we're already there. (In theory, this should
+        be always, but it's a little more clear to check.)
+
 2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.

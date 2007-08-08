@@ -45,7 +45,7 @@ CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool
     m_request = 0;
 
     m_accessCount = 0;
-    m_isInLiveResourcesList = false;
+    m_inLiveDecodedResourcesList = false;
     
     m_nextInAllResourcesList = 0;
     m_prevInAllResourcesList = 0;
@@ -97,10 +97,8 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::ref(CachedResourceClient *c)
 {
-    if (!referenced() && inCache()) {
+    if (!referenced() && inCache())
         cache()->addToLiveResourcesSize(this);
-        cache()->insertInLiveResourcesList(this);
-    }
     m_clients.add(c);
 }
 
@@ -112,7 +110,7 @@ void CachedResource::deref(CachedResourceClient *c)
         delete this;
     else if (!referenced() && inCache()) {
         cache()->removeFromLiveResourcesSize(this);
-        cache()->removeFromLiveResourcesList(this);
+        cache()->removeFromLiveDecodedResourcesList(this);
         allReferencesRemoved();
         cache()->pruneAllResources();
     }
@@ -148,8 +146,10 @@ void CachedResource::setEncodedSize(unsigned size)
 void CachedResource::liveResourceAccessed()
 {
     if (inCache()) {
-        cache()->removeFromLiveResourcesList(this);
-        cache()->insertInLiveResourcesList(this);
+        if (m_inLiveDecodedResourcesList) {
+            cache()->removeFromLiveDecodedResourcesList(this);
+            cache()->insertInLiveDecodedResourcesList(this);
+        }
         cache()->pruneLiveResources();
     }
 }

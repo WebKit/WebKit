@@ -230,15 +230,6 @@ unsigned CachedImage::decodedSize() const
     return 0;
 }
 
-void CachedImage::decodedSizeWillChange(const Image* image, int delta)
-{
-    if (image != m_image)
-        return;
-    
-    if (inCache() && referenced())
-        cache()->removeFromLiveResourcesList(this);
-}
-
 void CachedImage::decodedSizeChanged(const Image* image, int delta)
 {
     if (image != m_image)
@@ -246,8 +237,8 @@ void CachedImage::decodedSizeChanged(const Image* image, int delta)
     
     if (inCache()) {
         cache()->adjustSize(referenced(), delta, delta);
-        if (referenced())
-            cache()->insertInLiveResourcesList(this);
+        if (delta > 0 && referenced() && !inLiveDecodedResourcesList())
+            cache()->insertInLiveDecodedResourcesList(this);
     }
 }
 

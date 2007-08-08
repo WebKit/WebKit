@@ -105,6 +105,9 @@ public:
     void setInCache(bool b) { m_inCache = b; }
     bool inCache() const { return m_inCache; }
     
+    void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
+    bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
+    
     void setRequest(Request*);
 
     SharedBuffer* data() const { return m_data.get(); }
@@ -151,7 +154,7 @@ protected:
 private:
     unsigned m_encodedSize;
     unsigned m_accessCount;
-    unsigned m_isInLiveResourcesList;
+    unsigned m_inLiveDecodedResourcesList;
     
     bool m_sendResourceLoadCallbacks;
 protected:
