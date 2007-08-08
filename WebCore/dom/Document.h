@@ -136,7 +136,7 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
 
 class Document : public ContainerNode {
 public:
-    Document(DOMImplementation*, Frame*);
+    Document(DOMImplementation*, Frame*, bool isXHTML = false);
     ~Document();
 
     virtual void removedLastRef();
@@ -162,7 +162,7 @@ public:
     DOMImplementation* implementation() const;
     virtual void childrenChanged();
     Element* documentElement() const;
-    PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
+    virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment ();
     PassRefPtr<Text> createTextNode(const String& data);
     PassRefPtr<Comment> createComment(const String& data);
@@ -883,6 +883,8 @@ private:
     bool m_isAllowedToLoadLocalResources;
     
     bool m_useSecureKeyboardEntryWhenActive;
+
+    bool m_isXHTML;
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;

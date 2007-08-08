@@ -1,3 +1,21 @@
+2007-08-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej and Hyatt.
+
+        - <rdar://problem/4976879> REGRESSION: Safari doesn't work with Zimbra enhanced login.
+        - Reverting a previous change, and modifying how documents are created so that we better match other browsers behavior with respect to namespaceURIs.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createElement):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createElement):
+        * html/HTMLDocument.h:
+
 2007-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed and landed by Brady

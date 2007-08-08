@@ -1,3 +1,19 @@
+2007-08-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej and Hyatt.
+
+       - <rdar://problem/4976879> REGRESSION: Safari doesn't work with Zimbra enhanced login.
+        - Reverting a previous change, and modifying how documents are created so that we better match other browsers behavior with respect to namespaceURIs.
+
+        * dom/xhtml/level1/core/hc_documentcreateelementcasesensitive-expected.txt:
+        * fast/dom/Document/replace-child-expected.txt:
+        * http/tests/misc/createElementNamespace1-expected.txt: Added.
+        * http/tests/misc/createElementNamespace1.xml: Added.
+        * http/tests/misc/createElementNamespace2-expected.txt: Added.
+        * http/tests/misc/createElementNamespace2.xhtml: Added.
+        * http/tests/misc/createElementNamespace3-expected.txt: Added.
+        * http/tests/misc/createElementNamespace3.html: Added.
+
 2007-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed and landed by Brady

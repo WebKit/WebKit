@@ -1,3 +1,2 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_documentcreateelementcasesensitive
-Status	failure
-Message	nodeName1: assertEquals failed, actual acronym, expected ACRONYM.
+Status	Success

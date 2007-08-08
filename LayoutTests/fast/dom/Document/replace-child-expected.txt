@@ -1,6 +1,6 @@
 This tests that various combinations of replaceChild on the document works as specified. If this test succeeds, there will be a number of "SUCCESS" lines below followed by "SUCCESS - All tests succeeded".
 replacing element with element
-SUCCESS: <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><bar xmlns="http://www.w3.org/1999/xhtml"></bar>
+SUCCESS: <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><bar/>
 replacing element with doctype
 SUCCESS: <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 SUCCESS - All tests succeeded!
