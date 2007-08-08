@@ -233,7 +233,7 @@ namespace WTF {
       return QChar::toUpper(ch);
     }
 
-    inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
         const UChar *e = src + srcLength;
         const UChar *s = src;

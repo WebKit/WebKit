@@ -1,3 +1,10 @@
+2007-08-08  George Staikos  <staikos@kde.org>
+
+        Make it compile with Qt again.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toUpper):
+
 2007-08-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
