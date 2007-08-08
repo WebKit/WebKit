@@ -489,7 +489,7 @@ void IconDatabase::releaseIconForPageURL(const String& pageURL)
         return;
         
     // Check if this pageURL is actually retained
-    if(!m_pageURLToRetainCount.contains(pageURL)) {
+    if (!m_pageURLToRetainCount.contains(pageURL)) {
         LOG_ERROR("Attempting to release icon for URL %s which is not retained", pageURL.ascii().data());
         return;
     }
@@ -738,34 +738,31 @@ void IconDatabase::pruneUnretainedIconsOnStartup(Timer<IconDatabase>*)
     
     // Wipe all PageURLs that aren't retained
     // Temporary tables in sqlite seem to lose memory permanently so do this by hand instead. This is faster too.
-    
-    HashMap<String, int64_t> pageUrlsToDelete; 
-    
-    // First get the known PageURLs from the db
-    int result;
+
+    Vector<int64_t> pageURLIconIDsToDelete; 
+
+    // Get the known PageURLs from the db, and record the ID of any that are not in the retain count set.
     SQLStatement pageSQL(m_mainDB, "SELECT url, iconID FROM PageURL");
     pageSQL.prepare();
-    while((result = pageSQL.step()) == SQLResultRow)
-        pageUrlsToDelete.set(pageSQL.getColumnText16(0), pageSQL.getColumnInt64(1));
+    int result;
+    while ((result = pageSQL.step()) == SQLResultRow) {
+        String pageURL = pageSQL.getColumnText16(0);
+        if (pageURL.isEmpty() || !m_pageURLToRetainCount.contains(pageURL))
+            pageURLIconIDsToDelete.append(pageSQL.getColumnInt64(1));
+    }
     pageSQL.finalize();
     if (result != SQLResultDone)
         LOG_ERROR("Error reading PageURL table from on-disk DB");
     
-    // Remove all urls we actually want to keep from the hash
-    HashMap<String, int>::iterator endit = m_pageURLToRetainCount.end();
-    for (HashMap<String, int>::iterator it = m_pageURLToRetainCount.begin(); it != endit; ++it)
-        pageUrlsToDelete.remove(it->first);
-    
-    // Delete the rest, if any
-    if (pageUrlsToDelete.size()) {
+    // Delete page URLs that were in the table, but not in our retain count set.
+    size_t numToDelete = pageURLIconIDsToDelete.size();
+    if (numToDelete) {
         SQLStatement pageDeleteSQL(m_mainDB, "DELETE FROM PageURL WHERE iconID = (?)");
         pageDeleteSQL.prepare();
-        HashMap<String, int64_t>::iterator endit = pageUrlsToDelete.end();
-        for (HashMap<String, int64_t>::iterator it = pageUrlsToDelete.begin(); it != endit; ++it) {
-            LOG(IconDatabase, "Deleting %s from PageURL table\n", it->first.latin1().data());
-            pageDeleteSQL.bindInt64(1, it->second);
+        for (size_t i = 0; i < numToDelete; ++i) {
+            pageDeleteSQL.bindInt64(1, pageURLIconIDsToDelete[i]);
             if (pageDeleteSQL.step() != SQLResultDone)
-                LOG_ERROR("Unable to delete %s from PageURL table", it->first.latin1().data());
+                LOG_ERROR("Unable to delete icon ID %llu from PageURL table", static_cast<unsigned long long>(pageURLIconIDsToDelete[i]));
             pageDeleteSQL.reset();
         }
         pageDeleteSQL.finalize();

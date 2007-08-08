@@ -1,3 +1,15 @@
+2007-08-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - fix for <rdar://problem/5390708> CrashTracer: [USER] 27 crashes in Safari at
+          com.apple.WebCore: WTF::HashMap<etc>::set + 68, beneath pruneUnretainedIconsAtStartup
+
+        * loader/icon/IconDatabase.cpp: (WebCore::IconDatabase::pruneUnretainedIconsOnStartup):
+        Eliminate an unnecessary HashMap from the implementation; we can just use the
+        m_pageURLToRetainCount map directly. This simplifies the code and allows us to handle
+        the empty string, which otherwise poses a problem for HashMap.
+
 2007-08-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
