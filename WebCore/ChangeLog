@@ -1,3 +1,14 @@
+2007-08-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5390681> WebKit asserts when deleting To Do content selected with a double-click
+        
+        * dom/Position.cpp:
+        (WebCore::Position::trailingWhitespacePosition): Use VisiblePosition::characterAfter
+        to look for a trailing space.  The old code would incorrectly return a position before
+        a non-editable space if it had a collapsed space before it.
+
 2007-08-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady.

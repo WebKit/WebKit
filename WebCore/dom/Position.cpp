@@ -628,31 +628,14 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
     ASSERT(isEditablePosition(*this));
     if (isNull())
         return Position();
-
-    if (node()->isTextNode()) {
-        Text* textNode = static_cast<Text*>(node());
-        if (offset() < (int)textNode->length()) {
-            String string = textNode->data();
-            UChar c = string[offset()];
-            if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
-                if (isEditablePosition(*this))
-                    return *this;
-            return Position();
-        }
-    }
-
-    if (downstream().node()->hasTagName(brTag))
-        return Position();
-
-    Position next = nextCharacterPosition(affinity);
-    if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
-        String string = static_cast<Text*>(next.node())->data();
-        UChar c = string[0];
+    
+    VisiblePosition v(*this);
+    UChar c = v.characterAfter();
+    // The space must not be in another paragraph and it must be editable.
+    if (!isEndOfParagraph(v) && v.next(true).isNotNull())
         if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
-            if (isEditablePosition(*this))
-                return next;
-    }
-
+            return *this;
+    
     return Position();
 }
 

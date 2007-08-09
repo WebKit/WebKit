@@ -12,9 +12,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (140,18) size 778x36
             text run at (140,18) width 638: "There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder when it"
             text run at (0,36) width 67: "shouldn't."
-      RenderBlock {DIV} at (0,70) size 784x36
-        RenderBR {BR} at (0,0) size 0x18
+      RenderBlock {DIV} at (0,70) size 784x18
         RenderInline {SPAN} at (0,0) size 20x18
-          RenderText {#text} at (0,18) size 20x18
-            text run at (0,18) width 20: "bar"
-caret: position 0 of child 0 {BR} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 20x18
+            text run at (0,0) width 20: "bar"
