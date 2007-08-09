@@ -330,13 +330,11 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     if (handleDrag(event))
         return true;
 
-    // Mouse not pressed. Do nothing.
     if (!m_mousePressed)
         return false;
 
-    Node* innerNode = event.targetNode();
-
-    if (event.event().button() != LeftButton || !innerNode || !innerNode->renderer())
+    Node* targetNode = event.targetNode();
+    if (event.event().button() != LeftButton || !targetNode || !targetNode->renderer())
         return false;
 
 #if PLATFORM(MAC) // FIXME: Why does this assertion fire on other platforms?
@@ -348,30 +346,14 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     if (m_mouseDownMayStartAutoscroll) {            
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
-        RenderObject* renderer = innerNode->renderer();
+        RenderObject* renderer = targetNode->renderer();
         while (renderer && !renderer->shouldAutoscroll())
             renderer = renderer->parent();
         if (renderer)
             handleAutoscroll(renderer);
     }
     
-    if (!(m_mouseDownMayStartSelect && innerNode->renderer()->shouldSelect()))
-        return false;
-
-#if ENABLE(SVG)
-    Selection curSelection = m_frame->selectionController()->selection();
-    if (!curSelection.isNone()
-        && curSelection.base().node()->renderer()
-        && curSelection.base().node()->renderer()->isSVGText()
-        && innerNode->renderer()->containingBlock() != curSelection.base().node()->renderer()->containingBlock())
-        return false;
-#endif
-
-    // handle making selection
-    VisiblePosition pos(innerNode->renderer()->positionForPoint(event.localPoint()));
-
-    updateSelectionForMouseDragOverPosition(pos);
-
+    updateSelectionForMouseDrag(targetNode, event.localPoint());
     return true;
 }
     
@@ -398,28 +380,71 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, event.x(), event.y(), srcIsDHTML);
 }
 
-void EventHandler::updateSelectionForMouseDragOverPosition(const VisiblePosition& pos)
+void EventHandler::updateSelectionForMouseDrag()
 {
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+    RenderObject* renderer = m_frame->renderer();
+    if (!renderer)
+        return;
+    RenderLayer* layer = renderer->layer();
+    if (!layer)
+        return;
+
+    HitTestResult result(view->windowToContents(m_currentMousePosition));
+    layer->hitTest(HitTestRequest(true, true, true), result);
+    updateSelectionForMouseDrag(result.innerNode(), result.localPoint());
+}
+
+void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint& localPoint)
+{
+    if (!m_mouseDownMayStartSelect)
+        return;
+
+    if (!targetNode)
+        return;
+
+    RenderObject* targetRenderer = targetNode->renderer();
+    if (!targetRenderer)
+        return;
+
+    if (!targetRenderer->shouldSelect())
+        return;
+
+    VisiblePosition targetPosition(targetRenderer->positionForPoint(localPoint));
+
     // Don't modify the selection if we're not on a node.
-    if (pos.isNull())
+    if (targetPosition.isNull())
         return;
 
     // Restart the selection if this is the first mouse move. This work is usually
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
     Selection newSelection = m_frame->selectionController()->selection();
-    m_frame->selectionController()->setLastChangeWasHorizontalExtension(false);
-    
+
+#if ENABLE(SVG)
+    // Special case to limit selection to the containing block for SVG text.
+    // FIXME: Isn't there a better non-SVG-specific way to do this?
+    if (Node* selectionBaseNode = newSelection.base().node())
+        if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer())
+            if (selectionBaseRenderer->isSVGText())
+                if (targetNode->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
+                    return;
+#endif
+
     if (!m_beganSelectingText) {
         m_beganSelectingText = true;
-        newSelection = Selection(pos);
+        newSelection = Selection(targetPosition);
     }
 
-    newSelection.setExtent(pos);
+    newSelection.setExtent(targetPosition);
     if (m_frame->selectionGranularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selectionGranularity());
 
-    if (m_frame->shouldChangeSelection(newSelection))
+    if (m_frame->shouldChangeSelection(newSelection)) {
+        m_frame->selectionController()->setLastChangeWasHorizontalExtension(false);
         m_frame->selectionController()->setSelection(newSelection);
+    }
 }
     
 bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults& event)
@@ -928,6 +953,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         return true;
     }
 #endif
+
     if (m_frameSetBeingResized)
         return dispatchMouseEvent(mousemoveEvent, m_frameSetBeingResized.get(), false, 0, mouseEvent, false);
 
@@ -962,9 +988,9 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             m_lastScrollbarUnderMouse = scrollbar;
         }
     }
-        
+
     bool swallowEvent = false;
-    Node* targetNode = m_capturingMouseEventsNode.get() ? m_capturingMouseEventsNode.get() : mev.targetNode();
+    Node* targetNode = m_capturingMouseEventsNode ? m_capturingMouseEventsNode.get() : mev.targetNode();
     RefPtr<Frame> newSubframe = subframeForTargetNode(targetNode);
     
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
@@ -1364,8 +1390,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
     ASSERT(m_frame->document());
 
     if (RenderObject* renderer = m_frame->renderer()) {
-        IntPoint documentPoint = m_frame->view()->windowToContents(m_currentMousePosition);
-        HitTestResult result(documentPoint);
+        HitTestResult result(m_frame->view()->windowToContents(m_currentMousePosition));
         renderer->layer()->hitTest(HitTestRequest(false, false, true), result);
         m_frame->document()->updateRendering();
     }

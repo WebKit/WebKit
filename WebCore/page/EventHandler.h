@@ -85,7 +85,7 @@ public:
 
     void clear();
 
-    void updateSelectionForMouseDragOverPosition(const VisiblePosition&);
+    void updateSelectionForMouseDrag();
 
     Node* mousePressNode() const;
     void setMousePressNode(PassRefPtr<Node>);
@@ -254,6 +254,8 @@ private:
 #endif
 
     bool invertSenseOfTabsToLinks(KeyboardEvent*) const;
+
+    void updateSelectionForMouseDrag(Node* targetNode, const IntPoint& localPoint);
 
     Frame* m_frame;
 

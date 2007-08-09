@@ -840,25 +840,18 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
 
 void RenderLayer::autoscroll()
 {
-    if (!renderer() || !renderer()->document() || !renderer()->document()->frame() || !renderer()->document()->frame()->view())
+    Frame* frame = renderer()->document()->frame();
+    if (!frame)
         return;
-        
-    Frame* currentFrame = renderer()->document()->frame();
-    IntPoint currentPos = currentFrame->view()->windowToContents(currentFrame->eventHandler()->currentMousePosition());
-    
-    if (currentFrame->eventHandler()->mouseDownMayStartSelect()) {
-        // Convert the mouse position to local layer space.
-        int x, y;
-        convertToLayerCoords(root(), x, y);
-        HitTestRequest request(true, false, true);
-        HitTestResult result(currentPos - IntSize(x, y));
-        if (hitTest(request, result) && result.innerNode()->renderer() && result.innerNode()->renderer()->shouldSelect()) {
-            VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
-            currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
-        }
-    }
 
-    scrollRectToVisible(IntRect(currentPos, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    frame->eventHandler()->updateSelectionForMouseDrag();
+
+    IntPoint currentDocumentPosition = frameView->windowToContents(frame->eventHandler()->currentMousePosition());
+    scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
 }
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)

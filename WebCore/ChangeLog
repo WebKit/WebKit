@@ -1,3 +1,42 @@
+2007-08-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - fix <rdar://problem/4889753> REGRESSION: Selection doesn't continue with drag selecting
+          when autoscrolling vertically (in Notes as well as Safari)
+
+        The bug doesn't happen inside DumpRenderTree, so I was unable to make an automated
+        regression test.
+
+        * manual-tests/autoscroll-when-outside-window.html: Added.
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::autoscroll): Removed unneeded null
+        check for the layer's renderer and the document, neither of which can be null. Call
+        the new updateSelectionForMouseDrag instead of doing selection updating here.
+
+        * page/EventHandler.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent): Refactored most of the logic
+        about updating the selection into updateSelectionForMouseDrag.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Added. The public version of
+        this function takes no parameters, and is for use from auto-scrolling code. The
+        private version of this function takes node and point parameters and contains the
+        shared code, including everything from updateSelectionForMouseDragOverPosition.
+        Aside from the code motion, variable name changes, and sharing more code, this
+        differs from the old code in RenderLayer::autoscroll in the following ways:
+
+          1) The old code did hit testing only in the layer that was auto-scrolling,
+             and the new code instead starts the hit testing at the root layer, which is
+             better because it's the same thing we do for mouse moved events. Further,
+             the code to do this by calling convertToLayerCoords had a bug  because the
+             x and y variables were uninitialized.
+          2) The old code passed false for active to HitTestRequest, which was wrong.
+             The new code passes true. This flag needs to be true for hit testing done
+             while the mouse is down and false for hit testing done while the mouse is up.
+          3) The old code did not have the SVG-specific logic to match the mouse moved case.
+          4) The old code wouldn't do any selection updating if the return value from hitTest
+             was false, which is incorrect. The new code ignores the return value as it should.
+
 2007-08-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff Garen.
