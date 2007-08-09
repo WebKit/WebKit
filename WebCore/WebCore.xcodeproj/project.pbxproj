@@ -2728,8 +2728,6 @@
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B402FD090C4C9C3900210AA6 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC05649B0C6ABC1000ACE412 /* character-sets.txt in Resources */ = {isa = PBXBuildFile; fileRef = BC0564990C6ABC1000ACE412 /* character-sets.txt */; };
-		BC05649C0C6ABC1000ACE412 /* make-charset-table.pl in Resources */ = {isa = PBXBuildFile; fileRef = BC05649A0C6ABC1000ACE412 /* make-charset-table.pl */; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
 		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
@@ -11806,8 +11804,6 @@
 				06693F7B0BFBC91700216072 /* inspector in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				BC05649B0C6ABC1000ACE412 /* character-sets.txt in Resources */,
-				BC05649C0C6ABC1000ACE412 /* make-charset-table.pl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
