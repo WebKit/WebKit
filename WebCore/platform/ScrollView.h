@@ -32,7 +32,7 @@
 #include <wtf/HashSet.h>
 
 #if PLATFORM(GDK)
-typedef struct _GtkLayout GtkLayout;
+typedef struct _GtkAdjustment GtkAdjustment;
 #endif
 
 #if PLATFORM(WIN)
@@ -152,12 +152,22 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
-        virtual void setGtkWidget(GtkLayout* layout);
+        virtual void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+        virtual void geometryChanged() const;
+
+        virtual void paint(GraphicsContext*, const IntRect&);
         virtual void setFrameGeometry(const IntRect&);
-        virtual void updateGeometry(int width, int height);
+
+        void addToDirtyRegion(const IntRect&);
+        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+        void updateBackingStore();
     private:
-        void updateView(const IntRect&, bool now = false);
-        void updateScrollbars();
+        IntSize maximumScroll() const;
+        void updateScrollbars(const IntSize& desiredOffset);
+        HashSet<Widget*>* children();
+
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
 #endif

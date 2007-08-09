@@ -82,7 +82,7 @@ static gboolean webkit_gtk_page_expose_event(GtkWidget* widget, GdkEventExpose* 
         if (frame->view()->needsLayout())
             frame->view()->layout();
         IntRect rect(clip.x, clip.y, clip.width, clip.height);
-        frame->paint(&ctx, rect);
+        frame->view()->paint(&ctx, rect);
     }
     cairo_destroy(cr);
 
@@ -129,7 +129,7 @@ static void webkit_gtk_page_size_allocate(GtkWidget* widget, GtkAllocation* allo
     GTK_WIDGET_CLASS(webkit_gtk_page_parent_class)->size_allocate(widget,allocation);
 
     Frame* frame = core(getFrameFromPage(WEBKIT_GTK_PAGE(widget)));
-    frame->view()->updateGeometry(allocation->width, allocation->height);
+    frame->view()->resize(allocation->width, allocation->height);
     frame->forceLayout();
     frame->view()->adjustViewSize();
     frame->sendResizeEvent();
@@ -151,6 +151,12 @@ static void webkit_gtk_page_realize(GtkWidget* widget)
                             | GDK_BUTTON1_MOTION_MASK
                             | GDK_BUTTON2_MOTION_MASK
                             | GDK_BUTTON3_MOTION_MASK));
+}
+
+static void webkit_gtk_page_set_scroll_adjustments(GtkLayout* layout, GtkAdjustment* hadj, GtkAdjustment* vadj)
+{
+    FrameView* view = core(getFrameFromPage(WEBKIT_GTK_PAGE(layout)))->view();
+    view->setGtkAdjustments(hadj, vadj);
 }
 
 static WebKitGtkFrame* webkit_gtk_page_real_create_frame(WebKitGtkPage*, WebKitGtkFrame* parent, WebKitGtkFrameData*)
@@ -341,6 +347,8 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
     widgetClass->motion_notify_event = webkit_gtk_page_motion_event;
     widgetClass->scroll_event = webkit_gtk_page_scroll_event;
     widgetClass->size_allocate = webkit_gtk_page_size_allocate;
+
+    GTK_LAYOUT_CLASS(pageClass)->set_scroll_adjustments = webkit_gtk_page_set_scroll_adjustments;
 }
 
 static void webkit_gtk_page_init(WebKitGtkPage* page)

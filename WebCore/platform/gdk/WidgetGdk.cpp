@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
@@ -30,11 +30,11 @@
 #include "Widget.h"
 
 #include "Cursor.h"
-#include "Font.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "RenderObject.h"
 #include "NotImplemented.h"
+#include "RenderObject.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -43,31 +43,27 @@ namespace WebCore {
 
 class WidgetPrivate {
 public:
-    GdkDrawable* drawable;
     GtkWidget* widget;
     WidgetClient* client;
-    IntRect geometry;
-    Font font;
+    IntRect frameRect;
+
+    ScrollView* parent;
+    GtkLayout* containingWindow;
+    bool suppressInvalidation;
+
+    GdkDrawable* gdkDrawable() const
+    {
+        return widget ? widget->window : 0;
+    }
 };
 
 Widget::Widget()
     : data(new WidgetPrivate)
 {
-    data->drawable = 0;
     data->widget = 0;
-}
-
-Widget::Widget(GtkWidget* widget)
-    : data(new WidgetPrivate)
-{
-    setGtkWidget(widget);
-}
-
-GdkDrawable* Widget::gdkDrawable() const
-{
-    if (!data->drawable && data->widget)
-        data->drawable = GTK_IS_LAYOUT(data->widget) ? GTK_LAYOUT(data->widget)->bin_window : data->widget->window;
-    return data->drawable;
+    data->parent = 0;
+    data->containingWindow = 0;
+    data->suppressInvalidation = false;
 }
 
 GtkWidget* Widget::gtkWidget() const
@@ -77,13 +73,22 @@ GtkWidget* Widget::gtkWidget() const
 
 void Widget::setGtkWidget(GtkWidget* widget)
 {
-    data->drawable = 0;
     data->widget = widget;
 }
 
 Widget::~Widget()
 {
     delete data;
+}
+
+void Widget::setContainingWindow(GtkLayout* containingWindow)
+{
+    data->containingWindow = containingWindow;
+}
+
+GtkLayout* Widget::containingWindow() const
+{
+    return data->containingWindow;
 }
 
 void Widget::setClient(WidgetClient* c)
@@ -98,15 +103,27 @@ WidgetClient* Widget::client() const
 
 IntRect Widget::frameGeometry() const
 {
-    return data->geometry;
+    return data->frameRect;
 }
 
+void Widget::setFrameGeometry(const IntRect& r)
+{
+    data->frameRect = r;
+}
+
+void Widget::setParent(ScrollView* v)
+{
+    data->parent = v;
+}
+
+ScrollView* Widget::parent() const
+{
+    return data->parent;
+}
+ 
 void Widget::setFocus()
 {
-    GtkWidget *widget = data->widget;
-    if (!widget)
-        return;
-    gtk_widget_grab_focus(widget);
+    gtk_widget_grab_focus(gtkWidget() ? gtkWidget() : GTK_WIDGET(containingWindow()));
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -114,40 +131,21 @@ void Widget::setCursor(const Cursor& cursor)
     GdkCursor* pcur = cursor.impl();
     if (!pcur)
         return;
-
-    GdkDrawable* drawable = gdkDrawable();
-    if (!drawable || !GDK_IS_WINDOW(drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_set_cursor(window, pcur);
-
+    gdk_window_set_cursor(data->gdkDrawable() ? GDK_WINDOW(data->gdkDrawable()) : containingWindow()->bin_window, pcur);
 }
 
 void Widget::show()
 {
-    GdkDrawable* drawable = gdkDrawable();
-    if (!drawable || !GDK_IS_WINDOW(drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_show(window);
+    if (!gtkWidget())
+         return;
+    gtk_widget_show(gtkWidget());
 }
 
 void Widget::hide()
 {
-    GdkDrawable* drawable = gdkDrawable();
-    if (!drawable || !GDK_IS_WINDOW(drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(drawable);
-    gdk_window_hide(window);
-}
-
-void Widget::setFrameGeometry(const IntRect& r)
-{
-    data->geometry = r;
-    g_return_if_fail(data->widget);
-
-    GtkAllocation allocation = { r.x(), r.y(), r.width(), r.height() };
-    gtk_widget_size_allocate(data->widget, &allocation);
+    if (!gtkWidget())
+         return;
+    gtk_widget_hide(gtkWidget());
 }
 
 void Widget::setEnabled(bool)
@@ -163,16 +161,15 @@ bool Widget::isEnabled() const
 
 void Widget::removeFromParent()
 {
-    notImplemented();
+    if (parent())
+        parent()->removeChild(this);
 }
 
 /*
  * Strategy to painting a Widget:
  *  1.) do not paint if there is no GtkWidget set
- *  2.) We manipulate the GtkAllocation.{x,y} to take the
- *      GraphicsContext translation into account. This works as long as we assume
- *      that our GtkWidgets have GTK_NO_WINDOW set. This holds true
- *      for the PlatformScrollbar.
+ *  2.) We assume that GTK_NO_WINDOW is set and that geometryChanged positioned
+ *      the widget correctly. ATM we do not honor the GraphicsContext translation.
  */
 void Widget::paint(GraphicsContext* context, const IntRect&)
 {
@@ -182,16 +179,10 @@ void Widget::paint(GraphicsContext* context, const IntRect&)
     GtkWidget* widget = gtkWidget();
     ASSERT(GTK_WIDGET_NO_WINDOW(widget));
 
-    IntPoint originalPosition = IntPoint(widget->allocation.x, widget->allocation.y);
-    IntPoint translatedPosition = context->translatePoint(originalPosition);
-    widget->allocation.x = translatedPosition.x();
-    widget->allocation.y = translatedPosition.y();
-
     GdkEvent* event = gdk_event_new(GDK_EXPOSE);
     event->expose = *context->gdkExposeEvent();
     event->expose.region = gtk_widget_region_intersect(widget, event->expose.region);
 
-    
     /*
      * This will be unref'ed by gdk_event_free.
      */
@@ -205,8 +196,6 @@ void Widget::paint(GraphicsContext* context, const IntRect&)
         gtk_widget_send_expose(widget, event);
     }
 
-    widget->allocation.x = originalPosition.x();
-    widget->allocation.y = originalPosition.y();
     gdk_event_free(event);
 }
 
@@ -217,15 +206,83 @@ void Widget::setIsSelected(bool)
 
 void Widget::invalidate()
 {
-    if (data->widget)
-        gtk_widget_queue_draw(data->widget);
+    invalidateRect(IntRect(0, 0, width(), height()));
 }
 
 void Widget::invalidateRect(const IntRect& rect)
 {
-    if (data->widget)
-        gtk_widget_queue_draw_area(data->widget, rect.x(), rect.y(),
+    if (data->suppressInvalidation)
+        return;
+
+    if (!parent()) {
+        gtk_widget_queue_draw_area(GTK_WIDGET(containingWindow()), rect.x(), rect.y(),
                                    rect.width(), rect.height());
+        if (isFrameView())
+            static_cast<FrameView*>(this)->addToDirtyRegion(rect);
+        return;
+    }
+
+    // Get the root widget.
+    ScrollView* outermostView = parent();
+    while (outermostView && outermostView->parent())
+        outermostView = outermostView->parent();
+    if (!outermostView)
+        return;
+
+    IntRect windowRect = convertToContainingWindow(rect);
+    gtk_widget_queue_draw_area(GTK_WIDGET(containingWindow()), windowRect.x(), windowRect.y(),
+                               windowRect.width(), windowRect.height());
+    outermostView->addToDirtyRegion(windowRect);
 }
 
+IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
+{
+    IntPoint windowPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        windowPoint = parentWidget->convertChildToSelf(childWidget, windowPoint);
+    return windowPoint;
+}
+
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
+{
+    IntPoint widgetPoint = point;
+    for (const Widget *parentWidget = parent(), *childWidget = this;
+         parentWidget;
+         childWidget = parentWidget, parentWidget = parentWidget->parent())
+        widgetPoint = parentWidget->convertSelfToChild(childWidget, widgetPoint);
+    return widgetPoint;
+}
+
+IntRect Widget::convertToContainingWindow(const IntRect& rect) const
+{
+    IntRect convertedRect = rect;
+    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
+    return convertedRect;
+}
+
+IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() + child->x(), point.y() + child->y());
+}
+ 
+IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
+{
+    return IntPoint(point.x() - child->x(), point.y() - child->y());
+}
+
+bool Widget::suppressInvalidation() const
+{
+    return data->suppressInvalidation;
+}
+
+void Widget::setSuppressInvalidation(bool suppress)
+{
+    data->suppressInvalidation = suppress;
+}
+
+void Widget::geometryChanged() const
+{
+}
 }

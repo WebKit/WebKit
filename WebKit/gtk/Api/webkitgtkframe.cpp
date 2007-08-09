@@ -133,9 +133,10 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
     frameData->frame = new Frame(pageData->page, 0, frameData->client);
 
     FrameView* frameView = new FrameView(frameData->frame);
+    frameView->setContainingWindow(GTK_LAYOUT(page));
+    frameView->setGtkAdjustments(gtk_layout_get_hadjustment(GTK_LAYOUT(page)),
+                                 gtk_layout_get_vadjustment(GTK_LAYOUT(page)));
     frameData->frame->setView(frameView);
-
-    frameView->setGtkWidget(GTK_LAYOUT(page));
     frameData->frame->init();
     frameData->page = page;
 

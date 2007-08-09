@@ -43,6 +43,7 @@ typedef struct HWND__* HWND;
 #if PLATFORM(GDK)
 typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkLayout GtkLayout;
 #endif
 
 #if PLATFORM(QT)
@@ -136,10 +137,27 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GDK)
-        Widget(GtkWidget*);
-        virtual void setGtkWidget(GtkWidget*);
-        GdkDrawable* gdkDrawable() const;
+        virtual void setParent(ScrollView*);
+        ScrollView* parent() const;
+
+        void setContainingWindow(GtkLayout*);
+        GtkLayout* containingWindow() const;
+
+        virtual void geometryChanged() const;
+
+        IntRect convertToContainingWindow(const IntRect&) const;
+        IntPoint convertToContainingWindow(const IntPoint&) const;
+        IntPoint convertFromContainingWindow(const IntPoint&) const;
+
+        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+
+        bool suppressInvalidation() const;
+        void setSuppressInvalidation(bool);
+
         GtkWidget* gtkWidget() const;
+protected:
+        void setGtkWidget(GtkWidget*);
 #endif
 
 #if PLATFORM(QT)

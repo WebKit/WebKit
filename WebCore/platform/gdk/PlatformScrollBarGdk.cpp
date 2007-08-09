@@ -29,6 +29,7 @@
 #include "PlatformScrollBar.h"
 #include "IntRect.h"
 #include "GraphicsContext.h"
+#include "FrameView.h"
 
 #include "NotImplemented.h"
 #include <gtk/gtk.h>
@@ -47,6 +48,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
                               GTK_SCROLLBAR(::gtk_hscrollbar_new(m_adjustment)) :
                               GTK_SCROLLBAR(::gtk_vscrollbar_new(m_adjustment));
     gtk_widget_show(GTK_WIDGET(scrollBar));
+    g_object_ref(G_OBJECT(scrollBar));
     g_signal_connect(G_OBJECT(scrollBar), "value-changed", G_CALLBACK(PlatformScrollbar::gtkValueChanged), this);
 
     setGtkWidget(GTK_WIDGET(scrollBar));
@@ -57,9 +59,6 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
      */
     resize(PlatformScrollbar::horizontalScrollbarHeight(),
            PlatformScrollbar::verticalScrollbarWidth());    
-
-    g_object_ref(G_OBJECT(scrollBar));
-    gtk_object_sink(GTK_OBJECT(scrollBar));
 }
 
 PlatformScrollbar::~PlatformScrollbar()
@@ -68,7 +67,6 @@ PlatformScrollbar::~PlatformScrollbar()
      * the Widget does not take over ownership.
      */
     g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), (gpointer)PlatformScrollbar::gtkValueChanged, this);
-    gtk_widget_destroy(gtkWidget());
     g_object_unref(G_OBJECT(gtkWidget()));
 }
 
@@ -112,6 +110,20 @@ void PlatformScrollbar::updateThumbProportion()
 void PlatformScrollbar::setRect(const IntRect& rect)
 {
     setFrameGeometry(rect);
+    geometryChanged();
+}
+
+void PlatformScrollbar::geometryChanged()
+{
+    if (!parent())
+        return;
+
+    ASSERT(parent()->isFrameView());
+
+    FrameView* frameView = static_cast<FrameView*>(parent());
+    IntRect windowRect = IntRect(frameView->contentsToWindow(frameGeometry().location()), frameGeometry().size());
+    GtkAllocation allocation = { windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height() };
+    gtk_widget_size_allocate(gtkWidget(), &allocation);
 }
 
 void PlatformScrollbar::gtkValueChanged(GtkAdjustment*, PlatformScrollbar* that)

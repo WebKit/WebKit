@@ -1,0 +1,13 @@
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Follow the changes of ScrollView in WebCore and call setContainingWindow, set the
+        GtkAdjustment of the GtkLayout and reimplement the set_scroll_adjustments method and pass
+        the GtkAdjustments to ScrollView.
+        This makes having one GdkWindow for the complete FrameTree possible.
+        
+
+        * gtk/Api/webkitgtkframe.cpp:
+        * gtk/Api/webkitgtkpage.cpp:
+

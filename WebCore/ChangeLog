@@ -1,3 +1,94 @@
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Use the ScrollView/Widget design of the Windows port to only use one
+        native window for the whole page. This will make it possible to implement
+        FrameLoaderClientGdk::createFrame.
+
+        In contrast to the windows port the ScrollBars are GtkWidgets. To paint them
+        at the right position we need to position them correctly. To not scroll the
+        ScrollBar's belonging to the ScrollView a ScrollViewScrollbar is introduced with
+        a different geometryChanged method.
+
+        To allow the Gtk+ way of scrolling the ScrollView allows to get GtkAdjustments
+        set. In this case no ScrollViewScrollbar will be created.
+
+
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/gdk/PlatformScreenGdk.cpp:
+        (WebCore::screenDepth):
+        * platform/gdk/PlatformScrollBar.h:
+        * platform/gdk/PlatformScrollBarGdk.cpp:
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+        (PlatformScrollbar::setRect):
+        (PlatformScrollbar::geometryChanged):
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::~ScrollViewPrivate):
+        (WebCore::ScrollViewScrollbar::ScrollViewScrollbar):
+        (WebCore::ScrollViewScrollbar::geometryChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::ScrollViewPrivate::adjustmentChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::windowClipRect):
+        (WebCore::ScrollView::setGtkAdjustments):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::scroll):
+        (WebCore::ScrollView::addToDirtyRegion):
+        (WebCore::ScrollView::scrollBackingStore):
+        (WebCore::ScrollView::updateBackingStore):
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::WidgetPrivate::gdkDrawable):
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setContainingWindow):
+        (WebCore::Widget::containingWindow):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::setParent):
+        (WebCore::Widget::parent):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::removeFromParent):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+        (WebCore::Widget::convertChildToSelf):
+        (WebCore::Widget::convertSelfToChild):
+        (WebCore::Widget::suppressInvalidation):
+        (WebCore::Widget::setSuppressInvalidation):
+
 2007-08-09  Adele Peterson  <adele@apple.com>
 
         Fix by Brady, reviewed by me.
