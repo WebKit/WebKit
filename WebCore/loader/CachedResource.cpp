@@ -26,15 +26,18 @@
 
 #include "Cache.h"
 #include "DocLoader.h"
+#include "Frame.h"
 #include "FrameLoader.h"
+#include "KURL.h"
 #include "Request.h"
-#include <KURL.h>
+#include "SystemTime.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool sendResourceLoadCallbacks)
-    : m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
+    : m_lastLiveAccessTime(0)
+    , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
     , m_inCache(forCache)
     , m_docLoader(0)
 {
@@ -145,6 +148,10 @@ void CachedResource::setEncodedSize(unsigned size)
 
 void CachedResource::liveResourceAccessed()
 {
+    m_lastLiveAccessTime = Frame::currentPaintTimeStamp();
+    if (!m_lastLiveAccessTime) // In liveResourceAccessed is called directly, outside of a Frame paint.
+        m_lastLiveAccessTime = currentTime();
+    
     if (inCache()) {
         if (m_inLiveDecodedResourcesList) {
             cache()->removeFromLiveDecodedResourcesList(this);

@@ -120,6 +120,8 @@ struct MarkedTextUnderline {
 
 class Frame : public Shared<Frame> {
 public:
+    static double currentPaintTimeStamp() { return s_currentPaintTimeStamp; } // returns 0 if not painting
+    
     Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     virtual void setView(FrameView*);
     virtual ~Frame();
@@ -156,6 +158,8 @@ public:
     DragImageRef dragImageForSelection();
     
 private:
+    static double s_currentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
+    
     FramePrivate* d;
     
 // === undecided, may or may not belong here

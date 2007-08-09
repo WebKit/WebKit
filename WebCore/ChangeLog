@@ -1,3 +1,48 @@
+2007-08-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Added a thrash check to live decoded resource eviction.
+        
+        Here's the strategy: Stamp every image with its paint time. Don't evict 
+        a live decoded resource until another resource paints with a reasonably
+        (1 second) larger time stamp. 
+        
+        If no other resource paints, or another resource paints, but very soon 
+        after the resource in question, the resource in question is very likely 
+        to paint again soon. In fact, it's probably still on screen. So we 
+        leave it alone. (Previously, we evicted it on a timer, but that would 
+        evict a resource that was still on screen, hurting speed without 
+        helping memory use.)
+
+        In theory, this algorithm allows a single large resource or closely 
+        related set of resources to linger in the live decoded cache even 
+        though the cache is over its limit. However, that can only happen as 
+        long as no other resource ever paints again, which guarantees an 
+        absolute cap on cache memory usage from then on. Also, the resources 
+        will only linger as long as they remain live. Upon going dead, they 
+        will flush. Also, these circumstances are so rare that they are almost 
+        impossible to encounter in the wild. So don't sweat it.
+        
+        Stop evicting if the next resource painted too recently:
+        
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::liveResourceAccessed):
+        * loader/CachedResource.h:
+
+        Track the paint time stamp in Frame. We do this to give a consistent
+        stamp to all resources painted in a single paint operation (in case the
+        operation takes a significant amount of time), and to avoid excessive 
+        calls to system time functions, which hurt the PLT:
+
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        * page/Frame.h:
+        (WebCore::Frame::currentPaintTimeStamp):
+
 2007-08-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

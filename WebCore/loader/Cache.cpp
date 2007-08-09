@@ -29,16 +29,18 @@
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "Image.h"
 #include "ResourceHandle.h"
-#include "Frame.h"
+#include "SystemTime.h"
 
 using namespace std;
 
 namespace WebCore {
 
-const int cDefaultCacheSize = 8192 * 1024;
+static const int cDefaultCacheSize = 8192 * 1024;
+static const double cMinDelayBeforeLiveDecodedPrune = 1; // seconds
 
 Cache* cache()
 {
@@ -157,6 +159,10 @@ void Cache::pruneLiveResources()
     // before we do a prune.
     if (m_liveDecodedSize <= m_maximumSize)
         return;
+
+    double currentTime = Frame::currentPaintTimeStamp();
+    if (!currentTime) // In case prune is called directly, outside of a Frame paint.
+        currentTime = WebCore::currentTime();
     
     // Destroy any decoded data in live objects that we can.
     // Start from the tail, since this is the least recently accessed of the objects.
@@ -165,6 +171,11 @@ void Cache::pruneLiveResources()
         CachedResource* prev = current->m_prevInLiveResourcesList;
         ASSERT(current->referenced());
         if (current->isLoaded()) {
+            // Check to see if the remaining resources are too new to prune.
+            double elapsedTime = currentTime - current->m_lastLiveAccessTime;
+            if (elapsedTime < cMinDelayBeforeLiveDecodedPrune)
+                return;
+
             // Go ahead and destroy our decoded data.
             current->destroyDecodedData();
             
