@@ -1,3 +1,12 @@
+2007-08-09  Adele Peterson  <adele@apple.com>
+
+        Fix by Brady, reviewed by me.
+
+        Fix for <rdar://problem/5380697> connection:willSendRequest:redirectResponse: is called on every NSURLConnection
+
+        * platform/network/mac/ResourceHandleMac.mm: (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+          Work around a behavior change in CFNetwork where willSendRequest gets called more often by returning early.
+
 2007-08-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti.

@@ -350,6 +350,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
     if (!m_handle || !m_handle->client())
         return nil;
+    
+    // See <rdar://problem/5380697> .  This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
+    if (!redirectResponse)
+        return newRequest;
+    
     ++inNSURLConnectionCallback;
     ResourceRequest request = newRequest;
     m_handle->client()->willSendRequest(m_handle, request, redirectResponse);
