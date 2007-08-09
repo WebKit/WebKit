@@ -1,0 +1,51 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
+    <p>This tests that the comparison of the host for security is done case insensitive.</p>
+    <iframe id="frameA" src="http://localhost:8000/security/resources/cross-frame-iframe.html"></iframe>
+    <iframe id="frameB" src="http://LOCALHOST:8000/security/resources/localhost-accesssor.html"></iframe>
+    <pre id='console'></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        var innerFrameA = window.frames[0];
+        var innerFrameB = window.frames[1];
+
+        var testDone = false;
+
+        setTimeout(test, 1);
+
+        setTimeout(function() {
+            if (!testDone) {
+                log("FAIL: Test timed out");
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }, 2000);
+
+        function test() {
+            var flagA = innerFrameA.frames[0];
+            if (!flagA) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            var flagB = innerFrameB.frames[0];
+            if (!flagB) {
+                setTimeout(test, 1);
+                return;
+            }
+
+            testDone = true;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</body>
+</html>

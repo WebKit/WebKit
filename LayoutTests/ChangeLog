@@ -1,3 +1,20 @@
+2007-08-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady.
+
+        Test that protocol and host compares are case-insensitive.
+
+        * http/tests/security/cross-frame-access-port-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt: Added.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html: Added.
+        * http/tests/security/host-compare-case-insensitive-expected.txt: Added.
+        * http/tests/security/host-compare-case-insensitive.html: Added.
+        * http/tests/security/protocol-compare-case-insensitive-expected.txt: Added.
+        * http/tests/security/protocol-compare-case-insensitive.html: Added.
+        * http/tests/security/resources/cross-frame-iframe.html:
+        * http/tests/security/resources/localhost-accesssor.html: Added.
+
 2007-08-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

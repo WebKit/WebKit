@@ -1,0 +1,10 @@
+<html>
+<body>
+    <p>Other inner iframe.</p>
+    <iframe name='flag'></iframe>
+    <script>
+        var otherFrame = window.parent.frames[0];
+        otherFrame.document.getElementById('accessMe').innerHTML = "PASS: Host name compare is case insensitive.";
+    </script>
+</body>
+</html>

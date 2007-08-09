@@ -2654,4 +2654,24 @@ DeprecatedString::operator UString() const
     return UString(reinterpret_cast<const KJS::UChar*>(unicode()), length());
 }
 
+bool equalIgnoringCase(const DeprecatedString& a, const DeprecatedString& b)
+{
+    unsigned len = a.length();
+    if (len != b.length())
+        return false;
+
+    DeprecatedStringData* dataA = a.dataHandle[0];
+    DeprecatedStringData* dataB = b.dataHandle[0];
+
+    if (dataA->_isAsciiValid != dataB->_isAsciiValid)
+        return false;
+
+    if (dataA->_isAsciiValid && dataB->_isAsciiValid)
+        return strncasecmp(dataA->_ascii, dataB->_ascii, len) == 0;
+
+    ASSERT(dataA->_isUnicodeValid);
+    ASSERT(dataB->_isUnicodeValid);
+    return equalCaseInsensitive(dataA->_unicode, dataB->_unicode, len);
 }
+
+} // namespace WebCore

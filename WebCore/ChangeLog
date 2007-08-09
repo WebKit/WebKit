@@ -1,3 +1,18 @@
+2007-08-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady.
+
+        Make protocol and host compares case-insensitive.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityPolicyURL):
+        * platform/DeprecatedString.cpp:
+        (WebCore::equalIgnoringCase):
+        * platform/DeprecatedString.h:
+        (WebCore::equalIgnoringCase):
+
 2007-08-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
