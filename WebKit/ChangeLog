@@ -4,7 +4,7 @@
 
         Fixed: <rdar://problem/5394449> Stop using some Carbon UI APIs for 64 bit
         
-        #ifdef'd out Netscape style plug-ins on 64-bit because Mac OS X doesn't support for 64-bit Carbon.
+        #ifdef'd out Netscape style plug-ins on 64-bit because Mac OS X doesn't support 64-bit Carbon UI.
         
         * Plugins/WebBaseNetscapePluginStream.h:
         * Plugins/WebBaseNetscapePluginStream.mm:
