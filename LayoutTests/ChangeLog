@@ -1,5 +1,16 @@
 2007-08-08  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Oliver.
+        
+        <rdar://problem/5387578> Crash at ReplaceSelectionCommand::doApply() when pasting just after table cell content
+
+        * editing/pasteboard/5387578-expected.checksum: Added.
+        * editing/pasteboard/5387578-expected.png: Added.
+        * editing/pasteboard/5387578-expected.txt: Added.
+        * editing/pasteboard/5387578.html: Added.
+
+2007-08-08  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Harrison.
         
         <rdar://problem/5390681> WebKit asserts when deleting To Do content selected with a double-click        

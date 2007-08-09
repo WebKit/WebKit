@@ -154,10 +154,18 @@ void InsertLineBreakCommand::doApply()
         // Handle whitespace that occurs after the split
         updateLayout();
         if (!endingPosition.isRenderedCharacter()) {
+            Position positionBeforeTextNode(positionBeforeNode(textNode));
             // Clear out all whitespace and insert one non-breaking space
             deleteInsignificantTextDownstream(endingPosition);
             ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
-            insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
+            // Deleting insignificant whitespace will remove textNode if it contains nothing but insignificant whitespace.
+            if (textNode->inDocument())
+                insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
+            else {
+                RefPtr<Text> nbspNode = document()->createTextNode(nonBreakingSpaceString());
+                insertNodeAt(nbspNode.get(), positionBeforeTextNode);
+                endingPosition = Position(nbspNode.get(), 0);
+            }
         }
         
         setEndingSelection(Selection(endingPosition, DOWNSTREAM));

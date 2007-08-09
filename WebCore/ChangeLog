@@ -1,3 +1,20 @@
+2007-08-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5387578> Crash at ReplaceSelectionCommand::doApply() when pasting just after table cell content
+        
+        ReplaceSelectionCommand::doApply() inserts a line break before insertion
+        to prevent block nesting.  InsertLineBreakCommand::doApply was accidently
+        destroying a text node when it removed insignificant whitespace and then
+        setting a nil endingSelection().
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): If insignificant whitespace
+        removal removes textNode from the document, insert a text node containing
+        the non-breaking space we were attempting to insert and then insert it
+        at the position that the removed textNode occupied.
+
 2007-08-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
