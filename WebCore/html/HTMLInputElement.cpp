@@ -1100,6 +1100,9 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
             }
             input->deref();
         }
+
+        // Left clicks on radio buttons and check boxes already performed default actions in preDispatchEventHandler(). 
+        evt->setDefaultHandled();
     }
 }
 
@@ -1130,6 +1133,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // Before calling the base class defaultEventHandler, which will call handleKeypress, call doTextFieldCommandFromEvent.
     if (isTextField() && evt->type() == keypressEvent && evt->isKeyboardEvent() && focused() && document()->frame()
                 && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
+        evt->setDefaultHandled();
+        return;
+    }
+
+    if (inputType() == RADIO && evt->isMouseEvent()
+            && evt->type() == clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         evt->setDefaultHandled();
         return;
     }

@@ -1,3 +1,16 @@
+2007-08-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Test for <rdar://problem/5286443>, http://bugs.webkit.org/
+        show_bug.cgi?id=14268 REGRESSION: Radio buttons don't stay selected 
+        due to unclosed <label> tags
+
+        * fast/forms/radio-nested-labels-expected.checksum: Added.
+        * fast/forms/radio-nested-labels-expected.png: Added.
+        * fast/forms/radio-nested-labels-expected.txt: Added.
+        * fast/forms/radio-nested-labels.html: Added.
+
 2007-08-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

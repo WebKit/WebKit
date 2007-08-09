@@ -104,23 +104,25 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
     static bool processingClick = false;
 
     if (evt->type() == clickEvent && !processingClick) {
-        RefPtr<HTMLElement> element = correspondingControl();
+        RefPtr<HTMLElement> control = correspondingControl();
 
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
-        if (!element || (evt->target() && element->contains(evt->target()->toNode())))
+        if (!control || (evt->target() && control->contains(evt->target()->toNode())))
             return;
 
         processingClick = true;
 
         // Click the corresponding control.
-        element->dispatchSimulatedClick(evt);
+        control->dispatchSimulatedClick(evt);
 
         // If the control can be focused via the mouse, then do that too.
-        if (element->isMouseFocusable())
-            element->focus();
+        if (control->isMouseFocusable())
+            control->focus();
 
         processingClick = false;
+        
+        evt->setDefaultHandled();
     }
     
     HTMLElement::defaultEventHandler(evt);
