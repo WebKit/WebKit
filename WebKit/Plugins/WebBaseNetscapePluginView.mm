@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
+
 #import "WebBaseNetscapePluginView.h"
 
 #import "WebDataSourceInternal.h"
@@ -165,15 +167,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     carbonEvent->what = nullEvent;
     carbonEvent->message = 0;
     carbonEvent->when = TickCount();
-#ifdef __LP64__
-    // FIXME: we need to adopt the new HIGetMousePosition() here and remove GetGlobalMouse <rdar://problem/5311653>
-    carbonEvent->where.h = 0;
-    carbonEvent->where.v = 0;
-#else
+    
     GetGlobalMouse(&carbonEvent->where);
     carbonEvent->where.h = static_cast<short>(carbonEvent->where.h * HIGetScaleFactor());
     carbonEvent->where.v = static_cast<short>(carbonEvent->where.v * HIGetScaleFactor());
-#endif
     carbonEvent->modifiers = GetCurrentKeyModifiers();
     if (!Button())
         carbonEvent->modifiers |= btnState;
@@ -1028,9 +1025,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView)
 {    
-#ifndef __LP64__
-    // FIXME: CopyEvent is gone in 64-bit, this function needs to not use it <rdar://problem/5311648>
-
     EventRef rawKeyEventRef;
     OSStatus status = GetEventParameter(inEvent, kEventParamTextInputSendKeyboardEvent, typeEventRef, NULL, sizeof(EventRef), NULL, &rawKeyEventRef);
     if (status != noErr) {
@@ -1080,7 +1074,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ReleaseEvent(cloneEvent);
     
     free(buffer);
-#endif
 
     return noErr;
 }
@@ -3191,3 +3184,4 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 @end
+#endif

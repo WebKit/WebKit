@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
 #import "WebBaseNetscapePluginStream.h"
 
 #import "WebBaseNetscapePluginView.h"
@@ -577,3 +578,5 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath)
 
     return NULL;
 }
+
+#endif

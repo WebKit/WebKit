@@ -65,10 +65,16 @@
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
+    
     WebBasePluginPackage *pluginPackage = [[WebPluginPackage alloc] initWithPath:pluginPath];
 
-    if (!pluginPackage)
+    if (!pluginPackage) {
+#ifdef __LP64__
+        return nil;
+#else
         pluginPackage = [[WebNetscapePluginPackage alloc] initWithPath:pluginPath];
+#endif
+    }
 
     return [pluginPackage autorelease];
 }

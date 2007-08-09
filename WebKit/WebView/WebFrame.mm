@@ -615,6 +615,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return (WebFrameLoadType)[self _frameLoader]->loadType();
 }
 
+#ifndef __LP64__
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {
     Frame* coreFrame = core(self);
@@ -624,7 +625,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
     }
 }
+#endif
 
+#ifndef __LP64__
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins
 {
     Frame* coreFrame = core(self);
@@ -634,6 +637,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
             [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
     }
 }
+#endif
 
 - (NSRange)_selectedNSRange
 {

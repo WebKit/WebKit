@@ -487,7 +487,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                        baseURL:baseURL
                                     DOMElement:element
                                   loadManually:loadManually];
-        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            
+        }
+#ifndef __LP64__
+        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                            pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:URL
@@ -498,8 +501,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                             loadManually:loadManually
                                                               DOMElement:element] autorelease];
             view = embeddedView;
-        } else
-            ASSERT_NOT_REACHED();
+        } 
+#endif
     } else
         errorCode = WebKitErrorCannotFindPlugIn;
 
@@ -527,15 +530,20 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[_frame _dataSource] representation];
 
+#ifndef __LP64__
     if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
         [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];
     else {
+#else
+    {
+#endif
         WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
         ASSERT([docView isKindOfClass:[WebHTMLView class]]);
         
         WebPluginController *pluginController = [docView _pluginController];
         [representation _redirectDataToManualLoader:pluginController forPluginView:pluginView];
     }
+
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
@@ -571,7 +579,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                   loadManually:NO];
             [names release];
             [values release];
-        } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            
+        } 
+#ifndef __LP64__
+        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
                                                            pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:nil
@@ -584,6 +595,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         } else {
             ASSERT_NOT_REACHED();
         }
+#endif
     }
 
     if (!view) {

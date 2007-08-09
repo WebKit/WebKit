@@ -1,3 +1,38 @@
+2007-08-08  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed: <rdar://problem/5394449> Stop using some Carbon UI APIs for 64 bit
+        
+        #ifdef'd out Netscape style plug-ins on 64-bit because Mac OS X doesn't support for 64-bit Carbon.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (+[WebBaseNetscapePluginView getCarbonEvent:]):
+        (TSMEventHandler):
+        * Plugins/WebBaseNetscapePluginViewInternal.h:
+        * Plugins/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage pluginWithPath:]):
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.mm:
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        * Plugins/npapi.m:
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        * WebView/WebFrame.mm:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLView.mm:
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Niko.

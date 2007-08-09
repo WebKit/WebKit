@@ -26,9 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
 #import <WebKit/WebBaseNetscapePluginView.h>
 
 @interface WebBaseNetscapePluginView (WebInternal)
 - (void)restartNullEvents;
 - (void)stopNullEvents;
 @end
+#endif
+

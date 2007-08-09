@@ -107,8 +107,10 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 - (void)_updateFontPanel;
 - (BOOL)_canSmartCopyOrDelete;
 - (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
+#ifndef __LP64__
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
+#endif
 - (void)_willMakeFirstResponderForNodeFocus;
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;

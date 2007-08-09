@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
 #import "WebNetscapePluginPackage.h"
 
 #import "WebKitLogging.h"
@@ -769,3 +770,4 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
 }
 
 @end
+#endif

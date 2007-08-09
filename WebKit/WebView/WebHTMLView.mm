@@ -4810,11 +4810,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object
 {
+#ifndef __LP64__
     NSEnumerator *enumerator = [self objectEnumerator];
     WebNetscapePluginEmbeddedView *view;
     while ((view = [enumerator nextObject]) != nil)
         if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]])
             [view performSelector:selector withObject:object];
+#endif
 }
 
 @end
@@ -4896,6 +4898,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return _private->mouseDownEvent;
 }
 
+#ifndef __LP64__
 - (void)_pauseNullEventsForAllNetscapePlugins
 {
     NSArray *subviews = [self subviews];
@@ -4908,7 +4911,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             [(WebBaseNetscapePluginView *)subview stopNullEvents];
     }
 }
+#endif
 
+#ifndef __LP64__
 - (void)_resumeNullEventsForAllNetscapePlugins
 {
     NSArray *subviews = [self subviews];
@@ -4921,6 +4926,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             [(WebBaseNetscapePluginView *)subview restartNullEvents];
     }
 }
+#endif
 
 - (void)_willMakeFirstResponderForNodeFocus
 {

@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __LP64__
 #import "WebBasePluginPackage.h"
 
 #ifdef BUILDING_ON_TIGER
@@ -100,4 +101,4 @@ typedef enum {
 - (NPP_PrintProcPtr)NPP_Print;
 
 @end
-
+#endif

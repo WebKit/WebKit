@@ -57,8 +57,10 @@ typedef enum {
 - (BOOL)_isFrameSet;
 - (BOOL)_firstLayoutDone;
 - (WebFrameLoadType)_loadType;
+#ifndef __LP64__
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
+#endif
 
 // These methods take and return NSRanges based on the root editable element as the positional base.
 // This fits with AppKit's idea of an input context. These methods are slow compared to their DOMRange equivalents.
