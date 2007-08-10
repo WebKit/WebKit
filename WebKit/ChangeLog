@@ -1,3 +1,18 @@
+2007-08-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5394449> Stop using some Carbon UI APIs for 64 bit
+
+        Disable NPObject use in 64-bit on Mac OS X. Also generate the 64-bit export file.
+
+        * Configurations/WebKit.xcconfig: Point to the generated 64-bit export file.
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/npfunctions.h: #ifdef out this header in 64-bit on Mac OS X.
+        * WebKit.LP64.exp: Removed.
+        * WebKit.xcodeproj/project.pbxproj: Generate the the 64-bit export file.
+        * WebKitPrefix.h: Define WTF_USE_NPOBJECT.
+
 2007-08-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

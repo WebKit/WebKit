@@ -87,6 +87,7 @@
 #import "kjs_window.h"
 #import "markup.h"
 #import "visible_units.h"
+#import <OpenScripting/ASRegistry.h>
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>

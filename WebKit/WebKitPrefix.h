@@ -66,6 +66,12 @@
 
 #include <JavaScriptCore/Platform.h>
 
+#ifdef __LP64__
+#define WTF_USE_NPOBJECT 0
+#else
+#define WTF_USE_NPOBJECT 1
+#endif
+
 #ifdef __cplusplus
 #include <wtf/FastMalloc.h>
 #endif

@@ -24,13 +24,16 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/TextAffinity.h>
 #import <WebCore/TextGranularity.h>
+
+#if USE(NPOBJECT)
+#import <JavaScriptCore/npruntime.h>
+#endif
 
 namespace WebCore {
     class Frame;

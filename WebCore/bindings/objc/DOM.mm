@@ -557,9 +557,11 @@ static NSArray *kit(const Vector<IntRect>& rects)
 // FIXME: this should be implemented in the implementation
 - (void *)_NPObject
 {
+#if USE(NPOBJECT)
     WebCore::Element* element = [self _element];
     if (element->hasTagName(WebCore::HTMLNames::appletTag) || element->hasTagName(WebCore::HTMLNames::embedTag) || element->hasTagName(WebCore::HTMLNames::objectTag))
         return static_cast<WebCore::HTMLPlugInElement*>(element)->getNPObject();
+#endif
     return 0;
 }
 

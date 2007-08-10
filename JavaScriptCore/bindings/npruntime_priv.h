@@ -26,6 +26,8 @@
 #ifndef NP_RUNTIME_PRIV_H_
 #define NP_RUNTIME_PRIV_H_
 
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "npruntime.h"
 
 /*
@@ -35,3 +37,5 @@
 void NPN_InitializeVariantWithStringCopy(NPVariant*, const NPString*);
 
 #endif
+#endif
+

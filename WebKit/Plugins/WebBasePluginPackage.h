@@ -27,7 +27,12 @@
  */
 
 #import <WebCore/WebCoreViewFactory.h>
+
+#if USE(NPOBJECT)
 #import <WebKit/npfunctions.h>
+#else
+typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
+#endif
 
 @class WebPluginDatabase;
 

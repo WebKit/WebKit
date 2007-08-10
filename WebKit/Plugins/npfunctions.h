@@ -4,6 +4,10 @@
 #include <WebKit/npruntime.h>
 #include <WebKit/npapi.h>
 
+#if defined(XP_MACOSX) && defined(__LP64__)
+#error 64-bit Netscape plug-ins are not supported on Mac OS X
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

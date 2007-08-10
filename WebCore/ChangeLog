@@ -1,3 +1,24 @@
+2007-08-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5394449> Stop using some Carbon UI APIs for 64 bit
+
+        Disable NPObject use in 64-bit on Mac OS X.
+
+        * Configurations/WebCore.xcconfig: Add a framework search path to the sub-framworks of Carbon.
+        * WebCore.xcodeproj/project.pbxproj: Filter out the Frame::windowScriptNPObject() symbol in 64-bit.
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _NPObject]): Return null in 64-bit.
+        * config.h: Set WTF_USE_NPOBJECT to 0 in 64-bit Mac OS X.
+        * page/Frame.cpp:
+        (WebCore::Frame::cleanupScriptObjects): Add more #if USE(NPOBJECT) blocks where needed.
+        * page/Frame.h: Ditto.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::createScriptInstanceForWidget): Ditto.
+        * page/mac/WebCoreFrameBridge.h: Ditto.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
 2007-08-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Justin.

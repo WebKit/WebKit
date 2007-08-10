@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "c_class.h"
 
 #include "c_instance.h"
@@ -116,3 +119,5 @@ Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) cons
 }
 
 } } // namespace KJS::Bindings
+
+#endif

@@ -26,6 +26,8 @@
 #ifndef NP_JSOBJECT_H
 #define NP_JSOBJECT_H
 
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "npruntime.h"
 #include <wtf/Forward.h>
 
@@ -49,4 +51,5 @@ struct JavaScriptObject
 NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> originRootObject, PassRefPtr<KJS::Bindings::RootObject> rootObject);
 NPObject* _NPN_CreateNoScriptObject(void);
 
+#endif
 #endif

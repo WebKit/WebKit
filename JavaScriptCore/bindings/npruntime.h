@@ -75,6 +75,10 @@ extern "C" {
 #include <stdint.h>
 #include "npapi.h"
 
+#if defined(XP_MACOSX) && defined(__LP64__)
+#error 64-bit Netscape plug-ins are not supported on Mac OS X
+#endif
+
 /*
     This API is used to facilitate binding code written in C to script
     objects.  The API in this header does not assume the presence of a

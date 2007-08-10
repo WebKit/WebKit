@@ -658,6 +658,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
             return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
         return 0;
     } else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
+#if USE(NPOBJECT)
         NPObject* npObject = [aView createPluginScriptableObject];
         if (npObject) {
             Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());
@@ -666,6 +667,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
             _NPN_ReleaseObject(npObject);
             return instance;
         }
+#endif
         return 0;
     }
 

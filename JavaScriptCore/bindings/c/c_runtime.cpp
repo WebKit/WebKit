@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "c_runtime.h"
 
 #include "c_instance.h"
@@ -89,3 +92,5 @@ void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue *
 }
 
 } }
+
+#endif

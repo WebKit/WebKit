@@ -26,6 +26,8 @@
 #ifndef BINDINGS_C_RUNTIME_H_
 #define BINDINGS_C_RUNTIME_H_
 
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "npruntime.h"
 #include "runtime.h"
 
@@ -60,4 +62,5 @@ private:
 } // namespace Bindings
 } // namespace KJS
 
+#endif
 #endif

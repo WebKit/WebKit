@@ -330,7 +330,6 @@
 		1CA57D600AED6A470009BDD0 /* WebGraphicsExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGraphicsExtras.h; sourceTree = "<group>"; };
 		1CA57D610AED6A470009BDD0 /* WebGraphicsExtras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebGraphicsExtras.c; sourceTree = "<group>"; };
 		1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OldWebAssertions.c; sourceTree = "<group>"; };
-		1CE502600C4D48E000F0494E /* WebKit.LP64.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebKit.LP64.exp; sourceTree = "<group>"; };
 		2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginViewInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -632,7 +631,6 @@
 			children = (
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
 				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
-				1CE502600C4D48E000F0494E /* WebKit.LP64.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F52CA6C002DF9D78018635CA /* Download */,
@@ -1301,6 +1299,7 @@
 				939810BB0824BF01008DF038 /* Sources */,
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
 				939811270824BF01008DF038 /* Frameworks */,
+				1C395DE20C6BE8E0000D1E52 /* ShellScript */,
 			);
 			buildRules = (
 				1C8715500B0BA41000E3CB7B /* PBXBuildRule */,
@@ -1360,6 +1359,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1C395DE20C6BE8E0000D1E52 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/WebKit.exp",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${SRCROOT}/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n";
+		};
 		1C5BFFFE0BAF8AEA004FF4F5 /* Check Bundle Version */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

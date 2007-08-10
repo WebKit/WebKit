@@ -26,6 +26,8 @@
 #ifndef _NP_RUNTIME_IMPL_H_
 #define _NP_RUNTIME_IMPL_H_
 
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "npruntime.h"
 
 #ifdef __cplusplus
@@ -58,4 +60,5 @@ extern bool _NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, 
 }  /* end extern "C" */
 #endif
 
+#endif
 #endif

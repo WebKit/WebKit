@@ -96,7 +96,7 @@
 #endif
 
 #if defined(XP_MACOSX) && defined(__LP64__)
-    #define NP_NO_QUICKDRAW
+#error 64-bit Netscape plug-ins are not supported on Mac OS X
 #endif
 
 /*----------------------------------------------------------------------*/

@@ -97,10 +97,12 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
             break;
         }
 #endif
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
         case Instance::CLanguage: {
             newInstance = new Bindings::CInstance((NPObject *)nativeInstance, rootObject);
             break;
         }
+#endif
 #if PLATFORM(QT)
         case Instance::QtLanguage: {
             newInstance = new Bindings::QtInstance((QObject *)nativeInstance, rootObject);

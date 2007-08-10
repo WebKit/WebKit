@@ -1,3 +1,33 @@
+2007-08-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5394449> Stop using some Carbon UI APIs for 64 bit
+
+        Disable the NPAPI for 64-bit on Mac OS X.
+
+        * Configurations/JavaScriptCore.xcconfig: Use the 64-bit export file.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Create a 64-bit export file
+        that filters out the NPN fnctions.
+        * bindings/NP_jsobject.cpp: #ifdef out this for 64-bit on Mac OS X
+        * bindings/NP_jsobject.h: Ditto.
+        * bindings/c/c_class.cpp: Ditto.
+        * bindings/c/c_class.h: Ditto.
+        * bindings/c/c_instance.cpp: Ditto.
+        * bindings/c/c_instance.h: Ditto.
+        * bindings/c/c_runtime.cpp: Ditto.
+        * bindings/c/c_runtime.h: Ditto.
+        * bindings/c/c_utility.cpp: Ditto.
+        * bindings/c/c_utility.h: Ditto.
+        * bindings/npapi.h: Ditto.
+        * bindings/npruntime.cpp: Ditto.
+        * bindings/npruntime.h: Ditto.
+        * bindings/npruntime_impl.h: Ditto.
+        * bindings/npruntime_priv.h: Ditto.
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+         don't creat an NPObject on Mac OS X in 64-bit.
+
 2007-08-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.

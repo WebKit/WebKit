@@ -26,6 +26,8 @@
 #ifndef BINDINGS_C_INSTANCE_H_
 #define BINDINGS_C_INSTANCE_H_
 
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "runtime.h"
 #include <wtf/Noncopyable.h>
 
@@ -71,4 +73,5 @@ private:
 
 } // namespace KJS
 
+#endif
 #endif

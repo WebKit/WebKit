@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if !PLATFORM(DARWIN) || !defined(__LP64__)
+
 #include "npruntime.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
@@ -206,3 +209,5 @@ void _NPN_DeallocateObject(NPObject *obj)
             free(obj);
     }
 }
+
+#endif

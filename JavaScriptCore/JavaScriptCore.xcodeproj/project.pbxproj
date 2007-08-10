@@ -1305,6 +1305,7 @@
 				932F5B910822A1C700736975 /* Sources */,
 				9319586B09D9F91A00A56FD4 /* Check For Global Initializers */,
 				932F5BD20822A1C700736975 /* Frameworks */,
+				1C395CBC0C6BCC16000D1E52 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
 				1CFE4BF10B0BA22200CC444D /* PBXBuildRule */,
@@ -1407,6 +1408,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp \"${SRCROOT}/API/testapi.js\" \"${BUILT_PRODUCTS_DIR}\"";
+		};
+		1C395CBC0C6BCC16000D1E52 /* Generate 64-bit Export File */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/JavaScriptCore.exp",
+			);
+			name = "Generate 64-bit Export File";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# exclude NPN functions on 64-bit\nsed -e s/^.\\*NPN.\\*$// \"${SRCROOT}/JavaScriptCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp\"\n";
 		};
 		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
