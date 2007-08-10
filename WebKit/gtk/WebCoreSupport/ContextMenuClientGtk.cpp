@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ContextMenuClientGdk.h"
+#include "ContextMenuClientGtk.h"
 
 #include "HitTestResult.h"
 #include "KURL.h"
@@ -34,48 +34,48 @@
 
 namespace WebCore {
     
-void ContextMenuClientGdk::contextMenuDestroyed()
+void ContextMenuClientGtk::contextMenuDestroyed()
 {
     notImplemented();
 }
 
-PlatformMenuDescription ContextMenuClientGdk::getCustomMenuFromDefaultItems(ContextMenu*)
+PlatformMenuDescription ContextMenuClientGtk::getCustomMenuFromDefaultItems(ContextMenu*)
 {
     notImplemented();
     return PlatformMenuDescription();
 }
 
-void ContextMenuClientGdk::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
+void ContextMenuClientGtk::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::downloadURL(const KURL& url)
+void ContextMenuClientGtk::downloadURL(const KURL& url)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::copyImageToClipboard(const HitTestResult&)
+void ContextMenuClientGtk::copyImageToClipboard(const HitTestResult&)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::searchWithGoogle(const Frame*)
+void ContextMenuClientGtk::searchWithGoogle(const Frame*)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::lookUpInDictionary(Frame*)
+void ContextMenuClientGtk::lookUpInDictionary(Frame*)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::speak(const String&)
+void ContextMenuClientGtk::speak(const String&)
 {
     notImplemented();
 }
 
-void ContextMenuClientGdk::stopSpeaking()
+void ContextMenuClientGtk::stopSpeaking()
 {
     notImplemented();
 }

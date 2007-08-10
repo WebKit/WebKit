@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContextMenuClientGdk_h
-#define ContextMenuClientGdk_h
+#ifndef ContextMenuClientGtk_h
+#define ContextMenuClientGtk_h
 
 #include "ContextMenuClient.h"
 
 namespace WebCore {
     class ContextMenu;
 
-    class ContextMenuClientGdk : public ContextMenuClient
+    class ContextMenuClientGtk : public ContextMenuClient
     {
     public:
         virtual void contextMenuDestroyed();

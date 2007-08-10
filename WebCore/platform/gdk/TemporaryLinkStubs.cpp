@@ -44,7 +44,6 @@
 #include "Font.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
 #include "FTPDirectoryDocument.h"
 #include "GlobalHistory.h"

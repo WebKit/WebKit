@@ -26,8 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoaderClientGdk_H
-#define FrameLoaderClientGdk_H
+#ifndef FrameLoaderClientGtk_H
+#define FrameLoaderClientGtk_H
 
 #include "FrameLoaderClient.h"
 
@@ -37,10 +37,10 @@ typedef struct _WebKitGtkFrame WebKitGtkFrame;
 
 namespace WebCore {
 
-    class FrameLoaderClientGdk : public FrameLoaderClient {
+    class FrameLoaderClientGtk : public FrameLoaderClient {
     public:
-        FrameLoaderClientGdk(WebKitGtkFrame*);
-        virtual ~FrameLoaderClientGdk() { }
+        FrameLoaderClientGtk(WebKitGtkFrame*);
+        virtual ~FrameLoaderClientGtk() { }
         virtual void frameLoaderDestroyed();
 
         WebKitGtkFrame*  webFrame() const { return m_frame; }

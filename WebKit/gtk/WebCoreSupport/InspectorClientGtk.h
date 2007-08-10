@@ -26,58 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InspectorClientGdk.h"
+#ifndef InspectorClientGtk_h
+#define InspectorClientGtk_h
 
-#include "NotImplemented.h"
+#include "InspectorClient.h"
 
 namespace WebCore {
+    class Node;
+    class Page;
+    class String;
 
-void InspectorClientGdk::inspectorDestroyed()
-{
-    notImplemented();
+    class InspectorClientGtk : public InspectorClient {
+    public:
+        virtual void inspectorDestroyed();
+
+        virtual Page* createPage();
+
+        virtual void showWindow();
+        virtual void closeWindow();
+
+        virtual void attachWindow();
+        virtual void detachWindow();
+
+        virtual void highlight(Node*);
+        virtual void hideHighlight();
+        virtual void inspectedURLChanged(const String& newURL);
+    };
 }
 
-Page* InspectorClientGdk::createPage()
-{
-    notImplemented();
-    return 0;
-}
-
-void InspectorClientGdk::showWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::closeWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::attachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::detachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::highlight(Node* node)
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::hideHighlight()
-{
-    notImplemented();
-}
-
-void InspectorClientGdk::inspectedURLChanged(const String&)
-{
-    notImplemented();
-}
-
-}
-
+#endif

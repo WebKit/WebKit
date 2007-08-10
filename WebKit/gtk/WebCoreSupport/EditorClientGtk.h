@@ -27,8 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EditorClientGdk_h
-#define EditorClientGdk_h
+#ifndef EditorClientGtk_h
+#define EditorClientGtk_h
 
 #include "EditorClient.h"
 
@@ -40,9 +40,9 @@ namespace WebCore {
 
 class Page;
 
-class EditorClientGdk : public EditorClient {
+class EditorClientGtk : public EditorClient {
 public:
-    EditorClientGdk(WebKitGtkPage*);
+    EditorClientGtk(WebKitGtkPage*);
 
     // from EditorClient
     virtual void pageDestroyed();

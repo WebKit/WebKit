@@ -44,7 +44,7 @@
 #include "Settings.h"
 #include "Page.h"
 #include "Frame.h"
-#include "FrameLoaderClientGdk.h"
+#include "FrameLoaderClientGtk.h"
 
 namespace WebKitGtk {
     void apply(WebKitGtkSettings*,WebCore::Settings*);
@@ -74,7 +74,7 @@ extern "C" {
     typedef struct _WebKitGtkFramePrivate WebKitGtkFramePrivate;
     struct _WebKitGtkFramePrivate {
         WebCore::Frame* frame;
-        WebCore::FrameLoaderClientGdk* client;
+        WebCore::FrameLoaderClientGtk* client;
         WebKitGtkPage* page;
     };
 

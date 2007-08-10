@@ -1,3 +1,13 @@
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Move the various *ClientGdk.{h,cpp} away from the WebCore directory as
+        of http://bugs.webkit.org/show_bug.cgi?id=14727.
+
+        * WebCore.pro:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
 2007-08-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

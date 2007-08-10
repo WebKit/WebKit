@@ -842,22 +842,22 @@ gdk-port {
         ../WebKit/gtk/Api/webkitgtkpage.h \
         ../WebKit/gtk/Api/webkitgtkprivate.h \
         ../WebKit/gtk/Api/webkitgtksettings.h \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGdk.h
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \ 
+        ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
+        ../WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
+        ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
+        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h
     SOURCES += \
         platform/TextCodecICU.cpp \
         platform/TextBreakIteratorICU.cpp \
         page/gdk/EventHandlerGdk.cpp \
         page/gdk/FrameGdk.cpp \
-        page/gdk/ContextMenuClientGdk.cpp \
         page/gdk/DragControllerGdk.cpp \
-        page/gdk/InspectorClientGdk.cpp \
         loader/gdk/DocumentLoaderGdk.cpp \
-        loader/gdk/FrameLoaderClientGdk.cpp \
         platform/gdk/CookieJarGdk.cpp \
         platform/gdk/CursorGdk.cpp \
         platform/gdk/DragDataGdk.cpp \
         platform/gdk/DragImageGdk.cpp \
-        platform/gdk/EditorClientGdk.cpp \
         platform/gdk/FontCacheGdk.cpp \
         platform/gdk/FontDataGdk.cpp \
         platform/gdk/FontGdk.cpp \
@@ -900,7 +900,11 @@ gdk-port {
         ../WebKit/gtk/Api/webkitgtkpage.cpp \
         ../WebKit/gtk/Api/webkitgtkprivate.cpp \
         ../WebKit/gtk/Api/webkitgtksettings.cpp \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGdk.cpp
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \ 
+        ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
+        ../WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
+        ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
+        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp
 }
  
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

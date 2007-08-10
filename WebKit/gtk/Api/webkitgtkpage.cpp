@@ -33,14 +33,14 @@
 #include "webkitgtkprivate.h"
 
 #include "NotImplemented.h"
-#include "ChromeClientGdk.h"
-#include "ContextMenuClientGdk.h"
-#include "EditorClientGdk.h"
+#include "ChromeClientGtk.h"
+#include "ContextMenuClientGtk.h"
+#include "EditorClientGtk.h"
 #include "EventHandler.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "GraphicsContext.h"
-#include "InspectorClientGdk.h"
+#include "InspectorClientGtk.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "PlatformKeyboardEvent.h"
@@ -347,7 +347,7 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
 static void webkit_gtk_page_init(WebKitGtkPage* page)
 {
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(page));
-    pageData->page = new Page(new ChromeClientGdk(page), new ContextMenuClientGdk, new EditorClientGdk(page), 0, new InspectorClientGdk);
+    pageData->page = new Page(new ChromeClientGtk(page), new ContextMenuClientGtk, new EditorClientGtk(page), 0, new InspectorClientGtk);
 
     Settings* settings = pageData->page->settings();
     settings->setLoadsImagesAutomatically(true);

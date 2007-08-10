@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "EditorClientGdk.h"
+#include "EditorClientGtk.h"
 
 #include "EditCommand.h"
 #include "Editor.h"
@@ -47,178 +47,178 @@ using namespace WebKitGtk;
 
 namespace WebCore {
 
-bool EditorClientGdk::shouldDeleteRange(Range*)
+bool EditorClientGtk::shouldDeleteRange(Range*)
 {
     notImplemented();
     return false;
 }
 
-bool EditorClientGdk::shouldShowDeleteInterface(HTMLElement*)
+bool EditorClientGtk::shouldShowDeleteInterface(HTMLElement*)
 {
     return false;
 }
 
-bool EditorClientGdk::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientGdk::isGrammarCheckingEnabled()
+bool EditorClientGtk::isContinuousSpellCheckingEnabled()
 {
     notImplemented();
     return false;
 }
 
-int EditorClientGdk::spellCheckerDocumentTag()
+bool EditorClientGtk::isGrammarCheckingEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+int EditorClientGtk::spellCheckerDocumentTag()
 {
     notImplemented();
     return 0;
 }
 
-bool EditorClientGdk::shouldBeginEditing(WebCore::Range*)
+bool EditorClientGtk::shouldBeginEditing(WebCore::Range*)
 {
     notImplemented();
     return false;
 }
 
-bool EditorClientGdk::shouldEndEditing(WebCore::Range*)
+bool EditorClientGtk::shouldEndEditing(WebCore::Range*)
 {
     notImplemented();
     return false;
 }
 
-bool EditorClientGdk::shouldInsertText(String, Range*, EditorInsertAction)
+bool EditorClientGtk::shouldInsertText(String, Range*, EditorInsertAction)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClientGdk::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
+bool EditorClientGtk::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
 {
     notImplemented();
     return true;
 }
 
-bool EditorClientGdk::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
+bool EditorClientGtk::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
                                       WebCore::Range*)
 {
     notImplemented();
     return false;
 }
 
-bool EditorClientGdk::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
+bool EditorClientGtk::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
 {
     notImplemented();
     return true;
 }
 
-void EditorClientGdk::didBeginEditing()
+void EditorClientGtk::didBeginEditing()
 {
     notImplemented();
 }
 
-void EditorClientGdk::respondToChangedContents()
+void EditorClientGtk::respondToChangedContents()
 {
     notImplemented();
 }
 
-void EditorClientGdk::respondToChangedSelection()
+void EditorClientGtk::respondToChangedSelection()
 {
     notImplemented();
 }
 
-void EditorClientGdk::didEndEditing()
+void EditorClientGtk::didEndEditing()
 {
     notImplemented();
 }
 
-void EditorClientGdk::didWriteSelectionToPasteboard()
+void EditorClientGtk::didWriteSelectionToPasteboard()
 {
     notImplemented();
 }
 
-void EditorClientGdk::didSetSelectionTypesForPasteboard()
+void EditorClientGtk::didSetSelectionTypesForPasteboard()
 {
     notImplemented();
 }
 
-bool EditorClientGdk::selectWordBeforeMenuEvent()
-{
-    notImplemented();
-    return false;
-}
-
-bool EditorClientGdk::isEditable()
+bool EditorClientGtk::selectWordBeforeMenuEvent()
 {
     notImplemented();
     return false;
 }
 
-void EditorClientGdk::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::clearUndoRedoOperations()
-{
-    notImplemented();
-}
-
-bool EditorClientGdk::canUndo() const
+bool EditorClientGtk::isEditable()
 {
     notImplemented();
     return false;
 }
 
-bool EditorClientGdk::canRedo() const
+void EditorClientGtk::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::clearUndoRedoOperations()
+{
+    notImplemented();
+}
+
+bool EditorClientGtk::canUndo() const
 {
     notImplemented();
     return false;
 }
 
-void EditorClientGdk::undo()
-{
-    notImplemented();
-}
-
-void EditorClientGdk::redo()
-{
-    notImplemented();
-}
-
-bool EditorClientGdk::shouldInsertNode(Node*, Range*, EditorInsertAction)
+bool EditorClientGtk::canRedo() const
 {
     notImplemented();
     return false;
 }
 
-void EditorClientGdk::pageDestroyed()
+void EditorClientGtk::undo()
 {
     notImplemented();
 }
 
-bool EditorClientGdk::smartInsertDeleteEnabled()
+void EditorClientGtk::redo()
+{
+    notImplemented();
+}
+
+bool EditorClientGtk::shouldInsertNode(Node*, Range*, EditorInsertAction)
 {
     notImplemented();
     return false;
 }
 
-void EditorClientGdk::toggleContinuousSpellChecking()
+void EditorClientGtk::pageDestroyed()
 {
     notImplemented();
 }
 
-void EditorClientGdk::toggleGrammarChecking()
+bool EditorClientGtk::smartInsertDeleteEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+void EditorClientGtk::toggleContinuousSpellChecking()
+{
+    notImplemented();
+}
+
+void EditorClientGtk::toggleGrammarChecking()
 {
 }
 
-void EditorClientGdk::handleKeypress(KeyboardEvent* event)
+void EditorClientGtk::handleKeypress(KeyboardEvent* event)
 {
     Frame* frame = core(m_page)->focusController()->focusedOrMainFrame();
     if (!frame)
@@ -258,89 +258,89 @@ void EditorClientGdk::handleKeypress(KeyboardEvent* event)
 }
 
 
-void EditorClientGdk::handleInputMethodKeypress(KeyboardEvent*)
+void EditorClientGtk::handleInputMethodKeypress(KeyboardEvent*)
 {
     notImplemented();
 }
 
-EditorClientGdk::EditorClientGdk(WebKitGtkPage* page)
+EditorClientGtk::EditorClientGtk(WebKitGtkPage* page)
     : m_page(page)
 {
 }
 
-void EditorClientGdk::textFieldDidBeginEditing(Element*)
+void EditorClientGtk::textFieldDidBeginEditing(Element*)
 {
     notImplemented();
 }
 
-void EditorClientGdk::textFieldDidEndEditing(Element*)
+void EditorClientGtk::textFieldDidEndEditing(Element*)
 {
     notImplemented();
 }
 
-void EditorClientGdk::textDidChangeInTextField(Element*)
+void EditorClientGtk::textDidChangeInTextField(Element*)
 {
     notImplemented();
 }
 
-bool EditorClientGdk::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
-{
-    notImplemented();
-    return false;
-}
-
-void EditorClientGdk::textWillBeDeletedInTextField(Element*)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::textDidChangeInTextArea(Element*)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::ignoreWordInSpellDocument(const String&)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::learnWord(const String&)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::checkSpellingOfString(const UChar*, int, int*, int*)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::updateSpellingUIWithMisspelledWord(const String&)
-{
-    notImplemented();
-}
-
-void EditorClientGdk::showSpellingUI(bool)
-{
-    notImplemented();
-}
-
-bool EditorClientGdk::spellingUIIsShowing()
+bool EditorClientGtk::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
 {
     notImplemented();
     return false;
 }
 
-void EditorClientGdk::getGuessesForWord(const String&, Vector<String>&)
+void EditorClientGtk::textWillBeDeletedInTextField(Element*)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::textDidChangeInTextArea(Element*)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::ignoreWordInSpellDocument(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::learnWord(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::checkSpellingOfString(const UChar*, int, int*, int*)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::updateSpellingUIWithMisspelledWord(const String&)
+{
+    notImplemented();
+}
+
+void EditorClientGtk::showSpellingUI(bool)
+{
+    notImplemented();
+}
+
+bool EditorClientGtk::spellingUIIsShowing()
+{
+    notImplemented();
+    return false;
+}
+
+void EditorClientGtk::getGuessesForWord(const String&, Vector<String>&)
 {
     notImplemented();
 }

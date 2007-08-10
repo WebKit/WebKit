@@ -31,7 +31,7 @@
 #include "webkitgtkprivate.h"
 #include "NotImplemented.h"
 #include "FrameLoader.h"
-#include "ChromeClientGdk.h"
+#include "ChromeClientGtk.h"
 
 using namespace WebCore;
 
@@ -65,7 +65,7 @@ WebCore::Frame* core(WebKitGtkFrame* frame)
 
 WebKitGtkFrame* kit(WebCore::Frame* coreFrame)
 {
-    FrameLoaderClientGdk* client = static_cast<FrameLoaderClientGdk*>(coreFrame->loader()->client());
+    FrameLoaderClientGtk* client = static_cast<FrameLoaderClientGtk*>(coreFrame->loader()->client());
     return client->webFrame();
 }
 
@@ -77,7 +77,7 @@ WebCore::Page* core(WebKitGtkPage* page)
 
 WebKitGtkPage* kit(WebCore::Page* page)
 {
-    ChromeClientGdk* client = static_cast<ChromeClientGdk*>(page->chrome()->client());
+    ChromeClientGtk* client = static_cast<ChromeClientGtk*>(page->chrome()->client());
     return client->webPage();
 }
 }
