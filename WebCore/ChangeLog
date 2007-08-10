@@ -1,3 +1,12 @@
+2007-08-10  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Fix Windows, Qt and Gtk build.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

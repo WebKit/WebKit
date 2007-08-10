@@ -297,6 +297,7 @@ IDL_BINDINGS += \
 
 SOURCES += \
     bindings/js/GCController.cpp \
+    bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
@@ -305,6 +306,7 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
+    bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -314,7 +316,9 @@ SOURCES += \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLEmbedElementCustom.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
+    bindings/js/JSHTMLFrameElementCustom.cpp \
     bindings/js/JSHTMLFrameSetElementCustom.cpp \
+    bindings/js/JSHTMLIFrameElementCustom.cpp \
     bindings/js/JSHTMLInputElementBase.cpp \
     bindings/js/JSHTMLObjectElementCustom.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \

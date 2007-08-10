@@ -7115,6 +7115,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSAttrCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
 					>
 				</File>
@@ -7152,6 +7156,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMWindowCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSElementCustom.cpp"
 					>
 				</File>
 				<File
@@ -7203,7 +7211,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSHTMLFrameElementCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSHTMLFrameSetElementCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLIFrameElementCustom.cpp"
 					>
 				</File>
 				<File
