@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Make sure -fno-strict-aliasing is also added for mkspecs like linux-g++-64.
+
+        * WebCore.pro:
+
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Enable JavaScript bindings for HTML Object/Applet elements in the Qt port.
 
         * WebCore.pro:

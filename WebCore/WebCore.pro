@@ -22,7 +22,7 @@ DEPENDPATH += css dom loader editing history html \
 include($$OUTPUT_DIR/config.pri)
 
 CONFIG -= warn_on
-*-g++:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
+*-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
