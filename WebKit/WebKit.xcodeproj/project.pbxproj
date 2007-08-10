@@ -1292,6 +1292,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKit" */;
 			buildPhases = (
+				5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */,
 				1C5BFFFE0BAF8AEA004FF4F5 /* Check Bundle Version */,
 				1C6CB0510AA63EB000D23BFD /* Migrate Headers */,
 				939811300824BF01008DF038 /* Make Frameworks Symbolic Link */,
@@ -1388,6 +1389,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"MigrateHeaders.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+		};
+		5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Configurations/Version.xcconfig",
+			);
+			name = "Update Info.plist with version information";
+			outputPaths = (
+				"$(SRCROOT)/Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;

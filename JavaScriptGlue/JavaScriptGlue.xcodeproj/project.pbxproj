@@ -298,6 +298,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD66F3D108F73ED700C75FD7 /* Build configuration list for PBXNativeTarget "JavaScriptGlue" */;
 			buildPhases = (
+				5D2F7D0A0C6878E000B5B72B /* Update Info.plist with version information */,
 				DD66F3BA08F73ED700C75FD7 /* Headers */,
 				DD66F3C208F73ED700C75FD7 /* Resources */,
 				DD66F3C408F73ED700C75FD7 /* Sources */,
@@ -328,7 +329,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				1422E8C409DE3EA600749B87 /* All */,
 				DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */,
@@ -349,6 +349,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		5D2F7D0A0C6878E000B5B72B /* Update Info.plist with version information */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Configurations/Version.xcconfig",
+			);
+			name = "Update Info.plist with version information";
+			outputPaths = (
+				"$(SRCROOT)/Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
+		};
 		939D055E09DA033400984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -1300,6 +1300,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
 			buildPhases = (
+				5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */,
 				932F5B3F0822A1C700736975 /* Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				9319586B09D9F91A00A56FD4 /* Check For Global Initializers */,
@@ -1406,6 +1407,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp \"${SRCROOT}/API/testapi.js\" \"${BUILT_PRODUCTS_DIR}\"";
+		};
+		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Configurations/Version.xcconfig",
+			);
+			name = "Update Info.plist with version information";
+			outputPaths = (
+				"$(SRCROOT)/Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
