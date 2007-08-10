@@ -262,6 +262,15 @@ QWebPage *QWebPage::createWindow()
     return 0;
 }
 
+QObject *QWebPage::createPlugin(const QUrl &url, const QString &mimeType, const QStringList &paramNames, const QStringList &paramValues)
+{
+    Q_UNUSED(url)
+    Q_UNUSED(mimeType)
+    Q_UNUSED(paramNames)
+    Q_UNUSED(paramValues)
+    return 0;
+}
+
 QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
 {
     Q_UNUSED(request)
