@@ -28,7 +28,7 @@
 #include "HTMLPlugInElement.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-#include <JavaScriptCore/runtime.h>
+#include <bindings/runtime.h>
 #endif
 
 namespace WebCore {

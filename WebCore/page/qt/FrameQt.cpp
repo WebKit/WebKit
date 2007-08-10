@@ -65,6 +65,7 @@
 #include "JSLock.h"
 #include "kjs_window.h"
 #include "runtime_root.h"
+#include "runtime.h"
 #include <QScrollArea>
 #include "NotImplemented.h"
 
@@ -103,7 +104,9 @@ void Frame::issueTransposeCommand()
 
 KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
-    return 0;
+    return KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::QtLanguage,
+                                                                     widget->qwidget(),
+                                                                     bindingRootObject());
 }
 
 void Frame::cleanupPlatformScriptObjects()

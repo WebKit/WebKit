@@ -1,3 +1,16 @@
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Enable JavaScript bindings for HTML Object/Applet elements in the Qt port.
+
+        * WebCore.pro:
+        * bindings/js/kjs_dom.cpp:
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.h:
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::createScriptInstanceForWidget):
+
 2007-08-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

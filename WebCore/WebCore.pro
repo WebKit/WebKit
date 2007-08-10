@@ -83,6 +83,8 @@ INCLUDEPATH += \
 
 DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 	platform/graphics/qt ../WeKitQt/Api ../WebKitQt/WebCoreSupport
+
+    DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }
 
 gdk-port {
