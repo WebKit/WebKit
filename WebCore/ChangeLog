@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Revert r24699 as it broke timers. The precision of QTime::toTime_t() is just seconds, which is not good enough. Revert back
+        to the old implementation and use the simple implementation of currentTime() from win/ for the Qt/Windows build (fingers crossed :)
+
+        * WebCore.pro:
+        * platform/qt/SystemTimeQt.cpp:
+        (WebCore::currentTime):
+
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Recognize .htm as valid extension for text/html.
 
         * platform/qt/MIMETypeRegistryQt.cpp:

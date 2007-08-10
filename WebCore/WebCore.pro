@@ -749,7 +749,9 @@ gdk-port {
     platform/FontFallbackList.cpp 
 }
 
-qt-port:HEADERS += \
+qt-port {
+
+    HEADERS += \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/MenuEventProxy.h \
     $$PWD/platform/qt/SharedTimerQt.h \
@@ -764,7 +766,7 @@ qt-port:HEADERS += \
     $$PWD/../WebKitQt/Api/qcookiejar.h \
     $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
-qt-port:SOURCES += \
+    SOURCES += \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
@@ -811,7 +813,6 @@ qt-port:SOURCES += \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/StringQt.cpp \
-    platform/qt/SystemTimeQt.cpp \
     platform/qt/TemporaryLinkStubs.cpp \
     platform/qt/TextBoundaries.cpp \
     platform/qt/TextBreakIteratorQt.cpp \
@@ -834,6 +835,10 @@ qt-port:SOURCES += \
     ../WebKitQt/Api/qwebobjectplugin.cpp \
     ../WebKitQt/Api/qwebobjectpluginconnector.cpp \
     ../WebKitQt/Api/qwebhistoryinterface.cpp
+
+    unix: SOURCES += platform/qt/SystemTimeQt.cpp
+    else: SOURCES += platform/win/SystemTimeWin.cpp
+}
 
 gdk-port {
     HEADERS += \
