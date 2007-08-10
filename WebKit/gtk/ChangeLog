@@ -1,5 +1,21 @@
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Niko.
+
+        Minor changes to the WebKit::EditorClient to allow removing
+        of text from TextFields. Remove the selectWordBeforeMenuEvent method
+        which is not used and not within WebCore::EditorClient. 
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldDeleteRange):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::EditorClient::shouldApplyStyle):
+        (WebKit::EditorClient::shouldInsertNode):
+        * WebCoreSupport/EditorClientGtk.h:
+
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Mark.
 
         Rename the namespace from WebKitGtk to WebKit. Move the various *Client
