@@ -28,6 +28,8 @@
  */
 
 #include "config.h"
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSPropertyNames.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -862,7 +864,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentImage;
 
-    if (_mimeType == "application/x-qt-plugin")
+    if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
         return ObjectContentPlugin;
 
     if (QWebFactoryLoader::self()->supportsMimeType(mimeType))
@@ -873,6 +875,58 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     
     return ObjectContentNone;
 }
+
+static const CSSPropertyID qstyleSheetProperties[] = {
+    CSS_PROP_BACKGROUND_ATTACHMENT,
+    CSS_PROP_BACKGROUND_COLOR,
+    CSS_PROP_BACKGROUND_IMAGE,
+    CSS_PROP_BACKGROUND_REPEAT,
+    CSS_PROP_BORDER_BOTTOM_COLOR,
+    CSS_PROP_BORDER_BOTTOM_STYLE,
+    CSS_PROP_BORDER_BOTTOM_WIDTH,
+    CSS_PROP_BORDER_LEFT_COLOR,
+    CSS_PROP_BORDER_LEFT_STYLE,
+    CSS_PROP_BORDER_LEFT_WIDTH,
+    CSS_PROP_BORDER_RIGHT_COLOR,
+    CSS_PROP_BORDER_RIGHT_STYLE,
+    CSS_PROP_BORDER_RIGHT_WIDTH,
+    CSS_PROP_BORDER_TOP_COLOR,
+    CSS_PROP_BORDER_TOP_STYLE,
+    CSS_PROP_BORDER_TOP_WIDTH,
+    CSS_PROP_BOTTOM,
+    CSS_PROP_COLOR,
+    CSS_PROP_FLOAT,
+    CSS_PROP_FONT_FAMILY,
+    CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STYLE,
+    CSS_PROP_FONT_WEIGHT,
+    CSS_PROP_HEIGHT,
+    CSS_PROP_LEFT,
+    CSS_PROP_MARGIN_BOTTOM,
+    CSS_PROP_MARGIN_LEFT,
+    CSS_PROP_MARGIN_RIGHT,
+    CSS_PROP_MARGIN_TOP,
+    CSS_PROP_MAX_HEIGHT,
+    CSS_PROP_MAX_WIDTH,
+    CSS_PROP_MIN_HEIGHT,
+    CSS_PROP_MIN_WIDTH,
+    CSS_PROP_OPACITY,
+    CSS_PROP_PADDING_BOTTOM,
+    CSS_PROP_PADDING_LEFT,
+    CSS_PROP_PADDING_RIGHT,
+    CSS_PROP_PADDING_TOP,
+    CSS_PROP_POSITION,
+    CSS_PROP_RIGHT,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP_TEXT_DECORATION,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP_TOP,
+    CSS_PROP_VERTICAL_ALIGN,
+    CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDTH
+};
+
+const unsigned numqStyleSheetProperties = sizeof(qstyleSheetProperties) / sizeof(qstyleSheetProperties[0]);
 
 Widget* FrameLoaderClientQt::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -891,7 +945,7 @@ Widget* FrameLoaderClientQt::createPlugin(Element* element, const KURL& url, con
 
     QObject *object = 0;
 
-    if (mimeType == "application/x-qt-plugin")
+    if (mimeType == "application/x-qt-plugin" || mimeType == "application/x-qt-styled-widget")
         object = m_webFrame->page()->createPlugin(qurl, mimeType, params, values);
 
     if (!object)
@@ -901,6 +955,24 @@ Widget* FrameLoaderClientQt::createPlugin(Element* element, const KURL& url, con
         QWidget *widget = qobject_cast<QWidget *>(object);
         if (widget) {
             widget->setParent(m_webFrame->page());
+            if (mimeType == "application/x-qt-styled-widget") {
+                CSSComputedStyleDeclaration cssDecl(element);
+
+                QString styleSheet = element->getAttribute("style");
+                if (!styleSheet.isEmpty())
+                    styleSheet += QLatin1Char(';');
+
+                for (int i = 0; i < numqStyleSheetProperties; ++i) {
+                    CSSPropertyID property = qstyleSheetProperties[i];
+
+                    styleSheet += ::getPropertyName(property);
+                    styleSheet += QLatin1Char(':');
+                    styleSheet += cssDecl.getPropertyValue(property);
+                    styleSheet += QLatin1Char(';');
+                }
+
+                widget->setStyleSheet(styleSheet);
+            }
             Widget* w= new Widget();
             w->setQWidget(widget);
             return w;

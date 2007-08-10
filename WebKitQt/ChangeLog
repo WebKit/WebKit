@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Added support for "application/x-qt-styled-widget" that is treated like "application/x-qt-plugin" but also
+        gets a Qt widget stylesheet set from the CSS computed style and the element style attribute.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added virtual QWebPage::createPlugin that is called for embedded objects with the mime type "application/x-qt-plugin"
         and fixed widget embedding by setting the right QWidget parent.
 
