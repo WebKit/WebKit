@@ -31,50 +31,52 @@
 
 #include "NotImplemented.h"
 
-namespace WebCore {
+using namespace WebCore;
 
-void InspectorClientGtk::inspectorDestroyed()
+namespace WebKit {
+
+void InspectorClient::inspectorDestroyed()
 {
     notImplemented();
 }
 
-Page* InspectorClientGtk::createPage()
+Page* InspectorClient::createPage()
 {
     notImplemented();
     return 0;
 }
 
-void InspectorClientGtk::showWindow()
+void InspectorClient::showWindow()
 {
     notImplemented();
 }
 
-void InspectorClientGtk::closeWindow()
+void InspectorClient::closeWindow()
 {
     notImplemented();
 }
 
-void InspectorClientGtk::attachWindow()
+void InspectorClient::attachWindow()
 {
     notImplemented();
 }
 
-void InspectorClientGtk::detachWindow()
+void InspectorClient::detachWindow()
 {
     notImplemented();
 }
 
-void InspectorClientGtk::highlight(Node* node)
+void InspectorClient::highlight(Node* node)
 {
     notImplemented();
 }
 
-void InspectorClientGtk::hideHighlight()
+void InspectorClient::hideHighlight()
 {
     notImplemented();
 }
 
-void InspectorClientGtk::inspectedURLChanged(const String&)
+void InspectorClient::inspectedURLChanged(const String&)
 {
     notImplemented();
 }

@@ -130,7 +130,7 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
     WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
 
-    frameData->client = new FrameLoaderClientGtk(frame);
+    frameData->client = new WebKit::FrameLoaderClient(frame);
     frameData->frame = new Frame(pageData->page, 0, frameData->client);
 
     FrameView* frameView = new FrameView(frameData->frame);
@@ -150,7 +150,7 @@ GObject* webkit_gtk_frame_init_with_page(WebKitGtkPage* page, HTMLFrameOwnerElem
     WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
 
-    frameData->client = new FrameLoaderClientGtk(frame);
+    frameData->client = new WebKit::FrameLoaderClient(frame);
     frameData->frame = new Frame(pageData->page, element, frameData->client);
 
     FrameView* frameView = new FrameView(frameData->frame);

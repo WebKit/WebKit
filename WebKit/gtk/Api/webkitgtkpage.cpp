@@ -48,8 +48,8 @@
 #include "SubstituteData.h"
 
 
+using namespace WebKit;
 using namespace WebCore;
-using namespace WebKitGtk;
 
 extern "C" {
 
@@ -347,7 +347,7 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
 static void webkit_gtk_page_init(WebKitGtkPage* page)
 {
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(page));
-    pageData->page = new Page(new ChromeClientGtk(page), new ContextMenuClientGtk, new EditorClientGtk(page), 0, new InspectorClientGtk);
+    pageData->page = new Page(new WebKit::ChromeClient(page), new WebKit::ContextMenuClient, new WebKit::EditorClient(page), 0, new WebKit::InspectorClient);
 
     Settings* settings = pageData->page->settings();
     settings->setLoadsImagesAutomatically(true);

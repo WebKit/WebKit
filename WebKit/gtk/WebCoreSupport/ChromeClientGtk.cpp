@@ -39,160 +39,160 @@
 
 using namespace WebCore;
 
-namespace WebKitGtk {
-ChromeClientGtk::ChromeClientGtk(WebKitGtkPage* page)
+namespace WebKit {
+ChromeClient::ChromeClient(WebKitGtkPage* page)
     : m_webPage(page)
 {
 }
 
-void ChromeClientGtk::chromeDestroyed()
+void ChromeClient::chromeDestroyed()
 {
     notImplemented();
 }
 
-FloatRect ChromeClientGtk::windowRect()
-{
-    notImplemented();
-    return FloatRect();
-}
-
-void ChromeClientGtk::setWindowRect(const FloatRect& r)
-{
-    notImplemented();
-}
-
-FloatRect ChromeClientGtk::pageRect()
+FloatRect ChromeClient::windowRect()
 {
     notImplemented();
     return FloatRect();
 }
 
-float ChromeClientGtk::scaleFactor()
+void ChromeClient::setWindowRect(const FloatRect& r)
+{
+    notImplemented();
+}
+
+FloatRect ChromeClient::pageRect()
+{
+    notImplemented();
+    return FloatRect();
+}
+
+float ChromeClient::scaleFactor()
 {
     notImplemented();
     return 1.0;
 }
 
-void ChromeClientGtk::focus()
+void ChromeClient::focus()
 {
     notImplemented();
 }
 
-void ChromeClientGtk::unfocus()
+void ChromeClient::unfocus()
 {
     notImplemented();
 }
     
-Page* ChromeClientGtk::createWindow(Frame*, const FrameLoadRequest&)
+Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&)
 {
     /* TODO: FrameLoadRequest is not used */
     WebKitGtkPage* page = WEBKIT_GTK_PAGE_GET_CLASS(m_webPage)->create_page(m_webPage);
     if (!page)
         return 0;
 
-    WebKitGtkPagePrivate *private_data = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(page));
-    return private_data->page;
+    WebKitGtkPagePrivate *privateData = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(page));
+    return privateData->page;
 }
 
-Page* ChromeClientGtk::createModalDialog(Frame*, const FrameLoadRequest&)
+Page* ChromeClient::createModalDialog(Frame*, const FrameLoadRequest&)
 {
     notImplemented();
     return 0;
 }
 
-void ChromeClientGtk::show()
+void ChromeClient::show()
 {
     notImplemented();
 }
 
-bool ChromeClientGtk::canRunModal()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientGtk::runModal()
-{
-    notImplemented();
-}
-
-void ChromeClientGtk::setToolbarsVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientGtk::toolbarsVisible()
+bool ChromeClient::canRunModal()
 {
     notImplemented();
     return false;
 }
 
-void ChromeClientGtk::setStatusbarVisible(bool)
+void ChromeClient::runModal()
 {
     notImplemented();
 }
 
-bool ChromeClientGtk::statusbarVisible()
-{
-    notImplemented();
-    return false;
-}
-
-void ChromeClientGtk::setScrollbarsVisible(bool)
+void ChromeClient::setToolbarsVisible(bool)
 {
     notImplemented();
 }
 
-bool ChromeClientGtk::scrollbarsVisible() {
-    notImplemented();
-    return false;
-}
-
-void ChromeClientGtk::setMenubarVisible(bool)
-{
-    notImplemented();
-}
-
-bool ChromeClientGtk::menubarVisible()
+bool ChromeClient::toolbarsVisible()
 {
     notImplemented();
     return false;
 }
 
-void ChromeClientGtk::setResizable(bool)
+void ChromeClient::setStatusbarVisible(bool)
 {
     notImplemented();
 }
 
-void ChromeClientGtk::closeWindowSoon()
+bool ChromeClient::statusbarVisible()
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClient::setScrollbarsVisible(bool)
 {
     notImplemented();
 }
 
-bool ChromeClientGtk::canTakeFocus(FocusDirection)
+bool ChromeClient::scrollbarsVisible() {
+    notImplemented();
+    return false;
+}
+
+void ChromeClient::setMenubarVisible(bool)
+{
+    notImplemented();
+}
+
+bool ChromeClient::menubarVisible()
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClient::setResizable(bool)
+{
+    notImplemented();
+}
+
+void ChromeClient::closeWindowSoon()
+{
+    notImplemented();
+}
+
+bool ChromeClient::canTakeFocus(FocusDirection)
 {
     notImplemented();
     return true;
 }
 
-void ChromeClientGtk::takeFocus(FocusDirection)
+void ChromeClient::takeFocus(FocusDirection)
 {
     notImplemented();
 }
 
-bool ChromeClientGtk::canRunBeforeUnloadConfirmPanel()
-{
-    notImplemented();
-    return false;
-}
-
-bool ChromeClientGtk::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::Frame*)
+bool ChromeClient::canRunBeforeUnloadConfirmPanel()
 {
     notImplemented();
     return false;
 }
 
-void ChromeClientGtk::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
+bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::Frame*)
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClient::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
 {
     CString messageString = message.utf8();
     CString sourceIdString = sourceId.utf8();
@@ -200,19 +200,19 @@ void ChromeClientGtk::addMessageToConsole(const WebCore::String& message, unsign
     WEBKIT_GTK_PAGE_GET_CLASS(m_webPage)->java_script_console_message(m_webPage, messageString.data(), lineNumber, sourceIdString.data());
 }
 
-void ChromeClientGtk::runJavaScriptAlert(Frame* frame, const String& message)
+void ChromeClient::runJavaScriptAlert(Frame* frame, const String& message)
 {
     CString messageString = message.utf8();
     WEBKIT_GTK_PAGE_GET_CLASS(m_webPage)->java_script_alert(m_webPage, kit(frame), messageString.data());
 }
 
-bool ChromeClientGtk::runJavaScriptConfirm(Frame* frame, const String& message)
+bool ChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
     CString messageString = message.utf8();
     return WEBKIT_GTK_PAGE_GET_CLASS(m_webPage)->java_script_confirm(m_webPage, kit(frame), messageString.data());
 }
 
-bool ChromeClientGtk::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
+bool ChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
     CString messageString = message.utf8();
     CString defaultValueString = defaultValue.utf8(); 
@@ -230,56 +230,56 @@ bool ChromeClientGtk::runJavaScriptPrompt(Frame* frame, const String& message, c
     }
 }
 
-void ChromeClientGtk::setStatusbarText(const String& string)
+void ChromeClient::setStatusbarText(const String& string)
 {
     CString stringMessage = string.utf8();
     g_signal_emit_by_name(m_webPage, "status_bar_text_changed", stringMessage.data());
 }
 
-bool ChromeClientGtk::shouldInterruptJavaScript()
+bool ChromeClient::shouldInterruptJavaScript()
 {
     notImplemented();
     return false;
 }
 
-bool ChromeClientGtk::tabsToLinks() const
+bool ChromeClient::tabsToLinks() const
 {
     notImplemented();
     return false;
 }
 
-IntRect ChromeClientGtk::windowResizerRect() const
+IntRect ChromeClient::windowResizerRect() const
 {
     notImplemented();
     return IntRect();
 }
 
-void ChromeClientGtk::addToDirtyRegion(const IntRect&)
+void ChromeClient::addToDirtyRegion(const IntRect&)
 {
     notImplemented();
 }
 
-void ChromeClientGtk::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
+void ChromeClient::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
 {
     notImplemented();
 }
 
-void ChromeClientGtk::updateBackingStore()
+void ChromeClient::updateBackingStore()
 {
     notImplemented();
 }
 
-void ChromeClientGtk::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
+void ChromeClient::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
 {
     notImplemented();
 }
 
-void ChromeClientGtk::setToolTip(const String&)
+void ChromeClient::setToolTip(const String&)
 {
     notImplemented();
 }
 
-void ChromeClientGtk::print(Frame*)
+void ChromeClient::print(Frame*)
 {
     notImplemented();
 }

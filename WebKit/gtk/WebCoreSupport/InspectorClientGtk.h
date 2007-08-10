@@ -35,12 +35,15 @@ namespace WebCore {
     class Node;
     class Page;
     class String;
+}
 
-    class InspectorClientGtk : public InspectorClient {
+namespace WebKit {
+
+    class InspectorClient : public WebCore::InspectorClient {
     public:
         virtual void inspectorDestroyed();
 
-        virtual Page* createPage();
+        virtual WebCore::Page* createPage();
 
         virtual void showWindow();
         virtual void closeWindow();
@@ -48,9 +51,9 @@ namespace WebCore {
         virtual void attachWindow();
         virtual void detachWindow();
 
-        virtual void highlight(Node*);
+        virtual void highlight(WebCore::Node*);
         virtual void hideHighlight();
-        virtual void inspectedURLChanged(const String& newURL);
+        virtual void inspectedURLChanged(const WebCore::String& newURL);
     };
 }
 

@@ -30,20 +30,23 @@
 
 namespace WebCore {
     class ContextMenu;
+}
 
-    class ContextMenuClientGtk : public ContextMenuClient
+namespace WebKit {
+
+    class ContextMenuClient : public WebCore::ContextMenuClient
     {
     public:
         virtual void contextMenuDestroyed();
         
-        virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*);
-        virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
+        virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
+        virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
 
-        virtual void downloadURL(const KURL& url);
-        virtual void copyImageToClipboard(const HitTestResult&);
-        virtual void searchWithGoogle(const Frame*);
-        virtual void lookUpInDictionary(Frame*);
-        virtual void speak(const String&);
+        virtual void downloadURL(const WebCore::KURL& url);
+        virtual void copyImageToClipboard(const WebCore::HitTestResult&);
+        virtual void searchWithGoogle(const WebCore::Frame*);
+        virtual void lookUpInDictionary(WebCore::Frame*);
+        virtual void speak(const WebCore::String&);
         virtual void stopSpeaking();
     };
 }

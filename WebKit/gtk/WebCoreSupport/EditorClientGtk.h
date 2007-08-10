@@ -37,79 +37,81 @@
 typedef struct _WebKitGtkPage WebKitGtkPage;
 
 namespace WebCore {
+    class Page;
+}
 
-class Page;
+namespace WebKit {
 
-class EditorClientGtk : public EditorClient {
-public:
-    EditorClientGtk(WebKitGtkPage*);
 
-    // from EditorClient
-    virtual void pageDestroyed();
+    class EditorClient : public WebCore::EditorClient {
+    public:
+        EditorClient(WebKitGtkPage*);
+
+        // from EditorClient
+        virtual void pageDestroyed();
     
-    virtual bool shouldDeleteRange(Range*);
-    virtual bool shouldShowDeleteInterface(HTMLElement*);
-    virtual bool smartInsertDeleteEnabled(); 
-    virtual bool isContinuousSpellCheckingEnabled();
-    virtual void toggleContinuousSpellChecking();
-    virtual bool isGrammarCheckingEnabled();
-    virtual void toggleGrammarChecking();
-    virtual int spellCheckerDocumentTag();
+        virtual bool shouldDeleteRange(WebCore::Range*);
+        virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
+        virtual bool smartInsertDeleteEnabled(); 
+        virtual bool isContinuousSpellCheckingEnabled();
+        virtual void toggleContinuousSpellChecking();
+        virtual bool isGrammarCheckingEnabled();
+        virtual void toggleGrammarChecking();
+        virtual int spellCheckerDocumentTag();
     
-    virtual bool selectWordBeforeMenuEvent();
-    virtual bool isEditable();
+        virtual bool selectWordBeforeMenuEvent();
+        virtual bool isEditable();
 
-    virtual bool shouldBeginEditing(Range*);
-    virtual bool shouldEndEditing(Range*);
-    virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
-    virtual bool shouldInsertText(String, Range*, EditorInsertAction);
-    virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting);
+        virtual bool shouldBeginEditing(WebCore::Range*);
+        virtual bool shouldEndEditing(WebCore::Range*);
+        virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
+        virtual bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
+        virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
 
-    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
+        virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
 
-    virtual bool shouldMoveRangeAfterDelete(Range*, Range*);
+        virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
 
-    virtual void didBeginEditing();
-    virtual void respondToChangedContents();
-    virtual void respondToChangedSelection();
-    virtual void didEndEditing();
-    virtual void didWriteSelectionToPasteboard();
-    virtual void didSetSelectionTypesForPasteboard();
+        virtual void didBeginEditing();
+        virtual void respondToChangedContents();
+        virtual void respondToChangedSelection();
+        virtual void didEndEditing();
+        virtual void didWriteSelectionToPasteboard();
+        virtual void didSetSelectionTypesForPasteboard();
     
-    virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
-    virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
-    virtual void clearUndoRedoOperations();
+        virtual void registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>);
+        virtual void registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>);
+        virtual void clearUndoRedoOperations();
 
-    virtual bool canUndo() const;
-    virtual bool canRedo() const;
+        virtual bool canUndo() const;
+        virtual bool canRedo() const;
     
-    virtual void undo();
-    virtual void redo();
+        virtual void undo();
+        virtual void redo();
 
-    virtual void handleKeypress(KeyboardEvent*);
-    virtual void handleInputMethodKeypress(KeyboardEvent*);
+        virtual void handleKeypress(WebCore::KeyboardEvent*);
+        virtual void handleInputMethodKeypress(WebCore::KeyboardEvent*);
 
-    virtual void textFieldDidBeginEditing(Element*);
-    virtual void textFieldDidEndEditing(Element*);
-    virtual void textDidChangeInTextField(Element*);
-    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(Element*);
-    virtual void textDidChangeInTextArea(Element*);
+        virtual void textFieldDidBeginEditing(WebCore::Element*);
+        virtual void textFieldDidEndEditing(WebCore::Element*);
+        virtual void textDidChangeInTextField(WebCore::Element*);
+        virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
+        virtual void textWillBeDeletedInTextField(WebCore::Element*);
+        virtual void textDidChangeInTextArea(WebCore::Element*);
 
-    virtual void ignoreWordInSpellDocument(const String&);
-    virtual void learnWord(const String&);
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
-    virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&);
-    virtual void updateSpellingUIWithMisspelledWord(const String&);
-    virtual void showSpellingUI(bool show);
-    virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const String&, Vector<String>& guesses);
+        virtual void ignoreWordInSpellDocument(const WebCore::String&);
+        virtual void learnWord(const WebCore::String&);
+        virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
+        virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
+        virtual void updateSpellingUIWithGrammarString(const WebCore::String&, const WebCore::GrammarDetail&);
+        virtual void updateSpellingUIWithMisspelledWord(const WebCore::String&);
+        virtual void showSpellingUI(bool show);
+        virtual bool spellingUIIsShowing();
+        virtual void getGuessesForWord(const WebCore::String&, WTF::Vector<WebCore::String>& guesses);
 
-private:
-    WebKitGtkPage* m_page;
-};
-
+    private:
+        WebKitGtkPage* m_page;
+    };
 }
 
 #endif
