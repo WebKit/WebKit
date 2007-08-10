@@ -1,3 +1,13 @@
+2007-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark.
+
+        Update layout test to avoid problems caused by differences in whitespace 
+        for NSAttributedString descriptions on Tiger and Leopard 
+
+        * fast/text/attributed-substring-from-range-expected.txt:
+        * fast/text/attributed-substring-from-range.html:
+
 2007-08-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Justin.

@@ -26,14 +26,14 @@ body { margin: 10; padding: 0 }
             window.getSelection().setPosition(document.body, 4);
             textInputController.setMarkedText("56", 0, 1);
 
-            log("(0, 0): " + textInputController.attributedSubstringFromRange(0, 0));
-            log("(0, 2): " + textInputController.attributedSubstringFromRange(0, 2));
-            log("(0, 3): " + textInputController.attributedSubstringFromRange(0, 3));
-            log("(0, 6): " + textInputController.attributedSubstringFromRange(0, 6));
-            log("(0, 7): " + textInputController.attributedSubstringFromRange(0, 7));
-            log("(0, 100): " + textInputController.attributedSubstringFromRange(0, 100));
-            log("(5, 1): " + textInputController.attributedSubstringFromRange(5, 1));
-            log("(5, 2): " + textInputController.attributedSubstringFromRange(5, 2));
+            log("(0, 0): " + textInputController.attributedSubstringFromRange(0, 0).string());
+            log("(0, 2): " + textInputController.attributedSubstringFromRange(0, 2).string());
+            log("(0, 3): " + textInputController.attributedSubstringFromRange(0, 3).string());
+            log("(0, 6): " + textInputController.attributedSubstringFromRange(0, 6).string());
+            log("(0, 7): " + textInputController.attributedSubstringFromRange(0, 7).string());
+            log("(0, 100): " + textInputController.attributedSubstringFromRange(0, 100).string());
+            log("(5, 1): " + textInputController.attributedSubstringFromRange(5, 1).string());
+            log("(5, 2): " + textInputController.attributedSubstringFromRange(5, 2).string());
             log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be undefined
             log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be undefined
             
@@ -52,7 +52,7 @@ body { margin: 10; padding: 0 }
             window.getSelection().setPosition(document.body, 0);
 
             log("total length: " + textInputController.attributedSubstringFromRange(0, 100).length());
-            log("(0, 100): " + textInputController.attributedSubstringFromRange(0, 100));
+            log("(0, 100): " + textInputController.attributedSubstringFromRange(0, 100).string());
 
             document.body.innerHTML = "";
 
