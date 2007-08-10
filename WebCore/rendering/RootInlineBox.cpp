@@ -340,19 +340,18 @@ InlineBox* RootInlineBox::closestLeafChildForXPos(int x, bool onlyEditableLeaves
         // Return it.
         return lastLeaf;
 
-    InlineBox* closestLeaf = lastLeaf;
-    for (InlineBox* leaf = firstLeaf; leaf && leaf != lastLeaf; leaf = leaf->nextLeafChild()) {
+    InlineBox* closestLeaf = 0;
+    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
         if (!leaf->object()->isListMarker() && (!onlyEditableLeaves || isEditableLeaf(leaf))) {
-            int leafX = leaf->m_x;
             closestLeaf = leaf;
-            if (x < leafX + leaf->m_width)
+            if (x < leaf->m_x + leaf->m_width)
                 // The x coordinate is less than the right edge of the box.
                 // Return it.
                 return leaf;
         }
     }
 
-    return closestLeaf;
+    return closestLeaf ? closestLeaf : lastLeaf;
 }
 
 BidiStatus RootInlineBox::lineBreakBidiStatus() const

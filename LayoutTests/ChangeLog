@@ -1,3 +1,15 @@
+2007-08-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Justin.
+
+        - test for <rdar://problem/5397344> http://bugs.webkit.org/show_bug.cgi?id=14911
+          REGRESSION: Clicking in pasted text doesn't position the insertion point correctly
+
+        * editing/selection/inline-closest-leaf-child-expected.checksum: Added.
+        * editing/selection/inline-closest-leaf-child-expected.png: Added.
+        * editing/selection/inline-closest-leaf-child-expected.txt: Added.
+        * editing/selection/inline-closest-leaf-child.html: Added.
+
 2007-08-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

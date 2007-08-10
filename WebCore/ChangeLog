@@ -1,3 +1,17 @@
+2007-08-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Justin.
+
+        - fix <rdar://problem/5397344> http://bugs.webkit.org/show_bug.cgi?id=14911
+          REGRESSION: Clicking in pasted text doesn't position the insertion point correctly
+
+        Test: editing/selection/inline-closest-leaf-child.html
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::closestLeafChildForXPos): Return the last leaf if
+        it's the closest match, or if no other leaf matches (for example if all
+        leaves are list markers or non-editable where editable is required).
+
 2007-08-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
