@@ -159,12 +159,6 @@ static void webkit_gtk_page_set_scroll_adjustments(GtkLayout* layout, GtkAdjustm
     view->setGtkAdjustments(hadj, vadj);
 }
 
-static WebKitGtkFrame* webkit_gtk_page_real_create_frame(WebKitGtkPage*, WebKitGtkFrame* parent, WebKitGtkFrameData*)
-{
-    notImplemented();
-    return 0;
-}
-
 static WebKitGtkPage* webkit_gtk_page_real_create_page(WebKitGtkPage*)
 {
     notImplemented();
@@ -326,7 +320,6 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
     /*
      * implementations of virtual methods
      */
-    pageClass->create_frame = webkit_gtk_page_real_create_frame;
     pageClass->create_page = webkit_gtk_page_real_create_page;
     pageClass->navigation_requested = webkit_gtk_page_real_navigation_requested;
     pageClass->choose_file = webkit_gtk_page_real_choose_file;

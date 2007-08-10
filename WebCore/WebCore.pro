@@ -837,7 +837,6 @@ gdk-port {
     HEADERS += \
         ../WebKit/gtk/Api/webkitgtkdefines.h \
         ../WebKit/gtk/Api/webkitgtkframe.h \
-        ../WebKit/gtk/Api/webkitgtkframedata.h \
         ../WebKit/gtk/Api/webkitgtkglobal.h \
         ../WebKit/gtk/Api/webkitgtknetworkrequest.h \
         ../WebKit/gtk/Api/webkitgtkpage.h \
@@ -896,7 +895,6 @@ gdk-port {
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
         ../WebKit/gtk/Api/webkitgtkframe.cpp \
-        ../WebKit/gtk/Api/webkitgtkframedata.cpp \
         ../WebKit/gtk/Api/webkitgtkglobal.cpp \
         ../WebKit/gtk/Api/webkitgtknetworkrequest.cpp \
         ../WebKit/gtk/Api/webkitgtkpage.cpp \

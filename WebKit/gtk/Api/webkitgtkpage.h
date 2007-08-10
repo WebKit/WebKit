@@ -73,7 +73,6 @@ struct _WebKitGtkPageClass {
      * require someone doing a g_signal_stop_emission_by_name
      * WebUIDelegate has nothing for create_frame, WebPolicyDelegate as well...
      */
-    WebKitGtkFrame* (*create_frame) (WebKitGtkPage* page, WebKitGtkFrame* parent_frame, WebKitGtkFrameData* frame_data);
     WebKitGtkPage*  (*create_page)  (WebKitGtkPage* page);
 
     /*

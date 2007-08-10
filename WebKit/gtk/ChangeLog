@@ -2,6 +2,24 @@
 
         Reviewed by Adam.
 
+        Remove the create_frame virtual method of WebKitGtkPage. This method was inspired
+        by the Qt port but to be useful for reimplementations WebKitGtkFrameData would need
+        to export/expose WebCore types. WebView doesn't offer such a method so I decided to
+        remove it.
+        Add a internal constructor to WebKitGtkFrame to be used for constructing Sub-Frames. This
+        is currently used by FrameLoaderClientGdk::createFrame.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkframedata.cpp: Removed.
+        * Api/webkitgtkframedata.h: Removed.
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.h:
+
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Follow the changes of ScrollView in WebCore and call setContainingWindow, set the
         GtkAdjustment of the GtkLayout and reimplement the set_scroll_adjustments method and pass
         the GtkAdjustments to ScrollView.

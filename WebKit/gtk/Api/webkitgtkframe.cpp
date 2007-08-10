@@ -34,6 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientGdk.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 
 using namespace WebCore;
 
@@ -142,6 +143,25 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
 
     return G_OBJECT(frame);
 }
+
+GObject* webkit_gtk_frame_init_with_page(WebKitGtkPage* page, HTMLFrameOwnerElement* element)
+{
+    WebKitGtkFrame* frame = WEBKIT_GTK_FRAME(g_object_new(WEBKIT_GTK_TYPE_FRAME, NULL));
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+
+    frameData->client = new FrameLoaderClientGdk(frame);
+    frameData->frame = new Frame(pageData->page, element, frameData->client);
+
+    FrameView* frameView = new FrameView(frameData->frame);
+    frameView->setContainingWindow(page);
+    frameData->frame->setView(frameView);
+    frameView->deref();
+    frameData->frame->init();
+    frameData->page = page;
+
+    return G_OBJECT(frame);
+} 
 
 WebKitGtkPage*
 webkit_gtk_frame_get_page(WebKitGtkFrame* frame)

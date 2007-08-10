@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
@@ -34,6 +34,12 @@
 #include "FrameLoaderClientGdk.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
+#include "FrameTree.h"
+#include "HTMLFormElement.h"
+#include "HTMLFrameElement.h"
+#include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -173,8 +179,38 @@ Widget* FrameLoaderClientGdk::createPlugin(Element*, const KURL&, const Vector<S
 Frame* FrameLoaderClientGdk::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
-    notImplemented();
-    return 0;
+    Frame* coreFrame = core(webFrame());
+
+    ASSERT(core(getPageFromFrame(webFrame())) == coreFrame->page());
+    WebKitGtkFrame* gtkFrame = WEBKIT_GTK_FRAME(webkit_gtk_frame_init_with_page(getPageFromFrame(webFrame()), ownerElement));
+    Frame* childFrame = core(gtkFrame);
+
+    coreFrame->tree()->appendChild(childFrame);
+
+    // Frames are created with a refcount of 1. Release this ref, since we've assigned it to d->frame.
+    childFrame->deref();
+    childFrame->tree()->setName(name);
+    childFrame->init();
+    childFrame->loader()->load(url, referrer, FrameLoadTypeRedirectWithLockedHistory, String(), 0, 0);
+
+    // The frame's onload handler may have removed it from the document.
+    if (!childFrame->tree()->parent())
+        return 0;
+
+    // Propagate the marginwidth/height and scrolling modes to the view.
+    if (ownerElement->hasTagName(HTMLNames::frameTag) || ownerElement->hasTagName(HTMLNames::iframeTag)) {
+        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
+        if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
+            childFrame->view()->setScrollbarsMode(ScrollbarAlwaysOff);
+        int marginWidth = frameElt->getMarginWidth();
+        int marginHeight = frameElt->getMarginHeight();
+        if (marginWidth != -1)
+            childFrame->view()->setMarginWidth(marginWidth);
+        if (marginHeight != -1)
+            childFrame->view()->setMarginHeight(marginHeight);
+    }
+
+    return childFrame;
 }
 
 void FrameLoaderClientGdk::redirectDataToPlugin(Widget* pluginWidget)

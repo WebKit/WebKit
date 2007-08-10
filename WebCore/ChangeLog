@@ -2,6 +2,21 @@
 
         Reviewed by Adam.
 
+        Implement FrameLoaderClientGdk::createFrame mostly by copying
+        the windows implementation. A method similiar to WebFrame::loadURLIntoChild
+        was not introduced instead we have a simplified version similiar to the
+        one of the Qt port.
+
+        Remove building of WebKit/gtk/webkitgtkframedata.{cpp,h}.
+
+        * WebCore.pro:
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::createFrame):
+
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Use the ScrollView/Widget design of the Windows port to only use one
         native window for the whole page. This will make it possible to implement
         FrameLoaderClientGdk::createFrame.
