@@ -1,3 +1,16 @@
+2007-08-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5390568>
+        REGRESSION: –[WebFrame loadHTMLString:baseURL:] leaks the data source
+        
+        If the identifier is not in the map, just bail out instead of asserting. This is a better fix for
+        <rdar://problem/5133420> because WebCore shouldn't have to worry about the lifetime of WebKit objects.
+        
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::decreaseLoadCount):
+
 2007-08-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

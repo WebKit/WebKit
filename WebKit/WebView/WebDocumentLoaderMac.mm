@@ -116,8 +116,13 @@ void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
 
 void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
 {
-    ASSERT(m_loadingResources.contains(identifier));
-    m_loadingResources.remove(identifier);
+    HashSet<unsigned long>::iterator it = m_loadingResources.find(identifier);
+    
+    // It is valid for a load to be cancelled before it's started.
+    if (it == m_loadingResources.end())
+        return;
+    
+    m_loadingResources.remove(it);
     
     if (m_loadingResources.isEmpty()) {
         m_resourceLoadDelegate = 0;

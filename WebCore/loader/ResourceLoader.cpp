@@ -296,7 +296,6 @@ void ResourceLoader::didCancel(const ResourceError& error)
     // for a single delegate. Cancelling wins.
     m_cancelled = true;
     
-    bool m_hadHandle = m_handle;
     if (m_handle)
         m_handle->clearAuthentication();
 
@@ -305,7 +304,7 @@ void ResourceLoader::didCancel(const ResourceError& error)
         m_handle->cancel();
         m_handle = 0;
     }
-    if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad && m_hadHandle)
+    if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad)
         frameLoader()->didFailToLoad(this, error);
 
     releaseResources();

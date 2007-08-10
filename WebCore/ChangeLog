@@ -1,3 +1,16 @@
+2007-08-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5390568> 
+        REGRESSION: –[WebFrame loadHTMLString:baseURL:] leaks the data source.
+        
+        Revert the fix for <rdar://problem/5133420> which caused us to not cancel 
+        substitute data loads. It's better to remove the assertion in the WebKit layer.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didCancel):
+
 2007-08-10  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
