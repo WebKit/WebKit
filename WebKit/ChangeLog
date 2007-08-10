@@ -1,3 +1,14 @@
+2007-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/5000470> REGRESSION: ATOK IM: reconvert returns incorrect symbol due to inconsistent range domains in TSM by working around <rdar://problem/5400551> [NSAttributedString(WebKitExtras) _web_attributedStringFromRange:] adds whitespace to the requested range
+
+        We truncate the returned string to the expected length.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attributedSubstringFromRange:]):
+
 2007-08-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.

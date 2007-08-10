@@ -1,3 +1,16 @@
+2007-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Added new layout test to validate fix for <rdar://problem/5000470> REGRESSION: ATOK IM: reconvert returns incorrect symbol due to inconsistent range domains in TSM
+
+        Corrected fast/text/attributed-substring-from-range to account for additional whitespace, and to be correct.
+
+        * fast/text/attributed-substring-from-range-expected.txt:
+        * fast/text/attributed-substring-from-range-in-textfield-expected.txt: Added.
+        * fast/text/attributed-substring-from-range-in-textfield.html: Added.
+        * fast/text/attributed-substring-from-range.html:
+
 2007-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

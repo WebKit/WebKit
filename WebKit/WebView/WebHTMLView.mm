@@ -5296,6 +5296,14 @@ static BOOL isTextInput(Frame* coreFrame)
 
     NSAttributedString *result = [NSAttributedString _web_attributedStringFromRange:core(domRange)];
     
+    // [NSAttributedString(WebKitExtras) _web_attributedStringFromRange:]  insists on inserting a trailing 
+    // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
+    // To work around this we truncate the resultant string to the correct length.
+    if ([result length] > nsRange.length) {
+        ASSERT([result length] == nsRange.length + 1);
+        ASSERT([[result string] characterAtIndex:nsRange.length] == '\n' || [[result string] characterAtIndex:nsRange.length] == ' ');
+        result = [result attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
+    }
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%s\"", nsRange.location, nsRange.length, [[result string] UTF8String]);
     return result;
 }

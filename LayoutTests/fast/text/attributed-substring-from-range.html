@@ -4,8 +4,7 @@
 body { margin: 10; padding: 0 }
 </style>
 </head>
-<body contenteditable>
-12<b>3<i>4</i></b>
+<body contenteditable>12<b>3<i>4</i></b>
 <script type="text/javascript">
 
     var console_messages = document.createElement("ol");
@@ -61,7 +60,7 @@ body { margin: 10; padding: 0 }
             log("Exception: " + ex.description);
         }
         
-        var console = document.createElement("p");
+        var console = document.createElement("pre");
         console.appendChild(console_messages);
         document.body.appendChild(console);
         
