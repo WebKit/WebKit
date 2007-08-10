@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Added support for network jobs from Qt resources using the qrc protocol.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkInterface::addJob):
+
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added support for "application/x-qt-styled-widget" that is treated like "application/x-qt-plugin" but also
         gets a Qt widget stylesheet set from the CSS computed style and the element style attribute.
 

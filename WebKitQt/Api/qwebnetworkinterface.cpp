@@ -772,10 +772,16 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 
     int statusCode = 200;
     QByteArray data;
+    QString path = url.path();
+    if (protocol == QLatin1String("qrc")) {
+        protocol = "file";
+        path.prepend(QLatin1Char(':'));
+    }
+
     if (!(protocol.isEmpty() || protocol == QLatin1String("file"))) {
         statusCode = 404;
     } else if (job->postData().isEmpty()) {
-        QFile f(url.path());
+        QFile f(path);
         DEBUG() << "opening" << QString(url.path());
 
         if (f.open(QIODevice::ReadOnly)) {
