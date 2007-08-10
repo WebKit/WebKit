@@ -42,6 +42,7 @@ static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
     { "gif", "image/gif" },
     { "html", "text/html" },
+    { "htm", "text/html" },
     { "ico", "image/x-icon" },
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },

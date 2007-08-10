@@ -1,3 +1,12 @@
+2007-08-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Recognize .htm as valid extension for text/html.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::):
+
 2007-08-10  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
