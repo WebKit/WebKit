@@ -31,6 +31,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageObserver.h"
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
@@ -156,11 +157,13 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
         }
     } else // Draw the whole image.
         CGContextDrawImage(context, ir, image);
-
+        
     ctxt->restore();
     
     startAnimation();
 
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 void Image::drawPatternCallback(void* info, CGContextRef context)
@@ -201,6 +204,9 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     
     ctxt->restore();
     CGPatternRelease(pattern);
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 

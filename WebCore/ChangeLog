@@ -1,3 +1,61 @@
+2007-08-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Refactored live decoded resource eviction to be more modular / 
+        encapsulated. 
+        
+        This fixes one known place where we forgot to hook into the live 
+        decoded eviction mechanism -- canvas. There might be other, unknown 
+        places. In a canvas test page, which I broke off from the Safari 
+        pageout test, I saw an RPRVT reduction of ~10MB.
+        
+        A few renames:
+        - "m_lastLiveAccessTime" => "m_lastDecodedAccessTime" because the data
+        point we're recording is access to the resource in decoded form.
+        
+        - "liveResourceAccessed" => "didAccessDecodedData" for the same reason.
+
+        - "pruneAllResources" => "pruneDeadResources" because this function 
+        does not prune live resources.
+        
+        And the fix:
+        Instead of updating cache metadata at the call site whenver drawing an 
+        image, just have an image notify its observer whenever it draws. The 
+        observer, which is a CachedResource, can then update the metadata.
+        
+        * loader/Cache.cpp: Renames
+        * loader/Cache.h: Removed stale declarations, updated comments
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::didDraw): Implemented didDraw to update cache
+        metadata whenever our image draws.
+        * loader/CachedImage.h: Grouped parts of the ImageObserver interface.
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::deref):
+        (WebCore::CachedResource::didAccessDecodedData): Made this function
+        slightly more modular by allowing the caller to provide a time stamp.
+        In theory, not all CachedResources will necessarily want to use the 
+        current paint time stamp.
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw): Notify our observer that we drew.
+        (WebCore::Image::drawPattern): ditto
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw): ditto
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::draw): ditto
+        
+        Removed old code at image drawing call sites:
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.

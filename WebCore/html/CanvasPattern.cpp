@@ -121,6 +121,10 @@ static void patternCallback(void* info, CGContextRef context)
 
     if (image->getCGImageRef()) {
         CGContextDrawImage(context, rect, image->getCGImageRef());
+        // FIXME: We should refactor this code to use the platform-independent 
+        // drawing API in all cases. Then, this didDraw call will happen 
+        // automatically, and we can remove it.
+        cachedImage->didDraw(image);
         return;
     }
 

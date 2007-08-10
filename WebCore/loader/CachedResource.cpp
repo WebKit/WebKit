@@ -36,7 +36,7 @@
 namespace WebCore {
 
 CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool sendResourceLoadCallbacks)
-    : m_lastLiveAccessTime(0)
+    : m_lastDecodedAccessTime(0)
     , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
     , m_inCache(forCache)
     , m_docLoader(0)
@@ -115,7 +115,7 @@ void CachedResource::deref(CachedResourceClient *c)
         cache()->removeFromLiveResourcesSize(this);
         cache()->removeFromLiveDecodedResourcesList(this);
         allReferencesRemoved();
-        cache()->pruneAllResources();
+        cache()->pruneDeadResources();
     }
 }
 
@@ -146,11 +146,9 @@ void CachedResource::setEncodedSize(unsigned size)
     }
 }
 
-void CachedResource::liveResourceAccessed()
+void CachedResource::didAccessDecodedData(double timeStamp)
 {
-    m_lastLiveAccessTime = Frame::currentPaintTimeStamp();
-    if (!m_lastLiveAccessTime) // In liveResourceAccessed is called directly, outside of a Frame paint.
-        m_lastLiveAccessTime = currentTime();
+    m_lastDecodedAccessTime = timeStamp;
     
     if (inCache()) {
         if (m_inLiveDecodedResourcesList) {

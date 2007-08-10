@@ -545,8 +545,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
             paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
         context->drawImage(m_image->image(), marker.location());
-        if (!context->paintingDisabled())
-            m_image->liveResourceAccessed();
         if (selectionState() != SelectionNone)
             context->fillRect(selectionRect(), selectionBackgroundColor());
         return;

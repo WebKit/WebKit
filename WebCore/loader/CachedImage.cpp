@@ -29,7 +29,9 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
+#include "Frame.h"
 #include "Request.h"
+#include "SystemTime.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -240,6 +242,18 @@ void CachedImage::decodedSizeChanged(const Image* image, int delta)
         if (delta > 0 && referenced() && !inLiveDecodedResourcesList())
             cache()->insertInLiveDecodedResourcesList(this);
     }
+}
+
+void CachedImage::didDraw(const Image* image)
+{
+    if (image != m_image)
+        return;
+    
+    double timeStamp = Frame::currentPaintTimeStamp();
+    if (!timeStamp) // If didDraw is called outside of a Frame paint.
+        timeStamp = currentTime();
+    
+    CachedResource::didAccessDecodedData(timeStamp);
 }
 
 bool CachedImage::shouldPauseAnimation(const Image* image)

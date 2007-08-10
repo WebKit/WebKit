@@ -30,6 +30,7 @@
 #if PLATFORM(CG)
 
 #include "GraphicsContext.h"
+#include "ImageObserver.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -167,8 +168,11 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
     // Media box may have non-zero origin which we ignore. Pass 1 for the page number.
     CGContextDrawPDFDocument(context->platformContext(), FloatRect(FloatPoint(), m_mediaBox.size()),
         m_document, m_currentPage + 1);
-
+    
     context->restore();
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 }

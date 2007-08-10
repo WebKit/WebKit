@@ -34,6 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "ImageObserver.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "ResourceError.h"
@@ -101,6 +102,9 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     context->scale(FloatSize(dstRect.width()/srcRect.width(), dstRect.height()/srcRect.height()));
     m_frame->paint(context, enclosingIntRect(srcRect));
     context->restore();
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 NativeImagePtr SVGImage::nativeImageForCurrentFrame()

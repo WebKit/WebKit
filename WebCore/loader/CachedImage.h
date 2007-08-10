@@ -35,6 +35,8 @@ class Cache;
 class Image;
 
 class CachedImage : public CachedResource, public ImageObserver {
+    friend class Cache;
+
 public:
     CachedImage(DocLoader*, const String& url, bool forCache);
     CachedImage(Image*);
@@ -65,21 +67,21 @@ public:
     
     virtual unsigned decodedSize() const;
 
-    virtual void decodedSizeChanged(const Image* image, int delta);
-
-    virtual bool shouldPauseAnimation(const Image* image);
-    virtual void animationAdvanced(const Image* image);
-
     bool stillNeedsLoad() const { return !m_errorOccurred && m_status == Unknown && m_loading == false; }
     void load();
+
+    // ImageObserver
+    virtual void decodedSizeChanged(const Image* image, int delta);
+    virtual void didDraw(const Image*);
+
+    virtual bool shouldPauseAnimation(const Image*);
+    virtual void animationAdvanced(const Image*);
 
 private:
     void createImage();
     void notifyObservers();
 
     Image* m_image;
-
-    friend class Cache;
 };
 
 }
