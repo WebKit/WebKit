@@ -33,72 +33,6 @@
         (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
         * WebView/WebHTMLViewInternal.h:
 
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Niko.
-
-        We only need to set the Settings of the Page once so do it in
-        WebKitGtkPage instead of WebKitGtkFrame.
-
-        * gtk/Api/webkitgtkframe.cpp:
-        * gtk/Api/webkitgtkpage.cpp:
-
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Niko.
-
-        Instead of reimplementing the general event method, reimplement
-        the specific mouse, expose, keyboard event methods.
-
-        Call the finalize implementation of the base class from WebKitGtkPage
-        and WebKitGtkFrame.
-
-        * gtk/Api/webkitgtkframe.cpp:
-        * gtk/Api/webkitgtkpage.cpp:
-
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Niko.
-
-        Remove the custom painting in favor of the Widget::paint
-        implementation.
-
-        * gtk/Api/webkitgtkpage.cpp:
-
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Adam.
-
-        Moved code from class FrameGdk into WebKitGtkFrame. Update the
-        webkitgrkprivate.h header file to not include FrameGdk.h.
-
-        * gtk/Api/webkitgtkframe.cpp:
-        * gtk/Api/webkitgtkprivate.h:
-
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Adam.
-
-        Change variable names to follow the Coding-Style. Replace occurences
-        of a_b with aB and place the '*' correctly.
-
-        * gtk/Api/webkitgtkframe.cpp:
-        * gtk/Api/webkitgtkpage.cpp:
-        * gtk/Api/webkitgtkprivate.h:
-
-2007-08-08  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Adam.
-
-        Reimplement GtkWidget::event and handle the keyboard and mouse
-        events inside WebKitGtkPage.
-
-        * gtk/Api/webkitgtkpage.cpp:
-        (FrameGdkExposeData::frame_gdk_expose_child):
-        (FrameGdkExposeData::webkit_gtk_page_rendering_area_handle_gdk_event):
-        (FrameGdkExposeData::webkit_gtk_page_register_rendering_area_events):
-        (FrameGdkExposeData::webkit_gtk_page_class_init):
-
 2007-08-07  David Hyatt  <hyatt@apple.com>
 
         Fix a botched backout of the Quicktime plugin clipping fix that broke Java.  The plugin view should not
@@ -112,16 +46,6 @@
         (-[WebPluginController destroyAllPlugins]):
         * WebCoreSupport/WebFrameBridge.mm:
         (-[WebFrameBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:DOMElement:loadManually:]):
-
-2007-08-07  Xan Lopez  <xan@gnome.org>
-
-        Reviewed by Mark Rowe.
-
-        http://bugs.webkit.org/show_bug.cgi?id=14815
-        [gtk] API implementation: reload
-
-        * gtk/Api/webkitgtkpage.cpp: Implement the webkit_gtk_page_reload()
-        function.
 
 2007-08-03  Brady Eidson  <beidson@apple.com>
 
@@ -301,39 +225,6 @@
         * WebCoreSupport/WebEditorClient.mm:
         (WebEditorClient::shouldMoveRangeAfterDelete):
         * WebView/WebEditingDelegatePrivate.h:
-
-2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org>
-
-        Reviewed by Adam.
-
-        http://bugs.webkit.org/show_bug.cgi?id=14806
-        Implement can_go_backward and can_go_forward in webkitgtkpage.cpp
-
-        * gtk/Api/webkitgtkpage.cpp: Implement webkit_gtk_page_can_go_backward() and
-        webkit_gtk_page_can_go_forward() functions.
-
-2007-07-30  Diego Escalante Urrelo  <diegoe@gnome.org> 
-
-        Reviewed by Alp Toker.
-
-        http://bugs.webkit.org/show_bug.cgi?id=14810
-        Bad n_params on load_finished's g_signal_new in webkitgtkpage.cpp
-
-        This is the proper fix for #14810.
-
-        * gtk/Api/webkitgtkframe.cpp:
-        * gtk/Api/webkitgtkpage.cpp: Fix the marshaller type of the "load_finished" signal and
-        correct the class_offset parameters.
-
-2007-07-29  Diego Escalante Urrelo  <diegoe@gnome.org>
-
-        Reviewed by Alp Toker.
-
-        http://bugs.webkit.org/show_bug.cgi?id=14810
-        Bad n_params on load_finished's g_signal_new in webkitgtkpage.cpp
-
-        * gtk/Api/webkitgtkpage.cpp: Use a correct n_params value and the corresponding types for
-        them in the "load_finished" signal.
 
 2007-07-29  Adele Peterson  <adele@apple.com>
 
@@ -520,82 +411,6 @@
 
         * WebView/WebHTMLView.mm:
         * WebView/WebHTMLViewPrivate.h:
-
-2007-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
-
-        Reviewed by Adam.
-
-        Add the first API and partial implementation of the WebKit/Gtk port as
-        of http://bugs.webkit.org/show_bug.cgi?id=14678.
-
-        The delegates of WebView will be modeled as signals. Delegates like the
-        WebPolicyDelegate will be implemented as signals with default handlers.
-
-        Start moving files to WebKit/gtk/WebCoreSupport.
-
-        * gtk: Added.
-        * gtk/Api: Added.
-        * gtk/Api/headers.pri: Added.
-        * gtk/Api/webkitgtk-marshal.list: Added.
-        * gtk/Api/webkitgtkdefines.h: Added.
-        * gtk/Api/webkitgtkframe.cpp: Added.
-        * gtk/Api/webkitgtkframe.h: Added.
-        * gtk/Api/webkitgtkframedata.cpp: Added.
-        * gtk/Api/webkitgtkframedata.h: Added.
-        * gtk/Api/webkitgtkglobal.cpp: Added.
-        * gtk/Api/webkitgtkglobal.h: Added.
-        * gtk/Api/webkitgtknetworkrequest.cpp: Added.
-        * gtk/Api/webkitgtknetworkrequest.h: Added.
-        * gtk/Api/webkitgtkpage.cpp: Added.
-        * gtk/Api/webkitgtkpage.h: Added.
-        * gtk/Api/webkitgtkprivate.cpp: Added.
-        * gtk/Api/webkitgtkprivate.h: Added.
-        * gtk/Api/webkitgtksettings.cpp: Added.
-        * gtk/Api/webkitgtksettings.h: Added.
-        * gtk/WebCoreSupport: Added.
-        * gtk/WebCoreSupport/ChromeClientGdk.cpp: Added.
-        (WebCore::ChromeClientGdk::ChromeClientGdk):
-        (WebCore::ChromeClientGdk::chromeDestroyed):
-        (WebCore::ChromeClientGdk::windowRect):
-        (WebCore::ChromeClientGdk::setWindowRect):
-        (WebCore::ChromeClientGdk::pageRect):
-        (WebCore::ChromeClientGdk::scaleFactor):
-        (WebCore::ChromeClientGdk::focus):
-        (WebCore::ChromeClientGdk::unfocus):
-        (WebCore::ChromeClientGdk::createWindow):
-        (WebCore::ChromeClientGdk::createModalDialog):
-        (WebCore::ChromeClientGdk::show):
-        (WebCore::ChromeClientGdk::canRunModal):
-        (WebCore::ChromeClientGdk::runModal):
-        (WebCore::ChromeClientGdk::setToolbarsVisible):
-        (WebCore::ChromeClientGdk::toolbarsVisible):
-        (WebCore::ChromeClientGdk::setStatusbarVisible):
-        (WebCore::ChromeClientGdk::statusbarVisible):
-        (WebCore::ChromeClientGdk::setScrollbarsVisible):
-        (WebCore::ChromeClientGdk::scrollbarsVisible):
-        (WebCore::ChromeClientGdk::setMenubarVisible):
-        (WebCore::ChromeClientGdk::menubarVisible):
-        (WebCore::ChromeClientGdk::setResizable):
-        (WebCore::ChromeClientGdk::closeWindowSoon):
-        (WebCore::ChromeClientGdk::canTakeFocus):
-        (WebCore::ChromeClientGdk::takeFocus):
-        (WebCore::ChromeClientGdk::canRunBeforeUnloadConfirmPanel):
-        (WebCore::ChromeClientGdk::runBeforeUnloadConfirmPanel):
-        (WebCore::ChromeClientGdk::addMessageToConsole):
-        (WebCore::ChromeClientGdk::runJavaScriptAlert):
-        (WebCore::ChromeClientGdk::runJavaScriptConfirm):
-        (WebCore::ChromeClientGdk::runJavaScriptPrompt):
-        (WebCore::ChromeClientGdk::setStatusbarText):
-        (WebCore::ChromeClientGdk::shouldInterruptJavaScript):
-        (WebCore::ChromeClientGdk::tabsToLinks):
-        (WebCore::ChromeClientGdk::windowResizerRect):
-        (WebCore::ChromeClientGdk::addToDirtyRegion):
-        (WebCore::ChromeClientGdk::scrollBackingStore):
-        (WebCore::ChromeClientGdk::updateBackingStore):
-        (WebCore::ChromeClientGdk::mouseDidMoveOverElement):
-        (WebCore::ChromeClientGdk::setToolTip):
-        (WebCore::ChromeClientGdk::print):
-        * gtk/WebCoreSupport/ChromeClientGdk.h: Added.
 
 2007-07-23  Alice Liu  <alice.liu@apple.com>
 
