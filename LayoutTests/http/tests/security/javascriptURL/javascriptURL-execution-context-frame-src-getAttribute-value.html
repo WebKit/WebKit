@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script>
+        function runTest() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpChildFramesAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            var innerFrame = document.getElementById('aFrame').contentWindow;
+            var testDone = false;
+
+            setTimeout(test, 1);
+
+            setTimeout(function() {
+                if (!testDone) {
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }
+            }, 2000);
+
+            function test() {
+                var flag = innerFrame.frames[0];
+                if (!flag) {
+                    setTimeout(test, 1);
+                    return;
+                }
+
+                // Get old Attribute node and use Attribute.value.
+                var oldSrc = document.getElementById('aFrame').getAttributeNode('src');
+                oldSrc.value = 'javascript:"FAIL: this should not have been loaded."';
+
+                testDone = true;
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        }
+    </script>
+</head>
+<frameset onload="runTest()" rows="10%,*">
+    <frame id='main' src="data:text/html,<p>This test passes as long as the word 'FAIL' and an accompanying message do not appear in the frame below.</p>">
+    <frame id='aFrame' src='http://localhost:8000/security/resources/cross-frame-iframe.html'>
+</frameset>
+</html>

@@ -1,3 +1,35 @@
+2007-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5395618>
+
+        Use checkNodeSecurity when setting the 'src' or 'location' attribute of an
+        iframe or frame element.  
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAttrCustom.cpp: Added.
+        (WebCore::JSAttr::setValue): Call checkNodeSecurity for attributes with a current iframe or frame
+        ownerElement when setting src to a javascript: URL.
+        * bindings/js/JSElementCustom.cpp: Added.
+        (WebCore::allowSettingSrcToJavascriptURL):
+        (WebCore::JSElement::setAttribute): Call checkNodeSecurity when element is a frame or iframe and 
+        setting he src attribute to a javascript: URL.
+        (WebCore::JSElement::setAttributeNode): Ditto.
+        (WebCore::JSElement::setAttributeNS): Ditto.
+        (WebCore::JSElement::setAttributeNodeNS): Ditto.
+        * bindings/js/JSHTMLFrameElementCustom.cpp: Added.
+        (WebCore::allowSettingJavascriptURL):
+        (WebCore::JSHTMLFrameElement::setSrc): Call checkNodeSecurity when setting to a javascript: URL.
+        (WebCore::JSHTMLFrameElement::setLocation): Ditto.
+        * bindings/js/JSHTMLIFrameElementCustom.cpp: Added.
+        (WebCore::JSHTMLIFrameElement::setSrc): Call checkNodeSecurity when setting to a javascript: URL.
+        * bindings/scripts/CodeGeneratorJS.pm: Add support for [CustomGetter] and [CustomSetter]
+        * dom/Attr.idl:
+        * dom/Element.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders.

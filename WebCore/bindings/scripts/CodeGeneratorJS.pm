@@ -387,6 +387,8 @@ sub GenerateHeader
             my $attribute = $_;
 
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"};
+            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomGetter"};
+            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomSetter"};
 
             $i++;
             if ((($i % 4) eq 0) and ($i ne 0)) {
@@ -434,6 +436,12 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
                 push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
+                if ($attribute->type !~ /^readonly/) {
+                    push(@headerContent, "    void set" . WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                }
+            } elsif ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
+                push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
+            } elsif ($attribute->signature->extendedAttributes->{"CustomSetter"}) {
                 if ($attribute->type !~ /^readonly/) {
                     push(@headerContent, "    void set" . WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
                 }
@@ -862,12 +870,6 @@ sub GenerateImplementation
 
         push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n{\n");
 
-        if ($podType) {
-            push(@implContent, "    $podType& imp(*impl());\n\n");
-        } elsif (!($numAttributes == 1 && $dataNode->extendedAttributes->{"GenerateConstructor"})) {
-            push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
-        }
-
         push(@implContent, "    switch (token) {\n");
 
         foreach my $attribute (@{$dataNode->attributes}) {
@@ -889,14 +891,16 @@ sub GenerateImplementation
                 push(@implContent, "            return jsUndefined();\n");
             }
 
-            if ($attribute->signature->extendedAttributes->{"Custom"}) {
+            if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomGetter"}) {
                 push(@implContent, "        return $name(exec);\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
                 $implIncludes{"kjs_dom.h"} = 1;
+                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                 push(@implContent, "        return checkNodeSecurity(exec, imp->$name()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                 $implIncludes{"Document.h"} = 1;
                 $implIncludes{"kjs_dom.h"} = 1;
+                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                 push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
@@ -904,12 +908,14 @@ sub GenerateImplementation
                 push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
             } elsif (!@{$attribute->getterExceptions}) {
                 if ($podType) {
+                    push(@implContent, "        $podType& imp(*impl());\n\n");
                     if ($podType eq "double") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp") . ";\n");
                     } else {
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp.$name()") . ";\n");
                     }
                 } else {
+                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                     my $type = $codeGenerator->StripModule($attribute->signature->type);
                     my $jsType = NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name()");
 
@@ -935,8 +941,10 @@ sub GenerateImplementation
                 push(@implContent, "        ExceptionCode ec = 0;\n");
 
                 if ($podType) {
+                    push(@implContent, "        $podType& imp(*impl());\n\n");
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "", "imp.$name(ec)") . ";\n");
                 } else {
+                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                     push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name(ec)") . ";\n");
                 }
 
@@ -981,12 +989,6 @@ sub GenerateImplementation
             push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
             push(@implContent, "{\n");
 
-            if ($podType) {
-                push(@implContent, "    $podType& imp(*impl());\n\n");
-            } else {
-                push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
-            }
-
             push(@implContent, "    switch (token) {\n");
 
             foreach my $attribute (@{$dataNode->attributes}) {
@@ -1004,7 +1006,7 @@ sub GenerateImplementation
                         push(@implContent, "            return;\n");
                     }
 
-                    if ($attribute->signature->extendedAttributes->{"Custom"}) {
+                    if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
                         push(@implContent, "        set" . WK_ucfirst($name) . "(exec, value);\n");
                     } elsif ($attribute->signature->type =~ /Constructor$/) {
                         my $constructorType = $attribute->signature->type;
@@ -1014,6 +1016,7 @@ sub GenerateImplementation
                         push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
                     } else {
                         if ($podType) {
+                            push(@implContent, "        $podType& imp(*impl());\n\n");
                             if ($podType eq "double") { # Special case for JSSVGNumber
                                 push(@implContent, "        imp = " . JSValueToNative($attribute->signature, "value") . ";\n");
                             } else {
@@ -1021,6 +1024,7 @@ sub GenerateImplementation
                             }
                             push(@implContent, "        m_impl->commitChange(exec);\n");
                         } else {
+                            push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                             push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
                             push(@implContent, "        imp->set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
                             push(@implContent, ", ec") if @{$attribute->setterExceptions};
@@ -1036,6 +1040,7 @@ sub GenerateImplementation
 
             my $contextInterfaceName = CreateSVGContextInterfaceName($interfaceName);
             if ($contextInterfaceName ne "") {
+                push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
                 push(@implContent, "    ASSERT(exec && exec->dynamicInterpreter());\n");
                 push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
                 push(@implContent, "    if (!activeFrame)\n        return;\n\n");

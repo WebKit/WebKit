@@ -1,3 +1,36 @@
+2007-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Tests for <rdar://problem/5395618>
+
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt: Added.
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html: Added.
+
 2007-08-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

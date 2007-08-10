@@ -29,7 +29,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       name;
                  attribute boolean         noResize;
                  attribute [ConvertNullToNullString] DOMString       scrolling;
-                 attribute [ConvertNullToNullString] DOMString       src;
+                 attribute [ConvertNullToNullString, CustomSetter] DOMString       src;
 
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;
@@ -37,7 +37,7 @@ module html {
         // Extensions
         readonly attribute DOMWindow contentWindow;
 
-                 attribute [ConvertNullToNullString] DOMString       location;
+                 attribute [ConvertNullToNullString, CustomSetter] DOMString       location;
         readonly attribute long            width;
         readonly attribute long            height;
 

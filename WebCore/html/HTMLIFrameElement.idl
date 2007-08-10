@@ -30,7 +30,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       marginWidth;
                  attribute [ConvertNullToNullString] DOMString       name;
                  attribute [ConvertNullToNullString] DOMString       scrolling;
-                 attribute [ConvertNullToNullString] DOMString       src;
+                 attribute [ConvertNullToNullString, CustomSetter] DOMString       src;
                  attribute [ConvertNullToNullString] DOMString       width;
 
         // Introduced in DOM Level 2:
