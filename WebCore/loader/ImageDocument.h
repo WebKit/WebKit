@@ -52,6 +52,7 @@ private:
     void resizeImageToFit();
     void restoreImageSize();
     bool imageFitsInWindow() const;
+    bool shouldShrinkToFit() const;
     float scale() const;
     
     HTMLImageElement* m_imageElement;

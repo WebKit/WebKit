@@ -159,7 +159,7 @@ void ImageDocument::createDocumentStructure()
     
     body->appendChild(imageElement, ec);
     
-    if (!frame()->page()->settings()->shrinksStandaloneImagesToFit())
+    if (!shouldShrinkToFit())
         return;
     
     // Add event listeners
@@ -226,7 +226,7 @@ void ImageDocument::imageChanged()
     
     m_imageSizeIsKnown = true;
     
-    if (!frame()->page()->settings()->shrinksStandaloneImagesToFit())
+    if (!shouldShrinkToFit())
         return;
     
     // Force resizing of the image
@@ -299,6 +299,12 @@ CachedImage* ImageDocument::cachedImage()
         createDocumentStructure();
     
     return m_imageElement->cachedImage();
+}
+
+bool ImageDocument::shouldShrinkToFit() const
+{
+    return frame()->page()->settings()->shrinksStandaloneImagesToFit() &&
+        frame()->page()->mainFrame() == frame();
 }
 
 void ImageEventListener::handleEvent(Event* event, bool isWindowEvent)

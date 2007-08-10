@@ -1,3 +1,18 @@
+2007-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5400029> iframes with an image src rarely load image
+        
+        Don't try to shrink standalone images in subframes. The resize event is not 
+        sent for subframes which screws up the shrink-to-fit logic.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageChanged):
+        (WebCore::ImageDocument::shouldShrinkToFit):
+        * loader/ImageDocument.h:
+
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
