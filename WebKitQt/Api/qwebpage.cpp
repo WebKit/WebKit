@@ -262,10 +262,10 @@ QWebPage *QWebPage::createWindow()
     return 0;
 }
 
-QObject *QWebPage::createPlugin(const QUrl &url, const QString &mimeType, const QStringList &paramNames, const QStringList &paramValues)
+QObject *QWebPage::createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues)
 {
+    Q_UNUSED(classid)
     Q_UNUSED(url)
-    Q_UNUSED(mimeType)
     Q_UNUSED(paramNames)
     Q_UNUSED(paramValues)
     return 0;

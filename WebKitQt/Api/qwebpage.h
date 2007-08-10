@@ -171,7 +171,7 @@ signals:
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     virtual QWebPage *createWindow();
-    virtual QObject *createPlugin(const QUrl &url, const QString &mimeType, const QStringList &paramNames, const QStringList &paramValues);
+    virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
     virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
