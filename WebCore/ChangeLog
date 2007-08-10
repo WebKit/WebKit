@@ -1,3 +1,15 @@
+2007-08-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14875
+          Textarea with nowrap - left/right nav, Up/down nav both hide text
+
+        Test: fast/layers/scroll-rect-to-visible.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Account for borders and scroll bars.
+
 2007-08-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

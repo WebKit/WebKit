@@ -1,3 +1,15 @@
+2007-08-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14875
+          Textarea with nowrap - left/right nav, Up/down nav both hide text
+
+        * fast/layers/scroll-rect-to-visible-expected.checksum: Added.
+        * fast/layers/scroll-rect-to-visible-expected.png: Added.
+        * fast/layers/scroll-rect-to-visible-expected.txt: Added.
+        * fast/layers/scroll-rect-to-visible.html: Added.
+
 2007-08-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

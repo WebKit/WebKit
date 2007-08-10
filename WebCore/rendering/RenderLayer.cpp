@@ -711,16 +711,18 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
         int x, y;
         m_object->absolutePosition(x, y);
-        IntRect layerBounds = IntRect(x + scrollXOffset(), y + scrollYOffset(), 
-                                      width() - verticalScrollbarWidth(), height() - horizontalScrollbarHeight());
+        x += m_object->borderLeft();
+        y += m_object->borderTop();
+
+        IntRect layerBounds = IntRect(x + scrollXOffset(), y + scrollYOffset(), m_object->clientWidth(), m_object->clientHeight());
         IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
         xOffset = r.x() - x;
         yOffset = r.y() - y;
         // Adjust offsets if they're outside of the allowable range.
-        xOffset = max(0, min(scrollWidth() - width(), xOffset));
-        yOffset = max(0, min(scrollHeight() - height(), yOffset));
+        xOffset = max(0, min(scrollWidth() - layerBounds.width(), xOffset));
+        yOffset = max(0, min(scrollHeight() - layerBounds.height(), yOffset));
         
         if (xOffset != scrollXOffset() || yOffset != scrollYOffset()) {
             int diffX = scrollXOffset();
