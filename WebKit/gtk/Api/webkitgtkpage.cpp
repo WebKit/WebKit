@@ -68,7 +68,7 @@ enum {
 
 static guint webkit_gtk_page_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitGtkPage, webkit_gtk_page, GTK_TYPE_LAYOUT)
+G_DEFINE_TYPE(WebKitGtkPage, webkit_gtk_page, GTK_TYPE_CONTAINER)
 
 static gboolean webkit_gtk_page_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
@@ -135,13 +135,21 @@ static void webkit_gtk_page_size_allocate(GtkWidget* widget, GtkAllocation* allo
     frame->sendResizeEvent();
 }
 
-
 static void webkit_gtk_page_realize(GtkWidget* widget)
 {
-    GTK_WIDGET_CLASS(webkit_gtk_page_parent_class)->realize(widget);
+    GTK_WIDGET_SET_FLAGS(widget, GTK_REALIZED);
 
-    gdk_window_set_events(GTK_LAYOUT(widget)->bin_window,
-                          (GdkEventMask)(GDK_EXPOSURE_MASK
+    GdkWindowAttr attributes;
+    attributes.window_type = GDK_WINDOW_CHILD;
+    attributes.x = widget->allocation.x;
+    attributes.y = widget->allocation.y;
+    attributes.width = widget->allocation.width;
+    attributes.height = widget->allocation.height;
+    attributes.wclass = GDK_INPUT_OUTPUT;
+    attributes.visual = gtk_widget_get_visual (widget);
+    attributes.colormap = gtk_widget_get_colormap (widget);
+    attributes.event_mask = GDK_VISIBILITY_NOTIFY_MASK
+                            | GDK_EXPOSURE_MASK
                             | GDK_BUTTON_PRESS_MASK
                             | GDK_BUTTON_RELEASE_MASK
                             | GDK_POINTER_MOTION_MASK
@@ -150,13 +158,61 @@ static void webkit_gtk_page_realize(GtkWidget* widget)
                             | GDK_BUTTON_MOTION_MASK
                             | GDK_BUTTON1_MOTION_MASK
                             | GDK_BUTTON2_MOTION_MASK
-                            | GDK_BUTTON3_MOTION_MASK));
+                            | GDK_BUTTON3_MOTION_MASK;
+
+    gint attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+    widget->window = gdk_window_new(gtk_widget_get_parent_window (widget), &attributes, attributes_mask);
+    gdk_window_set_user_data(widget->window, widget);
 }
 
-static void webkit_gtk_page_set_scroll_adjustments(GtkLayout* layout, GtkAdjustment* hadj, GtkAdjustment* vadj)
+static void webkit_gtk_page_map(GtkWidget* widget)
 {
-    FrameView* view = core(getFrameFromPage(WEBKIT_GTK_PAGE(layout)))->view();
+    GTK_WIDGET_SET_FLAGS(widget, GTK_MAPPED);
+    WebKitGtkPagePrivate* private_data = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(widget));
+
+    HashSet<GtkWidget*>::const_iterator end = private_data->children.end();
+    for (HashSet<GtkWidget*>::const_iterator current = private_data->children.begin(); current != end; ++current)
+        if (GTK_WIDGET_VISIBLE(*current) && !GTK_WIDGET_MAPPED(*current))
+            gtk_widget_map((*current));
+
+    gdk_window_show(widget->window);
+}
+
+static void webkit_gtk_page_set_scroll_adjustments(WebKitGtkPage* page, GtkAdjustment* hadj, GtkAdjustment* vadj)
+{
+    FrameView* view = core(getFrameFromPage(page))->view();
     view->setGtkAdjustments(hadj, vadj);
+}
+
+static void webkit_gtk_page_container_add(GtkContainer* container, GtkWidget* widget)
+{
+    WebKitGtkPage* page = WEBKIT_GTK_PAGE(container);
+    WebKitGtkPagePrivate* private_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+
+    private_data->children.add(widget);
+    if (GTK_WIDGET_REALIZED(container))
+        gtk_widget_set_parent_window(widget, GTK_WIDGET(page)->window);
+    gtk_widget_set_parent(widget, GTK_WIDGET(container));
+}
+
+static void webkit_gtk_page_container_remove(GtkContainer* container, GtkWidget* widget)
+{
+    WebKitGtkPagePrivate* private_data = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(container));
+
+    if (private_data->children.contains(widget)) {
+        gtk_widget_unparent(widget);
+        private_data->children.remove(widget);
+    }
+}
+
+static void webkit_gtk_page_container_forall(GtkContainer* container, gboolean, GtkCallback callback, gpointer callbackData)
+{
+    WebKitGtkPagePrivate* privateData = WEBKIT_GTK_PAGE_GET_PRIVATE(WEBKIT_GTK_PAGE(container));
+
+    HashSet<GtkWidget*> children = privateData->children;
+    HashSet<GtkWidget*>::const_iterator end = children.end();
+    for (HashSet<GtkWidget*>::const_iterator current = children.begin(); current != end; ++current)
+        (*callback)(*current, callbackData);
 }
 
 static WebKitGtkPage* webkit_gtk_page_real_create_page(WebKitGtkPage*)
@@ -332,6 +388,7 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(pageClass);
     widgetClass->realize = webkit_gtk_page_realize;
+    widgetClass->map = webkit_gtk_page_map;
     widgetClass->expose_event = webkit_gtk_page_expose_event;
     widgetClass->key_press_event = webkit_gtk_page_key_event;
     widgetClass->key_release_event = webkit_gtk_page_key_event;
@@ -341,7 +398,23 @@ static void webkit_gtk_page_class_init(WebKitGtkPageClass* pageClass)
     widgetClass->scroll_event = webkit_gtk_page_scroll_event;
     widgetClass->size_allocate = webkit_gtk_page_size_allocate;
 
-    GTK_LAYOUT_CLASS(pageClass)->set_scroll_adjustments = webkit_gtk_page_set_scroll_adjustments;
+    GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(pageClass);
+    containerClass->add = webkit_gtk_page_container_add;
+    containerClass->remove = webkit_gtk_page_container_remove;
+    containerClass->forall = webkit_gtk_page_container_forall;
+
+    /*
+     * make us scrollable (e.g. addable to a GtkScrolledWindow)
+     */
+    pageClass->set_scroll_adjustments = webkit_gtk_page_set_scroll_adjustments;
+    GTK_WIDGET_CLASS(pageClass)->set_scroll_adjustments_signal = g_signal_new("set_scroll_adjustments",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitGtkPageClass, set_scroll_adjustments),
+            NULL, NULL,
+            webkit_gtk_marshal_VOID__OBJECT_OBJECT,
+            G_TYPE_NONE, 2,
+            GTK_TYPE_ADJUSTMENT, GTK_TYPE_ADJUSTMENT);
 }
 
 static void webkit_gtk_page_init(WebKitGtkPage* page)

@@ -134,9 +134,9 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
     frameData->frame = new Frame(pageData->page, 0, frameData->client);
 
     FrameView* frameView = new FrameView(frameData->frame);
-    frameView->setContainingWindow(GTK_LAYOUT(page));
-    frameView->setGtkAdjustments(gtk_layout_get_hadjustment(GTK_LAYOUT(page)),
-                                 gtk_layout_get_vadjustment(GTK_LAYOUT(page)));
+    frameView->setContainingWindow(GTK_CONTAINER(page));
+    frameView->setGtkAdjustments(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
+                                 GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
     frameData->frame->setView(frameView);
     frameData->frame->init();
     frameData->page = page;
@@ -154,7 +154,7 @@ GObject* webkit_gtk_frame_init_with_page(WebKitGtkPage* page, HTMLFrameOwnerElem
     frameData->frame = new Frame(pageData->page, element, frameData->client);
 
     FrameView* frameView = new FrameView(frameData->frame);
-    frameView->setContainingWindow(GTK_LAYOUT(page));
+    frameView->setContainingWindow(GTK_CONTAINER(page));
     frameData->frame->setView(frameView);
     frameView->deref();
     frameData->frame->init();

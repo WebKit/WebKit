@@ -1,3 +1,20 @@
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders.
+
+        Make the containingWindow a GtkContainer and make use of the
+        GtkWidget::window instead of the GtkLayout::bin_window.
+
+        * platform/Widget.h:
+        * platform/gdk/PlatformScreenGdk.cpp:
+        (WebCore::screenDepth):
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        * platform/gdk/WidgetGdk.cpp:
+        (WebCore::Widget::setContainingWindow):
+        (WebCore::Widget::setCursor):
+
 2007-08-10  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

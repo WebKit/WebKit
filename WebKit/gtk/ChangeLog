@@ -1,5 +1,18 @@
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Anders.
+
+        Make WebKitGtkPage a GtkContainer to avoid a size_allocate
+        race of GtkScrollBar and GtkLayout.
+
+        * Api/webkitgtk-marshal.list:
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.h:
+
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Niko.
 
         Minor changes to the WebKit::EditorClient to allow removing

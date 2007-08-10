@@ -298,7 +298,7 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
                           containingWindowRect.y(),
                           containingWindowRect.width(),
                           containingWindowRect.height() };
-    GdkWindow* window = containingWindow()->bin_window;
+    GdkWindow* window = GTK_WIDGET(containingWindow())->window;
 
     if (window)
         gdk_window_invalidate_rect(window, &rect, true);
@@ -315,7 +315,7 @@ void ScrollView::update()
     ASSERT(containingWindow());
 
     GdkRectangle rect = { 0, 0, m_data->contentsSize.width(), m_data->contentsSize.height() };
-    gdk_window_invalidate_rect(containingWindow()->bin_window, &rect, true);
+    gdk_window_invalidate_rect(GTK_WIDGET(containingWindow())->window, &rect, true);
 }
 
 int ScrollView::visibleWidth() const
@@ -445,10 +445,6 @@ void ScrollView::setStaticBackground(bool flag)
     m_data->hasStaticBackground = flag;
 }
 
-/*
- * only update the adjustments, the GtkLayout is doing the work
- * for us (assuming it is in a box...).
- */
 void ScrollView::setFrameGeometry(const IntRect& newGeometry)
 {
     ASSERT(isFrameView());

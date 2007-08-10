@@ -48,7 +48,7 @@ public:
     IntRect frameRect;
 
     ScrollView* parent;
-    GtkLayout* containingWindow;
+    GtkContainer* containingWindow;
     bool suppressInvalidation;
 
     GdkDrawable* gdkDrawable() const
@@ -81,12 +81,12 @@ Widget::~Widget()
     delete data;
 }
 
-void Widget::setContainingWindow(GtkLayout* containingWindow)
+void Widget::setContainingWindow(GtkContainer* containingWindow)
 {
     data->containingWindow = containingWindow;
 }
 
-GtkLayout* Widget::containingWindow() const
+GtkContainer* Widget::containingWindow() const
 {
     return data->containingWindow;
 }
@@ -131,7 +131,7 @@ void Widget::setCursor(const Cursor& cursor)
     GdkCursor* pcur = cursor.impl();
     if (!pcur)
         return;
-    gdk_window_set_cursor(data->gdkDrawable() ? GDK_WINDOW(data->gdkDrawable()) : containingWindow()->bin_window, pcur);
+    gdk_window_set_cursor(data->gdkDrawable() ? GDK_WINDOW(data->gdkDrawable()) : GTK_WIDGET(containingWindow())->window, pcur);
 }
 
 void Widget::show()

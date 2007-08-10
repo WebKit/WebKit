@@ -39,10 +39,10 @@ namespace WebCore {
 
 int screenDepth(Widget* widget) 
 {
-    ASSERT(widget->containingWindow() && widget->containingWindow()->bin_window);
+    ASSERT(widget->containingWindow() && GTK_WIDGET(widget->containingWindow())->window);
 
     gint dummy, depth;
-    gdk_window_get_geometry(widget->containingWindow()->bin_window, &dummy, &dummy, &dummy, &dummy, &depth);
+    gdk_window_get_geometry(GTK_WIDGET(widget->containingWindow())->window, &dummy, &dummy, &dummy, &dummy, &depth);
     return depth;
 }
 

@@ -43,7 +43,7 @@ typedef struct HWND__* HWND;
 #if PLATFORM(GDK)
 typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkLayout GtkLayout;
+typedef struct _GtkContainer GtkContainer;
 #endif
 
 #if PLATFORM(QT)
@@ -140,8 +140,8 @@ namespace WebCore {
         virtual void setParent(ScrollView*);
         ScrollView* parent() const;
 
-        void setContainingWindow(GtkLayout*);
-        GtkLayout* containingWindow() const;
+        void setContainingWindow(GtkContainer*);
+        GtkContainer* containingWindow() const;
 
         virtual void geometryChanged() const;
 
