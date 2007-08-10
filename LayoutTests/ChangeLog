@@ -1,5 +1,17 @@
 2007-08-09  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Justin Garcia.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14347
+          REGRESSION (r21291): Initiating a drag near the edge of a selection deselects it
+
+        * editing/selection/contains-boundaries-expected.checksum: Added.
+        * editing/selection/contains-boundaries-expected.png: Added.
+        * editing/selection/contains-boundaries-expected.txt: Added.
+        * editing/selection/contains-boundaries.html: Added.
+
+2007-08-09  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=14875
