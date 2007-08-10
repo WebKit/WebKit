@@ -1,3 +1,26 @@
+2007-08-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14798
+          Incorrect bidi reordering of neutrals and digits after RTL embed
+          and other bugs in the bidi algorithm.
+
+        Test: fast/text/international/bidi-neutral-run.html
+
+        Fixed several bugs in resolving the embedding level of runs of neutral
+        characters. Changed the logic to rely on the eor direction only for
+        the number types, and otherwise consider the last strong type.
+
+        * platform/BidiContext.h:
+        (WebCore::BidiContext::BidiContext): Added an ASSERT.
+        * platform/BidiResolver.h:
+        (WebCore::::embed):
+        (WebCore::::createBidiRunsForLine):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextRunIterator::atEnd): Changed to return true instead of
+        crashing when called on the empty iterator.
+
 2007-08-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.

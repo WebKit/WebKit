@@ -23,7 +23,6 @@
 #define BidiResolver_h
 
 #include "BidiContext.h"
-#include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -192,7 +191,7 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
         BidiContext* c = context()->parent();
         if (c) {
             if (!emptyRun && eor != last) {
-                ASSERT(m_status.eor != OtherNeutral);
+                ASSERT(m_status.eor != OtherNeutral || eor.atEnd());
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
                 ASSERT(m_status.last == EuropeanNumberSeparator
                     || m_status.last == EuropeanNumberTerminator
@@ -203,7 +202,7 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
                     || m_status.last == WhiteSpaceNeutral
                     || m_status.last == OtherNeutral);
                 if (m_direction == OtherNeutral)
-                    m_direction = context()->dir();
+                    m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
                 if (context()->dir() == LeftToRight) {
                     // bidi.sor ... bidi.eor ... bidi.last L
                     if (m_status.eor == EuropeanNumber) {
@@ -214,10 +213,18 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
                     } else if (m_status.eor == ArabicNumber) {
                         m_direction = ArabicNumber;
                         appendRun();
-                    } else if (m_status.eor != LeftToRight)
-                        appendRun();
-                } else if (m_status.eor != RightToLeft && m_status.eor != RightToLeftArabic)
+                    } else if (m_status.lastStrong != LeftToRight) {
+                        if (context()->dir() == RightToLeft)
+                            m_direction = RightToLeft;
+                        else {
+                            appendRun();
+                            m_direction = LeftToRight;
+                        }
+                    }
+                } else if (m_status.eor == EuropeanNumber || m_status.eor == ArabicNumber || m_status.lastStrong == LeftToRight) {
                     appendRun();
+                    m_direction = RightToLeft;
+                }
                 eor = last;
             }
             appendRun();
@@ -226,7 +233,6 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
             setLastDir(context()->dir());
             setLastStrongDir(context()->dir());
             setContext(c);
-            setEorDir(context()->dir());
             eor = Iterator();
         }
     } else {
@@ -252,7 +258,7 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
 
         if (level < 61) {
             if (!emptyRun && eor != last) {
-                ASSERT(m_status.eor != OtherNeutral);
+                ASSERT(m_status.eor != OtherNeutral || eor.atEnd());
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
                 ASSERT(m_status.last == EuropeanNumberSeparator
                     || m_status.last == EuropeanNumberTerminator
@@ -263,36 +269,26 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
                     || m_status.last == WhiteSpaceNeutral
                     || m_status.last == OtherNeutral);
                 if (m_direction == OtherNeutral)
-                    m_direction = runDir;
+                    m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
                 if (runDir == LeftToRight) {
                     // bidi.sor ... bidi.eor ... bidi.last L
                     if (m_status.eor == EuropeanNumber) {
                         if (m_status.lastStrong != LeftToRight) {
                             m_direction = EuropeanNumber;
                             appendRun();
-                            if (context()->dir() != LeftToRight)
-                                m_direction = RightToLeft;
                         }
                     } else if (m_status.eor == ArabicNumber) {
                         m_direction = ArabicNumber;
                         appendRun();
-                        if (context()->dir() != LeftToRight) {
-                            eor = last;
-                            m_direction = RightToLeft;
-                            appendRun();
-                        }
-                    } else if (m_status.eor != LeftToRight) {
-                        if (context()->dir() == LeftToRight || m_status.lastStrong == LeftToRight)
-                            appendRun();
-                        else
-                            m_direction = RightToLeft;
-                    }
-                } else if (m_status.eor != RightToLeft && m_status.eor != RightToLeftArabic) {
-                    // bidi.sor ... bidi.eor ... bidi.last R; bidi.eor=L/EN/AN; EN,AN behave like R (rule N1)
-                    if (context()->dir() == RightToLeft || m_status.lastStrong == RightToLeft || m_status.lastStrong == RightToLeftArabic)
+                    } else if (m_status.lastStrong != LeftToRight && context()->dir() == LeftToRight) {
                         appendRun();
-                    else
                         m_direction = LeftToRight;
+                    }
+                } else if (m_status.eor == ArabicNumber
+                    || m_status.eor == EuropeanNumber && (m_status.lastStrong != LeftToRight || context()->dir() == RightToLeft)
+                    || m_status.eor != EuropeanNumber && m_status.lastStrong == LeftToRight && context()->dir() == RightToLeft) {
+                    appendRun();
+                    m_direction = RightToLeft;
                 }
                 eor = last;
             }
@@ -301,7 +297,6 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
             setContext(new BidiContext(level, runDir, override, context()));
             setLastDir(runDir);
             setLastStrongDir(runDir);
-            setEorDir(runDir);
             eor = Iterator();
         }
     }
@@ -421,7 +416,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                 dirCurrent = m_status.last;
         }
 
-        ASSERT(m_status.eor != OtherNeutral);
+        ASSERT(m_status.eor != OtherNeutral || eor.atEnd());
         switch (dirCurrent) {
 
         // embedding and overrides (X1-X9 in the Bidi specs)
@@ -475,13 +470,13 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                             m_direction = RightToLeft;
                             appendRun();
                         }
-                    } else if (m_status.eor != LeftToRight) {
+                    } else if (m_status.lastStrong != LeftToRight) {
                         //last stuff takes embedding dir
-                        if (context()->dir() != LeftToRight && m_status.lastStrong != LeftToRight) {
+                        if (context()->dir() == RightToLeft) {
                             eor = last; 
                             m_direction = RightToLeft;
                         }
-                        appendRun(); 
+                        appendRun();
                     }
                 default:
                     break;
@@ -509,13 +504,15 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                 case SegmentSeparator:
                 case WhiteSpaceNeutral:
                 case OtherNeutral:
-                    if (m_status.eor != RightToLeft && m_status.eor != RightToLeftArabic) {
-                        //last stuff takes embedding dir
-                        if (context()->dir() != RightToLeft && m_status.lastStrong != RightToLeft
-                            && m_status.lastStrong != RightToLeftArabic) {
+                    if (m_status.eor == EuropeanNumber) {
+                        if (m_status.lastStrong == LeftToRight && context()->dir() == LeftToRight)
                             eor = last;
-                            m_direction = LeftToRight;
-                        }
+                        appendRun();
+                    } else if (m_status.eor == ArabicNumber)
+                        appendRun();
+                    else if (m_status.lastStrong == LeftToRight) {
+                        if (context()->dir() == LeftToRight)
+                            eor = last;
                         appendRun();
                     }
                 default:
@@ -553,19 +550,35 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                     case SegmentSeparator:
                     case WhiteSpaceNeutral:
                     case OtherNeutral:
-                        if (m_status.eor == RightToLeft) {
-                            // neutrals go to R
-                            eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : last;
+                        if (m_status.eor == EuropeanNumber) {
+                            if (m_status.lastStrong == RightToLeft) {
+                                // ENs on both sides behave like Rs, so the neutrals should be R.
+                                // Terminate the EN run.
+                                appendRun();
+                                // Make an R run.
+                                eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : last;
+                                m_direction = RightToLeft;
+                                appendRun();
+                                // Begin a new EN run.
+                                m_direction = EuropeanNumber;
+                            }
+                        } else if (m_status.eor == ArabicNumber) {
+                            // Terminate the AN run.
                             appendRun();
-                            m_direction = EuropeanNumber;
-                        } else if (m_status.eor != LeftToRight &&
-                                 (m_status.eor != EuropeanNumber || m_status.lastStrong != LeftToRight) &&
-                                 m_direction != LeftToRight) {
-                            // numbers on both sides, neutrals get right to left direction
-                            appendRun();
+                            if (m_status.lastStrong == RightToLeft || context()->dir() == RightToLeft) {
+                                // Make an R run.
+                                eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : last;
+                                m_direction = RightToLeft;
+                                appendRun();
+                                // Begin a new EN run.
+                                m_direction = EuropeanNumber;
+                            }
+                        } else if (m_status.lastStrong == RightToLeft) {
+                            // Extend the R run to include the neutrals.
                             eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : last;
                             m_direction = RightToLeft;
                             appendRun();
+                            // Begin a new EN run.
                             m_direction = EuropeanNumber;
                         }
                     default:
@@ -602,21 +615,15 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                 case SegmentSeparator:
                 case WhiteSpaceNeutral:
                 case OtherNeutral:
-                    if (m_status.eor != RightToLeft && m_status.eor != RightToLeftArabic) {
-                        // run of L before neutrals, neutrals take embedding dir (N2)
-                        if (context()->dir() == RightToLeft || m_status.lastStrong == RightToLeft
-                            || m_status.lastStrong == RightToLeftArabic) {
-                            // the embedding direction is R
-                            // close the L run
-                            appendRun();
-                            // neutrals become an R run
-                            m_direction = RightToLeft;
-                        } else {
-                            // the embedding direction is L
-                            // append neutrals to the L run and close it
-                            m_direction = LeftToRight;
-                        }
-                    }
+                    if (m_status.eor == ArabicNumber
+                        || m_status.eor == EuropeanNumber && (m_status.lastStrong == RightToLeft || context()->dir() == RightToLeft)
+                        || m_status.eor != EuropeanNumber && m_status.lastStrong == LeftToRight && context()->dir() == RightToLeft) {
+                        // Terminate the run before the neutrals.
+                        appendRun();
+                        // Begin an R run for the neutrals.
+                        m_direction = RightToLeft;
+                    } else if (m_direction == OtherNeutral)
+                        m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
                     eor = last;
                     appendRun();
                 default:

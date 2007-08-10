@@ -22,6 +22,7 @@
 #ifndef BidiContext_h
 #define BidiContext_h
 
+#include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -37,6 +38,7 @@ public:
         , m_parent(parent)
         , m_refCount(0)
     {
+        ASSERT(direction == WTF::Unicode::LeftToRight || direction == WTF::Unicode::RightToLeft);
     }
 
     void ref() const { m_refCount++; }

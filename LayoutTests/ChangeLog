@@ -1,3 +1,16 @@
+2007-08-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14798
+          Incorrect bidi reordering of neutrals and digits after RTL embed
+          and other bugs in the bidi algorithm.
+
+        * fast/text/international/bidi-neutral-run-expected.checksum: Added.
+        * fast/text/international/bidi-neutral-run-expected.png: Added.
+        * fast/text/international/bidi-neutral-run-expected.txt: Added.
+        * fast/text/international/bidi-neutral-run.html: Added.
+
 2007-08-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
