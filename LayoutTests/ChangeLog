@@ -1,3 +1,14 @@
+2007-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5313534> REGRESSION(Leopard): Some fast/xsl tests sometimes fail on Leopard
+
+        These tests no longer fail for me, so let's try removing them from the skipped file
+        and see what happens.
+        
+        * mac/leopard/Skipped:
+
 2007-08-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff Garen.

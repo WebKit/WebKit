@@ -32,12 +32,6 @@ dom/html/level2/html/HTMLDocument12.html
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
 
-# <rdar://problem/5313534> Some fast/xsl tests sometimes fail on Leopard
-fast/xsl/transformToFragment-XML-declaration.html
-fast/xsl/default-html.html
-fast/xsl/xslt-processor.html
-fast/xsl/xslt-string-parameters.html
-
 # <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
 fast/forms/hidden-listbox.html
 fast/forms/hidden-input-file.html
