@@ -1,5 +1,25 @@
 2007-08-09  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14742
+          Document::recalcStyle(Force) called for every updateStyleIgnorePendingStylesheets while waiting for stylesheets
+          <rdar://problem/5376306>
+
+        updateStyleSelector() is normally called when something changes that factors
+        into the style selector. However, updateLayoutIgnorePendingStylesheets() calls it for
+        a different reason, namely to account for all the preceding changes that were ignored
+        because of the early return in updateStyleSelector(). After that, the early return
+        can no longer occur, so changes are accounted for as they happen, and
+        updateLayoutIgnorePendingStylesheets() does not need to call updateStyleSelector()
+        again.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets): Call updateStyleSelector()
+        only before the first layout.
+
+2007-08-09  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Adam Roben.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14362
