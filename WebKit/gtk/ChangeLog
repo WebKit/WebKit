@@ -1,5 +1,11 @@
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Build fix.
+
+        * Api/webkitgtkframe.cpp:
+
+2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Adam.
 
         Remove the create_frame virtual method of WebKitGtkPage. This method was inspired
