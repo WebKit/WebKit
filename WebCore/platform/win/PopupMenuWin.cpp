@@ -711,13 +711,13 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                 BOOL shouldHotTrack = FALSE;
                 ::SystemParametersInfo(SPI_GETHOTTRACKING, 0, &shouldHotTrack, 0);
 
-                if (shouldHotTrack || wParam & MK_LBUTTON)
+                RECT bounds;
+                GetClientRect(popup->popupHandle(), &bounds);
+                if ((shouldHotTrack || wParam & MK_LBUTTON) && ::PtInRect(&bounds, mousePoint))
                     popup->setFocusedIndex(popup->listIndexAtPoint(mousePoint), true);
 
                 // Release capture if the left button isn't down, and the mousePoint is outside the popup window.
                 // This way, the WebView will get future mouse events in the rest of the window.
-                RECT bounds;
-                GetClientRect(popup->popupHandle(), &bounds);
                 if (!(wParam & MK_LBUTTON) && !::PtInRect(&bounds, mousePoint)) {
                     ::ReleaseCapture();
                     break;
