@@ -653,8 +653,12 @@ public:
     void setDocLoader(DocLoader* loader) { m_docLoader = loader; }
     bool inLowBandwidthDisplay() const { return m_inLowBandwidthDisplay; }
     void setLowBandwidthDisplay(bool lowBandWidth) { m_inLowBandwidthDisplay = lowBandWidth; }
-#endif     
-
+#endif
+    
+    void addNodeList() { m_numNodeLists++; }
+    void removeNodeList() { m_numNodeLists--; }
+    bool hasNodeLists() const { return m_numNodeLists != 0; }
+    
 protected:
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
@@ -886,6 +890,7 @@ private:
 
     bool m_isXHTML;
 
+    unsigned m_numNodeLists;
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
 #endif

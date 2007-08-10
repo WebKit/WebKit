@@ -434,13 +434,17 @@ void Node::registerNodeList(NodeList* list)
 {
     if (!m_nodeLists)
         m_nodeLists = new NodeListsNodeData;
+    else if (m_nodeLists->m_registeredLists.isEmpty() && m_document->parsing()) 
+        m_nodeLists->m_childNodeListCaches.reset();
+
     m_nodeLists->m_registeredLists.add(list);
+    m_document->addNodeList();
 }
 
 void Node::unregisterNodeList(NodeList* list)
 {
-    if (!m_nodeLists)
-        return;
+    ASSERT(m_nodeLists);
+    m_document->removeNodeList();
     m_nodeLists->m_registeredLists.remove(list);
 }
 

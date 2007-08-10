@@ -1,3 +1,26 @@
+2007-08-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Maciej.
+
+        <rdar://problem/5360748>
+        REGRESSION(r21002-r21003) Flash widget sniffer doesn't work
+        
+        Add a per-document NodeList counter. When parsing, only call notifyNodeListsChildrenChanged
+        if the document has node lists. Also, make sure to reset the cache when the node list count has 
+        been 0 and a new node list is registered to avoid any stale cache information.
+        
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChild):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::addNodeList):
+        (WebCore::Document::removeNodeList):
+        (WebCore::Document::hasNodeLists):
+        * dom/Node.cpp:
+        (WebCore::Node::registerNodeList):
+        (WebCore::Node::unregisterNodeList):
+
 2007-08-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
