@@ -28,7 +28,7 @@
         }, 2000);
 
         function test() {
-            var innerFrameInOpenedWindow = openedWindow.frames['aFrame'];
+            var innerFrameInOpenedWindow = openedWindow.frames[0];
 
             if (!innerFrameInOpenedWindow) {
                 setTimeout(test, 1);
@@ -36,7 +36,7 @@
             }
 
             // When the flag frame is not undefined, we know that the inner-inner frame has loaded.
-            var flagFrame = innerFrameInOpenedWindow.frames['flag'];
+            var flagFrame = innerFrameInOpenedWindow.frames[0];
             if (!flagFrame) {
                 setTimeout(test, 1);
                 return;

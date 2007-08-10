@@ -1,3 +1,14 @@
+2007-08-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Use index-getter instead of name-getter to better ensure
+        that the frame has finished loading.
+
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html:
+
 2007-08-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Justin Garcia.

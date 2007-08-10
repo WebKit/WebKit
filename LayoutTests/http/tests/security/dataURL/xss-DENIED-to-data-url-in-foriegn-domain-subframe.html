@@ -38,7 +38,7 @@
             }
 
             // When the flag frame is not undefined, we know that the inner-inner frame has loaded.
-            var flagFrame = innerInnerFrame.frames['flag'];
+            var flagFrame = innerInnerFrame.frames[0];
             if (!flagFrame) {
                 setTimeout(test, 1);
                 return;
