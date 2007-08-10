@@ -230,7 +230,6 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
 
 void ScrollView::update()
 {
-    Q_ASSERT(!containingWindow()->testAttribute(Qt::WA_WState_InPaintEvent));
     containingWindow()->update(frameGeometry());
 }
 
