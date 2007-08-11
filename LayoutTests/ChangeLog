@@ -1,3 +1,13 @@
+2007-08-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - test for <rdar://problem/5266535> REGRESSION: <img> inside <map> no longer allowed in strict mode
+          (breaks chemicalelements.com)
+
+        * fast/parser/strict-img-in-map-expected.txt: Added.
+        * fast/parser/strict-img-in-map.html: Added.
+
 2007-08-11  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.

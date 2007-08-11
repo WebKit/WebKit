@@ -1,13 +1,26 @@
+2007-08-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - fix <rdar://problem/5266535> REGRESSION: <img> inside <map> no longer allowed in strict mode
+          (breaks chemicalelements.com)
+
+        Test: fast/parser/strict-img-in-map.html
+
+        * html/HTMLMapElement.cpp: (WebCore::HTMLMapElement::checkDTD): Removed FIXME saying this
+        code is strange, since this code matches the HTML 4 specification almost exactly. Made
+        <img> elements allowed even in strict mode and added small comments to clarify what comes
+        from the DTD and what is non-standard.
+
 2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Lars.
 
         GdkEventKey::string is not supposed to be used. The length
-        of this string is zero for non ascii charachters. Use the
+        of this string is zero for non ascii characters. Use the
         gdk_unicode_to_keyval to convert the keyval to a UChar and construct
         a String. This change makes it possible to input non ascii
-        charachters.
-
+        characters.
 
         * platform/gdk/KeyEventGdk.cpp:
         (WebCore::keyIdentifierForGdkKeyCode):
