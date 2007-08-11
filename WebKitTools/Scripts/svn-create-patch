@@ -53,25 +53,32 @@ use MIME::Base64;
 use POSIX qw(:errno_h);
 use Time::gmtime;
 
+sub binarycmp($$);
 sub canonicalizePath($);
-sub findMimeType($);
+sub findBaseUrl($);
+sub findMimeType($;$);
 sub findModificationType($);
 sub findSourceFileAndRevision($);
 sub fixChangeLogPatch($);
-sub generateDiff($$$);
-sub generateFileList($\%\%\%);
+sub generateDiff($);
+sub generateFileList($\%);
 sub isBinaryMimeType($);
-sub manufacturePatchForAdditionWithHistory($$);
+sub manufacturePatchForAdditionWithHistory($);
 sub numericcmp($$);
 sub outputBinaryContent($);
 sub pathcmp($$);
 sub processPaths(\@);
 sub splitpath($);
+sub testfilecmp($$);
 
 $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
-if (!GetOptions("help" => \$showHelp) || $showHelp) {
+
+my $result = GetOptions(
+    "help"       => \$showHelp,
+);
+if (!$result || $showHelp) {
     print STDERR basename($0) . " [-h|--help] [svndir1 [svndir2 ...]]\n";
     exit 1;
 }
@@ -79,26 +86,25 @@ if (!GetOptions("help" => \$showHelp) || $showHelp) {
 my %paths = processPaths(@ARGV);
 
 # Generate a list of files requiring diffs
-my %sourceFiles;
-my %testFiles;
-my %binaryFiles;
+my %diffFiles;
 for my $path (keys %paths) {
-    generateFileList($path, %sourceFiles, %testFiles, %binaryFiles);
+    generateFileList($path, %diffFiles);
 }
 
 # Generate the diff for source code files, test files then binary files for easy reviewing
-for my $file (sort pathcmp keys %sourceFiles) {
-    generateDiff($file, $sourceFiles{$file}, 0);
-}
-for my $file (sort pathcmp keys %testFiles) {
-    generateDiff($file, $testFiles{$file}, 0);
-}
-for my $file (sort pathcmp keys %binaryFiles) {
-    generateDiff($file, $binaryFiles{$file}, 1);
+for my $fileData (sort binarycmp sort testfilecmp sort pathcmp values %diffFiles) {
+    generateDiff($fileData);
 }
 
 exit 0;
 
+
+# Sort so text files appear before binary files.
+sub binarycmp($$)
+{
+    my ($fileDataA, $fileDataB) = @_;
+    return $fileDataA->{isBinary} <=> $fileDataB->{isBinary};
+}
 
 sub canonicalizePath($)
 {
@@ -119,10 +125,26 @@ sub canonicalizePath($)
     return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
 }
 
-sub findMimeType($)
+sub findBaseUrl($)
 {
-    my ($file) = @_;
-    open PROPGET, "svn propget svn:mime-type '$file' |" or die;
+    my ($infoPath) = @_;
+    my $baseUrl;
+    open INFO, "svn info '$infoPath' |" or die;
+    while (<INFO>) {
+        if (/^URL: (.+)/) {
+            $baseUrl = $1;
+            last;
+        }
+    }
+    close INFO;
+    return $baseUrl;
+}
+
+sub findMimeType($;$)
+{
+    my ($file, $revision) = @_;
+    my $args = $revision ? "--revision $revision" : "";
+    open PROPGET, "svn propget svn:mime-type $args '$file' |" or die;
     my $mimeType = <PROPGET>;
     close PROPGET;
     chomp $mimeType if $mimeType;
@@ -146,15 +168,7 @@ sub findModificationType($)
 sub findSourceFileAndRevision($)
 {
     my ($file) = @_;
-    my $baseUrl;
-    open INFO, "svn info . |" or die;
-    while (<INFO>) {
-        if (/^URL: (.+)/) {
-            $baseUrl = $1;
-            last;
-        }
-    }
-    close INFO;
+    my $baseUrl = findBaseUrl(".");
     my $sourceFile;
     my $sourceRevision;
     open INFO, "svn info '$file' |" or die;
@@ -220,12 +234,13 @@ sub fixChangeLogPatch($)
     return $newPatch;
 }
 
-sub generateDiff($$$)
+sub generateDiff($)
 {
-    my ($file, $modificationType, $isBinary) = @_;
+    my ($fileData) = @_;
+    my $file = $fileData->{path};
     my $patch;
-    if ($modificationType eq "additionWithHistory") {
-        manufacturePatchForAdditionWithHistory($file, $isBinary);
+    if ($fileData->{modificationType} eq "additionWithHistory") {
+        manufacturePatchForAdditionWithHistory($fileData);
     }
     open DIFF, "svn diff --diff-cmd diff -x -uaNp '$file' |" or die;
     while (<DIFF>) {
@@ -234,15 +249,16 @@ sub generateDiff($$$)
     close DIFF;
     $patch = fixChangeLogPatch($patch) if basename($file) eq "ChangeLog";
     print $patch if $patch;
-    if ($isBinary) {
+    if ($fileData->{isBinary}) {
         print "\n" if ($patch && $patch =~ m/\n\S+$/m);
         outputBinaryContent($file);
     }
 }
 
-sub generateFileList($\%\%\%)
+sub generateFileList($\%)
 {
-    my ($statPath, $sourceFiles, $testFiles, $binaryFiles) = @_;
+    my ($statPath, $diffFiles) = @_;
+    my %testDirectories = map { $_ => 1 } qw(LayoutTests);
     open STAT, "svn stat '$statPath' |" or die;
     while (my $line = <STAT>) {
         chomp $line;
@@ -251,12 +267,14 @@ sub generateFileList($\%\%\%)
         next if -d $path;
         my $modificationType = findModificationType($stat);
         if ($modificationType) {
-            if (isBinaryMimeType($path)) {
-                $binaryFiles->{$path} = $modificationType;
-            } elsif ((File::Spec->splitdir($path))[0] eq "LayoutTests") {
-                $testFiles->{$path} = $modificationType;
-            } else {
-                $sourceFiles->{$path} = $modificationType;
+            $diffFiles->{$path}->{path} = $path;
+            $diffFiles->{$path}->{modificationType} = $modificationType;
+            $diffFiles->{$path}->{isBinary} = isBinaryMimeType($path);
+            $diffFiles->{$path}->{isTestFile} = exists $testDirectories{(File::Spec->splitdir($path))[0]} ? 1 : 0;
+            if ($modificationType eq "additionWithHistory") {
+                my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($path);
+                $diffFiles->{$path}->{sourceFile} = $sourceFile;
+                $diffFiles->{$path}->{sourceRevision} = $sourceRevision;
             }
         } else {
             print STDERR $line, "\n";
@@ -273,17 +291,19 @@ sub isBinaryMimeType($)
     return 1;
 }
 
-sub manufacturePatchForAdditionWithHistory($$)
+sub manufacturePatchForAdditionWithHistory($)
 {
-    my ($file, $isBinary) = @_;
+    my ($fileData) = @_;
+    my $file = $fileData->{path};
     print "Index: ${file}\n";
     print "=" x 67, "\n";
-    my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($file);
+    my $sourceFile = $fileData->{sourceFile};
+    my $sourceRevision = $fileData->{sourceRevision};
     print "--- ${file}\t(revision ${sourceRevision})\t(from ${sourceFile}:${sourceRevision})\n";
     print "+++ ${file}\t(working copy)\n";
-    if ($isBinary) {
+    if ($fileData->{isBinary}) {
         print "\nCannot display: file marked as a binary type.\n";
-        my $mimeType = findMimeType($file);
+        my $mimeType = findMimeType($file, $sourceRevision);
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
         print `svn cat ${sourceFile} | diff -u /dev/null - | tail +3`;
@@ -336,10 +356,10 @@ sub outputBinaryContent($)
 # Use numericcmp to sort directory and filenames to make order logical.
 sub pathcmp($$)
 {
-    my ($patha, $pathb) = @_;
+    my ($fileDataA, $fileDataB) = @_;
 
-    my ($dira, $namea) = splitpath($patha);
-    my ($dirb, $nameb) = splitpath($pathb);
+    my ($dira, $namea) = splitpath($fileDataA->{path});
+    my ($dirb, $nameb) = splitpath($fileDataB->{path});
 
     return numericcmp($dira, $dirb) if $dira ne $dirb;
     return numericcmp($namea, $nameb);
@@ -391,4 +411,11 @@ sub splitpath($)
     $dirname = "" if $dirname eq "." . $pathSeparator;
 
     return ($dirname, basename($path));
+}
+
+# Sort so source code files appear before test files.
+sub testfilecmp($$)
+{
+    my ($fileDataA, $fileDataB) = @_;
+    return $fileDataA->{isTestFile} <=> $fileDataB->{isTestFile};
 }

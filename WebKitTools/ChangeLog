@@ -1,3 +1,43 @@
+2007-08-11  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        Refactored svn-create-path to use a hash-of-hashes data structure to keep
+        track of changed files.  In the top level hash, keys are paths to files and
+        values are 'fileData' hashes with the following keys and values:
+
+        - isBinary: boolean value (set to true for non-text files like images, etc.)
+        - isTestFile: boolean value (set to true if file exists within a known test
+          directory)
+        - modificationType: string equal to one of 'addition', 'additionWithHistory',
+          'modification' or 'deletion'
+        - path: string equal to the path to the file (this may seem redundant, but it
+          is required to use the second-level 'fileData' hash independent of the
+          top-level hash)
+        - sourceFile: [optional] string equal to the path of the original file that was
+          copied or moved
+        - sourceRevision: [optional] string equal to the revision of the original file
+          that was copied or moved
+
+        * Scripts/svn-create-patch: Moved call to GetOptions() to its own statement
+        that saves the return value in $result, then checks it before printing help.
+        Combined sourceFiles, %testFiles, and %binaryFiles into single %diffFiles hash
+        and eliminated two for() loops.
+        (binarycmp): Added.  Used with sort() to order non-binary files before binary
+        files.
+        (findBaseUrl): Added.  Extracted from findSourceFileAndRevision().
+        (findMimeType): Added optional second argument that takes a revision number.
+        (generateDiff): Updated to take one fileData argument instead of three ($file,
+        $modificationType, $isBinary).
+        (generateFileList): Updated to take one hash ref argument (%diffFiles)
+        instead of three (%sourceFiles, %testFiles, %binaryFiles).  Populates
+        %diffFiles using paths for keys and fileData hashes for values.
+        (manufacturePatchForAdditionWithHistory): Updated to take one fileData
+        argument.
+        (pathcmp): Updated to take two fileData arguments instead of two strings.
+        (testfilecmp): Added.  Used with sort() to order non-test files before test
+        files.
+
 2007-08-11  Darin Adler  <darin@apple.com>
 
         * Scripts/run-webkit-tests: Give a different message when only the pixel test failed.
