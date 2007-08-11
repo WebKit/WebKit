@@ -257,13 +257,17 @@ void AutoTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
     int maxPercent = 0;
     int maxNonPercent = 0;
 
+    // We substitute 0 percent by (epsilon / percentScaleFactor) percent in two places below to avoid division by zero.
+    // FIXME: Handle the 0% cases properly.
+    const int epsilon = 1;
+
     int remainingPercent = 100 * percentScaleFactor;
     for (unsigned int i = 0; i < m_layoutStruct.size(); i++) {
         minWidth += m_layoutStruct[i].effMinWidth;
         maxWidth += m_layoutStruct[i].effMaxWidth;
         if (m_layoutStruct[i].effWidth.isPercent()) {
             int percent = min(m_layoutStruct[i].effWidth.rawValue(), remainingPercent);
-            int pw = (m_layoutStruct[i].effMaxWidth * 100 * percentScaleFactor) / max(percent, percentScaleFactor);
+            int pw = (m_layoutStruct[i].effMaxWidth * 100 * percentScaleFactor) / max(percent, epsilon);
             remainingPercent -= percent;
             maxPercent = max(pw,  maxPercent);
         } else {
@@ -272,8 +276,7 @@ void AutoTableLayout::calcPrefWidths(int& minWidth, int& maxWidth)
     }
 
     if (shouldScaleColumns(m_table)) {
-        // FIXME: Why 50?
-        maxNonPercent = (maxNonPercent * 100 + 50) * percentScaleFactor / max(remainingPercent, percentScaleFactor);
+        maxNonPercent = maxNonPercent * 100 * percentScaleFactor / max(remainingPercent, epsilon);
         maxWidth = max(maxNonPercent,  maxWidth);
         maxWidth = max(maxWidth, maxPercent);
     }

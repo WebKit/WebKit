@@ -1,3 +1,20 @@
+2007-08-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13670
+          <rdar://problem/5399619> Table misrender when one of the TDs has width=100%
+
+        Tests: fast/table/100-percent-cell-width.html
+               fast/table/percent-widths-stretch.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcPrefWidths): Changed the value used instead of
+        0% to avoid division by zero from 1% to less than 0.01%. Removed code that
+        added 0.5px to non-percent widths when calculating the scaling factor. The
+        latter change is covered by the percent-widths-stretch test, where the new
+        results match both WinIE 7 and Firefox 3.
+
 2007-08-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti.
