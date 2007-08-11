@@ -928,4 +928,27 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     d->m_wasScrolledByUser = wasScrolledByUser;
 }
 
+#ifdef PLATFORM(GDK)
+void FrameView::layoutIfNeededRecursive()
+{
+    // We have to crawl our entire tree looking for any FrameViews that need
+    // layout and make sure they are up to date.
+    // Mac actually tests for intersection with the dirty region and tries not to
+    // update layout for frames that are outside the dirty region.  Not only does this seem
+    // pointless (since those frames will have set a zero timer to layout anyway), but
+    // it is also incorrect, since if two frames overlap, the first could be excluded from the dirty
+    // region but then become included later by the second frame adding rects to the dirty region
+    // when it lays out.
+
+    if (needsLayout())
+        layout();
+
+    HashSet<Widget*>* viewChildren = children();
+    HashSet<Widget*>::iterator end = viewChildren->end();
+    for (HashSet<Widget*>::iterator current = viewChildren->begin(); current != end; ++current)
+        if ((*current)->isFrameView())
+            static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
+}
+#endif
+
 }

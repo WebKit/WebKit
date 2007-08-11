@@ -125,6 +125,10 @@ public:
     bool wasScrolledByUser() const;
     void setWasScrolledByUser(bool);
 
+#ifdef PLATFORM(GDK)
+    void layoutIfNeededRecursive();
+#endif
+
 private:
     void init();
 

@@ -80,8 +80,7 @@ static gboolean webkit_gtk_page_expose_event(GtkWidget* widget, GdkEventExpose* 
     GraphicsContext ctx(cr);
     ctx.setGdkExposeEvent(event);
     if (frame->renderer()) {
-        if (frame->view()->needsLayout())
-            frame->view()->layout();
+        frame->view()->layoutIfNeededRecursive();
         IntRect rect(clip.x, clip.y, clip.width, clip.height);
         frame->view()->paint(&ctx, rect);
     }

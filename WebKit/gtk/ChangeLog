@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        To not hit the needsLayout() assert of Frame::paint for subframes we need to
+        make sure they are layed out. Use the newly created FrameView::layoutIfNeededRecursive
+        method to do this.
+
+        * Api/webkitgtkpage.cpp:
+
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Fix text selection by setting a DragClient when creating the Page. Now
         that we have a DragClient we can free the Page when WebKitGtkPage gets
         destructed.

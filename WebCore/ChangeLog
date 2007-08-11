@@ -2,6 +2,23 @@
 
         Reviewed by Adam.
 
+        Copy the WebFrame::layoutIfNeededRecursive method of the windows port
+        to FrameView to be used by the Gtk+ port. Simplify the implementation due
+        moving it to the FrameView class.
+
+        Implement the ScrollView::children() method for the Gtk+ port and make it
+        available to the FrameView as children() is used within the layoutIfNeededRecursive method.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutIfNeededRecursive):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/gdk/ScrollViewGdk.cpp:
+
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         To fix text selection make the PlatformMouseEvent set the pressed
         button even when moving the mouse.
         
