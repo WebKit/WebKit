@@ -1,3 +1,10 @@
+2007-08-11  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Change "#ifdef PLATFORM(GDK)" to "#if PLATFORM(GDK)".
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+
 2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
