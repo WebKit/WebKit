@@ -31,6 +31,19 @@
 
 2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Anders.
+
+        Implement passing events to a subframe. The code is copied from
+        the windows port and passSubframeEventToSubframe was removed as it
+        is not called and it is not avilable in the windows port as well.
+
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Lars.
 
         GdkEventKey::string is not supposed to be used. The length
