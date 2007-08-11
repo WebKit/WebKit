@@ -29,6 +29,10 @@
 #ifndef __HIWEBCARBONUTILS__
 #define __HIWEBCARBONUTILS__
 
+#ifndef __LP64__
+
+// These functions are only available for 32-bit.
+
 #ifdef __OBJC__
 #import <ApplicationServices/ApplicationServices.h>
 @class NSImage;
@@ -52,4 +56,5 @@ WebConvertNSImageToCGImageRef(NSImage * inImage);
 }
 #endif
 
+#endif
 #endif // __HIWEBCARBONUTILS__
