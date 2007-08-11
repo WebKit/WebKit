@@ -1,3 +1,7 @@
+2007-08-11  Darin Adler  <darin@apple.com>
+
+        * Scripts/run-webkit-tests: Give a different message when only the pixel test failed.
+
 2007-08-06  Nigel Tao  <nigeltao@gnome.org>
 
         Reviewed by David Kilzer.

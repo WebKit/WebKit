@@ -673,7 +673,7 @@ for my $test (@tests) {
     } else {
         $result = "mismatch";
 
-        printFailureMessageForTest($test, "failed");
+        printFailureMessageForTest($test, $actual eq $expected ? "pixel test failed" : "failed");
 
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
