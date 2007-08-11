@@ -1,3 +1,14 @@
+2007-08-10  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam and Darin.
+        
+        <rdar://problem/5403095> Crash in WebViewWndProc after closing a window
+        We are seeing another case where WM_SETFOCUS is sent after WM_DESTROY has been handled in WebView.
+        Bail early in the wndProc if WebView is set to be destroyed.
+
+        * WebView.cpp:
+        (WebViewWndProc):
+
 2007-08-02  Ada Chan  <adachan@apple.com>
 
         Reviewed by Steve.
