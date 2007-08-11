@@ -1,3 +1,17 @@
+2007-08-11  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Mark Rowe.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14645
+        getPropertyValue should be case insensitive
+        
+        When we get the propertyID for a given string we convert to lowercase.
+        
+        This also applies to setProperty, removeProperty and others.
+        
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::propertyID):
+
 2007-08-11  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Change "#ifdef PLATFORM(GDK)" to "#if PLATFORM(GDK)".

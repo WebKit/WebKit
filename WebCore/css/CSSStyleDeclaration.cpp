@@ -29,6 +29,7 @@
 #include "CSSRule.h"
 #include "DeprecatedValueList.h"
 #include "ksvgcssproperties.h"
+#include <ctype.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ static int propertyID(const String& s)
         UChar c = s[i];
         if (c == 0 || c >= 0x7F)
             return 0; // illegal character
-        buffer[i] = c;
+        buffer[i] = tolower(c);
     }
 
     int propID = getPropertyID(buffer, len);
