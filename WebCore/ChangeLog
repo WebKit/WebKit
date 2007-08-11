@@ -1,3 +1,19 @@
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Lars.
+
+        GdkEventKey::string is not supposed to be used. The length
+        of this string is zero for non ascii charachters. Use the
+        gdk_unicode_to_keyval to convert the keyval to a UChar and construct
+        a String. This change makes it possible to input non ascii
+        charachters.
+
+
+        * platform/gdk/KeyEventGdk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        (WebCore::singleCharacterString):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-08-11  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.

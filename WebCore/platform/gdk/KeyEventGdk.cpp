@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +31,8 @@
 
 #include "DeprecatedString.h"
 #include "KeyboardCodes.h"
+#include "TextEncoding.h"
+
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -134,7 +137,7 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
         case GDK_Tab:
             return "U+0009";
         default:
-            return String::format("U+%04X", toupper(keyCode));
+            return String::format("U+%04X", gdk_keyval_to_unicode(gdk_keyval_to_upper(keyCode)));
     }
 }
 
@@ -458,24 +461,25 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
+static inline String singleCharacterString(guint val)
 {
-    m_isKeyUp = event->type == GDK_KEY_RELEASE;
-    m_shiftKey = event->state & GDK_SHIFT_MASK != 0;
-    m_ctrlKey = event->state & GDK_CONTROL_MASK != 0;
-    m_altKey = event->state & GDK_MOD1_MASK != 0;
-    m_metaKey = event->state & GDK_MOD2_MASK != 0;
-    m_text = event->string;
-    m_unmodifiedText = event->string;
-    m_keyIdentifier = keyIdentifierForGdkKeyCode(event->keyval);
-    m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event->keyval);
-    m_autoRepeat = false;
-    m_isKeypad = false;
+    val = gdk_keyval_to_unicode(val);
+    return String((UChar*)&val, 1);
+}
 
-    if (!m_shiftKey) {
-        UChar character = tolower(m_text[0]);
-        m_text = String(&character, 1);
-    }
+PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
+    : m_text(singleCharacterString(event->keyval))
+    , m_unmodifiedText(singleCharacterString(event->keyval))
+    , m_keyIdentifier(keyIdentifierForGdkKeyCode(event->keyval))
+    , m_isKeyUp(event->type == GDK_KEY_RELEASE)
+    , m_autoRepeat(false)
+    , m_WindowsKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
+    , m_isKeypad(false)
+    , m_shiftKey(event->state & GDK_SHIFT_MASK != 0)
+    , m_ctrlKey(event->state & GDK_CONTROL_MASK != 0)
+    , m_altKey(event->state & GDK_MOD1_MASK != 0)
+    , m_metaKey(event->state & GDK_MOD2_MASK != 0)
+{
 }
 
 }
