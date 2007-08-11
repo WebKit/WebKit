@@ -2,6 +2,7 @@
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+# Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -84,6 +85,7 @@ sub validateSkippedArg($$;$);
 sub htmlForExpectedAndActualResults($);
 sub deleteExpectedAndActualResults($);
 sub recordActualResultsAndDiff($$);
+sub buildPlatformHierarchy();
 
 # Argument handling
 my $shouldCheckLeaks = '';
@@ -93,6 +95,7 @@ my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
 my $ignoreTests = '';
 my $launchSafari = 1;
+my $platform;
 my $pixelTests = '';
 my $quiet = '';
 my $repaintSweepHorizontally = '';
@@ -118,6 +121,30 @@ my $actualTag = "actual";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
+my $useWinSkipped = 0;
+if (isLeopard()) {
+    $platform = "mac-leopard";
+} elsif (isOSX()) {
+    $platform = "mac";
+} elsif (isQt()) {
+    $platform = "qt";
+} elsif (isCygwin()) {
+    # FIXME: The two lines below are a hack to represent that on Windows we
+    # currently want to
+    # 1) use the Mac expected results
+    # 2) use the Windows Skipped file
+    # Once Windows has its own results and/or we come up with a better way of
+    # sharing results with Mac, we should set $platform to "win" and get rid of
+    # $useWinSkipped entirely.
+    $platform = "mac";
+    $useWinSkipped = 1;
+}
+
+if (!defined($platform)) {
+    print "WARNING: Your platform is not recognized. Any platform-specific results will be generated in platform/undefined.\n";
+    $platform = "undefined";
+}
+
 my $programName = basename($0);
 my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
 my $httpDefault = $testHTTP ? "run" : "do not run";
@@ -134,6 +161,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
   -p|--pixel-tests                Enable pixel tests
+  --platform                      Override the detected platform to use for tests and results (default: $platform)
   --port                          Web server port to use with http tests
   -q|--quiet                      Less verbose output
   -r|--repaint-tests              Run repaint tests (implies --pixel-tests)
@@ -165,6 +193,7 @@ my $getOptionsResult = GetOptions(
     'launch-safari!' => \$launchSafari,
     'leaks|l' => \$shouldCheckLeaks,
     'pixel-tests|p' => \$pixelTests,
+    'platform=s' => \$platform,
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
     'release|deploy' => sub { $configuration = "Release" },
@@ -245,17 +274,9 @@ checkFrameworks() unless isCygwin();
 
 my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
-my $platformTestDirectory = $testDirectory;
 my $expectedDirectory = $testDirectory;
-if (isLeopard()) {
-    $platformTestDirectory = "$testDirectory/mac/leopard";
-} elsif (isQt()) {
-    $expectedDirectory = File::Spec->rel2abs("LayoutTests/qt/");
-    $platformTestDirectory = $expectedDirectory;
-} elsif (isCygwin()) {
-    $expectedDirectory = $testDirectory;
-    $platformTestDirectory = File::Spec->rel2abs("LayoutTests/win/");
-}
+my $platformTestDirectory = catdir($testDirectory, "platform", $platform);
+my @platformHierarchy = buildPlatformHierarchy();
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
@@ -274,7 +295,7 @@ my %testType = ();
 system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTests";
 
 my %ignoredFiles = ();
-my %ignoredDirectories = ();
+my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
 if ($testOnlySVGs) {
@@ -296,27 +317,41 @@ if ($ignoreTests) {
     processIgnoreTests($ignoreTests);
 }
 
-if (!$ignoreSkipped && open SKIPPED, "<", "$platformTestDirectory/Skipped") {
-    if ($verbose && !$skippedOnly) {
-        print "Skipped tests:\n";
+if (!$ignoreSkipped) {
+    # FIXME: See comments where $platform is set for info on why this is needed.
+    my @skippedHierarchy;
+    if ($useWinSkipped) {
+        @skippedHierarchy = (catdir($testDirectory, "platform", "win"));
+    } else {
+        @skippedHierarchy = @platformHierarchy;
     }
-    while (<SKIPPED>) {
-        my $skipped = $_;
-        chomp $skipped;
-        $skipped =~ s/^ +//;
-        $skipped =~ s/ +$//;
-        if ($skipped && $skipped !~ /^#/) {
-            if ($skippedOnly) {
-                push(@ARGV, $skipped);
-            } else {
-                if ($verbose) {
-                    print "    $skipped\n";
-                }
-                processIgnoreTests($skipped);
+
+    foreach my $level (@skippedHierarchy) {
+        if (open SKIPPED, "<", "$level/Skipped") {
+            if ($verbose && !$skippedOnly) {
+                my ($dir, $name) = splitpath($level);
+                print "Skipped tests in $name:\n";
             }
+
+            while (<SKIPPED>) {
+                my $skipped = $_;
+                chomp $skipped;
+                $skipped =~ s/^ +//;
+                $skipped =~ s/ +$//;
+                if ($skipped && $skipped !~ /^#/) {
+                    if ($skippedOnly) {
+                        push(@ARGV, $skipped);
+                    } else {
+                        if ($verbose) {
+                            print "    $skipped\n";
+                        }
+                        processIgnoreTests($skipped);
+                    }
+                }
+            }
+            close SKIPPED;
         }
     }
-    close SKIPPED;
 }
 
 
@@ -350,12 +385,21 @@ for my $test (@ARGV) {
         }
     } elsif (-d $fullPath) {
         find({ preprocess => $directoryFilter, wanted => $fileFilter }, $fullPath);
+
+        for my $level (@platformHierarchy) {
+            my $platformPath = catfile($level, $test);
+            find({ preprocess => $directoryFilter, wanted => $fileFilter }, $platformPath) if (-d $platformPath);
+        }
     } else {
         print "test $test not found\n";
     }
 }
 if (!scalar @ARGV) {
     find({ preprocess => $directoryFilter, wanted => $fileFilter }, $testDirectory);
+
+    for my $level (@platformHierarchy) {
+        find({ preprocess => $directoryFilter, wanted => $fileFilter }, $level);
+    }
 }
 
 die "no tests to run\n" if !@tests;
@@ -476,7 +520,7 @@ for my $test (@tests) {
     my $expected;
     my $expectedDir = expectedDirectoryForTest($base);
     if (isQt() && $isText) {
-      $expectedDir = $testDirectory;
+        $expectedDir = $testDirectory;
     }
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
@@ -508,11 +552,10 @@ for my $test (@tests) {
     my $diffResult = "passed";
     
     if ($pixelTests) {
-        die "Pixel tests currently don't work when using a custom expected test results directory" if $testDirectory ne $expectedDir;
-            
         my $actualHash = "";
         my $expectedHash = "";
         my $actualPNGSize = 0;
+
         while (<IN>) {
             last if /#EOF/;
             if (/ActualHash: ([a-f0-9]{32})/) {
@@ -525,10 +568,10 @@ for my $test (@tests) {
             }
         }
 
-        if ($expectedHash ne $actualHash && -f "$testDirectory/$base-$expectedTag.png") {
-            my $expectedPNGSize = -s "$testDirectory/$base-$expectedTag.png";
+        if ($expectedHash ne $actualHash && -f "$expectedDir/$base-$expectedTag.png") {
+            my $expectedPNGSize = -s "$expectedDir/$base-$expectedTag.png";
             my $expectedPNG = "";
-            open EXPECTEDPNG, "$testDirectory/$base-$expectedTag.png";
+            open EXPECTEDPNG, "$expectedDir/$base-$expectedTag.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
             print DIFFOUT "Content-length: $actualPNGSize\n";
@@ -550,15 +593,16 @@ for my $test (@tests) {
             }
         }
 
-        if ($actualPNGSize && ($resetResults || !-f "$testDirectory/$base-$expectedTag.png")) {
-            open EXPECTED, ">", "$testDirectory/$base-expected.png" or die "could not create $testDirectory/$base-expected.png\n";
+        if ($actualPNGSize && ($resetResults || !-f "$expectedDir/$base-$expectedTag.png")) {
+            mkpath(catfile($expectedDir, dirname($base))) if $testDirectory ne $expectedDir;
+            open EXPECTED, ">", "$expectedDir/$base-expected.png" or die "could not create $expectedDir/$base-expected.png\n";
             print EXPECTED $actualPNG;
             close EXPECTED;
         }
 
         # update the expected hash if the image diff said that there was no difference
-        if ($actualHash ne "" && ($resetResults || !-f "$testDirectory/$base-$expectedTag.checksum")) {
-            open EXPECTED, ">", "$testDirectory/$base-$expectedTag.checksum" or die "could not create $testDirectory/$base-$expectedTag.checksum\n";
+        if ($actualHash ne "" && ($resetResults || !-f "$expectedDir/$base-$expectedTag.checksum")) {
+            open EXPECTED, ">", "$expectedDir/$base-$expectedTag.checksum" or die "could not create $expectedDir/$base-$expectedTag.checksum\n";
             print EXPECTED $actualHash;
             close EXPECTED;
         }
@@ -660,7 +704,7 @@ for my $test (@tests) {
                 print "\n" unless $atLineStart;
                 print "$test -> ";
             }
-            print "new\n";
+            print "new (results generated in $expectedDir)\n";
             $atLineStart = 1;
         }
     } elsif ($actual eq $expected && $diffResult eq "passed") {
@@ -944,7 +988,7 @@ sub countAndPrintLeaks($$$)
             "_objc_msgForward", # leak in NSSpellChecker, Radar 4965278
             "gldGetString" # leak in OpenGL, Radar 5013699
         );
-         push @typesToExclude, (
+        push @typesToExclude, (
             "THRD", # bug in 'leaks', Radar 3387783
             "DRHT" # ditto (endian little hate i)
         );
@@ -1258,7 +1302,14 @@ sub isTextOnlyTest($)
 sub expectedDirectoryForTest($)
 {
     my ($base) = @_;
-    return (-f "$platformTestDirectory/$base-$expectedTag.txt") ? $platformTestDirectory : $expectedDirectory;
+
+    foreach my $level (@platformHierarchy) {
+        return $level if (-f "$level/$base-$expectedTag.txt");
+    }
+
+    return $expectedDirectory if (-f "$expectedDirectory/$base-$expectedTag.txt");
+
+    return $platformHierarchy[$#platformHierarchy];
 }
 
 sub printFailureMessageForTest($$)
@@ -1380,4 +1431,19 @@ sub recordActualResultsAndDiff($$)
     copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
 
     system "diff -u \"$testResultsDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+}
+
+sub buildPlatformHierarchy()
+{
+    mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
+
+    my @platforms = split('-', $platformTestDirectory);
+    my @hierarchy;
+    for (my $i=0; $i < @platforms; $i++) {
+        my $scoped = join('-', @platforms[0..($#platforms - $i)]);
+        print "scoped = $scoped\n";
+        push(@hierarchy, $scoped) if (-d $scoped);
+    }
+
+    return @hierarchy;
 }

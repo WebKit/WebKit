@@ -1,3 +1,19 @@
+2007-08-11  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed over and over and over by Adam Roben.
+
+        Bug 14740: Hierarchical layout tests and platform organization
+        http://bugs.webkit.org/show_bug.cgi?id=14740
+
+        Add support for platform-specific layout tests and results.
+        New platform structure is as follows:
+
+        * platform: Added.
+        * platform/mac: Added.
+        * mac/leopard/ -> platform/mac-leopard
+        * win/ -> platform/win
+        * qt/ -> platform/qt
+
 2007-08-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
