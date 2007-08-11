@@ -855,6 +855,7 @@ gdk-port {
         ../WebKit/gtk/Api/webkitgtksettings.h \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \ 
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
+        ../WebKit/gtk/WebCoreSupport/DragClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h
@@ -913,6 +914,7 @@ gdk-port {
         ../WebKit/gtk/Api/webkitgtksettings.cpp \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \ 
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
+        ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \ 
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp

@@ -1,3 +1,21 @@
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        Fix text selection by setting a DragClient when creating the Page. Now
+        that we have a DragClient we can free the Page when WebKitGtkPage gets
+        destructed.
+
+        * Api/webkitgtkpage.cpp:
+        * WebCoreSupport/DragClientGtk.cpp: Added.
+        (WebKit::DragClient::willPerformDragDestinationAction):
+        (WebKit::DragClient::willPerformDragSourceAction):
+        (WebKit::DragClient::actionMaskForDrag):
+        (WebKit::DragClient::dragSourceActionMaskForPoint):
+        (WebKit::DragClient::startDrag):
+        (WebKit::DragClient::createDragImageForLink):
+        * WebCoreSupport/DragClientGtk.h: Added.
+
 2007-08-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders.

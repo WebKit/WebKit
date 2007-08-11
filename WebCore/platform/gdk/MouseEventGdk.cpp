@@ -94,5 +94,12 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     default:
         ASSERT_NOT_REACHED();
     };
+
+    if (motion->state & GDK_BUTTON1_MASK)
+        m_button = LeftButton;
+    else if (motion->state & GDK_BUTTON2_MASK)
+        m_button = MiddleButton;
+    else if (motion->state & GDK_BUTTON3_MASK)
+        m_button = RightButton;
 }
 }

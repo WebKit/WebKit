@@ -1,3 +1,17 @@
+2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        To fix text selection make the PlatformMouseEvent set the pressed
+        button even when moving the mouse.
+        
+        Add building of the WebKit::DragClient stubs as they are needed to
+        make text selection work.
+
+        * WebCore.pro:
+        * platform/gdk/MouseEventGdk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-08-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Maciej.
