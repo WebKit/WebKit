@@ -1,3 +1,19 @@
+2007-08-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Add test for http://bugs.webkit.org/attachment.cgi?id=15818&action=edit which
+        Mitz fixed in r24973.
+        
+        I had a fix for <rdar://problem/5267021>
+        REGRESSION: Loading Slashdot Firehose is 9X slower on Safari 3.0 than Safari 2.0
+        which turned out to be a dublicate.
+        
+        At least we can use the layout test I did.
+
+        * http/tests/local/style-access-before-stylesheet-loaded-expected.txt: Added.
+        * http/tests/local/style-access-before-stylesheet-loaded.html: Added.
+
 2007-08-11  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed over and over and over by Adam Roben.
