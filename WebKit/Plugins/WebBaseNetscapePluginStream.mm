@@ -295,6 +295,8 @@ static StreamMap& streams()
 - (void)startStreamWithResponse:(NSURLResponse *)r
 {
     NSMutableData *theHeaders = nil;
+    long long expectedContentLength = [r expectedContentLength];
+
     if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)r;
         theHeaders = [NSMutableData dataWithCapacity:1024];
@@ -331,11 +333,18 @@ static StreamMap& streams()
             [theHeaders appendBytes:"\n" length:1];
         }
 
+        // If the content is encoded (most likely compressed), then don't send its length to the plugin,
+        // which is only interested in the decoded length, not yet known at the moment.
+        // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
+        NSString *contentEncoding = (NSString *)[[(NSHTTPURLResponse *)r allHeaderFields] objectForKey:@"Content-Encoding"];
+        if (contentEncoding && ![contentEncoding isEqualToString:@"identity"])
+            expectedContentLength = -1;
+
         // startStreamResponseURL:... will null-terminate.
     }
 
     [self startStreamResponseURL:[r URL]
-           expectedContentLength:[r expectedContentLength]
+           expectedContentLength:expectedContentLength
                 lastModifiedDate:WKGetNSURLResponseLastModifiedDate(r)
                         MIMEType:[r MIMEType]
                          headers:theHeaders];

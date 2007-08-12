@@ -1,3 +1,14 @@
+2007-08-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=4648
+        Shockwave unable to load GZip'd text resources when server sends Content-Length header
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]): Don't trust 
+        -[NSURLResponse expectedContentLength] if Content-Encoding is not identity.
+
 2007-08-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
