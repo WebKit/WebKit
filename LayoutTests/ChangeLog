@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
         
-        Add test for http://bugs.webkit.org/attachment.cgi?id=15818&action=edit which
+        Add test for http://bugs.webkit.org/show_bug.cgi?id=14742 which
         Mitz fixed in r24973.
         
         I had a fix for <rdar://problem/5267021>
