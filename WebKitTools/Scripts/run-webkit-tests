@@ -704,7 +704,8 @@ for my $test (@tests) {
                 print "\n" unless $atLineStart;
                 print "$test -> ";
             }
-            print "new (results generated in $expectedDir)\n";
+            my $resultsDir = catdir($expectedDir, dirname($base));
+            print "new (results generated in $resultsDir)\n";
             $atLineStart = 1;
         }
     } elsif ($actual eq $expected && $diffResult eq "passed") {

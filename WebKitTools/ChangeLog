@@ -1,5 +1,16 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Print the actual directory where new results are generated.
+
+        Before, we were printing an unpredictable, context-specific substring
+        of the directory.
+
+        Reviewed by Lars.
+
+        * Scripts/run-webkit-tests:
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Factor some common code into a stripExtension() subroutine.
 
         Reviewed by Lars.
