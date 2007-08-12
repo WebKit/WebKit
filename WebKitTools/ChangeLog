@@ -1,3 +1,11 @@
+2007-08-12  Adam Roben  <aroben@apple.com>
+
+        Factor some common code into a stripExtension() subroutine.
+
+        Reviewed by Lars.
+
+        * Scripts/run-webkit-tests: Also removed some debugging output.
+
 2007-08-11  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed over and over and over by Adam Roben.

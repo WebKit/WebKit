@@ -75,6 +75,7 @@ sub pathcmp($$);
 sub processIgnoreTests($);
 sub slowestcmp($$);
 sub splitpath($);
+sub stripExtension($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($);
 sub printFailureMessageForTest($$);
@@ -454,8 +455,7 @@ for my $test (@tests) {
 
     openDumpTool();
 
-    my $base = $test;
-    $base =~ s/\.[a-zA-Z]+$//;
+    my $base = stripExtension($test);
     
     if ($verbose) {
         print "running $test -> ";
@@ -888,8 +888,7 @@ if ($counts{mismatch}) {
     print HTML "<p>Tests where results did not match expected results:</p>\n";
     print HTML "<table>\n";
     for my $test (@{$tests{mismatch}}) {
-        my $base = $test;
-        $base =~ s/\.[a-zA-Z]+$//;
+        my $base = stripExtension($test);
         print HTML "<tr>\n";            
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         print HTML htmlForExpectedAndActualResults($base);
@@ -910,8 +909,7 @@ if ($counts{crash}) {
     print HTML "<p>Tests that caused the DumpRenderTree tool to crash:</p>\n";
     print HTML "<table>\n";
     for my $test (@{$tests{crash}}) {
-        my $base = $test;
-        $base =~ s/\.[a-zA-Z]+$//;
+        my $base = stripExtension($test);
         my $expectedDir = expectedDirectoryForTest($base);
         print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
@@ -926,8 +924,7 @@ if ($counts{new}) {
     print HTML "<p>Tests that had no expected results (probably new):</p>\n";
     print HTML "<table>\n";
     for my $test (@{$tests{new}}) {
-        my $base = $test;
-        $base =~ s/\.[a-zA-Z]+$//;
+        my $base = stripExtension($test);
         my $expectedDir = expectedDirectoryForTest($base);
         print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
@@ -1287,6 +1284,14 @@ sub processIgnoreTests($) {
     }
 }
 
+sub stripExtension($)
+{
+    my ($test) = @_;
+
+    $test =~ s/\.[a-zA-Z]+$//;
+    return $test;
+}
+
 sub isTextOnlyTest($)
 {
     my ($actual) = @_;
@@ -1441,7 +1446,6 @@ sub buildPlatformHierarchy()
     my @hierarchy;
     for (my $i=0; $i < @platforms; $i++) {
         my $scoped = join('-', @platforms[0..($#platforms - $i)]);
-        print "scoped = $scoped\n";
         push(@hierarchy, $scoped) if (-d $scoped);
     }
 
