@@ -1,5 +1,14 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://problem/5278790> Hole for find-on-page match in subframe isn't clipped by frame bounds
+
+        Reviewed by Maciej.
+
+        * WebView.cpp:
+        (WebView::rectsForTextMatches): Ported fix from r23586.
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Prevent an ASSERT on launch by initializing AtomicString in WebKitGraphics
 
         Reviewed by Maciej.
