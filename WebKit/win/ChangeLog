@@ -1,3 +1,12 @@
+2007-08-12  Adam Roben  <aroben@apple.com>
+
+        Prevent an ASSERT on launch by initializing AtomicString in WebKitGraphics
+
+        Reviewed by Maciej.
+
+        * WebKitGraphics.cpp:
+        (makeFont):
+
 2007-08-10  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam and Darin.
