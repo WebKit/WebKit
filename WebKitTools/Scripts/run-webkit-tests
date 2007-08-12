@@ -77,7 +77,7 @@ sub slowestcmp($$);
 sub splitpath($);
 sub stripExtension($);
 sub isTextOnlyTest($);
-sub expectedDirectoryForTest($);
+sub expectedDirectoryForTest($;$);
 sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
@@ -518,7 +518,7 @@ for my $test (@tests) {
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    my $expectedDir = expectedDirectoryForTest($base);
+    my $expectedDir = expectedDirectoryForTest($base, $isText);
     if (isQt() && $isText) {
         $expectedDir = $testDirectory;
     }
@@ -1305,17 +1305,27 @@ sub isTextOnlyTest($)
     return $isText;
 }
 
-sub expectedDirectoryForTest($)
+sub expectedDirectoryForTest($;$)
 {
-    my ($base) = @_;
+    my ($base, $isText) = @_;
 
-    foreach my $level (@platformHierarchy) {
-        return $level if (-f "$level/$base-$expectedTag.txt");
+    my @directories = @platformHierarchy;
+    push(@directories, $expectedDirectory);
+
+    # If we already have expected results, just return their location.
+    foreach my $directory (@directories) {
+        return $directory if (-f "$directory/$base-$expectedTag.txt");
     }
 
-    return $expectedDirectory if (-f "$expectedDirectory/$base-$expectedTag.txt");
+    # For platform-specific tests, the results should go right next to the test itself.
+    # Note: The return value of this subroutine will be concatenated with $base
+    # to determine the location of the new results, so returning $expectedDirectory
+    # will put the results right next to the test.
+    return $expectedDirectory if $base =~ /^platform/;
 
-    return $platformHierarchy[$#platformHierarchy];
+    # For cross-platform tests, text-only results should go in the cross-platform directory,
+    # while render tree dumps should go in the least-specific platform directory.
+    return $isText ? $expectedDirectory : $platformHierarchy[$#platformHierarchy];
 }
 
 sub printFailureMessageForTest($$)

@@ -1,5 +1,19 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Generate results for new tests in a more logical location
+
+        New platform-specific tests always have their results generated right
+        next to the test. New cross-platform tests will have their results
+        generated a) in the cross-platform directory, if they are text-only,
+        or b) in the least-specific platform directory, if they are render
+        tree dumps.
+
+        Reviewed by Lars.
+
+        * Scripts/run-webkit-tests:
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Print the actual directory where new results are generated.
 
         Before, we were printing an unpredictable, context-specific substring
