@@ -1,3 +1,11 @@
+2007-08-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Use the cygwin specific Apache config file under cygwin.
+
+        * Scripts/run-webkit-httpd:
+
 2007-08-12  Adam Roben  <aroben@apple.com>
 
         Generate results for new tests in a more logical location

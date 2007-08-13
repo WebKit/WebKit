@@ -85,6 +85,7 @@ if (-f "/tmp/WebKit/httpd.pid") {
 my $testDirectory = getcwd() . "/LayoutTests";
 my $httpdPath = "/usr/sbin/httpd";
 my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+$httpdConfig = "$testDirectory/http/conf/cygwin-httpd.conf" if isCygwin();
 $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
 my $documentRoot = "$testDirectory/http/tests";
 my $typesConfig = "$testDirectory/http/conf/mime.types";
