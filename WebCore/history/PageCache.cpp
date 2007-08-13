@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageCache.h"
 
+#include "Cache.h"
 #include "CachedPage.h"
 #include "FrameLoader.h"
 #include "HistoryItem.h"
@@ -155,12 +156,19 @@ void PageCache::releaseAutoreleasedPagesNow()
 {
     m_autoreleaseTimer.stop();
 
+    // Postpone dead pruning until all our resources have gone dead.
+    cache()->setDeadResourcePruneEnabled(false);
+
     CachedPageSet tmp;
     tmp.swap(m_autoreleaseSet);
 
     CachedPageSet::iterator end = tmp.end();
     for (CachedPageSet::iterator it = tmp.begin(); it != end; ++it)
         (*it)->close();
+
+    // Now do the prune.
+    cache()->setDeadResourcePruneEnabled(true);
+    cache()->pruneDeadResources();
 }
 
 void PageCache::autorelease(PassRefPtr<CachedPage> page)

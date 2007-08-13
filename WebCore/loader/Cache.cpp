@@ -50,6 +50,7 @@ Cache* cache()
 
 Cache::Cache()
 : m_disabled(false)
+, m_deadResourcePruneEnabled(true)
 , m_maximumSize(cDefaultCacheSize)
 , m_currentSize(0)
 , m_liveResourcesSize(0)
@@ -170,17 +171,16 @@ void Cache::pruneLiveResources()
     while (current) {
         CachedResource* prev = current->m_prevInLiveResourcesList;
         ASSERT(current->referenced());
-        if (current->isLoaded()) {
+        if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
             double elapsedTime = currentTime - current->m_lastDecodedAccessTime;
             if (elapsedTime < cMinDelayBeforeLiveDecodedPrune)
                 return;
 
-            // Go ahead and destroy our decoded data.
+            // Destroy our decoded data. This will remove us from 
+            // m_liveDecodedResources, and possibly move us to a differnt LRU 
+            // list in m_allResources.
             current->destroyDecodedData();
-            
-            // Now remove us from the list so the next prune can ignore us.
-            removeFromLiveDecodedResourcesList(current);
             
             // Stop pruning if our total live resource size is back under the maximum.
             if (m_liveDecodedSize <= m_maximumSize)
@@ -204,7 +204,10 @@ void Cache::pruneDeadResources()
     if (unreferencedResourcesSize < m_maximumSize)
         return;
     
-    unsigned size = m_allResources.size();
+    if (!m_deadResourcePruneEnabled)
+        return;
+        
+    int size = m_allResources.size();
     bool canShrinkLRULists = true;
     for (int i = size - 1; i >= 0; i--) {
         // Remove from the tail, since this is the least frequently accessed of the objects.
@@ -213,8 +216,10 @@ void Cache::pruneDeadResources()
         // First flush all the decoded data in this queue.
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->referenced() && current->isLoaded()) {
-                // Go ahead and destroy our decoded data.
+            if (!current->referenced() && current->isLoaded() && current->decodedSize()) {
+                // Destroy our decoded data. This will remove us from 
+                // m_liveDecodedResources, and possibly move us to a differnt 
+                // LRU list in m_allResources.
                 current->destroyDecodedData();
                 
                 // Stop pruning if our total cache size is back under the maximum or if every
@@ -317,7 +322,7 @@ static inline unsigned fastLog2(unsigned i)
 Cache::LRUList* Cache::lruListFor(CachedResource* resource)
 {
     unsigned accessCount = max(resource->accessCount(), 1U);
-    unsigned queueIndex = fastLog2(resource->encodedSize() / accessCount);
+    unsigned queueIndex = fastLog2(resource->size() / accessCount);
 #ifndef NDEBUG
     resource->m_lruIndex = queueIndex;
 #endif
@@ -575,4 +580,23 @@ void Cache::setDisabled(bool disabled)
     }
 }
 
+#ifndef NDEBUG
+void Cache::dumpLRULists(bool includeLive) const
+{
+    printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced):\n");
+
+    int size = m_allResources.size();
+    for (int i = size - 1; i >= 0; i--) {
+        printf("\n\nList %d: ", i);
+        CachedResource* current = m_allResources[i].m_tail;
+        while (current) {
+            CachedResource* prev = current->m_prevInAllResourcesList;
+            if (includeLive || !current->referenced())
+                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, current->encodedSize() / 1024.0f, current->accessCount(), current->referenced());
+            current = prev;
+        }
+    }
 }
+#endif
+
+} // namespace WebCore

@@ -225,23 +225,12 @@ void CachedImage::destroyDecodedData()
         m_image->destroyDecodedData();
 }
 
-unsigned CachedImage::decodedSize() const
-{
-    if (m_image && !m_errorOccurred)
-        return m_image->decodedSize();
-    return 0;
-}
-
 void CachedImage::decodedSizeChanged(const Image* image, int delta)
 {
     if (image != m_image)
         return;
     
-    if (inCache()) {
-        cache()->adjustSize(referenced(), delta, delta);
-        if (delta > 0 && referenced() && !inLiveDecodedResourcesList())
-            cache()->insertInLiveDecodedResourcesList(this);
-    }
+    setDecodedSize(decodedSize() + delta);
 }
 
 void CachedImage::didDraw(const Image* image)

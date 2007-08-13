@@ -93,6 +93,9 @@ public:
     void setDisabled(bool);
     bool disabled() const { return m_disabled; }
     
+    void setDeadResourcePruneEnabled(bool enabled) { m_deadResourcePruneEnabled = enabled; }
+    bool deadResourcePruneEnabled() const { return m_deadResourcePruneEnabled; }
+    
     // Remove an existing cache entry from both the resource map and from the LRU list.
     void remove(CachedResource*);
 
@@ -132,12 +135,17 @@ private:
     LRUList* liveLRUListFor(CachedResource*);
     
     void resourceAccessed(CachedResource*);
+    
+#ifndef NDEBUG
+    void dumpLRULists(bool includeLive) const;
+#endif
 
     // Member variables.
     HashSet<DocLoader*> m_docLoaders;
     Loader m_loader;
 
     bool m_disabled;  // Whether or not the cache is enabled.
+    bool m_deadResourcePruneEnabled;
 
     unsigned m_maximumSize;  // The maximum size in bytes that the global cache can consume.
     unsigned m_currentSize;  // The current size of the global cache in bytes.

@@ -41,6 +41,8 @@ class Request;
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
 // This class also does the actual communication with the loader to obtain the resource from the network.
 class CachedResource {
+    friend class Cache;
+    
 public:
     enum Type {
         ImageResource,
@@ -83,7 +85,7 @@ public:
 
     unsigned size() const { return encodedSize() + decodedSize(); }
     unsigned encodedSize() const { return m_encodedSize; }
-    virtual unsigned decodedSize() const { return 0; }
+    unsigned decodedSize() const { return m_decodedSize; }
     
     bool isLoaded() const { return !m_loading; }
     void setLoading(bool b) { m_loading = b; }
@@ -134,6 +136,7 @@ public:
     
 protected:
     void setEncodedSize(unsigned);
+    void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
     
     HashCountedSet<CachedResourceClient*> m_clients;
@@ -152,6 +155,7 @@ protected:
 
 private:
     unsigned m_encodedSize;
+    unsigned m_decodedSize;
     unsigned m_accessCount;
     unsigned m_inLiveDecodedResourcesList;
     double m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
@@ -173,8 +177,6 @@ private:
     CachedResource* m_nextInLiveResourcesList;
     CachedResource* m_prevInLiveResourcesList;
 
-    friend class Cache;
-    
     bool m_shouldTreatAsLocal;
 
     DocLoader* m_docLoader; // only non-0 for resources that are not in the cache

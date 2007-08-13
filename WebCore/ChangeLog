@@ -1,3 +1,61 @@
+2007-08-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak, Dave Hyatt.
+        
+        Changed the dead resource LRU-SP algorithm to measure an object's
+        total size, not just its encoded size. This will allow us to make 
+        better decisions about what data to evict when the cache is small. For 
+        example, the PLT can now run with a 16MB cache without fully evicting
+        any resources.
+        
+        (Previously, we had assumed that decoded size would be an OK estimate
+        of encoded size, but that is not true of GIF, whose decoded size can be 
+        orders of magnitude greater than its encoded size.)
+        
+        Subtly, destroying a resource's decoded data now increases its recency 
+        by moving it to the head of a smaller LRU list. This is slightly odd,
+        but, since all resources get the same treatment, it shouldn't hurt 
+        the eviction algorithm.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::releaseAutoreleasedPagesNow): Make sure that a
+        dead resource eviction doesn't happen until we've released all of our
+        dead pages. Otherwise, the cache will make terrible decisions about 
+        what to evict because all of our dead resources will seem live.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::Cache):
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneDeadResources): Removed call to 
+        removeFromLiveDecodedResourcesList because this happens automatically
+        now as a part of the process of changing the resource's decoded size.
+        (WebCore::Cache::lruListFor): *** The key change. *** Compute the 
+        appropriate LRU list based on total size, not encoded size.
+        (WebCore::Cache::dumpLRULists): Added debug logging function to help
+        visualize the cache.
+
+        * loader/Cache.h:
+        (WebCore::Cache::setDeadResourcePruneEnabled):
+        (WebCore::Cache::deadResourcePruneEnabled):
+
+        * loader/CachedImage.cpp: Moved decoded size tracking code from here
+        up into the base class. Currently, only CachedImage has a use for that
+        functionality, but other subclasses might need it in the future, and
+        the base class is already responsible for similar code related to 
+        encoded size tracking.
+        (WebCore::CachedImage::decodedSizeChanged):
+        * loader/CachedImage.h:
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::setDecodedSize): Move us in the LRU-SP list
+        just like setEncodedSize does, since decoded size counts now, too.
+        (WebCore::CachedResource::setEncodedSize): Changed slightly to match
+        the style of setDecodedSize.
+
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::decodedSize):
+
 2007-08-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

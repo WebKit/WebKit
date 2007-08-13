@@ -45,6 +45,7 @@ CachedResource::CachedResource(const String& URL, Type type, bool forCache, bool
     m_type = type;
     m_status = Pending;
     m_encodedSize = 0;
+    m_decodedSize = 0;
     m_request = 0;
 
     m_accessCount = 0;
@@ -119,6 +120,36 @@ void CachedResource::deref(CachedResourceClient *c)
     }
 }
 
+void CachedResource::setDecodedSize(unsigned size)
+{
+    if (size == m_decodedSize)
+        return;
+
+    int delta = size - m_decodedSize;
+
+    // The object must now be moved to a different queue, since its size has been changed.
+    // We have to remove explicitly before updating m_decodedSize, so that we find the correct previous
+    // queue.
+    if (inCache())
+        cache()->removeFromLRUList(this);
+    
+    m_decodedSize = size;
+   
+    if (inCache()) { 
+        // Now insert into the new LRU list.
+        cache()->insertInLRUList(this);
+        
+        // Insert into or remove from the live decoded list if necessary.
+        if (m_decodedSize && !m_inLiveDecodedResourcesList && referenced())
+            cache()->insertInLiveDecodedResourcesList(this);
+        else if (!m_decodedSize && m_inLiveDecodedResourcesList)
+            cache()->removeFromLiveDecodedResourcesList(this);
+
+        // Update the cache's size totals.
+        cache()->adjustSize(referenced(), delta, delta);
+    }
+}
+
 void CachedResource::setEncodedSize(unsigned size)
 {
     if (size == m_encodedSize)
@@ -127,7 +158,7 @@ void CachedResource::setEncodedSize(unsigned size)
     // The size cannot ever shrink (unless it is being nulled out because of an error).  If it ever does, assert.
     ASSERT(size == 0 || size >= m_encodedSize);
     
-    unsigned oldSize = m_encodedSize;
+    int delta = size - m_encodedSize;
 
     // The object must now be moved to a different queue, since its size has been changed.
     // We have to remove explicitly before updating m_encodedSize, so that we find the correct previous
@@ -142,7 +173,7 @@ void CachedResource::setEncodedSize(unsigned size)
         cache()->insertInLRUList(this);
         
         // Update the cache's size totals.
-        cache()->adjustSize(referenced(), size - oldSize, 0);
+        cache()->adjustSize(referenced(), delta, 0);
     }
 }
 
