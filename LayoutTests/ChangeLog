@@ -1,3 +1,18 @@
+2007-08-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5333725> -webkit-user-select: none makes selection difficult
+
+        * editing/selection/5333725-expected.checksum: Added.
+        * editing/selection/5333725-expected.png: Added.
+        * editing/selection/5333725-expected.txt: Added.
+        * editing/selection/5333725.html: Added.
+        
+        Added a workaround for a bug where -webkit-user-select:none
+        has no effect on the body if placed on the html element:
+        * editing/selection/select-all-user-select-none.html:
+
 2007-08-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

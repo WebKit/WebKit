@@ -1,3 +1,40 @@
+2007-08-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5333725> -webkit-user-select: none makes selection difficult
+        
+        Let users create selections if they mouse down in a -webkit-user-select:none
+        region, just (continue to) disallow selection endpoints in those regions, and
+        don't paint those regions as selected if they are fully enclosed by a selection. 
+        For example, in xxyyyxx where x is -webkit-user-select:none, a user can mouse down
+        between the first two xs and drag across yyy to the second two xs to create a 
+        selection xx^yyy^xx.
+        
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectAll): Allow selectAll inside a root
+        that has -webkit-user-select:none, because it may contain content that
+        is selectable (VisiblePosition and Selection creation will keep Selection
+        endpoints out of -webkit-user-select:none regions).
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent): Use canMouseDownStartSelect
+        instead of the ambiguously named shouldSelect().
+        (WebCore::EventHandler::handleMousePressEventTripleClick): Ditto.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Ditto.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Use canMouseDragExtendSelect.
+        (WebCore::EventHandler::selectCursor): Paint an ibeam in -webkit-user-select:none regions,
+        because you can click in those regions to create a selection.
+        (WebCore::EventHandler::canMouseDownStartSelect): Now fires the selectStart event, and
+        returns true in -webkit-user-select: none regions.
+        (WebCore::EventHandler::canMouseDragExtendSelect): This is identical to 
+        canMouseDownStartSelect because of 12823, even though it seems strange that we would fire 
+        the selectStart event here.
+        * page/EventHandler.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::draggableNode): Only -webkit-user-select:ignore regions will
+        prevent selection creation.
+        * rendering/RenderObject.h:
+
 2007-08-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
