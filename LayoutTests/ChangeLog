@@ -1,3 +1,42 @@
+2007-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Sam.
+        
+        - test cases for <rdar://problem/5395213> cross-domain access to individual components of location object should be denied.
+
+        * http/tests/security/cross-frame-access-location-expected.txt: This test's results changed, there are more debug messages due to access being legitimately denied.
+        
+        The remainder are new tests and support:
+
+        * http/tests/security/resources/xss-DENIED-assign-location-hash-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-host-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-host-failure.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-hostname-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-hostname-failure.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-nonstandardProperty-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-pathname-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-pathname-failure.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-protocol-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-protocol-failure.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-reload-attacker.html: Added.
+        * http/tests/security/resources/xss-DENIED-assign-location-search-attacker.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-hash-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-hash.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-host-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-host.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-hostname-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-hostname.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-nonstandardProperty-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-nonstandardProperty.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-pathname-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-pathname.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-protocol-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-protocol.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-reload-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-reload.html: Added.
+        * http/tests/security/xss-DENIED-assign-location-search-expected.txt: Added.
+        * http/tests/security/xss-DENIED-assign-location-search.html: Added.
+
 2007-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

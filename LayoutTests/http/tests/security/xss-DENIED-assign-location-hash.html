@@ -1,0 +1,25 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function finish()
+{
+    if (location.hash.length == 0)
+        document.getElementById("console").innerHTML = "PASS: cross-site assignment of location.hash not allowed";
+    else
+        document.getElementById("console").innerHTML = "FAIL: cross-site assignment of location.hash was allowed!";
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+
+<body onload="finish()">
+
+    <iframe src="http://localhost:8000/security/resources/xss-DENIED-assign-location-hash-attacker.html"></iframe>
+
+<div id="console"></div>
+</body>
+</html>
