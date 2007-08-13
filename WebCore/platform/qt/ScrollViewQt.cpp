@@ -210,11 +210,16 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     //and send the bound along to QWebPage.  The cache is cleared everytime
     //an actual paint occurs in ScrollView::paint...
 
+    QRect r(containingWindowRect);
+    QWidget *container = containingWindow();
+    r = r.intersect(container->rect());
+    if (r.isEmpty())
+        return;
     // Cache the dirty spot.
     if (!m_data->m_dirtyRegion.isEmpty())
-        m_data->m_dirtyRegion = m_data->m_dirtyRegion.united(QRegion(containingWindowRect));
+        m_data->m_dirtyRegion = m_data->m_dirtyRegion.united(QRegion(r));
     else
-        m_data->m_dirtyRegion = QRegion(containingWindowRect);
+        m_data->m_dirtyRegion = QRegion(r);
 
     bool painting = containingWindow()->testAttribute(Qt::WA_WState_InPaintEvent);
     if (painting && now) {

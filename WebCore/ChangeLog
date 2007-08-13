@@ -1,3 +1,12 @@
+2007-08-13  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        no need to update regions that are not visible on the webpage.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateContents):
+
 2007-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Sam.
