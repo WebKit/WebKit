@@ -13,8 +13,6 @@
             layoutTestController.waitUntilDone();
         }
 
-        var innerFrame = window.frames[0];
-
         var testDone = false;
 
         setTimeout(test, 1);
@@ -28,6 +26,12 @@
         }, 2000);
 
         function test() {
+            var innerFrame = window.frames[0];
+            if (!innerFrame) {
+                setTimeout(test, 1);
+                return;
+            }
+            
             // When the flag frame is not undefined, we know that the location change has completed and the page is loaded.
             var flagFrame = innerFrame.frames[0];
             if (!flagFrame) {

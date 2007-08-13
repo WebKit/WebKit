@@ -15,8 +15,6 @@
             layoutTestController.waitUntilDone();
         }
 
-        var innerFrame = window.frames[0];
-
         var testDone = false;
 
         setTimeout(test, 1);
@@ -30,8 +28,13 @@
         }, 2000);
 
         function test() {
-            var innerInnerFrame = innerFrame.frames[0];
+            var innerFrame = window.frames[0];
+            if (!innerFrame) {
+                setTimeout(test, 1);
+                return;
+            }
 
+            var innerInnerFrame = innerFrame.frames[0];
             if (!innerInnerFrame) {
                 setTimeout(test, 1);
                 return;
