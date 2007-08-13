@@ -199,7 +199,7 @@ public:
     void replaceMarkedText(const String&);
 
     bool ignoreMarkedTextSelectionChange() const { return m_ignoreMarkedTextSelectionChange; }
-    void setIgnoreMarkedTextSelectionChange(bool ignore) { m_ignoreMarkedTextSelectionChange = ignore; }
+    void setIgnoreMarkedTextSelectionChange(bool ignore);
 
 #if PLATFORM(MAC)
     NSString* userVisibleString(NSURL*);
@@ -209,6 +209,7 @@ public:
 #endif
 
     PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
+
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
@@ -226,6 +227,7 @@ private:
     void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle);
     void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace);
     void writeSelectionToPasteboard(Pasteboard*);
+    void revealSelectionAfterEditingOperation();
 
 #if PLATFORM(MAC)
     void addToKillRing(Range*, bool prepend);

@@ -251,7 +251,7 @@ void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDe
                 return;
             if (m_frame->document()) {
                 TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
-                m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+                revealSelectionAfterEditingOperation();
             }
             break;
         case forwardDeleteKeyAction:
@@ -260,7 +260,7 @@ void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDe
                 return;
             if (m_frame->document()) {
                 TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
-                m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+                revealSelectionAfterEditingOperation();
             }
             break;
     }
@@ -367,7 +367,7 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
         return;
     
     applyCommand(new ReplaceSelectionCommand(m_frame->document(), fragment, selectReplacement, smartReplace, matchStyle));
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
@@ -546,7 +546,7 @@ PassRefPtr<Node> Editor::insertOrderedList()
         return 0;
         
     RefPtr<Node> newList = InsertListCommand::insertList(m_frame->document(), InsertListCommand::OrderedList);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return newList;
 }
 
@@ -556,7 +556,7 @@ PassRefPtr<Node> Editor::insertUnorderedList()
         return 0;
         
     RefPtr<Node> newList = InsertListCommand::insertList(m_frame->document(), InsertListCommand::UnorderedList);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return newList;
 }
 
@@ -576,7 +576,7 @@ PassRefPtr<Node> Editor::increaseSelectionListLevel()
         return 0;
     
     RefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return newList;
 }
 
@@ -586,7 +586,7 @@ PassRefPtr<Node> Editor::increaseSelectionListLevelOrdered()
         return 0;
     
     PassRefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return newList;
 }
 
@@ -596,7 +596,7 @@ PassRefPtr<Node> Editor::increaseSelectionListLevelUnordered()
         return 0;
     
     PassRefPtr<Node> newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return newList;
 }
 
@@ -606,7 +606,7 @@ void Editor::decreaseSelectionListLevel()
         return;
     
     DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
 }
 
 void Editor::removeFormattingAndStyle()
@@ -1448,7 +1448,7 @@ bool Editor::insertLineBreak()
         return true;
 
     TypingCommand::insertLineBreak(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return true;
 }
 
@@ -1464,7 +1464,7 @@ bool Editor::insertParagraphSeparator()
         return true;
 
     TypingCommand::insertParagraphSeparator(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
     return true;
 }
 
@@ -1711,7 +1711,7 @@ void Editor::replaceMarkedText(const String& text)
     if (!text.isEmpty())
         TypingCommand::insertText(m_frame->document(), text, true);
     
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    revealSelectionAfterEditingOperation();
 }
 
 void Editor::ignoreSpelling()
@@ -2285,6 +2285,24 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     IntPoint framePoint = frameView->windowToContents(windowPoint);
     Selection selection(frame->visiblePositionForPoint(framePoint));
     return selection.toRange();
+}
+
+void Editor::revealSelectionAfterEditingOperation()
+{
+    if (m_ignoreMarkedTextSelectionChange)
+        return;
+
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+}
+
+void Editor::setIgnoreMarkedTextSelectionChange(bool ignore)
+{
+    if (m_ignoreMarkedTextSelectionChange == ignore)
+        return;
+
+    m_ignoreMarkedTextSelectionChange = ignore;
+    if (!ignore)
+        revealSelectionAfterEditingOperation();
 }
 
 } // namespace WebCore

@@ -1,3 +1,34 @@
+2007-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5403724> REGRESSION: text inputs are not scrolled to make inline input visible (14912)
+
+        * editing/Editor.h: Made setIgnoreMarkedTextSelectionChange no longer inline.
+        It now has a side effect of revealing the selection when you set it to false.
+        Added private revealSelectionAfterEditingOperation helper.
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteRange): Calls revealSelectionAfterEditingOperation instead
+        of calling m_frame->revealSelection directly.
+        (WebCore::Editor::replaceSelectionWithFragment): Ditto.
+        (WebCore::Editor::insertOrderedList): Ditto.
+        (WebCore::Editor::insertUnorderedList): Ditto.
+        (WebCore::Editor::increaseSelectionListLevel): Ditto.
+        (WebCore::Editor::increaseSelectionListLevelOrdered): Ditto.
+        (WebCore::Editor::increaseSelectionListLevelUnordered): Ditto.
+        (WebCore::Editor::decreaseSelectionListLevel): Ditto.
+        (WebCore::Editor::insertLineBreak): Ditto.
+        (WebCore::Editor::insertParagraphSeparator): Ditto.
+        (WebCore::Editor::replaceMarkedText): Ditto.
+        (WebCore::Editor::revealSelectionAfterEditingOperation): Added. Calls revealSelection,
+        unless we are in the ignoreMarkedTextSelectionChange state. If we are in that state,
+        we're in the middle of a composite editing operation and we shouldn't try to scroll
+        to reveal the selection until the operation is done.
+        (WebCore::Editor::setIgnoreMarkedTextSelectionChange): Made no longer inline. If
+        changing the state from true to false, then calls revealSelectionAfterEditingOperation.
+
+        * WebCore.exp: Add new entry point for no-longer-inline setter function.
+
 2007-08-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak, Dave Hyatt.
