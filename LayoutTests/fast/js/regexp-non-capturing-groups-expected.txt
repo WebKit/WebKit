@@ -1,0 +1,23 @@
+Test for behavior of non-capturing groups, as described in a blog post by Steven Levithan and bug 14931.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /(x)?\1y/.test("y") is true
+PASS /(x)?\1y/.exec("y") is ["y", undefined]
+PASS /(x)?y/.exec("y") is ["y", undefined]
+PASS "y".match(/(x)?\1y/) is ["y", undefined]
+PASS "y".match(/(x)?y/) is ["y", undefined]
+PASS "y".match(/(x)?\1y/g) is ["y"]
+PASS "y".split(/(x)?\1y/) is ["", undefined, ""]
+PASS "y".split(/(x)?y/) is ["", undefined, ""]
+PASS "y".search(/(x)?\1y/) is 0
+PASS "y".replace(/(x)?\1y/, "z") is "z"
+PASS "y".replace(/(x)?y/, "$1") is ""
+PASS "y".replace(/(x)?\1y/, function($0, $1){ return String($1); }) is "undefined"
+PASS "y".replace(/(x)?y/, function($0, $1){ return String($1); }) is "undefined"
+PASS "y".replace(/(x)?y/, function($0, $1){ return $1; }) is "undefined"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

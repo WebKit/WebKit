@@ -1,3 +1,30 @@
+2007-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14931
+          JavaScript regular expression non-participating capturing groups behave incorrectly in edge cases
+
+        * fast/js/regexp-non-capturing-groups-expected.txt: Added.
+        * fast/js/regexp-non-capturing-groups.html: Added.
+        * fast/js/resources/regexp-non-capturing-groups.js: Added.
+
+        * fast/js/resources/js-test-pre.js: Updated to add a special case for array
+        results, since there are some array results in the test. Also cut down on the
+        verbosity of failures when the type of the actual result is the same as the type
+        of the expected result. And get rid of the special case function just for NaN.
+
+        * fast/js/regexp-unicode-overflow.html: Let the make-js-test-wrappers script
+        regenerate this file (it removed one of the trailing newlines).
+
+        * fast/js/kde/encode_decode_uri-expected.txt: This test now passes. I'm not sure
+        why it was failing before.
+
+        * fast/js/char-at-expected.txt: Removed all the periods at the end of NaN
+        test PASS messages; they are now consistent with all the other tests.
+        * fast/js/date-parse-comments-test-expected.txt: Ditto.
+        * fast/js/date-parse-test-expected.txt: Ditto.
+
 2007-08-11  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

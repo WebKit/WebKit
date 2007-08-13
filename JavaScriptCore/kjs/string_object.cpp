@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -362,7 +362,10 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
               int matchStart = ovector[(i + 1) * 2];
               int matchLen = ovector[(i + 1) * 2 + 1] - matchStart;
 
-              args.append(jsString(source.substr(matchStart, matchLen)));
+              if (matchStart < 0)
+                args.append(jsUndefined());
+              else
+                args.append(jsString(source.substr(matchStart, matchLen)));
           }
           
           args.append(jsNumber(completeMatchStart));
@@ -608,19 +611,27 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
       }
       pos = 0;
       while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
-        // TODO: back references
         int mpos;
-        int *ovector = 0L;
+        int* ovector;
         UString mstr = reg->match(u, pos, &mpos, &ovector);
-        delete [] ovector; ovector = 0L;
-        if (mpos < 0)
+        if (mpos < 0) {
+          delete [] ovector;
           break;
+        }
         pos = mpos + (mstr.isEmpty() ? 1 : mstr.size());
         if (mpos != p0 || !mstr.isEmpty()) {
           res->put(exec,i, jsString(u.substr(p0, mpos-p0)));
           p0 = mpos + mstr.size();
           i++;
         }
+        for (unsigned si = 1; si <= reg->subPatterns(); ++si) {
+          int spos = ovector[si * 2];
+          if (spos < 0)
+            res->put(exec, i++, jsUndefined());
+          else
+            res->put(exec, i++, jsString(u.substr(spos, ovector[si * 2 + 1] - spos)));
+        }
+        delete [] ovector;
       }
     } else {
       u2 = a0->toString(exec);

@@ -35,6 +35,27 @@ function testFailed(msg)
     debug('<span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
+function areArraysEqual(_a, _b)
+{
+    if (_a.length !== _b.length)
+        return false;
+    for (var i = 0; i < _a.length; i++)
+        if (_a[i] !== _b[i])
+            return false;
+    return true;
+}
+
+function isResultCorrect(_actual, _expected)
+{
+    if (_actual === _expected)
+        return true;
+    if (typeof(_expected) == "number" && isNaN(_expected))
+        return typeof(_actual) == "number" && isNaN(_actual);
+    if (_expected.prototype === [].prototype)
+        return areArraysEqual(_actual, _expected);
+    return false;
+}
+
 function shouldBe(_a, _b)
 {
   if (typeof _a != "string" || typeof _b != "string")
@@ -50,36 +71,17 @@ function shouldBe(_a, _b)
 
   if (exception)
     testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
-  else if (_av === _bv || (typeof(_av) == "number" && typeof(_bv) == "number" && isNaN(_av) && isNaN(_bv)))
+  else if (isResultCorrect(_av, _bv))
     testPassed(_a + " is " + _b);
-  else if (typeof(_av) == "string" && typeof(_bv) == "string")
+  else if (typeof(_av) == typeof(_bv))
     testFailed(_a + " should be " + _bv + ". Was " + _av + ".");
   else
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
-
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }
-
-function shouldBeNaN(_a)
-{
-  var exception;
-  var _av;
-  try {
-     _av = eval(_a);
-  } catch (e) {
-     exception = e;
-  }
-
-  if (exception)
-    testFailed(_a + " should be NaN. Threw exception " + exception + ".");
-  else if (isNaN(_av))
-    testPassed(_a + " is NaN.");
-  else
-    testFailed(_a + " should be NaN. Was " + _av + ".");
-}
-
+function shouldBeNaN(_a) { shouldBe(_a, "NaN"); }
 
 function shouldBeUndefined(_a)
 {

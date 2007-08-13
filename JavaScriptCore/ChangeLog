@@ -1,3 +1,22 @@
+2007-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14931
+          <rdar://problem/5403816> JavaScript regular expression non-participating capturing parentheses
+          fail in 3 different ways
+
+        Test: fast/js/regexp-non-capturing-groups.html
+
+        * kjs/string_object.cpp:
+        (KJS::replace): Add missing code to handle undefined backreferences; before we'd get the empty string
+        instead of a JavaScript "undefined" value.
+        (KJS::StringProtoFunc::callAsFunction): Implemented backreference support for split.
+        * pcre/pcre_exec.c: (match): Made backreferences to undefined groups match the empty string instead
+        of always failing. Only in JAVASCRIPT mode.
+
+        * tests/mozilla/expected.html: Add a new expected test success, since this fixed one test result.
+
 2007-08-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

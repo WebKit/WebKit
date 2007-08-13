@@ -1466,7 +1466,6 @@ for (;;)
 
     case OP_REF:
       {
-      int tmplen;
       offset = GET2(ecode, 1) << 1;               /* Doubled ref number */
       ecode += 3;                                 /* Advance past item */
 
@@ -1475,9 +1474,12 @@ for (;;)
       can't just fail here, because of the possibility of quantifiers with zero
       minima. */
 
-      tmplen = INT_CAST(md->end_subject - eptr + 1);
       length = (offset >= offset_top || md->offset_vector[offset] < 0)?
-        tmplen :
+#if JAVASCRIPT
+        0 : /* in JavaScript these match the empty string */
+#else
+        INT_CAST(md->end_subject - eptr + 1) :
+#endif
         md->offset_vector[offset+1] - md->offset_vector[offset];
 
       /* Set up for repetition, or handle the non-repeated case */
