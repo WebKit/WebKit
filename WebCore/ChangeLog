@@ -1,3 +1,16 @@
+2007-08-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5360748>
+        REGRESSION (r21002-r21003): Flash widget sniffer doesn't work (affects iWeb)
+
+        Don't check whether the document is being parsed or not, because the node list
+        could be accessed after the document has finished parsing.
+        
+        * dom/Node.cpp:
+        (WebCore::Node::registerNodeList):
+
 2007-08-13  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

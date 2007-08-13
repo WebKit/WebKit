@@ -434,7 +434,7 @@ void Node::registerNodeList(NodeList* list)
 {
     if (!m_nodeLists)
         m_nodeLists = new NodeListsNodeData;
-    else if (m_nodeLists->m_registeredLists.isEmpty() && m_document->parsing()) 
+    else if (m_nodeLists->m_registeredLists.isEmpty()) 
         m_nodeLists->m_childNodeListCaches.reset();
 
     m_nodeLists->m_registeredLists.add(list);

@@ -1,3 +1,16 @@
+2007-08-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5360748>
+        REGRESSION (r21002-r21003): Flash widget sniffer doesn't work (affects iWeb)
+        
+        Update test case to handle the case where the node list is accessed after 
+        the document has finished loading.
+        
+        * fast/dom/NodeList/invalidate-node-lists-when-parsing-expected.txt:
+        * fast/dom/NodeList/invalidate-node-lists-when-parsing.html:
+
 2007-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Sam.

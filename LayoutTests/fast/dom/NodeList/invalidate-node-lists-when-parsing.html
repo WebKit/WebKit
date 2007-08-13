@@ -5,19 +5,26 @@
         <title>5360748</title>
 
         <script type="text/javascript">
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
             function print(message)
             {
                 var paragraph = document.createElement("li");
                 paragraph.appendChild(document.createTextNode(message));
                 document.getElementById("console").appendChild(paragraph);
             }
-            function test()
-            {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+
+            function runTest() {
+                result3 = testForElement("onload", "testElement2");    // expect to see "testElement2"
+                
+                // don't show the results until the tests are finished -- it changes the DOM and could affect the tests
+                print(result1);
+                print(result2);
+                print(result3);
             }
-            function testForElement(testName) {
-                var found = containsElementWithId(document.body, "testElement");
+            function testForElement(testName, elementId) {
+                var found = containsElementWithId(document.body, elementId);
                 if (window.GCController)
                     GCController.collect();
                 else {
@@ -47,27 +54,24 @@
             }
         </script>        
     </head>
-    <body onload="test()">
+    <body onload="runTest()">
 
     <p>This test checks to see if the DOM ContainerNode's NodeList cache is correctly invalidated when new content is parsed.</p>
-    <p>If the test passes, you should see &quot;before: not found&quot; and &quot;after: found&quot;.</p>
+    <p>If the test passes, you should see &quot;before: not found&quot;, &quot;after: found&quot; and &quot;onload: found&quot;.</p>
     <p>If the cache is not invalidated when the testElement is parsed, both before and after will be &quot;not found&quot;, which is a failure.</p>
     <hr>
     <p><ol id=console></ol></p>
 
     <script type="text/javascript">
-        result1 = testForElement("before");    // expect not to see "testElement"
+        result1 = testForElement("before", "testElement");    // expect not to see "testElement"
     </script>
 
     <p id="testElement"></p>
     
     <script type="text/javascript">
-        result2 = testForElement("after");    // expect to see "testElement"
-
-        // don't show the results until the tests are finished -- it changes the DOM and could affect the tests
-        print(result1);
-        print(result2);
+        result2 = testForElement("after", "testElement");    // expect to see "testElement"
     </script>
 
+    <p id="testElement2"></p>
 </body>
 </html>
