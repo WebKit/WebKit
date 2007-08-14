@@ -1,3 +1,12 @@
+2007-08-13  Oliver Hunt  <oliver@apple.com>
+
+        rs=sam
+
+        Correct accidentally modified code.
+
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+
 2007-08-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

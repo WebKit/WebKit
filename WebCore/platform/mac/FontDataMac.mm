@@ -183,7 +183,7 @@ void FontData::platformInit()
     
     // Hack Hiragino line metrics to allow room for marked text underlines.
     // <rdar://problem/5386183>
-    if (m_descent < 3 && m_lineGap >= 2 && [familyName hasPrefix:@"Hiragino"]) {
+    if (m_descent < 3 && m_lineGap >= 3 && [familyName hasPrefix:@"Hiragino"]) {
         m_lineGap -= 3 - m_descent;
         m_descent = 3;
     }
