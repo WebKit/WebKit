@@ -181,6 +181,13 @@ void FontData::platformInit()
     m_lineGap = lroundf(fLineGap);
     m_lineSpacing = m_ascent + m_descent + m_lineGap;
     
+    // Hack Hiragino line metrics to allow room for marked text underlines.
+    // <rdar://problem/5386183>
+    if (m_descent < 3 && m_lineGap >= 2 && [familyName hasPrefix:@"Hiragino"]) {
+        m_lineGap -= 3 - m_descent;
+        m_descent = 3;
+    }
+    
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
     NSGlyph xGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter('x').glyph;
