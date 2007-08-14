@@ -40,30 +40,22 @@ StyleSheet* StyleElement::sheet(Element* e)
     return m_sheet.get();
 }
 
-void StyleElement::insertedIntoDocument(Document* document)
+void StyleElement::insertedIntoDocument(Document* document, Element* element)
 {
-    if (m_sheet) {
-        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading()
-            && (m_sheet->type().isEmpty() || m_sheet->type() == "text/css"))
-            document->addPendingSheet();
-        document->updateStyleSelector();
-    }
+    process(element);
 }
 
 void StyleElement::removedFromDocument(Document* document)
 {
-    if (m_sheet) {
-        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading()
-            && (m_sheet->type().isEmpty() || m_sheet->type() == "text/css"))
-            document->stylesheetLoaded();
+    if (m_sheet)
         document->updateStyleSelector();
-    }
 }
 
-void StyleElement::childrenChanged(Element* e)
+void StyleElement::process(Element* e)
 {
-    if (!e)
+    if (!e || !e->inDocument())
         return;
+
     String text = "";
 
     for (Node* c = e->firstChild(); c; c = c->nextSibling())
@@ -77,8 +69,8 @@ void StyleElement::createSheet(Element* e, const String& text)
 {
     Document* document = e->document();
     if (m_sheet) {
-        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading())
-            document->stylesheetLoaded(); // Remove ourselves from the sheet list.
+        if (static_cast<CSSStyleSheet*>(m_sheet.get())->isLoading())
+            document->removePendingSheet();
         m_sheet = 0;
     }
 
@@ -88,8 +80,7 @@ void StyleElement::createSheet(Element* e, const String& text)
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
         if (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get())) {
-            if (e->inDocument())
-                document->addPendingSheet();
+            document->addPendingSheet();
             setLoading(true);
             m_sheet = new CSSStyleSheet(e, String(), document->inputEncoding());
             m_sheet->parseString(text, !document->inCompatMode());
@@ -99,7 +90,7 @@ void StyleElement::createSheet(Element* e, const String& text)
         }
     }
 
-    if (m_sheet && e->inDocument())
+    if (m_sheet)
         m_sheet->checkLoaded();
 }
 
