@@ -1,5 +1,14 @@
 2007-08-13  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Kevin McCullough.
+
+        Another attempt at getting these to pass reliably. 
+
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html:
+
+2007-08-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff.
 
         Ensure that these tests don't fail intermittently.

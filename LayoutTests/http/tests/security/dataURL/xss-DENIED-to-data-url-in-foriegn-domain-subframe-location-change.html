@@ -40,7 +40,7 @@
             }
 
             try {
-                if (innerFrame.document.getElementById('accessMe')) {
+                if (innerFrame.document) {
                     innerFrame.document.getElementById('accessMe').innerHTML = "FAIL: Cross frame access to a data: URL embed in a frame on a foreign domain allowed.";
                     log("FAIL: Cross frame access to a data: URL embed in a frame on a foreign domain allowed.");
                     testDone = true;
