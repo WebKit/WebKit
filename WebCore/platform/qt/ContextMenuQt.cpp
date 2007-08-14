@@ -45,6 +45,7 @@ ContextMenu::ContextMenu(const HitTestResult& result)
     m_menu = new QMenu;
     //qDebug("Create menu(%p) %p", this, (QMenu*)m_menu);
     m_proxy = new MenuEventProxy(this);
+    QObject::connect(m_menu, SIGNAL(triggered(QAction *)), m_proxy, SLOT(trigger(QAction *)));
 #endif
 }
 
@@ -91,7 +92,6 @@ void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
                 action = m_menu->addAction((QString)item.title());
                 m_menu->removeAction(action);
                 m_menu->insertAction(before, action);
-                QObject::connect(m_menu, SIGNAL(triggered(QAction *)), m_proxy, SLOT(trigger(QAction *)));
             }
             break;
         case SeparatorType:
