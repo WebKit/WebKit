@@ -372,12 +372,12 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             }
         } else if (h->hasLocalName(htmlTag)) {
             if (!current->isDocumentNode() ) {
-                if (document->firstChild()->hasTagName(htmlTag)) {
+                if (document->documentElement()->hasTagName(htmlTag)) {
                     reportError(RedundantHTMLBodyError, &localName);
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
                     NamedAttrMap* map = static_cast<Element*>(n)->attributes(true);
-                    Element* existingHTML = static_cast<Element*>(document->firstChild());
+                    Element* existingHTML = static_cast<Element*>(document->documentElement());
                     NamedAttrMap* bmap = existingHTML->attributes(false);
                     for (unsigned l = 0; map && l < map->length(); ++l) {
                         Attribute* it = map->attributeItem(l);
@@ -605,7 +605,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return false;
         }
 
-        if (current->firstChild() == 0 || !current->firstChild()->isHTMLElement()) {
+        if (!document->documentElement()) {
             e = new HTMLHtmlElement(document);
             insertNode(e);
             handled = true;
@@ -1357,13 +1357,13 @@ void HTMLParser::freeBlock()
 
 void HTMLParser::createHead()
 {
-    if (head || !document->firstChild())
+    if (head || !document->documentElement())
         return;
 
     head = new HTMLHeadElement(document);
     HTMLElement* body = document->body();
     ExceptionCode ec = 0;
-    document->firstChild()->insertBefore(head, body, ec);
+    document->documentElement()->insertBefore(head, body, ec);
     if (ec)
         head = 0;
 }
