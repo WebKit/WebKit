@@ -1,5 +1,18 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Use RetainPtr to store WebPreferences::m_privatePrefs
+
+        Reviewed by Darin.
+
+        * WebPreferences.cpp:
+        (WebPreferences::setStringValue):
+        (WebPreferences::setIntegerValue):
+        (WebPreferences::setBoolValue):
+        (WebPreferences::initWithIdentifier):
+        * WebPreferences.h:
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://problem/5278790> Hole for find-on-page match in subframe isn't clipped by frame bounds
 
         Reviewed by Maciej.

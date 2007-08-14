@@ -29,9 +29,9 @@
 #include "IWebPreferences.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
+#include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences
-{
+class WebPreferences : public IWebPreferences {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -301,7 +301,7 @@ protected:
 
 protected:
     ULONG m_refCount;
-    CFMutableDictionaryRef m_privatePrefs;
+    RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
     bool m_autoSaves;
     WebCore::BString m_identifier;
     static CFMutableDictionaryRef m_standardUserDefaults;

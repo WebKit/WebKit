@@ -44,7 +44,6 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 static unsigned long long WebSystemMainMemory()
@@ -65,7 +64,6 @@ static HashMap<WebCore::String, WebPreferences*> webPreferencesInstances;
 
 WebPreferences::WebPreferences()
 : m_refCount(0)
-, m_privatePrefs(0)
 , m_autoSaves(0)
 {
     gClassCount++;
@@ -73,8 +71,6 @@ WebPreferences::WebPreferences()
 
 WebPreferences::~WebPreferences()
 {
-    if (m_privatePrefs)
-        CFRelease(m_privatePrefs);
     gClassCount--;
 }
 
@@ -339,7 +335,7 @@ void WebPreferences::initialize()
 
 const void* WebPreferences::valueForKey(CFStringRef key)
 {
-    const void* value = CFDictionaryGetValue(m_privatePrefs, key);
+    const void* value = CFDictionaryGetValue(m_privatePrefs.get(), key);
     if (!value)
         value = CFDictionaryGetValue(m_standardUserDefaults, key);
 
@@ -429,7 +425,7 @@ void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
     
     RetainPtr<CFStringRef> valueRef(AdoptCF,
         CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)_tcslen(value), kCFAllocatorMalloc));
-    CFDictionarySetValue(m_privatePrefs, key, valueRef.get());
+    CFDictionarySetValue(m_privatePrefs.get(), key, valueRef.get());
     if (m_autoSaves) {
         CFDictionarySetValue(m_standardUserDefaults, key, valueRef.get());
         save();
@@ -450,7 +446,7 @@ void WebPreferences::setIntegerValue(CFStringRef key, int value)
         return;
 
     RetainPtr<CFNumberRef> valueRef(AdoptCF, CFNumberCreate(0, kCFNumberSInt32Type, &value));
-    CFDictionarySetValue(m_privatePrefs, key, valueRef.get());
+    CFDictionarySetValue(m_privatePrefs.get(), key, valueRef.get());
     if (m_autoSaves) {
         CFDictionarySetValue(m_standardUserDefaults, key, valueRef.get());
         save();
@@ -464,7 +460,7 @@ void WebPreferences::setBoolValue(CFStringRef key, BOOL value)
     if (boolValueForKey(key) == value)
         return;
 
-    CFDictionarySetValue(m_privatePrefs, key, value ? kCFBooleanTrue : kCFBooleanFalse);
+    CFDictionarySetValue(m_privatePrefs.get(), key, value ? kCFBooleanTrue : kCFBooleanFalse);
     if (m_autoSaves) {
         CFDictionarySetValue(m_standardUserDefaults, key, value ? kCFBooleanTrue : kCFBooleanFalse);
         save();
@@ -685,9 +681,7 @@ HRESULT STDMETHODCALLTYPE WebPreferences::initWithIdentifier(
 
     load();
 
-    if (m_privatePrefs)
-        CFRelease(m_privatePrefs);
-    m_privatePrefs = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    m_privatePrefs.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     *preferences = this;
     AddRef();
