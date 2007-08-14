@@ -42,6 +42,10 @@
 #include "MIMETypeRegistry.h"
 #include "RenderTextControl.h"
 
+#if PLATFORM(WIN_OS)
+#include <shlwapi.h>
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;

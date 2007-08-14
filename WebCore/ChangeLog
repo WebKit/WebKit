@@ -1,3 +1,11 @@
+2007-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Steve.
+
+        Build fix for Windows.
+
+        * html/HTMLFormElement.cpp:
+
 2007-08-14  George Staikos  <staikos@kde.org>
 
         Only connect the menu signal once.
