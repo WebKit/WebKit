@@ -1,3 +1,16 @@
+2007-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix <rdar://problem/5410570> Global initializer introduced by use of std::numeric_limits in r24919
+
+        * kjs/ustring.cpp:
+        (KJS::overflowIndicator): Turned into a function.
+        (KJS::maxUChars): Ditto.
+        (KJS::allocChars): Use the functions.
+        (KJS::reallocChars): Ditto.
+        (KJS::UString::expandedSize): Ditto.
+
 2007-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -54,13 +54,13 @@ namespace KJS {
 extern const double NaN;
 extern const double Inf;
 
-static const size_t overflowIndicator = std::numeric_limits<size_t>::max();
-static const size_t maxUChars = std::numeric_limits<size_t>::max() / sizeof(UChar);
+static inline const size_t overflowIndicator() { return std::numeric_limits<size_t>::max(); }
+static inline const size_t maxUChars() { return std::numeric_limits<size_t>::max() / sizeof(UChar); }
 
 static inline UChar* allocChars(size_t length)
 {
     ASSERT(length);
-    if (length > maxUChars)
+    if (length > maxUChars())
         return 0;
     return static_cast<UChar*>(fastMalloc(sizeof(UChar) * length));
 }
@@ -68,7 +68,7 @@ static inline UChar* allocChars(size_t length)
 static inline UChar* reallocChars(UChar* buffer, size_t length)
 {
     ASSERT(length);
-    if (length > maxUChars)
+    if (length > maxUChars())
         return 0;
     return static_cast<UChar*>(fastRealloc(buffer, sizeof(UChar) * length));
 }
@@ -350,12 +350,12 @@ inline size_t UString::expandedSize(size_t size, size_t otherSize) const
     // Do the size calculation in two parts, returning overflowIndicator if
     // we overflow the maximum value that we can handle.
 
-    if (size > maxUChars)
-        return overflowIndicator;
+    if (size > maxUChars())
+        return overflowIndicator();
 
     size_t expandedSize = ((size + 10) / 10 * 11) + 1;
-    if (maxUChars - expandedSize < otherSize)
-        return overflowIndicator;
+    if (maxUChars() - expandedSize < otherSize)
+        return overflowIndicator();
 
     return expandedSize + otherSize;
 }
