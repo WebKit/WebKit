@@ -3,7 +3,7 @@
 
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
-    Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
+    Copyright (C) 2005, 2006, 2007 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -480,7 +480,42 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     memcpy(m_buffer.data() + oldSize, data, len);
 
     movedDataToBuffer = true;
-    
+
+    const char* ptr = m_buffer.data();
+    const char* pEnd = ptr + m_buffer.size();
+
+    // Is there enough data available to check for XML declaration?
+    if (m_buffer.size() < 8)
+        return false;
+
+    // Handle XML declaration, which can have encoding in it. This encoding is honored even for HTML documents.
+    // It is an error for an XML declaration not to be at the start of an XML document, and it is ignored in HTML documents in such case.
+    if (ptr[0] == '<' && ptr[1] == '?' && ptr[2] == 'x' && ptr[3] == 'm' && ptr[4] == 'l') {
+        const char* xmlDeclarationEnd = ptr;
+        while (xmlDeclarationEnd != pEnd && *xmlDeclarationEnd != '>')
+            ++xmlDeclarationEnd;
+        if (xmlDeclarationEnd == pEnd)
+            return false;
+        DeprecatedCString str(ptr, xmlDeclarationEnd - ptr); // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
+        int len = 0;
+        int pos = findXMLEncoding(str, len);
+        if (pos != -1)
+            setEncoding(TextEncoding(str.mid(pos, len)), EncodingFromXMLHeader);
+        // continue looking for a charset - it may be specified in an HTTP-Equiv meta
+    } else if (ptr[0] == '<' && ptr[1] == 0 && ptr[2] == '?' && ptr[3] == 0 && ptr[4] == 'x' && ptr[5] == 0) {
+        setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
+        return true;
+    } else if (ptr[0] == 0 && ptr[1] == '<' && ptr[2] == 0 && ptr[3] == '?' && ptr[4] == 0 && ptr[5] == 'x') {
+        setEncoding(UTF16BigEndianEncoding(), AutoDetectedEncoding);
+        return true;
+    } else if (ptr[0] == '<' && ptr[1] == 0 && ptr[2] == 0 && ptr[3] == 0 && ptr[4] == '?' && ptr[5] == 0 && ptr[6] == 0 && ptr[7] == 0) {
+        setEncoding(UTF32LittleEndianEncoding(), AutoDetectedEncoding);
+        return true;
+    } else if (ptr[0] == 0 && ptr[1] == 0 && ptr[2] == 0 && ptr[3] == '<' && ptr[4] == 0 && ptr[5] == 0 && ptr[6] == 0 && ptr[7] == '?') {
+        setEncoding(UTF32BigEndianEncoding(), AutoDetectedEncoding);
+        return true;
+    }
+
     // we still don't have an encoding, and are in the head
     // the following tags are allowed in <head>:
     // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
@@ -496,9 +531,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     
     AtomicStringImpl* enclosingTagName = 0;
 
-    const char* ptr = m_buffer.data();
-    const char* pEnd = ptr + m_buffer.size();
-    while (ptr + 7 < pEnd) { // +7 guarantees that "<!--" and "<?xml" fit in the buffer - and certainly we aren't going to lose any "charset" that way.
+    while (ptr + 3 < pEnd) { // +3 guarantees that "<!--" fits in the buffer - and certainly we aren't going to lose any "charset" that way.
         if (*ptr == '<') {
             bool end = false;
             ptr++;
@@ -508,30 +541,6 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                 ptr += 3;
                 skipComment(ptr, pEnd);
                 continue;
-            }
-
-            // Handle XML declaration, which can have encoding in it.
-            // This encoding is honored even for HTML documents.
-            if (ptr[0] == '?' && ptr[1] == 'x' && ptr[2] == 'm' && ptr[3] == 'l') {
-                const char* xmlDeclarationEnd = ptr;
-                while (xmlDeclarationEnd != pEnd && *xmlDeclarationEnd != '>')
-                    ++xmlDeclarationEnd;
-                if (xmlDeclarationEnd == pEnd)
-                    return false;
-                DeprecatedCString str(ptr, xmlDeclarationEnd - ptr); // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
-                int len = 0;
-                int pos = findXMLEncoding(str, len);
-                if (pos != -1)
-                    setEncoding(TextEncoding(str.mid(pos, len)), EncodingFromXMLHeader);
-                // continue looking for a charset - it may be specified in an HTTP-Equiv meta
-            } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
-                // UTF-16 without BOM
-                setEncoding(((ptr - m_buffer.data()) % 2) ? UTF16LittleEndianEncoding() : UTF16BigEndianEncoding(), AutoDetectedEncoding);
-                return true;
-            } else if (ptr[0] == 0 && ptr[1] == 0 && ptr[2] == 0 && ptr[3] == '?' && ptr[4] == 0 && ptr[5] == 0 && ptr[6] == 0 && ptr[7] == 'x') {
-                // UTF-32 without BOM
-                setEncoding(((ptr - m_buffer.data()) % 4) ? UTF32LittleEndianEncoding() : UTF32BigEndianEncoding(), AutoDetectedEncoding);
-                return true;
             }
 
             // the HTTP-EQUIV meta has no effect on XHTML

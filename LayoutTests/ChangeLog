@@ -1,3 +1,13 @@
+2007-08-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14951
+        REGRESSION: page interpreted as UTF-8 because of stray <?xml> after <head>
+
+        * fast/encoding/misplaced-xml-declaration-expected.txt: Added.
+        * fast/encoding/misplaced-xml-declaration.html: Added.
+
 2007-08-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kevin McCullough.
