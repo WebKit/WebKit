@@ -2,6 +2,21 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=14635
+        rdar://problem/5340188
+        Uploading file with non-ASCII character in path fails
+
+        File upload cannot be tested in DumpRenderTree.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::pathGetFilename): A cross-platform helper that extracts a file name from a path.
+        (WebCore::HTMLFormElement::formData): Use the above helper instead of code that doesn't
+        work on Windows.
+
+2007-08-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=14951
         REGRESSION: page interpreted as UTF-8 because of stray <?xml> after <head>
 

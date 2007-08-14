@@ -210,6 +210,18 @@ static int randomNumber()
 #endif
 }
 
+// Warning: this helper doesn't currently have a reliable cross-platform behavior in certain edge cases
+// (see basename(3) specification for examples).
+// Consider this if it ever needs to become a general purpose method.
+static String pathGetFilename(String path)
+{
+#if PLATFORM(WIN_OS)
+    return String(PathFindFileName(path.charactersWithNullTermination()));
+#else
+    return path.substring(path.reverseFind('/') + 1);
+#endif
+}
+
 PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
 {
     DeprecatedCString enc_string = "";
@@ -270,15 +282,14 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     if (current->hasLocalName(inputTag) &&
                         static_cast<HTMLInputElement*>(current)->inputType() == HTMLInputElement::FILE) {
                         String path = static_cast<HTMLInputElement*>(current)->value();
+                        String filename = pathGetFilename(path);
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF. This also does strange
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        int start = path.reverseFind('/') + 1;
-                        int length = path.length() - start;
-                        hstr += encoding.encode(reinterpret_cast<const UChar*>(path.characters() + start), length, true).data();
+                        hstr += encoding.encode(reinterpret_cast<const UChar*>(filename.characters()), filename.length(), true).data();
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
