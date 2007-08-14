@@ -1,0 +1,26 @@
+<body>
+
+<p>This tests for a bug where the delete button wouldn't work because it had -webkit-user-select:none instead of -webkit-user-select:ignore.  The list should be removed, the editable region below should be empty.</p>
+<div contenteditable="true" style="padding: 1em;">
+<ul class="needsDeletionUI"><li>1</li><li id="li">2</li></ul>
+</div>
+
+<script>
+
+sel = window.getSelection();
+li = document.getElementById("li");
+sel.setPosition(li, 0);
+
+if (window.layoutTestController) {
+    deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
+    x = deleteButton.offsetParent.offsetLeft + deleteButton.offsetLeft + deleteButton.offsetWidth / 2;
+    y = deleteButton.offsetParent.offsetTop + deleteButton.offsetTop + deleteButton.offsetHeight / 2;
+    alert(x);
+    alert(y);
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+</body>

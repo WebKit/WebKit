@@ -166,7 +166,7 @@ void DeleteButtonController::show(HTMLElement* element)
 
     CSSMutableStyleDeclaration* style = m_containerElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
+    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_IGNORE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
 
     ExceptionCode ec = 0;
@@ -187,7 +187,7 @@ void DeleteButtonController::show(HTMLElement* element)
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
     style->setProperty(CSS_PROP_CURSOR, CSS_VAL_DEFAULT);
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
+    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_IGNORE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
     style->setProperty(CSS_PROP_Z_INDEX, String::number(-1000000));
     style->setProperty(CSS_PROP_TOP, String::number(-borderWidth - m_target->renderer()->borderTop()) + "px");
@@ -215,7 +215,7 @@ void DeleteButtonController::show(HTMLElement* element)
     style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
     style->setProperty(CSS_PROP_CURSOR, CSS_VAL_DEFAULT);
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
+    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_IGNORE);
     style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
     style->setProperty(CSS_PROP_Z_INDEX, String::number(1000000));
     style->setProperty(CSS_PROP_TOP, String::number((-buttonHeight / 2) - m_target->renderer()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");

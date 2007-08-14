@@ -1,3 +1,14 @@
+2007-08-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tim.
+        
+        <rdar://problem/5408255> REGRESSION: In Mail, clicking the containing element's UI closebox doesn't delete element
+
+        * editing/deleting/5408255.html: Added.
+        * editing/deleting/5408255-expected.checksum: Added.
+        * editing/deleting/5408255-expected.png: Added.
+        * editing/deleting/5408255-expected.txt: Added.
+
 2007-08-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

@@ -119,6 +119,11 @@ extern BOOL shouldDumpEditingCallbacks;
     return acceptsEditing;
 }
 
+- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element
+{
+    return [[element className] isEqualToString:@"needsDeletionUI"];
+}
+
 - (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
     static const char *affinitystring[] = {

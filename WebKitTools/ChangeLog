@@ -1,3 +1,13 @@
+2007-08-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tim.
+        
+        <rdar://problem/5408255> REGRESSION: In Mail, clicking the containing element's UI closebox doesn't delete element
+
+        * DumpRenderTree/EditingDelegate.m:
+        (-[EditingDelegate webView:shouldShowDeleteInterfaceForElement:]): Added, return YES
+        only for elements with the class needsDeletionUI.
+
 2007-08-14  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
