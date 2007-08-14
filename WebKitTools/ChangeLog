@@ -1,3 +1,13 @@
+2007-08-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Kevin Mccullough.
+        
+        Removed special case that didn't belong. (It would allow a global 
+        initializer to sneak into production builds, which would cause a 
+        system-wide performance regression on Mac OS X.)
+
+        * Scripts/check-for-global-initializers:
+
 2007-08-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tim.
