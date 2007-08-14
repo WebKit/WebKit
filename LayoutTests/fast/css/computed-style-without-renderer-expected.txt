@@ -2,8 +2,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     background-attachment: scroll
     background-color: rgb(0, 128, 0)
     background-image: none
-    background-position-x: 0%
-    background-position-y: 0%
+    background-position: 0% 0%
     background-repeat: repeat
     border-bottom-color: rgb(0, 0, 0)
     border-bottom-style: none

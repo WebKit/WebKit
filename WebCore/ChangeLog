@@ -1,3 +1,20 @@
+2007-08-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5143183>
+        Air Mail postmark shows up wrong in Firefox due to use of CSS background-position-x/y
+        
+        Safari was using non-standard background-position-x/y properties when serializing style, both normal 
+        and computed. As a result Safari generated CSS would not render correctly in Firefox. 
+        
+        Use standard background-position property instead.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::cssText):
+
 2007-08-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady and Dr. Harrison.

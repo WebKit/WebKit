@@ -3,8 +3,7 @@ Attributes that are exposed in the CSS computed style object:
 background-attachment: scroll;
 background-color: rgba(0, 0, 0, 0);
 background-image: none;
-background-position-x: 0%;
-background-position-y: 0%;
+background-position: 0% 0%;
 background-repeat: repeat;
 border-bottom-color: rgb(0, 0, 0);
 border-bottom-style: none;

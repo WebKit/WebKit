@@ -602,10 +602,39 @@ String CSSMutableStyleDeclaration::item(unsigned i) const
 String CSSMutableStyleDeclaration::cssText() const
 {
     String result = "";
+    
+    const CSSProperty* positionXProp = 0;
+    const CSSProperty* positionYProp = 0;
 
     DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = m_values.begin(); it != end; ++it)
-        result += (*it).cssText();
+    for (DeprecatedValueListConstIterator<CSSProperty> it = m_values.begin(); it != end; ++it) {
+        const CSSProperty& prop = *it;
+        if (prop.id() == CSS_PROP_BACKGROUND_POSITION_X)
+            positionXProp = &prop;
+        else if (prop.id() == CSS_PROP_BACKGROUND_POSITION_Y)
+            positionYProp = &prop;
+        else
+            result += prop.cssText();
+    }
+    
+    // FIXME: This is a not-so-nice way to turn x/y positions into single background-position in output.
+    // It is required because background-position-x/y are non-standard properties and WebKit generated output 
+    // would not work in Firefox (<rdar://problem/5143183>)
+    // It would be a better solution if background-position was CSS_PAIR.
+    if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
+        String positionValue;
+        const int properties[2] = { CSS_PROP_BACKGROUND_POSITION_X, CSS_PROP_BACKGROUND_POSITION_Y };
+        if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList()) 
+            positionValue = getLayeredShorthandValue(properties, 2);
+        else
+            positionValue = positionXProp->value()->cssText() + " " + positionYProp->value()->cssText();
+        result += "background-position: " + positionValue + (positionXProp->isImportant() ? " !important" : "") + "; ";
+    } else {
+        if (positionXProp) 
+            result += positionXProp->cssText();
+        if (positionYProp)
+            result += positionYProp->cssText();
+    }
 
     return result;
 }

@@ -1,3 +1,18 @@
+2007-08-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Add test for <rdar://problem/5143183>
+        Air Mail postmark shows up wrong in Firefox due to use of CSS background-position-x/y
+        
+        Also update a few tests to expect background-position instead of background-position-x/y
+
+        * fast/css/background-position-serialize-expected.txt: Added.
+        * fast/css/background-position-serialize.html: Added.
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/css/remove-shorthand-expected.txt:
+
 2007-08-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
