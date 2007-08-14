@@ -122,10 +122,12 @@ void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
         webPreferencesInstances.remove(identifierString);
 }
 
-void WebPreferences::initialize()
+void WebPreferences::initializeDefaultSettings()
 {
-    if (!m_standardUserDefaults)
-        m_standardUserDefaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    if (m_standardUserDefaults)
+        return;
+
+    m_standardUserDefaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported memory doesn't align exactly to a megabyte boundary.
     unsigned long long memSize = WebSystemMainMemory() / 1024 / 1000;
@@ -158,179 +160,56 @@ void WebPreferences::initialize()
     else
         objectCacheSize = 23 * 1024 * 1024; 
 
-    CFStringRef key = CFSTR(WebKitStandardFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Times New Roman"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitSerifFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitSansSerifFontPreferenceKey), CFSTR("Arial"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitCursiveFontPreferenceKey), CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitFantasyFontPreferenceKey), CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitMinimumFontSizePreferenceKey), CFSTR("1"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitDefaultFixedFontSizePreferenceKey), CFSTR("13"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), CFSTR("ISO-8859-1"));
 
-    key = CFSTR(WebKitFixedFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Courier New"));
-    
-    key = CFSTR(WebKitSerifFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Times New Roman"));
-    
-    key = CFSTR(WebKitSansSerifFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Arial"));
+    RetainPtr<CFStringRef> pageCacheSizeString(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), pageCacheSize));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitPageCacheSizePreferenceKey), pageCacheSizeString.get());
 
-    key = CFSTR(WebKitCursiveFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Comic Sans MS"));
+    RetainPtr<CFStringRef> objectCacheSizeString(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), objectCacheSize));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitObjectCacheSizePreferenceKey), objectCacheSizeString.get());
 
-    key = CFSTR(WebKitFantasyFontPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitUserStyleSheetEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitUserStyleSheetLocationPreferenceKey), CFSTR(""));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitShouldPrintBackgroundsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitTextAreasAreResizablePreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitAllowAnimatedImagesPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitAllowAnimatedImageLoopingPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitDisplayImagesKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitTabToLinksPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitShowsURLsInToolTipsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitPDFScaleFactorPreferenceKey), CFSTR("0"));
 
-    key = CFSTR(WebKitMinimumFontSizePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("1"));
+    RetainPtr<CFStringRef> linkBehaviorStringRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
 
-    key = CFSTR(WebKitMinimumLogicalFontSizePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("9"));
-
-    key = CFSTR(WebKitDefaultFontSizePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("16"));
-
-    key = CFSTR(WebKitDefaultFixedFontSizePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("13"));
-
-    key = CFSTR(WebKitDefaultTextEncodingNamePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("ISO-8859-1"));
-
-    key = CFSTR(WebKitPageCacheSizePreferenceKey);
-    CFStringRef pageCacheSizeString = CFStringCreateWithFormat(0, 0, CFSTR("%d"), pageCacheSize);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               pageCacheSizeString);
-    CFRelease(pageCacheSizeString);
-
-    key = CFSTR(WebKitObjectCacheSizePreferenceKey);
-    CFStringRef objectCacheSizeString = CFStringCreateWithFormat(0, 0, CFSTR("%d"), objectCacheSize);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               objectCacheSizeString);
-    CFRelease(objectCacheSizeString);
-
-    key = CFSTR(WebKitUserStyleSheetEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitUserStyleSheetLocationPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR(""));
-
-    key = CFSTR(WebKitShouldPrintBackgroundsPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitTextAreasAreResizablePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitJavaEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitJavaScriptEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitPluginsEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitAllowAnimatedImagesPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitAllowAnimatedImageLoopingPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitDisplayImagesKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitBackForwardCacheExpirationIntervalKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("1800"));
-
-    key = CFSTR(WebKitTabToLinksPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitShowsURLsInToolTipsPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebKitPDFDisplayModePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("1"));
-
-    key = CFSTR(WebKitPDFScaleFactorPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("0"));
-
-    key = CFSTR(WebKitEditableLinkBehaviorPreferenceKey);
-    CFStringRef linkBehaviorStringRef = CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               linkBehaviorStringRef);
-    CFRelease(linkBehaviorStringRef);
-
-    key = CFSTR(WebKitHistoryItemLimitKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("1000"));
-
-    key = CFSTR(WebKitHistoryAgeInDaysLimitKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("7"));
-
-    key = CFSTR(WebKitIconDatabaseLocationKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR(""));
-
-    key = CFSTR(WebKitIconDatabaseEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitFontSmothingTypePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("2"));
-
-    key = CFSTR(WebKitCookieStorageAcceptPolicyPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               CFSTR("2"));
-
-    key = CFSTR(WebContinuousSpellCheckingEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(WebGrammarCheckingEnabledPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanFalse);
-
-    key = CFSTR(AllowContinuousSpellCheckingPreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
-
-    key = CFSTR(WebKitUsesPageCachePreferenceKey);
-    if (!CFDictionaryContainsKey(m_standardUserDefaults, key))
-        CFDictionaryAddValue(m_standardUserDefaults, key,                               kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitHistoryItemLimitKey), CFSTR("1000"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitHistoryAgeInDaysLimitKey), CFSTR("7"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitIconDatabaseLocationKey), CFSTR(""));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitIconDatabaseEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitFontSmothingTypePreferenceKey), CFSTR("2"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitCookieStorageAcceptPolicyPreferenceKey), CFSTR("2"));
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebContinuousSpellCheckingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebGrammarCheckingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(AllowContinuousSpellCheckingPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(m_standardUserDefaults, CFSTR(WebKitUsesPageCachePreferenceKey), kCFBooleanTrue);
 }
 
 const void* WebPreferences::valueForKey(CFStringRef key)
@@ -426,10 +305,8 @@ void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
     RetainPtr<CFStringRef> valueRef(AdoptCF,
         CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)_tcslen(value), kCFAllocatorMalloc));
     CFDictionarySetValue(m_privatePrefs.get(), key, valueRef.get());
-    if (m_autoSaves) {
-        CFDictionarySetValue(m_standardUserDefaults, key, valueRef.get());
+    if (m_autoSaves)
         save();
-    }
 
     postPreferencesChangesNotification();
 }
@@ -447,10 +324,8 @@ void WebPreferences::setIntegerValue(CFStringRef key, int value)
 
     RetainPtr<CFNumberRef> valueRef(AdoptCF, CFNumberCreate(0, kCFNumberSInt32Type, &value));
     CFDictionarySetValue(m_privatePrefs.get(), key, valueRef.get());
-    if (m_autoSaves) {
-        CFDictionarySetValue(m_standardUserDefaults, key, valueRef.get());
+    if (m_autoSaves)
         save();
-    }
 
     postPreferencesChangesNotification();
 }
@@ -461,10 +336,8 @@ void WebPreferences::setBoolValue(CFStringRef key, BOOL value)
         return;
 
     CFDictionarySetValue(m_privatePrefs.get(), key, value ? kCFBooleanTrue : kCFBooleanFalse);
-    if (m_autoSaves) {
-        CFDictionarySetValue(m_standardUserDefaults, key, value ? kCFBooleanTrue : kCFBooleanFalse);
+    if (m_autoSaves)
         save();
-    }
 
     postPreferencesChangesNotification();
 }
@@ -483,7 +356,7 @@ void WebPreferences::save()
     if (!CFWriteStreamOpen(stream.get()))
         return;
 
-    if (!CFPropertyListWriteToStream(m_standardUserDefaults, stream.get(), kCFPropertyListXMLFormat_v1_0, 0)) {
+    if (!CFPropertyListWriteToStream(m_privatePrefs.get(), stream.get(), kCFPropertyListXMLFormat_v1_0, 0)) {
         CFWriteStreamClose(stream.get());
         return;
     }
@@ -501,40 +374,85 @@ void WebPreferences::save()
 
 void WebPreferences::load()
 {
-    if (m_standardUserDefaults) // don't need to read in defaults again
-        return;
+    initializeDefaultSettings();
 
     TCHAR appDataPath[MAX_PATH];
-    RetainPtr<CFURLRef> urlRef;
-    CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0;
-    RetainPtr<CFReadStreamRef> stream;
-    OwnPtr<Vector<UInt8> > utf8Path;
-
     if (FAILED(preferencesPath(appDataPath, MAX_PATH)))
-        goto exit;
+        return;
 
     DWORD appDataPathLength = (DWORD) _tcslen(appDataPath)+1;
     int result = WideCharToMultiByte(CP_UTF8, 0, appDataPath, appDataPathLength, 0, 0, 0, 0);
-    utf8Path.set(new Vector<UInt8>(result));
-    if (!WideCharToMultiByte(CP_UTF8, 0, appDataPath, appDataPathLength, (LPSTR)utf8Path->data(), result, 0, 0))
-        goto exit;
+    Vector<UInt8> utf8Path(result);
+    if (!WideCharToMultiByte(CP_UTF8, 0, appDataPath, appDataPathLength, (LPSTR)utf8Path.data(), result, 0, 0))
+        return;
 
-    urlRef.adoptCF(CFURLCreateFromFileSystemRepresentation(0, *utf8Path, result-1, false));
+    RetainPtr<CFURLRef> urlRef(AdoptCF, CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result-1, false));
     if (!urlRef)
-        goto exit;
+        return;
 
-    stream.adoptCF(CFReadStreamCreateWithFile(0, urlRef.get()));
+    RetainPtr<CFReadStreamRef> stream(AdoptCF, CFReadStreamCreateWithFile(0, urlRef.get()));
     if (!stream) 
-        goto exit;
+        return;
 
-    if (!CFReadStreamOpen(stream.get()))
-        goto exit;
+    if (CFReadStreamOpen(stream.get())) {
+        CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0 | kCFPropertyListXMLFormat_v1_0;
+        RetainPtr<CFPropertyListRef> plist(AdoptCF, CFPropertyListCreateFromStream(0, stream.get(), 0, kCFPropertyListMutableContainersAndLeaves, &format, 0));
+        CFReadStreamClose(stream.get());
 
-    m_standardUserDefaults = (CFMutableDictionaryRef)CFPropertyListCreateFromStream(0, stream.get(), 0, kCFPropertyListMutableContainersAndLeaves, &format, 0);
-    CFReadStreamClose(stream.get());
+        if (CFGetTypeID(plist.get()) == CFDictionaryGetTypeID())
+            m_privatePrefs.adoptCF(const_cast<CFMutableDictionaryRef>(reinterpret_cast<CFDictionaryRef>(plist.releaseRef())));
+    }
 
-exit:
-    initialize();
+    if (!m_privatePrefs)
+        m_privatePrefs.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    migrateDefaultSettingsFromSafari3Beta();
+}
+
+void WebPreferences::migrateDefaultSettingsFromSafari3Beta()
+{
+    // The "migration" happening here is a one-time removal of any default values
+    // that were stored in the user's preferences due to <rdar://problem/5214504>.
+
+    ASSERT(m_standardUserDefaults);
+    if (!m_privatePrefs)
+        return;
+
+    CFStringRef didMigrateKey = CFSTR(WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey);
+    if (boolValueForKey(didMigrateKey))
+        return;
+
+    removeValuesMatchingDefaultSettings();
+
+    bool oldValue = m_autoSaves;
+    m_autoSaves = true;
+    setBoolValue(didMigrateKey, TRUE);
+    m_autoSaves = oldValue;
+}
+
+void WebPreferences::removeValuesMatchingDefaultSettings()
+{
+    ASSERT(m_privatePrefs);
+
+    int count = CFDictionaryGetCount(m_privatePrefs.get());
+    if (count <= 0)
+        return;
+
+    Vector<CFTypeRef> keys(count);
+    Vector<CFTypeRef> values(count);
+    CFDictionaryGetKeysAndValues(m_privatePrefs.get(), keys.data(), values.data());
+
+    for (int i = 0; i < count; ++i) {
+        if (!values[i])
+            continue;
+
+        CFTypeRef defaultValue = CFDictionaryGetValue(m_standardUserDefaults, keys[i]);
+        if (!defaultValue)
+            continue;
+
+        if (CFEqual(values[i], defaultValue))
+            CFDictionaryRemoveValue(m_privatePrefs.get(), keys[i]);
+    }
 }
 
 HRESULT WebPreferences::preferencesPath(LPTSTR path, size_t cchPath)
@@ -680,8 +598,6 @@ HRESULT STDMETHODCALLTYPE WebPreferences::initWithIdentifier(
     }
 
     load();
-
-    m_privatePrefs.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     *preferences = this;
     AddRef();

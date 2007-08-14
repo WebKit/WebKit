@@ -1,5 +1,42 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://problem/5214504> No way to change WebPreferences defaults (all preferences get written to disk)
+
+        We now only write to disk values that have been explicitly set, and
+        never write any default values.
+
+        This is not enough, however, as anyone who has used WebKit prior to
+        this change will have the default values sitting in their preferences
+        plist on disk. To remedy this, we perform a one-time removal of any
+        key-value pairs that match a pair in the defaults dictionary.
+
+        Reviewed by Steve, John, Ada, and Darin.
+
+        * WebPreferenceKeysPrivate.h: Added new key to ensure we only remove
+        the defaults once.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Renamed from initialize, and
+        made sure we only set up the defaults dictionary once. Now that the
+        defaults dictionary is never modified after creation, we don't need to
+        check whether the keys are already present.
+        (WebPreferences::setStringValue): Don't modify the defaults dictionary.
+        (WebPreferences::setIntegerValue): Ditto.
+        (WebPreferences::setBoolValue): Ditto.
+        (WebPreferences::save): Write out the user's preferences, not the defaults.
+        (WebPreferences::load):
+           - Removed gotos and early declarations now that we're using
+             RetainPtr everywhere.
+           - Initialize m_privatePrefs with an empty dictionary if we didn't
+             read in a plist.
+           - Call migrateDefaultSettingsFromSafari3Beta after loading.
+        (WebPreferences::migrateDefaultSettingsFromSafari3Beta): Added.
+        (WebPreferences::removeValuesMatchingDefaultSettings): Added.
+        (WebPreferences::initWithIdentifier): Don't initialize m_privatePrefs
+        -- load() does this now.
+        * WebPreferences.h: Updated/added declarations.
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Use RetainPtr to store WebPreferences::m_privatePrefs
 
         Reviewed by Darin.
