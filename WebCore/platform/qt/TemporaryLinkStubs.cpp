@@ -44,6 +44,7 @@
 #include "GraphicsContext.h"
 #include "Cursor.h"
 #include "loader.h"
+#include "FileSystem.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GlobalHistory.h"
@@ -82,6 +83,9 @@ Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
 float userIdleTime() { notImplemented(); return 0.0; }
+
+bool fileExists(const String& path) { notImplemented(); return false; }
+bool deleteFile(const String& path) { notImplemented(); return false; }
 
 }
 

@@ -41,6 +41,7 @@
 #include "EditCommand.h"
 #include "Editor.h"
 #include "FileChooser.h"
+#include "FileSystem.h"
 #include "Font.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -233,5 +234,7 @@ namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 float userIdleTime() { notImplemented(); return 0.0; }
+bool fileExists(const String& path) { notImplemented(); return false; }
+bool deleteFile(const String& path) { notImplemented(); return false; }
 }
 

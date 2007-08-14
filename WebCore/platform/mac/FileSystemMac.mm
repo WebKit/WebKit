@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import "config.h"
+#import "FileSystem.h"
 
-#import <WebKit/WebIconDatabase.h>
+#import "PlatformString.h"
 
-// FIXME: Some of the following is not API and should be moved
-// either inside WebIconDatabase.mm, or to WebIconDatabaseInternal.h.
+namespace WebCore {
 
-// Sent when all icons are removed from the database. The object of the notification is 
-// the icon database. There is no userInfo. Clients should react by removing any cached
-// icon images from the user interface. Clients need not and should not call 
-// releaseIconForURL: in response to this notification.
-extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
+bool fileExists(const String& path) 
+{
+    const char* fsRep = [(NSString *)path fileSystemRepresentation];
+        
+    if (!fsRep || fsRep[0] == '\0')
+        return false;
+        
+    struct stat fileInfo;
 
-// Key to store the path to look for old style icons in to convert to the new icon db
-extern NSString *WebIconDatabaseImportDirectoryDefaultsKey;
+    // stat(...) returns 0 on successful stat'ing of the file, and non-zero in any case where the file doesn't exist or cannot be accessed
+    return !stat(fsRep, &fileInfo);
+}
 
-@interface WebIconDatabase (WebPendingPublic)
+bool deleteFile(const String& path) 
+{
+    const char* fsRep = [(NSString *)path fileSystemRepresentation];
+        
+    if (!fsRep || fsRep[0] == '\0')
+        return false;
+        
+    // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
+    return !unlink(fsRep);
+}
 
-/*!
-   @method removeAllIcons:
-   @discussion Causes the icon database to delete all of the images that it has stored,
-   and to send out the notification WebIconDatabaseDidRemoveAllIconsNotification.
-*/
-- (void)removeAllIcons;
-
-@end
-
-@interface WebIconDatabase (WebPrivate)
-
-+ (void)_checkIntegrityBeforeOpening;
-
-@end
-
+} //namespace WebCore

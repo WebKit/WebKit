@@ -72,6 +72,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
 - (void)_importToWebCoreFormat; 
+- (NSString *)_databaseDirectory;
 @end
 
 @implementation WebIconDatabase
@@ -104,12 +105,7 @@ NSSize WebIconLargeSize = {128, 128};
         return self;
     
     // Figure out the directory we should be using for the icon.db
-    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-    if (!databaseDirectory) {
-        databaseDirectory = WebIconDatabasePath;
-        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
-    }
-    databaseDirectory = [[databaseDirectory stringByExpandingTildeInPath] stringByStandardizingPath];
+    NSString *databaseDirectory = [self _databaseDirectory];
     
     // Rename legacy icon database files to the new icon database name
     BOOL isDirectory = NO;
@@ -252,6 +248,15 @@ NSSize WebIconLargeSize = {128, 128};
     [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification
                                                         object:self
                                                       userInfo:nil];
+}
+
+@end
+
+@implementation WebIconDatabase (WebPrivate)
+
++ (void)_checkIntegrityBeforeOpening
+{
+    iconDatabase()->checkIntegrityBeforeOpening();
 }
 
 @end
@@ -588,6 +593,20 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     // If the new iconDB wasn't in that directory, we can delete the directory itself
     if (!foundIconDB)
         rmdir([databaseDirectory fileSystemRepresentation]);
+}
+
+- (NSString *)_databaseDirectory
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    // Figure out the directory we should be using for the icon.db
+    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    if (!databaseDirectory) {
+        databaseDirectory = WebIconDatabasePath;
+        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
+    }
+    
+    return [[databaseDirectory stringByExpandingTildeInPath] stringByStandardizingPath];
 }
 
 @end

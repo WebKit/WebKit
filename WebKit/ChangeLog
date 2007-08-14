@@ -1,3 +1,18 @@
+2007-08-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin, John, Maciej, Oliver, and Tim
+
+        <rdar://problem/5394708> - Crash on launch with corrupt icon database
+
+        Expose some new SPI to help recover from this case should it happen again
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]): Use the new _databaseDirectory to determine where to open the database on disk
+        (+[WebIconDatabase _checkIntegrityBeforeOpening]): Tell the icon database to check integrity when it opens
+        (-[WebIconDatabase _databaseDirectory]): Moved the database-directory-determining logic here as it's now used in two places
+        * Misc/WebIconDatabasePrivate.h: Added _checkIntegrityBeforeOpening SPI for clients to give hints about when the
+          integrity check should run
+
 2007-08-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

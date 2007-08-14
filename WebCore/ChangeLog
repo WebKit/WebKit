@@ -1,3 +1,54 @@
+2007-08-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin, John, Maciej, Oliver, and Tim
+
+        <rdar://problem/5394708> - Crash on launch with corrupt icon database
+
+        The main part of the fix is to not disable SQLite's default level of protection - to leave the sync options at their normal,
+        mostly safe levels.  
+
+        But in case lightning strikes at the exact right moment and someone ends up with a corrupt database, add some support code to
+        detect that condition and recover from it.  
+
+        This is mainly accomplished by exposing the "PRAGMA integrity_check;" facilities of sqlite through IconDatabase SPI as well as
+        running that integrity check if a journal file is detected at launch (a strong indication that the last quit was not clean).
+        There's also a method exposed to allow clients to tell the icon database "I suspect something bad happened, please check integrity"
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::checkIntegrityBeforeOpening): Allow clients to suggest an integrity check
+        (WebCore::IconDatabase::open): Add a check to see if the journal file for the database exists.  If it does, run the integrity
+          check.  Also run the check if a client has suggested it to be necessary.
+          If the integrity-check fails, we sadly have to destroy the database and recreate from scratch.
+          Also - quite importantly - do not adjust the default sync preferences for the SQLDatabase.  They were an optimization that 
+          might have been valid at one time but no longer affects any benchmarks we care about.
+        (WebCore::IconDatabase::checkIntegrity): Perform the SQLite integrity_check pragma
+        * loader/icon/IconDatabase.h:
+
+        * loader/icon/IconDatabaseNone.cpp:
+        (WebCore::IconDatabase::checkIntegrity): Keep IconDatabaseNone users building
+        (WebCore::IconDatabase::checkIntegrityBeforeOpening): Ditto
+
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::open): Make a copy of the path string so we don't accidentally mutate anyone else's string on ::close()
+
+        * platform/FileSystem.h: Added. Begin a long-needed platform file system abstraction
+        * platform/mac/FileSystemMac.mm: Added.
+        (WebCore::fileExists): Check if a file exists
+        (WebCore::deleteFile): Delete a file
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Steve.

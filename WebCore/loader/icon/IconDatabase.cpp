@@ -27,6 +27,7 @@
 #include "IconDatabase.h"
 
 #include "CString.h"
+#include "FileSystem.h"
 #include "IconDataCache.h"
 #include "Image.h"
 #include "Logging.h"
@@ -60,10 +61,17 @@ const int missingIconExpirationTime = 60*60*24*7;
 
 const int updateTimerDelay = 5; 
 
+static bool checkIntegrityOnOpen = false;
+
 const String& IconDatabase::defaultDatabaseFilename()
 {
     static String defaultDatabaseFilename = "Icons.db";
     return defaultDatabaseFilename;
+}
+
+void IconDatabase::checkIntegrityBeforeOpening()
+{
+    checkIntegrityOnOpen = true;
 }
 
 IconDatabase* iconDatabase()
@@ -157,6 +165,10 @@ bool IconDatabase::open(const String& databasePath)
         dbFilename = databasePath + "/" + defaultDatabaseFilename();
 #endif
 
+    String journalFilename = dbFilename + "-journal";
+    if (!checkIntegrityOnOpen)
+        checkIntegrityOnOpen = fileExists(journalFilename);
+    
     // <rdar://problem/4707718> - If user's Icon directory is unwritable, Safari will crash at startup
     // Now, we'll see if we can open the on-disk database.  And, if we can't, we'll return false.  
     // WebKit will then ignore us and act as if the database is disabled
@@ -165,15 +177,29 @@ bool IconDatabase::open(const String& databasePath)
         return false;
     }
     
+    if (checkIntegrityOnOpen) {
+        checkIntegrityOnOpen = false;
+        if (!checkIntegrity()) {
+            LOG(IconDatabase, "Integrity check was bad - dumping IconDatabase");
+            close();
+
+            // Should've been consumed by SQLite, delete just to make sure we don't see it again in the future;
+            deleteFile(journalFilename);
+            deleteFile(dbFilename);
+
+            // Reopen the main database, creating it from scratch
+            if (!m_mainDB.open(dbFilename)) {
+                LOG_ERROR("Unable to open icon database at path %s - %s", dbFilename.ascii().data(), m_mainDB.lastErrorMsg());
+                return false;
+            }
+        }
+    }
+        
     if (!isValidDatabase(m_mainDB)) {
         LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", dbFilename.ascii().data());
         m_mainDB.clearAllTables();
         createDatabaseTables(m_mainDB);
     }
-
-    // These are actually two different SQLite config options - not my fault they are named confusingly  ;)
-    m_mainDB.setSynchronous(SQLDatabase::SyncOff);
-    m_mainDB.setFullsync(false);
     
     // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill
     if (!SQLStatement(m_mainDB, "PRAGMA cache_size = 200;").executeCommand())         
@@ -1128,6 +1154,37 @@ void IconDatabase::setImportedQuery(SQLDatabase& db, bool imported)
         LOG_ERROR("setImportedQuery failed");
 
     m_setImportedStatement->reset();
+}
+
+bool IconDatabase::checkIntegrity()
+{
+    SQLStatement integrity(m_mainDB, "PRAGMA integrity_check;");
+    if (integrity.prepare() != SQLResultOk) {
+        LOG_ERROR("checkIntegrity failed to execute");
+        return false;
+    }
+    
+    int resultCode = integrity.step();
+    if (resultCode == SQLResultOk)
+        return true;
+        
+    if (resultCode != SQLResultRow)
+        return false;
+
+    int columns = integrity.columnCount();
+    if (columns != 1) {
+        LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
+        return false;
+    }
+        
+    String resultText = integrity.getColumnText16(0);
+        
+    // A successful, no-error integrity check will be "ok" - all other strings imply failure
+    if (resultText == "ok")
+        return true;
+    
+    LOG_ERROR("Icon database integrity check failed - \n%s", resultText.ascii().data());
+    return false;
 }
 
 } // namespace WebCore

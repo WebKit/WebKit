@@ -49,7 +49,7 @@ bool SQLDatabase::open(const String& filename)
     close();
     
     //SQLite expects a null terminator on its UTF16 strings
-    m_path = filename;
+    m_path = filename.copy();
     
     m_lastError = sqlite3_open16(m_path.charactersWithNullTermination(), &m_db);
     if (m_lastError != SQLITE_OK) {

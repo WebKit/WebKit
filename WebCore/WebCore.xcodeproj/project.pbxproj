@@ -333,6 +333,8 @@
 		513BF1280B4F57DC00CCFECE /* AuthenticationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 513BF1270B4F57DC00CCFECE /* AuthenticationMac.mm */; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
+		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; };
+		514B3F760C722055000530DF /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514B3F750C722055000530DF /* FileSystemMac.mm */; };
 		5160F3BC0B0A99C900C1D2AF /* CachedPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F3BB0B0A99C900C1D2AF /* CachedPageMac.mm */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		51741D0F0B07259A00ED442C /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3579,6 +3581,8 @@
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		514AF320BE854014A7DA49FB /* BidiContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiContext.h; sourceTree = "<group>"; };
+		514B3F720C722047000530DF /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystem.h; sourceTree = "<group>"; };
+		514B3F750C722055000530DF /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5160F3BB0B0A99C900C1D2AF /* CachedPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CachedPageMac.mm; path = mac/CachedPageMac.mm; sourceTree = "<group>"; };
@@ -7224,6 +7228,7 @@
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				066C772C0AB603D200238CC4 /* FileChooserMac.mm */,
+				514B3F750C722055000530DF /* FileSystemMac.mm */,
 				BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */,
 				BCC088850A1BD78D006189A6 /* FontDataMac.mm */,
 				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
@@ -9562,6 +9567,7 @@
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
+				514B3F720C722047000530DF /* FileSystem.h */,
 				BC6D6DD009AF906600F59759 /* Font.cpp */,
 				BC6D6DD109AF906600F59759 /* Font.h */,
 				BC6DABF20A19015700E5CD14 /* FontCache.cpp */,
@@ -11705,6 +11711,7 @@
 				B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */,
 				0F31CBF92B654730BA0535E8 /* BidiContext.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
+				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13165,6 +13172,7 @@
 				BC2ED6500C6BC48C00920BFF /* JSHTMLIFrameElementCustom.cpp in Sources */,
 				BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */,
 				BC2ED7A50C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp in Sources */,
+				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
