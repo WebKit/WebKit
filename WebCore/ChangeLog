@@ -1,3 +1,45 @@
+2007-08-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5404899> REGRESSION: Mail crash in 
+        WebCore::FontFallbackList::fontDataAt() after dragging image into 
+        text multiple times
+
+        We were crashing because style information was not up-to-date. This 
+        patch fixes the problem in two ways:
+
+        Style information was not up to date at the time of the crash 
+        because the document thought there was still a pending style sheet. 
+        The pending style sheet counter was incremented when a call to 
+        cloneNode from Mail cloned a style node with an imported style 
+        sheet. Because Mail disables the cache, the style sheet did not 
+        load immediately for the cloned node, and we do not check again to 
+        see if it has loaded in time to decrement the pending style sheet 
+        counter before the crash point. The fix here is only to increment 
+        the pending style sheet counter for elements that are already in 
+        the document.
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::insertedIntoDocument): If we have a CSS 
+        style sheet that is currently loading, increment the pending style 
+        sheet counter. This should keep the counter accurate in the case 
+        where a style node is cloned and then immediately inserted into the 
+        document.
+        (WebCore::StyleElement::removedFromDocument): If we have a CSS 
+        style sheet that is currently loading, decrement the pending style 
+        sheet count. This is required to keep the correct balance, given 
+        the change above.
+        (WebCore::StyleElement::createSheet): Only addPendingSheet() and 
+        checkLoaded() if we are in the document.
+
+        Here is Darin's original fix. It seems worth keeping this fix too. 
+        Font style information should not cause a crash if there are still 
+        pending style sheets. This is good belt-and-suspenders in case 
+        there is another way to run into this bug with a wacky timing 
+        issue.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement): Update the font.
+
 2007-08-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -26,6 +68,7 @@
         (WebCore::TextResourceDecoder::checkForHeadCharset): Only honor XML declaration
         at the very beginning of the file.
 
+>>>>>>> .r25066
 2007-08-13  Oliver Hunt  <oliver@apple.com>
 
         rs=sam

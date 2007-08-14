@@ -783,9 +783,10 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     // will vanish if a style recalc happens during loading.
     if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
         if (!styleNotYetAvailable) {
-            styleNotYetAvailable = ::new RenderStyle();
-            styleNotYetAvailable->setDisplay(NONE);
+            styleNotYetAvailable = ::new RenderStyle;
             styleNotYetAvailable->ref();
+            styleNotYetAvailable->setDisplay(NONE);
+            styleNotYetAvailable->font().update();
         }
         styleNotYetAvailable->ref();
         return styleNotYetAvailable;

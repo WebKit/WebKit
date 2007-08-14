@@ -42,14 +42,22 @@ StyleSheet* StyleElement::sheet(Element* e)
 
 void StyleElement::insertedIntoDocument(Document* document)
 {
-    if (m_sheet)
+    if (m_sheet) {
+        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading()
+            && (m_sheet->type().isEmpty() || m_sheet->type() == "text/css"))
+            document->addPendingSheet();
         document->updateStyleSelector();
+    }
 }
 
 void StyleElement::removedFromDocument(Document* document)
 {
-    if (m_sheet)
+    if (m_sheet) {
+        if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading()
+            && (m_sheet->type().isEmpty() || m_sheet->type() == "text/css"))
+            document->stylesheetLoaded();
         document->updateStyleSelector();
+    }
 }
 
 void StyleElement::childrenChanged(Element* e)
@@ -80,7 +88,8 @@ void StyleElement::createSheet(Element* e, const String& text)
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
         if (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get())) {
-            document->addPendingSheet();
+            if (e->inDocument())
+                document->addPendingSheet();
             setLoading(true);
             m_sheet = new CSSStyleSheet(e, String(), document->inputEncoding());
             m_sheet->parseString(text, !document->inCompatMode());
@@ -90,7 +99,7 @@ void StyleElement::createSheet(Element* e, const String& text)
         }
     }
 
-    if (m_sheet)
+    if (m_sheet && e->inDocument())
         m_sheet->checkLoaded();
 }
 
