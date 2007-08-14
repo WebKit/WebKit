@@ -1,5 +1,25 @@
 2007-08-12  Adam Roben  <aroben@apple.com>
 
+        Store user defaults in a non-mutable CFDictionaryRef
+
+        Also renamed WebPreferences' static members:
+            m_standardPreferences -> s_standardPreferences
+            m_standardUserDefaults -> s_defaultSettings
+
+        Reviewed by Darin and John.
+
+        * WebPreferences.cpp:
+        (WebPreferences::getInstanceForIdentifier):
+        (WebPreferences::initializeUserDefaults): Construct the dictionary as a
+        local CFMutableDictionaryRef, then assign it to the non-mutable static
+        member.
+        (WebPreferences::valueForKey):
+        (WebPreferences::removeDefaultsIfNeeded):
+        (WebPreferences::standardPreferences):
+        * WebPreferences.h:
+
+2007-08-12  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://problem/5214504> No way to change WebPreferences defaults (all preferences get written to disk)
 
         We now only write to disk values that have been explicitly set, and

@@ -306,8 +306,8 @@ protected:
     RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
     bool m_autoSaves;
     WebCore::BString m_identifier;
-    static CFMutableDictionaryRef m_standardUserDefaults;
-    static WebPreferences* m_standardPreferences;
+    static CFDictionaryRef s_defaultSettings;
+    static WebPreferences* s_standardPreferences;
 };
 
 #endif
