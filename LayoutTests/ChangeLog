@@ -1,3 +1,14 @@
+2007-08-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14746
+        <rdar://problem/5401041> REGRESSION: Form state not saved for forms that submit via HTTPS even if they do not contain a password field
+
+        * http/tests/navigation/resources/restore-form-state-https-1.html: Added.
+        * http/tests/navigation/restore-form-state-https-expected.txt: Added.
+        * http/tests/navigation/restore-form-state-https.html: Added.
+
 2007-08-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
