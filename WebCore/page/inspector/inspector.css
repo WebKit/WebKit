@@ -1280,7 +1280,7 @@ body.inactive #sidebar li.selected {
 
 .console-message-message {
     font-size: 11px;
-    whitespace: pre-wrap;
+    white-space: pre-wrap;
     margin-left: 22px;
 }
 
@@ -1313,7 +1313,7 @@ body.inactive #sidebar li.selected {
 .console-command-input, .console-command-output {
     font-size: 11px;
     margin-left: 22px;
-    whitespace: pre-wrap;
+    white-space: pre-wrap;
 }
 
 .console-command-input::before {

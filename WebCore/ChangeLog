@@ -1,3 +1,11 @@
+2007-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady and Dr. Harrison.
+
+        Fix typo.  'whitespace' property is spelled 'white-space'.
+
+        * page/inspector/inspector.css:
+
 2007-08-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
@@ -68,7 +76,6 @@
         (WebCore::TextResourceDecoder::checkForHeadCharset): Only honor XML declaration
         at the very beginning of the file.
 
->>>>>>> .r25066
 2007-08-13  Oliver Hunt  <oliver@apple.com>
 
         rs=sam
