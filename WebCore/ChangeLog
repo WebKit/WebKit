@@ -1,3 +1,19 @@
+2007-08-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14746
+        <rdar://problem/5401041> REGRESSION: Form state not saved for forms that submit via HTTPS even if they do not contain a password field
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::saveDocumentState): Restore our old behavior that will save form state for secure forms.
+          This will also match Firefox behavior.
+
+        * dom/Document.cpp: Removed secureFormAdded(), secureFormRemoved(), hasSecureForm() which are no longer used.
+        * dom/Document.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::attach):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+
 2007-08-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

@@ -797,10 +797,6 @@ public:
     
     void didRestoreFromCache();
 
-    void secureFormAdded();
-    void secureFormRemoved();
-    bool hasSecureForm() const;
-
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
     

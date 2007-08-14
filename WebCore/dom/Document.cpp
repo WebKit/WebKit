@@ -2737,22 +2737,6 @@ void Document::didRestoreFromCache()
         (*it)->didRestoreFromCache();
 }
 
-void Document::secureFormAdded()
-{
-    m_secureForms++;
-}
-
-void Document::secureFormRemoved()
-{
-    ASSERT(m_secureForms > 0);
-    m_secureForms--;
-}
-
-bool Document::hasSecureForm() const
-{
-    return m_secureForms > 0;
-}
-
 void Document::setShouldCreateRenderers(bool f)
 {
     m_createRenderers = f;

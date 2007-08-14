@@ -85,11 +85,6 @@ bool HTMLFormElement::formWouldHaveSecureSubmission(const String &url)
 void HTMLFormElement::attach()
 {
     HTMLElement::attach();
-
-    // note we don't deal with calling secureFormRemoved() on detach, because the timing
-    // was such that it cleared our state too early
-    if (formWouldHaveSecureSubmission(m_url))
-        document()->secureFormAdded();
 }
 
 void HTMLFormElement::insertedIntoDocument()
@@ -493,17 +488,8 @@ void HTMLFormElement::reset()
 
 void HTMLFormElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == actionAttr) {
-        bool oldURLWasSecure = formWouldHaveSecureSubmission(m_url);
+    if (attr->name() == actionAttr)
         m_url = parseURL(attr->value());
-        bool newURLIsSecure = formWouldHaveSecureSubmission(m_url);
-
-        if (m_attached && (oldURLWasSecure != newURLIsSecure))
-            if (newURLIsSecure)
-                document()->secureFormAdded();
-            else
-                document()->secureFormRemoved();
-    }
     else if (attr->name() == targetAttr)
         m_target = attr->value();
     else if (attr->name() == methodAttr) {
