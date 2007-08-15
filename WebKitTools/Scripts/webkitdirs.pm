@@ -82,12 +82,21 @@ sub determineBaseProductDir
     return if defined $baseProductDir;
     determineSourceDir();
     if (isOSX()) {
-        open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
-        $baseProductDir = <PRODUCT>;
+        open PRODUCT, "defaults read com.apple.Xcode PBXApplicationwideBuildSettings 2> /dev/null |" or die;
+        $baseProductDir = join '', <PRODUCT>;
         close PRODUCT;
-        if ($baseProductDir) {
-            chomp $baseProductDir;
-            undef $baseProductDir unless $baseProductDir =~ /^\//;
+
+        $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
+        undef $baseProductDir unless $baseProductDir =~ /^\//;
+
+        if (!defined($baseProductDir)) {
+            open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+            $baseProductDir = <PRODUCT>;
+            close PRODUCT;
+            if ($baseProductDir) {
+                chomp $baseProductDir;
+                undef $baseProductDir unless $baseProductDir =~ /^\//;
+            }
         }
     } else {
         $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
@@ -109,7 +118,7 @@ sub determineBaseProductDir
 
     if (!defined($baseProductDir)) {
         $baseProductDir = "$sourceDir/WebKitBuild";
-        @baseProductDirOption = ("SYMROOT=$baseProductDir") if (isOSX());
+        @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir") if (isOSX());
         if (isCygwin()) {
             my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
             chomp $dosBuildPath;

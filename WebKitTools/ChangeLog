@@ -1,3 +1,13 @@
+2007-08-15  Timothy Hatcher  <timothy@apple.com>
+
+        Look for the new Xcode 3 preference key (PBXApplicationwideBuildSettings) for the global build locations.
+        The value of PBXApplicationwideBuildSettings is a dictionary, so we have to pull the SYMROOT out of it.
+
+        Also pass xcodebuild OBJROOT with the same value as SYMROOT if we fallback to the default WebKitBuild,
+        this prevents making "build" directories in each project folder.
+
+        * Scripts/webkitdirs.pm:
+
 2007-08-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin Mccullough.
