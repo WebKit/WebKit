@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+
+                var dv = document.getElementById('dv');
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(10, dv.offsetTop + 3);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                document.execCommand("InsertText", false, 'P');
+                document.execCommand("InsertText", false, 'A');
+                document.execCommand("InsertText", false, 'S');
+                document.execCommand("InsertText", false, 'S');
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that you can set selection in an element that has "-webkit-user-select: text" set if its parent has "-webkit-user-select: ignore" set.
+        <div style="-webkit-user-select: ignore">
+            <div id="dv" contenteditable style="border: solid thin black; -webkit-user-select: text;"></div>
+        </div>
+    </body>
+</html>

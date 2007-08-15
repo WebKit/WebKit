@@ -1,3 +1,34 @@
+2007-08-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5370059> REGRESSION: Cannot type into edit fields on a form (sccsheriff.org)
+
+        This change makes -webkit-user-select an inherited css property.  For "user-select: none" we were already 
+        acting like it was an inheritable property, where we let user-select:text on the children override its parent's user-select:none.
+        By making user-select really inherited (instead of inherited for some values), we eliminate the need for crawling up the tree to see 
+        if an ancestor has user-select ignore set.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::canMouseDownStartSelect):
+          Now that user-select is inherited, you don't need to walk up the render tree looking for ancestors with user-select:ignore set.
+
+        * css/CSSStyleSelector.cpp: Eliminate SELECT_AUTO.
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSComputedStyleDeclaration.cpp: (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+        * rendering/RenderStyle.h:
+        (WebCore::): Eliminate SELECT_AUTO.  Make userSelect inherited.
+        (WebCore::RenderStyle::userSelect):
+        (WebCore::RenderStyle::setUserSelect):
+        (WebCore::RenderStyle::initialUserSelect):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+
 2007-08-15  Peter Kasting  <zerodpx@gmail.org>
 
         Reviewed by Darin.

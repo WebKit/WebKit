@@ -1365,9 +1365,8 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
         return true;
     
     // Some controls and images can't start a select on a mouse down.
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())
-        if (curr->style()->userSelect() == SELECT_IGNORE)
-            return false;
+    if (node->renderer()->style()->userSelect() == SELECT_IGNORE)
+        return false;
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
         if (Node* node = curr->element())

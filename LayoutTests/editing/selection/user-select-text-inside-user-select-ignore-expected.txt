@@ -1,0 +1,2 @@
+This tests that you can set selection in an element that has "-webkit-user-select: text" set if its parent has "-webkit-user-select: ignore" set.
+PASS

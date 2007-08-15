@@ -1,3 +1,14 @@
+2007-08-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for <rdar://problem/5370059> REGRESSION: Cannot type into edit fields on a form (sccsheriff.org)
+
+        * editing/selection/user-select-text-inside-user-select-ignore-expected.txt: Added.
+        * editing/selection/user-select-text-inside-user-select-ignore.html: Added.
+        * fast/css/computed-style-expected.txt: Updated now that we've eliminated the auto value.
+        * fast/css/computed-style-without-renderer-expected.txt: ditto.
+
 2007-08-14  Beth Dakin  <bdakin@apple.com>
 
         Test for new support of empty style sheets.

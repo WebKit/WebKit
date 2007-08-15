@@ -426,7 +426,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_content(0)
     , m_counterDirectives(0)
     , userDrag(RenderStyle::initialUserDrag())
-    , userSelect(RenderStyle::initialUserSelect())
     , textOverflow(RenderStyle::initialTextOverflow())
     , marginTopCollapse(MCOLLAPSE)
     , marginBottomCollapse(MCOLLAPSE)
@@ -450,7 +449,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_content(0)
     , m_counterDirectives(0)
     , userDrag(o.userDrag)
-    , userSelect(o.userSelect)
     , textOverflow(o.textOverflow)
     , marginTopCollapse(o.marginTopCollapse)
     , marginBottomCollapse(o.marginBottomCollapse)
@@ -497,7 +495,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_content == o.m_content
         && m_counterDirectives == o.m_counterDirectives
         && userDrag == o.userDrag
-        && userSelect == o.userSelect
         && textOverflow == o.textOverflow
         && marginTopCollapse == o.marginTopCollapse
         && marginBottomCollapse == o.marginBottomCollapse
@@ -531,6 +528,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , khtmlLineBreak(LBNORMAL)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
     , resize(RenderStyle::initialResize())
+    , userSelect(RenderStyle::initialUserSelect())
 {
 }
 
@@ -549,6 +547,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , khtmlLineBreak(o.khtmlLineBreak)
     , textSizeAdjust(o.textSizeAdjust)
     , resize(o.resize)
+    , userSelect(o.userSelect)
 {
 }
 
@@ -570,7 +569,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && wordWrap == o.wordWrap
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
-        && textSizeAdjust == o.textSizeAdjust;
+        && textSizeAdjust == o.textSizeAdjust
+        && userSelect == o.userSelect;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const
@@ -1060,7 +1060,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
         *background.get() != *other->background.get() ||
         visual->textDecoration != other->visual->textDecoration ||
         rareInheritedData->userModify != other->rareInheritedData->userModify ||
-        rareNonInheritedData->userSelect != other->rareNonInheritedData->userSelect ||
+        rareInheritedData->userSelect != other->rareInheritedData->userSelect ||
         rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag ||
         rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit ||
         rareInheritedData->textFillColor != other->rareInheritedData->textFillColor ||
