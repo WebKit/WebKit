@@ -27,6 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "Page.h"
@@ -150,15 +151,16 @@ bool HTMLPlugInElement::checkDTD(const Node* newChild)
     return newChild->hasTagName(paramTag) || HTMLFrameOwnerElement::checkDTD(newChild);
 }
 
-void HTMLPlugInElement::detach()
+void HTMLPlugInElement::willRemove()
 {
     if (Frame* parentFrame = document()->frame()) {
-        Frame* contentFrame = parentFrame->tree()->child(m_frameName);
-        if (contentFrame)
+        if (Frame* contentFrame = parentFrame->tree()->child(m_frameName)) {
             contentFrame->disconnectOwnerElement();
+            contentFrame->loader()->frameDetached();
+        }
     }
-    
-    HTMLFrameOwnerElement::detach();
+
+    HTMLFrameOwnerElement::willRemove();
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event* event)

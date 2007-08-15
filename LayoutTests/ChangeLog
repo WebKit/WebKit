@@ -1,3 +1,13 @@
+2007-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff and Oliver.
+
+        Add test for <rdar://problem/5267870>
+        Mangleme: Reproducible assertion failure in -[WebCoreFrameBridge installInFrame:]
+
+        * http/tests/misc/embedCrasher-expected.txt: Added.
+        * http/tests/misc/embedCrasher.html: Added.
+
 2007-08-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

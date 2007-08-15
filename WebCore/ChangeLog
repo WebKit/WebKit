@@ -1,3 +1,19 @@
+2007-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff and Oliver.
+
+        Fix for <rdar://problem/5267870>
+        Mangleme: Reproducible assertion failure in -[WebCoreFrameBridge installInFrame:]
+
+        - Change embed/plugin code path to detach the frame on willRemove instead of detach.
+          This matches what frame and iframe do.
+
+        Test: http/tests/misc/embedCrasher.html
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::willRemove):
+        * html/HTMLPlugInElement.h:
+
 2007-08-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
