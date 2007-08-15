@@ -1,3 +1,14 @@
+2007-08-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=14971
+        REGRESSION: cannot select reporter's e-mail in bugzilla
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::canMouseDragExtendSelect): Allow drag-selecting inside
+        a -webkit-user-select:ignore region.
+
 2007-08-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

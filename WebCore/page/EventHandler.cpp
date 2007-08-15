@@ -1377,7 +1377,14 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
 
 bool EventHandler::canMouseDragExtendSelect(Node* node)
 {
-    return canMouseDownStartSelect(node);
+    if (!node || !node->renderer())
+        return true;
+            
+    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
+        if (Node* node = curr->element())
+            return EventTargetNodeCast(node)->dispatchHTMLEvent(selectstartEvent, true, true);
+    
+    return true;
 }
 
 void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
