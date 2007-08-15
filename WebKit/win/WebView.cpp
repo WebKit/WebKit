@@ -3828,7 +3828,7 @@ static bool getCompositionString(HIMC hInputContext, DWORD type, String& result)
         return false;
     Vector<UChar> compositionBuffer(compositionLength / 2);
     compositionLength = IMMDict::dict().getCompositionString(hInputContext, type, (LPVOID)compositionBuffer.data(), compositionLength);
-    result = String(compositionBuffer, compositionLength / 2);
+    result = String(compositionBuffer.data(), compositionLength / 2);
     ASSERT(!compositionLength || compositionBuffer[0]);
     ASSERT(!compositionLength || compositionBuffer[compositionLength / 2 - 1]);
     return true;

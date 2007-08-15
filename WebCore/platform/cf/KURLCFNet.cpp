@@ -47,7 +47,7 @@ KURL::KURL(CFURLRef url)
             buffer[2] = 'l';
             buffer[3] = 'e';
             buffer[4] = ':';
-            parse(buffer, 0);
+            parse(buffer.data(), 0);
         } else
             parse(bytes, 0);
     } else

@@ -193,7 +193,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
 {
     availableLen = max(availableLen, 0);
 
-    int* gridLayout = axis.m_sizes;
+    int* gridLayout = axis.m_sizes.data();
 
     if (!grid) {
         gridLayout[0] = availableLen;
@@ -367,7 +367,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
 
     // now we have the final layout, distribute the delta over it
     bool worked = true;
-    int* gridDelta = axis.m_deltas;
+    int* gridDelta = axis.m_deltas.data();
     for (int i = 0; i < gridLen; ++i) {
         if (gridLayout[i] && gridLayout[i] + gridDelta[i] <= 0)
             worked = false;

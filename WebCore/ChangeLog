@@ -1,3 +1,25 @@
+2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=14967 part 1 - Eliminate most implicit
+        conversions of wtf::Vector<T> to T* by explicitly calling .data()
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::saveState):
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::init):
+        (WebCore::KURL::decode_string):
+        (WebCore::KURL::parse):
+        (WebCore::KURL::encode_string):
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::KURL):
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::KURL):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layOutAxis):
+
 2007-08-14  Ricci Adams  <iccir@apple.com>
 
         Reviewed by Darin, Hyatt.

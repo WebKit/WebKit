@@ -1,3 +1,13 @@
+2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=14967 part 1 - Eliminate most implicit
+        conversions of wtf::Vector<T> to T* by explicitly calling .data()
+
+        * WebView.cpp:
+        (getCompositionString):
+
 2007-08-12  Adam Roben  <aroben@apple.com>
 
         Store user defaults in a non-mutable CFDictionaryRef

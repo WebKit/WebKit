@@ -60,7 +60,7 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
         arguments[i] = toRef(args[i]);
 
     JSLock::DropAllLocks dropAllLocks;
-    return toJS(m_callback(execRef, thisRef, thisObjRef, argumentCount, arguments, toRef(exec->exceptionSlot())));
+    return toJS(m_callback(execRef, thisRef, thisObjRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
 }
 
 } // namespace KJS

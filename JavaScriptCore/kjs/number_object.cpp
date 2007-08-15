@@ -86,13 +86,13 @@ static UString integer_part_noexp(double d)
         Vector<char, 1024> buf(decimalPoint + 1);
         
         if (static_cast<int>(length) <= decimalPoint) {
-            strcpy(buf, result);
-            memset(buf + length, '0', decimalPoint - length);
+            strcpy(buf.data(), result);
+            memset(buf.data() + length, '0', decimalPoint - length);
         } else
-            strncpy(buf, result, decimalPoint);
+            strncpy(buf.data(), result, decimalPoint);
         
         buf[decimalPoint] = '\0';
-        str += UString(buf);
+        str += UString(buf.data());
     }
     
     kjs_freedtoa(result);
@@ -105,7 +105,7 @@ static UString char_sequence(char c, int count)
     Vector<char, 2048> buf(count + 1, c);
     buf[count] = '\0';
 
-    return UString(buf);
+    return UString(buf.data());
 }
 
 static double intPow10(int e)

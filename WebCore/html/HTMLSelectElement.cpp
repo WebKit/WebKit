@@ -280,7 +280,7 @@ bool HTMLSelectElement::saveState(String& value) const
         bool selected = e->hasLocalName(optionTag) && static_cast<HTMLOptionElement*>(e)->selected();
         characters[i] = selected ? 'X' : '.';
     }
-    value = String(characters, l);
+    value = String(characters.data(), l);
     return true;
 }
 

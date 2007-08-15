@@ -241,7 +241,7 @@ KURL::KURL(const char *url)
         buffer[3] = 'e';
         buffer[4] = ':';
         memcpy(&buffer[5], url, urlLength);
-        parse(buffer, 0);
+        parse(buffer.data(), 0);
     } else
         parse(url, 0);
 }
@@ -257,7 +257,7 @@ KURL::KURL(const DeprecatedString &url)
         buffer[3] = 'e';
         buffer[4] = ':';
         url.copyLatin1(&buffer[5]);
-        parse(buffer, 0);
+        parse(buffer.data(), 0);
     } else
         parse(url.ascii(), &url);
 }
@@ -405,7 +405,7 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
                 // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
                 Vector<char, 2048> buffer(base.pathEndPos + 1 + strlen(str) + 1);
 
-                char *bufferPos = buffer;
+                char *bufferPos = buffer.data();
                 
                 // first copy everything before the path from the base
                 const char *baseString = base.urlString.ascii();
@@ -473,9 +473,9 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
                 // of the relative reference; this will also add a null terminator
                 strcpy(bufferPos, relStringPos);
 
-                parse(buffer, 0);
+                parse(buffer.data(), 0);
                 
-                ASSERT(strlen(buffer) + 1 <= buffer.size());
+                ASSERT(strlen(buffer.data()) + 1 <= buffer.size());
                 break;
             }
         }
@@ -788,18 +788,18 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
         int encodedRunLength = encodedRunEnd - encodedRunPosition;
         buffer.clear();
         buffer.resize(encodedRunLength + 1);
-        urlString.copyLatin1(buffer, encodedRunPosition, encodedRunLength);
+        urlString.copyLatin1(buffer.data(), encodedRunPosition, encodedRunLength);
 
         // Decode the %-escapes into bytes.
-        char *p = buffer;
-        const char *q = buffer;
+        char *p = buffer.data();
+        const char *q = buffer.data();
         while (*q) {
             *p++ = (hexDigitValue(q[1]) << 4) | hexDigitValue(q[2]);
             q += 3;
         }
 
         // Decode the bytes into Unicode characters.
-        String decoded = (encoding.isValid() ? encoding : UTF8Encoding()).decode(buffer, p - buffer);
+        String decoded = (encoding.isValid() ? encoding : UTF8Encoding()).decode(buffer.data(), p - buffer.data());
         if (decoded.isEmpty())
             continue;
 
@@ -1106,7 +1106,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
 
     Vector<char, 4096> buffer(fragmentEnd * 3 + 1);
 
-    char *p = buffer;
+    char *p = buffer.data();
     const char *strPtr = url;
 
     // copy in the scheme
@@ -1114,7 +1114,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     while (strPtr < schemeEndPtr) {
         *p++ = *strPtr++;
     }
-    schemeEndPos = p - buffer;
+    schemeEndPos = p - buffer.data();
 
     // Check if we're http or https.
     bool isHTTPorHTTPS = matchLetter(url[0], 'h')
@@ -1164,7 +1164,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         *p++ = '/';
         *p++ = '/';
 
-        userStartPos = p - buffer;
+        userStartPos = p - buffer.data();
 
         // copy in the user
         strPtr = url + userStart;
@@ -1172,7 +1172,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         while (strPtr < userEndPtr) {
             *p++ = *strPtr++;
         }
-        userEndPos = p - buffer;
+        userEndPos = p - buffer.data();
         
         // copy in the password
         if (passwordEnd != passwordStart) {
@@ -1183,10 +1183,10 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
                 *p++ = *strPtr++;
             }
         }
-        passwordEndPos = p - buffer;
+        passwordEndPos = p - buffer.data();
         
         // If we had any user info, add "@"
-        if (p - buffer != userStartPos) {
+        if (p - buffer.data() != userStartPos) {
             *p++ = '@';
         }
         
@@ -1198,7 +1198,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
                 *p++ = *strPtr++;
             }
         }
-        hostEndPos = p - buffer;
+        hostEndPos = p - buffer.data();
         
         // copy in the port
         if (hostEnd != portStart) {
@@ -1209,9 +1209,9 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
                 *p++ = *strPtr++;
             }
         }
-        portEndPos = p - buffer;
+        portEndPos = p - buffer.data();
     } else {
-        userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer;
+        userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer.data();
     }
 
     // For canonicalization, ensure we have a '/' for no path.
@@ -1224,34 +1224,34 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     
     if (hierarchical && hasSlashDotOrDotDot(url)) {
         Vector<char, 4096> path_buffer(pathEnd - pathStart + 1);
-        copyPathRemovingDots(path_buffer, url, pathStart, pathEnd);
-        appendEscapingBadChars(p, path_buffer, strlen(path_buffer));
+        copyPathRemovingDots(path_buffer.data(), url, pathStart, pathEnd);
+        appendEscapingBadChars(p, path_buffer.data(), strlen(path_buffer.data()));
     } else
         appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
 
-    pathEndPos = p - buffer;
+    pathEndPos = p - buffer.data();
     
     
     // add query, escaping bad characters
     appendEscapingBadChars(p, url + queryStart, queryEnd - queryStart);
-    queryEndPos = p - buffer;
+    queryEndPos = p - buffer.data();
     
     // add fragment, escaping bad characters
     if (fragmentEnd != queryEnd) {
         *p++ = '#';
         appendEscapingBadChars(p, url + fragmentStart, fragmentEnd - fragmentStart);
     }
-    fragmentEndPos = p - buffer;
+    fragmentEndPos = p - buffer.data();
 
     // If we didn't end up actually changing the original string and
     // it started as a DeprecatedString, just reuse it, to avoid extra
     // allocation.
-    if (originalString && strncmp(buffer, url, fragmentEndPos) == 0) {
+    if (originalString && strncmp(buffer.data(), url, fragmentEndPos) == 0) {
         urlString = *originalString;
     } else
-        urlString = DeprecatedString(buffer, fragmentEndPos);
+        urlString = DeprecatedString(buffer.data(), fragmentEndPos);
 
-    ASSERT(p - buffer <= (int)buffer.size());
+    ASSERT(p - buffer.data() <= (int)buffer.size());
 }
 
 bool operator==(const KURL &a, const KURL &b)
@@ -1269,7 +1269,7 @@ DeprecatedString KURL::encode_string(const DeprecatedString& notEncodedString)
     DeprecatedCString asUTF8 = notEncodedString.utf8();
     
     Vector<char, 4096> buffer(asUTF8.length() * 3 + 1);
-    char *p = buffer;
+    char *p = buffer.data();
 
     const char *str = asUTF8;
     const char *strEnd = str + asUTF8.length();
@@ -1283,9 +1283,9 @@ DeprecatedString KURL::encode_string(const DeprecatedString& notEncodedString)
             *p++ = c;
     }
     
-    DeprecatedString result(buffer, p - buffer);
+    DeprecatedString result(buffer.data(), p - buffer.data());
     
-    ASSERT(p - buffer <= (int)buffer.size());
+    ASSERT(p - buffer.data() <= (int)buffer.size());
 
     return result;
 }

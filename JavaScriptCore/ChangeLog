@@ -1,3 +1,26 @@
+2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=14967 part 1 - Eliminate most implicit
+        conversions of wtf::Vector<T> to T* by explicitly calling .data()
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::callAsFunction):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        * kjs/number_object.cpp:
+        (integer_part_noexp):
+        (char_sequence):
+        * kjs/ustring.cpp:
+        (KJS::UString::UTF8String):
+
 2007-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
