@@ -1,3 +1,17 @@
+2007-08-14  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5411482> Windows user agent language always returns "en"
+        
+        Implement defaultLanguage().
+
+        Reviewed by Oliver.
+
+        * WebCore.vcproj/WebCore.vcproj: Added Language.cpp.
+        * platform/win/Language.cpp: Added.
+        (WebCore::localeInfo): Added.
+        (WebCore::defaultLanguage): Added.
+        * platform/win/TemporaryLinkStubs.cpp: Remove defaultLanguage stub.
+
 2007-08-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff and Oliver.

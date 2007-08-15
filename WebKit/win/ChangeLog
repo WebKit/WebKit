@@ -1,3 +1,14 @@
+2007-08-14  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5411482> Windows user agent language always returns "en"
+        
+        Call WebCore::defaultLanguage() to pick up UA language.
+        
+        Reviewed by Oliver.
+
+        * WebView.cpp:
+        (WebView::userAgentForKURL):
+
 2007-08-15  Peter Kasting  <zerodpx@gmail.org>
 
         Reviewed by Darin.

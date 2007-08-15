@@ -83,8 +83,6 @@ void GraphicsContextPlatformPrivate::clip(const Path&) { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-String WebCore::defaultLanguage() { return "en"; }
-
 namespace WebCore {
 
 void FrameView::updateBorder() { notImplemented(); }

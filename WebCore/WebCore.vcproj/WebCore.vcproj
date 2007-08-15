@@ -3528,7 +3528,11 @@
 					RelativePath="..\platform\win\KeyEventWin.cpp"
 					>
 				</File>
-				<File
+        <File
+					RelativePath="..\platform\win\Language.cpp"
+					>
+        </File>
+        <File
 					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
