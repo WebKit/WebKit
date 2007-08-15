@@ -272,9 +272,6 @@ http/tests/security/local-user-CSS-from-remote.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 svg/custom/use-events-crash.svg
 
-# editing/style/style-boundary-005.html fails on boomer <rdar://problem/5143715>
-editing/style/style-boundary-005.html
-
 # Pixel depth and color depth different on boomer <rdar://problem/5137719>
 fast/dom/Window/window-screen-properties.html
 
@@ -320,9 +317,6 @@ svg/custom/text-hit-test.svg
 # window.layoutTestController.setWindowIsKey is not implemented in DRT in boomer <rdar://problem/5141186>
 editing/selection/caret-and-focus-ring.html
 
-# editing/selection/editable-links.html fails on boomer <rdar://problem/5137972>
-editing/selection/drag-to-contenteditable-iframe.html
-editing/selection/editable-links.html
 
 # Some LayoutTests use the QuickTime plugin which is not installed on the boomer build bots <rdar://problem/5138561>
 fast/dom/object-embed-plugin-scripting.html
@@ -502,6 +496,9 @@ http/tests/security/cross-frame-access-protocol.html
 
 # Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
 http/tests/security/cross-frame-access-put.html
+
+#rdar://problem/5410959 editing/selection/drag-to-contenteditable-iframe.html fails on Windows
+editing/selection/drag-to-contenteditable-iframe.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

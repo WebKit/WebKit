@@ -1,3 +1,11 @@
+2007-08-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Updated Skipped list to reflect recent fixes.
+
+        * platform/win/Skipped:
+
 2007-08-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff and Oliver.
