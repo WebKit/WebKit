@@ -41,14 +41,12 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
-#include "HTMLStyleElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "ProcessingInstruction.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SVGStyleElement.h"
 #ifndef USE_QXMLSTREAM
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -720,14 +718,6 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
 
     if (newElement->hasTagName(scriptTag))
         static_cast<HTMLScriptElement*>(newElement.get())->setCreatedByParser(true);
-    else if (newElement->hasTagName(HTMLNames::styleTag))
-        static_cast<HTMLStyleElement*>(newElement.get())->setCreatedByParser(true);
-#if ENABLE(SVG)
-    else if (newElement->hasTagName(SVGNames::scriptTag))
-        static_cast<HTMLScriptElement*>(newElement.get())->setCreatedByParser(true);
-    else if (newElement->hasTagName(SVGNames::styleTag))
-        static_cast<SVGStyleElement*>(newElement.get())->setCreatedByParser(true);
-#endif
     
     if (newElement->hasTagName(HTMLNames::scriptTag)
 #if ENABLE(SVG)
@@ -760,7 +750,7 @@ void XMLTokenizer::endElementNs()
 
     Node* n = m_currentNode;
     RefPtr<Node> parent = n->parentNode();
-    n->finishedParsing();
+    n->closeRenderer();
     
     // don't load external scripts for standalone documents (for now)
     if (n->isElementNode() && m_view && (static_cast<Element*>(n)->hasTagName(scriptTag) 
@@ -1783,7 +1773,7 @@ void XMLTokenizer::parseEndElement()
 
     Node* n = m_currentNode;
     RefPtr<Node> parent = n->parentNode();
-    n->finishedParsing();
+    n->closeRenderer();
 
     // don't load external scripts for standalone documents (for now)
     if (n->isElementNode() && m_view && (static_cast<Element*>(n)->hasTagName(scriptTag) 

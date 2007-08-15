@@ -92,13 +92,13 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLScriptElement::finishedParsing()
+void HTMLScriptElement::closeRenderer()
 {
     // The parser just reached </script>. If we have no src and no text,
     // allow dynamic loading later.
     if (getAttribute(srcAttr).isEmpty() && text().isEmpty())
         setCreatedByParser(false);
-    HTMLElement::finishedParsing();
+    HTMLElement::closeRenderer();
 }
 
 void HTMLScriptElement::insertedIntoDocument()

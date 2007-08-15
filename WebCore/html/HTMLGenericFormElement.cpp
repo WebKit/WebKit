@@ -230,7 +230,7 @@ void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
     HTMLGenericFormElement::didMoveToNewOwnerDocument();
 }
 
-void HTMLFormControlElementWithState::finishedParsing()
+void HTMLFormControlElementWithState::closeRenderer()
 {
     Document* doc = document();
     if (doc->hasStateForNewFormElements()) {

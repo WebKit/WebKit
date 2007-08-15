@@ -51,7 +51,7 @@ public:
     virtual bool isURLAttribute(Attribute *attr) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
-    virtual void finishedParsing();
+    virtual void closeRenderer();
 
     bool shouldExecuteAsJavaScript();
     void evaluateScript(const String &URL, const String &script);

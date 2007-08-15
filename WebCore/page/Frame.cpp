@@ -105,13 +105,13 @@ public:
     ~UserStyleSheetLoader()
     {
         if (!m_cachedSheet->isLoaded())
-            m_document->removePendingSheet();        
+            m_document->stylesheetLoaded();        
         m_cachedSheet->deref(this);
     }
 private:
     virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& sheet)
     {
-        m_document->removePendingSheet();
+        m_document->stylesheetLoaded();
         if (Frame* frame = m_document->frame())
             frame->setUserStyleSheet(sheet);
     }

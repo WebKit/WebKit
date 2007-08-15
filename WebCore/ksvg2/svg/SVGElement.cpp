@@ -172,9 +172,9 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
     }
 }
 
-void SVGElement::finishedParsing()
+void SVGElement::closeRenderer()
 {
-    // finishedParsing() is called when the close tag is reached for an element (e.g. </svg>)
+    // closeRenderer() is called when the close tag is reached for an element (e.g. </svg>)
     // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish
     sendSVGLoadEventIfPossible();
 }

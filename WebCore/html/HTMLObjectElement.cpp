@@ -193,12 +193,12 @@ void HTMLObjectElement::attach()
     }
 }
 
-void HTMLObjectElement::finishedParsing()
+void HTMLObjectElement::closeRenderer()
 {
     // The parser just reached </object>.
     setComplete(true);
     
-    HTMLPlugInElement::finishedParsing();
+    HTMLPlugInElement::closeRenderer();
 }
 
 void HTMLObjectElement::setComplete(bool complete)

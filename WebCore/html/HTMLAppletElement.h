@@ -50,7 +50,7 @@ public:
     
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void finishedParsing();
+    virtual void closeRenderer();
     virtual void detach();
     
 #if USE(JAVASCRIPTCORE_BINDINGS)

@@ -251,7 +251,7 @@ public:
     /**
      * Updates the pending sheet count and then calls updateStyleSelector.
      */
-    void removePendingSheet();
+    void stylesheetLoaded();
 
     /**
      * This method returns true if all top-level stylesheets have loaded (including

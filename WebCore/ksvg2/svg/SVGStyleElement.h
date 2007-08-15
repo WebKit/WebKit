@@ -39,9 +39,6 @@ namespace WebCore {
         virtual void removedFromDocument();
         virtual void childrenChanged();
 
-        void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
-        virtual void finishedParsing();
-
         // 'SVGStyleElement' functions
         const AtomicString& xmlspace() const;
         void setXmlspace(const AtomicString&, ExceptionCode&);
@@ -58,9 +55,6 @@ namespace WebCore {
         void setTitle(const AtomicString&, ExceptionCode&);
 
         StyleSheet* sheet();
-        
-    protected:
-        bool m_createdByParser;
     };
 
 } // namespace WebCore
