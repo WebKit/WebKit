@@ -1,3 +1,12 @@
+2007-08-14  Ricci Adams  <iccir@apple.com>
+
+        Reviewed by Darin, Hyatt.
+
+        - fix <rdar://problem/5407795> -apple-line-clamp should never display less than one line
+
+        * rendering/RenderFlexibleBox.cpp:(WebCore::RenderFlexibleBox::layoutVerticalBox): Use
+        max to make sure it never computes a minimum of less than one line.
+
 2007-08-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
