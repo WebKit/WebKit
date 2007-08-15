@@ -30,6 +30,33 @@
 
 #include "HIWebView.h"
 
+#ifndef BUILDING_ON_TIGER
+
+#import "WebView.h"
+
+OSStatus HIWebViewCreate(HIViewRef* outHIView)
+{
+    return HIWebViewCreateWithClass([WebView class], outHIView);
+}
+
+OSStatus HIWebViewCreateWithClass(Class webViewClass, HIViewRef* outHIView)
+{
+    WebView* view = [[webViewClass alloc] init];
+    OSStatus status = HICocoaViewCreate(view, 0, outHIView);
+    [view release];
+    return status;
+}
+
+WebView* HIWebViewGetWebView(HIViewRef inView)
+{
+    NSView* view = HICocoaViewGetView(inView);
+    if ([view isKindOfClass:[WebView class]])
+        return (WebView*)view;
+    return nil;
+}
+
+#else
+
 #include "CarbonWindowAdapter.h"
 
 #include <WebKit/WebKit.h>
@@ -1622,5 +1649,7 @@ UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void 
         DisposeRgn( region );
     }
 }
+
+#endif
 
 #endif

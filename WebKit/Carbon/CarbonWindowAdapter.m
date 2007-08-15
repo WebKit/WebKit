@@ -55,7 +55,7 @@
 
 // Some things would have to be made public if someone wanted to subclass this so as to support more menu item commands.  M.P. Warning - 9/19/00
 
-#ifndef __LP64__
+#ifdef BUILDING_ON_TIGER
 
 #import "CarbonWindowAdapter.h"
 

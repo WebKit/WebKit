@@ -1,3 +1,31 @@
+2007-08-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5410937> HIWebView in SimpleCarbonWeb doesn't seem to be getting adequate invalidation when window is resized
+
+        HIWebViewCreate now just returns a HIViewRef created with HICocoaViewCreate. This eliminates lots of old code and
+        makes HIWebView a better citizen starting with Leopard. The old code paths are still needed for Tiger, so now
+        most of the files in the WebKit/Carbon directory are #ifdef BUILDING_ON_TIGER.
+
+        The Tiger code is unchanged and dosen't exhibit the invalidation problem when the window resizes.
+
+        * Carbon/CarbonUtils.m:
+        (WebInitForCarbon): #ifdef BUILDING_ON_TIGER portions of this code that is not needed on Leopard.
+        * Carbon/CarbonWindowAdapter.h: #ifdef BUILDING_ON_TIGER
+        * Carbon/CarbonWindowAdapter.m: Ditto.
+        * Carbon/CarbonWindowContentView.h: Ditto.
+        * Carbon/CarbonWindowContentView.m: Ditto.
+        * Carbon/CarbonWindowFrame.h: Ditto.
+        * Carbon/CarbonWindowFrame.m: Ditto.
+        * Carbon/HIViewAdapter.h: Ditto.
+        * Carbon/HIViewAdapter.m: Ditto.
+        * Carbon/HIWebView.h: Consolidate two #ifdef __OBJC__ blocks into one.
+        * Carbon/HIWebView.m: Implement Leopard specific HIWebViewCreate, HIWebViewCreateWithClass and HIWebViewGetWebView.
+        (HIWebViewCreate): Call HIWebViewCreateWithClass passing [WebView class].
+        (HIWebViewCreateWithClass): Call HICocoaViewCreate with an instance of the class passed in.
+        (HIWebViewGetWebView): Call HICocoaViewGetView.
+
 2007-08-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin, John, Maciej, Oliver, and Tim

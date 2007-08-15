@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __LP64__
+#ifdef BUILDING_ON_TIGER
 
 #import "CarbonWindowFrame.h"
 #import "CarbonWindowAdapter.h"
