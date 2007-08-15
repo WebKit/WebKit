@@ -41,9 +41,9 @@ protected:
     virtual const AtomicString& type() const = 0;
     virtual const AtomicString& media() const = 0;
 
-    void insertedIntoDocument(Document*);
+    void insertedIntoDocument(Document*, Element*);
     void removedFromDocument(Document*);
-    void childrenChanged(Element*);
+    void process(Element*);
 
     void createSheet(Element* e, const String& text = String());
 

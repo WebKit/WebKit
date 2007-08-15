@@ -55,7 +55,7 @@ HTMLLinkElement::~HTMLLinkElement()
     if (m_cachedSheet) {
         m_cachedSheet->deref(this);
         if (m_loading && !isDisabled() && !isAlternate())
-            document()->stylesheetLoaded();
+            document()->removePendingSheet();
     }
 }
 
@@ -71,7 +71,7 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
             // a main sheet or a sheet that was previously enabled via script, then we need
             // to remove it from the list of pending sheets.
             if (m_disabledState == 2 && (!m_alternate || oldDisabledState == 1))
-                document()->stylesheetLoaded();
+                document()->removePendingSheet();
 
             // Check #2: An alternate sheet becomes enabled while it is still loading.
             if (m_alternate && m_disabledState == 1)
@@ -186,7 +186,7 @@ void HTMLLinkElement::process()
             
             if (m_cachedSheet) {
                 if (m_loading)
-                    document()->stylesheetLoaded();
+                    document()->removePendingSheet();
                 m_cachedSheet->deref(this);
             }
             m_loading = true;
@@ -195,7 +195,7 @@ void HTMLLinkElement::process()
                 m_cachedSheet->ref(this);
             else if (!isAlternate()) { // request may have been denied if stylesheet is local and document is remote.
                 m_loading = false;
-                document()->stylesheetLoaded();
+                document()->removePendingSheet();
             }
         }
     } else if (m_sheet) {
@@ -242,7 +242,7 @@ bool HTMLLinkElement::isLoading() const
 bool HTMLLinkElement::sheetLoaded()
 {
     if (!isLoading() && !isDisabled() && !isAlternate()) {
-        document()->stylesheetLoaded();
+        document()->removePendingSheet();
         return true;
     }
     return false;

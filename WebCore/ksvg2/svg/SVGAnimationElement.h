@@ -98,7 +98,7 @@ namespace WebCore {
     
         virtual void parseMappedAttribute(MappedAttribute* attr);
 
-        virtual void closeRenderer();
+        virtual void finishedParsing();
 
         virtual bool updateAnimationBaseValueFromElement();
         bool updateAnimatedValueForElapsedSeconds(double elapsedSeconds);

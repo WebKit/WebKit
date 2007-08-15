@@ -35,6 +35,7 @@ using namespace HTMLNames;
 HTMLStyleElement::HTMLStyleElement(Document* doc)
     : HTMLElement(styleTag, doc)
     , m_loading(false)
+    , m_createdByParser(false)
 {
 }
 
@@ -49,10 +50,18 @@ void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
+void HTMLStyleElement::finishedParsing()
+{
+    StyleElement::process(this);
+    HTMLElement::finishedParsing();
+}
+
 void HTMLStyleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    StyleElement::insertedIntoDocument(document());
+
+    if (!m_createdByParser)
+        StyleElement::insertedIntoDocument(document(), this);
 }
 
 void HTMLStyleElement::removedFromDocument()
@@ -63,7 +72,7 @@ void HTMLStyleElement::removedFromDocument()
 
 void HTMLStyleElement::childrenChanged()
 {
-    StyleElement::childrenChanged(this);
+    StyleElement::process(this);
 }
 
 StyleSheet* HTMLStyleElement::sheet()
@@ -83,7 +92,7 @@ bool HTMLStyleElement::isLoading() const
 bool HTMLStyleElement::sheetLoaded()
 {
     if (!isLoading()) {
-        document()->stylesheetLoaded();
+        document()->removePendingSheet();
         return true;
     }
     return false;
