@@ -1,3 +1,17 @@
+2007-08-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Changing this test to get it to pass again after http://
+        trac.webkit.org/projects/webkit/changeset/25098
+
+        The test is changing because our new behavior seems correct, though 
+        not completely consistent. http://bugs.webkit.org/show_bug.cgi?
+        id=14979 is tracking the fact that the behavior is not consistent 
+        regarding style elements that are not in the document.
+
+        * fast/css/css-selector-text.html:
+
 2007-08-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

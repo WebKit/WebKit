@@ -1,5 +1,5 @@
 <html>
-<head>
+<head id="head">
 <link rel="stylesheet" href="../js/resources/js-test-style.css">
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
@@ -12,7 +12,16 @@ description("This tests parsing and re-serialization of some CSS selectors.");
 
 function parseThenSerializeRule(rule)
 {
-    var styleElement = document.createElement("style");
+    var styleElement = document.getElementById("style");
+    var head = document.getElementById("head");
+    if (styleElement)
+        head.removeChild(styleElement);
+
+    styleElement = document.createElement("style");
+    styleElement.id = "style";
+    var head = document.getElementById("head");
+    head.appendChild(styleElement);
+    
     styleElement.appendChild(document.createTextNode(rule));
     return styleElement.sheet.cssRules[0].cssText;
 }
