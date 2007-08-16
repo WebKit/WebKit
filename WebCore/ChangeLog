@@ -1,3 +1,41 @@
+2007-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5415029> In Mail, a crash occurs at WebCore::Node::isDescendantOf()
+          when attempting to delete a selection in a table
+
+        The bug was caused by createMarkup trying to operate on a range that
+        has an endpoint in the delete button DOM, because it removes that DOM
+        during its operation! Still working on a regression test -- it's hard
+        to make the kind of bad selection that's needed with the DOM, so I might
+        have to use the eventSender.
+
+        * editing/DeleteButtonController.h: Made some of the identifiers private.
+        We can make them public if we need to use them. Added a getter function
+        for the container element so we can figure out if a given node is inside
+        the DOM added for the delete button.
+
+        * editing/markup.cpp:
+        (WebCore::moveEndpointsBeforeNode): Added. General purpose helper function
+        that moves endpoints of a range to before a given node -- we do this before
+        removing the delete button, so the endpoint is where the delete button was,
+        rather than having an endpoint that's not in the document.
+        (WebCore::createMarkup): Always return empty string, not null string.
+        Get the document by calling ownerDocument on the range rather than getting
+        the document of the commonAncestorContainer. That's because we need to
+        get at the delete button before calling commonAncestorContainer. Call
+        moveEndpointsBeforeNode to move the range endpoints out of the delete
+        button interface before calling disable() which will remove it from the
+        DOM if it's in there. Added an early return for the case where commonAncestor
+        is non-0. If this happens, we would crash later because pastEndNode would
+        not be in the tree. This change alone would prevent the crash, but we'd get
+        bad markup, so we need the moveEndpointsBeforeNode fix. Added null checks
+        for the frame to the range version as in the single-node version so this
+        won't crash immediately on documents that are not in a frame. For the
+        single-node version, added a check if a ndoe of 0 and a node inside the
+        delete button user interface, and return the empty string for those cases.
+
 2007-08-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Maciej.

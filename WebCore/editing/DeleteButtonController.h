@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +41,9 @@ public:
     DeleteButtonController(Frame*);
 
     static const char* const containerElementIdentifier;
-    static const char* const buttonElementIdentifier;
-    static const char* const outlineElementIdentifier;
 
-    HTMLElement* target() const { return m_target.get(); };
+    HTMLElement* target() const { return m_target.get(); }
+    HTMLElement* containerElement() const { return m_containerElement.get(); }
 
     void respondToChangedSelection(const Selection& oldSelection);
 
@@ -58,6 +57,9 @@ public:
     void deleteTarget();
 
 private:
+    static const char* const buttonElementIdentifier;
+    static const char* const outlineElementIdentifier;
+
     Frame* m_frame;
     RefPtr<HTMLElement> m_target;
     RefPtr<HTMLElement> m_containerElement;
