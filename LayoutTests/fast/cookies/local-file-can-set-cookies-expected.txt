@@ -1,0 +1,10 @@
+This test checks that a local file can set cookies. See: rdar://problem/5379090 REGRESSION: Cannot set cookies for local files
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.cookie is 'ppkcookie1=testcookie'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

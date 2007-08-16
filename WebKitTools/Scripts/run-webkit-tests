@@ -123,7 +123,9 @@ my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
 my $useWinSkipped = 0;
-if (isLeopard()) {
+if (isTiger()) {
+    $platform = "mac-tiger";
+} elsif (isLeopard()) {
     $platform = "mac-leopard";
 } elsif (isOSX()) {
     $platform = "mac";

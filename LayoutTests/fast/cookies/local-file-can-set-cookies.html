@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>Local File Can Set Cookies</title>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description('This test checks that a local file can set cookies.  See: rdar://problem/5379090 REGRESSION: Cannot set cookies for local files');
+
+    document.cookie = 'ppkcookie1=testcookie; expires=Thu, 2 Aug 2008 20:47:11 UTC; path=/'
+    shouldBe("document.cookie", "'ppkcookie1=testcookie'");
+
+    var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

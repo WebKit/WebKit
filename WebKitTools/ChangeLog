@@ -1,3 +1,11 @@
+2007-08-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Added tests for regressions in other components.  In this case we also need to add a skipped list for Tiger since this functionality didn't exist in 10.4.
+
+        * Scripts/run-webkit-tests:
+
 2007-08-15  Timothy Hatcher  <timothy@apple.com>
 
         Look for the new Xcode 3 preference key (PBXApplicationwideBuildSettings) for the global build locations.
