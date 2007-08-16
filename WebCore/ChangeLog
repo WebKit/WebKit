@@ -1,3 +1,16 @@
+2007-08-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5378847> After creating and removing a ToDo, the caret disappears as soon as I start to type
+        
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): A whitespace text node inserted by Mail
+        when a ToDo is removed is completely removed by deleteInsignificantWhitespace,
+        and since it contains the text insertion position, insertion fails.
+        Save the position before the node where text insertion will occur,
+        and if that node is removed, use the saved position for insertion.
+
 2007-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

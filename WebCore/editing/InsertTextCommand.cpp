@@ -102,7 +102,12 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     
     // Insert the character at the leftmost candidate.
     Position startPosition = endingSelection().start().upstream();
+    // It is possible for the node that contains startPosition to contain only unrendered whitespace,
+    // and so deleteInsignificantText could remove it.  Save the position before the node in case that happens.
+    Position positionBeforeStartNode(positionBeforeNode(startPosition.node()));
     deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
+    if (!startPosition.node()->inDocument())
+        startPosition = positionBeforeStartNode;
     if (!startPosition.isCandidate())
         startPosition = startPosition.downstream();
     

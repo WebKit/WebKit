@@ -1,3 +1,13 @@
+2007-08-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5378847> 
+        After creating and removing a ToDo, the caret disappears as soon as I start to type
+
+        * editing/inserting/5378847-expected.txt: Added.
+        * editing/inserting/5378847.html: Added.
+
 2007-08-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
