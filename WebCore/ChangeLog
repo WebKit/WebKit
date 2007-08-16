@@ -1,3 +1,26 @@
+2007-08-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fix <rdar://problem/5388936>
+        Crash while setting display:none for a table cell with selection
+        
+        Super class destroy() could (through some selection code in removeChild()) trigger section recalc 
+        in middle of RenderTableCell::destroy(), cleaning section dirty bit. This would later crash in 
+        layout since cell grid would still have refence to the dead cell.
+        
+        Ensure table sections are dirty when leaving destroy method.
+        
+        I can't figure out tests for row and section changes but they look like
+        they could crash in similar way as cell.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::destroy):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::destroy):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::destroy):
+
 2007-08-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

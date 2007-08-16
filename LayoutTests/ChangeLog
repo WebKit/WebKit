@@ -1,3 +1,13 @@
+2007-08-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for <rdar://problem/5388936>
+        Crash while setting display:none for a table cell with selection
+
+        * fast/table/destroy-cell-with-selection-crash-expected.txt: Added.
+        * fast/table/destroy-cell-with-selection-crash.html: Added.
+
 2007-08-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

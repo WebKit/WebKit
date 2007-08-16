@@ -46,10 +46,12 @@ RenderTableRow::RenderTableRow(Node* node)
 
 void RenderTableRow::destroy()
 {
-    if (RenderTableSection* s = section())
-        s->setNeedsCellRecalc();
+    RenderTableSection* recalcSection = section();
     
     RenderContainer::destroy();
+    
+    if (recalcSection)
+        recalcSection->setNeedsCellRecalc();
 }
 
 void RenderTableRow::setStyle(RenderStyle* newStyle)

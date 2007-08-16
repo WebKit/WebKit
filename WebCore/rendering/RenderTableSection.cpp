@@ -72,12 +72,14 @@ RenderTableSection::~RenderTableSection()
 
 void RenderTableSection::destroy()
 {
+    RenderTable* recalcTable = table();
+    
+    RenderContainer::destroy();
+    
     // recalc cell info because RenderTable has unguarded pointers
     // stored that point to this RenderTableSection.
-    if (table())
-        table()->setNeedsSectionRecalc();
-
-    RenderContainer::destroy();
+    if (recalcTable)
+        recalcTable->setNeedsSectionRecalc();
 }
 
 void RenderTableSection::setStyle(RenderStyle* newStyle)
