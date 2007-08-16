@@ -1,3 +1,9 @@
+2007-08-16  Alice Liu  <alice.liu@apple.com>
+
+        Removed a fixed test from the skip list.  r25112 fixed this test.
+
+        * platform/mac-leopard/Skipped:
+
 2007-08-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
