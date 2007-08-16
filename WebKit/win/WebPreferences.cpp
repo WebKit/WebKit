@@ -158,7 +158,7 @@ void WebPreferences::initializeDefaultSettings()
     else if (memSize >= 512)
         objectCacheSize = 32 * 1024 * 1024;
     else
-        objectCacheSize = 23 * 1024 * 1024; 
+        objectCacheSize = 24 * 1024 * 1024; 
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));

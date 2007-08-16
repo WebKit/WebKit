@@ -3772,12 +3772,12 @@ static WebFrameView *containingFrameView(NSView *view)
 
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
     pageCache()->setCapacity([standardPreferences _pageCacheSize]);
-    cache()->setMaximumSize([standardPreferences _objectCacheSize]);
+    cache()->setCapacities(0, [standardPreferences _objectCacheSize], [standardPreferences _objectCacheSize]);
     didInitialize = true;
 
 #ifndef NDEBUG
-    LOG(CacheSizes, "Object cache size set to %d bytes.", cache()->maximumSize());
-    LOG(CacheSizes, "Page cache size set to %d pages.", pageCache()->capacity());
+    LOG(CacheSizes, "Object cache size set to %d bytes.", [standardPreferences _objectCacheSize]);
+    LOG(CacheSizes, "Page cache size set to %d pages.", [standardPreferences _pageCacheSize]);
 #endif
 }
 

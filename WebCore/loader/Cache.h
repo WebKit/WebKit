@@ -44,6 +44,18 @@ class DocLoader;
 class KURL;
 
 // This cache holds subresources used by Web pages: images, scripts, stylesheets, etc.
+
+// The cache keeps a flexible but bounded window of dead resources that grows/shrinks 
+// depending on the live resource load. Here's an example of cache growth over time,
+// with a min dead resource capacity of 25% and a max dead resource capacity of 50%:
+
+//        |-----|                              Dead: -
+//        |----------|                         Live: +
+//      --|----------|                         Cache boundary: | (objects outside this mark have been evicted)
+//      --|----------++++++++++|
+// -------|-----+++++++++++++++|
+// -------|-----+++++++++++++++|+++++
+
 class Cache : Noncopyable {
 public:
     friend Cache* cache();
@@ -83,27 +95,30 @@ public:
     // found in the cache.
     CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, const String* charset = 0, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true);
 
-    // Set/retreive the size of the cache. This will only hold approximately, since the size some 
-    // cached objects (like stylesheets) take up in memory is not exactly known.
-    void setMaximumSize(unsigned bytes);
-    unsigned maximumSize() const { return m_maximumSize; };
+    // Sets the cache's memory capacities, in bytes. These will hold only approximately, 
+    // since the decoded cost of resources like scripts and stylesheets is not known.
+    //  - minDeadBytes: The maximum number of bytes that dead resources should consume when the cache is under pressure.
+    //  - maxDeadBytes: The maximum number of bytes that dead resources should consume when the cache is not under pressure.
+    //  - totalBytes: The maximum number of bytes that the cache should consume overall.
+    void setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes);
 
     // Turn the cache on and off.  Disabling the cache will remove all resources from the cache.  They may
     // still live on if they are referenced by some Web page though.
     void setDisabled(bool);
     bool disabled() const { return m_disabled; }
     
-    void setDeadResourcePruneEnabled(bool enabled) { m_deadResourcePruneEnabled = enabled; }
-    bool deadResourcePruneEnabled() const { return m_deadResourcePruneEnabled; }
-    
+    void setPruneEnabled(bool enabled) { m_pruneEnabled = enabled; }
+    void prune()
+    {
+        if (m_liveSize + m_deadSize <= m_capacity && m_deadSize <= m_maxDeadCapacity) // Fast path.
+            return;
+            
+        pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.
+        pruneLiveResources();
+    }
+
     // Remove an existing cache entry from both the resource map and from the LRU list.
     void remove(CachedResource*);
-
-    // Flush dead resources (resources not referenced by Web pages).
-    void pruneDeadResources();
-
-    // Flush live resources.
-    void pruneLiveResources();
 
     void addDocLoader(DocLoader*);
     void removeDocLoader(DocLoader*);
@@ -115,7 +130,7 @@ public:
     void removeFromLRUList(CachedResource*);
 
     // Called to adjust the cache totals when a resource changes size.
-    void adjustSize(bool live, int delta, int decodedDelta);
+    void adjustSize(bool live, int delta);
 
     // Track decoded resources that are in the cache and referenced by a Web page.
     void insertInLiveDecodedResourcesList(CachedResource*);
@@ -132,27 +147,30 @@ private:
     ~Cache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
        
     LRUList* lruListFor(CachedResource*);
-    LRUList* liveLRUListFor(CachedResource*);
-    
     void resourceAccessed(CachedResource*);
-    
 #ifndef NDEBUG
     void dumpLRULists(bool includeLive) const;
 #endif
+
+    unsigned liveCapacity() const;
+    unsigned deadCapacity() const;
+    
+    void pruneDeadResources(); // Flush decoded and encoded data from resources not referenced by Web pages.
+    void pruneLiveResources(); // Flush decoded data from resources still referenced by Web pages.
 
     // Member variables.
     HashSet<DocLoader*> m_docLoaders;
     Loader m_loader;
 
     bool m_disabled;  // Whether or not the cache is enabled.
-    bool m_deadResourcePruneEnabled;
+    bool m_pruneEnabled;
 
-    unsigned m_maximumSize;  // The maximum size in bytes that the global cache can consume.
-    unsigned m_currentSize;  // The current size of the global cache in bytes.
-    unsigned m_liveResourcesSize; // The current size of "live" resources that cannot be flushed.
-    
-    unsigned m_currentDecodedSize; // The current size of all decoded data in the global cache.
-    unsigned m_liveDecodedSize; // The current decoded size of "live" resources only.  We are willing to flush decoded data even off live resources.
+    unsigned m_capacity;
+    unsigned m_minDeadCapacity;
+    unsigned m_maxDeadCapacity;
+
+    unsigned m_liveSize; // The number of bytes currently consumed by "live" resources in the cache.
+    unsigned m_deadSize; // The number of bytes currently consumed by "dead" resources in the cache.
 
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
     // more resources than the cached resource map, since it can also hold "stale" muiltiple versions of objects that are

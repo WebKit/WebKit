@@ -39,8 +39,9 @@ using namespace std;
 
 namespace WebCore {
 
-static const int cDefaultCacheSize = 8192 * 1024;
-static const double cMinDelayBeforeLiveDecodedPrune = 1; // seconds
+static const int cDefaultCacheCapacity = 8192 * 1024;
+static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
+static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 
 Cache* cache()
 {
@@ -50,12 +51,12 @@ Cache* cache()
 
 Cache::Cache()
 : m_disabled(false)
-, m_deadResourcePruneEnabled(true)
-, m_maximumSize(cDefaultCacheSize)
-, m_currentSize(0)
-, m_liveResourcesSize(0)
-, m_currentDecodedSize(0)
-, m_liveDecodedSize(0)
+, m_pruneEnabled(true)
+, m_capacity(cDefaultCacheCapacity)
+, m_minDeadCapacity(0)
+, m_maxDeadCapacity(cDefaultCacheCapacity)
+, m_liveSize(0)
+, m_deadSize(0)
 {
 }
 
@@ -150,17 +151,31 @@ CachedResource* Cache::resourceForURL(const String& url)
     return m_resources.get(url);
 }
 
+unsigned Cache::deadCapacity() const 
+{
+    // Dead resource capacity is whatever space is not occupied by live resources, bounded by an independent minimum and maximum.
+    unsigned capacity = m_capacity - min(m_liveSize, m_capacity); // Start with available capacity.
+    capacity = max(capacity, m_minDeadCapacity); // Make sure it's above the minimum.
+    capacity = min(capacity, m_maxDeadCapacity); // Make sure it's below the maximum.
+    return capacity;
+}
+
+unsigned Cache::liveCapacity() const 
+{ 
+    // Live resource capacity is whatever is left over after calculating dead resource capacity.
+    return m_capacity - deadCapacity();
+}
+
 void Cache::pruneLiveResources()
 {
-    // No need to prune if all of our objects fit.
-    if (m_currentSize <= m_maximumSize)
+    if (!m_pruneEnabled)
         return;
 
-    // We allow the live resource size to get as big as the maximum cache size
-    // before we do a prune.
-    if (m_liveDecodedSize <= m_maximumSize)
+    unsigned capacity = liveCapacity();
+    if (m_liveSize <= capacity)
         return;
 
+    unsigned targetSize = capacity * cTargetPrunePercentage; // Cut by a percentage to avoid immediately pruning again.
     double currentTime = Frame::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = WebCore::currentTime();
@@ -181,9 +196,8 @@ void Cache::pruneLiveResources()
             // m_liveDecodedResources, and possibly move us to a differnt LRU 
             // list in m_allResources.
             current->destroyDecodedData();
-            
-            // Stop pruning if our total live resource size is back under the maximum.
-            if (m_liveDecodedSize <= m_maximumSize)
+
+            if (m_liveSize <= targetSize)
                 return;
         }
         current = prev;
@@ -192,21 +206,14 @@ void Cache::pruneLiveResources()
 
 void Cache::pruneDeadResources()
 {
-    // No need to prune if all of our objects fit.
-    if (m_currentSize <= m_maximumSize)
+    if (!m_pruneEnabled)
         return;
 
-    // We allow the cache to get as big as the # of live objects + the maximum cache size
-    // before we do a prune.  Once we do decide to prune though, we are aggressive about it.
-    // We will include the live objects as part of the overall cache size when pruning, so will often
-    // kill every last object that isn't referenced by a Web page.
-    unsigned unreferencedResourcesSize = m_currentSize - m_liveResourcesSize;
-    if (unreferencedResourcesSize < m_maximumSize)
+    unsigned capacity = deadCapacity();
+    if (m_deadSize <= capacity)
         return;
-    
-    if (!m_deadResourcePruneEnabled)
-        return;
-        
+
+    unsigned targetSize = capacity * cTargetPrunePercentage; // Cut by a percentage to avoid immediately pruning again.
     int size = m_allResources.size();
     bool canShrinkLRULists = true;
     for (int i = size - 1; i >= 0; i--) {
@@ -222,10 +229,7 @@ void Cache::pruneDeadResources()
                 // LRU list in m_allResources.
                 current->destroyDecodedData();
                 
-                // Stop pruning if our total cache size is back under the maximum or if every
-                // remaining object in the cache is live (meaning there is nothing left we are able
-                // to prune).
-                if (m_currentSize <= m_maximumSize || m_currentSize == m_liveResourcesSize)
+                if (m_deadSize <= targetSize)
                     return;
             }
             current = prev;
@@ -237,11 +241,8 @@ void Cache::pruneDeadResources()
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->referenced()) {
                 remove(current);
-                
-                // Stop pruning if our total cache size is back under the maximum or if every
-                // remaining object in the cache is live (meaning there is nothing left we are able
-                // to prune).
-                if (m_currentSize <= m_maximumSize || m_currentSize == m_liveResourcesSize)
+
+                if (m_deadSize <= targetSize)
                     return;
             }
             current = prev;
@@ -256,10 +257,14 @@ void Cache::pruneDeadResources()
     }
 }
 
-void Cache::setMaximumSize(unsigned bytes)
+void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
 {
-    m_maximumSize = bytes;
-    pruneDeadResources();
+    ASSERT(minDeadBytes <= maxDeadBytes);
+    ASSERT(maxDeadBytes <= totalBytes);
+    m_minDeadCapacity = minDeadBytes;
+    m_maxDeadCapacity = maxDeadBytes;
+    m_capacity = totalBytes;
+    prune();
 }
 
 void Cache::remove(CachedResource* resource)
@@ -284,7 +289,7 @@ void Cache::remove(CachedResource* resource)
         // Subtract from our size totals.
         int delta = -static_cast<int>(resource->size());
         if (delta)
-            adjustSize(resource->referenced(), delta, -static_cast<int>(resource->decodedSize()));
+            adjustSize(resource->referenced(), delta);
     }
 
     if (resource->canDelete())
@@ -493,25 +498,24 @@ void Cache::insertInLiveDecodedResourcesList(CachedResource* resource)
 
 void Cache::addToLiveResourcesSize(CachedResource* resource)
 {
-    m_liveResourcesSize += resource->size();
-    m_liveDecodedSize += resource->decodedSize();
+    m_liveSize += resource->size();
+    m_deadSize -= resource->size();
 }
 
 void Cache::removeFromLiveResourcesSize(CachedResource* resource)
 {
-    m_liveResourcesSize -= resource->size();
-    m_liveDecodedSize -= resource->decodedSize();
+    m_liveSize -= resource->size();
+    m_deadSize += resource->size();
 }
 
-void Cache::adjustSize(bool live, int delta, int decodedDelta)
+void Cache::adjustSize(bool live, int delta)
 {
-    ASSERT(delta >= 0 || ((int)m_currentSize + delta >= 0));
-    m_currentSize += delta;
-    m_currentDecodedSize += decodedDelta;
     if (live) {
-        ASSERT(delta >= 0 || ((int)m_liveResourcesSize + delta >= 0));
-        m_liveResourcesSize += delta;
-        m_liveDecodedSize += decodedDelta;
+        ASSERT(delta >= 0 || ((int)m_liveSize + delta >= 0));
+        m_liveSize += delta;
+    } else {
+        ASSERT(delta >= 0 || ((int)m_deadSize + delta >= 0));
+        m_deadSize += delta;
     }
 }
 

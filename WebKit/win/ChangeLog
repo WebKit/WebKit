@@ -1,3 +1,17 @@
+2007-08-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        WebKit changes to support new cache eviction model in WebCore.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initialize):
+
+        * WebView/WebPreferences.m: Modified to reflect new API in WebCore.
+        * WebView.cpp:
+        (WebView::initializeCacheSizesIfNecessary): Slightly increased cache
+        size on low memory systems to avoid affecting the PLT for now.
+
 2007-08-14  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5411482> Windows user agent language always returns "en"

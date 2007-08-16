@@ -157,7 +157,7 @@ void PageCache::releaseAutoreleasedPagesNow()
     m_autoreleaseTimer.stop();
 
     // Postpone dead pruning until all our resources have gone dead.
-    cache()->setDeadResourcePruneEnabled(false);
+    cache()->setPruneEnabled(false);
 
     CachedPageSet tmp;
     tmp.swap(m_autoreleaseSet);
@@ -167,8 +167,8 @@ void PageCache::releaseAutoreleasedPagesNow()
         (*it)->close();
 
     // Now do the prune.
-    cache()->setDeadResourcePruneEnabled(true);
-    cache()->pruneDeadResources();
+    cache()->setPruneEnabled(true);
+    cache()->prune();
 }
 
 void PageCache::autorelease(PassRefPtr<CachedPage> page)

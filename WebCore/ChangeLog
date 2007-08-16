@@ -1,3 +1,59 @@
+2007-08-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Tweaked the cache eviction model to better balance between live and 
+        dead resources.
+        
+        For the sake of avoiding evictions during the PLT, the old model 
+        required the sum of dead and live resources to grow to twice the cache 
+        capacity before evicting, and would then evict dead or live down to 0 
+        if necessary. This was a too-high high water mark, which would nullify 
+        much of the value of eviction, and a too-low low water mark, which 
+        would nullify much of the value of the LRU-SP strategy.
+        
+        This patch changes the model in 3 ways.
+        
+        1. The new model for dead resources is a flexible window with a fixed 
+        minimum and maximum. The dead resource window is big when live resource 
+        pressure is small, and vice versa. This has the immediate advantage of
+        cutting the high water mark by up to 50%. It also enables the following
+        tunable optimizations in future patches:
+            a. A dead resource limit of 0 for clients who want that. (Just set
+            the fixed maximum to 0.)
+            b. A much higher low water mark. (Just set the fixed minimum to, 
+            say, 25% of the cache's capacity.)
+            c. A much lower high water mark for users who browse simple pages
+            in one tab. (Just set the fixed maximum to, say, 50% of the cache's
+            capacity.)
+        
+        I plan to make the changes that actually take advantage of these 
+        tunable optimizations in another check-in.
+
+        The new model won't hurt the PLT because it will notice the PLT's low
+        live resource size, and up the dead resource capacity in response. For
+        the same reason, the new model should establish a good balance in 
+        real-world use.
+        
+        2. Live resource eviction is now based on size(), not encodedSize().
+        So, a page with lots of large, encoded images will start evicting 
+        resources, if necessary, even before all the images paint. This allows 
+        you to more accurately stipulate an exact high water mark.
+        
+        3. When pruning, prune to a small percentage below capacity, to avoid
+        just having to prune again immediately.
+
+        Layout tests pass. PLT shows no regression.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::releaseAutoreleasedPagesNow): Updated for rename.
+
+        * loader/Cache.cpp: Implemented the algorithm explained above.
+        * loader/Cache.h: Removed explicit tracking of decoded data size, since
+        it was unused.
+
+        * loader/CachedResource.cpp: ditto on tracking of decoded data size
+
 2007-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

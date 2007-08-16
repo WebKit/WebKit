@@ -1101,7 +1101,7 @@ void WebView::initializeCacheSizesIfNecessary()
 
    UINT objectCacheSize;
    if (SUCCEEDED(prefs->objectCacheSize(&objectCacheSize)))
-        cache()->setMaximumSize(objectCacheSize);
+        cache()->setCapacities(0, objectCacheSize, objectCacheSize);
 
     didInitialize = true;
 }
