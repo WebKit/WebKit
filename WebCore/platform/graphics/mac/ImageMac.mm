@@ -37,8 +37,6 @@ namespace WebCore {
 
 void BitmapImage::initPlatformData()
 {
-    m_nsImage = 0;
-    m_tiffRep = 0;
 }
 
 void BitmapImage::invalidatePlatformData()
@@ -46,15 +44,8 @@ void BitmapImage::invalidatePlatformData()
     if (m_frames.size() != 1)
         return;
 
-    if (m_nsImage) {
-        CFRelease(m_nsImage);
-        m_nsImage = 0;
-    }
-
-    if (m_tiffRep) {
-        CFRelease(m_tiffRep);
-        m_tiffRep = 0;
-    }
+    m_nsImage = 0;
+    m_tiffRep = 0;
 }
 
 Image* Image::loadPlatformResource(const char *name)
@@ -73,7 +64,7 @@ Image* Image::loadPlatformResource(const char *name)
 CFDataRef BitmapImage::getTIFFRepresentation()
 {
     if (m_tiffRep)
-        return m_tiffRep;
+        return m_tiffRep.get();
     
     unsigned numFrames = frameCount();
     
@@ -92,9 +83,9 @@ CFDataRef BitmapImage::getTIFFRepresentation()
 
     unsigned numValidFrames = images.size();
     
-    CFMutableDataRef data = CFDataCreateMutable(0, 0);
+    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(0, 0));
     // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numValidFrames, 0);
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data.get(), CFSTR("public.tiff"), numValidFrames, 0);
     
     if (!destination)
         return 0;
@@ -106,20 +97,20 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     CFRelease(destination);
 
     m_tiffRep = data;
-    return m_tiffRep;
+    return m_tiffRep.get();
 }
 
 NSImage* BitmapImage::getNSImage()
 {
     if (m_nsImage)
-        return m_nsImage;
+        return m_nsImage.get();
 
     CFDataRef data = getTIFFRepresentation();
     if (!data)
         return 0;
     
-    m_nsImage = HardRetainWithNSRelease([[NSImage alloc] initWithData:(NSData*)data]);
-    return m_nsImage;
+    m_nsImage.adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
+    return m_nsImage.get();
 }
 
 }

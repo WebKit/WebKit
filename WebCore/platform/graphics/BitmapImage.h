@@ -32,6 +32,7 @@
 #include "IntSize.h"
 
 #if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__
 @class NSImage;
 #else
@@ -175,8 +176,8 @@ private:
     int m_repetitionsComplete;  // How many repetitions we've finished.
 
 #if PLATFORM(MAC)
-    mutable NSImage* m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
-    mutable CFDataRef m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
+    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
+    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
 #endif
 
     Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
