@@ -69,8 +69,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
-    virtual void focus(bool restorePreviousSelection = true);
-    virtual void updateFocusAppearance(bool restorePreviousSelection = true);
+    virtual void updateFocusAppearance(bool restorePreviousSelection);
 
     String value() const;
     void setValue(const String&);

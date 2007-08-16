@@ -253,6 +253,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     , m_title("")
     , m_titleSetExplicitly(false)
     , m_imageLoadEventTimer(this, &Document::imageLoadEventTimerFired)
+    , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
 #if ENABLE(XSLT)
     , m_transformSource(0)
 #endif
@@ -910,11 +911,6 @@ Node::NodeType Document::nodeType() const
 FrameView* Document::view() const
 {
     return m_frame ? m_frame->view() : 0;
-}
-
-Frame* Document::frame() const 
-{
-    return m_frame; 
 }
 
 Page* Document::page() const
@@ -3643,6 +3639,32 @@ void Document::initSecurityPolicyURL()
         return;
 
     m_securityPolicyURL = openerDocument->securityPolicyURL();
+}
+
+void Document::updateFocusAppearanceSoon()
+{
+    if (!m_updateFocusAppearanceTimer.isActive())
+        m_updateFocusAppearanceTimer.startOneShot(0);
+}
+
+void Document::cancelFocusAppearanceUpdate()
+{
+    m_updateFocusAppearanceTimer.stop();
+}
+
+void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
+{
+    Node* node = focusedNode();
+    if (!node)
+        return;
+    if (!node->isElementNode())
+        return;
+
+    updateLayout();
+
+    Element* element = static_cast<Element*>(node);
+    if (element->isFocusable())
+        element->updateFocusAppearance(false);
 }
 
 } // namespace WebCore

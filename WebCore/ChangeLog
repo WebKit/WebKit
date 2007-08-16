@@ -1,3 +1,78 @@
+2007-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5413488> REGRESSION: every DOM element is about 40
+          bytes bigger because it has a Timer
+
+        Moved the timer to the document from the element.
+
+        * dom/Document.h: Made frame() inline. Added updateFocusApperanceSoon(),
+        cancelFocusAppearanceUpdate(), m_updateFocusAppearanceTimer,
+        clearXMLVersion(), and updateFocusAppearanceTimerFired(). Also made
+        everything that was previously protected be private instead.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_updateFocusAppearanceTimer.
+        (WebCore::Document::updateFocusAppearanceSoon): Added. Starts timer.
+        (WebCore::Document::cancelFocusAppearanceUpdate): Added. Stops timer.
+        (WebCore::Document::updateFocusAppearanceTimerFired): Added. If the
+        focused node is a focusable element, then calls
+        updateFocusAppearance(false) on it.
+
+        * dom/Element.h: Removed default value of the boolean parameter to
+        updateFocusAppareance. Removed needsFocusAppearanceUpdate(),
+        setNeedsFocusAppearanceUpdate(), updateFocusAppearanceTimerFired(),
+        stopUpdateFocusAppearanceTimer(), m_updateFocusAppearanceTimer, and
+        m_needsFocusAppearanceUpdate. Added
+        updateFocusAppearanceSoonAfterAttach() and cancelFocusAppearanceUpdate().
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ElementRareData): Added initializer for
+        m_needsFocusAppearanceUpdateSoonAfterAttach.
+        (WebCore::Element::Element): Removed initializers for
+        m_updateFocusAppearanceTimer and m_needsFocusAppearanceUpdate.
+        (WebCore::Element::attach): Updated code that starts the focus
+        appearance timer to instead call updateFocusAppearanceSoon() on the
+        document.
+        (WebCore::Element::detach): Replaced call to
+        stopUpdateFocusAppearanceTimer with call to cancelFocusAppearanceUpdate.
+        (WebCore::Element::focus): Added check for node that's already focused,
+        to match the logic that's in the derived classes. This makes it safe for
+        us to remove the override in the derived classes. Also replaced the code
+        that called setNeedsFocusAppearanceUpdate(true) with code to set the
+        rare data flag m_needsFocusAppearanceUpdateSoonAfterAttach and added a
+        call to cancelFocusAppearanceUpdate() in the case where there's no focus
+        appearance update.
+        (WebCore::Element::blur): Replaced call to
+        stopUpdateFocusAppearanceTimer with call to cancelFocusAppearanceUpdate.
+        (WebCore::Element::cancelFocusAppearanceUpdate): Added. Sets
+        m_needsFocusAppearanceUpdateSoonAfterAttach to false, and then calls
+        cancelFocusAppearanceUpdate() on the document, but only if the element
+        is the focused node of the document.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument): Replaced code that sets
+        m_xmlVersion directly with a call to a new inline clearXMLVersion()
+        function.
+        (WebCore::HTMLDocument::setCookie): Replaced use of m_policyBaseURL with
+        policyBaseURL().
+        (WebCore::HTMLDocument::createTokenizer): Replaced uses of m_frame with
+        frame().
+        (WebCore::HTMLDocument::determineParseMode): Replaced code that sets
+        pMode and hMode directly with calls to setParseMode and setHTMLMode.
+        Replaced use of m_styleSelector with styleSelector().
+
+        * html/HTMLInputElement.h: Removed now-unneed override of focus().
+        Removed default value of the boolean parameter to updateFocusAppareance.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::updateFocusAppearance):
+        Pass the restorePreviousSelection boolean through -- while it's ignored,
+        it no longer has a default value.
+
+        * html/HTMLTextAreaElement.h: Removed now-unneed override of focus().
+        Removed default value of the boolean parameter to updateFocusAppareance.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+
+        * WebCore.exp: Removed the Document::frame() symbol, since it's now inline.
+
 2007-08-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

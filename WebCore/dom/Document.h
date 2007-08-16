@@ -306,7 +306,7 @@ public:
     bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
 
     FrameView* view() const; // can be NULL
-    Frame* frame() const; // can be NULL
+    Frame* frame() const { return m_frame; } // can be NULL
     Page* page() const; // can be NULL
     Settings* settings() const; // can be NULL
 
@@ -658,8 +658,11 @@ public:
     void addNodeList() { m_numNodeLists++; }
     void removeNodeList() { m_numNodeLists--; }
     bool hasNodeLists() const { return m_numNodeLists != 0; }
+
+    void updateFocusAppearanceSoon();
+    void cancelFocusAppearanceUpdate();
     
-protected:
+private:
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
 
@@ -758,6 +761,8 @@ protected:
     DeprecatedPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;
     Timer<Document> m_imageLoadEventTimer;
 
+    Timer<Document> m_updateFocusAppearanceTimer;
+
     Node* m_cssTarget;
     
     bool m_processingLoadEvent;
@@ -829,12 +834,16 @@ public:
     void initSecurityPolicyURL();
     const KURL& securityPolicyURL() const { return m_securityPolicyURL; }
 
+protected:
+    void clearXMLVersion() { m_xmlVersion = String(); }
+
 private:
     bool shouldBeAllowedToLoadLocalResources() const;
 
     void updateTitle();
     void removeAllDisconnectedNodeEventListeners();
     void imageLoadEventTimerFired(Timer<Document>*);
+    void updateFocusAppearanceTimerFired(Timer<Document>*);
 
     JSEditor* jsEditor();
     JSEditor* m_jsEditor;

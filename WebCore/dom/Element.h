@@ -28,7 +28,6 @@
 #include "ContainerNode.h"
 #include "QualifiedName.h"
 #include "ScrollTypes.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -159,10 +158,8 @@ public:
     virtual String target() const { return String(); }
         
     virtual void focus(bool restorePreviousSelection = true);
-    virtual void updateFocusAppearance(bool restorePreviousSelection = false);
+    virtual void updateFocusAppearance(bool restorePreviousSelection);
     void blur();
-    bool needsFocusAppearanceUpdate() const { return m_needsFocusAppearanceUpdate; }
-    void setNeedsFocusAppearanceUpdate(bool b) { m_needsFocusAppearanceUpdate = b; }
 
 #ifndef NDEBUG
     virtual void dump(TextStream* , DeprecatedString ind = "") const;
@@ -197,10 +194,8 @@ private:
 
     virtual void updateStyleAttributeIfNeeded() const {}
     
-    void updateFocusAppearanceTimerFired(Timer<Element>*);
-    void stopUpdateFocusAppearanceTimer();
-    Timer<Element> m_updateFocusAppearanceTimer;
-    bool m_needsFocusAppearanceUpdate;
+    void updateFocusAppearanceSoonAfterAttach();
+    void cancelFocusAppearanceUpdate();
 
 protected:
     mutable RefPtr<NamedAttrMap> namedAttrMap;

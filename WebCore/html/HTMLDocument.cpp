@@ -81,7 +81,7 @@ using namespace HTMLNames;
 HTMLDocument::HTMLDocument(DOMImplementation* implementation, Frame* frame)
     : Document(implementation, frame)
 {
-    m_xmlVersion = String();
+    clearXMLVersion();
 }
 
 HTMLDocument::~HTMLDocument()
@@ -104,7 +104,7 @@ String HTMLDocument::cookie() const
 
 void HTMLDocument::setCookie(const String& value)
 {
-    setCookies(URL(), m_policyBaseURL.deprecatedString(), value);
+    setCookies(URL(), policyBaseURL().deprecatedString(), value);
 }
 
 void HTMLDocument::setBody(HTMLElement* newBody, ExceptionCode& ec)
@@ -285,8 +285,8 @@ void HTMLDocument::releaseEvents()
 Tokenizer *HTMLDocument::createTokenizer()
 {
     bool reportErrors = false;
-    if (m_frame)
-        if (Page* page = m_frame->page())
+    if (frame())
+        if (Page* page = frame()->page())
             reportErrors = page->inspectorController()->windowVisible();
 
     return new HTMLTokenizer(this, reportErrors);
@@ -540,15 +540,15 @@ void HTMLDocument::determineParseMode(const String& str)
             setDocType(new DocumentType(this, name, publicID, systemID));
         if (!(resultFlags & PARSEMODE_HAVE_DOCTYPE)) {
             // No doctype found at all.  Default to quirks mode and Html4.
-            pMode = Compat;
-            hMode = Html4;
+            setParseMode(Compat);
+            setHTMLMode(Html4);
         }
         else if ((resultFlags & PARSEMODE_HAVE_INTERNAL) ||
                  !(resultFlags & PARSEMODE_HAVE_PUBLIC_ID)) {
             // Internal subsets always denote full standards, as does
             // a doctype without a public ID.
-            pMode = Strict;
-            hMode = Html4;
+            setParseMode(Strict);
+            setHTMLMode(Html4);
         }
         else {
             // We have to check a list of public IDs to see what we
@@ -560,8 +560,8 @@ void HTMLDocument::determineParseMode(const String& str)
             const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr.data(), pubIDStr.length());
             if (!doctypeEntry) {
                 // The DOCTYPE is not in the list.  Assume strict mode.
-                pMode = Strict;
-                hMode = Html4;
+                setParseMode(Strict);
+                setHTMLMode(Html4);
                 return;
             }
 
@@ -570,16 +570,16 @@ void HTMLDocument::determineParseMode(const String& str)
                     doctypeEntry->mode_if_no_sysid)
             {
                 case PubIDInfo::eQuirks3:
-                    pMode = Compat;
-                    hMode = Html3;
+                    setParseMode(Compat);
+                    setHTMLMode(Html3);
                     break;
                 case PubIDInfo::eQuirks:
-                    pMode = Compat;
-                    hMode = Html4;
+                    setParseMode(Compat);
+                    setHTMLMode(Html4);
                     break;
                 case PubIDInfo::eAlmostStandards:
-                    pMode = AlmostStrict;
-                    hMode = Html4;
+                    setParseMode(AlmostStrict);
+                    setHTMLMode(Html4);
                     break;
                  default:
                     ASSERT(false);
@@ -588,11 +588,11 @@ void HTMLDocument::determineParseMode(const String& str)
     }
     else {
         // Malformed doctype implies quirks mode.
-        pMode = Compat;
-        hMode = Html3;
+        setParseMode(Compat);
+        setHTMLMode(Html3);
     }
   
-    m_styleSelector->strictParsing = !inCompatMode();
+    styleSelector()->strictParsing = !inCompatMode();
  
 }
     

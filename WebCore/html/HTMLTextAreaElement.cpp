@@ -193,24 +193,6 @@ bool HTMLTextAreaElement::isMouseFocusable() const
     return HTMLFormControlElementWithState::isFocusable();
 }
 
-void HTMLTextAreaElement::focus(bool)
-{
-    Document* doc = document();
-    if (doc->focusedNode() == this)
-        return;
-    doc->updateLayout();
-    if (!supportsFocus())
-        return;
-    if (Page* page = doc->page())
-        page->focusController()->setFocusedNode(this, doc->frame());
-    // FIXME: Should isFocusable do the updateLayout?
-    if (!isFocusable()) {
-        setNeedsFocusAppearanceUpdate(true);
-        return;
-    }
-    updateFocusAppearance();
-}
-
 void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     ASSERT(renderer());
