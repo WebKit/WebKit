@@ -1,3 +1,16 @@
+2007-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5389696> leak of 32-byte NSData object (and more?) in WebIconDatabase code path with each refresh of http://www.apple.com
+        
+        * platform/graphics/BitmapImage.h: Use RetainPtr for m_nsImage and m_tiffRep
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::initPlatformData): No need to do anything now
+        (WebCore::BitmapImage::invalidatePlatformData): Simplify
+        (WebCore::BitmapImage::getTIFFRepresentation): Use RetainPtr to avoid leaks
+        (WebCore::BitmapImage::getNSImage): Use RetainPtr to avoid leaks
+
 2007-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
