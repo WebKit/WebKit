@@ -325,6 +325,7 @@ Font& Font::operator=(const Font& other)
     m_pageZero = other.m_pageZero;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
+    m_isPlatformFont = other.m_isPlatformFont;
     return *this;
 }
 

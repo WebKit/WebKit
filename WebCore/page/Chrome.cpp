@@ -139,7 +139,7 @@ void Chrome::runModal() const
     // in a way that could interact with this view.
     PageGroupLoadDeferrer deferrer(m_page, false);
 
-    // Go run the modal event loop.
+    TimerBase::fireTimersInNestedEventLoop();
     m_client->runModal();
 }
 

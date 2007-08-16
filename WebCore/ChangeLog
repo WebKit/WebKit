@@ -1,3 +1,26 @@
+2007-08-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix <rdar://problem/5094895> REGRESSION (r19094): JavaScript timers don't
+          work inside showModalDialog; caret also doesn't blink
+
+        * platform/Timer.h: Added fireTimersInNestedEventLoop.
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::fireTimers): Added code to exit if the timersReadyToFire
+        is cleared. This indicates that someone fired the timers in the nested event
+        loop, so we should not fire any more timers ourselves.
+        (WebCore::TimerBase::fireTimersInNestedEventLoop): Added. Sets timersReadyToFire
+        to 0 so we won't return early and do nothing if the shared timer first. Then
+        calls updateSharedTimer() so the shared timer will get scheduled as needed based
+        on any pending timers.
+
+        * page/Chrome.cpp: (WebCore::Chrome::runModal): Call
+        fireTimersInNestedEventLoop before calling runModal on the client.
+
+        * manual-tests/modal-dialog.html: Added a test that uses a timeout.
+        * manual-tests/show-modal-dialog-test.html: Fixed a typo.
+
 2007-08-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

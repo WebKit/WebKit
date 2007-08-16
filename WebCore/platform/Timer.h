@@ -52,7 +52,9 @@ public:
     double repeatInterval() const { return m_repeatInterval; }
 
     void augmentRepeatInterval(double delta) { setNextFireTime(m_nextFireTime + delta); m_repeatInterval += delta; }
-     
+
+    static void fireTimersInNestedEventLoop();
+
 private:
     virtual void fired() = 0;
 

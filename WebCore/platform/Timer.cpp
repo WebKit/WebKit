@@ -334,6 +334,10 @@ void TimerBase::fireTimers(double fireTime, const Vector<TimerBase*>& firingTime
 
         // Once the timer has been fired, it may be deleted, so do nothing else with it after this point.
         timer->fired();
+
+        // Catch the case where the timer asked timers to fire in a nested event loop.
+        if (!timersReadyToFire)
+            break;
     }
 }
 
@@ -354,6 +358,12 @@ void TimerBase::sharedTimerFired()
 
     timersReadyToFire = 0;
 
+    updateSharedTimer();
+}
+
+void TimerBase::fireTimersInNestedEventLoop()
+{
+    timersReadyToFire = 0;
     updateSharedTimer();
 }
 
