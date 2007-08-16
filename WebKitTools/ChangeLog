@@ -1,3 +1,15 @@
+2007-08-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix <rdar://problem/5360135> REGRESSION (Leopard only): editing/selection/5354455-1.html is causing subsequent tests to fail
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (createWebView):
+        Create a DumpRenderTreeWindow instead of a NSWindow, now that a DumpRenderTreeWindow no longer poses as a NSWindow.
+        (dumpRenderTree):
+        Don't pose as a NSWindow, since when the spelling panel gets created, it creates an NSWindow which ends up creating a DumpRenderTreeWindow. 
+
 2007-08-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

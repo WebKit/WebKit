@@ -399,7 +399,7 @@ WebView *createWebView()
     // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
     NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+    DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
     [[window contentView] addSubview:webView];
     [window orderBack:nil];
     [window setAutodisplay:NO];
@@ -456,7 +456,6 @@ void dumpRenderTree(int argc, const char *argv[])
     [NSApplication sharedApplication];
 
     class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
-    class_poseAs(objc_getClass("DumpRenderTreeWindow"), objc_getClass("NSWindow"));
     class_poseAs(objc_getClass("DumpRenderTreeEvent"), objc_getClass("NSEvent"));
 
     struct option options[] = {
