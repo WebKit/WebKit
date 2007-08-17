@@ -114,7 +114,7 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 
     if (obj) {
         if (obj->logSetWindow) {
-            printf("PLUGIN: NPP_SetWindow: %d %d\n", window->width, window->height);
+            printf("PLUGIN: NPP_SetWindow: %d %d\n", (int)window->width, (int)window->height);
             obj->logSetWindow = false;
         }
     }
