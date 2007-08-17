@@ -1,3 +1,33 @@
+2007-08-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5398301> Xcode threw mutation exception while enumerating subviews (GC only)
+
+        I was never able to reproduce this exception. But there can be cases where layout will
+        trigger JavaScript or plugin code that can modify the WebView view hierarchy during a
+        recursive enumeration of all the subviews.
+
+        This patch does two things:
+        1) Adds a check in debug builds that will LOG when any view is added or removed during layout.
+        Noting that added views will not recieve layout this round and might paint without first recieving layout.
+
+        2) Recursivly builds up an array of descendant WebHTMLViews before calling layout on them.
+        This matches the behavior of makeObjectsPerformSelector: in the non-GC case (making a copy
+        before enumerating.)
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursive]): Use _web_addDescendantWebHTMLViewsToArray to build up an array
+        of WebHTMLViews to enumerate.
+        (-[WebHTMLView _web_clearPrintingModeRecursive]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]): Ditto.
+        (-[WebHTMLView _web_layoutIfNeededRecursive]): Ditto.
+        (-[WebHTMLView _layoutIfNeeded]): Moved to WebHTMLViewFileInternal category.
+        (-[WebHTMLView didAddSubview:]): LOG in debug builds.
+        (-[WebHTMLView willRemoveSubview:]): Ditto.
+        (-[NSView _web_addDescendantWebHTMLViewsToArray:]): Recursivly build an array of descendant WebHTMLViews.
+        * WebView/WebHTMLViewInternal.h: Added a BOOL in WebHTMLViewPrivate to track subview changes (debug only.)
+
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -254,6 +254,10 @@ static CachedResourceClient* promisedDataClient()
 - (void)_setMouseDownEvent:(NSEvent *)event;
 - (WebHTMLView *)_topHTMLView;
 - (BOOL)_isTopHTMLView;
+- (void)_web_setPrintingModeRecursive;
+- (void)_web_setPrintingModeRecursiveAndAdjustViewSize;
+- (void)_web_clearPrintingModeRecursive;
+- (void)_web_layoutIfNeededRecursive;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -270,10 +274,7 @@ static CachedResourceClient* promisedDataClient()
 @end
 
 @interface NSView (WebHTMLViewFileInternal)
-- (void)_web_setPrintingModeRecursive;
-- (void)_web_setPrintingModeRecursiveAndAdjustViewSize;
-- (void)_web_clearPrintingModeRecursive;
-- (void)_web_layoutIfNeededRecursive;
+- (void)_web_addDescendantWebHTMLViewsToArray:(NSMutableArray *) array;
 @end
 
 @interface NSMutableDictionary (WebHTMLViewFileInternal)
@@ -766,6 +767,108 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return self == [self _topHTMLView];
 }
 
+- (void)_web_setPrintingModeRecursive
+{
+    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = YES;
+#endif
+
+    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+
+    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+
+    unsigned count = [decendantWebHTMLViews count];
+    for (unsigned i = 0; i < count; ++i)
+        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+
+    [decendantWebHTMLViews release];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = NO;
+#endif
+}
+
+- (void)_web_clearPrintingModeRecursive
+{
+    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = YES;
+#endif
+
+    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+
+    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+
+    unsigned count = [decendantWebHTMLViews count];
+    for (unsigned i = 0; i < count; ++i)
+        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+
+    [decendantWebHTMLViews release];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = NO;
+#endif
+}
+
+- (void)_web_setPrintingModeRecursiveAndAdjustViewSize
+{
+    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = YES;
+#endif
+
+    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+
+    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+
+    unsigned count = [decendantWebHTMLViews count];
+    for (unsigned i = 0; i < count; ++i)
+        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
+
+    [decendantWebHTMLViews release];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = NO;
+#endif
+}
+
+- (void)_layoutIfNeeded
+{
+    ASSERT(!_private->subviewsSetAside);
+
+    if ([[self _bridge] needsLayout])
+        _private->needsLayout = YES;
+    if (_private->needsToApplyStyles || _private->needsLayout)
+        [self layout];
+}
+
+- (void)_web_layoutIfNeededRecursive
+{
+    [self _layoutIfNeeded];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = YES;
+#endif
+
+    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+
+    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+
+    unsigned count = [decendantWebHTMLViews count];
+    for (unsigned i = 0; i < count; ++i)
+        [[decendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
+
+    [decendantWebHTMLViews release];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = NO;
+#endif
+}
+
 @end
 
 @implementation WebHTMLView (WebPrivate)
@@ -885,6 +988,22 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
 }
+
+#ifndef NDEBUG
+
+- (void)didAddSubview:(NSView *)subview
+{
+    if (_private->enumeratingSubviews)
+        LOG(View, "A view of class %s was added during subview enumeration for layout or printing mode change. This view might paint without first receiving layout.", object_getClassName([subview class]));
+}
+
+- (void)willRemoveSubview:(NSView *)subview
+{
+    if (_private->enumeratingSubviews)
+        LOG(View, "A view of class %s was removed during subview enumeration for layout or printing mode change. We will still do layout or the printing mode change even though this view is no longer in the view hierarchy.", object_getClassName([subview class]));
+}
+
+#endif
 
 #ifdef BUILDING_ON_TIGER
 
@@ -1374,24 +1493,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return _private->pluginController;
 }
 
-- (void)_web_setPrintingModeRecursive
-{
-    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
-    [super _web_setPrintingModeRecursive];
-}
-
-- (void)_web_clearPrintingModeRecursive
-{
-    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
-    [super _web_clearPrintingModeRecursive];
-}
-
-- (void)_web_setPrintingModeRecursiveAndAdjustViewSize
-{
-    [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
-    [super _web_setPrintingModeRecursiveAndAdjustViewSize];
-}
-
 - (void)_layoutForPrinting
 {
     // Set printing mode temporarily so we can adjust the size of the view. This will allow
@@ -1400,22 +1501,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // turn it off again after adjusting the size.
     [self _web_setPrintingModeRecursiveAndAdjustViewSize];
     [self _web_clearPrintingModeRecursive];
-}
-
-- (void)_layoutIfNeeded
-{
-    ASSERT(!_private->subviewsSetAside);
-
-    if ([[self _bridge] needsLayout])
-        _private->needsLayout = YES;
-    if (_private->needsToApplyStyles || _private->needsLayout)
-        [self layout];
-}
-
-- (void)_web_layoutIfNeededRecursive
-{
-    [self _layoutIfNeeded];
-    [super _web_layoutIfNeededRecursive];
 }
 
 - (void)_startAutoscrollTimer: (NSEvent *)triggerEvent
@@ -1801,24 +1886,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 @implementation NSView (WebHTMLViewFileInternal)
 
-- (void)_web_setPrintingModeRecursive
+- (void)_web_addDescendantWebHTMLViewsToArray:(NSMutableArray *)array
 {
-    [_subviews makeObjectsPerformSelector:@selector(_web_setPrintingModeRecursive)];
-}
-
-- (void)_web_setPrintingModeRecursiveAndAdjustViewSize
-{
-    [_subviews makeObjectsPerformSelector:@selector(_web_setPrintingModeRecursiveAndAdjustViewSize)];
-}
-
-- (void)_web_clearPrintingModeRecursive
-{
-    [_subviews makeObjectsPerformSelector:@selector(_web_clearPrintingModeRecursive)];
-}
-
-- (void)_web_layoutIfNeededRecursive
-{
-    [_subviews makeObjectsPerformSelector:@selector(_web_layoutIfNeededRecursive)];
+    unsigned count = [_subviews count];
+    for (unsigned i = 0; i < count; ++i) {
+        NSView *child = [_subviews objectAtIndex:i];
+        if ([child isKindOfClass:[WebHTMLView class]])
+            [array addObject:child];
+        [child _web_addDescendantWebHTMLViewsToArray:array];
+    }
 }
 
 @end
