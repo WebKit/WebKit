@@ -84,6 +84,11 @@ private:
     bool m_selectInsertedText;
     bool m_smartDelete;
     TextGranularity m_granularity;
+    
+    // Undoing a series of backward deletes will restore a selection around all of the
+    // characters that were deleted, but only if the typing command being undone
+    // was opened with a backward delete.
+    bool m_openedByBackwardDelete;
 };
 
 } // namespace WebCore

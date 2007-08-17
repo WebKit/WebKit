@@ -1,3 +1,35 @@
+2007-08-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5378473> 
+        REGRESSION: Undoing a deletion that is part of an open typing command fails to reinsert the caret
+        
+        We recently made Undo of a series of deletes select all of the 
+        characters that were deleted, not just the most recently deleted
+        character.  But the code that did this set a new starting selection 
+        after every delete, even those that were part of an open typing 
+        command that started with character insertions or forward deletes, 
+        operations that when undone, remove the starting selection being 
+        set from the document.
+        
+        After this change we only set a new starting selection if the open typing
+        command was opened by a backward delete. The new behavior matches TextEdit.  
+        We don't do something similar or forward deletes because TextEdit opens 
+        and closes a new typing command on forward delete (added a FIXME about this).
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand): Initialize 
+        m_openedByBackwardDelete.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Added a FIXME about
+        how in TextEdit, forward deletes open and close a new typing command.
+        (WebCore::TypingCommand::doApply): Set m_openedByBackwardDelete
+        appropriately.
+        (WebCore::TypingCommand::deleteKeyPressed): Only set the starting
+        selection if this delete is the first one in an open typing command
+        or one in a series of deletes that opened the typing command.
+        * editing/TypingCommand.h: Added m_openedByBackwardDelete.
+
 2007-08-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

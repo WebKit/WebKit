@@ -1,3 +1,16 @@
+2007-08-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5378473> Undoing a deletion that is part of an open typing command fails to reinsert the caret
+
+        * editing/undo/5378473.html: Added.
+        * platform/mac/editing: Added.
+        * platform/mac/editing/undo: Added.
+        * platform/mac/editing/undo/5378473-expected.checksum: Added.
+        * platform/mac/editing/undo/5378473-expected.png: Added.
+        * platform/mac/editing/undo/5378473-expected.txt: Added.
+
 2007-08-16  Alice Liu  <alice.liu@apple.com>
 
         Removed a fixed test from the skip list.  r25112 fixed this test.

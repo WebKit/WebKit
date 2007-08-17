@@ -51,7 +51,8 @@ TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, con
       m_applyEditing(false), 
       m_selectInsertedText(selectInsertedText),
       m_smartDelete(false),
-      m_granularity(granularity)
+      m_granularity(granularity),
+      m_openedByBackwardDelete(false)
 {
 }
 
@@ -75,6 +76,7 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
 
 void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete, TextGranularity granularity)
 {
+    // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
     ASSERT(document);
     
     Frame *frame = document->frame();
@@ -218,6 +220,10 @@ void TypingCommand::doApply()
 {
     if (endingSelection().isNone())
         return;
+        
+    if (m_commandType == DeleteKey)
+        if (m_commands.isEmpty())
+            m_openedByBackwardDelete = true;
 
     switch (m_commandType) {
         case DeleteKey:
@@ -391,8 +397,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
     }
     
     if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(selectionToDelete)) {
-        // make undo select what was deleted
-        setStartingSelection(selectionAfterUndo);
+        // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
+        // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
+        // more text than you insert.  In that case all of the text that was around originally should be selected.
+        if (m_openedByBackwardDelete)
+            setStartingSelection(selectionAfterUndo);
         deleteSelection(selectionToDelete, m_smartDelete);
         setSmartDelete(false);
         typingAddedToOpenCommand();
