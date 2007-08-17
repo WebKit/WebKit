@@ -1,3 +1,19 @@
+2007-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5379040>
+        REGRESSION (Tiger-Leopard): ADOBE: Safari calls NPP_SetWindow with bad values sometimes
+
+        Add a way for the plug-in to dump the width and height when it gets its  NPP_SetWindow call.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_New):
+        (NPP_SetWindow):
+
 2007-08-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

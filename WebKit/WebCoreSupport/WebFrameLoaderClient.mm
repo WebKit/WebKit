@@ -1215,18 +1215,19 @@ static NSArray* nsArray(const Vector<String>& vector)
     return array;
 }
 
-Widget* WebFrameLoaderClient::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames,
+Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames,
                                            const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     WebFrameBridge* bridge = m_webFrame->_private->bridge;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return new Widget([bridge viewForPluginWithURL:url.getNSURL()
-                              attributeNames:nsArray(paramNames)
-                              attributeValues:nsArray(paramValues)
-                              MIMEType:mimeType
-                              DOMElement:[DOMElement _wrapElement:element]
-                              loadManually:loadManually]);
+    return new Widget([bridge viewForPluginWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                                                 URL:url.getNSURL()
+                                      attributeNames:nsArray(paramNames)
+                                     attributeValues:nsArray(paramValues)
+                                            MIMEType:mimeType
+                                          DOMElement:[DOMElement _wrapElement:element]
+                                        loadManually:loadManually]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;

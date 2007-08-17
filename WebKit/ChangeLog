@@ -1,3 +1,18 @@
+2007-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5379040> 
+        REGRESSION (Tiger-Leopard): ADOBE: Safari calls NPP_SetWindow with bad values sometimes
+        
+        Pass the right size when creating the views.
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge viewForPluginWithFrame:URL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
 2007-08-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dave Hyatt.

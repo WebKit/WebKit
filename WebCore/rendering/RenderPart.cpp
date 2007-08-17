@@ -63,8 +63,6 @@ void RenderPart::setWidget(Widget* widget)
             static_cast<FrameView*>(widget)->ref();
         RenderWidget::setWidget(widget);
 
-        setNeedsLayoutAndPrefWidthsRecalc();
-
         // make sure the scrollbars are set correctly for restore
         // ### find better fix
         viewCleared();

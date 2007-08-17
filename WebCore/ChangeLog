@@ -1,3 +1,54 @@
+2007-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        <rdar://problem/5379040>
+        REGRESSION (Tiger-Leopard): ADOBE: Safari calls NPP_SetWindow with bad values sometimes
+
+        Instantiate plug-ins during the first layout instead of doing so when creating the renderer.
+        This ensures that the plug-in widget will have a correct initial size.
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::getInstance):
+        Force a layout if the plug-in doesn't have an instance.
+        
+        (WebCore::HTMLEmbedElement::attach):
+        Pass true to updateWidget, causing it to only create a widget if it won't be a plug-in.
+        
+        * html/HTMLIFrameElement.cpp:        
+        (WebCore::HTMLIFrameElement::attach):
+        Pass false to updateWidget, this will only create subframes anyway.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::getInstance):
+        Force a layout if the plug-in doesn't have an instance.
+        
+        (WebCore::HTMLObjectElement::attach):
+        Pass true to updateWidget, causing it to only create a widget if it won't be a plug-in.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadPlugin):
+        Get the size from the renderer and pass it to the client.
+        
+        * loader/FrameLoaderClient.h:
+        * page/mac/WebCoreFrameBridge.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::createPlugin):
+        Update declarations.
+        
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::setWidget):
+        No need to mark the renderer as dirty here.
+        
+        * rendering/RenderPartObject.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        Add a parameter, onlyCreateNonPlugins. If this is true the widget 
+        will only be created if it's not a plug-in.
+        
+        (WebCore::RenderPartObject::layout):
+        Call updateWidget here if m_widget is 0, causing the plug-in to be instantiated.
+        
 2007-08-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
