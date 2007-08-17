@@ -1,3 +1,20 @@
+2007-08-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14189
+        <rdar://problem/5319511> REPRODUCIBLE CRASH: Canvas createPattern(canvas, ...) crashes on Windows (14189)
+
+        Ensure that we actually retain the CG pattern correctly.
+
+        Credit to Philip Taylor <excors@gmail.com> for finding the cause of this.
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::~CanvasPattern):
+        (WebCore::CanvasPattern::createPattern):
+        * html/CanvasPattern.h:
+        (WebCore::CanvasPattern::platformImage):
+
 2007-08-16  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix. (Maybe?)

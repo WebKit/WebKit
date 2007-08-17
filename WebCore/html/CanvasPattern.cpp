@@ -91,9 +91,6 @@ CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeat
 
 CanvasPattern::~CanvasPattern()
 {
-#if PLATFORM(CG)
-    CGImageRelease(m_platformImage);
-#endif
     if (m_cachedImage)
         m_cachedImage->deref(this);
 }
@@ -142,8 +139,8 @@ CGPatternRef CanvasPattern::createPattern(const CGAffineTransform& transform)
     rect.origin.x = 0;
     rect.origin.y = 0;
     if (m_platformImage) {
-        rect.size.width = CGImageGetWidth(m_platformImage);
-        rect.size.height = CGImageGetHeight(m_platformImage);
+        rect.size.width = CGImageGetWidth(m_platformImage.get());
+        rect.size.height = CGImageGetHeight(m_platformImage.get());
     } else {
         if (!m_cachedImage)
             return 0;
