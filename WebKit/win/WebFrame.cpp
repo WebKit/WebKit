@@ -2226,7 +2226,7 @@ Frame* WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwner
     return result;
 }
 
-Widget* WebFrame::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool /*loadManually*/)
+Widget* WebFrame::createPlugin(const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool /*loadManually*/)
 {
     PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), element, url, paramNames, paramValues, mimeType);
 
