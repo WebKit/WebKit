@@ -552,22 +552,31 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                 end = true;
             }
 
-            char tmp[20];
+            // Grab the tag name, but mostly ignore namespaces.
+            bool sawNamespace = false;
+            char tagBuffer[20];
             int len = 0;
-            while (
-                ((*ptr >= 'a') && (*ptr <= 'z') ||
-                 (*ptr >= 'A') && (*ptr <= 'Z') ||
-                 (*ptr >= '0') && (*ptr <= '9'))
-                && len < 19 )
-            {
+            while (len < 19) {
                 if (ptr == pEnd)
                     return false;
-                tmp[len] = tolower(*ptr);
+                char c = *ptr;
+                if (c == ':') {
+                    len = 0;
+                    sawNamespace = true;
+                    ptr++;
+                    continue;
+                }
+                if (c >= 'a' && c <= 'z' || c >= '0' && c <= '9')
+                    ;
+                else if (c >= 'A' && c <= 'Z')
+                    c += 'a' - 'A';
+                else
+                    break;
+                tagBuffer[len++] = c;
                 ptr++;
-                len++;
             }
-            tmp[len] = 0;
-            AtomicString tag(tmp);
+            tagBuffer[len] = 0;
+            AtomicString tag(tagBuffer);
             
             if (enclosingTagName) {
                 if (end && tag.impl() == enclosingTagName)
@@ -600,7 +609,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                 ++ptr;
             }
             
-            if (!end && tag == metaTag) {
+            if (!end && tag == metaTag && !sawNamespace) {
                 DeprecatedCString str(tagContentStart, ptr - tagContentStart);
                 str = str.lower();
                 int pos = 0;
@@ -608,7 +617,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                     if ((pos = str.find("charset", pos, false)) == -1)
                         break;
                     pos += 7;
-                    // skip whitespace..
+                    // skip whitespace
                     while (pos < (int)str.length() && str[pos] <= ' ')
                         pos++;
                     if (pos == (int)str.length())
@@ -640,7 +649,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                        tag != linkTag && tag != metaTag && tag != objectTag &&
                        tag != titleTag && tag != baseTag && 
                        (end || tag != htmlTag) && !enclosingTagName &&
-                       (tag != headTag) && isalpha(tmp[0])) {
+                       (tag != headTag) && isalpha(tagBuffer[0])) {
                 m_checkedForHeadCharset = true;
                 return true;
             }

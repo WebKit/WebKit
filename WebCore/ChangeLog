@@ -1,3 +1,17 @@
+2007-08-17  Kevin Decker <kdecker@apple.com>
+
+        Code change by Darin, landed and reviewed by me.
+
+        Fixed: <rdar://problem/5252836> Adobe Help Viewer: Japanese characters in the Help Tree structure are shown as garbage
+        Added fast/encoding/namespace-tolerance.html test.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Slightly loosen the charset decoder heuristic by tweaking it
+        to ignore namespaces. This restores compatibility to documents which (1) use namespace prefixes on HTML elements
+        (2) specify a non-latin charset and (3) contain non-latin characters.
+        
+        Added fast/encoding/namespace-tolerance.html test.
+        
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dave Hyatt.
