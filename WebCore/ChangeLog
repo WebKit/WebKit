@@ -1,3 +1,11 @@
+2007-08-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix. (Maybe?)
+        
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneDeadResources):
+
 2007-08-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
