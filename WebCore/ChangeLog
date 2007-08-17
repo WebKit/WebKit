@@ -7,7 +7,7 @@
 
         Ensure that we actually retain the CG pattern correctly.
 
-        Credit to Philip Taylor <excors@gmail.com> for finding the cause of this.
+        Credit to Henry Mason <hmason@mac.com> for finding the cause of this.
 
         * html/CanvasPattern.cpp:
         (WebCore::CanvasPattern::~CanvasPattern):
