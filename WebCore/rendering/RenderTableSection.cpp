@@ -856,6 +856,12 @@ void RenderTableSection::recalcOuterBorder()
 
 void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 {
+    // put this back in when all layout tests can handle it
+    // ASSERT(!needsLayout());
+    // avoid crashing on bugs that cause us to paint with dirty layout
+    if (needsLayout())
+        return;
+    
     unsigned totalRows = m_gridRows;
     unsigned totalCols = table()->columns().size();
 

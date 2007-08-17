@@ -1,3 +1,19 @@
+2007-08-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5403773>
+        CrashTracer: [USER] 88 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::paint + 846
+        
+        Changed results for fast/dynamic/containing-block-change.html are progression
+        (even though new results don't match Firefox and old ones did!)
+
+        * fast/dynamic/ancestor-to-absolute-expected.txt: Added.
+        * fast/dynamic/ancestor-to-absolute.html: Added.
+        * fast/dynamic/containing-block-change-expected.checksum:
+        * fast/dynamic/containing-block-change-expected.png:
+        * fast/dynamic/containing-block-change-expected.txt:
+
 2007-08-17  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

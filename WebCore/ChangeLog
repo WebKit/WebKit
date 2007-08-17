@@ -1,3 +1,25 @@
+2007-08-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Fix <rdar://problem/5403773>
+        CrashTracer: [USER] 88 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::paint + 846
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removePositionedObjects):
+        
+        Fix crash in http://www.infobae.com/interior/home.html
+        Positioned objects removed from m_positionedObjects would in some cases not get added back to any 
+        positioned objects list. Adding objects happens in block layout but since layout was not invalidated 
+        correctly in removePositionedObjects() it would not get invoked. As a result some positioned objects 
+        would stay in layout dirty state leading to crashes and other bad things.
+        
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        
+        Add needLayout() guard to eliminate this class of crashes from release builds. 
+        Assert commented out for now since one existing layout test can't handle it.
+
 2007-08-17  Kevin Decker <kdecker@apple.com>
 
         Code change by Darin, landed and reviewed by me.

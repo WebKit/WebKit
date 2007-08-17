@@ -2084,6 +2084,15 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
         if (!o || it.current()->isDescendantOf(o)) {
             if (o)
                 it.current()->setChildNeedsLayout(true, false);
+            
+            // It is parent blocks job to add positioned child to positioned objects list of its containing block
+            // Parent layout needs to be invalidated to ensure this happens.
+            RenderObject* p = it.current()->parent();
+            while (p && !p->isRenderBlock())
+                p = p->parent();
+            if (p)
+                p->setChildNeedsLayout(true);
+            
             m_positionedObjects->removeRef(it.current());
         } else
             ++it;
