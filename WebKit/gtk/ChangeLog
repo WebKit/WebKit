@@ -1,3 +1,9 @@
+2007-08-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix. Add const to the first parameter of createPlugin
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
