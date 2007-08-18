@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,17 +103,11 @@ using namespace WebCore;
 // SPI for NSURLDownload
 // Needed for <rdar://problem/5121850> 
 @interface NSURLDownload (NSURLDownloadPrivate)
-
-- (void)_setOriginatingURL:(NSURL *)url;
-- (NSURL *)_originatingURL;
-
+- (void)_setOriginatingURL:(NSURL *)originatingURL;
 @end
 
-// FIXME: This is unnecessary after <rdar://problem/5208329>
 @interface WebHistoryItem (WebHistoryItemPrivate)
-
 - (BOOL)_wasUserGesture;
-
 @end
 
 @interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener>
@@ -259,34 +253,46 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
     setOriginalURLForDownload(download, initialRequest);    
 }
 
-void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, const WebCore::ResourceRequest& initialRequest) const
+void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, const ResourceRequest& initialRequest) const
 {
-    WebView *webView = getWebView(m_webFrame.get());
     NSURLRequest *initialURLRequest = initialRequest.nsURLRequest();
     NSURL *originalURL = nil;
-    WebBackForwardList *history = [webView backForwardList];
-    WebHistoryItem *currentItem = nil;
-    int backListCount = [history backListCount];
     
-    // if there was no referrer, don't traverse the backforward history
-    // since this download was initiated directly
-    // <rdar://problem/5294691>
+    // If there was no referrer, don't traverse the back/forward history
+    // since this download was initiated directly. <rdar://problem/5294691>
     if ([initialURLRequest valueForHTTPHeaderField:@"Referer"]) {
-        // find the first item in the history that was originated
-        // by the user
+        // find the first item in the history that was originated by the user
+        WebView *webView = getWebView(m_webFrame.get());
+        WebBackForwardList *history = [webView backForwardList];
+        int backListCount = [history backListCount];
         for (int backIndex = 0; backIndex <= backListCount && !originalURL; backIndex++) {
-            currentItem = [history itemAtIndex:-backIndex];
-
+            WebHistoryItem *currentItem = [history itemAtIndex:-backIndex];
             if (![currentItem respondsToSelector:@selector(_wasUserGesture)] || [currentItem _wasUserGesture])
                 originalURL = [currentItem URL];
         }
     }
-    
+
     if (!originalURL)
         originalURL = [initialURLRequest URL];
-    
-    if ([download respondsToSelector:@selector(_setOriginatingURL:)])
-        [download _setOriginatingURL:originalURL];
+
+    if ([download respondsToSelector:@selector(_setOriginatingURL:)]) {
+        NSString *scheme = [originalURL scheme];
+        NSString *host = [originalURL host];
+        if (scheme && host && [scheme length] && [host length]) {
+            NSNumber *port = [originalURL port];
+            if (port && [port intValue] < 0)
+                port = nil;
+            NSString *hostOnlyURLString;
+            if (port)
+                hostOnlyURLString = [[NSString alloc] initWithFormat:@"%@://%@:%d", scheme, host, [port intValue]];
+            else
+                hostOnlyURLString = [[NSString alloc] initWithFormat:@"%@://%@", scheme, host];
+            NSURL *hostOnlyURL = [[NSURL alloc] initWithString:hostOnlyURLString];
+            [hostOnlyURLString release];
+            [download _setOriginatingURL:hostOnlyURL];
+            [hostOnlyURL release];
+        }
+    }
 }
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
@@ -425,7 +431,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsi
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const WebCore::ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
@@ -1240,7 +1246,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-WebCore::Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Element* element, const KURL& baseURL, 
+Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Element* element, const KURL& baseURL, 
                                                               const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     Widget* result = new Widget;

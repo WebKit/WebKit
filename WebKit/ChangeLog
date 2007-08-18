@@ -1,3 +1,14 @@
+2007-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5414518> Use root URL as origin URL when quarantining downloads
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (WebFrameLoaderClient::setOriginalURLForDownload):
+        Extract only the scheme and host name and make the originating URL from that.
+
+        * WebKit/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2007-08-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
