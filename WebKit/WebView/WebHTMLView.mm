@@ -775,15 +775,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->enumeratingSubviews = YES;
 #endif
 
-    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
 
-    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
 
-    unsigned count = [decendantWebHTMLViews count];
+    unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
-    [decendantWebHTMLViews release];
+    [descendantWebHTMLViews release];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = NO;
@@ -798,15 +798,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->enumeratingSubviews = YES;
 #endif
 
-    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
 
-    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
 
-    unsigned count = [decendantWebHTMLViews count];
+    unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
-    [decendantWebHTMLViews release];
+    [descendantWebHTMLViews release];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = NO;
@@ -821,15 +821,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->enumeratingSubviews = YES;
 #endif
 
-    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
 
-    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
 
-    unsigned count = [decendantWebHTMLViews count];
+    unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[decendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
 
-    [decendantWebHTMLViews release];
+    [descendantWebHTMLViews release];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = NO;
@@ -854,15 +854,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->enumeratingSubviews = YES;
 #endif
 
-    NSMutableArray *decendantWebHTMLViews = [[NSMutableArray alloc] init];
+    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
 
-    [self _web_addDescendantWebHTMLViewsToArray:decendantWebHTMLViews];
+    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
 
-    unsigned count = [decendantWebHTMLViews count];
+    unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[decendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
+        [[descendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
 
-    [decendantWebHTMLViews release];
+    [descendantWebHTMLViews release];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = NO;
