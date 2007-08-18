@@ -49,14 +49,21 @@ my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL
 
 @ARGV >= 1 or die "Usage: extract-localizable-strings <exceptions file> [ directory... ]\nDid you mean to run extract-webkit-localizable-strings instead?\n";
 
-my $exceptionsFile = $ARGV[0];
+my $exceptionsFile = shift @ARGV;
 -f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n";
 
-my @directories;
-if (@ARGV < 2) {
+my @directories = ();
+my @directoriesToSkip = ();
+if (@ARGV < 1) {
     push(@directories, ".");
 } else {
-    push(@directories, @ARGV[1 .. $#ARGV]);
+    for my $dir (@ARGV) {
+        if ($dir =~ /^-(.*)$/) {
+            push @directoriesToSkip, $1;
+        } else {
+            push @directories, $dir;
+        }
+    }
 }
 
 my $sawError = 0;
@@ -87,6 +94,9 @@ if (open EXCEPTIONS, $exceptionsFile) {
 }
 
 my $quotedDirectoriesString = '"' . join('" "', @directories) . '"';
+for my $dir (@directoriesToSkip) {
+    $quotedDirectoriesString .= ' -path "' . $dir . '" -prune';
+}
 
 my @files = ( split "\n", `find $quotedDirectoriesString -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.cpp"` );
 

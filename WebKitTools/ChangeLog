@@ -1,3 +1,14 @@
+2007-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - don't look for Apple-style localizable strings in the GTK version of WebKit
+
+        * Scripts/extract-localizable-strings: Add a feature where you can pass in the
+        name of subdirectories to skip.
+        * Scripts/update-webkit-localizable-strings: Pass WebKit/gtk as a subdirectory
+        to skip.
+
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
