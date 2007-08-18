@@ -1,3 +1,11 @@
+2007-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+        
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createPlugin):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2007-08-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
