@@ -681,6 +681,7 @@ protected:
     void updateSelectionForIME();
     bool onIMERequestCharPosition(WebCore::Frame*, IMECHARPOSITION*, LRESULT*);
     bool onIMERequestReconvertString(WebCore::Frame*, RECONVERTSTRING*, LRESULT*);
+    bool developerExtrasEnabled() const;
 
     ULONG m_refCount;
     WebCore::String m_groupName;

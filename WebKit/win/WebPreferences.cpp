@@ -46,6 +46,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
+#include <initguid.h>
+// {A20B5645-692D-4147-BF80-E8CD84BE82A1}
+DEFINE_GUID(IID_WebPreferences, 0xa20b5645, 0x692d, 0x4147, 0xbf, 0x80, 0xe8, 0xcd, 0x84, 0xbe, 0x82, 0xa1);
+
 static unsigned long long WebSystemMainMemory()
 {
     MEMORYSTATUSEX statex;
@@ -96,7 +100,7 @@ WebPreferences* WebPreferences::createInstance()
 HRESULT WebPreferences::postPreferencesChangesNotification()
 {
     IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
-    HRESULT hr = nc->postNotificationName(webPreferencesChangedNotification(), this, 0);
+    HRESULT hr = nc->postNotificationName(webPreferencesChangedNotification(), static_cast<IWebPreferences*>(this), 0);
     if (FAILED(hr))
         return hr;
 
@@ -550,6 +554,10 @@ HRESULT STDMETHODCALLTYPE WebPreferences::QueryInterface(REFIID riid, void** ppv
         *ppvObject = static_cast<IWebPreferences*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferences))
         *ppvObject = static_cast<IWebPreferences*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate))
+        *ppvObject = static_cast<IWebPreferencesPrivate*>(this);
+    else if (IsEqualGUID(riid, IID_WebPreferences))
+        *ppvObject = static_cast<WebPreferences*>(this);
     else
         return E_NOINTERFACE;
 
@@ -1147,4 +1155,24 @@ HRESULT WebPreferences::setDOMPasteAllowed(BOOL enabled)
 {
     setBoolValue(CFSTR(WebKitDOMPasteAllowedPreferenceKey), enabled);
     return S_OK;
+}
+
+HRESULT WebPreferences::setDeveloperExtrasEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitDeveloperExtrasEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::developerExtrasEnabled(BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitDeveloperExtrasEnabledPreferenceKey));
+    return S_OK;
+}
+
+bool WebPreferences::developerExtrasDisabledByOverride()
+{
+    return !!boolValueForKey(CFSTR(DisableWebKitDeveloperExtrasPreferenceKey));
 }

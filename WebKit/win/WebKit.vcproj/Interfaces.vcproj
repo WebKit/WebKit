@@ -348,6 +348,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebPreferencesPrivate.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebResource.idl"
 			>
 		</File>

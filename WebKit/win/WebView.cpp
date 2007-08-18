@@ -1520,13 +1520,26 @@ HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferenc
 
     settings->setForceFTPDirectoryListings(true);
 
-    // FIXME: make this read a preference like the Mac's WebKitDeveloperExtras
-    // or when Safari's IncludeDebugMenu is set
-    settings->setDeveloperExtrasEnabled(true);
+    settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
 
     m_mainFrame->invalidate(); // FIXME
 
     return S_OK;
+}
+
+bool WebView::developerExtrasEnabled() const
+{
+    COMPtr<WebPreferences> webPrefs;
+    if (SUCCEEDED(m_preferences->QueryInterface(IID_WebPreferences, (void**)&webPrefs)) && webPrefs->developerExtrasDisabledByOverride())
+        return false;
+
+#ifdef NDEBUG
+    BOOL enabled = FALSE;
+    COMPtr<IWebPreferencesPrivate> prefsPrivate;
+    return SUCCEEDED(m_preferences->QueryInterface(&prefsPrivate)) && SUCCEEDED(prefsPrivate->developerExtrasEnabled(&enabled)) && enabled;
+#else
+    return true;
+#endif
 }
 
 static String osVersion()

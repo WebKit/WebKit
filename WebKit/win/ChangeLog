@@ -1,5 +1,36 @@
 2007-08-17  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5192578> Inspect Element should not appear in context menu in non-debug mode
+
+        We now follow the same logic as Mac WebKit for displaying the Inspect Element item:
+            1) If DisableWebKitDeveloperExtras is set to true, don't display it
+            2) If not, and we're in a debug build, display it
+            3) If not, and we're in a release build, display it if
+               WebKitDeveloperExtras is set to true
+
+        Reviewed by Ada.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added.
+        * WebKit.vcproj/Interfaces.vcproj: Add new IWebPreferencesPrivate.idl
+        file to project.
+        * WebKit.vcproj/WebKitGUID.vcproj: Added generated .c file for
+        IWebPreferencesPrivate to project.
+        * WebPreferenceKeysPrivate.h: Added new keys.
+        * WebPreferences.cpp: Added IID_WebPreferences.
+        (WebPreferences::postPreferencesChangesNotification): Added an explicit
+        cast needed now that WebPreferences implements two interfaces.
+        (WebPreferences::QueryInterface): Added new cases.
+        (WebPreferences::setDeveloperExtrasEnabled): Added.
+        (WebPreferences::developerExtrasEnabled): Added.
+        (WebPreferences::developerExtrasDisabledByOverride): Added.
+        * WebPreferences.h: Now implements IWebPreferencesPrivate.
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences): Call developerExtrasEnabled.
+        (WebView::developerExtrasEnabled): Ported from -[WebView _developerExtrasEnabled].
+        * WebView.h:
+
+2007-08-17  Adam Roben  <aroben@apple.com>
+
         Add WebPreferences::sharedStandardPreferences
 
         This is a convenience method to get the standard preferences object so

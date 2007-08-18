@@ -27,11 +27,15 @@
 #define WebPreferences_H
 
 #include "IWebPreferences.h"
+#include "IWebPreferencesPrivate.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences {
+// {A20B5645-692D-4147-BF80-E8CD84BE82A1}
+DEFINE_GUID(IID_WebPreferences, 0xa20b5645, 0x692d, 0x4147, 0xbf, 0x80, 0xe8, 0xcd, 0x84, 0xbe, 0x82, 0xa1);
+
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -271,7 +275,20 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setDOMPasteAllowed( 
         /* [in] */ BOOL enabled);
 
+    // IWebPreferencesPrivate
+    virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(
+        /* [in] */ BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE developerExtrasEnabled(
+        /* [retval][out] */ BOOL*);
+
+
     // WebPreferences
+
+    // This method accesses a different preference key than developerExtrasEnabled.
+    // See <rdar://5343767> for the justification.
+    bool developerExtrasDisabledByOverride();
+
     static BSTR webPreferencesChangedNotification();
     static void setInstance(WebPreferences* instance, BSTR identifier);
     static void removeReferenceForIdentifier(BSTR identifier);

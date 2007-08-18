@@ -209,11 +209,11 @@
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDataSource_i.c"
 			>
 		</File>
-    <File
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDebugProgram_i.c"
 			>
-    </File>
-    <File
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDocument_i.c"
 			>
 		</File>
@@ -307,6 +307,10 @@
 		</File>
 		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebPreferences_i.c"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebPreferencesPrivate_i.c"
 			>
 		</File>
 		<File
