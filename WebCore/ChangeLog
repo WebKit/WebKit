@@ -1,3 +1,13 @@
+2007-08-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - WebCore part of fix to scrollbar suppression hack for Leopard
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Suppress scrollbars earlier, so it happens
+        before any potential view swap.
+
 2007-08-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

@@ -41,10 +41,13 @@
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint
 {
     suppressScrollers = suppressed;
-    if (suppressed || repaint) {
-        [[self verticalScroller] setNeedsDisplay: !suppressed];
-        [[self horizontalScroller] setNeedsDisplay: !suppressed];
+    if (suppressed) {
+        [[self verticalScroller] setNeedsDisplay:NO];
+        [[self horizontalScroller] setNeedsDisplay:NO];
     }
+        
+    if (!suppressed && repaint)
+        [super reflectScrolledClipView:[self contentView]];
 }
 
 - (void)updateScrollers
@@ -131,13 +134,10 @@
         if (!inUpdateScrollers && [[NSGraphicsContext currentContext] isDrawingToScreen])
             [self updateScrollers];
     }
-    [super reflectScrolledClipView:clipView];
 
-    // Validate the scrollers if they're being suppressed.
-    if (suppressScrollers) {
-        [[self verticalScroller] setNeedsDisplay: NO];
-        [[self horizontalScroller] setNeedsDisplay: NO];
-    }
+    // Update the scrollers if they're not being suppressed.
+    if (!suppressScrollers)
+        [super reflectScrolledClipView:clipView];
 }
 
 - (void)setAllowsScrolling:(BOOL)flag

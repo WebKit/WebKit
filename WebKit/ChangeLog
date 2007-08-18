@@ -1,3 +1,15 @@
+2007-08-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - WebKit part of fix to scrollbar suppression hack for Leopard
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]): Don't call the superclass method
+        when scrollbars are suppressed.
+        (-[WebDynamicScrollBarsView setScrollBarsSuppressed:repaintOnUnsuppress:]): Instead call it
+        here, when unsuppressing.
+
 2007-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
