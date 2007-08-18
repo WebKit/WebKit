@@ -58,9 +58,21 @@ static unsigned long long WebSystemMainMemory()
 // WebPreferences ----------------------------------------------------------------
 
 CFDictionaryRef WebPreferences::s_defaultSettings = 0;
-WebPreferences* WebPreferences::s_standardPreferences = 0;
 
 static HashMap<WebCore::String, WebPreferences*> webPreferencesInstances;
+
+WebPreferences* WebPreferences::sharedStandardPreferences()
+{
+    static WebPreferences* standardPreferences;
+    if (!standardPreferences) {
+        standardPreferences = WebPreferences::createInstance();
+        standardPreferences->load();
+        standardPreferences->setAutosaves(TRUE);
+        standardPreferences->postPreferencesChangesNotification();
+    }
+
+    return standardPreferences;
+}
 
 WebPreferences::WebPreferences()
 : m_refCount(0)
@@ -93,11 +105,8 @@ HRESULT WebPreferences::postPreferencesChangesNotification()
 
 WebPreferences* WebPreferences::getInstanceForIdentifier(BSTR identifier)
 {
-    if (!identifier) {
-        if (s_standardPreferences)
-            return s_standardPreferences;
-        return 0;
-    }    
+    if (!identifier)
+        return sharedStandardPreferences();
 
     WebCore::String identifierString(identifier, SysStringLen(identifier));
     return webPreferencesInstances.get(identifierString);
@@ -567,25 +576,11 @@ ULONG STDMETHODCALLTYPE WebPreferences::Release(void)
 HRESULT STDMETHODCALLTYPE WebPreferences::standardPreferences( 
     /* [retval][out] */ IWebPreferences** standardPreferences)
 {
-    HRESULT hr = S_OK;
-
-    if (!s_standardPreferences) {
-        IWebPreferences* standardPrefs;
-        hr = initWithIdentifier(0, &standardPrefs);
-        if (FAILED(hr))
-            return hr;
-        s_standardPreferences = static_cast<WebPreferences*>(standardPrefs);
-        hr = s_standardPreferences->setAutosaves(TRUE);
-        if (FAILED(hr))
-            return hr;
-        hr = s_standardPreferences->postPreferencesChangesNotification();
-        if (FAILED(hr))
-            return hr;
-    }
-
-    s_standardPreferences->AddRef();
-    *standardPreferences = s_standardPreferences;
-    return hr;
+    if (!standardPreferences)
+        return E_POINTER;
+    *standardPreferences = sharedStandardPreferences();
+    (*standardPreferences)->AddRef();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebPreferences::initWithIdentifier( 

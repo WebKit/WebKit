@@ -89,21 +89,17 @@ HRESULT userIconDatabasePath(String& path)
 
 void WebIconDatabase::init()
 {
-    WebPreferences* prefs = WebPreferences::createInstance();
-    COMPtr<IWebPreferences> standardPrefs;
+    WebPreferences* standardPrefs = WebPreferences::sharedStandardPreferences();
     BOOL enabled = FALSE;
-    if (SUCCEEDED(prefs->standardPreferences(&standardPrefs)))
-        if (FAILED(standardPrefs->iconDatabaseEnabled(&enabled))) {
-            enabled = FALSE;
-            LOG_ERROR("Unable to get icon database enabled preference");
-        }
+    if (FAILED(standardPrefs->iconDatabaseEnabled(&enabled))) {
+        enabled = FALSE;
+        LOG_ERROR("Unable to get icon database enabled preference");
+    }
     iconDatabase()->setEnabled(!!enabled);
 
     BSTR prefDatabasePath = 0;
     if (FAILED(standardPrefs->iconDatabaseLocation(&prefDatabasePath)))
         LOG_ERROR("Unable to get icon database location preference");
-
-    prefs->Release();
 
     String databasePath(prefDatabasePath, SysStringLen(prefDatabasePath));
     SysFreeString(prefDatabasePath);

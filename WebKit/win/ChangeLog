@@ -1,3 +1,25 @@
+2007-08-17  Adam Roben  <aroben@apple.com>
+
+        Add WebPreferences::sharedStandardPreferences
+
+        This is a convenience method to get the standard preferences object so
+        that within WebKit we don't have to deal with the fact that COM doesn't
+        support static methods.
+
+        Reviewed by Ada.
+
+        * WebHistory.cpp:
+        (WebHistory::WebHistory): Use sharedStandardPreferences.
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::init): Ditto.
+        * WebPreferences.cpp:
+        (WebPreferences::sharedStandardPreferences): Added.
+        (WebPreferences::getInstanceForIdentifier): Use sharedStandardPreferences.
+        (WebPreferences::standardPreferences): Ditto.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::preferences): Ditto.
+
 2007-08-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

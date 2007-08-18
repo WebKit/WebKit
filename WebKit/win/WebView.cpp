@@ -2267,13 +2267,8 @@ HRESULT STDMETHODCALLTYPE WebView::preferences(
 {
     HRESULT hr = S_OK;
 
-    if (!m_preferences) {
-        WebPreferences* instance = WebPreferences::createInstance();
-        if (!instance)
-            return E_FAIL;
-        hr = instance->standardPreferences(&m_preferences);
-        instance->Release();
-    }
+    if (!m_preferences)
+        m_preferences = WebPreferences::sharedStandardPreferences();
 
     m_preferences.copyRefTo(prefs);
     return hr;

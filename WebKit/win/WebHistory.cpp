@@ -110,10 +110,7 @@ WebHistory::WebHistory()
     m_datesWithEntries.adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     m_entriesByDate.adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
-    COMPtr<WebPreferences> tempPrefs(AdoptCOM, WebPreferences::createInstance());
-    IWebPreferences* standardPrefs;
-    tempPrefs->standardPreferences(&standardPrefs);
-    m_preferences.adoptRef(static_cast<WebPreferences*>(standardPrefs)); // should be safe, since there's no setter for standardPrefs
+    m_preferences = WebPreferences::sharedStandardPreferences();
 }
 
 WebHistory::~WebHistory()
