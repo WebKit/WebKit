@@ -155,6 +155,12 @@ void WebFrameLoaderClient::makeDocumentView()
     WebFrameView *v = m_webFrame->_private->webFrameView;
     WebDataSource *ds = [m_webFrame.get() _dataSource];
 
+    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && [[WebFrameView class] _viewClassForMIMEType:[[ds response] MIMEType]] == [WebHTMLView class];
+    if (canSkipCreation) {
+        [[v documentView] setDataSource:ds];
+        return;
+    }
+
     NSView <WebDocumentView> *documentView = [v _makeDocumentViewForDataSource:ds];
     if (!documentView)
         return;

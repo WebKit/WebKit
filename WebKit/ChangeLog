@@ -1,3 +1,25 @@
+2007-08-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/5198272> REGRESSION: PLT 1.5% slower due to r21367 (change to start frames with empty documents)
+
+        There were three main cuases of extra time due to creating the initial empty document:
+        
+        1) Creating an extra WebHTMLView and swapping it for a new one for each frame created.
+        2) Parsing the minimal markup for the initial document's contents.
+        3) Clearing the Window object an extra time and dispatching the corresponding delegate method.
+        
+        The WebKit part of the fixes addresses 1.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::makeDocumentView): When switching from the initial
+        empty document to the first real document, reuse the WebHTMLView.
+        
+        It might actually be a significant performance improvement to always
+        reuse the WebHTMLView, but that is a much riskier change and not
+        needed to fix the regression right now.
+
 2007-08-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

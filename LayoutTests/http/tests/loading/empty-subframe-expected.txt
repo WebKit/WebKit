@@ -2,11 +2,9 @@ main frame - didStartProvisionalLoadForFrame
 main frame - willCloseFrame
 main frame - didCommitLoadForFrame
 main frame - didClearWindowObjectForFrame
-frame "f1" - didClearWindowObjectForFrame
 frame "f1" - didStartProvisionalLoadForFrame
 frame "f1" - willCloseFrame
 frame "f1" - didCommitLoadForFrame
-frame "f1" - didClearWindowObjectForFrame
 frame "f1" - didHandleOnloadEventsForFrame
 frame "f1" - didFinishDocumentLoadForFrame
 frame "f1" - didFinishLoadForFrame

@@ -1,3 +1,17 @@
+2007-08-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - update for fix to <rdar://problem/5198272> REGRESSION: PLT 1.5% slower due to r21367 (change to start frames with empty documents)
+        
+        No longer expect windowScriptObject delegate method in frames that never
+        use script.
+
+        * http/tests/loading/bad-scheme-subframe-expected.txt:
+        * http/tests/loading/bad-server-subframe-expected.txt:
+        * http/tests/loading/empty-subframe-expected.txt:
+        * http/tests/loading/slow-parsing-subframe-expected.txt:
+
 2007-08-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam Roben.

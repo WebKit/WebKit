@@ -1,3 +1,30 @@
+2007-08-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed <rdar://problem/5198272> REGRESSION: PLT 1.5% slower due to r21367 (change to start frames with empty documents)
+        
+        There were three main cuases of extra time due to creating the initial empty document:
+        
+        1) Creating an extra WebHTMLView and swapping it for a new one for each frame created.
+        2) Parsing the minimal markup for the initial document's contents.
+        3) Clearing the Window object an extra time and dispatching the corresponding delegate method.
+        
+        The WebCore part of the fixes addresses 2 and 3.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init): Don't parse "<html><body>" for the initial
+        empty document; it turns out not to be needed.
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable): Don't 
+        dispatch the delegate if we haven't created a ScriptInterpreter yet.
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded): Dispatch the window object
+        delegate when we first create the interpreter, since that is now done
+        lazily.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::committingFirstRealLoad): Helper for WebKit
+        to know when to reuse a WebHTMLView.
+
 2007-08-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam Roben.

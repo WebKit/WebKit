@@ -2,7 +2,6 @@ main frame - didStartProvisionalLoadForFrame
 main frame - willCloseFrame
 main frame - didCommitLoadForFrame
 main frame - didClearWindowObjectForFrame
-frame "f1" - didClearWindowObjectForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
 This is a test of load callbacks. It is only useful inside the regression test tool.

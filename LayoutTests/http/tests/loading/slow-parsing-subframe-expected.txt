@@ -3,7 +3,6 @@ frame "f1" - willCloseFrame
 main frame - willCloseFrame
 main frame - didCommitLoadForFrame
 main frame - didClearWindowObjectForFrame
-frame "f1" - didClearWindowObjectForFrame
 frame "f1" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "f1" - willCloseFrame

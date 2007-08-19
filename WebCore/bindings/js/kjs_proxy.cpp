@@ -161,6 +161,8 @@ void KJSProxy::initScriptIfNeeded()
     // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
     if (userAgent.find("Mozilla") >= 0 && userAgent.find("compatible") == -1)
       m_script->setCompatMode(Interpreter::NetscapeCompat);
+
+  m_frame->loader()->dispatchWindowObjectAvailable();
 }
 
 }

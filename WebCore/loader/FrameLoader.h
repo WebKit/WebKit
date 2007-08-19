@@ -434,7 +434,9 @@ namespace WebCore {
         bool useLowBandwidthDisplay() const { return m_useLowBandwidthDisplay; }
 #endif
 
-    private:        
+        bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
+
+    private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
 
