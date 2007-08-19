@@ -886,7 +886,7 @@ static const CSSPropertyID qstyleSheetProperties[] = {
 
 const unsigned numqStyleSheetProperties = sizeof(qstyleSheetProperties) / sizeof(qstyleSheetProperties[0]);
 
-Widget* FrameLoaderClientQt::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames,
+Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
 //     qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<mimeType;
