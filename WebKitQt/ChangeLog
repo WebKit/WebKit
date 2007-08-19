@@ -1,3 +1,11 @@
+2007-08-19  Mike Hommey  <mh+webkit@glandium.org>
+
+        Reviewed by George Staikos.
+
+        Don't export ICO symbols.
+
+        * Plugins/Plugins.pro:
+
 2007-08-19  George Staikos  <staikos@kde.org>
 
         Fix compilation.
