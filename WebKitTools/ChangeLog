@@ -1,3 +1,12 @@
+2007-08-19  Oleg Sukhodolsky  <son.two@gmail.com>
+
+        Reviewed by Mark.
+
+        -fixes http://bugs.webkit.org/show_bug.cgi?id=14632
+
+        * Scripts/webkitdirs.pm:
+        qt and gtk ports now explicitly pass debug (or release) mode to qmake.
+
 2007-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

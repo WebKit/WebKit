@@ -599,6 +599,13 @@ sub buildQMakeProject($$)
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, "CONFIG+=qt-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
+    if ($config =~ m/debug/i) {
+        push @buildArgs, "CONFIG-=release";
+        push @buildArgs, "CONFIG+=debug";
+    } else {
+        push @buildArgs, "CONFIG+=release";
+        push @buildArgs, "CONFIG-=debug";
+    }
 
     print "Calling '$qmakebin @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
@@ -653,6 +660,13 @@ sub buildQMakeGdkProject($$)
     push @buildArgs, "CONFIG-=qt";
     push @buildArgs, "CONFIG+=gdk-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
+    if ($config =~ m/debug/i) {
+        push @buildArgs, "CONFIG-=release";
+        push @buildArgs, "CONFIG+=debug";
+    } else {
+        push @buildArgs, "CONFIG+=release";
+        push @buildArgs, "CONFIG-=debug";
+    }
 
     print "Calling 'qmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
