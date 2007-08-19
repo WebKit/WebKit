@@ -210,6 +210,7 @@ ContextMenu::~ContextMenu() { notImplemented(); }
 void ContextMenu::appendItem(ContextMenuItem&) { notImplemented(); }
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu) { m_platformDescription = menu; }
 PlatformMenuDescription ContextMenu::platformDescription() const  { return m_platformDescription; }
+PlatformMenuDescription ContextMenu::releasePlatformDescription() const  { notImplemented(); return 0; }
 
 ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription) { notImplemented(); }
 ContextMenuItem::ContextMenuItem(ContextMenu*) { notImplemented(); }

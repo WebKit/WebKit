@@ -136,6 +136,13 @@ PlatformMenuDescription ContextMenu::platformDescription() const
     return m_menu;
 }
 
+PlatformMenuDescription ContextMenu::releasePlatformDescription()
+{
+    QMenu* tmp = m_menu;
+    m_menu = 0;
+    return tmp;
+}
+
 
 }
 // vim: ts=4 sw=4 et

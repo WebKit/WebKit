@@ -1,3 +1,34 @@
+2007-08-19  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5395835> REGRESSION (r24527): Context menu for edit fields is missing "Font & Writing Direction"
+
+        The problem was that ContextMenuItem::setSubMenu was just copying the
+        HMENU from the ContextMenu passed in on Windows, but that HMENU was
+        later getting destroyed when the ContextMenu went out of scope.
+
+        I added a new ContextMenu::releasePlatformDescription method that is
+        used in setSubMenu instead. I think an ultimately better design would
+        be for setSubMenu to take ownership of the ContextMenu that's passed in
+        (as should insertItem and appendItem), but I decided to be conservative
+        and just make the changes needed to fix the bug.
+
+        Reviewed by Darin.
+
+        No test possible.
+
+        * platform/ContextMenu.h: Added releasePlatformDescription.
+        * platform/gdk/TemporaryLinkStubs.cpp: Added stub implementation.
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::releasePlatformDescription): Implemented, though
+        it's never called on this platform.
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::releasePlatformDescription): Ditto.
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::setSubMenu): Call releasePlatformDescription
+        since we need to take ownership of the HMENU.
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::releasePlatformDescription): Implemented.
+
 2007-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

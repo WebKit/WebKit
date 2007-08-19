@@ -160,7 +160,7 @@ void ContextMenuItem::setSubMenu(ContextMenu* subMenu)
         ::DestroyMenu(m_platformDescription->hSubMenu);
 
     m_platformDescription->fMask |= MIIM_SUBMENU;
-    m_platformDescription->hSubMenu = subMenu->platformDescription();
+    m_platformDescription->hSubMenu = subMenu->releasePlatformDescription();
 }
 
 void ContextMenuItem::setChecked(bool checked)

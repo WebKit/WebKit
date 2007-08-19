@@ -67,6 +67,8 @@ class MenuEventProxy;
         PlatformMenuDescription platformDescription() const;
         void setPlatformDescription(PlatformMenuDescription);
 
+        PlatformMenuDescription releasePlatformDescription();
+
     private:
         HitTestResult m_hitTestResult;
 

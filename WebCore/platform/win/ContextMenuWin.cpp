@@ -123,4 +123,11 @@ HMENU ContextMenu::platformDescription() const
     return m_platformDescription;
 }
 
+HMENU ContextMenu::releasePlatformDescription()
+{
+    HMENU description = m_platformDescription;
+    m_platformDescription = 0;
+    return description;
+}
+
 }

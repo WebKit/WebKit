@@ -146,4 +146,9 @@ NSMutableArray* ContextMenu::platformDescription() const
     return m_platformDescription.get();
 }
 
+NSMutableArray* ContextMenu::releasePlatformDescription()
+{
+    return m_platformDescription.releaseRef();
+}
+
 }
