@@ -1,3 +1,10 @@
+2007-08-19  Mark Rowe  <mrowe@apple.com>
+
+        Update expected results.  The results that were landed with the test did not match the wording
+        in the test that was landed.
+
+        * fast/encoding/namespace-tolerance-expected.txt:
+
 2007-08-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

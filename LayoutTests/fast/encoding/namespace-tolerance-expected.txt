@@ -1,4 +1,4 @@
-This test ensures a UTF-8 encoding is properly set. The code tests compatibility of documents which: 
+This test ensures a UTF-8 encoding is properly set on documents that: 
 (1) use namespace prefixes on HTML elements 
 (2) specify a non-latin charset 
 (3) contain non-latin characters 
