@@ -1,3 +1,13 @@
+2007-08-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15008
+          ASSERTION FAILED: !firstLineBox() == !lastLineBox() setting content on image
+
+        * fast/images/text-content-crash-2-expected.txt: Added.
+        * fast/images/text-content-crash-2.html: Added.
+
 2007-08-19  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam and Geoff within one minute of each other.

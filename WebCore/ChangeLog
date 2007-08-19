@@ -1,3 +1,18 @@
+2007-08-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15008
+          ASSERTION FAILED: !firstLineBox() == !lastLineBox() setting content on image
+
+        Test: fast/images/text-content-crash-2.html
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::setImage): Added a check that the renderer is an
+        image.
+        (WebCore::HTMLImageLoader::updateFromElement): Ditto.
+        (WebCore::HTMLImageLoader::notifyFinished): Ditto.
+
 2007-08-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
