@@ -1,3 +1,13 @@
+2007-08-19  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam and Geoff within one minute of each other.
+
+        Tests that the '-apple-opacity', '-khtml-opacity' and '-webkit-opacity' styles
+        all map to the 'opacity' style.
+
+        * fast/css/legacy-opacity-styles-expected.txt: Added.
+        * fast/css/legacy-opacity-styles.html: Added.
+
 2007-08-19  Mark Rowe  <mrowe@apple.com>
 
         Update expected results.  The results that were landed with the test did not match the wording
