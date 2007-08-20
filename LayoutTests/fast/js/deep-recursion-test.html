@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This test how deep we can recurse, and that we get an exception when we do, as opposed to a stack overflow.");
+
+    function simpleRecursion(depth) {
+        if (depth)
+            simpleRecursion(depth - 1);
+    }
+
+    try {
+        simpleRecursion(499);
+    } catch (ex) {
+        debug(ex);
+    }
+
+    try {
+        simpleRecursion(500);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+    
+    try {
+        simpleRecursion(1000);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
+    successfullyParsed = true;
+
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,12 @@
+2007-08-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Adam.
+
+        - Changing stack depth toi 500 (from 100 in mac and win) to help out some apps specifically gmail.  <rdar://problem/3590522> JavaScript call stack limit of 99 is too small for some applications; needs to be closer to 500 (4045).
+
+        * fast/js/deep-recursion-test-expected.txt: Added.
+        * fast/js/deep-recursion-test.html: Added.
+
 2007-08-19  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed - test case fixes.

@@ -35,13 +35,9 @@
 
 // maximum global call stack size. Protects against accidental or
 // malicious infinite recursions. Define to -1 if you want no limit.
-#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
-// Given OS X stack sizes we run out of stack at about 350 levels.
-// If we improve our stack usage, we can bump this number.
-#define KJS_MAX_STACK 100
-#else
-#define KJS_MAX_STACK 1000
-#endif
+// In real-world testing it appears ok to bump the stack depth count to 500.
+// This of course is dependent on stack frame size.
+#define KJS_MAX_STACK 500
 
 #define JAVASCRIPT_CALL_TRACING 0
 #define JAVASCRIPT_MARK_TRACING 0
