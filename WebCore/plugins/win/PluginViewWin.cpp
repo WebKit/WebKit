@@ -145,6 +145,9 @@ static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam
 
 void PluginViewWin::updateWindow() const
 {
+    if (!parent())
+        return;
+
     ASSERT(parent()->isFrameView());
     FrameView* frameView = static_cast<FrameView*>(parent());
 

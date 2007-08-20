@@ -1,3 +1,14 @@
+2007-08-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5412988>
+        Crash when visiting http://www.rockonflash.com/blog/?p=58
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::updateWindow):
+        Just return if the plugin view hasn't been inserted in the hierarchy yet.
+
 2007-08-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Zack.
