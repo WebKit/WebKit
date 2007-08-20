@@ -119,6 +119,8 @@ for my $changeLog (@changeLogs) {
         $sortKey = lc "WebKit, WebBrowser after";
     } elsif ($label eq "WebCore") {
         $sortKey = lc "WebFoundation, WebCore after";
+    } elsif ($label eq "LayoutTests") {
+        $sortKey = lc "~, LayoutTests last";
     }
 
     $changeLogSort{$sortKey} = $label;

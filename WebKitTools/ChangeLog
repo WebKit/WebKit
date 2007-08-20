@@ -1,5 +1,16 @@
 2007-08-20  Adam Roben  <aroben@apple.com>
 
+        Put LayoutTests after all other ChangeLogs in commit logs
+
+        We use "~" to sort LayoutTests after all the other ChangeLogs because
+        "~" is the last ASCII character (other than "DEL").
+
+        Reviewed by Sam.
+
+        * Scripts/commit-log-editor:
+
+2007-08-20  Adam Roben  <aroben@apple.com>
+
         Detect that DRT crashed even if a crash dialog is running
 
         On Windows, when DRT crashes a crash dialog commonly appears. The DRT
