@@ -355,9 +355,6 @@ fast/history/clicked-link-is-visited.html
 fast/html/keygen.html
 fast/invalid/residual-style.html
 
-# dispatchEvent doesn't seem to be working <rdar://problems/5103985>
-fast/html/tab-order.html
-
 # Infinite recursion in JSValue::mark <rdar://problem/4928697>
 fast/js/toString-stack-overflow.html
 
