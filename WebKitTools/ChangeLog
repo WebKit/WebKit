@@ -1,5 +1,21 @@
 2007-08-20  Adam Roben  <aroben@apple.com>
 
+        Detect that DRT crashed even if a crash dialog is running
+
+        On Windows, when DRT crashes a crash dialog commonly appears. The DRT
+        process is still running at this point, so run-webkit-tests wouldn't
+        detect that DRT had crashed. We now record the crash in our SIGPIPE
+        handler so that we know if DRT crashed even if the crash dialog is up.
+
+        Reviewed by Sam.
+
+        * Scripts/run-webkit-tests:
+        (sub catch_pipe): Set the crashed bit.
+        (sub openDumpTool): Reset the crashed bit.
+        (sub dumpToolDidCrash): Check the crashed bit.
+
+2007-08-20  Adam Roben  <aroben@apple.com>
+
         Fix Bug 15026: prepare-ChangeLog should list new tests in WebCore/ChangeLog
 
         http://bugs.webkit.org/show_bug.cgi?id=15026

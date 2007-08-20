@@ -65,7 +65,7 @@ use POSIX;
 
 sub openDumpTool();
 sub closeDumpTool();
-sub dumpToolCrashed();
+sub dumpToolDidCrash();
 sub closeHTTPD();
 sub countAndPrintLeaks($$$);
 sub fileNameWithNumber($$);
@@ -437,16 +437,14 @@ if ($pixelTests) {
 
 my $dumpToolPID;
 my $isDumpToolOpen = 0;
+my $dumpToolCrashed = 0;
 
 my $atLineStart = 1;
 my $lastDirectory = "";
 
 my $isHttpdOpen = 0;
 
-# On Windows, we will receive a SIGPIPE signal if DRT crashes, which would
-# normally cause run-webkit-tests to quit. Catching the signal with this empty
-# handler will prevent that.
-sub catch_pipe { }
+sub catch_pipe { $dumpToolCrashed = 1; }
 $SIG{"PIPE"} = "catch_pipe";
 
 print "Testing ", scalar @tests, " test cases.\n";
@@ -665,7 +663,7 @@ for my $test (@tests) {
       }
     }
 
-    if (dumpToolCrashed()) {
+    if (dumpToolDidCrash()) {
         $result = "crash";
 
         printFailureMessageForTest($test, "crashed");
@@ -1154,6 +1152,7 @@ sub openDumpTool()
     }
     $dumpToolPID = open3(\*OUT, \*IN, \*ERROR, $dumpTool, @args) or die "Failed to start tool: $dumpTool\n";
     $isDumpToolOpen = 1;
+    $dumpToolCrashed = 0;
 }
 
 sub closeDumpTool()
@@ -1167,8 +1166,9 @@ sub closeDumpTool()
     $isDumpToolOpen = 0;
 }
 
-sub dumpToolCrashed()
+sub dumpToolDidCrash()
 {
+    return 1 if $dumpToolCrashed;
     return 0 unless $isDumpToolOpen;
 
     my $pid = waitpid(-1, WNOHANG);
