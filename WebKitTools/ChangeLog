@@ -1,3 +1,16 @@
+2007-08-20  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 15026: prepare-ChangeLog should list new tests in WebCore/ChangeLog
+
+        http://bugs.webkit.org/show_bug.cgi?id=15026
+
+        Reviewed by David Kilzer and Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        (sub isModifiedStatus): Split out from isModifiedOrAddedStatus.
+        (sub isAddedStatus): Ditto.
+        (sub testListForChangeLog): Added.
+
 2007-08-19  Oleg Sukhodolsky  <son.two@gmail.com>
 
         Reviewed by Mark.

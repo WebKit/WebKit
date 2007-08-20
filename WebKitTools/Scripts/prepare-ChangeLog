@@ -69,11 +69,13 @@ sub createPatchCommand($);
 sub diffHeaderFormat();
 sub findOriginalFileFromSvn($);
 sub generateFileList(\@\@\%);
-sub isModifiedOrAddedStatus($);
+sub isModifiedStatus($);
+sub isAddedStatus($);
 sub isConflictStatus($);
 sub statusDescription($$);
 sub extractLineRange($);
 sub canonicalizePath($);
+sub testListForChangeLog(@);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
@@ -122,7 +124,9 @@ my @conflict_files;
 my $SVN = "svn";
 my $GIT = "git";
 
-my $changedLayoutTests = 0;
+my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
+my @addedRegressionTests = ();
+my $didChangeRegressionTests = 0;
 
 generateFileList(@changed_files, @conflict_files, %function_lists);
 
@@ -316,7 +320,11 @@ foreach my $prefix (sort keys %files) {
     } else {
         print CHANGE_LOG "        Reviewed by NOBODY (OO" . "PS!).\n\n";
         if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-            print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $changedLayoutTests;
+            if ($didChangeRegressionTests) {
+                print CHANGE_LOG testListForChangeLog(sort @addedRegressionTests);
+            } else {
+                print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n";
+            }
         }
     }
 
@@ -1042,9 +1050,12 @@ sub generateFileList(\@\@\%)
 
         $file = makeFilePathRelative($file);
 
-        if (isModifiedOrAddedStatus($status)) {
+        if (isModifiedStatus($status) || isAddedStatus($status)) {
             my @components = File::Spec->splitdir($file);
-            $changedLayoutTests = 1 if $components[0] eq "LayoutTests";
+            if ($components[0] eq "LayoutTests") {
+                $didChangeRegressionTests = 1;
+                push @addedRegressionTests, $file if isAddedStatus($status) && $file =~ /\.([a-zA-Z]+)$/ && $supportedTestExtensions{$1};
+            }
             push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status)) {
             push @{$conflictFiles}, $file;
@@ -1055,14 +1066,24 @@ sub generateFileList(\@\@\%)
     close STAT;
 }
 
-sub isModifiedOrAddedStatus($)
+sub isModifiedStatus($)
+{
+    my ($status) = @_;
+
+    my %statusCodes = (
+        "M" => 1,
+    );
+
+    return $statusCodes{$status};
+}
+
+sub isAddedStatus($)
 {
     my ($status) = @_;
 
     my %statusCodes = (
         "A" => 1,
         "C" => $isGit,
-        "M" => 1,
         "R" => 1,
     );
 
@@ -1141,4 +1162,23 @@ sub firstDirectoryOrCwd()
     $dir = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]) if @dirs;
 
     return $dir;
+}
+
+sub testListForChangeLog(@)
+{
+    my (@tests) = @_;
+
+    return "" unless @tests;
+
+    my $leadString = "        Test" . (@tests == 1 ? "" : "s") . ": ";
+    my $list = $leadString;
+    foreach my $i (0..$#tests) {
+        $list .= " " x length($leadString) if $i;
+        my $test = $tests[$i];
+        $test =~ s/^LayoutTests\///;
+        $list .= "$test\n";
+    }
+    $list .= "\n";
+
+    return $list;
 }
