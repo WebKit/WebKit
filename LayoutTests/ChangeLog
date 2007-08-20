@@ -1,3 +1,16 @@
+2007-08-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - test case fixes.
+        
+        - fix some test cases where expected results were altered by the last change
+        (I reviewed all the new results.)
+
+        * fast/events/focusingUnloadedFrame-expected.txt:
+        * http/tests/loading/simple-subframe-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt:
+        * webarchive/loading/test-loading-archive-expected.txt:
+
 2007-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

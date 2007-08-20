@@ -21,8 +21,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
       RenderFrame {FRAME} at (0,0) size 0x0
-        layer at (0,0) size 8x8
+        layer at (0,0) size 0x0
           RenderView at (0,0) size 0x0
-        layer at (0,0) size 8x8
-          RenderBlock {HTML} at (0,0) size 0x8
-            RenderBody {BODY} at (8,8) size 0x0
+        layer at (0,0) size 0x0
+          RenderBlock {HTML} at (0,0) size 0x0

@@ -2,7 +2,6 @@ main frame - didStartProvisionalLoadForFrame
 main frame - willCloseFrame
 main frame - didCommitLoadForFrame
 main frame - didClearWindowObjectForFrame
-frame "<!--framePath //<!--frame0-->-->" - didClearWindowObjectForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 resources/helloworld.webarchive - willSendRequest <NSURLRequest resources/helloworld.webarchive> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
@@ -10,7 +9,6 @@ main frame - didFinishDocumentLoadForFrame
 resources/helloworld.webarchive - didReceiveResponse <NSURLResponse resources/helloworld.webarchive>
 frame "<!--framePath //<!--frame0-->-->" - willCloseFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didClearWindowObjectForFrame
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
