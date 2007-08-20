@@ -1,5 +1,11 @@
 2007-08-19  Adam Roben  <aroben@apple.com>
 
+        Gtk+ build fix.
+
+        * platform/gdk/TemporaryLinkStubs.cpp: Removed const.
+
+2007-08-19  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://5395835> REGRESSION (r24527): Context menu for edit fields is missing "Font & Writing Direction"
 
         The problem was that ContextMenuItem::setSubMenu was just copying the
