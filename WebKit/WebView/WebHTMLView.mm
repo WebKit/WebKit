@@ -3647,6 +3647,9 @@ noPromisedData:
     selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
     
     RefPtr<Range> range = selection.toRange();
+    if (!range)
+        return;
+    
     DOMRange *domRange = kit(range.get());
     
     if ([domRange collapsed])
