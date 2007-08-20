@@ -1,3 +1,11 @@
+2007-08-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, fix for crash on launch bug in last patch.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setDataSource:]): Remove an assertion, fix code to work right in the
+        face of that condition.
+
 2007-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

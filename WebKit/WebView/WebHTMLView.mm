@@ -3251,9 +3251,10 @@ noPromisedData:
 {
     ASSERT(dataSource);
     if (_private->dataSource != dataSource) {
-        ASSERT(!_private->dataSource);
         ASSERT(!_private->closed);
-        _private->dataSource = [dataSource retain];
+        [dataSource retain];
+        [_private->dataSource release];
+        _private->dataSource = dataSource;
         [_private->pluginController setDataSource:dataSource];
         [self addMouseMovedObserver];
     }
