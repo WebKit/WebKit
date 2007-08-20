@@ -1,3 +1,14 @@
+2007-08-20  Adam Roben  <aroben@apple.com>
+
+        Tests to ensure that local .xhtml and .svg files end up being parsed as XHTML and SVG, respectively
+
+        Reviewed by Darin.
+
+        * fast/loader/local-svg-parsed-as-svg-expected.txt: Added.
+        * fast/loader/local-svg-parsed-as-svg.svg: Added.
+        * fast/loader/local-xhtml-parsed-as-xhtml-expected.txt: Added.
+        * fast/loader/local-xhtml-parsed-as-xhtml.xhtml: Added.
+
 2007-08-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff and Adam.

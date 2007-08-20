@@ -1,3 +1,16 @@
+2007-08-20  Adam Roben  <aroben@apple.com>
+
+        Remove workarounds for <rdar://problem/5386894> now that it's been fixed
+
+        Reviewed by Darin.
+
+        Tests: fast/loader/local-svg-parsed-as-svg.svg
+               fast/loader/local-xhtml-parsed-as-xhtml.xhtml
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Removed hackish
+        workaround.
+
 2007-08-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
