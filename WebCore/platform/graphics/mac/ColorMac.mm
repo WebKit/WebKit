@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "Color.h"
+#import "ColorMac.h"
 
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
@@ -37,9 +38,22 @@ namespace WebCore {
 
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
+static RGBA32 oldAquaFocusRingColor = 0xFF7DADD9;
 static bool tintIsKnown;
-static bool tintIsKnownToBeGraphite;
 static void (*tintChangeFunction)();
+static RGBA32 systemFocusRingColor;
+static bool useOldAquaFocusRingColor;
+
+
+static RGBA32 makeRGBAFromNSColor(NSColor *c)
+{
+    return makeRGBA((int)(255 * [c redComponent]), (int)(255 * [c greenComponent]), (int)(255 * [c blueComponent]), (int)(255 * [c alphaComponent]));
+}
+
+Color colorFromNSColor(NSColor *c)
+{
+    return Color(makeRGBAFromNSColor(c));
+}
 
 NSColor* nsColor(const Color& color)
 {
@@ -135,7 +149,21 @@ Color focusRingColor()
 {
     if (!tintIsKnown)
         observeTint();
-    return tintIsKnownToBeGraphite ? 0xFF9CABBD : 0xFF7DADD9;
+    
+    if (usesTestModeFocusRingColor())
+        return oldAquaFocusRingColor;
+    
+    return systemFocusRingColor;
+}
+
+bool usesTestModeFocusRingColor()
+{
+    return useOldAquaFocusRingColor;
+}
+
+void setUsesTestModeFocusRingColor(bool newValue)
+{
+    useOldAquaFocusRingColor = newValue;
 }
 
 }
@@ -144,7 +172,12 @@ Color focusRingColor()
 
 + (void)controlTintDidChange
 {
-    WebCore::tintIsKnownToBeGraphite = [NSColor currentControlTint] == NSGraphiteControlTint;
+#ifdef COLORMATCH_EVERYTHING
+#error Not yet implemented.
+#else
+    NSColor* color = [[NSColor keyboardFocusIndicatorColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    WebCore::systemFocusRingColor = WebCore::makeRGBAFromNSColor(color);
+#endif
 }
 
 @end

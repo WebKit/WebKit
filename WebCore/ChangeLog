@@ -1,3 +1,62 @@
+2007-08-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+
+        WebCore part of fix for: 
+        <rdar://problem/5417777> WebKit focus ring color no longer matches system focus rings
+        
+        Adele wrote the first version of this patch. No test cases added because I made sure the 
+        layout tests are unaffected. Two additional bug fixes were made in passing, but neither 
+        of them had any effect on any known real-world case, and both were too difficult to write 
+        test cases for to be worthwhile.
+
+        * WebCore.exp:
+        added symbols for these new functions so WebKit can call them
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        updated for new file
+        
+        * platform/graphics/mac/ColorMac.h: Added.
+        New file to hold the increasing amount of Mac-specific color stuff.
+        
+        * platform/graphics/Color.h:
+        removed #if PLATFORM(MAC) code, which is now in ColorMac.h
+        
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeRGBAFromNSColor):
+        new static function to convert an NSColor object to an RGBA32 struct
+        (WebCore::colorFromNSColor):
+        new public function to convert an NSColor object to a WebCore-style Color object
+        (WebCore::focusRingColor):
+        Uses (cached) systemFocusRingColor instead of hardwired values, unless usesTestModeFocusRingColor is true,
+        in which case it uses the old hardwired color
+        (WebCore::usesTestModeFocusRingColor):
+        returns value of global var
+        (WebCore::setUsesTestModeFocusRingColor):
+        sets value of global var
+        (+[WebCoreControlTintObserver controlTintDidChange]):
+        Uses [NSColor keyboardFocusIndicatorColor] to set systemFocusRingColor; don't compile if COLORMATCH_EVERYTHING
+        is set since we don't know what it would take to satisfy this state.
+
+        * bindings/objc/DOMRGBColor.mm:
+        now includes ColorMac.h to account for moved declarations
+        * bridge/mac/WebCoreAXObject.mm:
+        ditto
+        
+        * page/mac/FrameMac.mm:
+        (WebCore::convertAttributesToUnderlines):
+        now uses new colorFromNSColor. The old code was swapping G & B, but it didn't matter in practice because
+        this function is only used to convert the color of an input manager's marked text underline, which is always black
+        
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setBaseBackgroundColor:]):
+        now uses new colorFromNSColor. The old code was swapping G & B, but it didn't matter in practice because
+        this function is only called with a grayscale color perhaps containing an alpha value
+                
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        just updated a comment
+
 2007-08-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
@@ -235,6 +294,7 @@
         (WebCore::RenderPartObject::layout):
         Call updateWidget here if m_widget is 0, causing the plug-in to be instantiated.
         
+>>>>>>> .r25158
 2007-08-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

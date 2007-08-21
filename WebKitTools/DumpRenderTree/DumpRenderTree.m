@@ -1547,6 +1547,7 @@ static void runTest(const char *pathOrURL)
     [[mainFrame webView] makeTextStandardSize:nil];
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
     [[mainFrame webView] setPolicyDelegate:nil];
+    [WebView _setUsesTestModeFocusRingColor:YES];
     done = NO;
     topLoadingFrame = nil;
     waitToDump = NO;

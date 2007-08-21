@@ -34,6 +34,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>

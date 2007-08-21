@@ -161,8 +161,8 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden.
-    // Only fill with white if we're the root document, since iframes/frames with
-    // no background in the child document should show the parent's background.
+    // Only fill with the base background color (typically white) if we're the root document, 
+    // since iframes/frames with no background in the child document should show the parent's background.
     if (view()->isTransparent())
         frameView()->setUseSlowRepaints(); // The parent must show behind the child.
     else {

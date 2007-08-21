@@ -27,6 +27,7 @@
 #import "WebCoreAXObject.h"
 
 #import "DOMInternal.h"
+#import "ColorMac.h"
 #import "Document.h"
 #import "EventNames.h"
 #import "FocusController.h"

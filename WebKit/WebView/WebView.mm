@@ -91,6 +91,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Cache.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -1444,6 +1445,17 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 {
     return WebCoreShouldUseFontSmoothing();
 }
+
++ (void)_setUsesTestModeFocusRingColor:(BOOL)f
+{
+    setUsesTestModeFocusRingColor(f);
+}
+
++ (BOOL)_usesTestModeFocusRingColor
+{
+    return usesTestModeFocusRingColor();
+}
+
 
 + (NSString *)_minimumRequiredSafariBuildNumber
 {

@@ -1,3 +1,12 @@
+2007-08-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (runTest):
+        call new +[WebView _setUsesTestModeFocusRingColor:YES] so we get the same focus ring colors
+        in layout tests on Tiger and Leopard
+
 2007-08-20  Adam Roben  <aroben@apple.com>
 
         Put LayoutTests after all other ChangeLogs in commit logs
@@ -38,6 +47,7 @@
         (sub isAddedStatus): Ditto.
         (sub testListForChangeLog): Added.
 
+>>>>>>> .r25168
 2007-08-19  Oleg Sukhodolsky  <son.two@gmail.com>
 
         Reviewed by Mark.

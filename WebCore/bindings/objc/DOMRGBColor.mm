@@ -29,6 +29,7 @@
 
 #import "CSSPrimitiveValue.h"
 #import "Color.h"
+#import "ColorMac.h"
 #import "DOMCSSPrimitiveValue.h"
 #import "DOMInternal.h"
 #import "WebCoreObjCExtras.h"

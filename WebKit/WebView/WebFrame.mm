@@ -59,6 +59,7 @@
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Chrome.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/Document.h>
 #import <WebCore/Event.h>
 #import <WebCore/FrameLoader.h>

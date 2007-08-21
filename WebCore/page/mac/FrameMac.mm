@@ -36,6 +36,7 @@
 #import "Chrome.h"
 #import "ClipboardEvent.h"
 #import "ClipboardMac.h"
+#import "ColorMac.h"
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "DocumentLoader.h"
@@ -540,13 +541,8 @@ static void convertAttributesToUnderlines(Vector<MarkedTextUnderline>& result, c
         NSRange range = [[ranges objectAtIndex:i] rangeValue];
         NSColor* color = [[attributes objectAtIndex:i] objectForKey:NSUnderlineColorAttributeName];
         Color qColor = Color::black;
-        if (color) {
-            NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-            qColor = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
-                                    (int)(255 * [deviceColor blueComponent]),
-                                    (int)(255 * [deviceColor greenComponent]),
-                                    (int)(255 * [deviceColor alphaComponent])));
-        }
+        if (color)
+            qColor = colorFromNSColor([color colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
 
         result.append(MarkedTextUnderline(range.location + baseOffset, 
                                           range.location + baseOffset + range.length, 

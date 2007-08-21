@@ -1,3 +1,23 @@
+2007-08-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        WebKit part of fix for: 
+        <rdar://problem/5417777> WebKit focus ring color no longer matches system focus rings
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        now includes <WebCore/ColorMac.h> to account for moved declaration
+        * WebView/WebFrame.mm:
+        ditto
+        
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.mm:
+        (+[WebView _setUsesTestModeFocusRingColor:]):
+        new SPI, calls through to new WebCore function. This is used by DumpRenderTree to make sure the
+        focus ring color is always the same when performing layout tests, regardless of OS X version.
+        (+[WebView _usesTestModeFocusRingColor]):
+        new SPI, calls through to new WebCore function
+
 2007-08-20  Antti Koivisto  <antti@apple.com>
 
         Reviewed by John.

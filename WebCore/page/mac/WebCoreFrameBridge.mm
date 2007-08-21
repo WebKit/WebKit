@@ -32,6 +32,7 @@
 #import "CSSHelper.h"
 #import "Cache.h"
 #import "ClipboardMac.h"
+#import "ColorMac.h"
 #import "DOMImplementation.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
@@ -817,11 +818,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor
 {
     if (m_frame && m_frame->view()) {
-        NSColor *deviceColor = [backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-        Color color = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
-                                     (int)(255 * [deviceColor blueComponent]),
-                                     (int)(255 * [deviceColor greenComponent]),
-                                     (int)(255 * [deviceColor alphaComponent])));
+        Color color = colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
         m_frame->view()->setBaseBackgroundColor(color);
     }
 }

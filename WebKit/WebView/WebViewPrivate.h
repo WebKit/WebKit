@@ -334,6 +334,11 @@ Could be worth adding to the API.
 + (void)_setShouldUseFontSmoothing:(BOOL)f;
 + (BOOL)_shouldUseFontSmoothing;
 
+// These two methods are useful for a test harness that needs a consistent appearance for the focus rings
+// regardless of OS X version.
++ (void)_setUsesTestModeFocusRingColor:(BOOL)f;
++ (BOOL)_usesTestModeFocusRingColor;
+
 + (NSString *)_minimumRequiredSafariBuildNumber;
 
 /*!
