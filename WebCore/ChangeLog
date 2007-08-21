@@ -1,3 +1,18 @@
+2007-08-20  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed: <rdar://problem/5325262> REGRESSION (Tiger-Leopard): PictureTalk plug-in doesn't work
+
+        The problem was that this particular plug-in handles "text/ptf", but WebCore wasn't giving the plug-in a chance to load
+        any type with "text/"
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Allow plug-ins to once again use "text/" MIME types, but only if the MIME
+        type is not "text/plain". Disallowing plug-ins to use text/plain prevents plug-ins from hijacking a fundamental type 
+        that the browser is expected to handle, and also serves as an optimization to prevent loading the plug-in database in 
+        the common case.
+
 2007-08-20  Adam Roben  <aroben@apple.com>
 
         Remove workarounds for <rdar://problem/5386894> now that it's been fixed

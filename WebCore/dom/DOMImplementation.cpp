@@ -374,12 +374,13 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new PluginDocument(this, frame);
     if (Image::supportsType(type))
         return new ImageDocument(this, frame);
+    // Everything else except text/plain can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
+    // Disallowing plug-ins to use text/plain prevents plug-ins from hijacking a fundamental type that the browser is expected to handle,
+    // and also serves as an optimization to prevent loading the plug-in database in the common case.
+    if (type != "text/plain" && PlugInInfoStore::supportsMIMEType(type)) 
+        return new PluginDocument(this, frame);
     if (isTextMIMEType(type))
         return new TextDocument(this, frame);
-
-    // Everything else can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
-    if (PlugInInfoStore::supportsMIMEType(type))
-        return new PluginDocument(this, frame);
 
 #if ENABLE(SVG)
     if (type == "image/svg+xml") {
