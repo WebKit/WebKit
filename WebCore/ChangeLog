@@ -1,3 +1,11 @@
+2007-08-21  Adele Peterson  <adele@apple.com>
+
+        Build fix for release build.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+
 2007-08-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

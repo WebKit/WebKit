@@ -400,7 +400,7 @@ int AutoTableLayout::calcEffectiveWidth()
 
                 for (unsigned int pos = col; pos < lastCol && totalWidth > 0; pos++) {
                     if (!(m_layoutStruct[pos].effWidth.isPercent())) {
-                        int percent = percentMissing * static_cast<float>(m_layoutStruct[pos].effMaxWidth) / totalWidth;
+                        int percent = static_cast<int>(percentMissing * static_cast<float>(m_layoutStruct[pos].effMaxWidth) / totalWidth);
                         totalWidth -= m_layoutStruct[pos].effMaxWidth;
                         percentMissing -= percent;
                         if (percent > 0)
@@ -657,7 +657,7 @@ void AutoTableLayout::layout()
         for (int i = 0; i < nEffCols; i++) {
             Length &width = m_layoutStruct[i].effWidth;
             if (width.isFixed()) {
-                int w = available * static_cast<float>(m_layoutStruct[i].effMaxWidth) / totalFixed;
+                int w = static_cast<int>(available * static_cast<float>(m_layoutStruct[i].effMaxWidth) / totalFixed);
                 available -= w;
                 totalFixed -= m_layoutStruct[i].effMaxWidth;
                 m_layoutStruct[i].calcWidth += w;
