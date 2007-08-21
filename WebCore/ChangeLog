@@ -1,3 +1,16 @@
+2007-08-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15023
+          REGRESSION (r21113-r21143): JavaScript tooltip rendering bug
+
+        Test: fast/repaint/layer-visibility.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasVisibleContent): Cache the layer's
+        rects when it changes to visible.
+
 2007-08-20  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Anders.

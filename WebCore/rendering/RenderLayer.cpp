@@ -231,6 +231,10 @@ void RenderLayer::setHasVisibleContent(bool b)
         return;
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
+    if (m_hasVisibleContent) {
+        m_repaintRect = renderer()->absoluteClippedOverflowRect();
+        m_outlineBox = renderer()->absoluteOutlineBox();
+    }
     if (parent())
         parent()->childVisibilityChanged(m_hasVisibleContent);
 }

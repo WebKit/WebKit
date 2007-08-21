@@ -1,3 +1,17 @@
+2007-08-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=15023
+          REGRESSION (r21113-r21143): JavaScript tooltip rendering bug
+
+        * fast/repaint/layer-visibility.html: Added.
+        * platform/mac/fast: Added.
+        * platform/mac/fast/repaint: Added.
+        * platform/mac/fast/repaint/layer-visibility-expected.checksum: Added.
+        * platform/mac/fast/repaint/layer-visibility-expected.png: Added.
+        * platform/mac/fast/repaint/layer-visibility-expected.txt: Added.
+
 2007-08-20  Adam Roben  <aroben@apple.com>
 
         Removed a now-working test from the Windows Skipped file
