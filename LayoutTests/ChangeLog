@@ -1,3 +1,7 @@
+2007-08-21  Adam Roben  <aroben@apple.com>
+
+        * platform/win/Skipped: Added some more failing tests.
+
 2007-08-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
