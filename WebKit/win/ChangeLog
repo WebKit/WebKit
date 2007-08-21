@@ -1,3 +1,14 @@
+2007-08-21  Ada Chan  <adachan@apple.com>
+
+        Fix <rdar://problem/5416630> Accelerator to open link in window in background opens window in foreground instead
+        Placing tooltip window at the topmost in z-order brought windows that were opened in the
+        background to the front.  Use HWND_TOP instead.
+
+        Reviewed by Adam.
+        
+        * WebView.cpp:
+        (WebView::initializeToolTipWindow):
+
 2007-08-21  Adam Roben  <aroben@apple.com>
 
         Switch Windows to using FrameView::layoutIfNeededRecursive
