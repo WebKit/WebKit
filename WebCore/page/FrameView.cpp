@@ -928,6 +928,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     d->m_wasScrolledByUser = wasScrolledByUser;
 }
 
+#if PLATFORM(WIN) || PLATFORM(GDK)
 void FrameView::layoutIfNeededRecursive()
 {
     // We have to crawl our entire tree looking for any FrameViews that need
@@ -948,5 +949,6 @@ void FrameView::layoutIfNeededRecursive()
         if ((*current)->isFrameView())
             static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
 }
+#endif
 
 }

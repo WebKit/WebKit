@@ -1,5 +1,17 @@
 2007-08-21  Adam Roben  <aroben@apple.com>
 
+        Build fix for Mac
+
+        Keep FrameView::layoutIfNeededRecursive Windows- and Gtk-only for now
+        (sadly). This will have to wait until we merge ScrollView and FrameView.
+
+        Reviewed by NOBODY.
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+
+2007-08-21  Adam Roben  <aroben@apple.com>
+
         Fix an ASSERT when using Find in Page
 
         Reviewed by Darin.
