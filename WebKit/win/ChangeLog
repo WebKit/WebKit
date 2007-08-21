@@ -1,3 +1,14 @@
+2007-08-21  Adam Roben  <aroben@apple.com>
+
+        Switch Windows to using FrameView::layoutIfNeededRecursive
+
+        Reviewed by Darin.
+
+        * WebFrame.cpp: Removed layoutIfNeededRecursive.
+        * WebFrame.h: Ditto.
+        * WebView.cpp:
+        (WebView::updateBackingStore): Call FrameView::layoutIfNeededRecursive.
+
 2007-08-17  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5192578> Inspect Element should not appear in context menu in non-debug mode

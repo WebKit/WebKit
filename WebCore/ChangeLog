@@ -1,3 +1,14 @@
+2007-08-21  Adam Roben  <aroben@apple.com>
+
+        Made FrameView::layoutIfNeededRecursive available to all platforms
+
+        Currently it's only used on Gtk+ and Windows.
+
+        Reviewed by Darin.
+
+        * page/FrameView.cpp: Removed #ifdef.
+        * page/FrameView.h: Ditto.
+
 2007-08-21  Adele Peterson  <adele@apple.com>
 
         Build fix for release build.
