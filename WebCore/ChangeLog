@@ -1,5 +1,18 @@
 2007-08-21  Adam Roben  <aroben@apple.com>
 
+        Fix an ASSERT when using Find in Page
+
+        Reviewed by Darin.
+
+        No test possible.
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::imageFromSelection): Make sure to update layout before
+        painting so we don't hit an ASSERT in painting code (Frame::selectionImage
+        in FrameMac.mm does this as well).
+
+2007-08-21  Adam Roben  <aroben@apple.com>
+
         Made FrameView::layoutIfNeededRecursive available to all platforms
 
         Currently it's only used on Gtk+ and Windows.
