@@ -45,15 +45,13 @@
             <img src="win_watsoninstalled.jpg" alt="Dr Watson was installed box">
         </li>
         <li>
-            <p>Crash information will now be logged to the <tt>drwtsn32.log</tt> and <tt>user.dmp</tt> files in
+            <p>Crash information will now be logged to the <tt>user.dmp</tt> file in
             <tt>C:\Documents and Settings\All Users\Application Data\Microsoft\Dr Watson\</tt>.</p>
 
-            <p><strong>All</strong> crashes you experience on Windows XP are logged to <tt>drwtsn32.log</tt>.  Dr. Watson will also create
-                a <tt>user.dmp</tt> file that contains a dump of the memory WebKit was using when it crashed. This is generally
-                more useful for debugging a crash than the crash log, but be careful as it is overwritten with every crash.</p>
+            <p>Dr. Watson will create a <tt>user.dmp</tt> file that records what WebKit was doing when it crashed.
+                Be careful as it is overwritten with every crash.</p>
 
-            <p>When reporting a WebKit bug, please only upload the relevant WebKit portion of the <tt>drwtsn32.log</tt> file as
-                well as the entire <tt>user.dmp</tt> file if possible.</p>
+            <p>When reporting a WebKit bug, please upload the <tt>user.dmp</tt> file if possible.</p>
         </li>
         <li>
             <p>Running <tt>drwtsn32</tt> without any options or switches will bring up a window that allows you to change various
