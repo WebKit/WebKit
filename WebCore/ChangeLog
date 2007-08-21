@@ -294,7 +294,6 @@
         (WebCore::RenderPartObject::layout):
         Call updateWidget here if m_widget is 0, causing the plug-in to be instantiated.
         
->>>>>>> .r25158
 2007-08-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
