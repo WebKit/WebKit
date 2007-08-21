@@ -1,3 +1,16 @@
+2007-08-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15010
+          <rdar://problem/5423956> REGRESSION (r25000-r25065): Table rendering broken by a recent nightly
+
+        * fast/table/max-width-integer-overflow.html: Added.
+        * platform/mac/fast/table: Added.
+        * platform/mac/fast/table/max-width-integer-overflow-expected.checksum: Added.
+        * platform/mac/fast/table/max-width-integer-overflow-expected.png: Added.
+        * platform/mac/fast/table/max-width-integer-overflow-expected.txt: Added.
+
 2007-08-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

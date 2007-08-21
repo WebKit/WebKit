@@ -1,3 +1,21 @@
+2007-08-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15010
+          <rdar://problem/5423956> REGRESSION (r25000-r25065): Table rendering broken by a recent nightly
+
+        Test: fast/table/max-width-integer-overflow.html
+
+        Avoid integer overflows when dealing with maximum widths by
+        1) using floating point arithmetic when summing or multiplying column max widths
+        2) capping max widths at INT_MAX / 2
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcPrefWidths):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+
 2007-08-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben
