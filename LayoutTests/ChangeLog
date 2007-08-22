@@ -1,3 +1,10 @@
+2007-08-22  Kevin McCullough  <kmccullough@apple.com>
+
+        - Rolling back since I neeed to update some layouttests this change broke.
+
+        * fast/forms/cursor-position-expected.txt:
+        * fast/forms/cursor-position.html:
+
 2007-08-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geof, Adam, Hyatt, Maciej and Oliver.

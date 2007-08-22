@@ -1,3 +1,10 @@
+2007-08-22  Kevin McCullough  <kmccullough@apple.com>
+
+        - Rolling back since I need to update some layouttests this change breaks.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+
 2007-08-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geof, Adam, Hyatt, Maciej and Oliver.
