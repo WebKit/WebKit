@@ -26,12 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef BUILDING_ON_TIGER
-
 #import <AppKit/NSView.h>
 
 @interface CarbonWindowContentView : NSView { }
 
 @end // interface CarbonWindowContentView
-
-#endif

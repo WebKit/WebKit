@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef BUILDING_ON_TIGER
+#ifndef __LP64__
 
 #import "HIViewAdapter.h"
 

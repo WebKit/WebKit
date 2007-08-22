@@ -1,3 +1,22 @@
+2007-08-22  Timothy Hatcher  <timothy@apple.com>
+
+        Rolling out r25102 for <rdar://problem/5410937> until
+        <rdar://problem/5429920> is resolved.
+
+        * Carbon/CarbonUtils.m:
+        (WebInitForCarbon):
+        (PoolCleaner):
+        * Carbon/CarbonWindowAdapter.h:
+        * Carbon/CarbonWindowAdapter.m:
+        * Carbon/CarbonWindowContentView.h:
+        * Carbon/CarbonWindowContentView.m:
+        * Carbon/CarbonWindowFrame.h:
+        * Carbon/CarbonWindowFrame.m:
+        * Carbon/HIViewAdapter.h:
+        * Carbon/HIViewAdapter.m:
+        * Carbon/HIWebView.h:
+        * Carbon/HIWebView.m:
+
 2007-08-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben

@@ -29,50 +29,42 @@
 #ifndef __LP64__
 
 #include "CarbonUtils.h"
-
 #import <WebKitSystemInterface.h>
 
-extern CGImageRef _NSCreateImageRef(unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
+extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 
-static void PoolCleaner(EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData);
+static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData );
 
-static NSAutoreleasePool* sPool;
+static NSAutoreleasePool*	sPool;
 static unsigned numPools;
 static EventLoopRef poolLoop;
 
-#ifdef BUILDING_ON_TIGER
+void                    HIWebViewRegisterClass( void );
 
-void HIWebViewRegisterClass(void);
-
-#endif
-
-void WebInitForCarbon(void)
+void
+WebInitForCarbon()
 {
-    static bool sAppKitLoaded;
+    static bool			sAppKitLoaded;
 
-    if (!sAppKitLoaded) {
-        ProcessSerialNumber process;
+    if ( !sAppKitLoaded )
+    {
+        ProcessSerialNumber    process;
 
         // Force us to register with process server, this ensure that the process
         // "flavour" is correctly established.
-        GetCurrentProcess(&process); 
+        GetCurrentProcess( &process ); 
         NSApplicationLoad();
-
-        sAppKitLoaded = true;
-
+                
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
         numPools = WKGetNSAutoreleasePoolCount();
+        
+        poolLoop = GetCurrentEventLoop ();
 
-        poolLoop = GetCurrentEventLoop();
-
-        InstallEventLoopIdleTimer(GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL);
-
-#ifdef BUILDING_ON_TIGER
-
+        InstallEventLoopIdleTimer( GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL );
+        
+        sAppKitLoaded = true;
+                
         HIWebViewRegisterClass();
-
-#endif
-
     }
 }
 
@@ -83,20 +75,22 @@ void WebInitForCarbon(void)
     techniques available to Carbon apps, MUST create their our pools around
     their nested event loops.
 */
-static void PoolCleaner(EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData)
+static void
+PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData )
 {
-    if (inState == kEventLoopIdleTimerStarted) {
-        CFStringRef mode = CFRunLoopCopyCurrentMode((CFRunLoopRef)GetCFRunLoopFromEventLoop(GetCurrentEventLoop()));
-        EventLoopRef thisLoop = GetCurrentEventLoop();
-        if (CFEqual(mode, kCFRunLoopDefaultMode) && thisLoop == poolLoop) {
-            unsigned currentNumPools = WKGetNSAutoreleasePoolCount() - 1;            
-            if (currentNumPools == numPools) {
+    if ( inState == kEventLoopIdleTimerStarted ) {
+        CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
+        EventLoopRef thisLoop = GetCurrentEventLoop ();
+        if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
+            unsigned currentNumPools = WKGetNSAutoreleasePoolCount()-1;            
+            if (currentNumPools == numPools){
                 [sPool drain];
+                
                 sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
                 numPools = WKGetNSAutoreleasePoolCount();
             }
         }
-        CFRelease(mode);
+        CFRelease( mode );
     }
 }
 

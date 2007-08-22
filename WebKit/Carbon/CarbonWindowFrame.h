@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef BUILDING_ON_TIGER
-
 #import <AppKit/AppKit.h>
 
 @interface CarbonWindowFrame : NSView
@@ -43,5 +41,3 @@
 }
 
 @end // interface NSCarbonWindowFrame
-
-#endif

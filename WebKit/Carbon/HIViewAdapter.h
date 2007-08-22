@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef BUILDING_ON_TIGER
-
 #import <WebKit/WebKit.h>
 #include <HIToolbox/HIView.h>
 
@@ -38,5 +36,3 @@
 + (HIViewRef)getHIViewForNSView:(NSView*)inView;
 
 @end
-
-#endif
