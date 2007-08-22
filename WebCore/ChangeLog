@@ -1,3 +1,13 @@
+2007-08-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof, Adam, Hyatt, Maciej and Oliver.
+
+        - In order to match the behavior of the other major browsers, selection is moved to the end of the text value when a change occurs to the contents of a text area instead of remembering the location of the selection.
+        - <rdar://problem/5423067> gmail is super annoying when trying to add a new name to the TO, CC or BCC fields
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+
 2007-08-21  Adam Roben  <aroben@apple.com>
 
         Build fix for Mac
