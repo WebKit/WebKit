@@ -252,13 +252,13 @@ void HTMLTextAreaElement::setValue(const String& value)
         document()->updateRendering();
     if (renderer())
         renderer()->updateFromElement();
-        
-    // Restore a caret at the starting point of the old selection.
-    // This matches Safari 2.0 behavior.
-    if (document()->focusedNode() == this && cachedSelStart != -1) {
-        ASSERT(cachedSelEnd != -1);
-        setSelectionRange(cachedSelStart, cachedSelStart);
+    
+    // Set the caret to the end of the text value.
+    if (document()->focusedNode() == this) {
+        unsigned endOfString = m_value.length();
+        setSelectionRange(endOfString, endOfString);
     }
+
     setChanged();
 }
 

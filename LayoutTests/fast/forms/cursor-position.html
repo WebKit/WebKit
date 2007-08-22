@@ -12,6 +12,7 @@
                 if (window.layoutTestController) {
                     layoutTestController.dumpAsText();
                 }
+
                 var elt = document.getElementById("text");
                 txt = "this is\ra test\rof cursor";
                 txt2 = "this is\na test\nof cursor!";
@@ -35,8 +36,11 @@
         </script>
     </head>
     <body onload="test();">
-        <p>This test sets a non-standard line endings, sets selection, then sets a standard line ending string, and checks selection.</p>
-        <p>If this test succeeded, you should see 2 lines saying "10, 10" below.</p>
+        <p>This test used to check that the selection start was the same before and after a change to the contents of a textarea.</p>
+        <p>However now, in order to match the behavior of the other major browsers, selection is moved to the end of the text value when a change occurs to the contents of a text area.</p>
+        <p>Because this would invalidate the previous test, and that the previous test now perfectly shows the new behavior, we repurposed it.</p>
+        <br />
+        <p>rdar://problem/5423067 gmail is super annoying when trying to add a new name to the TO, CC or BCC fields</p>
         <hr />
         <form>
             <textarea id="text"></textarea>

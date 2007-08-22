@@ -1,3 +1,12 @@
+2007-08-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele.
+
+        - rdar:5423067 Reapplyingthe change but only when the text area is in focus.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+
 2007-08-21  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5249757> Painting of JPGs in WebKit is too slow.
