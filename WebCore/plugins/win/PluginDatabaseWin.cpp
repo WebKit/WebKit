@@ -119,10 +119,10 @@ Vector<PluginPackageWin*> PluginDatabaseWin::plugins() const
     return result;
 }
 
-static inline void addPluginsFromRegistry(PluginSet& plugins)
+static inline void addPluginsFromRegistry(HKEY rootKey, PluginSet& plugins)
 {
     HKEY key;
-    HRESULT result = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\MozillaPlugins", 0, KEY_ENUMERATE_SUB_KEYS, &key);
+    HRESULT result = RegOpenKeyExW(rootKey, L"Software\\MozillaPlugins", 0, KEY_ENUMERATE_SUB_KEYS, &key);
 
     if (result != ERROR_SUCCESS)
         return;
@@ -208,7 +208,8 @@ PluginSet PluginDatabaseWin::getPluginsInPaths() const
         FindClose(hFind);
     }
 
-    addPluginsFromRegistry(plugins);
+    addPluginsFromRegistry(HKEY_LOCAL_MACHINE, plugins);
+    addPluginsFromRegistry(HKEY_CURRENT_USER, plugins);
 
     // If both the old and new WMP plugin are present in the plugins set, 
     // we remove the old one so we don't end up choosing the old one.

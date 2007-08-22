@@ -1,3 +1,15 @@
+2007-08-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5430584>
+        http://bugs.webkit.org/show_bug.cgi?id=15053        
+        WebKit does not check Windows Registry HKEY_CURRENT_USER for NPAPI plugin locations
+        
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addPluginsFromRegistry):
+        (WebCore::PluginDatabaseWin::getPluginsInPaths):
+
 2007-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adam.
