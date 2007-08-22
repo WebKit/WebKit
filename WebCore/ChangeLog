@@ -1,3 +1,19 @@
+2007-08-21  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5249757> Painting of JPGs in WebKit is too slow.
+
+        Use a new Leopard API for fast tiling of images.  We only use this API
+        when the whole image is being tiled and when the current CGImageRef to tile
+        has a size that matches the size of the whole image.
+
+        We can optimize border-image in the future by adding a cache of the 9
+        sub-images.
+
+        Reviewed by darin
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+
 2007-08-22  Kevin McCullough  <kmccullough@apple.com>
 
         - Rolling back since I need to update some layouttests this change breaks.
