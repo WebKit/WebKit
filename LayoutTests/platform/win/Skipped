@@ -81,6 +81,7 @@ fast/lists/drag-into-marker.html
 fast/lists/w3-list-styles.html
 fast/table/absolute-table-at-bottom.html
 fast/text/font-initial.html
+fast/text/international/bidi-neutral-run.html
 fast/xsl/xslt-text.xml
 svg/W3C-SVG-1.1/animate-elem-03-t.svg
 svg/W3C-SVG-1.1/animate-elem-24-t.svg
@@ -239,6 +240,7 @@ editing/selection/selection-actions.html
 fast/dom/character-index-for-point.html
 fast/forms/attributed-strings.html
 fast/text/attributed-substring-from-range-001.html
+fast/text/attributed-substring-from-range-in-textfield.html
 fast/text/attributed-substring-from-range.html
 fast/text/justified-text-rect.html
 
