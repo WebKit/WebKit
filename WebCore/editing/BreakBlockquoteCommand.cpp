@@ -93,12 +93,15 @@ void BreakBlockquoteCommand::doApply()
         // If a new start node was determined, find a new top block quote.
         if (newStartNode) {
             startNode = newStartNode;
+            topBlockquote = 0;
             for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
                 if (isMailBlockquote(node))
                     topBlockquote = node;
             }
-            if (!topBlockquote || !topBlockquote->parentNode())
+            if (!topBlockquote || !topBlockquote->parentNode()) {
+                setEndingSelection(Selection(VisiblePosition(Position(startNode, 0))));
                 return;
+            }
         }
         
         // Build up list of ancestors in between the start node and the top blockquote.

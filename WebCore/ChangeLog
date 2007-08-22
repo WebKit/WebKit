@@ -1,3 +1,14 @@
+2007-08-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adam.
+        
+        <rdar://problem/5418891> CrashTracer: [USER] 1 crash in Mail at -[WebViewEditor webView:shouldInsertText:replacingDOMRange:givenAction:]
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): We're reusing the topBlockquote
+        variable.  Null it out first.  If there is no new topBlockquote and we don't null
+        it out first, we'll assume that there was a new one and crash.
+
 2007-08-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele.

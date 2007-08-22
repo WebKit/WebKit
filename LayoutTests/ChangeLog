@@ -1,3 +1,15 @@
+2007-08-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5418891> CrashTracer: [USER] 1 crash in Mail at -[WebViewEditor webView:shouldInsertText:replacingDOMRange:givenAction:]
+
+        * editing/inserting/5418891.html: Added.
+        * platform/mac/editing/inserting: Added.
+        * platform/mac/editing/inserting/5418891-expected.checksum: Added.
+        * platform/mac/editing/inserting/5418891-expected.png: Added.
+        * platform/mac/editing/inserting/5418891-expected.txt: Added.
+
 2007-08-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele.
