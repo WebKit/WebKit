@@ -35,7 +35,7 @@ use lib $FindBin::Bin;
 use Getopt::Long;
 use webkitdirs;
 
-my $usage = "Usage: run-testkjs [--count run_count] [--verbose] file1 [file2...]";
+my $usage = "Usage: run-testkjs [--count run_count] [--verbose] shell_file [file2...]";
 
 my $count = 1;
 my $verbose = 0;

@@ -1,3 +1,11 @@
+2007-08-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof.
+
+        - Changing the usage to be more clear.
+
+        * Scripts/run-testkjs:
+
 2007-08-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben
