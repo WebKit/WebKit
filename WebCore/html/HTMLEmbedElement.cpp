@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
+#include "HTMLObjectElement.h"
 #include "HTMLNames.h"
 #include "RenderPartObject.h"
 
@@ -173,6 +174,20 @@ void HTMLEmbedElement::insertedIntoDocument()
         doc->addNamedItem(oldNameAttr);
     }
 
+    String width = getAttribute(widthAttr);
+    String height = getAttribute(heightAttr);
+    if (!width.isEmpty() || !height.isEmpty()) {
+        Node* n = parent();
+        while (n && !n->hasTagName(objectTag))
+            n = n->parent();
+        if (n) {
+            if (!width.isEmpty())
+                static_cast<HTMLObjectElement*>(n)->setAttribute(widthAttr, width);
+            if (!height.isEmpty())
+                static_cast<HTMLObjectElement*>(n)->setAttribute(heightAttr, height);
+        }
+    }
+
     HTMLPlugInElement::insertedIntoDocument();
 }
 
@@ -184,6 +199,19 @@ void HTMLEmbedElement::removedFromDocument()
     }
 
     HTMLPlugInElement::removedFromDocument();
+}
+
+void HTMLEmbedElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    HTMLPlugInElement::attributeChanged(attr, preserveDecls);
+
+    if ((attr->name() == widthAttr || attr->name() == heightAttr) && !attr->isEmpty()) {
+        Node* n = parent();
+        while (n && !n->hasTagName(objectTag))
+            n = n->parent();
+        if (n)
+            static_cast<HTMLObjectElement*>(n)->setAttribute(attr->name(), attr->value());
+    }
 }
 
 bool HTMLEmbedElement::isURLAttribute(Attribute *attr) const

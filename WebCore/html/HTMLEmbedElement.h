@@ -52,6 +52,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
     
     virtual bool isURLAttribute(Attribute*) const;
 

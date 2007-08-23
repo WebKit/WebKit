@@ -131,12 +131,6 @@ void RenderPartObject::updateWidget(bool onlyCreateNonPlugins)
       HTMLElement *embedOrObject;
       if (embed) {
           embedOrObject = (HTMLElement *)embed;
-          String attribute = embedOrObject->getAttribute(widthAttr);
-          if (!attribute.isEmpty())
-              o->setAttribute(widthAttr, attribute);
-          attribute = embedOrObject->getAttribute(heightAttr);
-          if (!attribute.isEmpty())
-              o->setAttribute(heightAttr, attribute);
           url = embed->url;
           serviceType = embed->m_serviceType;
       } else

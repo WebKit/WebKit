@@ -1,3 +1,24 @@
+2007-08-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14899
+          !d->m_view->needsLayout() in Frame::paint() (Causes assert)
+
+        WebKit copies the width and height attributes of an <embed> to its
+        nearest <object> ancestor. This used to be done in updateWidget(), but
+        that could lead to the document being dirty right after layout and
+        before painting. The patch moves the copying of the attributes to when
+        the <embed> is inserted into the document or its attributes change.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::attributeChanged):
+        * html/HTMLEmbedElement.h:
+        * manual-tests/bugzilla-14899.html: Added.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2007-08-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Oliver.
