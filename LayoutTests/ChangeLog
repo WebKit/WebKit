@@ -1,3 +1,15 @@
+2007-08-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele.
+        
+        <rdar://problem/5156801> REGRESSION: Crash at DeleteSelectionCommand::doApply() when deleting table content
+
+        * editing/deleting/5156801-2.html: Added.
+        * platform/mac/editing/deleting: Added.
+        * platform/mac/editing/deleting/5156801-2-expected.checksum: Added.
+        * platform/mac/editing/deleting/5156801-2-expected.png: Added.
+        * platform/mac/editing/deleting/5156801-2-expected.txt: Added.
+
 2007-08-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adam.

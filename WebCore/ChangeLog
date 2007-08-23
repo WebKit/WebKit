@@ -1,3 +1,21 @@
+2007-08-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/5156801> REGRESSION: Crash at DeleteSelectionCommand::doApply() when deleting table content
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Use a RefPtr
+        for node.  If the node to be removed contains the selection, and if
+        the next node to be removed (nextNode) is inside the deletion UI,
+        removing node will remove nextNode from the document.  nextNode is
+        a RefPtr, but node isn't and when nextNode falls out of scope the node
+        that node points to will be destroyed and we'll end up using a stale pointer.
+        Long term we should probably just disable the deletion UI before editing 
+        operations because the undo of the removal of node in the situation 
+        described above relies on the presence of the deletion UI, but it isn't 
+        present because its added and removed in a non-undoable way.
+
 2007-08-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

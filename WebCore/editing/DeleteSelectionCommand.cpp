@@ -405,12 +405,12 @@ void DeleteSelectionCommand::handleGeneralDelete()
     }
     else {
         // The selection to delete spans more than one node.
-        Node *node = startNode;
+        RefPtr<Node> node = startNode;
         
         if (startOffset > 0) {
             if (startNode->isTextNode()) {
                 // in a text node that needs to be trimmed
-                Text *text = static_cast<Text *>(node);
+                Text *text = static_cast<Text *>(node.get());
                 deleteTextFromNode(text, startOffset, text->length() - startOffset);
                 node = node->traverseNextNode();
             } else {
@@ -420,10 +420,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
         
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.node()) {
-            if (Range::compareBoundaryPoints(Position(node, 0), m_downstreamEnd) >= 0) {
+            if (Range::compareBoundaryPoints(Position(node.get(), 0), m_downstreamEnd) >= 0) {
                 // traverseNextSibling just blew past the end position, so stop deleting
                 node = 0;
-            } else if (!m_downstreamEnd.node()->isDescendantOf(node)) {
+            } else if (!m_downstreamEnd.node()->isDescendantOf(node.get())) {
                 RefPtr<Node> nextNode = node->traverseNextSibling();
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
@@ -431,12 +431,12 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     ASSERT(node->nodeIndex() < (unsigned)m_downstreamEnd.offset());
                     m_downstreamEnd = Position(m_downstreamEnd.node(), m_downstreamEnd.offset() - 1);
                 }
-                removeNode(node);
+                removeNode(node.get());
                 node = nextNode.get();
             } else {
                 Node* n = node->lastDescendant();
                 if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= n->caretMaxOffset()) {
-                    removeNode(node);
+                    removeNode(node.get());
                     node = 0;
                 } else
                     node = node->traverseNextNode();
