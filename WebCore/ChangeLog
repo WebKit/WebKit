@@ -1,3 +1,23 @@
+2007-08-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Steve.
+
+        If necessary, re-set the window proc after each call to NPP_SetWindow. This is to ensure that
+        our window proc is always run even if a plug-in subclasses the window and replaces the window proc.
+        
+        Also, make sure that the default window proc is of type ASCII so we can eliminate the 
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::registerPluginView):
+        (WebCore::PluginViewWndProc):
+        (WebCore::PluginViewWin::setNPWindowRect):
+        (WebCore::PluginViewWin::stop):
+        (WebCore::PluginViewWin::determineQuirks):
+        (WebCore::PluginViewWin::PluginViewWin):
+        (WebCore::PluginViewWin::init):
+        * plugins/win/PluginViewWin.h:
+        (WebCore::):
+        (WebCore::PluginViewWin::pluginWndProc):
+
 2007-08-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele.

@@ -119,7 +119,7 @@ static bool registerPluginView()
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_DBLCLKS;
-    wcex.lpfnWndProc    = PluginViewWndProc;
+    wcex.lpfnWndProc    = DefWindowProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = Page::instanceHandle();
@@ -137,10 +137,8 @@ static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam
 {
     PluginViewWin* pluginView = reinterpret_cast<PluginViewWin*>(GetProp(hWnd, kWebPluginViewProperty));
 
-    if (pluginView && (pluginView->quirks() & PluginQuirkWantsAsciiWindowProc))
-        return DefWindowProcA(hWnd, message, wParam, lParam);
-    else 
-        return DefWindowProcW(hWnd, message, wParam, lParam);
+    // Call the plug-in's window proc.
+    return ::CallWindowProc(pluginView->pluginWndProc(), hWnd, message, wParam, lParam);
 }
 
 void PluginViewWin::updateWindow() const
@@ -457,6 +455,15 @@ void PluginViewWin::setNPWindowRect(const IntRect& rect)
     if (m_plugin->pluginFuncs()->setwindow) {
         KJS::JSLock::DropAllLocks dropAllLocks;
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
+
+        if (!m_isWindowed)
+            return;
+
+        ASSERT(m_window);
+
+        WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(m_window, GWLP_WNDPROC);
+        if (currentWndProc != PluginViewWndProc)
+                m_pluginWndProc = (WNDPROC)SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)PluginViewWndProc);
     }
 }
 
@@ -507,6 +514,10 @@ void PluginViewWin::stop()
     ASSERT(m_streams.isEmpty());
 
     m_isStarted = false;
+
+    // Unsubclass the window
+    if (m_isWindowed)
+        SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)m_pluginWndProc);
 
     KJS::JSLock::DropAllLocks;
 
@@ -1184,16 +1195,6 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     // call SetWindow when the plugin view has a correct size
     if (mimeType == "video/divx")
         m_quirks |= PluginQuirkDeferFirstSetWindowCall;
-
-    // Shockwave calls SetWindowLongA to set a new WNDPROC on its plugin window. The value returned from SetWindowLongA is the old WNDPROC.
-    // If the previous WNDPROC was an Unicode WNDPROC, the address of the WNDPROC will not be returned. Instead, a special
-    // value that indicates that the messages coming to the WNDPROC need to be translated to Unicode. If CallWndProc is used to 
-    // call the WNDPROC, it knows when the value is a real function pointer or not. If it's not, the message should be translated.
-    // The Shockwave plugin however blindly treats the WNDPROC as a function pointer and tries to call it. Because of this, we set an ASCII
-    // WNDPROC on the plugin window so that the value returned to Shockwave will be a real function pointer.
-    // For more info on this, see http://blogs.msdn.com/oldnewthing/archive/2003/12/01/55900.aspx
-    if (mimeType == "application/x-director")
-        m_quirks |= PluginQuirkWantsAsciiWindowProc;
 }
 
 void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues)
@@ -1232,6 +1233,7 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Eleme
     , m_paramNames(0)
     , m_paramValues(0)
     , m_window(0)
+    , m_pluginWndProc(0)
     , m_quirks(0)
     , m_isWindowed(true)
     , m_isTransparent(false)
@@ -1286,9 +1288,10 @@ void PluginViewWin::init()
 
         m_window = CreateWindowEx(0, kWebPluginViewWindowClassName, 0, flags,
                                   0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
-
-        if (m_quirks & PluginQuirkWantsAsciiWindowProc)
-            ::SetWindowLongPtrA(m_window, GWL_WNDPROC, (LONG)PluginViewWndProc);
+        
+        // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
+        // the Shockwave Director plug-in.
+        ::SetWindowLongPtrA(m_window, GWL_WNDPROC, (LONG)DefWindowProcA);
 
         SetProp(m_window, kWebPluginViewProperty, this);
 

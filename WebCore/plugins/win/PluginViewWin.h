@@ -63,8 +63,7 @@ namespace WebCore {
         PluginQuirkWantsMozillaUserAgent = 1 << 0,
         PluginQuirkDeferFirstSetWindowCall = 1 << 1,
         PluginQuirkThrottleInvalidate = 1 << 2, 
-        PluginQuirkWantsAsciiWindowProc = 1 << 3,
-        PluginQuirkRemoveWindowlessVideoParam = 1 << 4,
+        PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
     };
 
     enum PluginStatus {
@@ -126,6 +125,7 @@ namespace WebCore {
         virtual void setParent(ScrollView*);
 
         int quirks() const { return m_quirks; }
+        WNDPROC pluginWndProc() { return m_pluginWndProc; }
     private:
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         void init();
@@ -178,6 +178,7 @@ namespace WebCore {
         bool m_isVisible;
         bool m_haveInitialized;
 
+        WNDPROC m_pluginWndProc;
         HWND m_window; // for windowed plug-ins
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
