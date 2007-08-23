@@ -466,7 +466,7 @@ void dump()
     COMPtr<IWebDataSource> dataSource;
     if (SUCCEEDED(frame->dataSource(&dataSource))) {
         COMPtr<IWebURLResponse> response;
-        if (SUCCEEDED(dataSource->response(&response))) {
+        if (SUCCEEDED(dataSource->response(&response)) && response) {
             BSTR mimeType;
             if (SUCCEEDED(response->MIMEType(&mimeType)))
                 dumpAsText |= !_tcscmp(mimeType, TEXT("text/plain"));

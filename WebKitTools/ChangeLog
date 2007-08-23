@@ -1,3 +1,13 @@
+2007-08-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by John and Adam.
+        
+        WebDataSource::response can legitimately have a null response, so we
+        must check that case.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (dump):
+
 2007-08-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geof.
