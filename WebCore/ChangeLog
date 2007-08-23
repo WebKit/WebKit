@@ -4109,7 +4109,10 @@
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11756
+          REGRESSION: link targeting a frame in another window does not work
           <rdar://problem/5286420>
+
+        Test: http/tests/navigation/target-frame-from-window.html
 
         Fix a typo error to really compare the present domain to the domain of the parent of the targeted frame.
 

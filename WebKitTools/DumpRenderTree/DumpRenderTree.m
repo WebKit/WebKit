@@ -378,7 +378,7 @@ static void makeLargeMallocFailSilently(void)
 WebView *createWebView()
 {
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
-    WebView *webView = [[WebView alloc] initWithFrame:rect];
+    WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
         
     [webView setUIDelegate:uiDelegate];
     [webView setFrameLoadDelegate:frameLoadDelegate];

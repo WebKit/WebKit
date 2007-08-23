@@ -774,7 +774,10 @@ int main(int argc, char* argv[])
 
     RECT clientRect;
     clientRect.bottom = clientRect.left = clientRect.top = clientRect.right = 0;
-    if (FAILED(webView->initWithFrame(clientRect, 0, 0)))
+    BSTR groupName = SysAllocString(L"org.webkit.DumpRenderTree");
+    bool failed = FAILED(webView->initWithFrame(clientRect, 0, groupName));
+    SysFreeString(groupName);
+    if (failed)
         return -1;
 
     COMPtr<IWebViewPrivate> viewPrivate;
@@ -786,7 +789,7 @@ int main(int argc, char* argv[])
     BSTR pluginPath = SysAllocStringLen(0, exePath.length() + _tcslen(TestPluginDir));
     _tcscpy(pluginPath, exePath.c_str());
     _tcscat(pluginPath, TestPluginDir);
-    bool failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
+    failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
     SysFreeString(pluginPath);
     if (failed)
         return -1;

@@ -1,3 +1,20 @@
+2007-08-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and Adam.
+
+        - DumpRenderTree changes to allow testing for
+          http://bugs.webkit.org/show_bug.cgi?id=11756
+          REGRESSION: link targeting a frame in another window does not work
+          <rdar://problem/5286420>
+
+        Use a frame group name for all WebViews created by DumpRenderTree to
+        allow testing of cross-page frame lookup.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (createWebView): Pass group name to -[WebView initWithFrame:frameName:groupName:].
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (main): Pass group name to WebView::initWithFrame(RECT, BSTR, BSTR).
+
 2007-08-23  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

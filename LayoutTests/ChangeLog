@@ -1,3 +1,18 @@
+2007-08-23  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11756
+          REGRESSION: link targeting a frame in another window does not work
+          <rdar://problem/5286420>
+
+        * http/tests/navigation/resources/target-frame-from-window-end.html: Added.
+        * http/tests/navigation/resources/target-frame-from-window-popup.html: Added.
+        * http/tests/navigation/resources/target-frame-from-window-start.html: Added.
+        * http/tests/navigation/target-frame-from-window-expected.txt: Added.
+        * http/tests/navigation/target-frame-from-window.html: Added.
+        * platform/win/Skipped: Added http/tests/navigation/target-frame-from-window.html to skip list.
+
 2007-08-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele.

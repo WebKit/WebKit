@@ -269,6 +269,7 @@ editing/pasteboard/drag-drop-modifies-page.html
 # DumpRenderTree doesn't support multiple windows <rdar://problem/5208288>
 fast/dom/open-and-close-by-DOM.html
 fast/history/history_reload.html
+http/tests/navigation/target-frame-from-window.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html
