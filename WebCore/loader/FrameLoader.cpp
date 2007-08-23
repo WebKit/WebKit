@@ -1537,7 +1537,6 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
         }
     }
 
-    checkCallImplicitClose();
     return widget != 0;
 }
 

@@ -1,5 +1,25 @@
 2007-08-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin and Oliver.
+
+        <rdar://problem/5422410>
+        http://bugs.webkit.org/show_bug.cgi?id=15019
+        REGRESSION (r25124-r25140): New posts and hot topics won't show at mobile01.com
+
+        Remove the call to checkCallImplicitClose(). Calling it in loadPlugin is bad for two reasons:
+        
+        1. It could cause onload to be dispatched even when the page has subresources that are still
+        loading, such as images.
+        
+        2. Now that loadPlugin is called during layout, it could cause onload to be dispatched during
+        layout, which can execute javascript and do pretty much anything while the render tree is in an
+        inconsistent state.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadPlugin):
+
+2007-08-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/5430584>
