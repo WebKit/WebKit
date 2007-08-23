@@ -1,3 +1,11 @@
+2007-08-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        - window-resize.html now passes.
+
+        * platform/win/Skipped:
+
 2007-08-23  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

@@ -497,9 +497,6 @@ editing/selection/5354455-2.html
 # eventSender.textZoomIn is unimplemented <rdar://problem/5382277>
 fast/css/ignore-text-zoom.html
 
-# <rdar://problem/5361188>
-fast/dom/Window/window-resize.html
-
 # layoutTestController.setCustomPolicyDelegate is unimplemented <rdar://problem/5382546>
 http/tests/security/feed-urls-from-remote.html
 
