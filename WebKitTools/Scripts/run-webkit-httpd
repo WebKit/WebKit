@@ -118,7 +118,7 @@ my @args = (
 );
 
 # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
-push(@args, "-c", "SSLCertificateFile $sslCertificate") unless isCygwin();
+push(@args, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
 
 system($httpdPath, @args);
 

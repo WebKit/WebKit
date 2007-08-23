@@ -1,3 +1,12 @@
+2007-08-23  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        Quote the $sslCertificate path in case it contains a space.
+
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+
 2007-08-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by John and Adam.
@@ -65,7 +74,6 @@
         (sub isAddedStatus): Ditto.
         (sub testListForChangeLog): Added.
 
->>>>>>> .r25168
 2007-08-19  Oleg Sukhodolsky  <son.two@gmail.com>
 
         Reviewed by Mark.
