@@ -125,6 +125,7 @@ WebView::WebView()
 , m_mainFrame(0)
 , m_page(0)
 , m_backingStoreBitmap(0)
+, m_hasCustomDropTarget(false)
 , m_backingStoreDirtyRegion(0)
 , m_useBackForwardList(true)
 , m_userAgentOverridden(false)
@@ -3375,6 +3376,26 @@ HRESULT STDMETHODCALLTYPE WebView::onNotify(
 }
 
 // IWebViewPrivate ------------------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE WebView::setCustomDropTarget(
+    /* [in] */ IDropTarget* dt)
+{
+    ASSERT(::IsWindow(m_viewWindow));
+    if (!dt)
+        return E_POINTER;
+    m_hasCustomDropTarget = true;
+    revokeDragDrop();
+    return ::RegisterDragDrop(m_viewWindow,dt);
+}
+
+HRESULT STDMETHODCALLTYPE WebView::removeCustomDropTarget()
+{
+    if (!m_hasCustomDropTarget)
+        return S_OK;
+    m_hasCustomDropTarget = false;
+    revokeDragDrop();
+    return registerDragDrop();
+}
 
 HRESULT STDMETHODCALLTYPE WebView::setInViewSourceMode( 
         /* [in] */ BOOL flag)

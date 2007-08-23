@@ -1,3 +1,20 @@
+2007-08-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
+        Refactoring of <radr://problem/5220598> Dragging URL out and back
+        inserts a second copy of the URL
+
+        * Interfaces/IWebViewPrivate.idl: Added setCustomDropTarget and
+        removeCustomDropTarget
+        * WebView.cpp: 
+        (WebView::WebView): Initialize m_hasCustomDropTarget
+        (WebView::setCustomDropTarget): Revoke any existing drop target and set
+        the incoming drop target.
+        (WebView::removeCustomDropTarget): Revoke any existing drop target and
+        set the default drop target.
+        * WebView.h:
+
 2007-08-21  Ada Chan  <adachan@apple.com>
 
         Fix <rdar://problem/5416630> Accelerator to open link in window in background opens window in foreground instead

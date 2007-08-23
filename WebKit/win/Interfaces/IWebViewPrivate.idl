@@ -112,4 +112,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT addAdditionalPluginPath([in] BSTR path);
 
     HRESULT loadBackForwardListFromOtherView([in] IWebView* otherView);
+
+    HRESULT setCustomDropTarget([in] IDropTarget* dt);
+    HRESULT removeCustomDropTarget();
 }
