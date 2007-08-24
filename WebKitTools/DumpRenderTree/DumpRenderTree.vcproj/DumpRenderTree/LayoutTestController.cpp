@@ -233,7 +233,7 @@ static JSValueRef queueLoadCallback(JSContextRef context, JSObjectRef function, 
         return undefined;
 
     COMPtr<IWebURLResponse> response;
-    if (FAILED(dataSource->response(&response)))
+    if (FAILED(dataSource->response(&response)) || !response)
         return undefined;
 
     BSTR responseURLBSTR;

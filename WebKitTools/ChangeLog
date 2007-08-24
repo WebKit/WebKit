@@ -1,3 +1,13 @@
+2007-08-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by John H.
+
+        WebDataSource::response can legitimately have a null response, so we
+        must check that case.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.cpp:
+        (queueLoadCallback):
+
 2007-08-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin and Adam.
