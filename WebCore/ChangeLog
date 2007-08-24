@@ -1,3 +1,16 @@
+2007-08-24  George Wright  <george.wright@collabora.co.uk>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15071
+        [cairo] SVG skews are incorrect
+
+        Fix Cairo implementation of AffineTransform::shear so that shearing is
+        done in the correct direction.
+
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        (WebCore::AffineTransform::shear):
+
 2007-08-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Steve.

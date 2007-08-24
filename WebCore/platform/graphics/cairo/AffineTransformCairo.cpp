@@ -221,7 +221,7 @@ AffineTransform &AffineTransform::translate(double tx, double ty)
 AffineTransform &AffineTransform::shear(double sx, double sy)
 {
     cairo_matrix_t shear;
-    cairo_matrix_init(&shear, 1, sx, sy, 1, 0, 0);
+    cairo_matrix_init(&shear, 1, sy, sx, 1, 0, 0);
 
     cairo_matrix_t result;
     cairo_matrix_multiply(&result, &shear, &m_transform);
