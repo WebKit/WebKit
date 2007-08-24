@@ -1,3 +1,29 @@
+2007-08-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5410937> HIWebView in SimpleCarbonWeb doesn't seem to be getting adequate invalidation when window is resized
+
+        The Carbon HIWebView was relying on layout happening when displayIfNeededInRect: was called on the WebView.
+        This would happen on Tiger because _recursiveDisplayRectIfNeededIgnoringOpacity: would always do a layout if needed.
+        Doing a layout in _recursiveDisplayRectIfNeededIgnoringOpacity was removed in Leopard in favor of viewWillDraw, and
+        the fact that adding new dirty rects inside _recursiveDisplayRectIfNeededIgnoringOpacity on Leopard will not
+        cause a drawRect in the same display loop.
+
+        So any client on Leopard calling displayIfNeeded* on the WebView would get a layout and any new dirty rects. So
+        _web_layoutIfNeededRecursive needs to be called on the main frame's WebHTMLView to make sure we layout and
+        display anything that is really needed.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _layoutIfNeeded]):
+        (-[WebHTMLView _web_layoutIfNeededRecursive]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebView.mm:
+        (-[WebView displayIfNeeded]): Call _web_layoutIfNeededRecursive on the main WebHTMLView.
+        (-[WebView displayIfNeededIgnoringOpacity]): Ditto.
+        (-[WebView displayIfNeededInRect:]): Ditto. 
+        (-[WebView displayIfNeededInRectIgnoringOpacity:]): Ditto.
+
 2007-08-22  Timothy Hatcher  <timothy@apple.com>
 
         Rolling out r25102 for <rdar://problem/5410937> until

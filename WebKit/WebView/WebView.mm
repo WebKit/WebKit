@@ -2005,6 +2005,38 @@ NS_ENDHANDLER
     [self _close];
 }
 
+- (void)displayIfNeeded
+{
+    NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _web_layoutIfNeededRecursive];
+    [super displayIfNeeded];
+}
+
+- (void)displayIfNeededIgnoringOpacity
+{
+    NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _web_layoutIfNeededRecursive];
+    [super displayIfNeededIgnoringOpacity];
+}
+
+- (void)displayIfNeededInRect:(NSRect) rect
+{
+    NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _web_layoutIfNeededRecursive];
+    [super displayIfNeededInRect:rect];
+}
+
+- (void)displayIfNeededInRectIgnoringOpacity:(NSRect) rect
+{
+    NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _web_layoutIfNeededRecursive];
+    [super displayIfNeededInRectIgnoringOpacity:rect];
+}
+
 - (void)setShouldCloseWithWindow:(BOOL)close
 {
     _private->shouldCloseWithWindow = close;

@@ -257,7 +257,6 @@ static CachedResourceClient* promisedDataClient()
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_setPrintingModeRecursiveAndAdjustViewSize;
 - (void)_web_clearPrintingModeRecursive;
-- (void)_web_layoutIfNeededRecursive;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -828,39 +827,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
         [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
-
-    [descendantWebHTMLViews release];
-
-#ifndef NDEBUG
-    _private->enumeratingSubviews = NO;
-#endif
-}
-
-- (void)_layoutIfNeeded
-{
-    ASSERT(!_private->subviewsSetAside);
-
-    if ([[self _bridge] needsLayout])
-        _private->needsLayout = YES;
-    if (_private->needsToApplyStyles || _private->needsLayout)
-        [self layout];
-}
-
-- (void)_web_layoutIfNeededRecursive
-{
-    [self _layoutIfNeeded];
-
-#ifndef NDEBUG
-    _private->enumeratingSubviews = YES;
-#endif
-
-    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
-
-    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
-
-    unsigned count = [descendantWebHTMLViews count];
-    for (unsigned i = 0; i < count; ++i)
-        [[descendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
 
     [descendantWebHTMLViews release];
 
@@ -5243,6 +5209,39 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 }
 
 #undef COMMAND_PROLOGUE
+
+- (void)_layoutIfNeeded
+{
+    ASSERT(!_private->subviewsSetAside);
+
+    if ([[self _bridge] needsLayout])
+        _private->needsLayout = YES;
+    if (_private->needsToApplyStyles || _private->needsLayout)
+        [self layout];
+}
+
+- (void)_web_layoutIfNeededRecursive
+{
+    [self _layoutIfNeeded];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = YES;
+#endif
+
+    NSMutableArray *descendantWebHTMLViews = [[NSMutableArray alloc] init];
+
+    [self _web_addDescendantWebHTMLViewsToArray:descendantWebHTMLViews];
+
+    unsigned count = [descendantWebHTMLViews count];
+    for (unsigned i = 0; i < count; ++i)
+        [[descendantWebHTMLViews objectAtIndex:i] _layoutIfNeeded];
+
+    [descendantWebHTMLViews release];
+
+#ifndef NDEBUG
+    _private->enumeratingSubviews = NO;
+#endif
+}
 
 @end
 
