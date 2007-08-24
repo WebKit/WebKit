@@ -1,3 +1,14 @@
+2007-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        Part of <rdar://problem/5433236> Print preview of empty txt file crashes
+        Safari
+
+        * WebFrame.cpp:
+        (WebFrame::computePageRects): Pass m_pageRects by reference into 
+        computePageRectsForFrame
+
 2007-08-24  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
