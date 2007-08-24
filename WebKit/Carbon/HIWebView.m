@@ -196,10 +196,10 @@ static void				StopUpdateObserver( HIWebView* view );
 
 static inline void HIRectToQDRect( const HIRect* inRect, Rect* outRect )
 {
-    outRect->top = CGRectGetMinY( *inRect );
-    outRect->left = CGRectGetMinX( *inRect );
-    outRect->bottom = CGRectGetMaxY( *inRect );
-    outRect->right = CGRectGetMaxX( *inRect );
+    outRect->top = (SInt16)CGRectGetMinY( *inRect );
+    outRect->left = (SInt16)CGRectGetMinX( *inRect );
+    outRect->bottom = (SInt16)CGRectGetMaxY( *inRect );
+    outRect->right = (SInt16)CGRectGetMaxX( *inRect );
 }
 
 static Class webViewClass;
@@ -358,7 +358,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 	GetRegionBounds( limitRgn, &drawRect );
 
     if ( !inView->fIsComposited )
-        OffsetRect( &drawRect, -bounds.origin.x, -bounds.origin.y );
+        OffsetRect( &drawRect, (SInt16)-bounds.origin.x, (SInt16)-bounds.origin.y );
     
 	hiRect.origin.x = drawRect.left;
 	hiRect.origin.y = bounds.size.height - drawRect.bottom; // flip y
@@ -454,8 +454,8 @@ GetRegion(
 
 			temp.top = (SInt16)bounds.origin.y;
 			temp.left = (SInt16)bounds.origin.x;
-			temp.bottom = CGRectGetMaxY( bounds );
-			temp.right = CGRectGetMaxX( bounds );
+			temp.bottom = (SInt16)CGRectGetMaxY( bounds );
+			temp.right = (SInt16)CGRectGetMaxX( bounds );
 
 			RectRgn( outRgn, &temp );
 			err = noErr;
