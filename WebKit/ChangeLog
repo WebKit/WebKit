@@ -1,3 +1,19 @@
+2007-08-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5410937> HIWebView in SimpleCarbonWeb doesn't seem to be getting adequate invalidation when window is resized
+
+        This is a more localized fix for yesterday's change. Now explicitly call _web_layoutIfNeededRecursive inside the
+        HIWebView Draw() function. Adds a FIXME to explain that we need to do layout before Carbon has decided what regions to draw.
+        Doing layout in Draw() will potentially cause drawing to happen in two passes, but this has always been a problem in Carbon.
+
+        * Carbon/HIWebView.m:
+        (Draw): Call _web_layoutIfNeededRecursive on the main WebHTMLView.
+        (SetFocusPart): Fix to work in ObjC++ (now that HIWebView.m is treated as a ObjC++ file.)
+        * WebView/WebView.mm: Removes the 4 displayIfNeeded methods from yesterday's change.
+        * WebKit.xcodeproj/project.pbxproj: Force the file type of HIWebView.m to ObjC++ so WebHTMLViewInternal.h can be included.
+
 2007-08-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.

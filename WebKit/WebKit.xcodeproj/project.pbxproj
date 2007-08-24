@@ -589,7 +589,7 @@
 		F7EBEE9A03F9DBA103CA0DE6 /* HIViewAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HIViewAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = HIViewAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HIWebView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEEAB03F9DBA103CA0DE6 /* HIWebView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = HIWebView.m; sourceTree = "<group>"; usesTabs = 0; };
+		F7EBEEAB03F9DBA103CA0DE6 /* HIWebView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = HIWebView.m; sourceTree = "<group>"; usesTabs = 0; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAuthenticationPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 /* End PBXFileReference section */
