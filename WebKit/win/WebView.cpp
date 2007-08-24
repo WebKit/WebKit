@@ -942,6 +942,9 @@ static const KeyEntry keyEntries[] = {
     { 'C',       CtrlKey,            "Copy"                                        },
     { 'V',       CtrlKey,            "Paste"                                       },
     { 'X',       CtrlKey,            "Cut"                                         },
+    { 'A',       CtrlKey,            "SelectAll"                                   },
+    { 'Z',       CtrlKey,            "Undo"                                        },
+    { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
 };
 
 const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
