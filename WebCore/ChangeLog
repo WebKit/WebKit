@@ -1,3 +1,22 @@
+2007-08-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver
+
+        Fix <rdar://problem/5393758>
+        Crash in WebCore::FontData::platformInit
+        
+        Null check glyph page. 
+        
+        If font has somehow failed to initialize it is possible to have null glyph page. Based on
+        crash dumps this seems to occasionally happen when running Mail under guard malloc. 
+        
+        No test case, I don't know how to get to this state.
+
+        * platform/FontData.cpp:
+        (WebCore::FontData::FontData):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+
 2007-08-24  George Wright  <george.wright@collabora.co.uk>
 
         Reviewed by Oliver.

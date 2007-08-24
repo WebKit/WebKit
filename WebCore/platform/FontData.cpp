@@ -41,10 +41,21 @@ FontData::FontData(const FontPlatformData& f)
 {    
     platformInit();
     
+    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
+    if (!glyphPageZero) {
+        LOG_ERROR("Failed to get glyph page zero.");
+        m_spaceGlyph = 0;
+        m_spaceWidth = 0;
+        m_adjustedSpaceWidth = 0;
+        determinePitch();
+        m_missingGlyphData.fontData = this;
+        m_missingGlyphData.glyph = 0;
+        return;
+    }
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width.  Otherwise we round.
-    m_spaceGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter(' ').glyph;
+    m_spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
     float width = widthForGlyph(m_spaceGlyph);
     m_spaceWidth = width;
     determinePitch();
@@ -55,7 +66,7 @@ FontData::FontData(const FontPlatformData& f)
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178>
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph.
-    Glyph zeroWidthSpaceGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter(0).glyph;
+    Glyph zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
     if (zeroWidthSpaceGlyph) {
         if (zeroWidthSpaceGlyph != m_spaceGlyph)
             m_glyphToWidthMap.setWidthForGlyph(zeroWidthSpaceGlyph, 0);
