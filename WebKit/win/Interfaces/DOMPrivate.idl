@@ -58,10 +58,10 @@ import "DOMCore.idl";
     uuid(7FF28EC8-6DA1-498d-9A43-7E67C2D3128F),
     pointer_default(unique)
 ]
-interface IDOMElementPrivate : IUnknown
+interface IDeprecatedDOMElementPrivate : IUnknown
 {
     [local] HRESULT coreElement(void** element);
-    HRESULT isEqual([in] IDOMElement* other, [out, retval] BOOL* result);
+    HRESULT isEqual([in] IDeprecatedDOMElement* other, [out, retval] BOOL* result);
     HRESULT isFocused([out, retval] BOOL* result);
     HRESULT innerText([out, retval] BSTR* result);
 }

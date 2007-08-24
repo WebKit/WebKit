@@ -2676,7 +2676,7 @@ HRESULT STDMETHODCALLTYPE WebView::mainFrameURL(
 }
     
 HRESULT STDMETHODCALLTYPE WebView::mainFrameDocument( 
-        /* [retval][out] */ IDOMDocument** document)
+        /* [retval][out] */ IDeprecatedDOMDocument** document)
 {
     if (document)
         *document = 0;
@@ -2852,9 +2852,9 @@ HRESULT STDMETHODCALLTYPE WebView::toggleGrammarChecking(
 // IWebViewCSS -----------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebView::computedStyleForElement( 
-        /* [in] */ IDOMElement* /*element*/,
+        /* [in] */ IDeprecatedDOMElement* /*element*/,
         /* [in] */ BSTR /*pseudoElement*/,
-        /* [retval][out] */ IDOMCSSStyleDeclaration** /*style*/)
+        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration** /*style*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -2864,14 +2864,14 @@ HRESULT STDMETHODCALLTYPE WebView::computedStyleForElement(
 
 HRESULT STDMETHODCALLTYPE WebView::editableDOMRangeForPoint( 
         /* [in] */ LPPOINT /*point*/,
-        /* [retval][out] */ IDOMRange** /*range*/)
+        /* [retval][out] */ IDeprecatedDOMRange** /*range*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::setSelectedDOMRange( 
-        /* [in] */ IDOMRange* /*range*/,
+        /* [in] */ IDeprecatedDOMRange* /*range*/,
         /* [in] */ WebSelectionAffinity /*affinity*/)
 {
     ASSERT_NOT_REACHED();
@@ -2879,7 +2879,7 @@ HRESULT STDMETHODCALLTYPE WebView::setSelectedDOMRange(
 }
     
 HRESULT STDMETHODCALLTYPE WebView::selectedDOMRange( 
-        /* [retval][out] */ IDOMRange** /*range*/)
+        /* [retval][out] */ IDeprecatedDOMRange** /*range*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -2907,14 +2907,14 @@ HRESULT STDMETHODCALLTYPE WebView::isEditable(
 }
     
 HRESULT STDMETHODCALLTYPE WebView::setTypingStyle( 
-        /* [in] */ IDOMCSSStyleDeclaration* /*style*/)
+        /* [in] */ IDeprecatedDOMCSSStyleDeclaration* /*style*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::typingStyle( 
-        /* [retval][out] */ IDOMCSSStyleDeclaration** /*style*/)
+        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration** /*style*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -3046,7 +3046,7 @@ HRESULT STDMETHODCALLTYPE WebView::editingDelegate(
     
 HRESULT STDMETHODCALLTYPE WebView::styleDeclarationWithText( 
         /* [in] */ BSTR /*text*/,
-        /* [retval][out] */ IDOMCSSStyleDeclaration** /*style*/)
+        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration** /*style*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -3130,7 +3130,7 @@ HRESULT STDMETHODCALLTYPE WebView::setGrammarCheckingEnabled(
 // IWebViewUndoableEditing -----------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithNode( 
-        /* [in] */ IDOMNode* /*node*/)
+        /* [in] */ IDeprecatedDOMNode* /*node*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -3173,7 +3173,7 @@ HRESULT STDMETHODCALLTYPE WebView::clearSelection( void)
 }
     
 HRESULT STDMETHODCALLTYPE WebView::applyStyle( 
-        /* [in] */ IDOMCSSStyleDeclaration* /*style*/)
+        /* [in] */ IDeprecatedDOMCSSStyleDeclaration* /*style*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

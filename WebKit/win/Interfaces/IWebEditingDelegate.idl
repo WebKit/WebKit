@@ -57,8 +57,8 @@ import "DOMRange.idl";
 import "IWebUndoManager.idl";
 import "IWebView.idl";
 
-interface IDOMCSSStyleDeclaration;
-interface IDOMRange;
+interface IDeprecatedDOMCSSStyleDeclaration;
+interface IDeprecatedDOMRange;
 interface IWebView;
 interface IWebNotification;
 
@@ -124,41 +124,41 @@ interface IWebEditingDelegate : IUnknown
     /*
         - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range;
     */
-    HRESULT shouldBeginEditingInDOMRange([in] IWebView* webView, [in] IDOMRange* range, [out, retval] BOOL* result);
+    HRESULT shouldBeginEditingInDOMRange([in] IWebView* webView, [in] IDeprecatedDOMRange* range, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range;
     */
-    HRESULT shouldEndEditingInDOMRange([in] IWebView* webView, [in] IDOMRange* range, [out, retval] BOOL* result);
+    HRESULT shouldEndEditingInDOMRange([in] IWebView* webView, [in] IDeprecatedDOMRange* range, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
     */
-    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action);
+    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDeprecatedDOMNode* node, [in] IDeprecatedDOMRange* range, [in] WebViewInsertAction action);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
     */
-    HRESULT shouldInsertText([in] IWebView* webView, [in] BSTR text, [in] IDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
+    HRESULT shouldInsertText([in] IWebView* webView, [in] BSTR text, [in] IDeprecatedDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range;
     */
-    HRESULT shouldDeleteDOMRange([in] IWebView* webView, [in] IDOMRange* range, [out, retval] BOOL* result);
+    HRESULT shouldDeleteDOMRange([in] IWebView* webView, [in] IDeprecatedDOMRange* range, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
     */
-    HRESULT shouldChangeSelectedDOMRange([in] IWebView* webView, [in] IDOMRange* currentRange, [in] IDOMRange* proposedRange, [in] WebSelectionAffinity selectionAffinity, [in] BOOL stillSelecting, [out, retval] BOOL* result);
+    HRESULT shouldChangeSelectedDOMRange([in] IWebView* webView, [in] IDeprecatedDOMRange* currentRange, [in] IDeprecatedDOMRange* proposedRange, [in] WebSelectionAffinity selectionAffinity, [in] BOOL stillSelecting, [out, retval] BOOL* result);
     /*
         - (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
     */
-    HRESULT shouldApplyStyle([in] IWebView* webView, [in] IDOMCSSStyleDeclaration* style, [in] IDOMRange* range, [out, retval] BOOL* result);
+    HRESULT shouldApplyStyle([in] IWebView* webView, [in] IDeprecatedDOMCSSStyleDeclaration* style, [in] IDeprecatedDOMRange* range, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle;
     */
-    HRESULT shouldChangeTypingStyle([in] IWebView* webView, [in] IDOMCSSStyleDeclaration* currentStyle, [in] IDOMCSSStyleDeclaration* proposedStyle, [out, retval] BOOL* result);
+    HRESULT shouldChangeTypingStyle([in] IWebView* webView, [in] IDeprecatedDOMCSSStyleDeclaration* currentStyle, [in] IDeprecatedDOMCSSStyleDeclaration* proposedStyle, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView doCommandBySelector:(SEL)selector;

@@ -91,25 +91,25 @@ interface IWebFormSubmissionListener : IUnknown
 interface IWebFormDelegate : IUnknown
 {
     //- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
-    HRESULT textFieldDidBeginEditing([in] IDOMHTMLInputElement* element, [in] IWebFrame* frame);
+    HRESULT textFieldDidBeginEditing([in] IDeprecatedDOMHTMLInputElement* element, [in] IWebFrame* frame);
 
     //- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
-    HRESULT textFieldDidEndEditing([in] IDOMHTMLInputElement* element, [in] IWebFrame* frame);
+    HRESULT textFieldDidEndEditing([in] IDeprecatedDOMHTMLInputElement* element, [in] IWebFrame* frame);
 
     //- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
-    HRESULT textDidChangeInTextField([in] IDOMHTMLInputElement* element, [in] IWebFrame* frame);
+    HRESULT textDidChangeInTextField([in] IDeprecatedDOMHTMLInputElement* element, [in] IWebFrame* frame);
 
     //- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element inFrame:(WebFrame *)frame;
-    HRESULT textDidChangeInTextArea([in] IDOMHTMLTextAreaElement* element, [in] IWebFrame* frame);
+    HRESULT textDidChangeInTextArea([in] IDeprecatedDOMHTMLTextAreaElement* element, [in] IWebFrame* frame);
 
     //- (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame;
-    HRESULT doPlatformCommand([in] IDOMHTMLInputElement* element, [in] BSTR command, [in] IWebFrame* frame, [out, retval] BOOL* result);
+    HRESULT doPlatformCommand([in] IDeprecatedDOMHTMLInputElement* element, [in] BSTR command, [in] IWebFrame* frame, [out, retval] BOOL* result);
 
     //- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame;
-    [local] HRESULT shouldHandleEvent([in] IDOMHTMLInputElement* element, [in] void* event, [in] IWebFrame* frame, [out, retval] BOOL* result);
+    [local] HRESULT shouldHandleEvent([in] IDeprecatedDOMHTMLInputElement* element, [in] void* event, [in] IWebFrame* frame, [out, retval] BOOL* result);
 
     // Sent when a form is just about to be submitted (before the load is started)
     // listener must be sent continue when the delegate is done.
     //- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
-    HRESULT willSubmitForm([in] IWebFrame* frame, [in] IWebFrame* sourceFrame, [in] IDOMElement* form, [in] IPropertyBag* values, [in] IWebFormSubmissionListener* listener);
+    HRESULT willSubmitForm([in] IWebFrame* frame, [in] IWebFrame* sourceFrame, [in] IDeprecatedDOMElement* form, [in] IPropertyBag* values, [in] IWebFormSubmissionListener* listener);
 }

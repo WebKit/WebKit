@@ -72,7 +72,7 @@ ULONG STDMETHODCALLTYPE EditingDelegate::Release(void)
     return newRef;
 }
 
-static wstring dumpPath(IDOMNode* node)
+static wstring dumpPath(IDeprecatedDOMNode* node)
 {
     ASSERT(node);
 
@@ -84,14 +84,14 @@ static wstring dumpPath(IDOMNode* node)
     result.assign(name, SysStringLen(name));
     SysFreeString(name);
 
-    COMPtr<IDOMNode> parent;
+    COMPtr<IDeprecatedDOMNode> parent;
     if (SUCCEEDED(node->parentNode(&parent)))
         result += TEXT(" > ") + dumpPath(parent.get());
 
     return result;
 }
 
-static wstring dump(IDOMRange* range)
+static wstring dump(IDeprecatedDOMRange* range)
 {
     ASSERT(range);
 
@@ -103,11 +103,11 @@ static wstring dump(IDOMRange* range)
     if (FAILED(range->endOffset(&endOffset)))
         return 0;
 
-    COMPtr<IDOMNode> startContainer;
+    COMPtr<IDeprecatedDOMNode> startContainer;
     if (FAILED(range->startContainer(&startContainer)))
         return 0;
 
-    COMPtr<IDOMNode> endContainer;
+    COMPtr<IDeprecatedDOMNode> endContainer;
     if (FAILED(range->endContainer(&endContainer)))
         return 0;
 
@@ -118,7 +118,7 @@ static wstring dump(IDOMRange* range)
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldBeginEditingInDOMRange( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {
@@ -135,7 +135,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldBeginEditingInDOMRange(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldEndEditingInDOMRange( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {
@@ -152,8 +152,8 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldEndEditingInDOMRange(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertNode( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMNode* node,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMNode* node,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [in] */ WebViewInsertAction action)
 {
     static LPCTSTR insertactionstring[] = {
@@ -171,7 +171,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertNode(
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertText( 
     /* [in] */ IWebView* webView,
     /* [in] */ BSTR text,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [in] */ WebViewInsertAction action,
     /* [retval][out] */ BOOL* result)
 {
@@ -195,7 +195,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertText(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldDeleteDOMRange( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {
@@ -212,8 +212,8 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldDeleteDOMRange(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeSelectedDOMRange( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* currentRange,
-    /* [in] */ IDOMRange* proposedRange,
+    /* [in] */ IDeprecatedDOMRange* currentRange,
+    /* [in] */ IDeprecatedDOMRange* proposedRange,
     /* [in] */ WebSelectionAffinity selectionAffinity,
     /* [in] */ BOOL stillSelecting,
     /* [retval][out] */ BOOL* result)
@@ -241,8 +241,8 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeSelectedDOMRange(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldApplyStyle( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMCSSStyleDeclaration* style,
-    /* [in] */ IDOMRange* range,
+    /* [in] */ IDeprecatedDOMCSSStyleDeclaration* style,
+    /* [in] */ IDeprecatedDOMRange* range,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {
@@ -259,8 +259,8 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldApplyStyle(
 
 HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeTypingStyle( 
     /* [in] */ IWebView* webView,
-    /* [in] */ IDOMCSSStyleDeclaration* currentStyle,
-    /* [in] */ IDOMCSSStyleDeclaration* proposedStyle,
+    /* [in] */ IDeprecatedDOMCSSStyleDeclaration* currentStyle,
+    /* [in] */ IDeprecatedDOMCSSStyleDeclaration* proposedStyle,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {

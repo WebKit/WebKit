@@ -1,3 +1,27 @@
+2007-08-24  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        <rdar://problem/5434593> Deprecate current manually written COM DOM bindings in anticipation of autogeneration
+
+        Rename COM DOM bindings to use Deprecated prefix.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dump):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.cpp:
+        (dumpPath):
+        (dump):
+        (EditingDelegate::shouldBeginEditingInDOMRange):
+        (EditingDelegate::shouldEndEditingInDOMRange):
+        (EditingDelegate::shouldInsertNode):
+        (EditingDelegate::shouldInsertText):
+        (EditingDelegate::shouldDeleteDOMRange):
+        (EditingDelegate::shouldChangeSelectedDOMRange):
+        (EditingDelegate::shouldApplyStyle):
+        (EditingDelegate::shouldChangeTypingStyle):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.h:
+
 2007-08-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by John H.

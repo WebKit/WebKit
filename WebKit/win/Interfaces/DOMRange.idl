@@ -84,12 +84,12 @@ enum {
     uuid(2F33E42C-0B39-48b3-B7B6-E910CDB325AD),
     pointer_default(unique)
 ]
-interface IDOMRange : IDOMObject
+interface IDeprecatedDOMRange : IDeprecatedDOMObject
 {
     /*
         - (DOMNode *)startContainer;
     */
-    HRESULT startContainer([out, retval] IDOMNode** node);
+    HRESULT startContainer([out, retval] IDeprecatedDOMNode** node);
 
     /*
         - (int)startOffset;
@@ -99,7 +99,7 @@ interface IDOMRange : IDOMObject
     /*
         - (DOMNode *)endContainer;
     */
-    HRESULT endContainer([out, retval] IDOMNode** node);
+    HRESULT endContainer([out, retval] IDeprecatedDOMNode** node);
 
     /*
         - (int)endOffset;
@@ -114,37 +114,37 @@ interface IDOMRange : IDOMObject
     /*
         - (DOMNode *)commonAncestorContainer;
     */
-    HRESULT commonAncestorContainer([out, retval] IDOMNode** container);
+    HRESULT commonAncestorContainer([out, retval] IDeprecatedDOMNode** container);
 
     /*
         - (void)setStart:(DOMNode *)refNode :(int)offset;
     */
-    HRESULT setStart([in] IDOMNode* refNode, [in] int offset);
+    HRESULT setStart([in] IDeprecatedDOMNode* refNode, [in] int offset);
 
     /*
         - (void)setEnd:(DOMNode *)refNode :(int)offset;
     */
-    HRESULT setEnd([in] IDOMNode* refNode, [in] int offset);
+    HRESULT setEnd([in] IDeprecatedDOMNode* refNode, [in] int offset);
 
     /*
         - (void)setStartBefore:(DOMNode *)refNode;
     */
-    HRESULT setStartBefore([in] IDOMNode* refNode);
+    HRESULT setStartBefore([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (void)setStartAfter:(DOMNode *)refNode;
     */
-    HRESULT setStartAfter([in] IDOMNode* refNode);
+    HRESULT setStartAfter([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (void)setEndBefore:(DOMNode *)refNode;
     */
-    HRESULT setEndBefore([in] IDOMNode* refNode);
+    HRESULT setEndBefore([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (void)setEndAfter:(DOMNode *)refNode;
     */
-    HRESULT setEndAfter([in] IDOMNode* refNode);
+    HRESULT setEndAfter([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (void)collapse:(BOOL)toStart;
@@ -154,17 +154,17 @@ interface IDOMRange : IDOMObject
     /*
         - (void)selectNode:(DOMNode *)refNode;
     */
-    HRESULT selectNode([in] IDOMNode* refNode);
+    HRESULT selectNode([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (void)selectNodeContents:(DOMNode *)refNode;
     */
-    HRESULT selectNodeContents([in] IDOMNode* refNode);
+    HRESULT selectNodeContents([in] IDeprecatedDOMNode* refNode);
 
     /*
         - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
     */
-    HRESULT compareBoundaryPoints([in] unsigned short how, [in] IDOMRange* sourceRange);
+    HRESULT compareBoundaryPoints([in] unsigned short how, [in] IDeprecatedDOMRange* sourceRange);
 
     /*
         - (void)deleteContents;
@@ -174,27 +174,27 @@ interface IDOMRange : IDOMObject
     /*
         - (DOMDocumentFragment *)extractContents;
     */
-    HRESULT extractContents([out, retval] IDOMDocumentFragment** fragment);
+    HRESULT extractContents([out, retval] IDeprecatedDOMDocumentFragment** fragment);
 
     /*
         - (DOMDocumentFragment *)cloneContents;
     */
-    HRESULT cloneContents([out, retval] IDOMDocumentFragment** fragment);
+    HRESULT cloneContents([out, retval] IDeprecatedDOMDocumentFragment** fragment);
 
     /*
         - (void)insertNode:(DOMNode *)newNode;
     */
-    HRESULT insertNode([in] IDOMNode* newNode);
+    HRESULT insertNode([in] IDeprecatedDOMNode* newNode);
 
     /*
         - (void)surroundContents:(DOMNode *)newParent;
     */
-    HRESULT surroundContents([in] IDOMNode* newParent);
+    HRESULT surroundContents([in] IDeprecatedDOMNode* newParent);
 
     /*
         - (DOMRange *)cloneRange;
     */
-    HRESULT cloneRange([out, retval] IDOMRange** range);
+    HRESULT cloneRange([out, retval] IDeprecatedDOMRange** range);
 
     /*
         - (NSString *)toString;

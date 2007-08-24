@@ -37,107 +37,107 @@ namespace WebCore {
     class HTMLCollection;
 }
 
-class DOMHTMLCollection : public DOMObject, public IDOMHTMLCollection
+class DeprecatedDOMHTMLCollection : public DeprecatedDOMObject, public IDeprecatedDOMHTMLCollection
 {
 protected:
-    DOMHTMLCollection(WebCore::HTMLCollection* c);
+    DeprecatedDOMHTMLCollection(WebCore::HTMLCollection* c);
 
 public:
-    static IDOMHTMLCollection* createInstance(WebCore::HTMLCollection*);
+    static IDeprecatedDOMHTMLCollection* createInstance(WebCore::HTMLCollection*);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMObject::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMObject::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMObject::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMObject::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMObject::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMObject::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMObject::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMObject::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMObject::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMObject::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMObject::setException(description); }
 
-    // IDOMHTMLCollection
+    // IDeprecatedDOMHTMLCollection
     virtual HRESULT STDMETHODCALLTYPE length( 
         /* [retval][out] */ UINT *result);
     
     virtual HRESULT STDMETHODCALLTYPE item( 
         /* [in] */ UINT index,
-        /* [retval][out] */ IDOMNode **node);
+        /* [retval][out] */ IDeprecatedDOMNode **node);
     
     virtual HRESULT STDMETHODCALLTYPE namedItem( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNode **node);
+        /* [retval][out] */ IDeprecatedDOMNode **node);
 
 protected:
     RefPtr<WebCore::HTMLCollection> m_collection;
 };
 
-class DOMHTMLOptionsCollection : public DOMObject, public IDOMHTMLOptionsCollection
+class DeprecatedDOMHTMLOptionsCollection : public DeprecatedDOMObject, public IDeprecatedDOMHTMLOptionsCollection
 {
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMObject::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMObject::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMObject::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMObject::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMObject::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMObject::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMObject::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMObject::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMObject::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMObject::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMObject::setException(description); }
 
-    // IDOMHTMLOptionsCollection
+    // IDeprecatedDOMHTMLOptionsCollection
     virtual HRESULT STDMETHODCALLTYPE length( 
         /* [retval][out] */ unsigned int *result);
     
@@ -146,226 +146,226 @@ class DOMHTMLOptionsCollection : public DOMObject, public IDOMHTMLOptionsCollect
     
     virtual HRESULT STDMETHODCALLTYPE item( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ IDOMNode **result);
+        /* [retval][out] */ IDeprecatedDOMNode **result);
     
     virtual HRESULT STDMETHODCALLTYPE namedItem( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNode *result);
+        /* [retval][out] */ IDeprecatedDOMNode *result);
 };
 
-class DOMHTMLDocument : public DOMDocument, public IDOMHTMLDocument
+class DeprecatedDOMHTMLDocument : public DeprecatedDOMDocument, public IDeprecatedDOMHTMLDocument
 {
 protected:
-    DOMHTMLDocument();
+    DeprecatedDOMHTMLDocument();
 public:
-    DOMHTMLDocument(WebCore::Document* d) : DOMDocument(d) {}
+    DeprecatedDOMHTMLDocument(WebCore::Document* d) : DeprecatedDOMDocument(d) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMDocument::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMDocument::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMDocument::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMDocument::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMDocument::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMDocument::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMDocument::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMDocument::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMDocument::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMDocument::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMDocument::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMDocument::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMDocument::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMDocument::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMDocument::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMDocument::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMDocument::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMDocument::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMDocument::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMDocument::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMDocument::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMDocument::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMDocument::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMDocument::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
         /* [in] */ BSTR value) { return setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMDocument::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMDocument::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMDocument::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMDocument::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMDocument::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMDocument::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMDocument::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMDocument::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMDocument::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMDocument::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMDocument::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMDocument::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMDocument::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMDocument::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMDocument::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMDocument::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMDocument::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMDocument::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMDocument::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMDocument::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMDocument::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMDocument::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMDocument::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMDocument::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMDocument::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMDocument::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMDocument::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMDocument::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMDocument::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMDocument::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMDocument::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMDocument::setTextContent(text); }
     
-    // IDOMDocument
+    // IDeprecatedDOMDocument
     virtual HRESULT STDMETHODCALLTYPE doctype( 
-        /* [retval][out] */ IDOMDocumentType **result) { return DOMDocument::doctype(result); }
+        /* [retval][out] */ IDeprecatedDOMDocumentType **result) { return DeprecatedDOMDocument::doctype(result); }
     
     virtual HRESULT STDMETHODCALLTYPE implementation( 
-        /* [retval][out] */ IDOMImplementation **result) { return DOMDocument::implementation(result); }
+        /* [retval][out] */ IDeprecatedDOMImplementation **result) { return DeprecatedDOMDocument::implementation(result); }
     
     virtual HRESULT STDMETHODCALLTYPE documentElement( 
-        /* [retval][out] */ IDOMElement **result) { return DOMDocument::documentElement(result); }
+        /* [retval][out] */ IDeprecatedDOMElement **result) { return DeprecatedDOMDocument::documentElement(result); }
     
     virtual HRESULT STDMETHODCALLTYPE createElement( 
         /* [in] */ BSTR tagName,
-        /* [retval][out] */ IDOMElement **result) { return DOMDocument::createElement(tagName, result); }
+        /* [retval][out] */ IDeprecatedDOMElement **result) { return DeprecatedDOMDocument::createElement(tagName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createDocumentFragment( 
-        /* [retval][out] */ IDOMDocumentFragment **result) { return DOMDocument::createDocumentFragment(result); }
+        /* [retval][out] */ IDeprecatedDOMDocumentFragment **result) { return DeprecatedDOMDocument::createDocumentFragment(result); }
     
     virtual HRESULT STDMETHODCALLTYPE createTextNode( 
         /* [in] */ BSTR data,
-        /* [retval][out] */ IDOMText **result) { return DOMDocument::createTextNode(data, result); }
+        /* [retval][out] */ IDeprecatedDOMText **result) { return DeprecatedDOMDocument::createTextNode(data, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createComment( 
         /* [in] */ BSTR data,
-        /* [retval][out] */ IDOMComment **result) { return DOMDocument::createComment(data, result); }
+        /* [retval][out] */ IDeprecatedDOMComment **result) { return DeprecatedDOMDocument::createComment(data, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createCDATASection( 
         /* [in] */ BSTR data,
-        /* [retval][out] */ IDOMCDATASection **result) { return DOMDocument::createCDATASection(data, result); }
+        /* [retval][out] */ IDeprecatedDOMCDATASection **result) { return DeprecatedDOMDocument::createCDATASection(data, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createProcessingInstruction( 
         /* [in] */ BSTR target,
         /* [in] */ BSTR data,
-        /* [retval][out] */ IDOMProcessingInstruction **result) { return DOMDocument::createProcessingInstruction(target, data, result); }
+        /* [retval][out] */ IDeprecatedDOMProcessingInstruction **result) { return DeprecatedDOMDocument::createProcessingInstruction(target, data, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMDocument::createAttribute(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMDocument::createAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createEntityReference( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMEntityReference **result) { return DOMDocument::createEntityReference(name, result); }
+        /* [retval][out] */ IDeprecatedDOMEntityReference **result) { return DeprecatedDOMDocument::createEntityReference(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR tagName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMDocument::getElementsByTagName(tagName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMDocument::getElementsByTagName(tagName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE importNode( 
-        /* [in] */ IDOMNode *importedNode,
+        /* [in] */ IDeprecatedDOMNode *importedNode,
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMDocument::importNode(importedNode, deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMDocument::importNode(importedNode, deep, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createElementNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [retval][out] */ IDOMElement **result) { return DOMDocument::createElementNS(namespaceURI, qualifiedName, result); }
+        /* [retval][out] */ IDeprecatedDOMElement **result) { return DeprecatedDOMDocument::createElementNS(namespaceURI, qualifiedName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE createAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMDocument::createAttributeNS(namespaceURI, qualifiedName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMDocument::createAttributeNS(namespaceURI, qualifiedName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMDocument::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMDocument::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementById( 
         /* [in] */ BSTR elementId,
-        /* [retval][out] */ IDOMElement **result) { return DOMDocument::getElementById(elementId, result); }
+        /* [retval][out] */ IDeprecatedDOMElement **result) { return DeprecatedDOMDocument::getElementById(elementId, result); }
 
-    // IDOMHTMLDocument
+    // IDeprecatedDOMHTMLDocument
     virtual HRESULT STDMETHODCALLTYPE title( 
         /* [retval][out] */ BSTR *result);
     
@@ -382,25 +382,25 @@ public:
         /* [retval][out] */ BSTR *result);
     
     virtual HRESULT STDMETHODCALLTYPE body( 
-        /* [retval][out] */ IDOMHTMLElement **bodyElement);
+        /* [retval][out] */ IDeprecatedDOMHTMLElement **bodyElement);
     
     virtual HRESULT STDMETHODCALLTYPE setBody( 
-        /* [in] */ IDOMHTMLElement *body);
+        /* [in] */ IDeprecatedDOMHTMLElement *body);
     
     virtual HRESULT STDMETHODCALLTYPE images( 
-        /* [retval][out] */ IDOMHTMLCollection **collection);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **collection);
     
     virtual HRESULT STDMETHODCALLTYPE applets( 
-        /* [retval][out] */ IDOMHTMLCollection **collection);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **collection);
     
     virtual HRESULT STDMETHODCALLTYPE links( 
-        /* [retval][out] */ IDOMHTMLCollection **collection);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **collection);
     
     virtual HRESULT STDMETHODCALLTYPE forms( 
-        /* [retval][out] */ IDOMHTMLCollection **collection);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **collection);
     
     virtual HRESULT STDMETHODCALLTYPE anchors( 
-        /* [retval][out] */ IDOMHTMLCollection **collection);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **collection);
     
     virtual HRESULT STDMETHODCALLTYPE cookie( 
         /* [retval][out] */ BSTR *result);
@@ -420,228 +420,228 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE getElementById_( 
         /* [in] */ BSTR elementId,
-        /* [retval][out] */ IDOMElement **element);
+        /* [retval][out] */ IDeprecatedDOMElement **element);
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByName( 
         /* [in] */ BSTR elementName,
-        /* [retval][out] */ IDOMNodeList **nodeList);
+        /* [retval][out] */ IDeprecatedDOMNodeList **nodeList);
 };
 
-class DOMHTMLElement : public DOMElement, public IDOMHTMLElement
+class DeprecatedDOMHTMLElement : public DeprecatedDOMElement, public IDeprecatedDOMHTMLElement
 {
 protected:
-    DOMHTMLElement();
+    DeprecatedDOMHTMLElement();
 public:
-    DOMHTMLElement(WebCore::Element* e) : DOMElement(e) {}
+    DeprecatedDOMHTMLElement(WebCore::Element* e) : DeprecatedDOMElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
         /* [retval][out] */ BSTR *result);
     
@@ -686,266 +686,266 @@ public:
 
 };
 
-class DOMHTMLFormElement : public DOMHTMLElement, public IDOMHTMLFormElement
+class DeprecatedDOMHTMLFormElement : public DeprecatedDOMHTMLElement, public IDeprecatedDOMHTMLFormElement
 {
 protected:
-    DOMHTMLFormElement();
+    DeprecatedDOMHTMLFormElement();
 public:
-    DOMHTMLFormElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+    DeprecatedDOMHTMLFormElement(WebCore::Element* e) : DeprecatedDOMHTMLElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMHTMLElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMHTMLElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMHTMLElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMHTMLElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMHTMLElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMHTMLElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMHTMLElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMHTMLElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMHTMLElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMHTMLElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMHTMLElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::idName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setIdName( 
-        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+        /* [in] */ BSTR idName) { return DeprecatedDOMHTMLElement::setIdName(idName); }
     
     virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::title(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTitle( 
-        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+        /* [in] */ BSTR title) { return DeprecatedDOMHTMLElement::setTitle(title); }
     
     virtual HRESULT STDMETHODCALLTYPE lang( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::lang(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setLang( 
-        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+        /* [in] */ BSTR lang) { return DeprecatedDOMHTMLElement::setLang(lang); }
     
     virtual HRESULT STDMETHODCALLTYPE dir( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::dir(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setDir( 
-        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+        /* [in] */ BSTR dir) { return DeprecatedDOMHTMLElement::setDir(dir); }
     
     virtual HRESULT STDMETHODCALLTYPE className( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::className(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setClassName( 
-        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+        /* [in] */ BSTR className) { return DeprecatedDOMHTMLElement::setClassName(className); }
 
     virtual HRESULT STDMETHODCALLTYPE innerHTML( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerHTML(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
-        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        /* [in] */ BSTR html) { return DeprecatedDOMHTMLElement::setInnerHTML(html); }
         
     virtual HRESULT STDMETHODCALLTYPE innerText( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerText(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerText( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setInnerText(text); }
 
-    // IDOMHTMLFormElement
+    // IDeprecatedDOMHTMLFormElement
     virtual HRESULT STDMETHODCALLTYPE elements( 
-        /* [retval][out] */ IDOMHTMLCollection **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLCollection **result);
     
     virtual HRESULT STDMETHODCALLTYPE length( 
         /* [retval][out] */ int *result);
@@ -991,264 +991,264 @@ public:
     virtual HRESULT STDMETHODCALLTYPE reset( void);
 };
 
-class DOMHTMLSelectElement : public DOMHTMLElement, public IDOMHTMLSelectElement, public IFormsAutoFillTransitionSelect
+class DeprecatedDOMHTMLSelectElement : public DeprecatedDOMHTMLElement, public IDeprecatedDOMHTMLSelectElement, public IFormsAutoFillTransitionSelect
 {
 protected:
-    DOMHTMLSelectElement();
+    DeprecatedDOMHTMLSelectElement();
 public:
-    DOMHTMLSelectElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+    DeprecatedDOMHTMLSelectElement(WebCore::Element* e) : DeprecatedDOMHTMLElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMHTMLElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMHTMLElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMHTMLElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMHTMLElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMHTMLElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMHTMLElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMHTMLElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMHTMLElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMHTMLElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMHTMLElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMHTMLElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::idName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setIdName( 
-        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+        /* [in] */ BSTR idName) { return DeprecatedDOMHTMLElement::setIdName(idName); }
     
     virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::title(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTitle( 
-        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+        /* [in] */ BSTR title) { return DeprecatedDOMHTMLElement::setTitle(title); }
     
     virtual HRESULT STDMETHODCALLTYPE lang( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::lang(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setLang( 
-        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+        /* [in] */ BSTR lang) { return DeprecatedDOMHTMLElement::setLang(lang); }
     
     virtual HRESULT STDMETHODCALLTYPE dir( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::dir(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setDir( 
-        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+        /* [in] */ BSTR dir) { return DeprecatedDOMHTMLElement::setDir(dir); }
     
     virtual HRESULT STDMETHODCALLTYPE className( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::className(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setClassName( 
-        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+        /* [in] */ BSTR className) { return DeprecatedDOMHTMLElement::setClassName(className); }
 
     virtual HRESULT STDMETHODCALLTYPE innerHTML( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerHTML(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
-        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        /* [in] */ BSTR html) { return DeprecatedDOMHTMLElement::setInnerHTML(html); }
         
     virtual HRESULT STDMETHODCALLTYPE innerText( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerText(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerText( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setInnerText(text); }
 
-    // IDOMHTMLSelectElement
+    // IDeprecatedDOMHTMLSelectElement
     virtual HRESULT STDMETHODCALLTYPE type( 
         /* [retval][out] */ BSTR *result);
     
@@ -1268,10 +1268,10 @@ public:
         /* [retval][out] */ int *result);
     
     virtual HRESULT STDMETHODCALLTYPE form( 
-        /* [retval][out] */ IDOMHTMLFormElement **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLFormElement **result);
     
     virtual HRESULT STDMETHODCALLTYPE options( 
-        /* [retval][out] */ IDOMHTMLOptionsCollection **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLOptionsCollection **result);
     
     virtual HRESULT STDMETHODCALLTYPE disabled( 
         /* [retval][out] */ BOOL *result);
@@ -1304,8 +1304,8 @@ public:
         /* [in] */ int tabIndex);
     
     virtual HRESULT STDMETHODCALLTYPE add( 
-        /* [in] */ IDOMHTMLElement *element,
-        /* [in] */ IDOMHTMLElement *before);
+        /* [in] */ IDeprecatedDOMHTMLElement *element,
+        /* [in] */ IDeprecatedDOMHTMLElement *before);
     
     virtual HRESULT STDMETHODCALLTYPE remove( 
         /* [in] */ int index);
@@ -1315,266 +1315,266 @@ public:
         /* [in] */ int index);
 };
 
-class DOMHTMLOptionElement : public DOMHTMLElement, public IDOMHTMLOptionElement
+class DeprecatedDOMHTMLOptionElement : public DeprecatedDOMHTMLElement, public IDeprecatedDOMHTMLOptionElement
 {
 protected:
-    DOMHTMLOptionElement();
+    DeprecatedDOMHTMLOptionElement();
 public:
-    DOMHTMLOptionElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+    DeprecatedDOMHTMLOptionElement(WebCore::Element* e) : DeprecatedDOMHTMLElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMHTMLElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMHTMLElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMHTMLElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMHTMLElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMHTMLElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMHTMLElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMHTMLElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMHTMLElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMHTMLElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMHTMLElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMHTMLElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::idName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setIdName( 
-        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+        /* [in] */ BSTR idName) { return DeprecatedDOMHTMLElement::setIdName(idName); }
     
     virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::title(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTitle( 
-        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+        /* [in] */ BSTR title) { return DeprecatedDOMHTMLElement::setTitle(title); }
     
     virtual HRESULT STDMETHODCALLTYPE lang( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::lang(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setLang( 
-        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+        /* [in] */ BSTR lang) { return DeprecatedDOMHTMLElement::setLang(lang); }
     
     virtual HRESULT STDMETHODCALLTYPE dir( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::dir(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setDir( 
-        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+        /* [in] */ BSTR dir) { return DeprecatedDOMHTMLElement::setDir(dir); }
     
     virtual HRESULT STDMETHODCALLTYPE className( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::className(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setClassName( 
-        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+        /* [in] */ BSTR className) { return DeprecatedDOMHTMLElement::setClassName(className); }
 
     virtual HRESULT STDMETHODCALLTYPE innerHTML( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerHTML(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
-        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        /* [in] */ BSTR html) { return DeprecatedDOMHTMLElement::setInnerHTML(html); }
         
     virtual HRESULT STDMETHODCALLTYPE innerText( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerText(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerText( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setInnerText(text); }
 
-    // IDOMHTMLOptionElement
+    // IDeprecatedDOMHTMLOptionElement
     virtual HRESULT STDMETHODCALLTYPE form( 
-        /* [retval][out] */ IDOMHTMLFormElement **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLFormElement **result);
     
     virtual HRESULT STDMETHODCALLTYPE defaultSelected( 
         /* [retval][out] */ BOOL *result);
@@ -1613,264 +1613,264 @@ public:
         /* [in] */ BSTR value);
 };
 
-class DOMHTMLInputElement : public DOMHTMLElement, public IDOMHTMLInputElement, public IFormsAutoFillTransition, public IFormPromptAdditions
+class DeprecatedDOMHTMLInputElement : public DeprecatedDOMHTMLElement, public IDeprecatedDOMHTMLInputElement, public IFormsAutoFillTransition, public IFormPromptAdditions
 {
 protected:
-    DOMHTMLInputElement();
+    DeprecatedDOMHTMLInputElement();
 public:
-    DOMHTMLInputElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+    DeprecatedDOMHTMLInputElement(WebCore::Element* e) : DeprecatedDOMHTMLElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMHTMLElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMHTMLElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMHTMLElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMHTMLElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMHTMLElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMHTMLElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMHTMLElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMHTMLElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMHTMLElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMHTMLElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMHTMLElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::idName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setIdName( 
-        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+        /* [in] */ BSTR idName) { return DeprecatedDOMHTMLElement::setIdName(idName); }
     
     virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::title(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTitle( 
-        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+        /* [in] */ BSTR title) { return DeprecatedDOMHTMLElement::setTitle(title); }
     
     virtual HRESULT STDMETHODCALLTYPE lang( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::lang(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setLang( 
-        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+        /* [in] */ BSTR lang) { return DeprecatedDOMHTMLElement::setLang(lang); }
     
     virtual HRESULT STDMETHODCALLTYPE dir( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::dir(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setDir( 
-        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+        /* [in] */ BSTR dir) { return DeprecatedDOMHTMLElement::setDir(dir); }
     
     virtual HRESULT STDMETHODCALLTYPE className( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::className(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setClassName( 
-        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+        /* [in] */ BSTR className) { return DeprecatedDOMHTMLElement::setClassName(className); }
 
     virtual HRESULT STDMETHODCALLTYPE innerHTML( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerHTML(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
-        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        /* [in] */ BSTR html) { return DeprecatedDOMHTMLElement::setInnerHTML(html); }
         
     virtual HRESULT STDMETHODCALLTYPE innerText( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerText(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerText( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setInnerText(text); }
 
-    // IDOMHTMLInputElement
+    // IDeprecatedDOMHTMLInputElement
     virtual HRESULT STDMETHODCALLTYPE defaultValue( 
         /* [retval][out] */ BSTR *result);
     
@@ -1884,7 +1884,7 @@ public:
         /* [in] */ BSTR checked);
     
     virtual HRESULT STDMETHODCALLTYPE form( 
-        /* [retval][out] */ IDOMHTMLElement **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLElement **result);
     
     virtual HRESULT STDMETHODCALLTYPE accept( 
         /* [retval][out] */ BSTR *result);
@@ -2017,264 +2017,264 @@ public:
         /* [retval][out] */ BOOL *result);
 };
 
-class DOMHTMLTextAreaElement : public DOMHTMLElement, public IDOMHTMLTextAreaElement, public IFormPromptAdditions
+class DeprecatedDOMHTMLTextAreaElement : public DeprecatedDOMHTMLElement, public IDeprecatedDOMHTMLTextAreaElement, public IFormPromptAdditions
 {
 protected:
-    DOMHTMLTextAreaElement();
+    DeprecatedDOMHTMLTextAreaElement();
 public:
-    DOMHTMLTextAreaElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+    DeprecatedDOMHTMLTextAreaElement(WebCore::Element* e) : DeprecatedDOMHTMLElement(e) {}
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMHTMLElement::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMHTMLElement::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMHTMLElement::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMHTMLElement::setException(description); }
 
-    // IDOMNode
+    // IDeprecatedDOMNode
     virtual HRESULT STDMETHODCALLTYPE nodeName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeValue( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::nodeValue(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
-        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setNodeValue(value); }
     
     virtual HRESULT STDMETHODCALLTYPE nodeType( 
-        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+        /* [retval][out] */ unsigned short *result) { return DeprecatedDOMHTMLElement::nodeType(result); }
     
     virtual HRESULT STDMETHODCALLTYPE parentNode( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::parentNode(result); }
     
     virtual HRESULT STDMETHODCALLTYPE childNodes( 
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::childNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE firstChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::firstChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE lastChild( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::lastChild(result); }
     
     virtual HRESULT STDMETHODCALLTYPE previousSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::previousSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE nextSibling( 
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::nextSibling(result); }
     
     virtual HRESULT STDMETHODCALLTYPE attributes( 
-        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+        /* [retval][out] */ IDeprecatedDOMNamedNodeMap **result) { return DeprecatedDOMHTMLElement::attributes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
-        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+        /* [retval][out] */ IDeprecatedDOMDocument **result) { return DeprecatedDOMHTMLElement::ownerDocument(result); }
     
     virtual HRESULT STDMETHODCALLTYPE insertBefore( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *refChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *refChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::insertBefore(newChild, refChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE replaceChild( 
-        /* [in] */ IDOMNode *newChild,
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *newChild,
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::replaceChild(newChild, oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::removeChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE appendChild( 
-        /* [in] */ IDOMNode *oldChild,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+        /* [in] */ IDeprecatedDOMNode *oldChild,
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::appendChild(oldChild, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasChildNodes(result); }
     
     virtual HRESULT STDMETHODCALLTYPE cloneNode( 
         /* [in] */ BOOL deep,
-        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+        /* [retval][out] */ IDeprecatedDOMNode **result) { return DeprecatedDOMHTMLElement::cloneNode(deep, result); }
     
-    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DeprecatedDOMHTMLElement::normalize(); }
     
     virtual HRESULT STDMETHODCALLTYPE isSupported( 
         /* [in] */ BSTR feature,
         /* [in] */ BSTR version,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::isSupported(feature, version, result); }
     
     virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::namespaceURI(result); }
     
     virtual HRESULT STDMETHODCALLTYPE prefix( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::prefix(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setPrefix( 
-        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+        /* [in] */ BSTR prefix) { return DeprecatedDOMHTMLElement::setPrefix(prefix); }
     
     virtual HRESULT STDMETHODCALLTYPE localName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::localName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributes(result); }
 
     virtual HRESULT STDMETHODCALLTYPE isSameNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isSameNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
-        /* [in] */ IDOMNode* other,
-        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+        /* [in] */ IDeprecatedDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DeprecatedDOMHTMLElement::isEqualNode(other, result); }
     
     virtual HRESULT STDMETHODCALLTYPE textContent( 
-        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+        /* [retval][out] */ BSTR* result) { return DeprecatedDOMHTMLElement::textContent(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTextContent( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setTextContent(text); }
     
-    // IDOMElement
+    // IDeprecatedDOMElement
     virtual HRESULT STDMETHODCALLTYPE tagName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::tagName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttribute( 
         /* [in] */ BSTR name,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttribute(name, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
-        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMHTMLElement::removeAttribute(name); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNode(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNode(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
-        /* [in] */ IDOMAttr *oldAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *oldAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::removeAttributeNode(oldAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagName(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR qualifiedName,
-        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+        /* [in] */ BSTR value) { return DeprecatedDOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
     
     virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
         /* [in] */ BSTR namespaceURI,
-        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+        /* [in] */ BSTR localName) { return DeprecatedDOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
     
     virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
-        /* [in] */ IDOMAttr *newAttr,
-        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+        /* [in] */ IDeprecatedDOMAttr *newAttr,
+        /* [retval][out] */ IDeprecatedDOMAttr **result) { return DeprecatedDOMHTMLElement::setAttributeNodeNS(newAttr, result); }
     
     virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+        /* [retval][out] */ IDeprecatedDOMNodeList **result) { return DeprecatedDOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
         /* [in] */ BSTR name,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttribute(name, result); }
     
     virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
         /* [in] */ BSTR namespaceURI,
         /* [in] */ BSTR localName,
-        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
 
-    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DeprecatedDOMHTMLElement::focus(); }
     
-    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DeprecatedDOMHTMLElement::blur(); }
 
-    // IDOMHTMLElement
+    // IDeprecatedDOMHTMLElement
     virtual HRESULT STDMETHODCALLTYPE idName( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::idName(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setIdName( 
-        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+        /* [in] */ BSTR idName) { return DeprecatedDOMHTMLElement::setIdName(idName); }
     
     virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::title(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setTitle( 
-        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+        /* [in] */ BSTR title) { return DeprecatedDOMHTMLElement::setTitle(title); }
     
     virtual HRESULT STDMETHODCALLTYPE lang( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::lang(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setLang( 
-        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+        /* [in] */ BSTR lang) { return DeprecatedDOMHTMLElement::setLang(lang); }
     
     virtual HRESULT STDMETHODCALLTYPE dir( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::dir(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setDir( 
-        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+        /* [in] */ BSTR dir) { return DeprecatedDOMHTMLElement::setDir(dir); }
     
     virtual HRESULT STDMETHODCALLTYPE className( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::className(result); }
     
     virtual HRESULT STDMETHODCALLTYPE setClassName( 
-        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+        /* [in] */ BSTR className) { return DeprecatedDOMHTMLElement::setClassName(className); }
 
     virtual HRESULT STDMETHODCALLTYPE innerHTML( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerHTML(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
-        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        /* [in] */ BSTR html) { return DeprecatedDOMHTMLElement::setInnerHTML(html); }
         
     virtual HRESULT STDMETHODCALLTYPE innerText( 
-        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        /* [retval][out] */ BSTR *result) { return DeprecatedDOMHTMLElement::innerText(result); }
         
     virtual HRESULT STDMETHODCALLTYPE setInnerText( 
-        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+        /* [in] */ BSTR text) { return DeprecatedDOMHTMLElement::setInnerText(text); }
 
-    // IDOMHTMLTextArea
+    // IDeprecatedDOMHTMLTextArea
     virtual HRESULT STDMETHODCALLTYPE defaultValue( 
         /* [retval][out] */ BSTR *result);
     
@@ -2282,7 +2282,7 @@ public:
         /* [in] */ BSTR val);
     
     virtual HRESULT STDMETHODCALLTYPE form( 
-        /* [retval][out] */ IDOMHTMLElement **result);
+        /* [retval][out] */ IDeprecatedDOMHTMLElement **result);
     
     virtual HRESULT STDMETHODCALLTYPE accessKey( 
         /* [retval][out] */ BSTR *result);

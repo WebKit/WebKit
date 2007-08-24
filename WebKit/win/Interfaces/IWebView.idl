@@ -71,11 +71,11 @@ import "IWebUndoManager.idl";
 import "IWebEditingDelegate.idl";
 import "DOMRange.idl";
 
-interface IDOMCSSStyleDeclaration;
-interface IDOMDocument;
-interface IDOMElement;
-interface IDOMNode;
-interface IDOMRange;
+interface IDeprecatedDOMCSSStyleDeclaration;
+interface IDeprecatedDOMDocument;
+interface IDeprecatedDOMElement;
+interface IDeprecatedDOMNode;
+interface IDeprecatedDOMRange;
 
 interface IWebArchive;
 interface IWebBackForwardList;
@@ -722,7 +722,7 @@ interface IWebView : IUnknown
         @result Returns the main frame's DOMDocument.
         - (DOMDocument *)mainFrameDocument;
     */
-    HRESULT mainFrameDocument([out, retval] IDOMDocument** document);
+    HRESULT mainFrameDocument([out, retval] IDeprecatedDOMDocument** document);
 
     /*!
         @method mainFrameTitle
@@ -846,7 +846,7 @@ interface IWebViewCSS : IUnknown
     /*
         - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
     */
-    HRESULT computedStyleForElement([in] IDOMElement* element, [in] BSTR pseudoElement, [out, retval] IDOMCSSStyleDeclaration** style);
+    HRESULT computedStyleForElement([in] IDeprecatedDOMElement* element, [in] BSTR pseudoElement, [out, retval] IDeprecatedDOMCSSStyleDeclaration** style);
 }
 
 /*
@@ -863,17 +863,17 @@ interface IWebViewEditing : IUnknown
     /*
         - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
     */
-    HRESULT editableDOMRangeForPoint([in] LPPOINT point, [out, retval] IDOMRange** range);
+    HRESULT editableDOMRangeForPoint([in] LPPOINT point, [out, retval] IDeprecatedDOMRange** range);
 
     /*
         - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
     */
-    HRESULT setSelectedDOMRange([in] IDOMRange* range, [in] WebSelectionAffinity affinity);
+    HRESULT setSelectedDOMRange([in] IDeprecatedDOMRange* range, [in] WebSelectionAffinity affinity);
 
     /*
         - (DOMRange *)selectedDOMRange;
     */
-    HRESULT selectedDOMRange([out, retval] IDOMRange** range);
+    HRESULT selectedDOMRange([out, retval] IDeprecatedDOMRange** range);
 
     /*
         - (NSSelectionAffinity)selectionAffinity;
@@ -893,12 +893,12 @@ interface IWebViewEditing : IUnknown
     /*
         - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style;
     */
-    HRESULT setTypingStyle([in] IDOMCSSStyleDeclaration* style);
+    HRESULT setTypingStyle([in] IDeprecatedDOMCSSStyleDeclaration* style);
 
     /*
         - (DOMCSSStyleDeclaration *)typingStyle;
     */
-    HRESULT typingStyle([out, retval] IDOMCSSStyleDeclaration** style);
+    HRESULT typingStyle([out, retval] IDeprecatedDOMCSSStyleDeclaration** style);
 
     /*
         - (void)setSmartInsertDeleteEnabled:(BOOL)flag;
@@ -943,7 +943,7 @@ interface IWebViewEditing : IUnknown
     /*
         - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text;
     */
-    HRESULT styleDeclarationWithText([in] BSTR text, [out, retval] IDOMCSSStyleDeclaration** style);
+    HRESULT styleDeclarationWithText([in] BSTR text, [out, retval] IDeprecatedDOMCSSStyleDeclaration** style);
 
     /*
         - (BOOL)hasSelectedRange;
@@ -1000,7 +1000,7 @@ interface IWebViewUndoableEditing : IUnknown
     /*
         - (void)replaceSelectionWithNode:(DOMNode *)node; 
     */
-    HRESULT replaceSelectionWithNode([in] IDOMNode* node);
+    HRESULT replaceSelectionWithNode([in] IDeprecatedDOMNode* node);
 
     /*
         - (void)replaceSelectionWithText:(NSString *)text;    
@@ -1030,7 +1030,7 @@ interface IWebViewUndoableEditing : IUnknown
     /*
         - (void)applyStyle:(DOMCSSStyleDeclaration *)style;
     */
-    HRESULT applyStyle([in] IDOMCSSStyleDeclaration* style);
+    HRESULT applyStyle([in] IDeprecatedDOMCSSStyleDeclaration* style);
 }
 
 /*

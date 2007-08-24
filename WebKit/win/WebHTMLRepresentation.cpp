@@ -125,9 +125,9 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedImageMIMETypes(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::attributedStringFromDOMNodes( 
-        /* [in] */ IDOMNode* /*startNode*/,
+        /* [in] */ IDeprecatedDOMNode* /*startNode*/,
         /* [in] */ int /*startOffset*/,
-        /* [in] */ IDOMNode* /*endNode*/,
+        /* [in] */ IDeprecatedDOMNode* /*endNode*/,
         /* [in] */ int /*endOffset*/,
         /* [retval][out] */ IDataObject** /*attributedString*/)
 {
@@ -137,8 +137,8 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::attributedStringFromDOMNodes(
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementWithName( 
         /* [in] */ BSTR name,
-        /* [in] */ IDOMElement* form,
-        /* [retval][out] */ IDOMElement** element)
+        /* [in] */ IDeprecatedDOMElement* form,
+        /* [retval][out] */ IDeprecatedDOMElement** element)
 {
     if (!m_frame)
         return E_FAIL;
@@ -147,7 +147,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementWithName(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete( 
-        /* [in] */ IDOMElement* element,
+        /* [in] */ IDeprecatedDOMElement* element,
         /* [retval][out] */ BOOL* result)
 {
     bool doesAutoComplete;
@@ -157,7 +157,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementIsPassword( 
-        /* [in] */ IDOMElement* element,
+        /* [in] */ IDeprecatedDOMElement* element,
         /* [retval][out] */ BOOL* result)
 {
     bool isPassword;
@@ -167,8 +167,8 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementIsPassword(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::formForElement( 
-        /* [in] */ IDOMElement* element,
-        /* [retval][out] */ IDOMElement** form)
+        /* [in] */ IDeprecatedDOMElement* element,
+        /* [retval][out] */ IDeprecatedDOMElement** form)
 {
     if (!m_frame)
         return E_FAIL;
@@ -177,7 +177,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::formForElement(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::currentForm( 
-        /* [retval][out] */ IDOMElement** form)
+        /* [retval][out] */ IDeprecatedDOMElement** form)
 {
     if (!m_frame)
         return E_FAIL;
@@ -186,8 +186,8 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::currentForm(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::controlsInForm( 
-        /* [in] */ IDOMElement* form,
-        /* [out][in] */ IDOMElement** controls,
+        /* [in] */ IDeprecatedDOMElement* form,
+        /* [out][in] */ IDeprecatedDOMElement** controls,
         /* [out][in] */ int* cControls)
 {
     return m_frame->controlsInForm(form, controls, cControls);
@@ -196,7 +196,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::controlsInForm(
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::searchForLabels( 
         /* [size_is][in] */ BSTR* labels,
         /* [in] */ int cLabels,
-        /* [in] */ IDOMElement* beforeElement,
+        /* [in] */ IDeprecatedDOMElement* beforeElement,
         /* [retval][out] */ BSTR* result)
 {
     return m_frame->searchForLabelsBeforeElement(labels, cLabels, beforeElement, result);
@@ -205,7 +205,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::searchForLabels(
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::matchLabels( 
         /* [size_is][in] */ BSTR* labels,
         /* [in] */ int cLabels,
-        /* [in] */ IDOMElement* againstElement,
+        /* [in] */ IDeprecatedDOMElement* againstElement,
         /* [retval][out] */ BSTR* result)
 {
     return m_frame->matchLabelsAgainstElement(labels, cLabels, againstElement, result);

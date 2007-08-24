@@ -57,7 +57,7 @@ import "ocidl.idl";
     uuid(E6CEE774-41C6-4c1b-8832-798E49245E6B),
     pointer_default(unique)
 ]
-interface IDOMNodeExtensions : IUnknown
+interface IDeprecatedDOMNodeExtensions : IUnknown
 {
     /*
         - (NSRect)boundingBox

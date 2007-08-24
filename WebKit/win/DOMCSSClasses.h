@@ -31,54 +31,54 @@
 
 #include <WebCore/CSSStyleDeclaration.h>
 
-class DOMCSSStyleDeclaration : public DOMObject, public IDOMCSSStyleDeclaration
+class DeprecatedDOMCSSStyleDeclaration : public DeprecatedDOMObject, public IDeprecatedDOMCSSStyleDeclaration
 {
 protected:
-    DOMCSSStyleDeclaration(WebCore::CSSStyleDeclaration* d);
-    ~DOMCSSStyleDeclaration();
+    DeprecatedDOMCSSStyleDeclaration(WebCore::CSSStyleDeclaration* d);
+    ~DeprecatedDOMCSSStyleDeclaration();
 
 public:
-    static IDOMCSSStyleDeclaration* createInstance(WebCore::CSSStyleDeclaration* d);
+    static IDeprecatedDOMCSSStyleDeclaration* createInstance(WebCore::CSSStyleDeclaration* d);
 
 public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DeprecatedDOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DeprecatedDOMObject::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException( 
         /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMObject::throwException(exceptionMessage, result); }
+        /* [retval][out] */ BOOL *result) { return DeprecatedDOMObject::throwException(exceptionMessage, result); }
     
     virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
         /* [in] */ BSTR name,
         /* [size_is][in] */ const VARIANT args[  ],
         /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::callWebScriptMethod(name, args, cArgs, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::callWebScriptMethod(name, args, cArgs, result); }
     
     virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
         /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::evaluateWebScript(script, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::evaluateWebScript(script, result); }
     
     virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMObject::removeWebScriptKey(name); }
+        /* [in] */ BSTR name) { return DeprecatedDOMObject::removeWebScriptKey(name); }
     
     virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMObject::stringRepresentation(stringRepresentation); }
+        /* [retval][out] */ BSTR* stringRepresentation) { return DeprecatedDOMObject::stringRepresentation(stringRepresentation); }
     
     virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::webScriptValueAtIndex(index, result); }
+        /* [retval][out] */ VARIANT *result) { return DeprecatedDOMObject::webScriptValueAtIndex(index, result); }
     
     virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
         /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMObject::setWebScriptValueAtIndex(index, val); }
+        /* [in] */ VARIANT val) { return DeprecatedDOMObject::setWebScriptValueAtIndex(index, val); }
     
     virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMObject::setException(description); }
+        /* [in] */ BSTR description) { return DeprecatedDOMObject::setException(description); }
 
-    // IDOMCSSStyleDeclaration
+    // IDeprecatedDOMCSSStyleDeclaration
     virtual HRESULT STDMETHODCALLTYPE cssText( 
         /* [retval][out] */ BSTR *result);
     
@@ -91,7 +91,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE getPropertyCSSValue( 
         /* [in] */ BSTR propertyName,
-        /* [retval][out] */ IDOMCSSValue **result);
+        /* [retval][out] */ IDeprecatedDOMCSSValue **result);
     
     virtual HRESULT STDMETHODCALLTYPE removeProperty( 
         /* [in] */ BSTR propertyName,
@@ -114,7 +114,7 @@ public:
         /* [retval][out] */ BSTR *result);
     
     virtual HRESULT STDMETHODCALLTYPE parentRule( 
-        /* [retval][out] */ IDOMCSSRule **result);
+        /* [retval][out] */ IDeprecatedDOMCSSRule **result);
 
 protected:
     ULONG m_refCount;

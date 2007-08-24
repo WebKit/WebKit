@@ -353,13 +353,13 @@ HRESULT STDMETHODCALLTYPE FormValuesPropertyBag::LoadObject(
 
 //-----------------------------------------------------------------------------
 
-static Element *elementFromDOMElement(IDOMElement *element)
+static Element *elementFromDOMElement(IDeprecatedDOMElement *element)
 {
     if (!element)
         return 0;
 
-    COMPtr<IDOMElementPrivate> elePriv;
-    HRESULT hr = element->QueryInterface(IID_IDOMElementPrivate, (void**) &elePriv);
+    COMPtr<IDeprecatedDOMElementPrivate> elePriv;
+    HRESULT hr = element->QueryInterface(IID_IDeprecatedDOMElementPrivate, (void**) &elePriv);
     if (SUCCEEDED(hr)) {
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
@@ -369,13 +369,13 @@ static Element *elementFromDOMElement(IDOMElement *element)
     return 0;
 }
 
-static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
+static HTMLFormElement *formElementFromDOMElement(IDeprecatedDOMElement *element)
 {
     if (!element)
         return 0;
 
-    IDOMElementPrivate* elePriv;
-    HRESULT hr = element->QueryInterface(IID_IDOMElementPrivate, (void**) &elePriv);
+    IDeprecatedDOMElementPrivate* elePriv;
+    HRESULT hr = element->QueryInterface(IID_IDeprecatedDOMElementPrivate, (void**) &elePriv);
     if (SUCCEEDED(hr)) {
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
@@ -386,13 +386,13 @@ static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
     return 0;
 }
 
-static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
+static HTMLInputElement* inputElementFromDOMElement(IDeprecatedDOMElement* element)
 {
     if (!element)
         return 0;
 
-    IDOMElementPrivate* elePriv;
-    HRESULT hr = element->QueryInterface(IID_IDOMElementPrivate, (void**) &elePriv);
+    IDeprecatedDOMElementPrivate* elePriv;
+    HRESULT hr = element->QueryInterface(IID_IDeprecatedDOMElementPrivate, (void**) &elePriv);
     if (SUCCEEDED(hr)) {
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
@@ -516,7 +516,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::frameView(
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::DOMDocument( 
-    /* [retval][out] */ IDOMDocument** result)
+    /* [retval][out] */ IDeprecatedDOMDocument** result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -527,20 +527,20 @@ HRESULT STDMETHODCALLTYPE WebFrame::DOMDocument(
 
     if (Frame* coreFrame = core(this))
         if (Document* document = coreFrame->document())
-            *result = DOMDocument::createInstance(document);
+            *result = DeprecatedDOMDocument::createInstance(document);
 
     return *result ? S_OK : E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::frameElement( 
-    /* [retval][out] */ IDOMHTMLElement** /*frameElement*/)
+    /* [retval][out] */ IDeprecatedDOMHTMLElement** /*frameElement*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::currentForm( 
-        /* [retval][out] */ IDOMElement **currentForm)
+        /* [retval][out] */ IDeprecatedDOMElement **currentForm)
 {
     if (!currentForm) {
         ASSERT_NOT_REACHED();
@@ -551,7 +551,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::currentForm(
 
     if (Frame* coreFrame = core(this))
         if (HTMLFormElement* formElement = coreFrame->currentForm())
-            *currentForm = DOMElement::createInstance(formElement);
+            *currentForm = DeprecatedDOMElement::createInstance(formElement);
 
     return *currentForm ? S_OK : E_FAIL;
 }
@@ -1020,7 +1020,7 @@ HRESULT WebFrame::setInViewSourceMode(BOOL flag)
     return S_OK;
 }
 
-HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** element)
+HRESULT WebFrame::elementWithName(BSTR name, IDeprecatedDOMElement* form, IDeprecatedDOMElement** element)
 {
     if (!form)
         return E_INVALIDARG;
@@ -1033,7 +1033,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
             HTMLGenericFormElement *elt = elements[i];
             // Skip option elements, other duds
             if (elt->name() == targetName) {
-                *element = DOMElement::createInstance(elt);
+                *element = DeprecatedDOMElement::createInstance(elt);
                 return S_OK;
             }
         }
@@ -1041,7 +1041,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     return E_FAIL;
 }
 
-HRESULT WebFrame::formForElement(IDOMElement* element, IDOMElement** form)
+HRESULT WebFrame::formForElement(IDeprecatedDOMElement* element, IDeprecatedDOMElement** form)
 {
     if (!element)
         return E_INVALIDARG;
@@ -1054,11 +1054,11 @@ HRESULT WebFrame::formForElement(IDOMElement* element, IDOMElement** form)
     if (!formElement)
         return E_FAIL;
 
-    *form = DOMElement::createInstance(formElement);
+    *form = DeprecatedDOMElement::createInstance(formElement);
     return S_OK;
 }
 
-HRESULT WebFrame::elementDoesAutoComplete(IDOMElement *element, bool *result)
+HRESULT WebFrame::elementDoesAutoComplete(IDeprecatedDOMElement *element, bool *result)
 {
     *result = false;
     if (!element)
@@ -1073,7 +1073,7 @@ HRESULT WebFrame::elementDoesAutoComplete(IDOMElement *element, bool *result)
     return S_OK;
 }
 
-HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls)
+HRESULT WebFrame::controlsInForm(IDeprecatedDOMElement* form, IDeprecatedDOMElement** controls, int* cControls)
 {
     if (!form)
         return E_INVALIDARG;
@@ -1094,14 +1094,14 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
     Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
     for (int i = 0; i < count; i++) {
         if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-            controls[*cControls] = DOMElement::createInstance(elements.at(i));
+            controls[*cControls] = DeprecatedDOMElement::createInstance(elements.at(i));
             (*cControls)++;
         }
     }
     return S_OK;
 }
 
-HRESULT WebFrame::elementIsPassword(IDOMElement *element, bool *result)
+HRESULT WebFrame::elementIsPassword(IDeprecatedDOMElement *element, bool *result)
 {
     HTMLInputElement *inputElement = inputElementFromDOMElement(element);
     *result = inputElement != 0
@@ -1109,7 +1109,7 @@ HRESULT WebFrame::elementIsPassword(IDOMElement *element, bool *result)
     return S_OK;
 }
 
-HRESULT WebFrame::searchForLabelsBeforeElement(const BSTR* labels, int cLabels, IDOMElement* beforeElement, BSTR* result)
+HRESULT WebFrame::searchForLabelsBeforeElement(const BSTR* labels, int cLabels, IDeprecatedDOMElement* beforeElement, BSTR* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -1142,7 +1142,7 @@ HRESULT WebFrame::searchForLabelsBeforeElement(const BSTR* labels, int cLabels, 
     return S_OK;
 }
 
-HRESULT WebFrame::matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result)
+HRESULT WebFrame::matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDeprecatedDOMElement* againstElement, BSTR* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -1562,8 +1562,8 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
         return;
     }
 
-    COMPtr<IDOMElement> formElement;
-    formElement.adoptRef(DOMElement::createInstance(formState->form()));
+    COMPtr<IDeprecatedDOMElement> formElement;
+    formElement.adoptRef(DeprecatedDOMElement::createInstance(formState->form()));
 
     // FIXME: The FormValuesPropertyBag constructor should take a const pointer
     FormValuesPropertyBag formValuesPropBag(const_cast<HashMap<String, String>*>(&formState->values()));

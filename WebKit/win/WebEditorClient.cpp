@@ -237,7 +237,7 @@ bool WebEditorClient::shouldDeleteRange(Range* /*range*/)
     //BOOL result = false;
     //IWebViewEditingDelegate* editingDelegate;
     //// FIXME: DOMRange needs to be implemented before anything meaningful can be done here
-    //IDOMRange* domRange(0);
+    //IDeprecatedDOMRange* domRange(0);
     //if (SUCCEEDED(m_webView->editingDelegate(&editingDelegate))) {
     //    editingDelegate->shouldDeleteDOMRange(m_webView, domRange, &result);
     //    editingDelegate->Release();
@@ -260,7 +260,7 @@ bool WebEditorClient::shouldInsertText(String /*str*/, Range* /* replacingRange 
     //BOOL result = false;
     //IWebViewEditingDelegate* editingDelegate;
     //// FIXME: DOMRange needs to be implemented before anything meaningful can be done here
-    //IDOMRange* domRange(0); // make a DOMRange from replacingRange
+    //IDeprecatedDOMRange* domRange(0); // make a DOMRange from replacingRange
     //BString text(str);
     //if (SUCCEEDED(m_webView->editingDelegate(&editingDelegate))) {
     //    editingDelegate->shouldInsertText(m_webView, text, domRange, (WebViewInsertAction) givenAction, &result);
@@ -304,10 +304,10 @@ void WebEditorClient::textFieldDidBeginEditing(Element* e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLInputElement* domInputElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+            IDeprecatedDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLInputElement, (void**)&domInputElement))) {
                 formDelegate->textFieldDidBeginEditing(domInputElement, kit(e->document()->frame()));
                 domInputElement->Release();
             }
@@ -321,10 +321,10 @@ void WebEditorClient::textFieldDidEndEditing(Element* e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLInputElement* domInputElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+            IDeprecatedDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLInputElement, (void**)&domInputElement))) {
                 formDelegate->textFieldDidEndEditing(domInputElement, kit(e->document()->frame()));
                 domInputElement->Release();
             }
@@ -338,10 +338,10 @@ void WebEditorClient::textDidChangeInTextField(Element* e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLInputElement* domInputElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+            IDeprecatedDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLInputElement, (void**)&domInputElement))) {
                 formDelegate->textDidChangeInTextField(domInputElement, kit(e->document()->frame()));
                 domInputElement->Release();
             }
@@ -356,10 +356,10 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
     BOOL result = FALSE;
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLInputElement* domInputElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+            IDeprecatedDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLInputElement, (void**)&domInputElement))) {
                 String command = m_webView->interpretKeyEvent(ke);
                 // We allow empty commands here because the app code actually depends on this being called for all key presses.
                 // We may want to revisit this later because it doesn't really make sense to send an empty command.
@@ -378,10 +378,10 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* e)
     // We're using the deleteBackward command for all deletion operations since the autofill code treats all deletions the same way.
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLInputElement* domInputElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
+            IDeprecatedDOMHTMLInputElement* domInputElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLInputElement, (void**)&domInputElement))) {
                 BOOL result;
                 formDelegate->doPlatformCommand(domInputElement, BString("BackwardDelete"), kit(e->document()->frame()), &result);
                 domInputElement->Release();
@@ -396,10 +396,10 @@ void WebEditorClient::textDidChangeInTextArea(Element* e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDeprecatedDOMElement* domElement = DeprecatedDOMElement::createInstance(e);
         if (domElement) {
-            IDOMHTMLTextAreaElement* domTextAreaElement;
-            if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLTextAreaElement, (void**)&domTextAreaElement))) {
+            IDeprecatedDOMHTMLTextAreaElement* domTextAreaElement;
+            if (SUCCEEDED(domElement->QueryInterface(IID_IDeprecatedDOMHTMLTextAreaElement, (void**)&domTextAreaElement))) {
                 formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e->document()->frame()));
                 domTextAreaElement->Release();
             }
