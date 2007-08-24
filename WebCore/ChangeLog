@@ -1,3 +1,18 @@
+2007-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5433236> Print preview of empty txt file crashes Safari
+        Fix: Adjust computePageRectsForFrame to always return at least one 
+        page rect, even if document height is zero.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * bridge/win/FrameWin.h: Added Vector& parameter to 
+        computePagesRectsForFrame; changed its return type to void.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame): Reordered the loop that inserts
+        rects into the vector.
+
 2007-08-24  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver
