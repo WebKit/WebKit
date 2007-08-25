@@ -1,3 +1,29 @@
+2007-08-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5430165>
+        REGRESSION: Dynamically loaded images fail to load
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        Initialize the m_elementIsProtected member.
+
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        Assert that the element is not protected.
+        
+        (WebCore::HTMLImageLoader::setLoadingImage):
+        If the image is not null, protect the element. Otherwise, unprotect it.
+        
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        Unprotect the element here.
+
+        (WebCore::HTMLImageLoader::protectElement):
+        (WebCore::HTMLImageLoader::unprotectElement):
+        New methods which protect and unprotect the element.
+        
+        * html/HTMLImageLoader.h:
+
 2007-08-24  Kevin McCullough  <kmccullough@apple.com>
 
         - Updated ChangeLog
@@ -26,6 +52,7 @@
         (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
         (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]):
 
+>>>>>>> .r25226
 2007-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

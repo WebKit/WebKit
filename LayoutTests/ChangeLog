@@ -1,3 +1,13 @@
+2007-08-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5430165>
+        REGRESSION: Dynamically loaded images fail to load
+        
+        * fast/dom/HTMLImageElement/image-loading-gc-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-loading-gc.html: Added.
+
 2007-08-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt and Adele.

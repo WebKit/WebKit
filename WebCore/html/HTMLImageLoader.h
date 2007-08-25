@@ -58,11 +58,15 @@ protected:
     void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
 
 private:
+    void protectElement();
+    void unprotectElement();
+    
     Element* m_element;
     CachedImage* m_image;
     bool m_firedLoad : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
+    bool m_elementIsProtected : 1;
 };
 
 } //namespace
