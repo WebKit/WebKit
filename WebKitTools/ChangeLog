@@ -1,5 +1,9 @@
 2007-08-24  Sam Weinig  <sam@webkit.org>
 
+        Revert r25216 which renamed the COM DOM bindings to use Deprecated prefix.
+
+2007-08-24  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Adam Roben.
 
         <rdar://problem/5434593> Deprecate current manually written COM DOM bindings in anticipation of autogeneration

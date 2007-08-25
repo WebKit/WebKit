@@ -53,12 +53,12 @@ import "ocidl.idl";
 import "DOMCore.idl";
 import "IWebScriptObject.idl";
 
-interface IDeprecatedDOMObject;
-interface IDeprecatedDOMCSSValue;
-interface IDeprecatedDOMCSSStyleDeclaration;
-interface IDeprecatedDOMCSSStyleSheet;
-interface IDeprecatedDOMCSSRule;
-interface IDeprecatedDOMElement;
+interface IDOMObject;
+interface IDOMCSSValue;
+interface IDOMCSSStyleDeclaration;
+interface IDOMCSSStyleSheet;
+interface IDOMCSSRule;
+interface IDOMElement;
 
 /*
     @interface DOMDocument (DOMViewCSS)
@@ -69,12 +69,12 @@ interface IDeprecatedDOMElement;
     uuid(43EFE238-A4DF-400a-983D-FCE0C0F56BCD),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMViewCSS : IUnknown
+interface IDOMViewCSS : IUnknown
 {
     /*
         - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
     */
-    HRESULT getComputedStyle([in] IDeprecatedDOMElement* elt, [in] BSTR pseudoElt, [out, retval] IDeprecatedDOMCSSStyleDeclaration** result);
+    HRESULT getComputedStyle([in] IDOMElement* elt, [in] BSTR pseudoElt, [out, retval] IDOMCSSStyleDeclaration** result);
 }
 
 /*
@@ -86,7 +86,7 @@ interface IDeprecatedDOMViewCSS : IUnknown
     uuid(D45DA43D-5EDB-4315-A097-3ED3FA089193),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCSSRuleList : IDeprecatedDOMObject
+interface IDOMCSSRuleList : IDOMObject
 {
     /*
         - (unsigned)length;
@@ -96,7 +96,7 @@ interface IDeprecatedDOMCSSRuleList : IDeprecatedDOMObject
     /*
         - (DOMCSSRule *)item:(unsigned)index;
     */
-    HRESULT item([in] UINT index, [out, retval] IDeprecatedDOMCSSRule** result);
+    HRESULT item([in] UINT index, [out, retval] IDOMCSSRule** result);
 }
 
 /*
@@ -108,7 +108,7 @@ interface IDeprecatedDOMCSSRuleList : IDeprecatedDOMObject
     uuid(05947A31-9E1C-4c98-8608-6688959D6542),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCSSRule : IDeprecatedDOMObject
+interface IDOMCSSRule : IDOMObject
 {
     /*
         - (unsigned short)type;
@@ -128,12 +128,12 @@ interface IDeprecatedDOMCSSRule : IDeprecatedDOMObject
     /*
         - (DOMCSSStyleSheet *)parentStyleSheet;
     */
-    HRESULT parentStyleSheet([out, retval] IDeprecatedDOMCSSStyleSheet** sheet);
+    HRESULT parentStyleSheet([out, retval] IDOMCSSStyleSheet** sheet);
 
     /*
         - (DOMCSSRule *)parentRule;
     */
-    HRESULT parentRule([out, retval] IDeprecatedDOMCSSRule** rule);
+    HRESULT parentRule([out, retval] IDOMCSSRule** rule);
 }
 
 /*
@@ -145,7 +145,7 @@ interface IDeprecatedDOMCSSRule : IDeprecatedDOMObject
     uuid(DBBE9A6B-D505-4647-B4AB-40A7CF3EE63E),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCSSStyleDeclaration : IDeprecatedDOMObject
+interface IDOMCSSStyleDeclaration : IDOMObject
 {
     /*
         - (NSString *)cssText;
@@ -165,7 +165,7 @@ interface IDeprecatedDOMCSSStyleDeclaration : IDeprecatedDOMObject
     /*
         - (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName;
     */
-    HRESULT getPropertyCSSValue([in] BSTR propertyName, [out, retval] IDeprecatedDOMCSSValue** result);
+    HRESULT getPropertyCSSValue([in] BSTR propertyName, [out, retval] IDOMCSSValue** result);
 
     /*
         - (NSString *)removeProperty:(NSString *)propertyName;
@@ -195,7 +195,7 @@ interface IDeprecatedDOMCSSStyleDeclaration : IDeprecatedDOMObject
     /*
         - (DOMCSSRule *)parentRule;
     */
-    HRESULT parentRule([out, retval] IDeprecatedDOMCSSRule** result);
+    HRESULT parentRule([out, retval] IDOMCSSRule** result);
 }
 
 /*
@@ -207,7 +207,7 @@ interface IDeprecatedDOMCSSStyleDeclaration : IDeprecatedDOMObject
     uuid(51D29553-2AF7-4f52-AFE6-3C59196A8BAA),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCSSValue : IDeprecatedDOMObject
+interface IDOMCSSValue : IDOMObject
 {
     /*
         - (NSString *)cssText;
@@ -234,17 +234,17 @@ interface IDeprecatedDOMCSSValue : IDeprecatedDOMObject
     uuid(14B1C213-1458-48a1-AD8F-54BFE64F9ECF),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCSSStyleSheet : IDeprecatedDOMObject
+interface IDOMCSSStyleSheet : IDOMObject
 {
     /*
         - (DOMCSSRule *)ownerRule;
     */
-    HRESULT ownerRule([out, retval] IDeprecatedDOMCSSRule** rule);
+    HRESULT ownerRule([out, retval] IDOMCSSRule** rule);
 
     /*
         - (DOMCSSRuleList *)cssRules;
     */
-    HRESULT cssRules([out, retval] IDeprecatedDOMCSSRuleList** ruleList);
+    HRESULT cssRules([out, retval] IDOMCSSRuleList** ruleList);
 
     /*
         - (unsigned)insertRule:(NSString *)rule :(unsigned)index;
@@ -266,10 +266,10 @@ interface IDeprecatedDOMCSSStyleSheet : IDeprecatedDOMObject
     uuid(585127E2-D698-44c4-83EC-4D1E6E07E90D),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMElementCSSInlineStyle : IUnknown
+interface IDOMElementCSSInlineStyle : IUnknown
 {
     /*
         - (DOMCSSStyleDeclaration *)style;
     */
-    HRESULT style([out, retval] IDeprecatedDOMCSSStyleDeclaration** result);
+    HRESULT style([out, retval] IDOMCSSStyleDeclaration** result);
 }

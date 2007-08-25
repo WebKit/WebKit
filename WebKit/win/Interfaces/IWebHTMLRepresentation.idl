@@ -82,45 +82,45 @@ interface IWebHTMLRepresentation : IUnknown
     /*
         - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
     */
-    HRESULT attributedStringFromDOMNodes([in] IDeprecatedDOMNode* startNode, [in] int startOffset, [in] IDeprecatedDOMNode* endNode, [in] int endOffset, [out, retval] IDataObject** attributedString);
+    HRESULT attributedStringFromDOMNodes([in] IDOMNode* startNode, [in] int startOffset, [in] IDOMNode* endNode, [in] int endOffset, [out, retval] IDataObject** attributedString);
 
     /*
         - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
     */
-    HRESULT elementWithName([in] BSTR name, [in] IDeprecatedDOMElement* form, [out, retval] IDeprecatedDOMElement** element);
+    HRESULT elementWithName([in] BSTR name, [in] IDOMElement* form, [out, retval] IDOMElement** element);
 
     /*
         - (BOOL)elementDoesAutoComplete:(DOMElement *)element;
     */
-    HRESULT elementDoesAutoComplete([in] IDeprecatedDOMElement* element, [out, retval] BOOL* result);
+    HRESULT elementDoesAutoComplete([in] IDOMElement* element, [out, retval] BOOL* result);
 
     /*
         - (BOOL)elementIsPassword:(DOMElement *)element;
     */
-    HRESULT elementIsPassword([in] IDeprecatedDOMElement* element, [out, retval] BOOL* result);
+    HRESULT elementIsPassword([in] IDOMElement* element, [out, retval] BOOL* result);
 
     /*
         - (DOMElement *)formForElement:(DOMElement *)element;
     */
-    HRESULT formForElement([in] IDeprecatedDOMElement* element, [out, retval] IDeprecatedDOMElement** form);
+    HRESULT formForElement([in] IDOMElement* element, [out, retval] IDOMElement** form);
 
     /*
         - (DOMElement *)currentForm;
     */
-    HRESULT currentForm([out, retval] IDeprecatedDOMElement** form);
+    HRESULT currentForm([out, retval] IDOMElement** form);
 
     /*
         - (NSArray *)controlsInForm:(DOMElement *)form;
     */
-    HRESULT controlsInForm([in] IDeprecatedDOMElement* form, [in, out] IDeprecatedDOMElement** controls, [in, out] int* cControls);
+    HRESULT controlsInForm([in] IDOMElement* form, [in, out] IDOMElement** controls, [in, out] int* cControls);
 
     /*
         - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
     */
-    HRESULT searchForLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDeprecatedDOMElement* beforeElement, [out, retval] BSTR* result);
+    HRESULT searchForLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDOMElement* beforeElement, [out, retval] BSTR* result);
 
     /*
         - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
     */
-    HRESULT matchLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDeprecatedDOMElement* againstElement, [out, retval] BSTR* result);
+    HRESULT matchLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDOMElement* againstElement, [out, retval] BSTR* result);
 }

@@ -59,47 +59,47 @@ public:
         /* [out][in] */ int* cTypes);
     
     virtual HRESULT STDMETHODCALLTYPE attributedStringFromDOMNodes( 
-        /* [in] */ IDeprecatedDOMNode* startNode,
+        /* [in] */ IDOMNode* startNode,
         /* [in] */ int startOffset,
-        /* [in] */ IDeprecatedDOMNode* endNode,
+        /* [in] */ IDOMNode* endNode,
         /* [in] */ int endOffset,
         /* [retval][out] */ IDataObject** attributedString);
     
     virtual HRESULT STDMETHODCALLTYPE elementWithName( 
         /* [in] */ BSTR name,
-        /* [in] */ IDeprecatedDOMElement* form,
-        /* [retval][out] */ IDeprecatedDOMElement** element);
+        /* [in] */ IDOMElement* form,
+        /* [retval][out] */ IDOMElement** element);
     
     virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete( 
-        /* [in] */ IDeprecatedDOMElement* element,
+        /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result);
     
     virtual HRESULT STDMETHODCALLTYPE elementIsPassword( 
-        /* [in] */ IDeprecatedDOMElement* element,
+        /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result);
     
     virtual HRESULT STDMETHODCALLTYPE formForElement( 
-        /* [in] */ IDeprecatedDOMElement* element,
-        /* [retval][out] */ IDeprecatedDOMElement** form);
+        /* [in] */ IDOMElement* element,
+        /* [retval][out] */ IDOMElement** form);
     
     virtual HRESULT STDMETHODCALLTYPE currentForm( 
-        /* [retval][out] */ IDeprecatedDOMElement** form);
+        /* [retval][out] */ IDOMElement** form);
     
     virtual HRESULT STDMETHODCALLTYPE controlsInForm( 
-        /* [in] */ IDeprecatedDOMElement* form,
-        /* [out][in] */ IDeprecatedDOMElement** controls,
+        /* [in] */ IDOMElement* form,
+        /* [out][in] */ IDOMElement** controls,
         /* [out][in] */ int* cControls);
     
     virtual HRESULT STDMETHODCALLTYPE searchForLabels( 
         /* [size_is][in] */ BSTR *labels,
         /* [in] */ int cLabels,
-        /* [in] */ IDeprecatedDOMElement *beforeElement,
+        /* [in] */ IDOMElement *beforeElement,
         /* [retval][out] */ BSTR *result);
     
     virtual HRESULT STDMETHODCALLTYPE matchLabels( 
         /* [size_is][in] */ BSTR *labels,
         /* [in] */ int cLabels,
-        /* [in] */ IDeprecatedDOMElement *againstElement,
+        /* [in] */ IDOMElement *againstElement,
         /* [retval][out] */ BSTR *result);
 
     // IWebDocumentRepresentation

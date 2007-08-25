@@ -53,19 +53,19 @@ import "ocidl.idl";
 import "IWebScriptObject.idl";
 
 interface IWebScriptObject;
-interface IDeprecatedDOMNodeList;
-interface IDeprecatedDOMNamedNodeMap;
-interface IDeprecatedDOMDocumentType;
-interface IDeprecatedDOMElement;
-interface IDeprecatedDOMDocumentFragment;
-interface IDeprecatedDOMText;
-interface IDeprecatedDOMComment;
-interface IDeprecatedDOMCDATASection;
-interface IDeprecatedDOMProcessingInstruction;
-interface IDeprecatedDOMAttr;
-interface IDeprecatedDOMEntityReference;
-interface IDeprecatedDOMDocument;
-interface IDeprecatedDOMCSSStyleDeclaration;
+interface IDOMNodeList;
+interface IDOMNamedNodeMap;
+interface IDOMDocumentType;
+interface IDOMElement;
+interface IDOMDocumentFragment;
+interface IDOMText;
+interface IDOMComment;
+interface IDOMCDATASection;
+interface IDOMProcessingInstruction;
+interface IDOMAttr;
+interface IDOMEntityReference;
+interface IDOMDocument;
+interface IDOMCSSStyleDeclaration;
 /*
     @interface DOMObject : WebScriptObject <NSCopying>
 */
@@ -75,7 +75,7 @@ interface IDeprecatedDOMCSSStyleDeclaration;
     uuid(A27FA225-F34E-425d-88EB-A35BD105A527),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMObject : IWebScriptObject
+interface IDOMObject : IWebScriptObject
 {
 }
 
@@ -88,7 +88,7 @@ interface IDeprecatedDOMObject : IWebScriptObject
     uuid(6E48C25D-E542-4d1a-BC73-ACDC21E39C56),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMImplementation : IDeprecatedDOMObject
+interface IDOMImplementation : IDOMObject
 {
     /*
         - (BOOL)hasFeature:(NSString *)feature :(NSString *)version;
@@ -98,12 +98,12 @@ interface IDeprecatedDOMImplementation : IDeprecatedDOMObject
     /*
         - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId;
     */
-    HRESULT createDocumentType([in] BSTR qualifiedName, [in] BSTR publicId, [in] BSTR systemId, [out, retval] IDeprecatedDOMDocumentType** result);
+    HRESULT createDocumentType([in] BSTR qualifiedName, [in] BSTR publicId, [in] BSTR systemId, [out, retval] IDOMDocumentType** result);
 
     /*
         - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype;
     */
-    HRESULT createDocument([in] BSTR namespaceURI, [in] BSTR qualifiedName, [in] IDeprecatedDOMDocumentType* doctype, [out, retval] IDeprecatedDOMDocument** result);
+    HRESULT createDocument([in] BSTR namespaceURI, [in] BSTR qualifiedName, [in] IDOMDocumentType* doctype, [out, retval] IDOMDocument** result);
 }
 
 /*
@@ -115,7 +115,7 @@ interface IDeprecatedDOMImplementation : IDeprecatedDOMObject
     uuid(3EEA3E20-72DA-4be7-954F-79B5A14AD726),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMNode : IDeprecatedDOMObject
+interface IDOMNode : IDOMObject
 {
     /*
         - (NSString *)nodeName;
@@ -140,62 +140,62 @@ interface IDeprecatedDOMNode : IDeprecatedDOMObject
     /*
         - (DOMNode *)parentNode;
     */
-    HRESULT parentNode([out, retval] IDeprecatedDOMNode** result);
+    HRESULT parentNode([out, retval] IDOMNode** result);
 
     /*
         - (DOMNodeList *)childNodes;
     */
-    HRESULT childNodes([out, retval] IDeprecatedDOMNodeList** result);
+    HRESULT childNodes([out, retval] IDOMNodeList** result);
 
     /*
         - (DOMNode *)firstChild;
     */
-    HRESULT firstChild([out, retval] IDeprecatedDOMNode** result);
+    HRESULT firstChild([out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)lastChild;
     */
-    HRESULT lastChild([out, retval] IDeprecatedDOMNode** result);
+    HRESULT lastChild([out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)previousSibling;
     */
-    HRESULT previousSibling([out, retval] IDeprecatedDOMNode** result);
+    HRESULT previousSibling([out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)nextSibling;
     */
-    HRESULT nextSibling([out, retval] IDeprecatedDOMNode** result);
+    HRESULT nextSibling([out, retval] IDOMNode** result);
 
     /*
         - (DOMNamedNodeMap *)attributes;
     */
-    HRESULT attributes([out, retval] IDeprecatedDOMNamedNodeMap** result);
+    HRESULT attributes([out, retval] IDOMNamedNodeMap** result);
 
     /*
         - (DOMDocument *)ownerDocument;
     */
-    HRESULT ownerDocument([out, retval] IDeprecatedDOMDocument** result);
+    HRESULT ownerDocument([out, retval] IDOMDocument** result);
 
     /*
         - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild;
     */
-    HRESULT insertBefore([in] IDeprecatedDOMNode* newChild, [in] IDeprecatedDOMNode* refChild, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT insertBefore([in] IDOMNode* newChild, [in] IDOMNode* refChild, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild;
     */
-    HRESULT replaceChild([in] IDeprecatedDOMNode* newChild, [in] IDeprecatedDOMNode* oldChild, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT replaceChild([in] IDOMNode* newChild, [in] IDOMNode* oldChild, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)removeChild:(DOMNode *)oldChild;
     */
-    HRESULT removeChild([in] IDeprecatedDOMNode* oldChild, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT removeChild([in] IDOMNode* oldChild, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)appendChild:(DOMNode *)newChild;
     */
-    HRESULT appendChild([in] IDeprecatedDOMNode* oldChild, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT appendChild([in] IDOMNode* oldChild, [out, retval] IDOMNode** result);
 
     /*
         - (BOOL)hasChildNodes;
@@ -205,7 +205,7 @@ interface IDeprecatedDOMNode : IDeprecatedDOMObject
     /*
         - (DOMNode *)cloneNode:(BOOL)deep;
     */
-    HRESULT cloneNode([in] BOOL deep, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT cloneNode([in] BOOL deep, [out, retval] IDOMNode** result);
 
     /*
         - (void)normalize;
@@ -245,12 +245,12 @@ interface IDeprecatedDOMNode : IDeprecatedDOMObject
     /*
         - (BOOL)isSameNode:(DOMNode *)other;
     */
-    HRESULT isSameNode([in] IDeprecatedDOMNode* other, [out, retval] BOOL* result);
+    HRESULT isSameNode([in] IDOMNode* other, [out, retval] BOOL* result);
 
     /*
         - (BOOL)isEqualNode:(DOMNode *)other;
     */
-    HRESULT isEqualNode([in] IDeprecatedDOMNode* other, [out, retval] BOOL* result); 
+    HRESULT isEqualNode([in] IDOMNode* other, [out, retval] BOOL* result); 
 
     /*
         - (NSString *)textContent;
@@ -272,12 +272,12 @@ interface IDeprecatedDOMNode : IDeprecatedDOMObject
     uuid(10A05A96-CBD9-4493-83AD-FAFB952615CE),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMNodeList : IDeprecatedDOMObject
+interface IDOMNodeList : IDOMObject
 {
     /*
         - (DOMNode *)item:(unsigned)index;
     */
-    HRESULT item([in] UINT index, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT item([in] UINT index, [out, retval] IDOMNode** result);
 
     /*
         - (unsigned)length;
@@ -294,27 +294,27 @@ interface IDeprecatedDOMNodeList : IDeprecatedDOMObject
     uuid(E6CBF396-C9F9-431b-A8D6-BCB525067E9F),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMNamedNodeMap : IDeprecatedDOMObject
+interface IDOMNamedNodeMap : IDOMObject
 {
     /*
         - (DOMNode *)getNamedItem:(NSString *)name;
     */
-    HRESULT getNamedItem([in] BSTR name, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT getNamedItem([in] BSTR name, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)setNamedItem:(DOMNode *)arg;
     */
-    HRESULT setNamedItem([in] IDeprecatedDOMNode* arg, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT setNamedItem([in] IDOMNode* arg, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)removeNamedItem:(NSString *)name;
     */
-    HRESULT removeNamedItem([in] BSTR name, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT removeNamedItem([in] BSTR name, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)item:(unsigned)index;
     */
-    HRESULT item([in] UINT index, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT item([in] UINT index, [out, retval] IDOMNode** result);
 
     /*
         - (unsigned)length;
@@ -324,21 +324,21 @@ interface IDeprecatedDOMNamedNodeMap : IDeprecatedDOMObject
     /*
         - (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
     */
-    HRESULT getNamedItemNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT getNamedItemNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)setNamedItemNS:(DOMNode *)arg;
     */
-    HRESULT setNamedItemNS([in] IDeprecatedDOMNode* arg, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT setNamedItemNS([in] IDOMNode* arg, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
     */
-    HRESULT removeNamedItemNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT removeNamedItemNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDOMNode** result);
 }
 
 /*
-    @interface DOMDocument : IDeprecatedDOMNode
+    @interface DOMDocument : IDOMNode
 */
 [
     object,
@@ -346,96 +346,96 @@ interface IDeprecatedDOMNamedNodeMap : IDeprecatedDOMObject
     uuid(A83C2C44-0BAC-45c7-8E17-6A49975D5CCA),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMDocument : IDeprecatedDOMNode
+interface IDOMDocument : IDOMNode
 {
     /*
         - (DOMDocumentType *)doctype;
     */
-    HRESULT doctype([out, retval] IDeprecatedDOMDocumentType** result);
+    HRESULT doctype([out, retval] IDOMDocumentType** result);
 
     /*
         - (DOMImplementation *)implementation;
     */
-    HRESULT implementation([out, retval] IDeprecatedDOMImplementation** result);
+    HRESULT implementation([out, retval] IDOMImplementation** result);
 
     /*
         - (DOMElement *)documentElement;
     */
-    HRESULT documentElement([out, retval] IDeprecatedDOMElement** result);
+    HRESULT documentElement([out, retval] IDOMElement** result);
 
     /*
         - (DOMElement *)createElement:(NSString *)tagName;
     */
-    HRESULT createElement([in] BSTR tagName, [out, retval] IDeprecatedDOMElement** result);
+    HRESULT createElement([in] BSTR tagName, [out, retval] IDOMElement** result);
 
     /*
         - (DOMDocumentFragment *)createDocumentFragment;
     */
-    HRESULT createDocumentFragment([out, retval] IDeprecatedDOMDocumentFragment** result);
+    HRESULT createDocumentFragment([out, retval] IDOMDocumentFragment** result);
 
     /*
         - (DOMText *)createTextNode:(NSString *)data;
     */
-    HRESULT createTextNode([in] BSTR data, [out, retval] IDeprecatedDOMText** result);
+    HRESULT createTextNode([in] BSTR data, [out, retval] IDOMText** result);
 
     /*
         - (DOMComment *)createComment:(NSString *)data;
     */
-    HRESULT createComment([in] BSTR data, [out, retval] IDeprecatedDOMComment** result);
+    HRESULT createComment([in] BSTR data, [out, retval] IDOMComment** result);
 
     /*
         - (DOMCDATASection *)createCDATASection:(NSString *)data;
     */
-    HRESULT createCDATASection([in] BSTR data, [out, retval] IDeprecatedDOMCDATASection** result);
+    HRESULT createCDATASection([in] BSTR data, [out, retval] IDOMCDATASection** result);
 
     /*
         - (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target :(NSString *)data;
     */
-    HRESULT createProcessingInstruction([in] BSTR target, [in] BSTR data, [out, retval] IDeprecatedDOMProcessingInstruction** result);
+    HRESULT createProcessingInstruction([in] BSTR target, [in] BSTR data, [out, retval] IDOMProcessingInstruction** result);
 
     /*
         - (DOMAttr *)createAttribute:(NSString *)name;
     */
-    HRESULT createAttribute([in] BSTR name, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT createAttribute([in] BSTR name, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMEntityReference *)createEntityReference:(NSString *)name;
     */
-    HRESULT createEntityReference([in] BSTR name, [out, retval] IDeprecatedDOMEntityReference** result);
+    HRESULT createEntityReference([in] BSTR name, [out, retval] IDOMEntityReference** result);
 
     /*
         - (DOMNodeList *)getElementsByTagName:(NSString *)tagname;
     */
-    HRESULT getElementsByTagName([in] BSTR tagName, [out, retval] IDeprecatedDOMNodeList** result);
+    HRESULT getElementsByTagName([in] BSTR tagName, [out, retval] IDOMNodeList** result);
 
     /*
         - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep;
     */
-    HRESULT importNode([in] IDeprecatedDOMNode* importedNode, [in] BOOL deep, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT importNode([in] IDOMNode* importedNode, [in] BOOL deep, [out, retval] IDOMNode** result);
 
     /*
         - (DOMElement *)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName;
     */
-    HRESULT createElementNS([in] BSTR namespaceURI, [in] BSTR qualifiedName, [out, retval] IDeprecatedDOMElement** result);
+    HRESULT createElementNS([in] BSTR namespaceURI, [in] BSTR qualifiedName, [out, retval] IDOMElement** result);
 
     /*
         - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName;
     */
-    HRESULT createAttributeNS([in] BSTR namespaceURI, [in] BSTR qualifiedName, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT createAttributeNS([in] BSTR namespaceURI, [in] BSTR qualifiedName, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
     */
-    HRESULT getElementsByTagNameNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDeprecatedDOMNodeList** result);
+    HRESULT getElementsByTagNameNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDOMNodeList** result);
 
     /*
         - (DOMElement *)getElementById:(NSString *)elementId;
     */
-    HRESULT getElementById([in] BSTR elementId, [out, retval] IDeprecatedDOMElement** result);
+    HRESULT getElementById([in] BSTR elementId, [out, retval] IDOMElement** result);
 }
 
 /*
-    @interface DOMCharacterData : IDeprecatedDOMNode
+    @interface DOMCharacterData : IDOMNode
 */
 [
     object,
@@ -443,7 +443,7 @@ interface IDeprecatedDOMDocument : IDeprecatedDOMNode
     uuid(F4DED047-FE61-461a-BDBD-BB87F79DB713),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCharacterData : IDeprecatedDOMNode
+interface IDOMCharacterData : IDOMNode
 {
     /*
         - (NSString *)data;
@@ -487,7 +487,7 @@ interface IDeprecatedDOMCharacterData : IDeprecatedDOMNode
 }
 
 /*
-    @interface DOMAttr : IDeprecatedDOMNode
+    @interface DOMAttr : IDOMNode
 */
 [
     object,
@@ -495,7 +495,7 @@ interface IDeprecatedDOMCharacterData : IDeprecatedDOMNode
     uuid(B587E098-8206-4b5a-A7DB-422F218571A0),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMAttr : IDeprecatedDOMNode
+interface IDOMAttr : IDOMNode
 {
     /*
         - (NSString *)name;
@@ -520,11 +520,11 @@ interface IDeprecatedDOMAttr : IDeprecatedDOMNode
     /*
         - (DOMElement *)ownerElement;
     */
-    HRESULT ownerElement([out, retval] IDeprecatedDOMElement** result);
+    HRESULT ownerElement([out, retval] IDOMElement** result);
 }
 
 /*
-    @interface DOMElement : IDeprecatedDOMNode
+    @interface DOMElement : IDOMNode
 */
 [
     object,
@@ -532,7 +532,7 @@ interface IDeprecatedDOMAttr : IDeprecatedDOMNode
     uuid(E053A35B-7775-4859-80EA-C35D02D145A2),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMElement : IDeprecatedDOMNode
+interface IDOMElement : IDOMNode
 {
     /*
         - (NSString *)tagName;
@@ -557,22 +557,22 @@ interface IDeprecatedDOMElement : IDeprecatedDOMNode
     /*
         - (DOMAttr *)getAttributeNode:(NSString *)name;
     */
-    HRESULT getAttributeNode([in] BSTR name, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT getAttributeNode([in] BSTR name, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr;
     */
-    HRESULT setAttributeNode([in] IDeprecatedDOMAttr* newAttr, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT setAttributeNode([in] IDOMAttr* newAttr, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMAttr *)removeAttributeNode:(DOMAttr *)oldAttr;
     */
-    HRESULT removeAttributeNode([in] IDeprecatedDOMAttr* oldAttr, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT removeAttributeNode([in] IDOMAttr* oldAttr, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMNodeList *)getElementsByTagName:(NSString *)name;
     */
-    HRESULT getElementsByTagName([in] BSTR name, [out, retval] IDeprecatedDOMNodeList** result);
+    HRESULT getElementsByTagName([in] BSTR name, [out, retval] IDOMNodeList** result);
 
     /*
         - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
@@ -592,17 +592,17 @@ interface IDeprecatedDOMElement : IDeprecatedDOMNode
     /*
         - (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName;
     */
-    HRESULT getAttributeNodeNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT getAttributeNodeNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr;
     */
-    HRESULT setAttributeNodeNS([in] IDeprecatedDOMAttr* newAttr, [out, retval] IDeprecatedDOMAttr** result);
+    HRESULT setAttributeNodeNS([in] IDOMAttr* newAttr, [out, retval] IDOMAttr** result);
 
     /*
         - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
     */
-    HRESULT getElementsByTagNameNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDeprecatedDOMNodeList** result);
+    HRESULT getElementsByTagNameNS([in] BSTR namespaceURI, [in] BSTR localName, [out, retval] IDOMNodeList** result);
 
     /*
         - (BOOL)hasAttribute:(NSString *)name;
@@ -634,7 +634,7 @@ interface IDeprecatedDOMElement : IDeprecatedDOMNode
     uuid(98E481F5-4405-4c2a-BF77-1CE95FE5F992),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMElementExtensions : IUnknown
+interface IDOMElementExtensions : IUnknown
 {
     /*
         - (int)offsetLeft;
@@ -659,7 +659,7 @@ interface IDeprecatedDOMElementExtensions : IUnknown
     /*
         - (DOMElement *)offsetParent;
     */
-    HRESULT offsetParent([out, retval] IDeprecatedDOMElement** result);
+    HRESULT offsetParent([out, retval] IDOMElement** result);
 
     /*
         - (int)clientWidth;
@@ -721,12 +721,12 @@ interface IDeprecatedDOMElementExtensions : IUnknown
     uuid(74638F45-1AA0-4db5-958C-82066E00BD2B),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMText : IDeprecatedDOMCharacterData
+interface IDOMText : IDOMCharacterData
 {
     /*
         - (DOMText *)splitText:(unsigned)offset;
     */
-    HRESULT splitText([in] UINT offset, [out, retval] IDeprecatedDOMText** result);
+    HRESULT splitText([in] UINT offset, [out, retval] IDOMText** result);
 }
 
 /*
@@ -738,7 +738,7 @@ interface IDeprecatedDOMText : IDeprecatedDOMCharacterData
     uuid(118002E8-847F-4b1a-968C-B25A6AC7B128),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMComment : IDeprecatedDOMCharacterData
+interface IDOMComment : IDOMCharacterData
 {
 }
 
@@ -751,12 +751,12 @@ interface IDeprecatedDOMComment : IDeprecatedDOMCharacterData
     uuid(31B506C1-45A3-4d72-815A-311B0A897E58),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMCDATASection : IDeprecatedDOMText
+interface IDOMCDATASection : IDOMText
 {
 }
 
 /*
-    @interface DOMDocumentType : IDeprecatedDOMNode
+    @interface DOMDocumentType : IDOMNode
 */
 [
     object,
@@ -764,7 +764,7 @@ interface IDeprecatedDOMCDATASection : IDeprecatedDOMText
     uuid(17FCE6EA-4164-4bd4-9DBF-0395FBF37FD3),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMDocumentType : IDeprecatedDOMNode
+interface IDOMDocumentType : IDOMNode
 {
     /*
         - (NSString *)name;
@@ -774,12 +774,12 @@ interface IDeprecatedDOMDocumentType : IDeprecatedDOMNode
     /*
         - (DOMNamedNodeMap *)entities;
     */
-    HRESULT entities([out, retval] IDeprecatedDOMNamedNodeMap** result);
+    HRESULT entities([out, retval] IDOMNamedNodeMap** result);
 
     /*
         - (DOMNamedNodeMap *)notations;
     */
-    HRESULT notations([out, retval] IDeprecatedDOMNamedNodeMap** result);
+    HRESULT notations([out, retval] IDOMNamedNodeMap** result);
 
     /*
         - (NSString *)publicId;
@@ -798,7 +798,7 @@ interface IDeprecatedDOMDocumentType : IDeprecatedDOMNode
 }
 
 /*
-    @interface DOMEntityReference : IDeprecatedDOMNode
+    @interface DOMEntityReference : IDOMNode
 */
 [
     object,
@@ -806,12 +806,12 @@ interface IDeprecatedDOMDocumentType : IDeprecatedDOMNode
     uuid(0593CE45-15B2-44af-BBD0-5A1654F8240E),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMEntityReference : IDeprecatedDOMNode
+interface IDOMEntityReference : IDOMNode
 {
 }
 
 /*
-    @interface DOMProcessingInstruction : IDeprecatedDOMNode
+    @interface DOMProcessingInstruction : IDOMNode
 */
 [
     object,
@@ -819,7 +819,7 @@ interface IDeprecatedDOMEntityReference : IDeprecatedDOMNode
     uuid(D99D2F48-ABF3-426a-9339-54681E1AFCA9),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMProcessingInstruction : IDeprecatedDOMNode
+interface IDOMProcessingInstruction : IDOMNode
 {
     /*
         - (NSString *)target;
@@ -838,7 +838,7 @@ interface IDeprecatedDOMProcessingInstruction : IDeprecatedDOMNode
 }
 
 /*
-    @interface DOMDocumentFragment : IDeprecatedDOMNode
+    @interface DOMDocumentFragment : IDOMNode
 */
 [
     object,
@@ -846,6 +846,6 @@ interface IDeprecatedDOMProcessingInstruction : IDeprecatedDOMNode
     uuid(09D35665-8396-4868-949E-8AA2407A6E10),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMDocumentFragment : IDeprecatedDOMNode
+interface IDOMDocumentFragment : IDOMNode
 {
 }

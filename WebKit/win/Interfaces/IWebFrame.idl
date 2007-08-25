@@ -57,8 +57,8 @@ import "IWebView.idl";
 import "IWebURLRequest.idl";
 import "DOMCore.idl";
 
-interface IDeprecatedDOMDocument;
-interface IDeprecatedDOMHTMLElement;
+interface IDOMDocument;
+interface IDOMHTMLElement;
 interface IWebURLRequest;
 interface IWebArchive;
 interface IWebDataSource;
@@ -107,7 +107,7 @@ interface IWebFrame : IUnknown
         @description Returns nil if the frame does not contain a DOM document such as a standalone image.
         - (DOMDocument *)DOMDocument;
     */
-    HRESULT DOMDocument([out, retval] IDeprecatedDOMDocument** document);
+    HRESULT DOMDocument([out, retval] IDOMDocument** document);
 
     /*!
         @method frameElement
@@ -116,7 +116,7 @@ interface IWebFrame : IUnknown
         Returns nil if the frame is the main frame since there is no frame element for the frame in this case.
         - (DOMHTMLElement *)frameElement;
     */
-    HRESULT frameElement([out, retval] IDeprecatedDOMHTMLElement** frameElement);
+    HRESULT frameElement([out, retval] IDOMHTMLElement** frameElement);
 
     /*!
         @method loadRequest:
@@ -231,5 +231,5 @@ interface IWebFrame : IUnknown
 
 
   /* This is a DOMElement on mac, but maybe should be a DOMHTMLFrameElement? */
-    HRESULT currentForm([out, retval] IDeprecatedDOMElement** frameElement);
+    HRESULT currentForm([out, retval] IDOMElement** frameElement);
 }

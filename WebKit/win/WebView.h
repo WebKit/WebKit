@@ -282,7 +282,7 @@ public:
         /* [retval][out] */ BSTR *urlString);
     
     virtual HRESULT STDMETHODCALLTYPE mainFrameDocument( 
-        /* [retval][out] */ IDeprecatedDOMDocument **document);
+        /* [retval][out] */ IDOMDocument **document);
     
     virtual HRESULT STDMETHODCALLTYPE mainFrameTitle( 
         /* [retval][out] */ BSTR *title);
@@ -348,22 +348,22 @@ public:
     // IWebViewCSS
 
     virtual HRESULT STDMETHODCALLTYPE computedStyleForElement( 
-        /* [in] */ IDeprecatedDOMElement *element,
+        /* [in] */ IDOMElement *element,
         /* [in] */ BSTR pseudoElement,
-        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration **style);
+        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
 
     // IWebViewEditing
 
     virtual HRESULT STDMETHODCALLTYPE editableDOMRangeForPoint( 
         /* [in] */ LPPOINT point,
-        /* [retval][out] */ IDeprecatedDOMRange **range);
+        /* [retval][out] */ IDOMRange **range);
     
     virtual HRESULT STDMETHODCALLTYPE setSelectedDOMRange( 
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMRange *range,
         /* [in] */ WebSelectionAffinity affinity);
     
     virtual HRESULT STDMETHODCALLTYPE selectedDOMRange( 
-        /* [retval][out] */ IDeprecatedDOMRange **range);
+        /* [retval][out] */ IDOMRange **range);
     
     virtual HRESULT STDMETHODCALLTYPE selectionAffinity( 
         /* [retval][out][retval][out] */ WebSelectionAffinity *affinity);
@@ -375,10 +375,10 @@ public:
         /* [retval][out] */ BOOL *isEditable);
     
     virtual HRESULT STDMETHODCALLTYPE setTypingStyle( 
-        /* [in] */ IDeprecatedDOMCSSStyleDeclaration *style);
+        /* [in] */ IDOMCSSStyleDeclaration *style);
     
     virtual HRESULT STDMETHODCALLTYPE typingStyle( 
-        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration **style);
+        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
     
     virtual HRESULT STDMETHODCALLTYPE setSmartInsertDeleteEnabled( 
         /* [in] */ BOOL flag);
@@ -406,7 +406,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE styleDeclarationWithText( 
         /* [in] */ BSTR text,
-        /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration **style);
+        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
     
     virtual HRESULT STDMETHODCALLTYPE hasSelectedRange( 
         /* [retval][out] */ BOOL *hasSelectedRange);
@@ -435,7 +435,7 @@ public:
     // IWebViewUndoableEditing
 
     virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithNode( 
-        /* [in] */ IDeprecatedDOMNode *node);
+        /* [in] */ IDOMNode *node);
     
     virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithText( 
         /* [in] */ BSTR text);
@@ -451,7 +451,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE clearSelection(void);
     
     virtual HRESULT STDMETHODCALLTYPE applyStyle( 
-        /* [in] */ IDeprecatedDOMCSSStyleDeclaration *style);
+        /* [in] */ IDOMCSSStyleDeclaration *style);
 
     // IWebViewEditingActions
 

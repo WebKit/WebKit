@@ -52,12 +52,12 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "DOMCore.idl";
 
-interface IDeprecatedDOMHTMLElement;
-interface IDeprecatedDOMHTMLFormElement;
-interface IDeprecatedDOMHTMLTableCaptionElement;
-interface IDeprecatedDOMHTMLTableSectionElement;
-interface IDeprecatedDOMDocument;
-interface IDeprecatedDOMElement;
+interface IDOMHTMLElement;
+interface IDOMHTMLFormElement;
+interface IDOMHTMLTableCaptionElement;
+interface IDOMHTMLTableSectionElement;
+interface IDOMDocument;
+interface IDOMElement;
 
 /*
     @interface DOMHTMLCollection : DOMObject
@@ -68,7 +68,7 @@ interface IDeprecatedDOMElement;
     uuid(DD8E4E33-D1D4-48e7-BB23-6DC3D7CCEC42),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLCollection : IDeprecatedDOMObject
+interface IDOMHTMLCollection : IDOMObject
 {
     /*
         - (unsigned)length;
@@ -78,12 +78,12 @@ interface IDeprecatedDOMHTMLCollection : IDeprecatedDOMObject
     /*
         - (DOMNode *)item:(unsigned)index;
     */
-    HRESULT item([in] UINT index, [out, retval] IDeprecatedDOMNode** node);
+    HRESULT item([in] UINT index, [out, retval] IDOMNode** node);
 
     /*
         - (DOMNode *)namedItem:(NSString *)name;
     */
-    HRESULT namedItem([in] BSTR name, [out, retval] IDeprecatedDOMNode** node);
+    HRESULT namedItem([in] BSTR name, [out, retval] IDOMNode** node);
 }
 
 /*
@@ -95,7 +95,7 @@ interface IDeprecatedDOMHTMLCollection : IDeprecatedDOMObject
     uuid(1AD98D99-163C-4c04-B6EE-85A3DD31F5C4),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLOptionsCollection : IDeprecatedDOMObject
+interface IDOMHTMLOptionsCollection : IDOMObject
 {
     /*
         - (unsigned)length;
@@ -110,12 +110,12 @@ interface IDeprecatedDOMHTMLOptionsCollection : IDeprecatedDOMObject
     /*
         - (DOMNode *)item:(unsigned)index;
     */
-    HRESULT item([in] unsigned int index, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT item([in] unsigned int index, [out, retval] IDOMNode** result);
 
     /*
         - (DOMNode *)namedItem:(NSString *)name;
     */
-    HRESULT namedItem([in] BSTR name, [out, retval] IDeprecatedDOMNode** result);
+    HRESULT namedItem([in] BSTR name, [out, retval] IDOMNode** result);
 }
 
 /*
@@ -127,7 +127,7 @@ interface IDeprecatedDOMHTMLOptionsCollection : IDeprecatedDOMObject
     uuid(A7DF8485-25B7-4a98-B70C-1E29CAA00597),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLDocument : IDeprecatedDOMDocument
+interface IDOMHTMLDocument : IDOMDocument
 {
     /*
         - (NSString *)title;
@@ -157,37 +157,37 @@ interface IDeprecatedDOMHTMLDocument : IDeprecatedDOMDocument
     /*
         - (DOMHTMLElement *)body;
     */
-    HRESULT body([out, retval] IDeprecatedDOMHTMLElement** bodyElement);
+    HRESULT body([out, retval] IDOMHTMLElement** bodyElement);
 
     /*
         - (void)setBody:(DOMHTMLElement *)body;
     */
-    HRESULT setBody([in] IDeprecatedDOMHTMLElement* body);
+    HRESULT setBody([in] IDOMHTMLElement* body);
 
     /*
         - (DOMHTMLCollection *)images;
     */
-    HRESULT images([out, retval] IDeprecatedDOMHTMLCollection** collection);
+    HRESULT images([out, retval] IDOMHTMLCollection** collection);
 
     /*
         - (DOMHTMLCollection *)applets;
     */
-    HRESULT applets([out, retval] IDeprecatedDOMHTMLCollection** collection);
+    HRESULT applets([out, retval] IDOMHTMLCollection** collection);
 
     /*
         - (DOMHTMLCollection *)links;
     */
-    HRESULT links([out, retval] IDeprecatedDOMHTMLCollection** collection);
+    HRESULT links([out, retval] IDOMHTMLCollection** collection);
 
     /*
         - (DOMHTMLCollection *)forms;
     */
-    HRESULT forms([out, retval] IDeprecatedDOMHTMLCollection** collection);
+    HRESULT forms([out, retval] IDOMHTMLCollection** collection);
 
     /*
         - (DOMHTMLCollection *)anchors;
     */
-    HRESULT anchors([out, retval] IDeprecatedDOMHTMLCollection** collection);
+    HRESULT anchors([out, retval] IDOMHTMLCollection** collection);
 
     /*
         - (NSString *)cookie;
@@ -222,12 +222,12 @@ interface IDeprecatedDOMHTMLDocument : IDeprecatedDOMDocument
     /*
         - (DOMElement *)getElementById:(NSString *)elementId;
     */
-    HRESULT getElementById_([in] BSTR elementId, [out, retval] IDeprecatedDOMElement** element);
+    HRESULT getElementById_([in] BSTR elementId, [out, retval] IDOMElement** element);
 
     /*
         - (DOMNodeList *)getElementsByName:(NSString *)elementName;
     */
-    HRESULT getElementsByName([in] BSTR elementName, [out, retval] IDeprecatedDOMNodeList** nodeList);
+    HRESULT getElementsByName([in] BSTR elementName, [out, retval] IDOMNodeList** nodeList);
 }
 
 /*
@@ -239,7 +239,7 @@ interface IDeprecatedDOMHTMLDocument : IDeprecatedDOMDocument
     uuid(EBD5F41D-FF65-41d8-97C9-FCE3A3D4CC3E),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLElement : IDeprecatedDOMElement
+interface IDOMHTMLElement : IDOMElement
 {
     /*
         - (NSString *)idName;
@@ -321,12 +321,12 @@ interface IDeprecatedDOMHTMLElement : IDeprecatedDOMElement
     uuid(DF5C0054-DDDB-4888-9198-7A4E4EBF8D69),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLFormElement : IDeprecatedDOMHTMLElement
+interface IDOMHTMLFormElement : IDOMHTMLElement
 {
     /*
         - (DOMHTMLCollection *)elements;
     */
-    HRESULT elements([out, retval] IDeprecatedDOMHTMLCollection** result);
+    HRESULT elements([out, retval] IDOMHTMLCollection** result);
 
     /*
         - (int)length;
@@ -412,7 +412,7 @@ interface IDeprecatedDOMHTMLFormElement : IDeprecatedDOMHTMLElement
     uuid(3825AA04-B38F-4399-95BB-F5410B29594A),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLSelectElement : IDeprecatedDOMHTMLElement
+interface IDOMHTMLSelectElement : IDOMHTMLElement
 {
     /*
         - (NSString *)type;
@@ -447,12 +447,12 @@ interface IDeprecatedDOMHTMLSelectElement : IDeprecatedDOMHTMLElement
     /*
         - (DOMHTMLFormElement *)form;
     */
-    HRESULT form([out, retval] IDeprecatedDOMHTMLFormElement** result);
+    HRESULT form([out, retval] IDOMHTMLFormElement** result);
 
     /*
         - (DOMHTMLOptionsCollection *)options;
     */
-    HRESULT options([out, retval] IDeprecatedDOMHTMLOptionsCollection** result);
+    HRESULT options([out, retval] IDOMHTMLOptionsCollection** result);
 
     /*
         - (BOOL)disabled;
@@ -507,7 +507,7 @@ interface IDeprecatedDOMHTMLSelectElement : IDeprecatedDOMHTMLElement
     /*
         - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
     */
-    HRESULT add([in] IDeprecatedDOMHTMLElement* element, [in] IDeprecatedDOMHTMLElement* before);
+    HRESULT add([in] IDOMHTMLElement* element, [in] IDOMHTMLElement* before);
 
     /*
         - (void)remove:(int)index;
@@ -534,12 +534,12 @@ interface IDeprecatedDOMHTMLSelectElement : IDeprecatedDOMHTMLElement
     uuid(0E1EF5AB-4008-4d83-9135-D4DC1B4603D4),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLOptionElement : IDeprecatedDOMHTMLElement
+interface IDOMHTMLOptionElement : IDOMHTMLElement
 {
     /*
         - (DOMHTMLFormElement *)form;
     */
-    HRESULT form([out, retval] IDeprecatedDOMHTMLFormElement** result);
+    HRESULT form([out, retval] IDOMHTMLFormElement** result);
 
     /*
         - (BOOL)defaultSelected;
@@ -611,11 +611,11 @@ interface IDeprecatedDOMHTMLOptionElement : IDeprecatedDOMHTMLElement
     uuid(80C40AC5-1755-4894-812F-479269C262A2),
     pointer_default(unique)
 ]
-/* FIXME: The Safari app currently relies on IDeprecatedDOMHTMLInputElement inheriting from
-   IDeprecatedDOMElement. This can't be changed until a version of SafariWin which no longer 
+/* FIXME: The Safari app currently relies on IDOMHTMLInputElement inheriting from
+   IDOMElement. This can't be changed until a version of SafariWin which no longer 
    makes this assumption is released.
 */
-interface IDeprecatedDOMHTMLInputElement : IDeprecatedDOMElement
+interface IDOMHTMLInputElement : IDOMElement
 {
     /*
         - (NSString *)defaultValue;
@@ -640,7 +640,7 @@ interface IDeprecatedDOMHTMLInputElement : IDeprecatedDOMElement
     /*
         - (DOMHTMLFormElement *)form;
     */
-    HRESULT form([out, retval] IDeprecatedDOMHTMLElement** result);
+    HRESULT form([out, retval] IDOMHTMLElement** result);
 
     /*
         - (NSString *)accept;
@@ -832,7 +832,7 @@ interface IDeprecatedDOMHTMLInputElement : IDeprecatedDOMElement
     uuid(298B02B7-3EB5-4ba4-AD3F-7FA53241AADE),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMHTMLTextAreaElement : IDeprecatedDOMHTMLElement
+interface IDOMHTMLTextAreaElement : IDOMHTMLElement
 {
     /*
         - (NSString *)defaultValue;
@@ -847,7 +847,7 @@ interface IDeprecatedDOMHTMLTextAreaElement : IDeprecatedDOMHTMLElement
     /*
         - (DOMHTMLFormElement *)form;
     */
-    HRESULT form([out, retval] IDeprecatedDOMHTMLElement** result);
+    HRESULT form([out, retval] IDOMHTMLElement** result);
 
     /*
         - (NSString *)accessKey;

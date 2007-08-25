@@ -48,21 +48,21 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-// DeprecatedDOMHTMLCollection
+// DOMHTMLCollection
 
-DeprecatedDOMHTMLCollection::DeprecatedDOMHTMLCollection(WebCore::HTMLCollection* c)
+DOMHTMLCollection::DOMHTMLCollection(WebCore::HTMLCollection* c)
 : m_collection(c)
 {
 }
 
-IDeprecatedDOMHTMLCollection* DeprecatedDOMHTMLCollection::createInstance(WebCore::HTMLCollection* c)
+IDOMHTMLCollection* DOMHTMLCollection::createInstance(WebCore::HTMLCollection* c)
 {
     if (!c)
         return 0;
 
-    IDeprecatedDOMHTMLCollection* htmlCollection = 0;
-    DeprecatedDOMHTMLCollection* newCollection = new DeprecatedDOMHTMLCollection(c);
-    if (FAILED(newCollection->QueryInterface(IID_IDeprecatedDOMHTMLCollection, (void**)&htmlCollection))) {
+    IDOMHTMLCollection* htmlCollection = 0;
+    DOMHTMLCollection* newCollection = new DOMHTMLCollection(c);
+    if (FAILED(newCollection->QueryInterface(IID_IDOMHTMLCollection, (void**)&htmlCollection))) {
         delete newCollection;
         return 0;
     }
@@ -70,23 +70,23 @@ IDeprecatedDOMHTMLCollection* DeprecatedDOMHTMLCollection::createInstance(WebCor
     return htmlCollection;
 }
 
-// DeprecatedDOMHTMLCollection - IUnknown -----------------------------------------------
+// DOMHTMLCollection - IUnknown -----------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLCollection::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLCollection::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLCollection))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLCollection*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLCollection))
+        *ppvObject = static_cast<IDOMHTMLCollection*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLCollection ----------------------------------------------------------
+// DOMHTMLCollection ----------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLCollection::length( 
+HRESULT STDMETHODCALLTYPE DOMHTMLCollection::length( 
     /* [retval][out] */ UINT* result)
 {
     *result = 0;
@@ -97,342 +97,342 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLCollection::length(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLCollection::item( 
+HRESULT STDMETHODCALLTYPE DOMHTMLCollection::item( 
     /* [in] */ UINT index,
-    /* [retval][out] */ IDeprecatedDOMNode** node)
+    /* [retval][out] */ IDOMNode** node)
 {
     *node = 0;
     if (!m_collection)
         return E_POINTER;
 
-    *node = DeprecatedDOMNode::createInstance(m_collection->item(index));
+    *node = DOMNode::createInstance(m_collection->item(index));
     return *node ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLCollection::namedItem( 
+HRESULT STDMETHODCALLTYPE DOMHTMLCollection::namedItem( 
     /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*node*/)
+    /* [retval][out] */ IDOMNode** /*node*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMHTMLOptionsCollection - IUnknown ----------------------------------------
+// DOMHTMLOptionsCollection - IUnknown ----------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionsCollection::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLOptionsCollection))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLOptionsCollection*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLOptionsCollection))
+        *ppvObject = static_cast<IDOMHTMLOptionsCollection*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLOptionsCollection ---------------------------------------------------
+// DOMHTMLOptionsCollection ---------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionsCollection::length( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::length( 
     /* [retval][out] */ unsigned int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionsCollection::setLength( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::setLength( 
     /* [in] */ unsigned int /*length*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionsCollection::item( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::item( 
     /* [in] */ unsigned int /*index*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionsCollection::namedItem( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionsCollection::namedItem( 
     /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDeprecatedDOMNode* /*result*/)
+    /* [retval][out] */ IDOMNode* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMHTMLDocument - IUnknown -------------------------------------------------
+// DOMHTMLDocument - IUnknown -------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLDocument))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLDocument*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLDocument))
+        *ppvObject = static_cast<IDOMHTMLDocument*>(this);
     else
-        return DeprecatedDOMDocument::QueryInterface(riid, ppvObject);
+        return DOMDocument::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLDocument ------------------------------------------------------------
+// DOMHTMLDocument ------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::title( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::title( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::setTitle( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::setTitle( 
         /* [in] */ BSTR /*title*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::referrer( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::referrer( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::domain( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::domain( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::URL( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::URL( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::body( 
-        /* [retval][out] */ IDeprecatedDOMHTMLElement** bodyElement)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body( 
+        /* [retval][out] */ IDOMHTMLElement** bodyElement)
 {
     *bodyElement = 0;
     if (!m_document || !m_document->isHTMLDocument())
         return E_FAIL;
 
     HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
-    COMPtr<IDeprecatedDOMElement> domElement;
-    domElement.adoptRef(DeprecatedDOMHTMLElement::createInstance(htmlDoc->body()));
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc->body()));
     if (domElement)
-        return domElement->QueryInterface(IID_IDeprecatedDOMHTMLElement, (void**) bodyElement);
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) bodyElement);
     return E_FAIL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::setBody( 
-        /* [in] */ IDeprecatedDOMHTMLElement* /*body*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::setBody( 
+        /* [in] */ IDOMHTMLElement* /*body*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::images( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** /*collection*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::images( 
+        /* [retval][out] */ IDOMHTMLCollection** /*collection*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::applets( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** /*collection*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::applets( 
+        /* [retval][out] */ IDOMHTMLCollection** /*collection*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::links( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** /*collection*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::links( 
+        /* [retval][out] */ IDOMHTMLCollection** /*collection*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::forms( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** collection)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::forms( 
+        /* [retval][out] */ IDOMHTMLCollection** collection)
 {
     *collection = 0;
     if (!m_document || !m_document->isHTMLDocument())
         return E_FAIL;
 
     HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
-    *collection = DeprecatedDOMHTMLCollection::createInstance(htmlDoc->forms().get());
+    *collection = DOMHTMLCollection::createInstance(htmlDoc->forms().get());
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::anchors( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** /*collection*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::anchors( 
+        /* [retval][out] */ IDOMHTMLCollection** /*collection*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::cookie( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::cookie( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::setCookie( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::setCookie( 
         /* [in] */ BSTR /*cookie*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::open( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::open( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::close( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::close( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::write( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::write( 
         /* [in] */ BSTR /*text*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::writeln( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::writeln( 
         /* [in] */ BSTR /*text*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::getElementById_( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::getElementById_( 
         /* [in] */ BSTR /*elementId*/,
-        /* [retval][out] */ IDeprecatedDOMElement** /*element*/)
+        /* [retval][out] */ IDOMElement** /*element*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLDocument::getElementsByName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLDocument::getElementsByName( 
         /* [in] */ BSTR /*elementName*/,
-        /* [retval][out] */ IDeprecatedDOMNodeList** /*nodeList*/)
+        /* [retval][out] */ IDOMNodeList** /*nodeList*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMHTMLElement - IUnknown --------------------------------------------------
+// DOMHTMLElement - IUnknown --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLElement))
+        *ppvObject = static_cast<IDOMHTMLElement*>(this);
     else
-        return DeprecatedDOMElement::QueryInterface(riid, ppvObject);
+        return DOMElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLElement -------------------------------------------------------------
+// DOMHTMLElement -------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::idName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::idName( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setIdName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setIdName( 
         /* [in] */ BSTR /*idName*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::title( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::title( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setTitle( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setTitle( 
         /* [in] */ BSTR /*title*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::lang( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::lang( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setLang( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setLang( 
         /* [in] */ BSTR /*lang*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::dir( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::dir( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setDir( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setDir( 
         /* [in] */ BSTR /*dir*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::className( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::className( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setClassName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setClassName( 
         /* [in] */ BSTR /*className*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::innerHTML( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::innerHTML( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
         
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setInnerHTML( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setInnerHTML( 
         /* [in] */ BSTR /*html*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
         
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::innerText( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::innerText( 
         /* [retval][out] */ BSTR* result)
 {
     ASSERT(m_element && m_element->isHTMLElement());
@@ -441,7 +441,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::innerText(
     return S_OK;
 }
         
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setInnerText( 
+HRESULT STDMETHODCALLTYPE DOMHTMLElement::setInnerText( 
         /* [in] */ BSTR text)
 {
     ASSERT(m_element && m_element->isHTMLElement());
@@ -452,65 +452,65 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLElement::setInnerText(
     return S_OK;
 }
 
-// DeprecatedDOMHTMLFormElement - IUnknown ----------------------------------------------
+// DOMHTMLFormElement - IUnknown ----------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLFormElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLFormElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLFormElement))
+        *ppvObject = static_cast<IDOMHTMLFormElement*>(this);
     else
-        return DeprecatedDOMHTMLElement::QueryInterface(riid, ppvObject);
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLFormElement ---------------------------------------------------------
+// DOMHTMLFormElement ---------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::elements( 
-        /* [retval][out] */ IDeprecatedDOMHTMLCollection** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::elements( 
+        /* [retval][out] */ IDOMHTMLCollection** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::length( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::length( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::name( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::name( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setName( 
         /* [in] */ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::acceptCharset( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::acceptCharset( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setAcceptCharset( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAcceptCharset( 
         /* [in] */ BSTR /*acceptCharset*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::action( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::action( 
         /* [retval][out] */ BSTR* result)
 {
     ASSERT(m_element && m_element->hasTagName(formTag));
@@ -519,28 +519,28 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::action(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setAction( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAction( 
         /* [in] */ BSTR /*action*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::encType( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::encType( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setEnctype( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setEnctype( 
         /* [retval][out] */ BSTR* /*encType*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::method( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::method( 
         /* [retval][out] */ BSTR* result)
 {
     ASSERT(m_element && m_element->hasTagName(formTag));
@@ -549,448 +549,448 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::method(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setMethod( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setMethod( 
         /* [in] */ BSTR /*method*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::target( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::target( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::setTarget( 
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setTarget( 
         /* [in] */ BSTR /*target*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::submit( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::submit( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLFormElement::reset( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::reset( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMHTMLSelectElement - IUnknown ----------------------------------------------
+// DOMHTMLSelectElement - IUnknown ----------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLSelectElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLSelectElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLSelectElement))
+        *ppvObject = static_cast<IDOMHTMLSelectElement*>(this);
     else if (IsEqualGUID(riid, IID_IFormsAutoFillTransitionSelect))
         *ppvObject = static_cast<IFormsAutoFillTransitionSelect*>(this);
     else
-        return DeprecatedDOMHTMLElement::QueryInterface(riid, ppvObject);
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLSelectElement -------------------------------------------------------
+// DOMHTMLSelectElement -------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::type( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::type( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::selectedIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::selectedIndex( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setSelectedIndx( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setSelectedIndx( 
         /* [in] */ int /*selectedIndex*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::value( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::value( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setValue( 
         /* [in] */ BSTR /*value*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::length( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::length( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::form( 
-        /* [retval][out] */ IDeprecatedDOMHTMLFormElement** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::form( 
+        /* [retval][out] */ IDOMHTMLFormElement** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::options( 
-        /* [retval][out] */ IDeprecatedDOMHTMLOptionsCollection** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::options( 
+        /* [retval][out] */ IDOMHTMLOptionsCollection** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::disabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::disabled( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setDisabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setDisabled( 
         /* [in] */ BOOL /*disabled*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::multiple( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::multiple( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setMultiple( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setMultiple( 
         /* [in] */ BOOL /*multiple*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::name( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::name( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setName( 
         /* [in] */ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::size( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::size( 
         /* [retval][out] */ int* /*size*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setSize( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setSize( 
         /* [in] */ int /*size*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::tabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::tabIndex( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::setTabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::setTabIndex( 
         /* [in] */ int /*tabIndex*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::add( 
-        /* [in] */ IDeprecatedDOMHTMLElement* /*element*/,
-        /* [in] */ IDeprecatedDOMHTMLElement* /*before*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::add( 
+        /* [in] */ IDOMHTMLElement* /*element*/,
+        /* [in] */ IDOMHTMLElement* /*before*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::remove( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::remove( 
         /* [in] */ int /*index*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-// DeprecatedDOMHTMLSelectElement - IFormsAutoFillTransitionSelect ----------------------
+// DOMHTMLSelectElement - IFormsAutoFillTransitionSelect ----------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLSelectElement::activateItemAtIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::activateItemAtIndex( 
     /* [in] */ int /*index*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;    
 }
 
-// DeprecatedDOMHTMLOptionElement - IUnknown --------------------------------------------
+// DOMHTMLOptionElement - IUnknown --------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLOptionElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLOptionElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLOptionElement))
+        *ppvObject = static_cast<IDOMHTMLOptionElement*>(this);
     else
-        return DeprecatedDOMHTMLElement::QueryInterface(riid, ppvObject);
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLOptionElement -------------------------------------------------------
+// DOMHTMLOptionElement -------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::form( 
-        /* [retval][out] */ IDeprecatedDOMHTMLFormElement** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::form( 
+        /* [retval][out] */ IDOMHTMLFormElement** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::defaultSelected( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::defaultSelected( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::setDefaultSelected( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setDefaultSelected( 
         /* [in] */ BOOL /*defaultSelected*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::text( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::text( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::index( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::index( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::disabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::disabled( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::setDisabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setDisabled( 
         /* [in] */ BOOL /*disabled*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::label( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::label( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::setLabel( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setLabel( 
         /* [in] */ BSTR /*label*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::selected( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::selected( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::setSelected( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setSelected( 
         /* [in] */ BOOL /*selected*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::value( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::value( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLOptionElement::setValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::setValue( 
         /* [in] */ BSTR /*value*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMHTMLInputElement - IUnknown ----------------------------------------------
+// DOMHTMLInputElement - IUnknown ----------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLInputElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLInputElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLInputElement))
+        *ppvObject = static_cast<IDOMHTMLInputElement*>(this);
     else if (IsEqualGUID(riid, IID_IFormsAutoFillTransition))
         *ppvObject = static_cast<IFormsAutoFillTransition*>(this);
     else if (IsEqualGUID(riid, IID_IFormPromptAdditions))
         *ppvObject = static_cast<IFormPromptAdditions*>(this);    
     else
-        return DeprecatedDOMHTMLElement::QueryInterface(riid, ppvObject);
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLInputElement --------------------------------------------------------
+// DOMHTMLInputElement --------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::defaultValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::defaultValue( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setDefaultValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setDefaultValue( 
         /* [in] */ BSTR /*val*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::defaultChecked( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::defaultChecked( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setDefaultChecked( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setDefaultChecked( 
         /* [in] */ BSTR /*checked*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::form( 
-        /* [retval][out] */ IDeprecatedDOMHTMLElement** result)
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::form( 
+        /* [retval][out] */ IDOMHTMLElement** result)
 {
     if (!result)
         return E_POINTER;
     *result = 0;
     ASSERT(m_element && m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
-    COMPtr<IDeprecatedDOMElement> domElement;
-    domElement.adoptRef(DeprecatedDOMHTMLElement::createInstance(inputElement->form()));
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(inputElement->form()));
     if (domElement)
-        return domElement->QueryInterface(IID_IDeprecatedDOMHTMLElement, (void**) result);
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) result);
     return E_FAIL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::accept( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::accept( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAccept( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAccept( 
         /* [in] */ BSTR /*accept*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::accessKey( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::accessKey( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAccessKey( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAccessKey( 
         /* [in] */ BSTR /*key*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::align( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::align( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAlign( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAlign( 
         /* [in] */ BSTR /*align*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::alt( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::alt( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAlt( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAlt( 
         /* [in] */ BSTR /*alt*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::checked( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::checked( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setChecked( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setChecked( 
         /* [in] */ BOOL /*checked*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::disabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::disabled( 
         /* [retval][out] */ BOOL* result)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -999,42 +999,42 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::disabled(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setDisabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setDisabled( 
         /* [in] */ BOOL /*disabled*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::maxLength( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::maxLength( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setMaxLength( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setMaxLength( 
         /* [in] */ int /*maxLength*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::name( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::name( 
         /* [retval][out] */ BSTR* /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setName( 
         /* [in] */ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::readOnly( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::readOnly( 
         /* [retval][out] */ BOOL* result)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1043,63 +1043,63 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::readOnly(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setReadOnly( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setReadOnly( 
         /* [in] */ BOOL /*readOnly*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::size( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::size( 
         /* [retval][out] */ unsigned int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSize( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setSize( 
         /* [in] */ unsigned int /*size*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::src( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::src( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSrc( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setSrc( 
         /* [in] */ BSTR /*src*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::tabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::tabIndex( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setTabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setTabIndex( 
         /* [in] */ int /*tabIndex*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::type( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::type( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setType( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setType( 
         /* [in] */ BSTR type)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1109,21 +1109,21 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setType(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::useMap( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::useMap( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setUseMap( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setUseMap( 
         /* [in] */ BSTR /*useMap*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::value( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::value( 
         /* [retval][out] */ BSTR* result)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1135,7 +1135,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::value(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setValue( 
         /* [in] */ BSTR value)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1144,7 +1144,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setValue(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::select( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::select( void)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
@@ -1152,13 +1152,13 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::select( void)
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::click( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::click( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSelectionStart( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setSelectionStart( 
     /* [in] */ long start)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1167,7 +1167,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSelectionStart(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectionStart( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectionStart( 
     /* [retval][out] */ long *start)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1176,7 +1176,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectionStart(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSelectionEnd( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setSelectionEnd( 
     /* [in] */ long end)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1185,7 +1185,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setSelectionEnd(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectionEnd( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectionEnd( 
     /* [retval][out] */ long *end)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1194,9 +1194,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectionEnd(
     return S_OK;
 }
 
-// DeprecatedDOMHTMLInputElement -- IFormsAutoFillTransition ----------------------------
+// DOMHTMLInputElement -- IFormsAutoFillTransition ----------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::isTextField(
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isTextField(
     /* [retval][out] */ BOOL* result)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1205,7 +1205,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::isTextField(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::rectOnScreen( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::rectOnScreen( 
     /* [retval][out] */ LPRECT rect)
 {
     rect->left = rect->top = rect->right = rect->bottom = 0;
@@ -1223,7 +1223,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::rectOnScreen(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::replaceCharactersInRange( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::replaceCharactersInRange( 
     /* [in] */ int /*startTarget*/,
     /* [in] */ int /*endTarget*/,
     /* [in] */ BSTR /*replacementString*/,
@@ -1233,7 +1233,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::replaceCharactersInRang
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectedRange( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::selectedRange( 
     /* [out] */ int* start,
     /* [out] */ int* end)
 {
@@ -1244,7 +1244,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::selectedRange(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAutofilled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::setAutofilled( 
     /* [in] */ BOOL filled)
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
@@ -1253,9 +1253,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::setAutofilled(
     return S_OK;
 }
 
-// DeprecatedDOMHTMLInputElement -- IFormPromptAdditions ------------------------------------
+// DOMHTMLInputElement -- IFormPromptAdditions ------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::isUserEdited( 
+HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::isUserEdited( 
     /* [retval][out] */ BOOL *result)
 {
     if (!result)
@@ -1272,159 +1272,159 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLInputElement::isUserEdited(
     return S_OK;
 }
 
-// DeprecatedDOMHTMLTextAreaElement - IUnknown ----------------------------------------------
+// DOMHTMLTextAreaElement - IUnknown ----------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMHTMLTextAreaElement))
-        *ppvObject = static_cast<IDeprecatedDOMHTMLTextAreaElement*>(this);
+    if (IsEqualGUID(riid, IID_IDOMHTMLTextAreaElement))
+        *ppvObject = static_cast<IDOMHTMLTextAreaElement*>(this);
     else if (IsEqualGUID(riid, IID_IFormPromptAdditions))
         *ppvObject = static_cast<IFormPromptAdditions*>(this);    
     else
-        return DeprecatedDOMHTMLElement::QueryInterface(riid, ppvObject);
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMHTMLTextAreaElement -----------------------------------------------------
+// DOMHTMLTextAreaElement -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::defaultValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::defaultValue( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setDefaultValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setDefaultValue( 
         /* [in] */ BSTR /*val*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::form( 
-        /* [retval][out] */ IDeprecatedDOMHTMLElement** result)
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::form( 
+        /* [retval][out] */ IDOMHTMLElement** result)
 {
     if (!result)
         return E_POINTER;
     *result = 0;
     ASSERT(m_element && m_element->hasTagName(textareaTag));
     HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
-    COMPtr<IDeprecatedDOMElement> domElement;
-    domElement.adoptRef(DeprecatedDOMHTMLElement::createInstance(textareaElement->form()));
+    COMPtr<IDOMElement> domElement;
+    domElement.adoptRef(DOMHTMLElement::createInstance(textareaElement->form()));
     if (domElement)
-        return domElement->QueryInterface(IID_IDeprecatedDOMHTMLElement, (void**) result);
+        return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) result);
     return E_FAIL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::accessKey( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::accessKey( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setAccessKey( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setAccessKey( 
         /* [in] */ BSTR /*key*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::cols( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::cols( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setCols( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setCols( 
         /* [in] */ int /*cols*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::disabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::disabled( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setDisabled( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setDisabled( 
         /* [in] */ BOOL /*disabled*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::name( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::name( 
         /* [retval][out] */ BSTR* /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setName( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setName( 
         /* [in] */ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::readOnly( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::readOnly( 
         /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setReadOnly( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setReadOnly( 
         /* [in] */ BOOL /*readOnly*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::rows( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::rows( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setRows( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setRows( 
         /* [in] */ int /*rows*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::tabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::tabIndex( 
         /* [retval][out] */ int* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setTabIndex( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setTabIndex( 
         /* [in] */ int /*tabIndex*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::type( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::type( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::value( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::value( 
         /* [retval][out] */ BSTR* result)
 {
     ASSERT(m_element && m_element->hasTagName(textareaTag));
@@ -1436,7 +1436,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::value(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setValue( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setValue( 
         /* [in] */ BSTR value)
 {
     ASSERT(m_element && m_element->hasTagName(textareaTag));
@@ -1445,7 +1445,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::setValue(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::select( void)
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::select( void)
 {
     ASSERT(m_element && m_element->hasTagName(textareaTag));
     HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
@@ -1453,9 +1453,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::select( void)
     return S_OK;
 }
 
-// DeprecatedDOMHTMLTextAreaElement -- IFormPromptAdditions ------------------------------------
+// DOMHTMLTextAreaElement -- IFormPromptAdditions ------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMHTMLTextAreaElement::isUserEdited( 
+HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::isUserEdited( 
     /* [retval][out] */ BOOL *result)
 {
     if (!result)

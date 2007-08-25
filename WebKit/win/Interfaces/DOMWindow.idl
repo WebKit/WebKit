@@ -53,7 +53,7 @@ import "ocidl.idl";
 import "DOMCore.idl";
 import "DOMCSS.idl";
 
-interface IDeprecatedDOMCSSRuleList;
+interface IDOMCSSRuleList;
 
 [
     object,
@@ -61,22 +61,22 @@ interface IDeprecatedDOMCSSRuleList;
     uuid(19126DDF-E82F-46c0-A2F9-16879D7DADC5),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMWindow : IDeprecatedDOMObject
+interface IDOMWindow : IDOMObject
 {
     // DOM Level 2 AbstractView Interface
     //readonly attribute Document document;
-    HRESULT document([out, retval] IDeprecatedDOMDocument** result);
+    HRESULT document([out, retval] IDOMDocument** result);
 
     // DOM Level 2 Style Interface
     //CSSStyleDeclaration getComputedStyle(in Element element,
     //                                     in DOMString pseudoElement);
-    HRESULT getComputedStyle([in] IDeprecatedDOMElement* element, [in] BSTR pseudoElement);
+    HRESULT getComputedStyle([in] IDOMElement* element, [in] BSTR pseudoElement);
 
     // WebKit extensions
     //CSSRuleList getMatchedCSSRules(in Element element,
     //                               in DOMString pseudoElement,
     //                               in [Optional] boolean authorOnly);
-    HRESULT getMatchedCSSRules([in] IDeprecatedDOMElement* element, [in] BSTR pseudoElement, [in] BOOL authorOnly, [out, retval] IDeprecatedDOMCSSRuleList** result);
+    HRESULT getMatchedCSSRules([in] IDOMElement* element, [in] BSTR pseudoElement, [in] BOOL authorOnly, [out, retval] IDOMCSSRuleList** result);
 
     //readonly attribute double devicePixelRatio;
     HRESULT devicePixelRatio([out, retval] double* result);

@@ -117,7 +117,7 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
     BSTR key = (BSTR)pszPropName;
     VariantClear(pVar);
     if (isEqual(WebElementDOMNodeKey, key)) {
-        IDeprecatedDOMNode* node = DeprecatedDOMNode::createInstance(m_result->innerNonSharedNode());
+        IDOMNode* node = DOMNode::createInstance(m_result->innerNonSharedNode());
         V_VT(pVar) = VT_UNKNOWN;
         V_UNKNOWN(pVar) = node;
         return S_OK;

@@ -53,15 +53,15 @@ import "ocidl.idl";
 import "DOMCore.idl";
 import "DOMWindow.idl";
 
-interface IDeprecatedDOMEvent;
-interface IDeprecatedDOMEventException;
-interface IDeprecatedDOMEventTarget;
-interface IDeprecatedDOMKeyboardEvent;
-interface IDeprecatedDOMMouseEvent;
-interface IDeprecatedDOMMutationEvent;
-interface IDeprecatedDOMOverflowEvent;
-interface IDeprecatedDOMUIEvent;
-interface IDeprecatedDOMWheelEvent;
+interface IDOMEvent;
+interface IDOMEventException;
+interface IDOMEventTarget;
+interface IDOMKeyboardEvent;
+interface IDOMMouseEvent;
+interface IDOMMutationEvent;
+interface IDOMOverflowEvent;
+interface IDOMUIEvent;
+interface IDOMWheelEvent;
 
 typedef long long DOMTimeStamp;
 
@@ -71,10 +71,10 @@ typedef long long DOMTimeStamp;
     uuid(7f8a0a96-f864-44fb-87fb-c5f03666e8e6),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMEventListener : IDeprecatedDOMObject
+interface IDOMEventListener : IDOMObject
 {
     //void               handleEvent(in Event evt);
-    HRESULT handleEvent([in] IDeprecatedDOMEvent* evt);
+    HRESULT handleEvent([in] IDOMEvent* evt);
 }
 
 [
@@ -83,7 +83,7 @@ interface IDeprecatedDOMEventListener : IDeprecatedDOMObject
     uuid(62343a9e-a779-4e91-818a-14fc178cf4c2),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMEvent : IDeprecatedDOMObject
+interface IDOMEvent : IDOMObject
 {
     // DOM PhaseType
     const unsigned short DOMEVENT_CAPTURING_PHASE     = 1;
@@ -112,10 +112,10 @@ interface IDeprecatedDOMEvent : IDeprecatedDOMObject
     HRESULT type([out, retval] BSTR* result);
 
     //readonly attribute EventTarget      target;
-    HRESULT target([out, retval] IDeprecatedDOMEventTarget** result);
+    HRESULT target([out, retval] IDOMEventTarget** result);
 
     //readonly attribute EventTarget      currentTarget;
-    HRESULT currentTarget([out, retval] IDeprecatedDOMEventTarget** result);
+    HRESULT currentTarget([out, retval] IDOMEventTarget** result);
 
     //readonly attribute unsigned short   eventPhase;
     HRESULT eventPhase([out, retval] unsigned short* result);
@@ -147,20 +147,20 @@ interface IDeprecatedDOMEvent : IDeprecatedDOMObject
     uuid(c7cf7d84-d755-40bc-b664-84bc79eff709),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMEventTarget : IUnknown
+interface IDOMEventTarget : IUnknown
 {
     //void               addEventListener(in DOMString type, 
     //                                    in EventListener listener, 
     //                                    in boolean useCapture);
-    HRESULT addEventListener([in] BSTR type, [in] IDeprecatedDOMEventListener* listener, [in] BOOL useCapture);
+    HRESULT addEventListener([in] BSTR type, [in] IDOMEventListener* listener, [in] BOOL useCapture);
 
     //void               removeEventListener(in DOMString type, 
     //                                       in EventListener listener, 
     //                                       in boolean useCapture);
-    HRESULT removeEventListener([in] BSTR type, [in] IDeprecatedDOMEventListener* listener, [in] BOOL useCapture);
+    HRESULT removeEventListener([in] BSTR type, [in] IDOMEventListener* listener, [in] BOOL useCapture);
 
     //boolean            dispatchEvent(in Event event)
-    HRESULT dispatchEvent([in] IDeprecatedDOMEvent* event, [out, retval] BOOL* result);
+    HRESULT dispatchEvent([in] IDOMEvent* event, [out, retval] BOOL* result);
 }
 
 [
@@ -169,11 +169,11 @@ interface IDeprecatedDOMEventTarget : IUnknown
     uuid(55AAF192-68CD-409f-A551-89710DC7240A),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMDocumentEvent : IUnknown
+interface IDOMDocumentEvent : IUnknown
 {
     //Event              createEvent(in DOMString eventType)
     //    raises(DOMException);
-    HRESULT createEvent([in] BSTR eventType, [out, retval] IDeprecatedDOMEvent** result);
+    HRESULT createEvent([in] BSTR eventType, [out, retval] IDOMEvent** result);
 }
 
 [
@@ -182,7 +182,7 @@ interface IDeprecatedDOMDocumentEvent : IUnknown
     uuid(76bc4e46-67df-40d3-89b0-a94dcc2ed507),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMKeyboardEvent : IDeprecatedDOMUIEvent
+interface IDOMKeyboardEvent : IDOMUIEvent
 {
     // KeyLocationCode
     const unsigned long       DOMKEYBOARDEVENT_KEY_LOCATION_STANDARD      = 0x00;
@@ -226,7 +226,7 @@ interface IDeprecatedDOMKeyboardEvent : IDeprecatedDOMUIEvent
     //                       in boolean shiftKey,
     //                       in boolean metaKey,
     //                       in boolean altGraphKey);
-    HRESULT initKeyboardEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDeprecatedDOMWindow* view, [in] BSTR keyIdentifier, [in] unsigned long keyLocation, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] BOOL graphKey);
+    HRESULT initKeyboardEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] BSTR keyIdentifier, [in] unsigned long keyLocation, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] BOOL graphKey);
 
     // WebKit Extensions
     //readonly attribute long             keyCode;
@@ -253,7 +253,7 @@ interface IDeprecatedDOMKeyboardEvent : IDeprecatedDOMUIEvent
     uuid(bdd97151-5f6a-4ba4-a902-9b008392eb54),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMMouseEvent : IDeprecatedDOMUIEvent
+interface IDOMMouseEvent : IDOMUIEvent
 {
     //readonly attribute long             screenX;
     HRESULT screenX([out, retval] long* result);
@@ -283,7 +283,7 @@ interface IDeprecatedDOMMouseEvent : IDeprecatedDOMUIEvent
     HRESULT button([out, retval] unsigned short* result);
 
     //readonly attribute EventTarget      relatedTarget;
-    HRESULT relatedTarget([out, retval] IDeprecatedDOMEventTarget** result);
+    HRESULT relatedTarget([out, retval] IDOMEventTarget** result);
 
     //[OldStyleObjC] void initMouseEvent(in AtomicString type, 
     //                                   in boolean canBubble, 
@@ -300,7 +300,7 @@ interface IDeprecatedDOMMouseEvent : IDeprecatedDOMUIEvent
     //                                   in boolean metaKey, 
     //                                   in unsigned short button, 
     //                                   in EventTarget relatedTarget);
-    HRESULT initMouseEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDeprecatedDOMWindow* view, [in] long detail, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] unsigned short button, [in] IDeprecatedDOMEventTarget* relatedTarget);
+    HRESULT initMouseEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] long detail, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey, [in] unsigned short button, [in] IDOMEventTarget* relatedTarget);
 
     // extensions
     //readonly attribute long             offsetX;
@@ -316,10 +316,10 @@ interface IDeprecatedDOMMouseEvent : IDeprecatedDOMUIEvent
     HRESULT y([out, retval] long* result);
 
     //readonly attribute Node             fromElement;
-    HRESULT fromElement([out, retval] IDeprecatedDOMNode** result);
+    HRESULT fromElement([out, retval] IDOMNode** result);
 
     //readonly attribute Node             toElement;
-    HRESULT toElement([out, retval] IDeprecatedDOMNode** result);
+    HRESULT toElement([out, retval] IDOMNode** result);
 }
 
 [
@@ -328,7 +328,7 @@ interface IDeprecatedDOMMouseEvent : IDeprecatedDOMUIEvent
     uuid(6345d228-ea67-48ee-93c8-ff6e9c6356e9),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMMutationEvent : IDeprecatedDOMEvent
+interface IDOMMutationEvent : IDOMEvent
 {
     // attrChangeType
     const unsigned short DOMMUTATIONEVENT_MODIFICATION = 1;
@@ -336,7 +336,7 @@ interface IDeprecatedDOMMutationEvent : IDeprecatedDOMEvent
     const unsigned short DOMMUTATIONEVENT_REMOVAL      = 3;
 
     //readonly attribute Node           relatedNode;
-    HRESULT relatedNode([out, retval] IDeprecatedDOMNode** result);
+    HRESULT relatedNode([out, retval] IDOMNode** result);
 
     //readonly attribute DOMString      prevValue;
     HRESULT prevValue([out, retval] BSTR* result);
@@ -358,7 +358,7 @@ interface IDeprecatedDOMMutationEvent : IDeprecatedDOMEvent
     //                                      in DOMString newValue, 
     //                                      in DOMString attrName, 
     //                                      in unsigned short attrChange);
-    HRESULT initMutationEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDeprecatedDOMNode* relatedNode, [in] BSTR prevValue, [in] BSTR newValue, [in] BSTR attrName, [in] unsigned short attrChange);
+    HRESULT initMutationEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMNode* relatedNode, [in] BSTR prevValue, [in] BSTR newValue, [in] BSTR attrName, [in] unsigned short attrChange);
 }
 
 [
@@ -367,7 +367,7 @@ interface IDeprecatedDOMMutationEvent : IDeprecatedDOMEvent
     uuid(6048369e-e444-401b-950d-c9daef9384d2),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMOverflowEvent : IDeprecatedDOMEvent
+interface IDOMOverflowEvent : IDOMEvent
 {
     const unsigned short DOMOVERFLOWEVENT_HORIZONTAL = 0;
     const unsigned short DOMOVERFLOWEVENT_VERTICAL   = 1;
@@ -389,10 +389,10 @@ interface IDeprecatedDOMOverflowEvent : IDeprecatedDOMEvent
     uuid(b928261d-7c9e-4156-af71-6f698bd97788),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMUIEvent : IDeprecatedDOMEvent
+interface IDOMUIEvent : IDOMEvent
 {
     //readonly attribute DOMWindow            view;
-    HRESULT view([out, retval] IDeprecatedDOMWindow** result);
+    HRESULT view([out, retval] IDOMWindow** result);
 
     //readonly attribute long                 detail;
     HRESULT detail([out, retval] long* result);
@@ -402,7 +402,7 @@ interface IDeprecatedDOMUIEvent : IDeprecatedDOMEvent
     //                                in boolean cancelable, 
     //                                in DOMWindow view, 
     //                                in long detail);
-    HRESULT initUIEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDeprecatedDOMWindow* view, [in] long detail);
+    HRESULT initUIEvent([in] BSTR type, [in] BOOL canBubble, [in] BOOL cancelable, [in] IDOMWindow* view, [in] long detail);
 
     // extentsions
     //readonly attribute long                 keyCode;
@@ -433,7 +433,7 @@ interface IDeprecatedDOMUIEvent : IDeprecatedDOMEvent
     uuid(5404e6d9-a2bb-4c74-8070-ce9d2599bd00),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMWheelEvent : IDeprecatedDOMUIEvent
+interface IDOMWheelEvent : IDOMUIEvent
 {
     //readonly attribute long    screenX;
     HRESULT screenX([out, retval] long* result);
@@ -495,5 +495,5 @@ interface IDeprecatedDOMWheelEvent : IDeprecatedDOMUIEvent
     //                    in boolean altKey,
     //                    in boolean shiftKey,
     //                    in boolean metaKey);
-    HRESULT initWheelEvent([in] long wheelDeltaX, [in] long wheelDeltaY, [in] IDeprecatedDOMWindow* view, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey);
+    HRESULT initWheelEvent([in] long wheelDeltaX, [in] long wheelDeltaY, [in] IDOMWindow* view, [in] long screenX, [in] long screenY, [in] long clientX, [in] long clientY, [in] BOOL ctrlKey, [in] BOOL altKey, [in] BOOL shiftKey, [in] BOOL metaKey);
 }

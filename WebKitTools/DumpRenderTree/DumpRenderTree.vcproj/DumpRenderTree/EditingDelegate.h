@@ -45,50 +45,50 @@ public:
     // IWebEditingDelegate
     virtual HRESULT STDMETHODCALLTYPE shouldBeginEditingInDOMRange( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMRange *range,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldEndEditingInDOMRange( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMRange *range,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldInsertNode( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMNode *node,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMNode *node,
+        /* [in] */ IDOMRange *range,
         /* [in] */ WebViewInsertAction action);
     
     virtual HRESULT STDMETHODCALLTYPE shouldInsertText( 
         /* [in] */ IWebView *webView,
         /* [in] */ BSTR text,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMRange *range,
         /* [in] */ WebViewInsertAction action,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldDeleteDOMRange( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMRange *range,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldChangeSelectedDOMRange( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMRange *currentRange,
-        /* [in] */ IDeprecatedDOMRange *proposedRange,
+        /* [in] */ IDOMRange *currentRange,
+        /* [in] */ IDOMRange *proposedRange,
         /* [in] */ WebSelectionAffinity selectionAffinity,
         /* [in] */ BOOL stillSelecting,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldApplyStyle( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMCSSStyleDeclaration *style,
-        /* [in] */ IDeprecatedDOMRange *range,
+        /* [in] */ IDOMCSSStyleDeclaration *style,
+        /* [in] */ IDOMRange *range,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE shouldChangeTypingStyle( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IDeprecatedDOMCSSStyleDeclaration *currentStyle,
-        /* [in] */ IDeprecatedDOMCSSStyleDeclaration *proposedStyle,
+        /* [in] */ IDOMCSSStyleDeclaration *currentStyle,
+        /* [in] */ IDOMCSSStyleDeclaration *proposedStyle,
         /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE doPlatformCommand( 

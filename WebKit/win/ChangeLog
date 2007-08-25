@@ -1,3 +1,7 @@
+2007-08-24  Sam Weinig  <sam@webkit.org>
+
+        Revert r25216 which renamed the COM DOM bindings to use Deprecated prefix.
+
 2007-08-24  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5147315> and <rdar://problem/5183935>

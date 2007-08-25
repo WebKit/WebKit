@@ -84,12 +84,12 @@ enum {
     uuid(2F33E42C-0B39-48b3-B7B6-E910CDB325AD),
     pointer_default(unique)
 ]
-interface IDeprecatedDOMRange : IDeprecatedDOMObject
+interface IDOMRange : IDOMObject
 {
     /*
         - (DOMNode *)startContainer;
     */
-    HRESULT startContainer([out, retval] IDeprecatedDOMNode** node);
+    HRESULT startContainer([out, retval] IDOMNode** node);
 
     /*
         - (int)startOffset;
@@ -99,7 +99,7 @@ interface IDeprecatedDOMRange : IDeprecatedDOMObject
     /*
         - (DOMNode *)endContainer;
     */
-    HRESULT endContainer([out, retval] IDeprecatedDOMNode** node);
+    HRESULT endContainer([out, retval] IDOMNode** node);
 
     /*
         - (int)endOffset;
@@ -114,37 +114,37 @@ interface IDeprecatedDOMRange : IDeprecatedDOMObject
     /*
         - (DOMNode *)commonAncestorContainer;
     */
-    HRESULT commonAncestorContainer([out, retval] IDeprecatedDOMNode** container);
+    HRESULT commonAncestorContainer([out, retval] IDOMNode** container);
 
     /*
         - (void)setStart:(DOMNode *)refNode :(int)offset;
     */
-    HRESULT setStart([in] IDeprecatedDOMNode* refNode, [in] int offset);
+    HRESULT setStart([in] IDOMNode* refNode, [in] int offset);
 
     /*
         - (void)setEnd:(DOMNode *)refNode :(int)offset;
     */
-    HRESULT setEnd([in] IDeprecatedDOMNode* refNode, [in] int offset);
+    HRESULT setEnd([in] IDOMNode* refNode, [in] int offset);
 
     /*
         - (void)setStartBefore:(DOMNode *)refNode;
     */
-    HRESULT setStartBefore([in] IDeprecatedDOMNode* refNode);
+    HRESULT setStartBefore([in] IDOMNode* refNode);
 
     /*
         - (void)setStartAfter:(DOMNode *)refNode;
     */
-    HRESULT setStartAfter([in] IDeprecatedDOMNode* refNode);
+    HRESULT setStartAfter([in] IDOMNode* refNode);
 
     /*
         - (void)setEndBefore:(DOMNode *)refNode;
     */
-    HRESULT setEndBefore([in] IDeprecatedDOMNode* refNode);
+    HRESULT setEndBefore([in] IDOMNode* refNode);
 
     /*
         - (void)setEndAfter:(DOMNode *)refNode;
     */
-    HRESULT setEndAfter([in] IDeprecatedDOMNode* refNode);
+    HRESULT setEndAfter([in] IDOMNode* refNode);
 
     /*
         - (void)collapse:(BOOL)toStart;
@@ -154,17 +154,17 @@ interface IDeprecatedDOMRange : IDeprecatedDOMObject
     /*
         - (void)selectNode:(DOMNode *)refNode;
     */
-    HRESULT selectNode([in] IDeprecatedDOMNode* refNode);
+    HRESULT selectNode([in] IDOMNode* refNode);
 
     /*
         - (void)selectNodeContents:(DOMNode *)refNode;
     */
-    HRESULT selectNodeContents([in] IDeprecatedDOMNode* refNode);
+    HRESULT selectNodeContents([in] IDOMNode* refNode);
 
     /*
         - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
     */
-    HRESULT compareBoundaryPoints([in] unsigned short how, [in] IDeprecatedDOMRange* sourceRange);
+    HRESULT compareBoundaryPoints([in] unsigned short how, [in] IDOMRange* sourceRange);
 
     /*
         - (void)deleteContents;
@@ -174,27 +174,27 @@ interface IDeprecatedDOMRange : IDeprecatedDOMObject
     /*
         - (DOMDocumentFragment *)extractContents;
     */
-    HRESULT extractContents([out, retval] IDeprecatedDOMDocumentFragment** fragment);
+    HRESULT extractContents([out, retval] IDOMDocumentFragment** fragment);
 
     /*
         - (DOMDocumentFragment *)cloneContents;
     */
-    HRESULT cloneContents([out, retval] IDeprecatedDOMDocumentFragment** fragment);
+    HRESULT cloneContents([out, retval] IDOMDocumentFragment** fragment);
 
     /*
         - (void)insertNode:(DOMNode *)newNode;
     */
-    HRESULT insertNode([in] IDeprecatedDOMNode* newNode);
+    HRESULT insertNode([in] IDOMNode* newNode);
 
     /*
         - (void)surroundContents:(DOMNode *)newParent;
     */
-    HRESULT surroundContents([in] IDeprecatedDOMNode* newParent);
+    HRESULT surroundContents([in] IDOMNode* newParent);
 
     /*
         - (DOMRange *)cloneRange;
     */
-    HRESULT cloneRange([out, retval] IDeprecatedDOMRange** range);
+    HRESULT cloneRange([out, retval] IDOMRange** range);
 
     /*
         - (NSString *)toString;

@@ -48,20 +48,20 @@
 
 #include <initguid.h>
 // {79A193A5-D783-4c73-9AD9-D10678B943DE}
-DEFINE_GUID(IID_DeprecatedDOMNode, 0x79a193a5, 0xd783, 0x4c73, 0x9a, 0xd9, 0xd1, 0x6, 0x78, 0xb9, 0x43, 0xde);
+DEFINE_GUID(IID_DOMNode, 0x79a193a5, 0xd783, 0x4c73, 0x9a, 0xd9, 0xd1, 0x6, 0x78, 0xb9, 0x43, 0xde);
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}
-DEFINE_GUID(IID_DeprecatedDOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 0x1e, 0x8, 0xe2, 0x3e);
+DEFINE_GUID(IID_DOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 0x1e, 0x8, 0xe2, 0x3e);
 
 using namespace WebCore;
 using namespace HTMLNames;
 
-// DeprecatedDOMObject - IUnknown -------------------------------------------------------
+// DOMObject - IUnknown -------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMObject::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMObject::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMObject))
-        *ppvObject = static_cast<IDeprecatedDOMObject*>(this);
+    if (IsEqualGUID(riid, IID_IDOMObject))
+        *ppvObject = static_cast<IDOMObject*>(this);
     else
         return WebScriptObject::QueryInterface(riid, ppvObject);
 
@@ -69,32 +69,32 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMObject::QueryInterface(REFIID riid, void*
     return S_OK;
 }
 
-// DeprecatedDOMNode - IUnknown ---------------------------------------------------------
+// DOMNode - IUnknown ---------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMNode))
-        *ppvObject = static_cast<IDeprecatedDOMNode*>(this);
-    else if (IsEqualGUID(riid, IID_DeprecatedDOMNode))
-        *ppvObject = static_cast<DeprecatedDOMNode*>(this);
+    if (IsEqualGUID(riid, IID_IDOMNode))
+        *ppvObject = static_cast<IDOMNode*>(this);
+    else if (IsEqualGUID(riid, IID_DOMNode))
+        *ppvObject = static_cast<DOMNode*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMNode --------------------------------------------------------------------
+// DOMNode --------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::nodeName( 
+HRESULT STDMETHODCALLTYPE DOMNode::nodeName( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::nodeValue( 
+HRESULT STDMETHODCALLTYPE DOMNode::nodeValue( 
     /* [retval][out] */ BSTR* result)
 {
     if (!m_node)
@@ -106,140 +106,140 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::nodeValue(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::setNodeValue( 
+HRESULT STDMETHODCALLTYPE DOMNode::setNodeValue( 
     /* [in] */ BSTR /*value*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::nodeType( 
+HRESULT STDMETHODCALLTYPE DOMNode::nodeType( 
     /* [retval][out] */ unsigned short* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::parentNode( 
-    /* [retval][out] */ IDeprecatedDOMNode** result)
+HRESULT STDMETHODCALLTYPE DOMNode::parentNode( 
+    /* [retval][out] */ IDOMNode** result)
 {
     *result = 0;
     if (!m_node || !m_node->parentNode())
         return E_FAIL;
-    *result = DeprecatedDOMNode::createInstance(m_node->parentNode());
+    *result = DOMNode::createInstance(m_node->parentNode());
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::childNodes( 
-    /* [retval][out] */ IDeprecatedDOMNodeList** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::childNodes( 
+    /* [retval][out] */ IDOMNodeList** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::firstChild( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::firstChild( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::lastChild( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::lastChild( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::previousSibling( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::previousSibling( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::nextSibling( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::nextSibling( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::attributes( 
-    /* [retval][out] */ IDeprecatedDOMNamedNodeMap** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::attributes( 
+    /* [retval][out] */ IDOMNamedNodeMap** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::ownerDocument( 
-    /* [retval][out] */ IDeprecatedDOMDocument** result)
+HRESULT STDMETHODCALLTYPE DOMNode::ownerDocument( 
+    /* [retval][out] */ IDOMDocument** result)
 {
     if (!result)
         return E_POINTER;
     *result = 0;
     if (!m_node)
         return E_FAIL;
-    *result = DeprecatedDOMDocument::createInstance(m_node->ownerDocument());
+    *result = DOMDocument::createInstance(m_node->ownerDocument());
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::insertBefore( 
-    /* [in] */ IDeprecatedDOMNode* /*newChild*/,
-    /* [in] */ IDeprecatedDOMNode* /*refChild*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::insertBefore( 
+    /* [in] */ IDOMNode* /*newChild*/,
+    /* [in] */ IDOMNode* /*refChild*/,
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::replaceChild( 
-    /* [in] */ IDeprecatedDOMNode* /*newChild*/,
-    /* [in] */ IDeprecatedDOMNode* /*oldChild*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::replaceChild( 
+    /* [in] */ IDOMNode* /*newChild*/,
+    /* [in] */ IDOMNode* /*oldChild*/,
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::removeChild( 
-    /* [in] */ IDeprecatedDOMNode* /*oldChild*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::removeChild( 
+    /* [in] */ IDOMNode* /*oldChild*/,
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::appendChild( 
-    /* [in] */ IDeprecatedDOMNode* /*oldChild*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMNode::appendChild( 
+    /* [in] */ IDOMNode* /*oldChild*/,
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::hasChildNodes( 
+HRESULT STDMETHODCALLTYPE DOMNode::hasChildNodes( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::cloneNode( 
+HRESULT STDMETHODCALLTYPE DOMNode::cloneNode( 
     /* [in] */ BOOL /*deep*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::normalize( void)
+HRESULT STDMETHODCALLTYPE DOMNode::normalize( void)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isSupported( 
+HRESULT STDMETHODCALLTYPE DOMNode::isSupported( 
     /* [in] */ BSTR /*feature*/,
     /* [in] */ BSTR /*version*/,
     /* [retval][out] */ BOOL* /*result*/)
@@ -248,43 +248,43 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isSupported(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::namespaceURI( 
+HRESULT STDMETHODCALLTYPE DOMNode::namespaceURI( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::prefix( 
+HRESULT STDMETHODCALLTYPE DOMNode::prefix( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::setPrefix( 
+HRESULT STDMETHODCALLTYPE DOMNode::setPrefix( 
     /* [in] */ BSTR /*prefix*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::localName( 
+HRESULT STDMETHODCALLTYPE DOMNode::localName( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::hasAttributes( 
+HRESULT STDMETHODCALLTYPE DOMNode::hasAttributes( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isSameNode( 
-    /* [in] */ IDeprecatedDOMNode* other,
+HRESULT STDMETHODCALLTYPE DOMNode::isSameNode( 
+    /* [in] */ IDOMNode* other,
     /* [retval][out] */ BOOL* result)
 {
     if (!result) {
@@ -297,8 +297,8 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isSameNode(
     if (!other)
         return E_POINTER;
 
-    COMPtr<DeprecatedDOMNode> domOther;
-    HRESULT hr = other->QueryInterface(IID_DeprecatedDOMNode, (void**)&domOther);
+    COMPtr<DOMNode> domOther;
+    HRESULT hr = other->QueryInterface(IID_DOMNode, (void**)&domOther);
     if (FAILED(hr))
         return hr;
 
@@ -306,15 +306,15 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isSameNode(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::isEqualNode( 
-    /* [in] */ IDeprecatedDOMNode* /*other*/,
+HRESULT STDMETHODCALLTYPE DOMNode::isEqualNode( 
+    /* [in] */ IDOMNode* /*other*/,
     /* [retval][out] */ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::textContent( 
+HRESULT STDMETHODCALLTYPE DOMNode::textContent( 
     /* [retval][out] */ BSTR* result)
 {
     if (!result)
@@ -325,33 +325,33 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::textContent(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::setTextContent( 
+HRESULT STDMETHODCALLTYPE DOMNode::setTextContent( 
     /* [in] */ BSTR /*text*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMNode - IDeprecatedDOMEventTarget --------------------------------------------------
+// DOMNode - IDOMEventTarget --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::addEventListener( 
+HRESULT STDMETHODCALLTYPE DOMNode::addEventListener( 
     /* [in] */ BSTR /*type*/,
-    /* [in] */ IDeprecatedDOMEventListener* /*listener*/,
+    /* [in] */ IDOMEventListener* /*listener*/,
     /* [in] */ BOOL /*useCapture*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::removeEventListener( 
+HRESULT STDMETHODCALLTYPE DOMNode::removeEventListener( 
     /* [in] */ BSTR /*type*/,
-    /* [in] */ IDeprecatedDOMEventListener* /*listener*/,
+    /* [in] */ IDOMEventListener* /*listener*/,
     /* [in] */ BOOL /*useCapture*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::dispatchEvent( 
-    /* [in] */ IDeprecatedDOMEvent* evt,
+HRESULT STDMETHODCALLTYPE DOMNode::dispatchEvent( 
+    /* [in] */ IDOMEvent* evt,
     /* [retval][out] */ BOOL* result)
 {
     if (!m_node || !evt)
@@ -362,8 +362,8 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::dispatchEvent(
         WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 #endif
 
-    COMPtr<DeprecatedDOMEvent> domEvent;
-    HRESULT hr = evt->QueryInterface(IID_DeprecatedDOMEvent, (void**) &domEvent);
+    COMPtr<DOMEvent> domEvent;
+    HRESULT hr = evt->QueryInterface(IID_DOMEvent, (void**) &domEvent);
     if (FAILED(hr))
         return hr;
 
@@ -375,9 +375,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNode::dispatchEvent(
     return S_OK;
 }
 
-// DeprecatedDOMNode - DeprecatedDOMNode ----------------------------------------------------------
+// DOMNode - DOMNode ----------------------------------------------------------
 
-DeprecatedDOMNode::DeprecatedDOMNode(WebCore::Node* n)
+DOMNode::DOMNode(WebCore::Node* n)
 : m_node(0)
 {
     if (n)
@@ -386,44 +386,44 @@ DeprecatedDOMNode::DeprecatedDOMNode(WebCore::Node* n)
     m_node = n;
 }
 
-DeprecatedDOMNode::~DeprecatedDOMNode()
+DOMNode::~DOMNode()
 {
     if (m_node)
         m_node->deref();
 }
 
-IDeprecatedDOMNode* DeprecatedDOMNode::createInstance(WebCore::Node* n)
+IDOMNode* DOMNode::createInstance(WebCore::Node* n)
 {
     if (!n)
         return 0;
 
     HRESULT hr = S_OK;
-    IDeprecatedDOMNode* domNode = 0;
+    IDOMNode* domNode = 0;
     WebCore::Node::NodeType nodeType = n->nodeType();
 
     switch (nodeType) {
         case WebCore::Node::ELEMENT_NODE: 
         {
-            IDeprecatedDOMElement* newElement = DeprecatedDOMElement::createInstance(static_cast<WebCore::Element*>(n));
+            IDOMElement* newElement = DOMElement::createInstance(static_cast<WebCore::Element*>(n));
             if (newElement) {
-                hr = newElement->QueryInterface(IID_IDeprecatedDOMNode, (void**)&domNode);
+                hr = newElement->QueryInterface(IID_IDOMNode, (void**)&domNode);
                 newElement->Release();
             }
         }
         break;
         case WebCore::Node::DOCUMENT_NODE:
         {
-            IDeprecatedDOMDocument* newDocument = DeprecatedDOMDocument::createInstance(n->document());
+            IDOMDocument* newDocument = DOMDocument::createInstance(n->document());
             if (newDocument) {
-                hr = newDocument->QueryInterface(IID_IDeprecatedDOMNode, (void**)&domNode);
+                hr = newDocument->QueryInterface(IID_IDOMNode, (void**)&domNode);
                 newDocument->Release();
             }
         }
         break;
         default:
         {
-            DeprecatedDOMNode* newNode = new DeprecatedDOMNode(n);
-            hr = newNode->QueryInterface(IID_IDeprecatedDOMNode, (void**)&domNode);
+            DOMNode* newNode = new DOMNode(n);
+            hr = newNode->QueryInterface(IID_IDOMNode, (void**)&domNode);
         }
         break;
     }
@@ -434,25 +434,25 @@ IDeprecatedDOMNode* DeprecatedDOMNode::createInstance(WebCore::Node* n)
     return domNode;
 }
 
-// DeprecatedDOMNodeList - IUnknown -----------------------------------------------------
+// DOMNodeList - IUnknown -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNodeList::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMNodeList::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMNodeList))
-        *ppvObject = static_cast<IDeprecatedDOMNodeList*>(this);
+    if (IsEqualGUID(riid, IID_IDOMNodeList))
+        *ppvObject = static_cast<IDOMNodeList*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// IDeprecatedDOMNodeList ---------------------------------------------------------------
+// IDOMNodeList ---------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNodeList::item( 
+HRESULT STDMETHODCALLTYPE DOMNodeList::item( 
     /* [in] */ UINT index,
-    /* [retval][out] */ IDeprecatedDOMNode **result)
+    /* [retval][out] */ IDOMNode **result)
 {
     *result = 0;
     if (!m_nodeList)
@@ -462,13 +462,13 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNodeList::item(
     if (!itemNode)
         return E_FAIL;
 
-    *result = DeprecatedDOMNode::createInstance(itemNode);
+    *result = DOMNode::createInstance(itemNode);
     if (!(*result))
         return E_FAIL;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMNodeList::length( 
+HRESULT STDMETHODCALLTYPE DOMNodeList::length( 
         /* [retval][out] */ UINT *result)
 {
     *result = 0;
@@ -478,9 +478,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMNodeList::length(
     return S_OK;
 }
 
-// DeprecatedDOMNodeList - DeprecatedDOMNodeList --------------------------------------------------
+// DOMNodeList - DOMNodeList --------------------------------------------------
 
-DeprecatedDOMNodeList::DeprecatedDOMNodeList(WebCore::NodeList* l)
+DOMNodeList::DOMNodeList(WebCore::NodeList* l)
 : m_nodeList(0)
 {
     if (l)
@@ -489,214 +489,214 @@ DeprecatedDOMNodeList::DeprecatedDOMNodeList(WebCore::NodeList* l)
     m_nodeList = l;
 }
 
-DeprecatedDOMNodeList::~DeprecatedDOMNodeList()
+DOMNodeList::~DOMNodeList()
 {
     if (m_nodeList)
         m_nodeList->deref();
 }
 
-IDeprecatedDOMNodeList* DeprecatedDOMNodeList::createInstance(WebCore::NodeList* l)
+IDOMNodeList* DOMNodeList::createInstance(WebCore::NodeList* l)
 {
     if (!l)
         return 0;
 
-    IDeprecatedDOMNodeList* domNodeList = 0;
-    DeprecatedDOMNodeList* newNodeList = new DeprecatedDOMNodeList(l);
-    if (FAILED(newNodeList->QueryInterface(IID_IDeprecatedDOMNodeList, (void**)&domNodeList)))
+    IDOMNodeList* domNodeList = 0;
+    DOMNodeList* newNodeList = new DOMNodeList(l);
+    if (FAILED(newNodeList->QueryInterface(IID_IDOMNodeList, (void**)&domNodeList)))
         return 0;
 
     return domNodeList;
 }
 
-// DeprecatedDOMDocument - IUnknown -----------------------------------------------------
+// DOMDocument - IUnknown -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMDocument::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMDocument))
-        *ppvObject = static_cast<IDeprecatedDOMDocument*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMViewCSS))
-        *ppvObject = static_cast<IDeprecatedDOMViewCSS*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMDocumentEvent))
-        *ppvObject = static_cast<IDeprecatedDOMDocumentEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMDocument))
+        *ppvObject = static_cast<IDOMDocument*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMViewCSS))
+        *ppvObject = static_cast<IDOMViewCSS*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMDocumentEvent))
+        *ppvObject = static_cast<IDOMDocumentEvent*>(this);
     else
-        return DeprecatedDOMNode::QueryInterface(riid, ppvObject);
+        return DOMNode::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMDocument ----------------------------------------------------------------
+// DOMDocument ----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::doctype( 
-    /* [retval][out] */ IDeprecatedDOMDocumentType** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMDocument::doctype( 
+    /* [retval][out] */ IDOMDocumentType** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::implementation( 
-    /* [retval][out] */ IDeprecatedDOMImplementation** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMDocument::implementation( 
+    /* [retval][out] */ IDOMImplementation** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::documentElement( 
-    /* [retval][out] */ IDeprecatedDOMElement** result)
+HRESULT STDMETHODCALLTYPE DOMDocument::documentElement( 
+    /* [retval][out] */ IDOMElement** result)
 {
-    *result = DeprecatedDOMElement::createInstance(m_document->documentElement());
+    *result = DOMElement::createInstance(m_document->documentElement());
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createElement( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createElement( 
     /* [in] */ BSTR tagName,
-    /* [retval][out] */ IDeprecatedDOMElement** result)
+    /* [retval][out] */ IDOMElement** result)
 {
     if (!m_document)
         return E_FAIL;
 
     String tagNameString(tagName);
     ExceptionCode ec;
-    *result = DeprecatedDOMElement::createInstance(m_document->createElement(tagNameString, ec).get());
+    *result = DOMElement::createInstance(m_document->createElement(tagNameString, ec).get());
     if (!(*result))
         return E_FAIL;
     return S_OK;    
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createDocumentFragment( 
-    /* [retval][out] */ IDeprecatedDOMDocumentFragment** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMDocument::createDocumentFragment( 
+    /* [retval][out] */ IDOMDocumentFragment** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createTextNode( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createTextNode( 
     /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDeprecatedDOMText** /*result*/)
+    /* [retval][out] */ IDOMText** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createComment( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createComment( 
     /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDeprecatedDOMComment** /*result*/)
+    /* [retval][out] */ IDOMComment** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createCDATASection( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createCDATASection( 
     /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDeprecatedDOMCDATASection** /*result*/)
+    /* [retval][out] */ IDOMCDATASection** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createProcessingInstruction( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createProcessingInstruction( 
     /* [in] */ BSTR /*target*/,
     /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDeprecatedDOMProcessingInstruction** /*result*/)
+    /* [retval][out] */ IDOMProcessingInstruction** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createAttribute( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createAttribute( 
     /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+    /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createEntityReference( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createEntityReference( 
     /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDeprecatedDOMEntityReference** /*result*/)
+    /* [retval][out] */ IDOMEntityReference** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::getElementsByTagName( 
+HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagName( 
     /* [in] */ BSTR tagName,
-    /* [retval][out] */ IDeprecatedDOMNodeList** result)
+    /* [retval][out] */ IDOMNodeList** result)
 {
     if (!m_document)
         return E_FAIL;
 
     String tagNameString(tagName);
-    *result = DeprecatedDOMNodeList::createInstance(m_document->getElementsByTagName(tagNameString).get());
+    *result = DOMNodeList::createInstance(m_document->getElementsByTagName(tagNameString).get());
     if (!(*result))
         return E_FAIL;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::importNode( 
-    /* [in] */ IDeprecatedDOMNode* /*importedNode*/,
+HRESULT STDMETHODCALLTYPE DOMDocument::importNode( 
+    /* [in] */ IDOMNode* /*importedNode*/,
     /* [in] */ BOOL /*deep*/,
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createElementNS( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createElementNS( 
     /* [in] */ BSTR /*namespaceURI*/,
     /* [in] */ BSTR /*qualifiedName*/,
-    /* [retval][out] */ IDeprecatedDOMElement** /*result*/)
+    /* [retval][out] */ IDOMElement** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createAttributeNS( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createAttributeNS( 
     /* [in] */ BSTR /*namespaceURI*/,
     /* [in] */ BSTR /*qualifiedName*/,
-    /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+    /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::getElementsByTagNameNS( 
+HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagNameNS( 
     /* [in] */ BSTR namespaceURI,
     /* [in] */ BSTR localName,
-    /* [retval][out] */ IDeprecatedDOMNodeList** result)
+    /* [retval][out] */ IDOMNodeList** result)
 {
     if (!m_document)
         return E_FAIL;
 
     String namespaceURIString(namespaceURI);
     String localNameString(localName);
-    *result = DeprecatedDOMNodeList::createInstance(m_document->getElementsByTagNameNS(namespaceURIString, localNameString).get());
+    *result = DOMNodeList::createInstance(m_document->getElementsByTagNameNS(namespaceURIString, localNameString).get());
     if (!(*result))
         return E_FAIL;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::getElementById( 
+HRESULT STDMETHODCALLTYPE DOMDocument::getElementById( 
     /* [in] */ BSTR /*elementId*/,
-    /* [retval][out] */ IDeprecatedDOMElement** /*result*/)
+    /* [retval][out] */ IDOMElement** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMDocument - IDeprecatedDOMViewCSS --------------------------------------------------
+// DOMDocument - IDOMViewCSS --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::getComputedStyle( 
-    /* [in] */ IDeprecatedDOMElement* elt,
+HRESULT STDMETHODCALLTYPE DOMDocument::getComputedStyle( 
+    /* [in] */ IDOMElement* elt,
     /* [in] */ BSTR pseudoElt,
-    /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration** result)
+    /* [retval][out] */ IDOMCSSStyleDeclaration** result)
 {
     if (!elt || !result)
         return E_POINTER;
 
-    COMPtr<DeprecatedDOMElement> domEle;
-    HRESULT hr = elt->QueryInterface(IID_DeprecatedDOMElement, (void**)&domEle);
+    COMPtr<DOMElement> domEle;
+    HRESULT hr = elt->QueryInterface(IID_DOMElement, (void**)&domEle);
     if (FAILED(hr))
         return hr;
     Element* element = domEle->element();
@@ -707,48 +707,48 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::getComputedStyle(
     if (!dv)
         return E_FAIL;
     
-    *result = DeprecatedDOMCSSStyleDeclaration::createInstance(dv->getComputedStyle(element, pseudoEltString.impl()).get());
+    *result = DOMCSSStyleDeclaration::createInstance(dv->getComputedStyle(element, pseudoEltString.impl()).get());
     return S_OK;
 }
 
-// DeprecatedDOMDocument - IDeprecatedDOMDocumentEvent --------------------------------------------
+// DOMDocument - IDOMDocumentEvent --------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMDocument::createEvent( 
+HRESULT STDMETHODCALLTYPE DOMDocument::createEvent( 
     /* [in] */ BSTR eventType,
-    /* [retval][out] */ IDeprecatedDOMEvent **result)
+    /* [retval][out] */ IDOMEvent **result)
 {
     String eventTypeString(eventType, SysStringLen(eventType));
     WebCore::ExceptionCode ec = 0;
-    *result = DeprecatedDOMEvent::createInstance(m_document->createEvent(eventTypeString, ec));
+    *result = DOMEvent::createInstance(m_document->createEvent(eventTypeString, ec));
     return S_OK;
 }
 
-// DeprecatedDOMDocument - DeprecatedDOMDocument --------------------------------------------------
+// DOMDocument - DOMDocument --------------------------------------------------
 
-DeprecatedDOMDocument::DeprecatedDOMDocument(WebCore::Document* d)
-: DeprecatedDOMNode(d)
+DOMDocument::DOMDocument(WebCore::Document* d)
+: DOMNode(d)
 , m_document(d)
 {
 }
 
-DeprecatedDOMDocument::~DeprecatedDOMDocument()
+DOMDocument::~DOMDocument()
 {
 }
 
-IDeprecatedDOMDocument* DeprecatedDOMDocument::createInstance(WebCore::Document* d)
+IDOMDocument* DOMDocument::createInstance(WebCore::Document* d)
 {
     if (!d)
         return 0;
 
     HRESULT hr;
-    IDeprecatedDOMDocument* domDocument = 0;
+    IDOMDocument* domDocument = 0;
 
     if (d->isHTMLDocument()) {
-        DeprecatedDOMHTMLDocument* newDocument = new DeprecatedDOMHTMLDocument(d);
-        hr = newDocument->QueryInterface(IID_IDeprecatedDOMDocument, (void**)&domDocument);
+        DOMHTMLDocument* newDocument = new DOMHTMLDocument(d);
+        hr = newDocument->QueryInterface(IID_IDOMDocument, (void**)&domDocument);
     } else {
-        DeprecatedDOMDocument* newDocument = new DeprecatedDOMDocument(d);
-        hr = newDocument->QueryInterface(IID_IDeprecatedDOMDocument, (void**)&domDocument);
+        DOMDocument* newDocument = new DOMDocument(d);
+        hr = newDocument->QueryInterface(IID_IDOMDocument, (void**)&domDocument);
     }
 
     if (FAILED(hr))
@@ -757,33 +757,33 @@ IDeprecatedDOMDocument* DeprecatedDOMDocument::createInstance(WebCore::Document*
     return domDocument;
 }
 
-// DeprecatedDOMElement - IUnknown ------------------------------------------------------
+// DOMElement - IUnknown ------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMElement::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMElement))
-        *ppvObject = static_cast<IDeprecatedDOMElement*>(this);
-    else if (IsEqualGUID(riid, IID_DeprecatedDOMElement))
-        *ppvObject = static_cast<DeprecatedDOMElement*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMElementPrivate))
-        *ppvObject = static_cast<IDeprecatedDOMElementPrivate*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMNodeExtensions))
-        *ppvObject = static_cast<IDeprecatedDOMNodeExtensions*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMElementCSSInlineStyle))
-        *ppvObject = static_cast<IDeprecatedDOMElementCSSInlineStyle*>(this);
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMElementExtensions))
-        *ppvObject = static_cast<IDeprecatedDOMElementExtensions*>(this);
+    if (IsEqualGUID(riid, IID_IDOMElement))
+        *ppvObject = static_cast<IDOMElement*>(this);
+    else if (IsEqualGUID(riid, IID_DOMElement))
+        *ppvObject = static_cast<DOMElement*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMElementPrivate))
+        *ppvObject = static_cast<IDOMElementPrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMNodeExtensions))
+        *ppvObject = static_cast<IDOMNodeExtensions*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMElementCSSInlineStyle))
+        *ppvObject = static_cast<IDOMElementCSSInlineStyle*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMElementExtensions))
+        *ppvObject = static_cast<IDOMElementExtensions*>(this);
     else
-        return DeprecatedDOMNode::QueryInterface(riid, ppvObject);
+        return DOMNode::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMElement - IDeprecatedDOMNodeExtensions---------------------------------------------
+// DOMElement - IDOMNodeExtensions---------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::boundingBox( 
+HRESULT STDMETHODCALLTYPE DOMElement::boundingBox( 
     /* [retval][out] */ LPRECT rect)
 {
     ::SetRectEmpty(rect);
@@ -803,23 +803,23 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::boundingBox(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::lineBoxRects( 
+HRESULT STDMETHODCALLTYPE DOMElement::lineBoxRects( 
     /* [size_is][in] */ RECT* /*rects*/,
     /* [in] */ int /*cRects*/)
 {
     return E_NOTIMPL;
 }
 
-// IDeprecatedDOMElement ----------------------------------------------------------------
+// IDOMElement ----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::tagName( 
+HRESULT STDMETHODCALLTYPE DOMElement::tagName( 
         /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttribute( 
+HRESULT STDMETHODCALLTYPE DOMElement::getAttribute( 
         /* [in] */ BSTR name,
         /* [retval][out] */ BSTR* result)
 {
@@ -833,7 +833,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttribute(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttribute( 
+HRESULT STDMETHODCALLTYPE DOMElement::setAttribute( 
         /* [in] */ BSTR name,
         /* [in] */ BSTR value)
 {
@@ -847,46 +847,46 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttribute(
     return ec ? E_FAIL : S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::removeAttribute( 
+HRESULT STDMETHODCALLTYPE DOMElement::removeAttribute( 
         /* [in] */ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttributeNode( 
+HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNode( 
         /* [in] */ BSTR /*name*/,
-        /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+        /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttributeNode( 
-        /* [in] */ IDeprecatedDOMAttr* /*newAttr*/,
-        /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNode( 
+        /* [in] */ IDOMAttr* /*newAttr*/,
+        /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::removeAttributeNode( 
-        /* [in] */ IDeprecatedDOMAttr* /*oldAttr*/,
-        /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMElement::removeAttributeNode( 
+        /* [in] */ IDOMAttr* /*oldAttr*/,
+        /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getElementsByTagName( 
+HRESULT STDMETHODCALLTYPE DOMElement::getElementsByTagName( 
         /* [in] */ BSTR /*name*/,
-        /* [retval][out] */ IDeprecatedDOMNodeList** /*result*/)
+        /* [retval][out] */ IDOMNodeList** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttributeNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*localName*/,
         /* [retval][out] */ BSTR* /*result*/)
@@ -895,7 +895,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttributeNS(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttributeNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*qualifiedName*/,
         /* [in] */ BSTR /*value*/)
@@ -904,7 +904,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttributeNS(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::removeAttributeNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::removeAttributeNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*localName*/)
 {
@@ -912,33 +912,33 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::removeAttributeNS(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getAttributeNodeNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNodeNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+        /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setAttributeNodeNS( 
-        /* [in] */ IDeprecatedDOMAttr* /*newAttr*/,
-        /* [retval][out] */ IDeprecatedDOMAttr** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNodeNS( 
+        /* [in] */ IDOMAttr* /*newAttr*/,
+        /* [retval][out] */ IDOMAttr** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::getElementsByTagNameNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::getElementsByTagNameNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ IDeprecatedDOMNodeList** /*result*/)
+        /* [retval][out] */ IDOMNodeList** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::hasAttribute( 
+HRESULT STDMETHODCALLTYPE DOMElement::hasAttribute( 
         /* [in] */ BSTR /*name*/,
         /* [retval][out] */ BOOL* /*result*/)
 {
@@ -946,7 +946,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::hasAttribute(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::hasAttributeNS( 
+HRESULT STDMETHODCALLTYPE DOMElement::hasAttributeNS( 
         /* [in] */ BSTR /*namespaceURI*/,
         /* [in] */ BSTR /*localName*/,
         /* [retval][out] */ BOOL* /*result*/)
@@ -955,7 +955,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::hasAttributeNS(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::focus( void)
+HRESULT STDMETHODCALLTYPE DOMElement::focus( void)
 {
     if (!m_element)
         return E_FAIL;
@@ -963,7 +963,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::focus( void)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::blur( void)
+HRESULT STDMETHODCALLTYPE DOMElement::blur( void)
 {
     if (!m_element)
         return E_FAIL;
@@ -971,9 +971,9 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::blur( void)
     return S_OK;
 }
 
-// IDeprecatedDOMElementPrivate ---------------------------------------------------------
+// IDOMElementPrivate ---------------------------------------------------------
 
-HRESULT DeprecatedDOMElement::coreElement(void **element)
+HRESULT DOMElement::coreElement(void **element)
 {
     if (!m_element)
         return E_FAIL;
@@ -981,8 +981,8 @@ HRESULT DeprecatedDOMElement::coreElement(void **element)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::isEqual( 
-    /* [in] */ IDeprecatedDOMElement *other,
+HRESULT STDMETHODCALLTYPE DOMElement::isEqual( 
+    /* [in] */ IDOMElement *other,
     /* [retval][out] */ BOOL *result)
 {
     *result = FALSE;
@@ -990,8 +990,8 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::isEqual(
     if (!other || !result)
         return E_POINTER;
 
-    IDeprecatedDOMElementPrivate* otherPriv;
-    HRESULT hr = other->QueryInterface(IID_IDeprecatedDOMElementPrivate, (void**) &otherPriv);
+    IDOMElementPrivate* otherPriv;
+    HRESULT hr = other->QueryInterface(IID_IDOMElementPrivate, (void**) &otherPriv);
     if (FAILED(hr))
         return hr;
     
@@ -1005,7 +1005,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::isEqual(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::isFocused( 
+HRESULT STDMETHODCALLTYPE DOMElement::isFocused( 
     /* [retval][out] */ BOOL *result)
 {
     if (!m_element)
@@ -1019,7 +1019,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::isFocused(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::innerText(
+HRESULT STDMETHODCALLTYPE DOMElement::innerText(
     /* [retval][out] */ BSTR* result)
 {
     if (!result) {
@@ -1036,10 +1036,10 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::innerText(
     return S_OK;
 }
 
-// IDeprecatedDOMElementCSSInlineStyle --------------------------------------------------
+// IDOMElementCSSInlineStyle --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::style( 
-    /* [retval][out] */ IDeprecatedDOMCSSStyleDeclaration** result)
+HRESULT STDMETHODCALLTYPE DOMElement::style( 
+    /* [retval][out] */ IDOMCSSStyleDeclaration** result)
 {
     if (!result)
         return E_POINTER;
@@ -1050,13 +1050,13 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::style(
     if (!style)
         return E_FAIL;
 
-    *result = DeprecatedDOMCSSStyleDeclaration::createInstance(style);
+    *result = DOMCSSStyleDeclaration::createInstance(style);
     return S_OK;
 }
 
-// IDeprecatedDOMElementExtensions ------------------------------------------------------
+// IDOMElementExtensions ------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetLeft( 
+HRESULT STDMETHODCALLTYPE DOMElement::offsetLeft( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1066,7 +1066,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetLeft(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetTop( 
+HRESULT STDMETHODCALLTYPE DOMElement::offsetTop( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1076,7 +1076,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetTop(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetWidth( 
+HRESULT STDMETHODCALLTYPE DOMElement::offsetWidth( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1086,7 +1086,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetHeight( 
+HRESULT STDMETHODCALLTYPE DOMElement::offsetHeight( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1096,15 +1096,15 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::offsetParent( 
-    /* [retval][out] */ IDeprecatedDOMElement** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMElement::offsetParent( 
+    /* [retval][out] */ IDOMElement** /*result*/)
 {
     // FIXME
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::clientWidth( 
+HRESULT STDMETHODCALLTYPE DOMElement::clientWidth( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1114,7 +1114,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::clientWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::clientHeight( 
+HRESULT STDMETHODCALLTYPE DOMElement::clientHeight( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1124,7 +1124,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::clientHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollLeft( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollLeft( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1134,7 +1134,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollLeft(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setScrollLeft( 
+HRESULT STDMETHODCALLTYPE DOMElement::setScrollLeft( 
     /* [in] */ int /*newScrollLeft*/)
 {
     // FIXME
@@ -1142,7 +1142,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setScrollLeft(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollTop( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollTop( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1152,7 +1152,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollTop(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setScrollTop( 
+HRESULT STDMETHODCALLTYPE DOMElement::setScrollTop( 
     /* [in] */ int /*newScrollTop*/)
 {
     // FIXME
@@ -1160,7 +1160,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::setScrollTop(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollWidth( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollWidth( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1170,7 +1170,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollHeight( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollHeight( 
     /* [retval][out] */ int* result)
 {
     if (!m_element)
@@ -1180,7 +1180,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollIntoView( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoView( 
     /* [in] */ BOOL alignWithTop)
 {
     if (!m_element)
@@ -1190,7 +1190,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollIntoView(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollIntoViewIfNeeded( 
+HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoViewIfNeeded( 
     /* [in] */ BOOL centerIfNeeded)
 {
     if (!m_element)
@@ -1200,47 +1200,47 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMElement::scrollIntoViewIfNeeded(
     return S_OK;
 }
 
-// DeprecatedDOMElement -----------------------------------------------------------------
+// DOMElement -----------------------------------------------------------------
 
-DeprecatedDOMElement::DeprecatedDOMElement(WebCore::Element* e)
-: DeprecatedDOMNode(e)
+DOMElement::DOMElement(WebCore::Element* e)
+: DOMNode(e)
 , m_element(e)
 {
 }
 
-DeprecatedDOMElement::~DeprecatedDOMElement()
+DOMElement::~DOMElement()
 {
 }
 
-IDeprecatedDOMElement* DeprecatedDOMElement::createInstance(WebCore::Element* e)
+IDOMElement* DOMElement::createInstance(WebCore::Element* e)
 {
     if (!e)
         return 0;
 
     HRESULT hr;
-    IDeprecatedDOMElement* domElement = 0;
+    IDOMElement* domElement = 0;
 
     if (e->hasTagName(formTag)) {
-        DeprecatedDOMHTMLFormElement* newElement = new DeprecatedDOMHTMLFormElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLFormElement* newElement = new DOMHTMLFormElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(selectTag)) {
-        DeprecatedDOMHTMLSelectElement* newElement = new DeprecatedDOMHTMLSelectElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(optionTag)) {
-        DeprecatedDOMHTMLOptionElement* newElement = new DeprecatedDOMHTMLOptionElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLOptionElement* newElement = new DOMHTMLOptionElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(inputTag)) {
-        DeprecatedDOMHTMLInputElement* newElement = new DeprecatedDOMHTMLInputElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(textareaTag)) {
-        DeprecatedDOMHTMLTextAreaElement* newElement = new DeprecatedDOMHTMLTextAreaElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLTextAreaElement* newElement = new DOMHTMLTextAreaElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->isHTMLElement()) {
-        DeprecatedDOMHTMLElement* newElement = new DeprecatedDOMHTMLElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMHTMLElement* newElement = new DOMHTMLElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else {
-        DeprecatedDOMElement* newElement = new DeprecatedDOMElement(e);
-        hr = newElement->QueryInterface(IID_IDeprecatedDOMElement, (void**)&domElement);
+        DOMElement* newElement = new DOMElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     }
 
     if (FAILED(hr))

@@ -31,9 +31,9 @@
 #include <WebCore/PlatformString.h>
 #pragma warning(pop)
 
-// DeprecatedDOMCSSStyleDeclaration - DeprecatedDOMCSSStyleDeclaration ----------------------------
+// DOMCSSStyleDeclaration - DOMCSSStyleDeclaration ----------------------------
 
-DeprecatedDOMCSSStyleDeclaration::DeprecatedDOMCSSStyleDeclaration(WebCore::CSSStyleDeclaration* s)
+DOMCSSStyleDeclaration::DOMCSSStyleDeclaration(WebCore::CSSStyleDeclaration* s)
 : m_style(0)
 {
     if (s)
@@ -42,22 +42,22 @@ DeprecatedDOMCSSStyleDeclaration::DeprecatedDOMCSSStyleDeclaration(WebCore::CSSS
     m_style = s;
 }
 
-DeprecatedDOMCSSStyleDeclaration::~DeprecatedDOMCSSStyleDeclaration()
+DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
 {
     if (m_style)
         m_style->deref();
 }
 
-IDeprecatedDOMCSSStyleDeclaration* DeprecatedDOMCSSStyleDeclaration::createInstance(WebCore::CSSStyleDeclaration* s)
+IDOMCSSStyleDeclaration* DOMCSSStyleDeclaration::createInstance(WebCore::CSSStyleDeclaration* s)
 {
     if (!s)
         return 0;
 
     HRESULT hr;
-    IDeprecatedDOMCSSStyleDeclaration* domStyle = 0;
+    IDOMCSSStyleDeclaration* domStyle = 0;
 
-    DeprecatedDOMCSSStyleDeclaration* newStyle = new DeprecatedDOMCSSStyleDeclaration(s);
-    hr = newStyle->QueryInterface(IID_IDeprecatedDOMCSSStyleDeclaration, (void**)&domStyle);
+    DOMCSSStyleDeclaration* newStyle = new DOMCSSStyleDeclaration(s);
+    hr = newStyle->QueryInterface(IID_IDOMCSSStyleDeclaration, (void**)&domStyle);
 
     if (FAILED(hr))
         return 0;
@@ -65,30 +65,30 @@ IDeprecatedDOMCSSStyleDeclaration* DeprecatedDOMCSSStyleDeclaration::createInsta
     return domStyle;
 }
 
-// DeprecatedDOMCSSStyleDeclaration - IUnknown ------------------------------------------
+// DOMCSSStyleDeclaration - IUnknown ------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMCSSStyleDeclaration))
-        *ppvObject = static_cast<IDeprecatedDOMCSSStyleDeclaration*>(this);
+    if (IsEqualGUID(riid, IID_IDOMCSSStyleDeclaration))
+        *ppvObject = static_cast<IDOMCSSStyleDeclaration*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-// DeprecatedDOMCSSStyleDeclaration - IDeprecatedDOMCSSStyleDeclaration ---------------------------
+// DOMCSSStyleDeclaration - IDOMCSSStyleDeclaration ---------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::cssText( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::cssText( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::setCssText( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setCssText( 
     /* [in] */ BSTR cssText)
 {
     WebCore::String cssTextString(cssText);
@@ -98,7 +98,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::setCssText(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::getPropertyValue( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue( 
     /* [in] */ BSTR propertyName,
     /* [retval][out] */ BSTR* result)
 {
@@ -110,23 +110,15 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::getPropertyValue(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::getPropertyCSSValue( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyCSSValue( 
     /* [in] */ BSTR /*propertyName*/,
-    /* [retval][out] */ IDeprecatedDOMCSSValue** /*result*/)
+    /* [retval][out] */ IDOMCSSValue** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::removeProperty( 
-    /* [in] */ BSTR /*propertyName*/,
-    /* [retval][out] */ BSTR* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::getPropertyPriority( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::removeProperty( 
     /* [in] */ BSTR /*propertyName*/,
     /* [retval][out] */ BSTR* /*result*/)
 {
@@ -134,7 +126,15 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::getPropertyPriority(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::setProperty( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyPriority( 
+    /* [in] */ BSTR /*propertyName*/,
+    /* [retval][out] */ BSTR* /*result*/)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setProperty( 
     /* [in] */ BSTR propertyName,
     /* [in] */ BSTR value,
     /* [in] */ BSTR priority)
@@ -148,14 +148,14 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::setProperty(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::length( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::length( 
     /* [retval][out] */ UINT* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::item( 
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::item( 
     /* [in] */ UINT /*index*/,
     /* [retval][out] */ BSTR* /*result*/)
 {
@@ -163,8 +163,8 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::item(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMCSSStyleDeclaration::parentRule( 
-    /* [retval][out] */ IDeprecatedDOMCSSRule** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::parentRule( 
+    /* [retval][out] */ IDOMCSSRule** /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

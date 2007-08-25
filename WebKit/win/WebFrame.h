@@ -96,10 +96,10 @@ public:
         /* [retval][out] */ IWebFrameView **view);
     
     virtual HRESULT STDMETHODCALLTYPE DOMDocument( 
-        /* [retval][out] */ IDeprecatedDOMDocument** document);
+        /* [retval][out] */ IDOMDocument** document);
     
     virtual HRESULT STDMETHODCALLTYPE frameElement( 
-        /* [retval][out] */ IDeprecatedDOMHTMLElement **frameElement);
+        /* [retval][out] */ IDOMHTMLElement **frameElement);
     
     virtual HRESULT STDMETHODCALLTYPE loadRequest( 
         /* [in] */ IWebURLRequest *request);
@@ -143,7 +143,7 @@ public:
         /* [retval][out] */ IEnumVARIANT **enumFrames);
 
     virtual HRESULT STDMETHODCALLTYPE currentForm( 
-        /* [retval][out] */ IDeprecatedDOMElement **formElement);
+        /* [retval][out] */ IDOMElement **formElement);
 
     // IWebFramePrivate
     virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(
@@ -326,13 +326,13 @@ public:
     void setTextSizeMultiplier(float multiplier);
     HRESULT inViewSourceMode(BOOL *flag);
     HRESULT setInViewSourceMode(BOOL flag);
-    HRESULT elementWithName(BSTR name, IDeprecatedDOMElement* form, IDeprecatedDOMElement** element);
-    HRESULT formForElement(IDeprecatedDOMElement* element, IDeprecatedDOMElement** form);
-    HRESULT elementDoesAutoComplete(IDeprecatedDOMElement* element, bool* result);
-    HRESULT controlsInForm(IDeprecatedDOMElement* form, IDeprecatedDOMElement** controls, int* cControls);
-    HRESULT elementIsPassword(IDeprecatedDOMElement* element, bool* result);
-    HRESULT searchForLabelsBeforeElement(const BSTR* labels, int cLabels, IDeprecatedDOMElement* beforeElement, BSTR* result);
-    HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDeprecatedDOMElement* againstElement, BSTR* result);
+    HRESULT elementWithName(BSTR name, IDOMElement* form, IDOMElement** element);
+    HRESULT formForElement(IDOMElement* element, IDOMElement** form);
+    HRESULT elementDoesAutoComplete(IDOMElement* element, bool* result);
+    HRESULT controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls);
+    HRESULT elementIsPassword(IDOMElement* element, bool* result);
+    HRESULT searchForLabelsBeforeElement(const BSTR* labels, int cLabels, IDOMElement* beforeElement, BSTR* result);
+    HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result);
     HRESULT canProvideDocumentSource(bool* result);
     WebHistory* webHistory();
 

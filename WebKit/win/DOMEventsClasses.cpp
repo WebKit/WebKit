@@ -35,67 +35,67 @@
 #include <WebCore/MouseEvent.h>
 #pragma warning( pop )
 
-// DeprecatedDOMEventListener -----------------------------------------------------------
+// DOMEventListener -----------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEventListener::QueryInterface(const IID &riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMEventListener::QueryInterface(const IID &riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMEventListener))
-        *ppvObject = static_cast<IDeprecatedDOMEventListener*>(this);
+    if (IsEqualGUID(riid, IID_IDOMEventListener))
+        *ppvObject = static_cast<IDOMEventListener*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEventListener::handleEvent( 
-    /* [in] */ IDeprecatedDOMEvent* /*evt*/)
+HRESULT STDMETHODCALLTYPE DOMEventListener::handleEvent( 
+    /* [in] */ IDOMEvent* /*evt*/)
 {
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMEvent -------------------------------------------------------------------
+// DOMEvent -------------------------------------------------------------------
 
-DeprecatedDOMEvent::DeprecatedDOMEvent(PassRefPtr<WebCore::Event> e)
+DOMEvent::DOMEvent(PassRefPtr<WebCore::Event> e)
 : m_event(0)
 {
     m_event = e;
 }
 
-DeprecatedDOMEvent::~DeprecatedDOMEvent()
+DOMEvent::~DOMEvent()
 {
 }
 
-IDeprecatedDOMEvent* DeprecatedDOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
+IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
 {
     if (!e)
         return 0;
 
     HRESULT hr;
-    IDeprecatedDOMEvent* domEvent = 0;
+    IDOMEvent* domEvent = 0;
 
     if (e->isKeyboardEvent()) {
-        DeprecatedDOMKeyboardEvent* newEvent = new DeprecatedDOMKeyboardEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMKeyboardEvent, (void**)&domEvent);
+        DOMKeyboardEvent* newEvent = new DOMKeyboardEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMKeyboardEvent, (void**)&domEvent);
     } else if (e->isMouseEvent()) {
-        DeprecatedDOMMouseEvent* newEvent = new DeprecatedDOMMouseEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMMouseEvent, (void**)&domEvent);
+        DOMMouseEvent* newEvent = new DOMMouseEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMMouseEvent, (void**)&domEvent);
     } else if (e->isMutationEvent()) {
-        DeprecatedDOMMutationEvent* newEvent = new DeprecatedDOMMutationEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMMutationEvent, (void**)&domEvent);
+        DOMMutationEvent* newEvent = new DOMMutationEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMMutationEvent, (void**)&domEvent);
     } else if (e->isOverflowEvent()) {
-        DeprecatedDOMOverflowEvent* newEvent = new DeprecatedDOMOverflowEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMOverflowEvent, (void**)&domEvent);
+        DOMOverflowEvent* newEvent = new DOMOverflowEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMOverflowEvent, (void**)&domEvent);
     } else if (e->isWheelEvent()) {
-        DeprecatedDOMWheelEvent* newEvent = new DeprecatedDOMWheelEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMWheelEvent, (void**)&domEvent);
+        DOMWheelEvent* newEvent = new DOMWheelEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMWheelEvent, (void**)&domEvent);
     } else if (e->isUIEvent()) {
-        DeprecatedDOMUIEvent* newEvent = new DeprecatedDOMUIEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMUIEvent, (void**)&domEvent);
+        DOMUIEvent* newEvent = new DOMUIEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMUIEvent, (void**)&domEvent);
     } else {
-        DeprecatedDOMEvent* newEvent = new DeprecatedDOMEvent(e);
-        hr = newEvent->QueryInterface(IID_IDeprecatedDOMEvent, (void**)&domEvent);
+        DOMEvent* newEvent = new DOMEvent(e);
+        hr = newEvent->QueryInterface(IID_IDOMEvent, (void**)&domEvent);
     }
 
     if (FAILED(hr))
@@ -104,73 +104,73 @@ IDeprecatedDOMEvent* DeprecatedDOMEvent::createInstance(PassRefPtr<WebCore::Even
     return domEvent;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::QueryInterface(const IID &riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMEvent::QueryInterface(const IID &riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_DeprecatedDOMEvent))
+    if (IsEqualGUID(riid, IID_DOMEvent))
         *ppvObject = this;
-    else if (IsEqualGUID(riid, IID_IDeprecatedDOMEvent))
-        *ppvObject = static_cast<IDeprecatedDOMEvent*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMEvent))
+        *ppvObject = static_cast<IDOMEvent*>(this);
     else
-        return DeprecatedDOMObject::QueryInterface(riid, ppvObject);
+        return DOMObject::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::type( 
+HRESULT STDMETHODCALLTYPE DOMEvent::type( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::target( 
-    /* [retval][out] */ IDeprecatedDOMEventTarget** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMEvent::target( 
+    /* [retval][out] */ IDOMEventTarget** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::currentTarget( 
-    /* [retval][out] */ IDeprecatedDOMEventTarget** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMEvent::currentTarget( 
+    /* [retval][out] */ IDOMEventTarget** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::eventPhase( 
+HRESULT STDMETHODCALLTYPE DOMEvent::eventPhase( 
     /* [retval][out] */ unsigned short* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::bubbles( 
+HRESULT STDMETHODCALLTYPE DOMEvent::bubbles( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::cancelable( 
+HRESULT STDMETHODCALLTYPE DOMEvent::cancelable( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::timeStamp( 
+HRESULT STDMETHODCALLTYPE DOMEvent::timeStamp( 
     /* [retval][out] */ DOMTimeStamp* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::stopPropagation( void)
+HRESULT STDMETHODCALLTYPE DOMEvent::stopPropagation( void)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::preventDefault( void)
+HRESULT STDMETHODCALLTYPE DOMEvent::preventDefault( void)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::initEvent( 
+HRESULT STDMETHODCALLTYPE DOMEvent::initEvent( 
     /* [in] */ BSTR /*eventTypeArg*/,
     /* [in] */ BOOL /*canBubbleArg*/,
     /* [in] */ BOOL /*cancelableArg*/)
@@ -178,111 +178,111 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMEvent::initEvent(
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMUIEvent -----------------------------------------------------------------
+// DOMUIEvent -----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMUIEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMUIEvent))
-        *ppvObject = static_cast<IDeprecatedDOMUIEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMUIEvent))
+        *ppvObject = static_cast<IDOMUIEvent*>(this);
     else
-        return DeprecatedDOMEvent::QueryInterface(riid, ppvObject);
+        return DOMEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::view( 
-    /* [retval][out] */ IDeprecatedDOMWindow** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMUIEvent::view( 
+    /* [retval][out] */ IDOMWindow** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::detail( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::detail( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::initUIEvent( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::initUIEvent( 
     /* [in] */ BSTR /*type*/,
     /* [in] */ BOOL /*canBubble*/,
     /* [in] */ BOOL /*cancelable*/,
-    /* [in] */ IDeprecatedDOMWindow* /*view*/,
+    /* [in] */ IDOMWindow* /*view*/,
     /* [in] */ long /*detail*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::keyCode( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::keyCode( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::charCode( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::charCode( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::layerX( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::layerX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::layerY( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::layerY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::pageX( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::pageX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::pageY( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::pageY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMUIEvent::which( 
+HRESULT STDMETHODCALLTYPE DOMUIEvent::which( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMKeyboardEvent -----------------------------------------------------------
+// DOMKeyboardEvent -----------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMKeyboardEvent))
-        *ppvObject = static_cast<IDeprecatedDOMKeyboardEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMKeyboardEvent))
+        *ppvObject = static_cast<IDOMKeyboardEvent*>(this);
     else
-        return DeprecatedDOMUIEvent::QueryInterface(riid, ppvObject);
+        return DOMUIEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::keyIdentifier( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::keyIdentifier( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::keyLocation( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::keyLocation( 
     /* [retval][out] */ unsigned long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::ctrlKey( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::ctrlKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -294,7 +294,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::ctrlKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::shiftKey( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::shiftKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -306,7 +306,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::shiftKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::altKey( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::altKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -318,7 +318,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::altKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::metaKey( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::metaKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -330,7 +330,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::metaKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::altGraphKey( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::altGraphKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -342,18 +342,18 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::altGraphKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::getModifierState( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::getModifierState( 
     /* [in] */ BSTR /*keyIdentifierArg*/,
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::initKeyboardEvent( 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::initKeyboardEvent( 
     /* [in] */ BSTR /*type*/,
     /* [in] */ BOOL /*canBubble*/,
     /* [in] */ BOOL /*cancelable*/,
-    /* [in] */ IDeprecatedDOMWindow* /*view*/,
+    /* [in] */ IDOMWindow* /*view*/,
     /* [in] */ BSTR /*keyIdentifier*/,
     /* [in] */ unsigned long /*keyLocation*/,
     /* [in] */ BOOL /*ctrlKey*/,
@@ -365,45 +365,45 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMKeyboardEvent::initKeyboardEvent(
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMMouseEvent --------------------------------------------------------------
+// DOMMouseEvent --------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMMouseEvent))
-        *ppvObject = static_cast<IDeprecatedDOMMouseEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMMouseEvent))
+        *ppvObject = static_cast<IDOMMouseEvent*>(this);
     else
-        return DeprecatedDOMUIEvent::QueryInterface(riid, ppvObject);
+        return DOMUIEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::screenX( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::screenX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::screenY( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::screenY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::clientX( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::clientX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::clientY( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::clientY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::ctrlKey( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::ctrlKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -415,7 +415,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::ctrlKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::shiftKey( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::shiftKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -427,7 +427,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::shiftKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::altKey( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::altKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -439,7 +439,7 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::altKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::metaKey( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::metaKey( 
     /* [retval][out] */ BOOL* result)
 {
     *result = FALSE;
@@ -451,23 +451,23 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::metaKey(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::button( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::button( 
     /* [retval][out] */ unsigned short* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::relatedTarget( 
-    /* [retval][out] */ IDeprecatedDOMEventTarget** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::relatedTarget( 
+    /* [retval][out] */ IDOMEventTarget** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::initMouseEvent( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::initMouseEvent( 
     /* [in] */ BSTR /*type*/,
     /* [in] */ BOOL /*canBubble*/,
     /* [in] */ BOOL /*cancelable*/,
-    /* [in] */ IDeprecatedDOMWindow* /*view*/,
+    /* [in] */ IDOMWindow* /*view*/,
     /* [in] */ long /*detail*/,
     /* [in] */ long /*screenX*/,
     /* [in] */ long /*screenY*/,
@@ -478,96 +478,96 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::initMouseEvent(
     /* [in] */ BOOL /*shiftKey*/,
     /* [in] */ BOOL /*metaKey*/,
     /* [in] */ unsigned short /*button*/,
-    /* [in] */ IDeprecatedDOMEventTarget* /*relatedTarget*/)
+    /* [in] */ IDOMEventTarget* /*relatedTarget*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::offsetX( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::offsetX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::offsetY( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::offsetY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::x( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::x( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::y( 
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::y( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::fromElement( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::fromElement( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMouseEvent::toElement( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMMouseEvent::toElement( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMMutationEvent -----------------------------------------------------------
+// DOMMutationEvent -----------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMMutationEvent))
-        *ppvObject = static_cast<IDeprecatedDOMMutationEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMMutationEvent))
+        *ppvObject = static_cast<IDOMMutationEvent*>(this);
     else
-        return DeprecatedDOMEvent::QueryInterface(riid, ppvObject);
+        return DOMEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::relatedNode( 
-    /* [retval][out] */ IDeprecatedDOMNode** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::relatedNode( 
+    /* [retval][out] */ IDOMNode** /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::prevValue( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::prevValue( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::newValue( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::newValue( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::attrName( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::attrName( 
     /* [retval][out] */ BSTR* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::attrChange( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::attrChange( 
     /* [retval][out] */ unsigned short* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::initMutationEvent( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::initMutationEvent( 
     /* [in] */ BSTR /*type*/,
     /* [in] */ BOOL /*canBubble*/,
     /* [in] */ BOOL /*cancelable*/,
-    /* [in] */ IDeprecatedDOMNode* /*relatedNode*/,
+    /* [in] */ IDOMNode* /*relatedNode*/,
     /* [in] */ BSTR /*prevValue*/,
     /* [in] */ BSTR /*newValue*/,
     /* [in] */ BSTR /*attrName*/,
@@ -576,152 +576,152 @@ HRESULT STDMETHODCALLTYPE DeprecatedDOMMutationEvent::initMutationEvent(
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMOverflowEvent -----------------------------------------------------------
+// DOMOverflowEvent -----------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMOverflowEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMOverflowEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMOverflowEvent))
-        *ppvObject = static_cast<IDeprecatedDOMOverflowEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMOverflowEvent))
+        *ppvObject = static_cast<IDOMOverflowEvent*>(this);
     else
-        return DeprecatedDOMEvent::QueryInterface(riid, ppvObject);
+        return DOMEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMOverflowEvent::orient( 
+HRESULT STDMETHODCALLTYPE DOMOverflowEvent::orient( 
     /* [retval][out] */ unsigned short* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMOverflowEvent::horizontalOverflow( 
+HRESULT STDMETHODCALLTYPE DOMOverflowEvent::horizontalOverflow( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMOverflowEvent::verticalOverflow( 
+HRESULT STDMETHODCALLTYPE DOMOverflowEvent::verticalOverflow( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-// DeprecatedDOMWheelEvent --------------------------------------------------------------
+// DOMWheelEvent --------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IDeprecatedDOMWheelEvent))
-        *ppvObject = static_cast<IDeprecatedDOMWheelEvent*>(this);
+    if (IsEqualGUID(riid, IID_IDOMWheelEvent))
+        *ppvObject = static_cast<IDOMWheelEvent*>(this);
     else
-        return DeprecatedDOMUIEvent::QueryInterface(riid, ppvObject);
+        return DOMUIEvent::QueryInterface(riid, ppvObject);
 
     AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::screenX( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::screenX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::screenY( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::screenY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::clientX( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::clientX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::clientY( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::clientY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::ctrlKey( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::ctrlKey( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::shiftKey( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::shiftKey( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::altKey( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::altKey( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::metaKey( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::metaKey( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::wheelDelta( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::wheelDelta( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::wheelDeltaX( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::wheelDeltaX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::wheelDeltaY( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::wheelDeltaY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::offsetX( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::offsetX( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::offsetY( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::offsetY( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::x( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::x( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::y( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::y( 
     /* [retval][out] */ long* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::isHorizontal( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::isHorizontal( 
     /* [retval][out] */ BOOL* /*result*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DeprecatedDOMWheelEvent::initWheelEvent( 
+HRESULT STDMETHODCALLTYPE DOMWheelEvent::initWheelEvent( 
     /* [in] */ long /*wheelDeltaX*/,
     /* [in] */ long /*wheelDeltaY*/,
-    /* [in] */ IDeprecatedDOMWindow* /*view*/,
+    /* [in] */ IDOMWindow* /*view*/,
     /* [in] */ long /*screenX*/,
     /* [in] */ long /*screenY*/,
     /* [in] */ long /*clientX*/,
