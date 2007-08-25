@@ -1,3 +1,16 @@
+2007-08-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Justin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14792
+          <rdar://problem/5367763> REGRESSION: Copy inserts carriage return in middle of selection
+
+        Test: editing/pasteboard/newlines-around-floating-or-positioned.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitNewlinesBeforeAndAfterNode): Do not emit newlines around
+        floating or positioned blocks. This behavior seems to match WinIE's.
+
 2007-08-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

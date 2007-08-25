@@ -2,13 +2,7 @@ Tests for bugs 3439, 5764, 7701 - Mouse events vs. DOM manipulation.
 
 Move the mouse pointer from left to right:
 
-1              
-1              
-2
-3
-4
-5
-
+1               1               2345
 Log	Expected results
 mouseover on t1_1
 mouseout on t1_1

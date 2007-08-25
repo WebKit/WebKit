@@ -1,3 +1,23 @@
+2007-08-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Justin.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=14792
+          <rdar://problem/5367763> REGRESSION: Copy inserts carriage return in middle of selection
+
+        * editing/pasteboard/newlines-around-floating-or-positioned-expected.txt: Added.
+        * editing/pasteboard/newlines-around-floating-or-positioned.html: Added.
+        * fast/events/capture-on-target-expected.txt:
+        * fast/events/mouseclick-target-and-positioning-expected.txt:
+        * fast/events/mouseover-mouseout-expected.txt:
+        * fast/events/mouseover-mouseout2-expected.txt:
+        * fast/events/window-events-bubble-expected.txt:
+        * fast/events/window-events-bubble2-expected.txt:
+        * fast/events/window-events-capture-expected.txt:
+        * fast/forms/input-appearance-elementFromPoint-expected.txt:
+        * fast/forms/onselect-textarea-expected.txt:
+        * fast/forms/onselect-textfield-expected.txt:
+
 2007-08-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
