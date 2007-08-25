@@ -1085,24 +1085,28 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         if (isBlockStillInTree)
             blockElem->parentNode()->removeChild(blockElem, ec);
 
-        // Step 2: Clone |residualElem|.
-        RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
-        Node* newNodePtr = newNode.get();
-        reportError(ResidualStyleError, &newNode->localName());
+        Node* newNodePtr = 0;
+        ASSERT(finished || blockElem->firstChild());
+        if (blockElem->firstChild()) {
+            // Step 2: Clone |residualElem|.
+            RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
+            newNodePtr = newNode.get();
+            reportError(ResidualStyleError, &newNode->localName());
 
-        // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
-        // before we've put |newElem| into the document.  That way we'll only do one attachment of all
-        // the new content (instead of a bunch of individual attachments).
-        Node* currNode = blockElem->firstChild();
-        while (currNode) {
-            Node* nextNode = currNode->nextSibling();
-            newNode->appendChild(currNode, ec);
-            currNode = nextNode;
+            // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
+            // before we've put |newElem| into the document.  That way we'll only do one attachment of all
+            // the new content (instead of a bunch of individual attachments).
+            Node* currNode = blockElem->firstChild();
+            while (currNode) {
+                Node* nextNode = currNode->nextSibling();
+                newNode->appendChild(currNode, ec);
+                currNode = nextNode;
+            }
+
+            // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
+            // attachment can occur yet.
+            blockElem->appendChild(newNode.release(), ec);
         }
-
-        // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
-        // attachment can occur yet.
-        blockElem->appendChild(newNode.release(), ec);
 
         // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
         if (isBlockStillInTree)
@@ -1129,6 +1133,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             elem->node = prevMaxElem->node;
             elem->didRefNode = prevMaxElem->didRefNode;
             prevMaxElem->next = elem;
+            ASSERT(newNodePtr);
             prevMaxElem->node = newNodePtr;
             prevMaxElem->didRefNode = false;
         } else

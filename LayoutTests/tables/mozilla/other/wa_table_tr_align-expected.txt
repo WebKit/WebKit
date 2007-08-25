@@ -242,9 +242,6 @@ layer at (0,0) size 785x1308
                 RenderBlock (anonymous) at (2,56) size 336x0
                   RenderInline {B} at (0,0) size 0x0
                 RenderBlock {P} at (2,72) size 336x0
-                  RenderInline {B} at (0,0) size 0x0
-                    RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-                  RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,974) size 769x146
         RenderTable {TABLE} at (0,0) size 346x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 344x18
@@ -293,9 +290,6 @@ layer at (0,0) size 785x1308
                 RenderBlock (anonymous) at (2,56) size 336x0
                   RenderInline {B} at (0,0) size 0x0
                 RenderBlock {P} at (2,72) size 336x0
-                  RenderInline {B} at (0,0) size 0x0
-                    RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-                  RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1136) size 769x70
         RenderTable {TABLE} at (0,0) size 346x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 344x18
