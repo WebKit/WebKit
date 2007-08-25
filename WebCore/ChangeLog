@@ -1,3 +1,13 @@
+2007-08-25  Jasper Bryant-Greene  <m@ni.ac.nz>
+
+        Reviewed by Oliver Hunt.
+
+        Set paintingDisabled to true in Cairo's GraphicsContext constructor
+        when passed a null PlatformGraphicsContext.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+
 2007-08-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
