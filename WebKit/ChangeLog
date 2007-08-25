@@ -2,6 +2,7 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/5437038> 1 credential object leaked for each call to credentialWithUser:password:persistence
         - Use initWithUser instead of credentialWithUser because credentialWithUser leaks.
 
         * Panels/WebAuthenticationPanel.m:
