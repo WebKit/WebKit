@@ -1,3 +1,15 @@
+2007-08-24  Adele Peterson  <adele@apple.com>
+
+        Fix by Darin, reviewed by Adele.
+
+        Fix for <rdar://problem/5433422> Upon quitting, WebKit loads the WebPlugin shared database and immediately closes it
+
+        * Plugins/WebPluginDatabase.h: Added closeSharedDatabase, which won't create a new database if we're just trying to close it.
+        * Plugins/WebPluginDatabase.m: (+[WebPluginDatabase closeSharedDatabase]): Added.
+        * WebView/WebView.mm:
+        (-[WebView _close]): Call closeSharedDatabase.
+        (+[WebView _applicationWillTerminate]): Call closeSharedDatabase.
+
 2007-08-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John Sullivan.

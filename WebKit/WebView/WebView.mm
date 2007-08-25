@@ -707,7 +707,7 @@ static bool debugWidget = true;
     
     // Keep the global plug-in database active until the app terminates to avoid having to reload plug-in bundles.
     if (!pluginDatabaseClientCount && applicationIsTerminating)
-        [[WebPluginDatabase sharedDatabase] close];
+        [WebPluginDatabase closeSharedDatabase];
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
@@ -1667,7 +1667,7 @@ NSMutableDictionary *countInvocations;
 {   
     applicationIsTerminating = YES;
     if (!pluginDatabaseClientCount)
-        [[WebPluginDatabase sharedDatabase] close];
+        [WebPluginDatabase closeSharedDatabase];
 }
 
 #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM

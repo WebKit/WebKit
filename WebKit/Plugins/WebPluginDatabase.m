@@ -64,6 +64,11 @@ static WebPluginDatabase *sharedDatabase = nil;
     return sharedDatabase;
 }
 
++ (void)closeSharedDatabase 
+{
+    [sharedDatabase close];
+}
+
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
     WebBasePluginPackage *plugin = nil;
