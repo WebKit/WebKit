@@ -62,7 +62,9 @@ public:
 
 bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, HitTestBlockBackground);
+    RenderTextControl* renderer = static_cast<RenderTextControl*>(node()->shadowAncestorNode()->renderer());
+    
+    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, renderer->placeholderIsVisible() ? HitTestBlockBackground : hitTestAction);
 }
 
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)

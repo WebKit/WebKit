@@ -1,3 +1,13 @@
+2007-08-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=15073
+        <rdar://problem/5426557> REGRESSION: Can no longer drag text from textareas
+
+        * fast/forms/drag-out-of-textarea-expected.txt: Added.
+        * fast/forms/drag-out-of-textarea.html: Added.
+
 2007-08-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Mitz.

@@ -99,6 +99,8 @@ public:
     void hidePopup();
 
     void stopSearchEventTimer();
+    
+    bool placeholderIsVisible() const { return m_placeholderVisible; }
 
 private:
     // PopupMenuClient methods

@@ -1,3 +1,16 @@
+2007-08-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15073
+        <rdar://problem/5426557> REGRESSION: Can no longer drag text from textareas
+        
+        Test: fast/forms/drag-out-of-textarea.html
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControlInnerBlock::nodeAtPoint):
+          Only restricts hit testing if the placeholder text is visible.
+        * rendering/RenderTextControl.h: (WebCore::RenderTextControl::placeholderIsVisible): Added. 
+
 2007-08-25  Peter Kasting <zerodpx@gmail.org>
 
         Reviewed by Sam Weinig.
