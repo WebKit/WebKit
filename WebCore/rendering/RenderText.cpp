@@ -265,7 +265,8 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         if (y >= box->root()->topOverflow()) {
-            if (y < box->root()->bottomOverflow()) {
+            int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->topOverflow() : box->root()->bottomOverflow();
+            if (y < bottom) {
                 offset = box->offsetForPosition(x);
 
                 if (x == box->m_x)

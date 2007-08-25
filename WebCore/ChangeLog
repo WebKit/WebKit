@@ -1,5 +1,19 @@
 2007-08-25  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14972
+          Moving cursor down in contentEditable section fails if styled line-height:1em
+
+        Test: editing/selection/move-by-line-003.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForCoordinates): Changed hit testing so that each
+        line is tested for hits between its overflow top and the next line's overflow top.
+        This matches RenderBlock::positionForCoordinates.
+
+2007-08-25  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Justin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=14792
