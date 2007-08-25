@@ -1,3 +1,22 @@
+2007-08-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14848
+        DOM table rules are not updated when changed
+
+        On a dynamic rules attr change, mark the table cells and
+        their ancestors (up to and including the table tag) as
+        changed.
+
+        Tests: fast/table/rules-attr-dynchange1.html
+               fast/table/rules-attr-dynchange2.html
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::isTableCellAncestor):
+        (WebCore::setTableCellsChanged):
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+
 2007-08-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.

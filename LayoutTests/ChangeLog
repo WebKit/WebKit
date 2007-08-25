@@ -1,3 +1,20 @@
+2007-08-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=14848
+        DOM table rules are not updated when changed
+
+        * fast/table/rules-attr-dynchange1-expected.checksum: Added.
+        * fast/table/rules-attr-dynchange1-expected.png: Added.
+        * fast/table/rules-attr-dynchange1-expected.txt: Added.
+        * fast/table/rules-attr-dynchange1.html: Added.
+        * fast/table/rules-attr-dynchange2-expected.checksum: Added.
+        * fast/table/rules-attr-dynchange2-expected.png: Added.
+        * fast/table/rules-attr-dynchange2-expected.txt: Added.
+        * fast/table/rules-attr-dynchange2.html: Added.
+
 2007-08-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.
