@@ -140,7 +140,7 @@ FrameView::~FrameView()
     resetScrollbars();
 
     ASSERT(m_refCount == 0);
-    ASSERT((!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty()) && !d->m_enqueueEvents);
+    ASSERT(d->m_scheduledEvents.isEmpty() && !d->m_enqueueEvents);
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->document()->renderer());
@@ -781,7 +781,7 @@ void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNod
 
 void FrameView::pauseScheduledEvents()
 {
-    ASSERT(!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
+    ASSERT(d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
     d->m_enqueueEvents++;
 }
 
@@ -790,7 +790,7 @@ void FrameView::resumeScheduledEvents()
     d->m_enqueueEvents--;
     if (!d->m_enqueueEvents)
         dispatchScheduledEvents();
-    ASSERT(!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
+    ASSERT(d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
 }
 
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
@@ -821,7 +821,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
 
 void FrameView::dispatchScheduledEvents()
 {
-    if (!d->m_scheduledEvents)
+    if (d->m_scheduledEvents.isEmpty())
         return;
     
     Vector<ScheduledEvent*> scheduledEventsCopy = d->m_scheduledEvents;

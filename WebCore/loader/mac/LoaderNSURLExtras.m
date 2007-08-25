@@ -246,7 +246,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
     if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
         Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(MIMEType);
 
-        if (!extensions.size() || (extensions && !vectorContainsString(extensions, extension))) {
+        if (extensions.isEmpty() || !vectorContainsString(extensions, extension)) {
             // The extension doesn't match the MIME type. Correct this.
             NSString *correctExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(MIMEType);
             if ([correctExtension length] != 0) {

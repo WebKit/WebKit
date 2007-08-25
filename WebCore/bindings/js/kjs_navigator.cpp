@@ -236,7 +236,7 @@ void PluginBase::cachePluginDataIfNecessary()
                 continue;
             
             plugins->append(plugin);
-            if (!plugin->mimes)
+            if (plugin->mimes.isEmpty())
                 continue;
             
             Vector<MimeClassInfo*>::iterator end = plugin->mimes.end();

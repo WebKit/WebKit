@@ -1,3 +1,15 @@
+2007-08-25  Peter Kasting <zerodpx@gmail.org>
+
+        Reviewed by Sam Weinig.
+
+        Part 2 of http://bugs.webkit.org/show_bug.cgi?id=14967.
+        Eliminate all remaining implicit conversions of wtf::Vector<T> to T*.  Where code was
+        previously checking that the Vector's data pointer was non-NULL, check !Vector::isEmpty()
+        instead.
+
+        * wtf/Vector.h:
+        (WTF::Vector::data):
+
 2007-08-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff and Adam.

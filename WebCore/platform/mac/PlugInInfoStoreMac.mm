@@ -58,7 +58,7 @@ PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    if (pluginInfo && pluginInfo->mimes)
+    if (pluginInfo && !pluginInfo->mimes.isEmpty())
         deleteAllValues(pluginInfo->mimes);
     delete pluginInfo;
 

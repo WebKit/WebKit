@@ -1,3 +1,24 @@
+2007-08-25  Peter Kasting <zerodpx@gmail.org>
+
+        Reviewed by Sam Weinig.
+
+        Part 2 of http://bugs.webkit.org/show_bug.cgi?id=14967.
+        Eliminate all remaining implicit conversions of wtf::Vector<T> to T*.  Where code was
+        previously checking that the Vector's data pointer was non-NULL, check !Vector::isEmpty()
+        instead.
+
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::PluginBase::cachePluginDataIfNecessary):
+        * loader/mac/LoaderNSURLExtras.m:
+        (suggestedFilenameWithMIMEType):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::pauseScheduledEvents):
+        (WebCore::FrameView::resumeScheduledEvents):
+        (WebCore::FrameView::dispatchScheduledEvents):
+        * platform/mac/PlugInInfoStoreMac.mm:
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+
 2007-08-25  Mitz Pettel  <mitz@webkit.org>
 
         Rubber-stamped by Adam Roben
