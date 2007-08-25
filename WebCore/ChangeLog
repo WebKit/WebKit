@@ -1,3 +1,27 @@
+2007-08-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5432254> GoogleDocs: A hang occurs when applying list style to selected table
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): If the position
+        that marked the start of the range to delete has been removed from the
+        document, and it was inside the node that holds the position that marks
+        the end of the range to delete, don't remove any children of that node,
+        because we don't know how many to remove.  For example, if the end is
+        [a, 5] and the start was in some descendant of a and was removed, don't
+        remove any of the children of a.  We will now refuse to remove some content
+        incorrectly, but that's less dangerous than removing content incorrectly.
+        Long term we need to update these positions as we remove content from the 
+        document, but that seems like a more risky change.  Added a testcase.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::modifyRange): If the end of the selection to 
+        modify is just after a table, and if the start of the selection is inside 
+        that table, the last paragraph that we'll want modify is the last one inside 
+        the table, not the paragraph that contains the table itself. Adjust 
+        startOfLastParagraph here to avoid infinite recursion.
+
 2007-08-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

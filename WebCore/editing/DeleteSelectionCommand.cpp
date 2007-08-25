@@ -404,8 +404,9 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
     }
     else {
+        bool startNodeWasDescendantOfEndNode = m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node());
         // The selection to delete spans more than one node.
-        RefPtr<Node> node = startNode;
+        RefPtr<Node> node(startNode);
         
         if (startOffset > 0) {
             if (startNode->isTextNode()) {
@@ -456,7 +457,13 @@ void DeleteSelectionCommand::handleGeneralDelete()
                         deleteTextFromNode(text, 0, m_downstreamEnd.offset());
                         m_downstreamEnd = Position(text, 0);
                     }
-                } else {
+                // Remove children of m_downstreamEnd.node() that come after m_upstreamStart.
+                // Don't try to remove children if m_upstreamStart was inside m_downstreamEnd.node()
+                // and m_upstreamStart has been removed from the document, because then we don't 
+                // know how many children to remove.
+                // FIXME: Make m_upstreamStart a position we update as we remove content, then we can
+                // always know which children to remove.
+                } else if (!(startNodeWasDescendantOfEndNode && !m_upstreamStart.node()->inDocument())) {
                     int offset = 0;
                     if (m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node())) {
                         Node *n = m_upstreamStart.node();

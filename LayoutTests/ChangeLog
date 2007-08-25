@@ -1,3 +1,19 @@
+2007-08-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5432254> GoogleDocs: A hang occurs when applying list style to selected table
+
+        * editing/execCommand/5432254-1.html: Added.
+        * editing/execCommand/5432254-2.html: Added.
+        * platform/mac/editing/execCommand: Added.
+        * platform/mac/editing/execCommand/5432254-1-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5432254-1-expected.png: Added.
+        * platform/mac/editing/execCommand/5432254-1-expected.txt: Added.
+        * platform/mac/editing/execCommand/5432254-2-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5432254-2-expected.png: Added.
+        * platform/mac/editing/execCommand/5432254-2-expected.txt: Added.
+
 2007-08-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

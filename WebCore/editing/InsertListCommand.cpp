@@ -65,6 +65,14 @@ bool InsertListCommand::modifyRange()
     VisiblePosition visibleEnd = endingSelection().visibleEnd();
     VisiblePosition startOfLastParagraph = startOfParagraph(visibleEnd);
     
+    // If the end of the selection to modify is just after a table, and
+    // if the start of the selection is inside that table, the last paragraph
+    // that we'll want modify is the last one inside the table, not the table itself.
+    // Adjust startOfLastParagraph here to avoid infinite recursion.
+    if (Node* table = isFirstPositionAfterTable(visibleEnd))
+        if (visibleStart.deepEquivalent().node()->isDescendantOf(table))
+            startOfLastParagraph = startOfParagraph(visibleEnd.previous(true));
+        
     if (startOfParagraph(visibleStart) == startOfLastParagraph)
         return false;
     
