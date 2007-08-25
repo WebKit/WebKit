@@ -372,10 +372,10 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
         return false;
     
     HitTestRequest request(true, false);
-    HitTestResult result(event.pos());
+    HitTestResult result(m_frame->view()->windowToContents(event.pos()));
     m_frame->renderer()->layer()->hitTest(request, result);
     bool srcIsDHTML;
-    return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, event.x(), event.y(), srcIsDHTML);
+    return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, result.point().x(), result.point().y(), srcIsDHTML);
 }
 
 void EventHandler::updateSelectionForMouseDrag()

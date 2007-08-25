@@ -1,3 +1,15 @@
+2007-08-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15077
+          REGRESSION: Cannot drag selected text out of a background window
+
+        * manual-tests/drag-out-of-background-window.html: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag): Added missing coordinate
+        conversion.
+
 2007-08-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
