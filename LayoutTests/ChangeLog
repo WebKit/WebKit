@@ -1,3 +1,15 @@
+2007-08-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt and Adele.
+
+        Test for <rdar://problem/5417203> Google Gmail 1.0 widget - unread 
+        count is missing
+
+        * fast/table/cell-pref-width-invalidation.html: Added.
+        * platform/mac/fast/table/cell-pref-width-invalidation-expected.checksum: Added.
+        * platform/mac/fast/table/cell-pref-width-invalidation-expected.png: Added.
+        * platform/mac/fast/table/cell-pref-width-invalidation-expected.txt: Added.
+
 2007-08-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .

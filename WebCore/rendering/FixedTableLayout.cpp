@@ -152,6 +152,9 @@ int FixedTableLayout::calcWidthArray(int tableWidth)
         while (child) {
             if (child->isTableCell()) {
                 RenderTableCell* cell = static_cast<RenderTableCell*>(child);
+                if (cell->prefWidthsDirty())
+                    cell->calcPrefWidths();
+
                 Length w = cell->styleOrColWidth();
                 int span = cell->colSpan();
                 int effWidth = 0;
