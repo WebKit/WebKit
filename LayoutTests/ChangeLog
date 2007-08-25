@@ -1,3 +1,12 @@
+2007-08-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Mitz.
+
+        Disable fast/js/string-concatenate-outofmemory.html until <http://bugs.webkit.org/show_bug.cgi?id=15046> is resolved.
+
+        * fast/js/string-concatenate-outofmemory.html: Removed.
+        * fast/js/string-concatenate-outofmemory.html-disabled: Copied from LayoutTests/fast/js/string-concatenate-outofmemory.html.
+
 2007-08-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
