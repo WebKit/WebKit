@@ -1414,14 +1414,14 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::AddEventListener:
         if (!window->isSafeScript(exec))
             return jsUndefined();
-        if (JSEventListener *listener = Window::retrieveActive(exec)->findOrCreateJSEventListener(args[1]))
+        if (JSEventListener* listener = window->findOrCreateJSEventListener(args[1]))
             if (Document *doc = frame->document())
                 doc->addWindowEventListener(AtomicString(args[0]->toString(exec)), listener, args[2]->toBoolean(exec));
         return jsUndefined();
   case Window::RemoveEventListener:
         if (!window->isSafeScript(exec))
             return jsUndefined();
-        if (JSEventListener *listener = Window::retrieveActive(exec)->findJSEventListener(args[1]))
+        if (JSEventListener* listener = window->findJSEventListener(args[1]))
             if (Document *doc = frame->document())
                 doc->removeWindowEventListener(AtomicString(args[0]->toString(exec)), listener, args[2]->toBoolean(exec));
         return jsUndefined();

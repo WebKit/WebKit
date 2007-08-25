@@ -1,3 +1,26 @@
+2007-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele.
+
+        Tests for <rdar://problem/5426142>
+
+        * http/tests/security/listener: Added.
+        * http/tests/security/listener/resources: Added.
+        * http/tests/security/listener/resources/childWindow.html: Added.
+        * http/tests/security/listener/resources/childWithButton.html: Added.
+        * http/tests/security/listener/resources/targetChild-JSTargetNode-onclick-addEventListener.html: Added.
+        * http/tests/security/listener/resources/targetChild-JSTargetNode-onclick-shortcut.html: Added.
+        * http/tests/security/listener/resources/targetChild-window-onclick-addEventListener.html: Added.
+        * http/tests/security/listener/resources/targetChild-window-onclick-shortcut.html: Added.
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt: Added.
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener.html: Added.
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt: Added.
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut.html: Added.
+        * http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt: Added.
+        * http/tests/security/listener/xss-window-onclick-addEventListener.html: Added.
+        * http/tests/security/listener/xss-window-onclick-shortcut-expected.txt: Added.
+        * http/tests/security/listener/xss-window-onclick-shortcut.html: Added.
+
 2007-08-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

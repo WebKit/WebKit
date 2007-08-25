@@ -1,0 +1,12 @@
+<html>
+<body>
+    <p>Target Child</p>
+    <script>
+        window.parent.frames[1].document.getElementById('button').addEventListener("click", function() {
+            alert("document.domain: " + window.document.domain);
+        }, false);
+
+        window.location = "http://localhost:8000/security/resources/cross-frame-iframe.html";
+    </script> 
+</body>
+</html>

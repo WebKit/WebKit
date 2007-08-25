@@ -1,3 +1,22 @@
+2007-08-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/5426142>
+
+        Use the EventTarget's frame when creating the EventListener.
+
+        Tests: http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener.html
+               http/tests/security/listener/xss-JSTargetNode-onclick-shortcut.html
+               http/tests/security/listener/xss-window-onclick-addEventListener.html
+               http/tests/security/listener/xss-window-onclick-shortcut.html
+
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::setListener):
+        (WebCore::JSEventTargetNodePrototypeFunction::callAsFunction):
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+
 2007-08-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig.
