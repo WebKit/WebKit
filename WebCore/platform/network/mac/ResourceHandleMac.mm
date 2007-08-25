@@ -376,10 +376,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         NSString *password = [m_url password];
 
         if (user && password) {
-            NSURLCredential *credential = [NSURLCredential credentialWithUser:user
+            NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:user
                                                                      password:password
                                                                   persistence:NSURLCredentialPersistenceForSession];
             [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            [credential release];
             return;
         }
     }
@@ -537,10 +538,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         NSString *password = [m_url password];
         
         if (user && password) {
-            NSURLCredential *credential = [NSURLCredential credentialWithUser:user
+            NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:user
                                                                      password:password
                                                                   persistence:NSURLCredentialPersistenceForSession];
             [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            [credential release];
             return;
         }
     }

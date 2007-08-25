@@ -142,10 +142,11 @@ NSURLCredential *mac(const Credential& coreCredential)
         default:
             ASSERT_NOT_REACHED();
     }
-    
-    return [NSURLCredential credentialWithUser:coreCredential.user()
-                                      password:coreCredential.password()
-                                   persistence:persistence];
+
+    return [[[NSURLCredential alloc] initWithUser:coreCredential.user()
+                                        password:coreCredential.password()
+                                     persistence:persistence]
+                                     autorelease];
 }
 
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)

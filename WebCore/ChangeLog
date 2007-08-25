@@ -1,3 +1,15 @@
+2007-08-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Use initWithUser instead of credentialWithUser because credentialWithUser leaks.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]):
+
 2007-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

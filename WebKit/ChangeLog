@@ -1,3 +1,13 @@
+2007-08-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Use initWithUser instead of credentialWithUser because credentialWithUser leaks.
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+
 2007-08-24  Adele Peterson  <adele@apple.com>
 
         Fix by Darin, reviewed by Adele.
