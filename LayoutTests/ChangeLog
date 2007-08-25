@@ -1,3 +1,14 @@
+2007-08-25  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by NOBODY (fixes layout tests).
+
+        Don't pass any options to window.open() in target-frame-from-window.html, specifically
+        those that cause the window to be resized.  This caused a downstream failure in
+        cross-frame-access-put.html because the window.outerHeight and window.outerWidth 
+        properties were sometimes affected by the new window size used in the popup window.
+
+        * http/tests/navigation/target-frame-from-window.html:
+
 2007-08-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele.
