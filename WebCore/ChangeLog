@@ -1,3 +1,7 @@
+2007-08-24  Kevin McCullough  <kmccullough@apple.com>
+
+        - Updated ChangeLog
+
 2007-08-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt and Adele.
@@ -13,6 +17,7 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/5437038> 1 credential object leaked for each call to credentialWithUser:password:persistence
         - Use initWithUser instead of credentialWithUser because credentialWithUser leaks.
 
         * platform/network/mac/AuthenticationMac.mm:
