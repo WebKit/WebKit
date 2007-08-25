@@ -1,0 +1,11 @@
+<p>This tests for a deletion bug.  Only the second paragraph inside the table should be deleted.  You should see a table with 'foo' in it below.</p>
+<div contenteditable="true"><table id="table" border="1"><tr><td id="td"><div>foo</div>bar</td></tr></table></div>
+
+<script>
+table = document.getElementById("table");
+td = document.getElementById("td");
+text = td.firstChild.nextSibling;
+s = window.getSelection();
+s.setBaseAndExtent(text, 0, table, 1);
+document.execCommand("Delete");
+</script>
