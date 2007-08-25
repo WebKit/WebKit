@@ -1,5 +1,15 @@
 2007-08-25  Peter Kasting <zerodpx@gmail.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Part 3 of http://bugs.webkit.org/show_bug.cgi?id=14967
+        Bug 14967: Reduce wtf::Vector::operator[]() overloads
+
+        * wtf/Vector.h:
+        (WTF::Vector::operator[]): Only provide versions of operator[] that takes a size_t argument.
+
+2007-08-25  Peter Kasting <zerodpx@gmail.org>
+
         Reviewed by Sam Weinig.
 
         Part 2 of http://bugs.webkit.org/show_bug.cgi?id=14967.

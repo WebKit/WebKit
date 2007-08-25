@@ -407,18 +407,8 @@ namespace WTF {
             return m_impl.buffer()[i]; 
         }
 
-        T& operator[](long i) { return at(i); }
-        const T& operator[](long i) const { return at(i); }
-        T& operator[](unsigned long i) { return at(i); }
-        const T& operator[](unsigned long i) const { return at(i); }
-        T& operator[](int i) { return at(i); }
-        const T& operator[](int i) const { return at(i); }
-        T& operator[](unsigned i) { return at(i); }
-        const T& operator[](unsigned i) const { return at(i); }
-        T& operator[](short i) { return at(i); }
-        const T& operator[](short i) const { return at(i); }
-        T& operator[](unsigned short i) { return at(i); }
-        const T& operator[](unsigned short i) const { return at(i); }
+        T& operator[](size_t i) { return at(i); }
+        const T& operator[](size_t i) const { return at(i); }
 
         T* data() { return m_impl.buffer(); }
         const T* data() const { return m_impl.buffer(); }
