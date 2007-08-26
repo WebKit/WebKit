@@ -59,8 +59,10 @@ use File::Spec;
 use FindBin;
 use Getopt::Long;
 use lib $FindBin::Bin;
+use POSIX qw(strftime);
 use VCSUtils;
 
+sub changeLogDate($);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -81,6 +83,9 @@ sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
+
+# Project time zone for Cupertino, CA, US
+my $changeLogTimeZone = "PST8PDT";
 
 my $gitCommit = 0;
 my $gitReviewer = "";
@@ -212,10 +217,7 @@ if (%changed_line_ranges) {
 }
 
 # Get some parameters for the ChangeLog we are about to write.
-my $date = sprintf "%d-%02d-%02d",
-  1900 + (localtime $^T)[5], # year
-  1 + (localtime $^T)[4], # month
-  (localtime $^T)[3]; # day within month
+my $date = changeLogDate($changeLogTimeZone);
 my $name = $ENV{CHANGE_LOG_NAME}
   || $ENV{REAL_NAME}
   || (getpwuid $<)[6]
@@ -376,6 +378,21 @@ sub canonicalizePath($)
         }
     }
     return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
+}
+
+sub changeLogDate($)
+{
+    my ($timeZone) = @_;
+    my $savedTimeZone = $ENV{'TZ'};
+    # Set TZ temporarily so that localtime() is in that time zone
+    $ENV{'TZ'} = $timeZone;
+    my $date = strftime("%Y-%m-%d", localtime());
+    if (defined $savedTimeZone) {
+         $ENV{'TZ'} = $savedTimeZone;
+    } else {
+         delete $ENV{'TZ'};
+    }
+    return $date;
 }
 
 sub get_function_line_ranges($$)
