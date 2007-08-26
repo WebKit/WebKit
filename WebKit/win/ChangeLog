@@ -1,3 +1,21 @@
+2007-08-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam and Sam
+        
+        <rdar://problem/5269732> Safari 3.0 for Windows cuts off text in textarea boxes during sending forms (14562) 
+        <http://bugs.webkit.org/show_bug.cgi?id=14562> [Win] Textarea contents partially eaten on submit/copy
+        
+        WebView::handleEditingKeyboardEvent assumed all keycodes that did not trigger a named command were
+        to be inserted.  This could cause unexpected behaviour when control characters (eg. escape) are sent,
+        or could cause data loss when sent a null character (as happens when dead keys are used for international 
+        input).
+        
+        This patch corrects WebView::handleEditingKeyboardEvent to prevent such characters from being sent 
+        to Editor::insertText.  This behaviour matches Firefox.
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent):
+
 2007-08-24  Sam Weinig  <sam@webkit.org>
 
         Revert r25216 which renamed the COM DOM bindings to use Deprecated prefix.

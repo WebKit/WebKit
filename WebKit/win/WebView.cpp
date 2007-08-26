@@ -986,11 +986,17 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
         if (frame->editor()->execCommand(command, evt))
             return true;
 
-    if (evt->keyEvent())
-        if (frame->editor()->insertText(evt->keyEvent()->text(), evt))
-            return true;
+    if (!evt->keyEvent())
+        return false;
 
-    return false;
+    if (evt->keyEvent()->text().length() == 1) {
+        UChar ch = evt->keyEvent()->text()[0];
+        // Don't insert null or control characters as they can reslt in unexpected behaviour
+        if (ch < ' ')
+            return false;
+    }
+
+    return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
 
 bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
