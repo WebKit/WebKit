@@ -1,3 +1,11 @@
+2007-08-26  Mike Hommey  <glandium@debian.org>
+
+        Reviewed by Mark Rowe and David Kilzer.
+
+        Fix build failure on arm.
+
+        * wtf/Platform.h: Also test if __arm__ is defined.
+
 2007-08-25  Peter Kasting <zerodpx@gmail.org>
 
         Reviewed by Maciej Stachowiak.

@@ -127,7 +127,8 @@
 #define WTF_PLATFORM_BIG_ENDIAN 1
 #endif
 
-#if defined(arm)
+#if   defined(arm) \
+   || defined(__arm__)
 #define WTF_PLATFORM_ARM 1
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
 #endif
