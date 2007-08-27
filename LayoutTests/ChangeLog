@@ -1,3 +1,11 @@
+2007-08-27  Oliver Hunt  <oliver@apple.com>
+
+        rs=adam
+
+        Remove tests effected by <rdar://problem/5317287> from the windows skiplist
+
+        * platform/win/Skipped:
+
 2007-08-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
