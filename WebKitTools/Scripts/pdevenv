@@ -13,7 +13,7 @@ chomp(my $vcBin = `cygpath -w "$FindBin::Bin/../vcbin"`);
 print $fh "\@echo off\n\n";
 print $fh "call \"\%VS80COMNTOOLS\%\\vsvars32.bat\"\n\n";
 print $fh "set PATH=$vcBin;\%PATH\%\n\n";
-print $fh "devenv /useenv\n";
+print $fh "devenv.com /useenv " . join(" ", @ARGV) . "\n";
 
 close $fh;
 
