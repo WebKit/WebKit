@@ -692,12 +692,17 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->hovered() == element->hovered()) &&
             (s->active() == element->active()) &&
             (s->focused() == element->focused()) &&
-            (s->isEnabled() == element->isEnabled()) &&
-            (s->isIndeterminate() == element->isIndeterminate()) &&
-            (s->isChecked() == element->isChecked()) &&
             (s != s->document()->getCSSTarget() && element != element->document()->getCSSTarget()) &&
             (s->getAttribute(typeAttr) == element->getAttribute(typeAttr)) &&
             (s->getAttribute(readonlyAttr) == element->getAttribute(readonlyAttr))) {
+            bool isControl = s->isControl();
+            if (isControl != element->isControl())
+                return false;
+            if (isControl && (s->isEnabled() != element->isEnabled()) ||
+                             (s->isIndeterminate() != element->isIndeterminate()) ||
+                             (s->isChecked() != element->isChecked()))
+                return false;
+            
             bool classesMatch = true;
             if (s->hasClass()) {
                 const AtomicString& class1 = element->getAttribute(classAttr);
@@ -716,8 +721,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                         Color linkColor = element->document()->linkColor();
                         Color visitedColor = element->document()->visitedLinkColor();
                         if (pseudoState == PseudoUnknown)
-                            checkPseudoState(element, style->pseudoState() != PseudoAnyLink ||
-                                             linkColor != visitedColor);
+                            checkPseudoState(element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
                         linksMatch = (pseudoState == style->pseudoState());
                     }
                     

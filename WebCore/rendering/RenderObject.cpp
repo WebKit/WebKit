@@ -213,14 +213,9 @@ bool RenderObject::isDescendantOf(const RenderObject* obj) const
     return false;
 }
 
-bool RenderObject::isRoot() const
-{
-    return element() && element()->renderer() == this && document()->documentElement() == element();
-}
-
 bool RenderObject::isBody() const
 {
-    return element() && element()->renderer() == this && element()->hasTagName(bodyTag);
+    return node()->hasTagName(bodyTag);
 }
 
 bool RenderObject::isHR() const
@@ -2487,12 +2482,6 @@ void RenderObject::removeFromObjectLists()
                 static_cast<RenderBlock*>(p)->removePositionedObject(this);
         }
     }
-}
-
-RenderArena* RenderObject::renderArena() const
-{
-    Document* doc = document();
-    return doc ? doc->renderArena() : 0;
 }
 
 bool RenderObject::documentBeingDestroyed() const

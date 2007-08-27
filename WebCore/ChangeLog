@@ -1,3 +1,21 @@
+2007-08-27  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5441224, micro-optimizations to improve the PLT by 1%.
+
+        Reviewed by Darin
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::requiresLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isBody):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::renderArena):
+        (WebCore::RenderObject::isRoot):
+
 2007-08-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -604,7 +604,10 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
     CGContextRef cgContext = context->platformContext();
 
     bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    CGContextSetShouldSmoothFonts(cgContext, WebCoreShouldUseFontSmoothing());
+    bool newShouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
+    
+    if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
+        CGContextSetShouldSmoothFonts(cgContext, newShouldUseFontSmoothing);
     
     const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
@@ -641,7 +644,8 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
 
-    CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
+    if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
+        CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 }
 
 }
