@@ -1,3 +1,16 @@
+2007-08-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15091
+          Crash in RenderBlock::skipWhitespace during layout <rdar://problem/5439631> 
+
+        Test: fast/replaced/applet-disabled-positioned.html
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer): Changed to call
+        RenderObject::createObject(), which accounts for style.
+
 2007-08-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

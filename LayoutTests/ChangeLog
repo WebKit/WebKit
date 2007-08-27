@@ -1,3 +1,16 @@
+2007-08-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15091
+          Crash in RenderBlock::skipWhitespace during layout <rdar://problem/5439631> 
+
+        * fast/replaced/applet-disabled-positioned.html: Added.
+        * platform/mac/fast/replaced: Added.
+        * platform/mac/fast/replaced/applet-disabled-positioned-expected.checksum: Added.
+        * platform/mac/fast/replaced/applet-disabled-positioned-expected.png: Added.
+        * platform/mac/fast/replaced/applet-disabled-positioned-expected.txt: Added.
+
 2007-08-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
