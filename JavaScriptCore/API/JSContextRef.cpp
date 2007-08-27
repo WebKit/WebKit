@@ -41,7 +41,8 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 
     JSObject* globalObject;
     if (globalObjectClass)
-        globalObject = new JSCallbackObject(0, globalObjectClass, 0, 0); // FIXME: <rdar://problem/4949002>
+        // Specify jsNull() as the prototype.  Interpreter will fix it up to point at builtinObjectPrototype() in its constructor
+        globalObject = new JSCallbackObject(0, globalObjectClass, jsNull(), 0); // FIXME: <rdar://problem/4949002>
     else
         globalObject = new JSObject();
 

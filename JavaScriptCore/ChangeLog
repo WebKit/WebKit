@@ -1,3 +1,14 @@
+2007-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5438496> JSGlobalContextCreate crashes when passed a custom class
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Specify jsNull() as the prototype and let Interpreter's constructor fix it up to point at builtinObjectPrototype().
+        * API/testapi.c:
+        (main): Use an instance of a custom class as the global object to ensure the code path is exercised in the test.
+
 2007-08-26  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Mark Rowe and David Kilzer.

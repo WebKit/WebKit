@@ -477,7 +477,9 @@ int main(int argc, char* argv[])
 
     assert(Base_didFinalize);
 
-    context = JSGlobalContextCreate(NULL);
+    JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
+    JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
+    context = JSGlobalContextCreate(globalObjectClass);
     
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     assert(JSValueIsObject(context, globalObject));
@@ -814,6 +816,7 @@ int main(int argc, char* argv[])
     
     JSGlobalContextRelease(context);
     JSGarbageCollect(context);
+    JSClassRelease(globalObjectClass);
 
     printf("PASS: Program exited normally.\n");
     return 0;
