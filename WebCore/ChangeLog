@@ -1,3 +1,19 @@
+2007-08-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix for <rdar://problem/5433726>
+        Mail crash at WebCore::Frame::styleForSelectionStart() when deleting a selection in a HTML message (http://www.yahoo.com/)
+
+        Test: editing/style/temporary-span-crash.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::styleForSelectionStart):
+        Temporary span created here might not have renderer if document has style sheet that makes it display:none.
+        Set display:inline explicitly in spans style attribute. This temporary span does not need to get its display 
+        value from actual document style sheets. Null check the renderer too to be sure.
+
+
 2007-08-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele.

@@ -1555,7 +1555,8 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
     RefPtr<Element> styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", ec);
     ASSERT(ec == 0);
     
-    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), ec);
+    String styleText = d->m_typingStyle->cssText() + " display: inline";
+    styleElement->setAttribute(styleAttr, styleText.impl(), ec);
     ASSERT(ec == 0);
     
     styleElement->appendChild(document()->createEditingTextNode(""), ec);
@@ -1565,7 +1566,7 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
     ASSERT(ec == 0);
     
     nodeToRemove = styleElement.get();    
-    return styleElement->renderer()->style();
+    return styleElement->renderer() ? styleElement->renderer()->style() : 0;
 }
 
 void Frame::setSelectionFromNone()

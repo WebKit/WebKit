@@ -1,3 +1,13 @@
+2007-08-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for <rdar://problem/5433726>
+        Mail crash at WebCore::Frame::styleForSelectionStart() when deleting a selection in a HTML message (http://www.yahoo.com/)
+
+        * editing/style/temporary-span-crash-expected.txt: Added.
+        * editing/style/temporary-span-crash.html: Added.
+
 2007-08-25  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by NOBODY (fixes layout tests).
