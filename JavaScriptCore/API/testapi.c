@@ -454,6 +454,12 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
     return result;
 }
 
+static void testInitializeOfGlobalObjectClassHasNonNullContext(JSContextRef context, JSObjectRef object)
+{
+    UNUSED_PARAM(object);
+    assert(context);
+}
+
 static char* createStringWithContentsOfFile(const char* fileName);
 
 static void testInitializeFinalize()
@@ -478,6 +484,7 @@ int main(int argc, char* argv[])
     assert(Base_didFinalize);
 
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
+    globalObjectClassDefinition.initialize = testInitializeOfGlobalObjectClassHasNonNullContext;
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
     context = JSGlobalContextCreate(globalObjectClass);
     

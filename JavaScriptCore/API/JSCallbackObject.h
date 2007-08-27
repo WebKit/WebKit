@@ -72,6 +72,8 @@ public:
 
     bool inherits(JSClassRef) const;
     
+    void initializeIfNeeded(ExecState*);
+    
 private:
     JSCallbackObject(); // prevent default construction
     JSCallbackObject(const JSCallbackObject&);
@@ -85,6 +87,7 @@ private:
     
     void* m_privateData;
     JSClassRef m_class;
+    bool m_isInitialized;
 };
 
 } // namespace KJS

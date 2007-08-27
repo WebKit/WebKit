@@ -42,6 +42,7 @@ const ClassInfo JSCallbackObject::info = { "CallbackObject", 0, 0, 0 };
 
 JSCallbackObject::JSCallbackObject(ExecState* exec, JSClassRef jsClass, JSValue* prototype, void* data)
     : JSObject(prototype)
+    , m_isInitialized(false)
 {
     init(exec, jsClass, data);
 }
@@ -49,7 +50,13 @@ JSCallbackObject::JSCallbackObject(ExecState* exec, JSClassRef jsClass, JSValue*
 void JSCallbackObject::init(ExecState* exec, JSClassRef jsClass, void* data)
 {
     m_privateData = data;
+    JSClassRef oldClass = m_class;
     m_class = JSClassRetain(jsClass);
+    if (oldClass)
+        JSClassRelease(oldClass);
+
+    if (!exec)
+        return;
 
     Vector<JSObjectInitializeCallback, 16> initRoutines;
     do {
@@ -63,6 +70,7 @@ void JSCallbackObject::init(ExecState* exec, JSClassRef jsClass, void* data)
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
+    m_isInitialized = true;
 }
 
 JSCallbackObject::~JSCallbackObject()
@@ -75,6 +83,13 @@ JSCallbackObject::~JSCallbackObject()
         }
     
     JSClassRelease(m_class);
+}
+
+void JSCallbackObject::initializeIfNeeded(ExecState* exec)
+{
+    if (m_isInitialized)
+        return;
+    init(exec, m_class, m_privateData);
 }
 
 UString JSCallbackObject::className() const

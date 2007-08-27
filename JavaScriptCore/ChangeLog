@@ -2,6 +2,26 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/4949002> JSGlobalContextCreate can cause crashes because it passes a NULL JSContextRef to the globalObjectClass's initialize callback
+
+        JSCallbackObject now tracks whether it was constructed with a null ExecState.  This will happen when the object is being used as the global object,
+        as the Interpreter needs to be created after the global object.  In this situation the initialization is deferred until after the Interpreter's
+        ExecState is available to be passed down to the initialize callbacks.
+
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::init): Track whether we successfully initialized.
+        (KJS::JSCallbackObject::initializeIfNeeded): Attempt to initialize with the new ExecState.
+        * API/JSCallbackObject.h:
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Initialize the JSCallbackObject with the Interpreter's ExecState.
+        * API/testapi.c:
+        (testInitializeOfGlobalObjectClassHasNonNullContext):
+        (main): Verify that the context passed to the initialize callback is non-null.
+
+2007-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/5438496> JSGlobalContextCreate crashes when passed a custom class
 
         * API/JSContextRef.cpp:
