@@ -992,17 +992,6 @@ sub countAndPrintLeaks($$$)
         );
     }
 
-    if (isLeopard()) {
-        push @callStacksToExclude, (
-            "glvmInitializeLLVM", # leak in OpenGL, Radar 5329956
-            "GetProcessForPID", # leak in Process Manager, Radar 5329842
-            "HIView::SendGetPartRegionOrShape", # leak in High Level Toolbox, Radars 5329755 & 5329717
-            "AddImageByTypeInfo", # leak in Launch Services, Radar 5329735
-            "fileProtocolStart \\| _LSCopyTypeIdentifierForItemRefInfo", # leak in CFNetwork, Radar 5329625
-            "CGContextDrawImage", # leak in CoreGraphics, Radar 5002510
-        );
-    }
-
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
     $excludeString .= " --exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'" if @typesToExclude;

@@ -1,3 +1,11 @@
+2007-08-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by John.
+
+        - Removed Leopard leaks list since all of those radars were fixed.
+
+        * Scripts/run-webkit-tests:
+
 2007-08-27  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Mark.
