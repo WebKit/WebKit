@@ -1,3 +1,13 @@
+2007-08-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for <rdar://problem/5433144>
+        REGRESSION: Unable to click "Select" link at Expedia for car rentals
+
+        * fast/innerHTML/javascript-url-expected.txt: Added.
+        * fast/innerHTML/javascript-url.html: Added.
+
 2007-08-27  Oliver Hunt  <oliver@apple.com>
 
         rs=adam

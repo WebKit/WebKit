@@ -1,3 +1,20 @@
+2007-08-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fix <rdar://problem/5433144>
+        REGRESSION: Unable to click "Select" link at Expedia for car rentals
+        
+        javascript: URLs need special handling when serializing. Escaping them like
+        normal attribute values can do bad things. Try hard to not escape anything,
+        escape quote characters only if really necessary. Try to match Firefox.
+
+        Test: fast/innerHTML/javascript-url.html
+
+        * editing/markup.cpp:
+        (WebCore::urlAttributeToQuotedString):
+        (WebCore::startMarkup):
+
 2007-08-27  David Hyatt  <hyatt@apple.com>
 
         Fix for 5441224, micro-optimizations to improve the PLT by 1%.
