@@ -42,6 +42,9 @@ fast/objc/longlongTest.html
 # <rdar://problem/5352927>
 editing/input/mac
 
+# x-nextstep is a legacy mac text codec that we can't deal with on windows
+fast/encoding/char-decoding-mac.html
+
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
@@ -630,9 +633,6 @@ fast/forms/textarea-paste-newline.html
 
 # Seems to be a difference btw. WebScriptObject and the JSCore API
 fast/dom/Window/window-properties.html
-
-# Is the x-nextstep encoding Mac-specific?
-fast/encoding/char-decoding.html
 
 # Unimplemented part of DRT. (This test is currently disabled).
 # http/tests/plugins/npapi-response-headers.html

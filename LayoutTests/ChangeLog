@@ -1,3 +1,29 @@
+2007-08-27  Oliver Hunt  <oliver@apple.com>
+
+        rs=brady
+        
+        Convert all the encoding tests to plain text dumps.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding-mac-expected.txt: Added.
+        * fast/encoding/char-decoding-mac.html: Added.
+          char-decoding-mac tests the ability to decode the mac specific legacy x-nextstep charset.
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/frame-default-enc-expected.checksum: Removed.
+        * fast/encoding/frame-default-enc-expected.png: Removed.
+        * fast/encoding/frame-default-enc-expected.txt:
+        * fast/encoding/frame-default-enc.html:
+        * fast/encoding/mispositioned-meta-expected.checksum: Removed.
+        * fast/encoding/mispositioned-meta-expected.png: Removed.
+        * fast/encoding/mispositioned-meta-expected.txt:
+        * fast/encoding/mispositioned-meta.html:
+        * fast/encoding/tag-in-title-expected.checksum: Removed.
+        * fast/encoding/tag-in-title-expected.png: Removed.
+        * fast/encoding/tag-in-title-expected.txt:
+        * fast/encoding/tag-in-title.html:
+        * platform/win/Skipped:
+          Skip char-decoding-mac
+
 2007-08-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

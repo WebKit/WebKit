@@ -2,9 +2,15 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=x-mac-cyrillic">
 <title>Frames and encodings</title>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+}
+</script>
 </head>
 <frameset rows="0,*">
-	<frame src="about:" scrolling=no marginwidth=0 marginheight=0>
-	<frame src="resources/frame-default-enc-frame.html">
+    <frame src="about:" scrolling=no marginwidth=0 marginheight=0>
+    <frame src="resources/frame-default-enc-frame.html">
 </frameset>
 </html>
