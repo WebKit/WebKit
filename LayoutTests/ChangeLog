@@ -1,5 +1,12 @@
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
+        Use the correct test paths.
+        
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
+2007-08-28  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/5298296> XMLHttpRequest readyState 3 & responseText buffer issues
