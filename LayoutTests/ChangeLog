@@ -1,3 +1,19 @@
+2007-08-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5415006> Command Left in a To Do causes caret to disappear
+
+        * editing/selection/mixed-editability-8.html: Added.
+        * editing/selection/mixed-editability-9.html: Added.
+        * platform/mac/editing/selection: Added.
+        * platform/mac/editing/selection/mixed-editability-8-expected.checksum: Added.
+        * platform/mac/editing/selection/mixed-editability-8-expected.png: Added.
+        * platform/mac/editing/selection/mixed-editability-8-expected.txt: Added.
+        * platform/mac/editing/selection/mixed-editability-9-expected.checksum: Added.
+        * platform/mac/editing/selection/mixed-editability-9-expected.png: Added.
+        * platform/mac/editing/selection/mixed-editability-9-expected.txt: Added.
+
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
         Use the correct test paths.
