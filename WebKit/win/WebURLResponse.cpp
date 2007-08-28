@@ -30,6 +30,8 @@
 
 #include "MarshallingHelpers.h"
 #include "WebLocalizableStrings.h"
+
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/platform.h>
 #pragma warning( push, 0 )
 #include <WebCore/BString.h>
@@ -243,11 +245,13 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::QueryInterface(REFIID riid, void** ppv
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<IUnknown*>(this);
+        *ppvObject = static_cast<IWebURLResponse*>(this);
     else if (IsEqualGUID(riid, IID_WebURLResponse))
         *ppvObject = static_cast<WebURLResponse*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLResponse))
         *ppvObject = static_cast<IWebURLResponse*>(this);
+    else if (IsEqualGUID(riid, IID_IWebURLResponsePrivate))
+        *ppvObject = static_cast<IWebURLResponsePrivate*>(this);
     else if (m_response.isHTTP() && IsEqualGUID(riid, IID_IWebHTTPURLResponse))
         *ppvObject = static_cast<IWebHTTPURLResponse*>(this);
     else
@@ -381,6 +385,22 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::statusCode(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate( 
+    /* [retval][out] */ OLE_HANDLE* result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    CFDictionaryRef dict = certificateDictionary();
+    if (!dict)
+        return E_FAIL;
+    void* data = wkGetSSLPeerCertificateData(dict);
+    if (!data)
+        return E_FAIL;
+    *result = (OLE_HANDLE)(ULONG64)data;
+    return *result ? S_OK : E_FAIL;
+}
+
 // WebURLResponse -------------------------------------------------------------
 
 HRESULT WebURLResponse::suggestedFileExtension(BSTR *result)
@@ -437,3 +457,14 @@ const ResourceResponse& WebURLResponse::resourceResponse() const
     return m_response;
 }
 
+CFDictionaryRef WebURLResponse::certificateDictionary() const
+{
+    if (m_SSLCertificateInfo)
+        return m_SSLCertificateInfo.get();
+
+    CFURLResponseRef cfResponse = m_response.cfURLResponse();
+    if (!cfResponse)
+        return 0;
+    m_SSLCertificateInfo = wkGetSSLCertificateInfo(cfResponse);
+    return m_SSLCertificateInfo.get();
+}

@@ -1,3 +1,20 @@
+2007-08-28  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/4876242> Added SPI to fetch SSL certificate information.
+
+        Reviewed by Adam and Steve.
+
+        * Interfaces/IWebURLResponsePrivate.idl: Added.
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebURLResponse.cpp:
+        (WebURLResponse::QueryInterface):
+        (WebURLResponse::sslPeerCertificate): gets peer certificate context from CFNetwork
+        (WebURLResponse::certificateDictionary): gets the dictionary that contains SSL certificate
+        info from CFNetwork.  We retain the dictionary to ensure the certificate context is valid
+        throughout the lifetime of the WebURLResponse.
+        * WebURLResponse.h:
+
 2007-08-27  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5424801> REGRESSION (r25151): Web page area of window doesn't redraw if page isn't loaded

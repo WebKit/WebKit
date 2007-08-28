@@ -366,6 +366,10 @@
 			>
 		</File>
 		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebURLResponsePrivate_i.c"
+			>
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebView_i.c"
 			>
 		</File>

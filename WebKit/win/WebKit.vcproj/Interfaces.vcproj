@@ -404,6 +404,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebURLResponsePrivate.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebView.idl"
 			>
 		</File>
