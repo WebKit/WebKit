@@ -178,6 +178,7 @@ namespace WebCore {
         bool isLoadingMainResource() const { return m_isLoadingMainResource; }
         bool isLoading() const;
         bool frameHasLoaded() const;
+        bool committedFirstRealDocumentLoad() const { return m_committedFirstRealDocumentLoad; }
 
         int numPendingOrLoadingRequests(bool recurse) const;
         bool isReloading() const;

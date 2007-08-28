@@ -1165,7 +1165,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             COMPtr<IWebDataSource> dataSource;
             mainFrameImpl->dataSource(&dataSource);
             Frame* coreFrame = core(mainFrameImpl);
-            if (!webView->isPainting() && (!dataSource || coreFrame && coreFrame->view()->didFirstLayout()))
+            if (!webView->isPainting() && (!dataSource || coreFrame && (coreFrame->view()->didFirstLayout() || !coreFrame->loader()->committedFirstRealDocumentLoad())))
                 webView->paint(0, 0);
             else
                 ValidateRect(hWnd, 0);

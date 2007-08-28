@@ -1,3 +1,14 @@
+2007-08-27  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5424801> REGRESSION (r25151): Web page area of window doesn't redraw if page isn't loaded
+        
+        Don't bypass WebView WM_PAINT if the WebView has never committed a page.
+        
+        Reviewed by Maciej.
+
+        * WebView.cpp:
+        (WebViewWndProc): Don't skip painting if we haven't committed any pages in this view.
+
 2007-08-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam and Sam
