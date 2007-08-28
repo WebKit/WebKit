@@ -1,5 +1,16 @@
 2007-08-27  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (layout test result fix).
+
+        Output of layoutTestController.dumpChildFramesAsText changes in non-relevant way
+        when running this test on its own vs. running as part of the full suite. 
+        
+        Correcting test result for the output produced while running the full suite.
+
+        * fast/encoding/frame-default-enc-expected.txt:
+
+2007-08-27  Oliver Hunt  <oliver@apple.com>
+
         rs=brady
         
         Convert all the encoding tests to plain text dumps.
