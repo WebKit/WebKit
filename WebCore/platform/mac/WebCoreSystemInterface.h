@@ -114,6 +114,7 @@ extern void (*wkReleaseStyleGroup)(void* group);
 extern void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 extern void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
+extern void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 extern void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint);
 extern void (*wkSetUpFontCache)(size_t);
 extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);

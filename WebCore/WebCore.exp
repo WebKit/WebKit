@@ -721,6 +721,7 @@ _wkSecondsSinceLastInputEvent
 _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetNSURLConnectionDefersCallbacks
+_wkSetNSURLRequestShouldContentSniff
 _wkSetPatternPhaseInUserSpace
 _wkSetUpFontCache
 _wkSignalCFReadStreamEnd

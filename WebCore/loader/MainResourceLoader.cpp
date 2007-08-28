@@ -42,7 +42,7 @@
 namespace WebCore {
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
-    : ResourceLoader(frame, true)
+    : ResourceLoader(frame, true, true)
     , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
@@ -374,7 +374,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
     else
-        m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
+        m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true, true);
 
     return false;
 }

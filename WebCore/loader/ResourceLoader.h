@@ -108,7 +108,7 @@ namespace WebCore {
         void setShouldBufferData(bool shouldBufferData) { m_shouldBufferData = shouldBufferData; }
 
     protected:
-        ResourceLoader(Frame*, bool sendResourceLoadCallbacks);
+        ResourceLoader(Frame*, bool sendResourceLoadCallbacks, bool shouldContentSniff);
 
         virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart();
@@ -129,6 +129,7 @@ namespace WebCore {
         bool m_calledDidFinishLoad;
 
         bool m_sendResourceLoadCallbacks;
+        bool m_shouldContentSniff;
         bool m_shouldBufferData;
 protected:
         // FIXME: Once everything is made cross platform, these can be private instead of protected

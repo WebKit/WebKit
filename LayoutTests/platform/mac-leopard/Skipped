@@ -32,3 +32,6 @@ http/tests/security/frame-loading-via-document-write.html
 # <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
 fast/forms/hidden-listbox.html
 fast/forms/hidden-input-file.html
+
+# Once <rdar://problem/5343008> is in a released build we can remove this.
+tests/xmlhttprequest/small-chunks-response-text.html

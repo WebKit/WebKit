@@ -1,3 +1,15 @@
+2007-08-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5298296> XMLHttpRequest readyState 3 & responseText buffer issues
+        
+        * http/tests/xmlhttprequest/resources/small-chunks.cgi: Added.
+        * http/tests/xmlhttprequest/small-chunks-response-text-expected.txt: Added.
+        * http/tests/xmlhttprequest/small-chunks-response-text.html: Added.
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2007-08-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (layout test result fix).

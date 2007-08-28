@@ -1,3 +1,39 @@
+2007-08-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5298296> XMLHttpRequest readyState 3 & responseText buffer issues
+        
+        Add a shouldContentSniff flag to ResourceLoader and ResourceHandle and have XMLHttpRequest 
+        pass in false when creating its subresource loader.
+        
+        * WebCore.exp:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::loadNow):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::load):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2007-08-27  Steve Falkenburg  <sfalken@apple.com>
 
         Added getter for committedFirstRealDocumentLoad.

@@ -119,7 +119,19 @@ bool ResourceHandle::start(Frame* frame)
     } else 
         delegate = ResourceHandle::delegate();
     
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
+
+    NSURLConnection *connection;
+    
+    if (d->m_shouldContentSniff) 
+        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
+    else {
+        NSMutableURLRequest *request = [d->m_request.nsURLRequest() mutableCopy];
+        wkSetNSURLRequestShouldContentSniff(request, NO);
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate];
+        [request release];
+    }
+    
+    
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
