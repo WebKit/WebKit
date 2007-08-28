@@ -1,3 +1,16 @@
+2007-08-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5444457>: Content is cut when page orientation changed
+        in print preview
+        Fix: Don't return WebFrame::m_pageRects if it exists; let
+        computePageRectsForFrame clear and rewrite it.
+
+        * WebFrame.cpp:
+        (WebFrame::computePageRects): Removed an early-return case. Added a
+        space.
+
 2007-08-28  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/4876242> Added SPI to fetch SSL certificate information.

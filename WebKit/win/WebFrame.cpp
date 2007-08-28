@@ -2423,16 +2423,13 @@ const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
     ASSERT(coreFrame);
     ASSERT(coreFrame->document());
 
-    if (m_pageRects.size())
-        return m_pageRects;
-
     if (!printDC)
         return m_pageRects;
 
     // adjust the page rect by the header and footer
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
-    computePageRectsForFrame(coreFrame, printerRect(printDC), headerHeight, footerHeight, 1.0,m_pageRects);
+    computePageRectsForFrame(coreFrame, printerRect(printDC), headerHeight, footerHeight, 1.0, m_pageRects);
     
     return m_pageRects;
 }
