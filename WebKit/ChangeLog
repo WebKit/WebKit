@@ -1,5 +1,12 @@
 2007-08-28  Mark Rowe  <mrowe@apple.com>
 
+        Fix the buildbot build.
+
+        * History/WebHistory.mm:
+        (timeIntervalForBeginningOfDay):  Explicitly cast to silence compiler warning.
+
+2007-08-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/5437983> Loading history containing 100,000 entries adds 20s to Safari's startup

@@ -111,7 +111,7 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     // Converting from double to int64_t is safe here as NSDate's useful range
     // is -2**48 .. 2**47 which will safely fit in an int64_t.
-    return result;
+    return (WebHistoryDateKey)result;
 }
 
 // Returns whether the day is already in the list of days,
