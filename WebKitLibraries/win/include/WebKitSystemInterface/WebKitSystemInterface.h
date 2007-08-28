@@ -35,6 +35,7 @@ typedef unsigned short CGFontIndex;
 typedef struct CGFont* CGFontRef;
 typedef CGFontIndex CGGlyph;
 typedef wchar_t UChar;
+typedef struct _CFURLResponse* CFURLResponseRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -45,5 +46,8 @@ void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
 void wkSetUpFontCache(size_t s);
 
 void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
+
+CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
+void* wkGetSSLPeerCertificateData(CFDictionaryRef);
 
 #endif
