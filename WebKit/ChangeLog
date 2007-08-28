@@ -1,3 +1,43 @@
+2007-08-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5437983> Loading history containing 100,000 entries adds 20s to Safari's startup
+
+        Move WebHistoryItemPrivate from using a sorted array of NSCalendarDate's that map to a sorted array of arrays
+        of WebHistoryItem's over to using a HashMap of NSTimeIntervals and arrays of WebHistoryItems.  NSTimeInterval
+        uses less memory and is substantially cheaper during comparisons than NSCalendarDate.  The use of the HashMap
+        avoids the needs to repeatedly search within an array to locate the array that corresponds to the given days
+        history items.
+
+        The result of these changes is that loading 100,000 history items drops from around 25s to 1.6s.  Loading
+        100 items drops from 0.003s to 0.002s.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate init]):
+        (-[WebHistoryPrivate dealloc]):
+        (timeIntervalForBeginningOfDay): Return the NSTimeInterval representing the beginning of the specified day.
+        (-[WebHistoryPrivate findKey:forDay:]):
+        (-[WebHistoryPrivate insertItem:forDateKey:]): Perform a binary search within the day's history items rather than a linear search.
+        (-[WebHistoryPrivate _removeItemFromDateCaches:]):
+        (-[WebHistoryPrivate _addItemToDateCaches:]):
+        (-[WebHistoryPrivate removeAllItems]):
+        (-[WebHistoryPrivate orderedLastVisitedDays]): Generate and cache the sorted NSArray of NSCalendarDate's exposed in the API.
+        This cache is invalidated by _removeItemFromDateCaches: and _addItemToDateCaches: when needed.
+        (-[WebHistoryPrivate orderedItemsLastVisitedOnDay:]):
+        (-[WebHistoryPrivate arrayRepresentation]):
+        (-[WebHistoryPrivate _loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]): Use an autorelease pool to keep the
+        number of live autoreleased objects generated to a reasonable level.
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initWithURLString:title:displayTitle:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Use the new HistoryItem constructor that accepts the alternate title
+        rather than setting it after construction.  This prevents a modification notification from being sent for each WebHistoryItem that is loaded.
+        * History/WebHistoryItemInternal.h:
+        * History/WebHistoryPrivate.h:
+        * Misc/WebNSCalendarDateExtras.h: Removed as _webkit_compareDay: is no longer used.
+        * Misc/WebNSCalendarDateExtras.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
@@ -320,7 +360,7 @@
         Reviewed by Geoff.
 
         <rdar://problem/5390568>
-        REGRESSION: â€“[WebFrame loadHTMLString:baseURL:] leaks the data source
+        REGRESSION: Ð[WebFrame loadHTMLString:baseURL:] leaks the data source
         
         If the identifier is not in the map, just bail out instead of asserting. This is a better fix for
         <rdar://problem/5133420> because WebCore shouldn't have to worry about the lifetime of WebKit objects.

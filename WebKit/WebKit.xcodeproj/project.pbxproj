@@ -59,8 +59,6 @@
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */; };
-		65EEDE53084FFB920002DB25 /* WebNSCalendarDateExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */; };
-		65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */; };
 		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; };
 		65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */; };
 		65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */; };
@@ -417,8 +415,6 @@
 		65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSUserDefaultsExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150307EFFEBF009B8BF7 /* WebPluginContainerCheck.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerCheck.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginContainerCheck.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSCalendarDateExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSCalendarDateExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSFileManagerExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSFileManagerExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoaderMac.h; sourceTree = "<group>"; };
@@ -753,8 +749,6 @@
 				EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */,
 				ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */,
 				ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */,
-				65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */,
-				65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */,
 				9345DDB20365FFD0008635CE /* WebNSControlExtras.h */,
 				9345DDB30365FFD0008635CE /* WebNSControlExtras.m */,
 				BECD14290565830A005BB09C /* WebNSDataExtras.h */,
@@ -1235,7 +1229,6 @@
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
 				939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */,
 				65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */,
-				65EEDE53084FFB920002DB25 /* WebNSCalendarDateExtras.h in Headers */,
 				65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */,
 				65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */,
 				65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */,
@@ -1528,7 +1521,6 @@
 				9398111F0824BF01008DF038 /* WebPDFRepresentation.m in Sources */,
 				939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */,
 				65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */,
-				65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */,
 				65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.m in Sources */,
 				65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */,
 				65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */,

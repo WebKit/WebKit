@@ -33,6 +33,16 @@
 @class WebHistoryItem;
 @class NSError;
 
+#ifdef __cplusplus
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
+
+typedef int64_t WebHistoryDateKey;
+typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray> > DateToEntriesMap;
+#else
+typedef struct DateToEntriesMap DateToEntriesMap;
+#endif
+
 /*
     @constant WebHistoryItemsDiscardedWhileLoadingNotification Posted from loadFromURL:error:.  
     This notification comes with a userInfo dictionary that contains the array of
@@ -45,8 +55,8 @@ extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
 @interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_entriesByURL;
-    NSMutableArray *_datesWithEntries;
-    NSMutableArray *_entriesByDate;
+    DateToEntriesMap* _entriesByDate;
+    NSMutableArray *_orderedLastVisitedDays;
     BOOL itemLimitSet;
     int itemLimit;
     BOOL ageInDaysLimitSet;

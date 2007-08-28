@@ -280,6 +280,11 @@ static WebWindowWatcher *_windowWatcher = nil;
     return [self initWithWebCoreHistoryItem:(new HistoryItem(URL, target, parent, title))];
 }
 
+- (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
+{
+    return [self initWithWebCoreHistoryItem:(new HistoryItem(URLString, title, displayTitle, time))];
+}
+
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item
 {   
     WebCoreThreadViolationCheck();
@@ -330,7 +335,7 @@ static WebWindowWatcher *_windowWatcher = nil;
     NSString *timeIntervalString = [dict _webkit_stringForKey:WebLastVisitedTimeIntervalKey];
     NSTimeInterval lastVisited = timeIntervalString == nil ? 0 : [timeIntervalString doubleValue];
 
-    self = [self initWithURLString:URLString title:title lastVisitedTimeInterval:lastVisited];
+    self = [self initWithURLString:URLString title:title displayTitle:[dict _webkit_stringForKey:WebDisplayTitleKey] lastVisitedTimeInterval:lastVisited];
     
     // Check if we've read a broken URL from the file that has non-Latin1 chars.  If so, try to convert
     // as if it was from user typing.
@@ -342,7 +347,6 @@ static WebWindowWatcher *_windowWatcher = nil;
         core(_private)->setOriginalURLString(newURLString);
     } 
 
-    core(_private)->setAlternateTitle([dict _webkit_stringForKey:WebDisplayTitleKey]);
     core(_private)->setVisitCount([dict _webkit_intForKey:WebVisitCountKey]);
 
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];

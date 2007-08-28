@@ -33,11 +33,11 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
-#import "WebNSCalendarDateExtras.h"
 #import "WebNSURLExtras.h"
 #import <Foundation/NSError.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreHistory.h>
+#import <wtf/Vector.h>
 
 
 NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
@@ -77,8 +77,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     }
     
     _entriesByURL = [[NSMutableDictionary alloc] init];
-    _datesWithEntries = [[NSMutableArray alloc] init];
-    _entriesByDate = [[NSMutableArray alloc] init];
+    _entriesByDate = new DateToEntriesMap;
 
     return self;
 }
@@ -86,73 +85,97 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 - (void)dealloc
 {
     [_entriesByURL release];
-    [_datesWithEntries release];
-    [_entriesByDate release];
+    [_orderedLastVisitedDays release];
+    delete _entriesByDate;
     
     [super dealloc];
 }
 
-#pragma mark MODIFYING CONTENTS
-
-// Returns whether the day is already in the list of days,
-// and fills in *index with the found or proposed index.
-- (BOOL)findIndex: (int *)index forDay: (NSCalendarDate *)date
+- (void)finalize
 {
-    int count;
-
-    ASSERT_ARG(index, index != nil);
-
-    //FIXME: just does linear search through days; inefficient if many days
-    count = [_datesWithEntries count];
-    for (*index = 0; *index < count; ++*index) {
-        NSComparisonResult result = [date _webkit_compareDay: [_datesWithEntries objectAtIndex: *index]];
-        if (result == NSOrderedSame) {
-            return YES;
-        }
-        if (result == NSOrderedDescending) {
-            return NO;
-        }
-    }
-
-    return NO;
+    delete _entriesByDate;
+    [super finalize];
 }
 
-- (void)insertItem: (WebHistoryItem *)entry atDateIndex: (int)dateIndex
+#pragma mark MODIFYING CONTENTS
+
+WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 {
-    int index, count;
-    NSMutableArray *entriesForDate;
-    NSTimeInterval entryDate;
+    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(interval, timeZone);
+    date.hour = 0;
+    date.minute = 0;
+    date.second = 0;
+    NSTimeInterval result = CFGregorianDateGetAbsoluteTime(date, timeZone);
+    CFRelease(timeZone);
 
+    // Converting from double to int64_t is safe here as NSDate's useful range
+    // is -2**48 .. 2**47 which will safely fit in an int64_t.
+    return result;
+}
+
+// Returns whether the day is already in the list of days,
+// and fills in *key with the key used to access its location
+- (BOOL)findKey:(WebHistoryDateKey*)key forDay:(NSTimeInterval)date
+{
+    ASSERT_ARG(key, key != nil);
+    *key = timeIntervalForBeginningOfDay(date);
+    return _entriesByDate->contains(*key);
+}
+
+- (void)insertItem:(WebHistoryItem *)entry forDateKey:(WebHistoryDateKey)dateKey
+{
     ASSERT_ARG(entry, entry != nil);
-    ASSERT_ARG(dateIndex, dateIndex >= 0 && (uint)dateIndex < [_entriesByDate count]);
+    ASSERT(_entriesByDate->contains(dateKey));
 
-    //FIXME: just does linear search through entries; inefficient if many entries for this date
-    entryDate = [entry lastVisitedTimeInterval];
-    entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
-    count = [entriesForDate count];
-    // optimized for inserting oldest to youngest
-    for (index = 0; index < count; ++index)
-        if (entryDate >= [[entriesForDate objectAtIndex:index] lastVisitedTimeInterval])
-            break;
+    NSMutableArray *entriesForDate = _entriesByDate->get(dateKey).get();
+    NSTimeInterval entryDate = [entry lastVisitedTimeInterval];
 
-    [entriesForDate insertObject: entry atIndex: index];
+    unsigned count = [entriesForDate count];
+
+    // Check for the common cases of the date being after all existing dates
+    if (count > 0 && [[entriesForDate objectAtIndex:count - 1] lastVisitedTimeInterval] < entryDate) {
+        [entriesForDate insertObject:entry atIndex:count];
+        return;
+    }
+    // .. or being the first date or before all existing dates
+    if (!count || [[entriesForDate objectAtIndex:0] lastVisitedTimeInterval] >= entryDate) {
+        [entriesForDate insertObject:entry atIndex:0];
+        return;
+    }
+
+    unsigned low = 0;
+    unsigned high = count;
+    while (low < high) {
+        unsigned mid = low + (high - low) / 2;
+        if ([[entriesForDate objectAtIndex:mid] lastVisitedTimeInterval] < entryDate)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+
+    // low is now the index of the first object of equal or greater value than entryDate
+    [entriesForDate insertObject:entry atIndex:low];
 }
 
 - (BOOL)_removeItemFromDateCaches:(WebHistoryItem *)entry
 {
-    int dateIndex;
-    BOOL foundDate = [self findIndex: &dateIndex forDay: [entry _lastVisitedDate]];
+    WebHistoryDateKey dateKey;
+    BOOL foundDate = [self findKey:&dateKey forDay:[entry lastVisitedTimeInterval]];
  
     if (!foundDate)
         return NO;
-    
-    NSMutableArray *entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
-    [entriesForDate removeObjectIdenticalTo: entry];
+
+    DateToEntriesMap::iterator it = _entriesByDate->find(dateKey);
+    NSMutableArray *entriesForDate = it->second.get();
+    [entriesForDate removeObjectIdenticalTo:entry];
     
     // remove this date entirely if there are no other entries on it
     if ([entriesForDate count] == 0) {
-        [_entriesByDate removeObjectAtIndex: dateIndex];
-        [_datesWithEntries removeObjectAtIndex: dateIndex];
+        _entriesByDate->remove(it);
+        // Clear _orderedLastVisitedDays so it will be regenerated when next requested.
+        [_orderedLastVisitedDays release];
+        _orderedLastVisitedDays = nil;
     }
     
     return YES;
@@ -179,14 +202,18 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (void)_addItemToDateCaches:(WebHistoryItem *)entry
 {
-    int dateIndex;
-    if ([self findIndex:&dateIndex forDay:[entry _lastVisitedDate]]) {
+    WebHistoryDateKey dateKey;
+    if ([self findKey:&dateKey forDay:[entry lastVisitedTimeInterval]])
         // other entries already exist for this date
-        [self insertItem:entry atDateIndex:dateIndex];
-    } else {
+        [self insertItem:entry forDateKey:dateKey];
+    else {
         // no other entries exist for this date
-        [_datesWithEntries insertObject:[entry _lastVisitedDate] atIndex:dateIndex];
-        [_entriesByDate insertObject:[NSMutableArray arrayWithObject:entry] atIndex:dateIndex];
+        NSMutableArray *entries = [[NSMutableArray alloc] initWithObjects:&entry count:1];
+        _entriesByDate->set(dateKey, entries);
+        [entries release];
+        // Clear _orderedLastVisitedDays so it will be regenerated when next requested.
+        [_orderedLastVisitedDays release];
+        _orderedLastVisitedDays = nil;
     }
 }
 
@@ -274,8 +301,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         return NO;
     }
 
-    [_entriesByDate removeAllObjects];
-    [_datesWithEntries removeAllObjects];
+    _entriesByDate->clear();
     [_entriesByURL removeAllObjects];
 
     return YES;
@@ -301,16 +327,31 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (NSArray *)orderedLastVisitedDays
 {
-    return _datesWithEntries;
+    if (!_orderedLastVisitedDays) {
+        Vector<int> daysAsTimeIntervals;
+        daysAsTimeIntervals.reserveCapacity(_entriesByDate->size());
+        DateToEntriesMap::const_iterator end = _entriesByDate->end();
+        for (DateToEntriesMap::const_iterator it = _entriesByDate->begin(); it != end; ++it)
+            daysAsTimeIntervals.append(it->first);
+
+        std::sort(daysAsTimeIntervals.begin(), daysAsTimeIntervals.end());
+        size_t count = daysAsTimeIntervals.size();
+        _orderedLastVisitedDays = [[NSMutableArray alloc] initWithCapacity:count];
+        for (int i = count - 1; i >= 0; i--) {
+            NSTimeInterval interval = daysAsTimeIntervals[i];
+            NSCalendarDate *date = [[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:interval];
+            [_orderedLastVisitedDays addObject:date];
+            [date release];
+        }
+    }
+    return _orderedLastVisitedDays;
 }
 
 - (NSArray *)orderedItemsLastVisitedOnDay: (NSCalendarDate *)date
 {
-    int index;
-
-    if ([self findIndex: &index forDay: date]) {
-        return [_entriesByDate objectAtIndex: index];
-    }
+    WebHistoryDateKey dateKey;
+    if ([self findKey:&dateKey forDay:[date timeIntervalSinceReferenceDate]])
+        return _entriesByDate->get(dateKey).get();
 
     return nil;
 }
@@ -380,14 +421,18 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 {
     NSMutableArray *arrayRep = [NSMutableArray array];
 
-    int dateCount = [_entriesByDate count];
-    int dateIndex;
-    for (dateIndex = 0; dateIndex < dateCount; ++dateIndex) {
-        NSArray *entries = [_entriesByDate objectAtIndex:dateIndex];
+    Vector<int> dateKeys;
+    dateKeys.reserveCapacity(_entriesByDate->size());
+    DateToEntriesMap::const_iterator end = _entriesByDate->end();
+    for (DateToEntriesMap::const_iterator it = _entriesByDate->begin(); it != end; ++it)
+        dateKeys.append(it->first);
+
+    std::sort(dateKeys.begin(), dateKeys.end());
+    for (int dateIndex = dateKeys.size() - 1; dateIndex >= 0; dateIndex--) {
+        NSArray *entries = _entriesByDate->get(dateKeys[dateIndex]).get();
         int entryCount = [entries count];
-        int entryIndex;
-        for (entryIndex = 0; entryIndex < entryCount; ++entryIndex)
-            [arrayRep addObject: [[entries objectAtIndex:entryIndex] dictionaryRepresentation]];
+        for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex)
+            [arrayRep addObject:[[entries objectAtIndex:entryIndex] dictionaryRepresentation]];
     }
 
     return arrayRep;
@@ -397,7 +442,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 {
     *numberOfItemsLoaded = 0;
     NSDictionary *dictionary = nil;
-    
+
     // Optimize loading from local file, which is faster than using the general URL loading mechanism
     if ([URL isFileURL]) {
         dictionary = [NSDictionary dictionaryWithContentsOfFile:[URL path]];
@@ -418,7 +463,6 @@ NSString *DatesArrayKey = @"WebHistoryDates";
                 errorDescription:nil];
         }
     }
-    
 
     // We used to support NSArrays here, but that was before Safari 1.0 shipped. We will no longer support
     // that ancient format, so anything that isn't an NSDictionary is bogus.
@@ -440,14 +484,15 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     }    
 
     NSArray *array = [dictionary objectForKey:DatesArrayKey];
-        
+
     int itemCountLimit = [self historyItemLimit];
-    NSCalendarDate *ageLimitDate = [self _ageLimitDate];
+    NSTimeInterval ageLimitDate = [[self _ageLimitDate] timeIntervalSinceReferenceDate];
     NSEnumerator *enumerator = [array objectEnumerator];
     BOOL ageLimitPassed = NO;
     BOOL itemLimitPassed = NO;
     ASSERT(*numberOfItemsLoaded == 0);
-    
+
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSDictionary *itemAsDictionary;
     while ((itemAsDictionary = [enumerator nextObject]) != nil) {
         WebHistoryItem *item = [[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary];
@@ -456,9 +501,9 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         if ([item URLString]) {
             // Test against date limit. Since the items are ordered newest to oldest, we can stop comparing
             // once we've found the first item that's too old.
-            if (!ageLimitPassed && ([[item _lastVisitedDate] compare:ageLimitDate] != NSOrderedDescending))
+            if (!ageLimitPassed && [item lastVisitedTimeInterval] <= ageLimitDate)
                 ageLimitPassed = YES;
-            
+
             if (ageLimitPassed || itemLimitPassed)
                 [discardedItems addObject:item];
             else {
@@ -466,13 +511,19 @@ NSString *DatesArrayKey = @"WebHistoryDates";
                 ++(*numberOfItemsLoaded);
                 if (*numberOfItemsLoaded == itemCountLimit)
                     itemLimitPassed = YES;
+
+                // Draining the autorelease pool every 50 iterations was found by experimentation to be optimal
+                if (*numberOfItemsLoaded % 50 == 0) {
+                    [pool drain];
+                    pool = [[NSAutoreleasePool alloc] init];
+                }
             }
         }
-        
         [item release];
     }
+    [pool drain];
 
-    return YES;    
+    return YES;
 }
 
 - (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error

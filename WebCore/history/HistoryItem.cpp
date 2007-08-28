@@ -60,6 +60,19 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
+HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double time)
+    : m_urlString(urlString)
+    , m_originalURLString(urlString)
+    , m_title(title)
+    , m_displayTitle(alternateTitle)
+    , m_lastVisitedTime(time)
+    , m_isInPageCache(false)
+    , m_isTargetItem(false)
+    , m_visitCount(0)
+{    
+    iconDatabase()->retainIconForPageURL(m_urlString);
+}
+
 HistoryItem::HistoryItem(const KURL& url, const String& title)
     : m_urlString(url.url())
     , m_originalURLString(url.url())

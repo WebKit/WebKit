@@ -61,6 +61,7 @@ class HistoryItem : public Shared<HistoryItem> {
 public: 
     HistoryItem();
     HistoryItem(const String& urlString, const String& title, double lastVisited);
+    HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double lastVisited);
     HistoryItem(const KURL& url, const String& title);
     HistoryItem(const KURL& url, const String& target, const String& parent, const String& title);
     
