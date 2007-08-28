@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/5443453> Decreasing history expiration time from 1 year to 1 week can lead to long hang while icon database syncs
+
+        Perform the sync inside a SQLite transaction.  This drops the time taken for the sync from over 90s to under half a second in the
+        extreme case of over 90,000 URLs being pruned.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::syncDatabase):
+
+2007-08-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/5437983> Loading history containing 100,000 entries adds 20s to Safari's startup
 
         Add a new constructor for HistoryItem that initializes the alternate title.  This prevents WebHistoryItem
