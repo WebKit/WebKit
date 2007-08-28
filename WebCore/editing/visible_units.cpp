@@ -235,7 +235,8 @@ static unsigned previousWordPositionBoundary(const UChar* characters, unsigned l
 
 VisiblePosition previousWordPosition(const VisiblePosition &c)
 {
-    return previousBoundary(c, previousWordPositionBoundary);
+    VisiblePosition prev = previousBoundary(c, previousWordPositionBoundary);
+    return c.firstEditablePositionAtOrAfter(prev);
 }
 
 static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length)
@@ -245,7 +246,8 @@ static unsigned nextWordPositionBoundary(const UChar* characters, unsigned lengt
 
 VisiblePosition nextWordPosition(const VisiblePosition &c)
 {
-    return nextBoundary(c, nextWordPositionBoundary);
+    VisiblePosition next = nextBoundary(c, nextWordPositionBoundary);    
+    return c.lastEditablePositionAtOrBefore(next);
 }
 
 // ---------
@@ -309,16 +311,22 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
         startOffset = startTextBox->m_start;
     }
-    
-    return VisiblePosition(startNode, startOffset, DOWNSTREAM);
+  
+    VisiblePosition visPos = VisiblePosition(startNode, startOffset, DOWNSTREAM);
+
+    // return table offset 0 instead of the first VisiblePosition inside the table
+    VisiblePosition visPrevious = visPos.previous();
+    if (isLastPositionBeforeTable(visPrevious))
+        visPos = visPrevious;
+
+    return visPos;
 }
 
 VisiblePosition startOfLine(const VisiblePosition& c)
 {
     VisiblePosition visPos = startPositionForLine(c);
     
-    if (visPos.isNotNull())
-    {
+    if (visPos.isNotNull()) {
         // Make sure the start of line is not greater than the given input position.  Else use the previous position to 
         // obtain start of line.  This condition happens when the input position is before the space character at the end 
         // of a soft-wrapped non-editable line. In this scenario, startPositionForLine would incorrectly hand back a position
@@ -332,8 +340,8 @@ VisiblePosition startOfLine(const VisiblePosition& c)
             visPos = startPositionForLine(visPos);
         }
     }
-    
-    return visPos;
+
+    return c.firstEditablePositionAtOrAfter(visPos);
 }
 
 static VisiblePosition endPositionForLine(const VisiblePosition& c)
@@ -400,7 +408,7 @@ VisiblePosition endOfLine(const VisiblePosition& c)
         visPos = endPositionForLine(visPos);
     }
     
-    return visPos;
+    return c.lastEditablePositionAtOrBefore(visPos);
 }
 
 bool inSameLine(const VisiblePosition &a, const VisiblePosition &b)
@@ -595,7 +603,8 @@ static unsigned previousSentencePositionBoundary(const UChar* characters, unsign
 
 VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
-    return previousBoundary(c, previousSentencePositionBoundary);
+    VisiblePosition prev = previousBoundary(c, previousSentencePositionBoundary);
+    return c.firstEditablePositionAtOrAfter(prev);
 }
 
 static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length)
@@ -608,7 +617,8 @@ static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned l
 
 VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
-    return nextBoundary(c, nextSentencePositionBoundary);
+    VisiblePosition next = nextBoundary(c, nextSentencePositionBoundary);    
+    return c.lastEditablePositionAtOrBefore(next);
 }
 
 // FIXME: Broken for positions before/after images that aren't inline (5027702)

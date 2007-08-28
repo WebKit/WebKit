@@ -1,3 +1,51 @@
+2007-08-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5415006> Command Left in a To Do causes caret to disappear
+
+        The selection was ending up inside non-editable content at the To Do Options
+        arrow image, rather then at the editable position just to the left of that image.
+        The problem was that startPositionForLine looked only at line boxes, and there
+        is no linebox for the editable position at the far left of a To Do, which is
+        a table. Addressed by having startPositionForLine use table offset 0 instead
+        of the first VisiblePosition inside the table.
+        
+        Found and fixed the similar case with option-left (move by word position).
+        
+        Test cases:
+        * editing/selection/mixed-editability-8.html: Added.
+        * editing/selection/mixed-editability-9.html: Added.
+
+        Source changes:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyMovingLeftBackward):
+        
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::stayInEditableContentLeft):
+        (WebCore::VisiblePosition::stayInEditableContentRight):
+        Factored stayInEditableContentLeft() and stayInEditableContentRight()
+        out of previous() and next().
+        
+        * editing/VisiblePosition.h:
+        Declare stayInEditableContentLeft() and stayInEditableContentRight().
+
+        * editing/visible_units.cpp:
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPosition):
+        (WebCore::startOfLine):
+        (WebCore::endOfLine):
+        (WebCore::previousSentencePosition):
+        (WebCore::nextSentencePosition):
+        Call stayInEditableContentLeft() or stayInEditableContentRight(), as 
+        appropriate, so prevent crossing from editable content into
+        uneditable content.
+        
+        (WebCore::startPositionForLine):
+        Use table offset 0 instead of the first VisiblePosition in the table.
+        
 2007-08-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

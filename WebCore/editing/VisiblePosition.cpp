@@ -66,18 +66,10 @@ VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
 {
     VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
     
-    if (!stayInEditableContent || next.isNull())
+    if (!stayInEditableContent)
         return next;
     
-    Node* highestRoot = highestEditableRoot(deepEquivalent());
-    
-    if (!next.deepEquivalent().node()->isDescendantOf(highestRoot))
-        return VisiblePosition();
-
-    if (highestEditableRoot(next.deepEquivalent()) == highestRoot)
-        return next;
-    
-    return firstEditablePositionAfterPositionInRoot(next.deepEquivalent(), highestRoot);
+    return firstEditablePositionAtOrAfter(next);
 }
 
 VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
@@ -102,18 +94,42 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     }
 #endif
 
-    if (!stayInEditableContent || prev.isNull())
+    if (!stayInEditableContent)
         return prev;
+    
+    return lastEditablePositionAtOrBefore(prev);
+}
+
+VisiblePosition VisiblePosition::lastEditablePositionAtOrBefore(const VisiblePosition &pos) const
+{
+    if (pos.isNull())
+        return pos;
     
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
-    if (!prev.deepEquivalent().node()->isDescendantOf(highestRoot))
+    if (!pos.deepEquivalent().node()->isDescendantOf(highestRoot))
         return VisiblePosition();
         
-    if (highestEditableRoot(prev.deepEquivalent()) == highestRoot)
-        return prev;
+    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
+        return pos;
 
-    return lastEditablePositionBeforePositionInRoot(prev.deepEquivalent(), highestRoot);
+    return lastEditablePositionBeforePositionInRoot(pos.deepEquivalent(), highestRoot);
+}
+
+VisiblePosition VisiblePosition::firstEditablePositionAtOrAfter(const VisiblePosition &pos) const
+{
+    if (pos.isNull())
+        return pos;
+    
+    Node* highestRoot = highestEditableRoot(deepEquivalent());
+    
+    if (!pos.deepEquivalent().node()->isDescendantOf(highestRoot))
+        return VisiblePosition();
+        
+    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
+        return pos;
+
+    return firstEditablePositionAfterPositionInRoot(pos.deepEquivalent(), highestRoot);
 }
 
 Position canonicalizeCandidate(const Position& candidate)

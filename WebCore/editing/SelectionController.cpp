@@ -368,7 +368,6 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(TextGranularity
 VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity granularity)
 {
     VisiblePosition pos;
-    // FIXME: Stay in editable content for the less common granularities.
     switch (granularity) {
         case CharacterGranularity:
             if (isRange()) 
