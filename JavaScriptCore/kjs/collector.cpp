@@ -109,8 +109,8 @@ static CollectorBlock* allocateBlock()
     LPVOID address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #elif HAVE(POSIX_MEMALIGN)
     void* address;
-    posix_memalign(address, BLOCK_SIZE, BLOCK_SIZE);
-    memset(reinterpret_cast<void*>(address), 0, BLOCK_SIZE);
+    posix_memalign(&address, BLOCK_SIZE, BLOCK_SIZE);
+    memset(address, 0, BLOCK_SIZE);
 #else
     static size_t pagesize = getpagesize();
     

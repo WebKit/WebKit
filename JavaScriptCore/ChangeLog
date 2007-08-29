@@ -1,3 +1,13 @@
+2007-08-29  Ryan Leavengood <leavengood@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15043
+        - posix_memalign takes a void** as its first parameter. My port makes use of this function call.
+
+        * kjs/collector.cpp:
+        (KJS::allocateBlock):
+
 2007-08-26  Darin Adler  <darin@apple.com>
 
         - quick follow on to that last check-in
