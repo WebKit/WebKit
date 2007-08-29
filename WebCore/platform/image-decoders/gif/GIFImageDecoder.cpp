@@ -345,12 +345,13 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
 
     if (repeatCount > 1) {
         // Copy the row |repeatCount|-1 times.
-        unsigned size = (currDst - dst) * sizeof(unsigned);
+        unsigned num = currDst - dst;
+        unsigned size = num * sizeof(unsigned);
         unsigned width = m_size.width();
         unsigned* end = buffer.bytes().data() + width * m_size.height();
         currDst = dst + width;
         for (unsigned i = 1; i < repeatCount; i++) {
-            if (currDst + size > end) // Protect against a buffer overrun from a bogus repeatCount.
+            if (currDst + num > end) // Protect against a buffer overrun from a bogus repeatCount.
                 break;
             memcpy(currDst, dst, size);
             currDst += width;

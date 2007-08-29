@@ -1,3 +1,15 @@
+2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15104
+        Don't double-compensate for sizeof(unsigned) when making a buffer
+        overflow check in the GIF decoder.  Now interlaced GIFs don't
+        sometimes get nothing/garbage in some of the bottom rows.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+
 2007-08-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
