@@ -318,6 +318,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     m_didCalculateStyleSelector = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
+    m_hasNodesWithPlaceholderStyle = false;
     m_pendingSheetLayout = NoLayoutWithPendingSheets;
 
     m_cssTarget = 0;
@@ -986,6 +987,9 @@ void Document::recalcStyle(StyleChange change)
         goto bail_out;
 
     if (change == Force) {
+        // style selector may set this again during recalc
+        m_hasNodesWithPlaceholderStyle = false;
+        
         RenderStyle* oldStyle = renderer()->style();
         if (oldStyle)
             oldStyle->ref();
@@ -1098,7 +1102,11 @@ void Document::updateLayoutIgnorePendingStylesheets()
         if (body() && !body()->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
             updateStyleSelector();
-        }
+        } else if (m_hasNodesWithPlaceholderStyle)
+            // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
+            // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
+            // but here we need up-to-date style immediatly.
+            recalcStyle(Force);
     }
 
     updateLayout();

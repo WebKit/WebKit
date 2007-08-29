@@ -640,6 +640,8 @@ public:
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 
     bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
+    
+    void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
     String iconURL();
     void setIconURL(const String& iconURL, const String& type);
@@ -695,6 +697,8 @@ private:
     // to track that this happened so that we can do a full repaint when the stylesheets
     // do eventually load.
     PendingSheetLayout m_pendingSheetLayout;
+    
+    bool m_hasNodesWithPlaceholderStyle;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
 

@@ -1,3 +1,28 @@
+2007-08-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Fix <rdar://problem/5425951>
+        REGRESSION: change to updateLayoutIgnorePendingStylesheets causes SAP Portal page to render wrong
+        
+        If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
+        may not have had their real style calculated yet. Normally this state gets cleaned when style sheets arrive 
+        but in updateLayoutIgnorePendingStylesheets() we need to do full style recalc to get up-to-date style immediatly.
+        
+        Added a document flag to track if there are any nodes that did not have their real style calculated due to
+        pending stylesheets.
+
+        Test: fast/dynamic/style-access-late-stylesheet-load.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        * dom/Document.h:
+        (WebCore::Document::setHasNodesWithPlaceholderStyle):
+
 2007-08-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

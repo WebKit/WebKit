@@ -1,3 +1,13 @@
+2007-08-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Test for <rdar://problem/5425951>
+        REGRESSION: change to updateLayoutIgnorePendingStylesheets causes SAP Portal page to render wrong
+
+        * fast/dynamic/style-access-late-stylesheet-load-expected.txt: Added.
+        * fast/dynamic/style-access-late-stylesheet-load.html: Added.
+
 2007-08-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
