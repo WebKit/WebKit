@@ -133,14 +133,15 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     unsigned count = [entriesForDate count];
 
-    // Check for the common cases of the date being after all existing dates
-    if (count > 0 && [[entriesForDate objectAtIndex:count - 1] lastVisitedTimeInterval] < entryDate) {
-        [entriesForDate insertObject:entry atIndex:count];
+    // The entries for each day are stored in a sorted array with the most recent entry first
+    // Check for the common cases of the entry being newer than all existing entries or the first entry of the day
+    if (!count || [[entriesForDate objectAtIndex:0] lastVisitedTimeInterval] < entryDate) {
+        [entriesForDate insertObject:entry atIndex:0];
         return;
     }
-    // .. or being the first date or before all existing dates
-    if (!count || [[entriesForDate objectAtIndex:0] lastVisitedTimeInterval] >= entryDate) {
-        [entriesForDate insertObject:entry atIndex:0];
+    // .. or older than all existing entries
+    if (count > 0 && [[entriesForDate objectAtIndex:count - 1] lastVisitedTimeInterval] >= entryDate) {
+        [entriesForDate insertObject:entry atIndex:count];
         return;
     }
 
@@ -148,13 +149,13 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     unsigned high = count;
     while (low < high) {
         unsigned mid = low + (high - low) / 2;
-        if ([[entriesForDate objectAtIndex:mid] lastVisitedTimeInterval] < entryDate)
+        if ([[entriesForDate objectAtIndex:mid] lastVisitedTimeInterval] >= entryDate)
             low = mid + 1;
         else
             high = mid;
     }
 
-    // low is now the index of the first object of equal or greater value than entryDate
+    // low is now the index of the first entry that is older than entryDate
     [entriesForDate insertObject:entry atIndex:low];
 }
 

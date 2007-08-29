@@ -13,6 +13,16 @@
 
 2007-08-28  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fix fallout from the fix for <rdar://problem/5437983> (Loading history containing 100,000 entries adds 20s to Safari's startup)
+        in r25275.  The array of entries for each day was being maintained in the reverse of the order that was expected.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate insertItem:forDateKey:]): Maintain the array of entries in descending order.
+
+2007-08-28  Mark Rowe  <mrowe@apple.com>
+
         Fix the buildbot build.
 
         * History/WebHistory.mm:
