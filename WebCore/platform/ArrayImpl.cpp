@@ -138,7 +138,7 @@ bool ArrayImpl::fill(const void *item, int numItems)
 
 bool ArrayImpl::operator==(const ArrayImpl &a) const
 {
-    return d->numItems == a.d->numItems && d->itemSize == d->itemSize
+    return d->numItems == a.d->numItems && d->itemSize == a.d->itemSize
         && (d->data == a.d->data || memcmp(d->data, a.d->data, d->itemSize*d->numItems) == 0);
 }
 

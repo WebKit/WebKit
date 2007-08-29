@@ -1,3 +1,14 @@
+2007-08-29  Rick  <rick@writhe.org.uk>
+
+        Reviewed by Tim Hatcher.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14853
+        Bug 14853: Incorrect implementation of ArrayImpl's equality operator
+
+        * platform/ArrayImpl.cpp:
+        (WebCore::ArrayImpl::operator==):
+        Fixed typo so that correct variable is used in equality comparison.
+
 2007-08-29  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Maciej.
