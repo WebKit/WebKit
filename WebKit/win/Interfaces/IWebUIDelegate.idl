@@ -779,4 +779,5 @@ interface IWebUIDelegate2 : IWebUIDelegate
 */
     HRESULT drawFooterInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext, [in] UINT pageIndex, [in] UINT pageCount);
 
+    HRESULT webViewPrintingMarginRect([in] IWebView* webView, [out, retval] RECT* rect);
 }

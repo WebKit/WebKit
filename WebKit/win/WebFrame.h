@@ -346,6 +346,7 @@ protected:
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
     void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
     void headerAndFooterHeights(float*, float*);
+    WebCore::IntRect printerMarginRect(HDC);
 
 protected:
     ULONG               m_refCount;

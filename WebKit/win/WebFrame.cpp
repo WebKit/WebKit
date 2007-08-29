@@ -2415,6 +2415,29 @@ void WebFrame::headerAndFooterHeights(float* headerHeight, float* footerHeight)
         *footerHeight = height;
 }
 
+IntRect WebFrame::printerMarginRect(HDC printDC)
+{
+    IntRect emptyRect(0, 0, 0, 0);
+
+    COMPtr<IWebUIDelegate> ui;
+    if (FAILED(d->webView->uiDelegate(&ui)))
+        return emptyRect;
+    COMPtr<IWebUIDelegate2> ui2;
+    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
+        return emptyRect;
+
+    RECT rect;
+    if (FAILED(ui2->webViewPrintingMarginRect(d->webView, &rect)))
+        return emptyRect;
+
+    rect.left = MulDiv(rect.left, ::GetDeviceCaps(printDC, LOGPIXELSX), 1000);
+    rect.top = MulDiv(rect.top, ::GetDeviceCaps(printDC, LOGPIXELSY), 1000);
+    rect.right = MulDiv(rect.right, ::GetDeviceCaps(printDC, LOGPIXELSX), 1000);
+    rect.bottom = MulDiv(rect.bottom, ::GetDeviceCaps(printDC, LOGPIXELSY), 1000);
+
+    return IntRect(rect.left, rect.top, (rect.right - rect.left), rect.bottom - rect.top);
+}
+
 const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
 {
     ASSERT(m_inPrintingMode);
@@ -2429,7 +2452,15 @@ const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
     // adjust the page rect by the header and footer
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
-    computePageRectsForFrame(coreFrame, printerRect(printDC), headerHeight, footerHeight, 1.0, m_pageRects);
+    IntRect pageRect = printerRect(printDC);
+    IntRect marginRect = printerMarginRect(printDC);
+    IntRect adjustedRect = IntRect(
+        pageRect.x() + marginRect.x(),
+        pageRect.y() + marginRect.y(),
+        pageRect.width() - marginRect.x() - marginRect.right(),
+        pageRect.height() - marginRect.y() - marginRect.bottom());
+
+    computePageRectsForFrame(coreFrame, adjustedRect, headerHeight, footerHeight, 1.0,m_pageRects);
     
     return m_pageRects;
 }
@@ -2540,8 +2571,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
             }
 
             if (footerHeight) {
-                y = (int)(mediaBox.size.height/scale - footerHeight);
-                RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
+                RECT footerRect = {x, pageRect.bottom(), x+pageRect.width(), pageRect.bottom()+(int)footerHeight};
                 ui2->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
             }
         }

@@ -1,3 +1,18 @@
+2007-08-28  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5079253> Cannot set different margins for the page
+        
+        Added support for setting margins via page setup for Windows printing.
+        
+        Reviewed by Adam.
+
+        * Interfaces/IWebUIDelegate.idl: Added webViewPrintingMarginRect.
+        * WebFrame.cpp:
+        (WebFrame::printerMarginRect): Added.
+        (WebFrame::computePageRects): Account for margins when calculating page rects.
+        (WebFrame::spoolPages): Position footer at the bottom of the page rect (fixes footer drawing if left/right margins are set).
+        * WebFrame.h:
+
 2007-08-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Adam.
