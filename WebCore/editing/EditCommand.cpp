@@ -86,7 +86,10 @@ void EditCommand::apply()
         }
     }
 
+    DeleteButtonController *deleteButtonController = frame->editor()->deleteButtonController();
+    deleteButtonController->disable();
     doApply();
+    deleteButtonController->enable();
 
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -222,10 +225,7 @@ void EditCommand::setParent(CompositeEditCommand* parent)
 
 void applyCommand(PassRefPtr<EditCommand> command)
 {
-    DeleteButtonController *deleteButtonController = command->document()->frame()->editor()->deleteButtonController();
-    deleteButtonController->disable();
     command->apply();
-    deleteButtonController->enable();
 }
 
 } // namespace WebCore

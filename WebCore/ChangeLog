@@ -1,3 +1,14 @@
+2007-08-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        We disable the DeleteButton UI before applying any editing commands.
+        This patch simply moves those disable/enable calls to a more correct place, closer to the actual application of the editing command. 
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::applyCommand):
+
 2007-08-28  Alice Liu  <alice.liu@apple.com>
 
         fixed <rdar://problem/5420682> Mail crashes at WebCore::InsertLineBreakCommand::doApply() 
