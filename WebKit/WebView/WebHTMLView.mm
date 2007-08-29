@@ -398,7 +398,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
         Method resetCursorRectsMethod = class_getInstanceMethod([NSWindow class], @selector(resetCursorRects));
         ASSERT(resetCursorRectsMethod);
         oldResetCursorRectsIMP = resetCursorRectsMethod->method_imp;
-        resetCursorRects->method_imp = (IMP)resetCursorRects;
+        resetCursorRectsMethod->method_imp = (IMP)resetCursorRects;
         ASSERT(oldResetCursorRectsIMP);
     }
 #endif
