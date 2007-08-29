@@ -4,10 +4,7 @@
 
         Update fix landed in r25249 to account for XMLHttpRequest, which can also be EventTargets.
 
-        Tests: http/tests/security/listener/resources/childWithXMLHttpRequest.html
-               http/tests/security/listener/resources/targetChild-XMLHttpRequest-addEventListener.html
-               http/tests/security/listener/resources/targetChild-XMLHttpRequest-shortcut.html
-               http/tests/security/listener/xss-XMLHttpRequest-addEventListener.html
+        Tests: http/tests/security/listener/xss-XMLHttpRequest-addEventListener.html
                http/tests/security/listener/xss-XMLHttpRequest-shortcut.html
 
         * bindings/js/JSXMLHttpRequest.cpp:
