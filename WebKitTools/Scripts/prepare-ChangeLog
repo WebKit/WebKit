@@ -1071,7 +1071,11 @@ sub generateFileList(\@\@\%)
             my @components = File::Spec->splitdir($file);
             if ($components[0] eq "LayoutTests") {
                 $didChangeRegressionTests = 1;
-                push @addedRegressionTests, $file if isAddedStatus($status) && $file =~ /\.([a-zA-Z]+)$/ && $supportedTestExtensions{$1};
+                push @addedRegressionTests, $file
+                    if isAddedStatus($status)
+                       && $file =~ /\.([a-zA-Z]+)$/
+                       && $supportedTestExtensions{$1}
+                       && !scalar(grep(/^resources$/, @components));
             }
             push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status)) {
