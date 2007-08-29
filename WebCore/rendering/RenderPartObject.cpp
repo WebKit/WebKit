@@ -101,7 +101,7 @@ static inline void mapClassIdToServiceType(const String& classId, String& servic
     // TODO: add more plugins here
 }
 
-void RenderPartObject::updateWidget(bool onlyCreateNonPlugins)
+void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 {
   String url;
   String serviceType;
@@ -211,12 +211,12 @@ void RenderPartObject::updateWidget(bool onlyCreateNonPlugins)
               m_hasFallbackContent = true;
       }
       
-      if (onlyCreateNonPlugins) {
+      if (onlyCreateNonNetscapePlugins) {
           KURL completedURL;
           if (!url.isEmpty())
               completedURL = frame->loader()->completeURL(url);
         
-          if (frame->loader()->client()->objectContentType(completedURL, serviceType) == ObjectContentPlugin)
+          if (frame->loader()->client()->objectContentType(completedURL, serviceType) == ObjectContentNetscapePlugin)
               return;
       }
       
@@ -243,13 +243,14 @@ void RenderPartObject::updateWidget(bool onlyCreateNonPlugins)
           }
       }
       
-      if (onlyCreateNonPlugins) {
+      if (onlyCreateNonNetscapePlugins) {
           KURL completedURL;
           if (!url.isEmpty())
               completedURL = frame->loader()->completeURL(url);
           
-          if (frame->loader()->client()->objectContentType(completedURL, serviceType) == ObjectContentPlugin)
+          if (frame->loader()->client()->objectContentType(completedURL, serviceType) == ObjectContentNetscapePlugin)
               return;
+          
       }
       
       frame->loader()->requestObject(this, url, o->getAttribute(nameAttr), serviceType, paramNames, paramValues);
@@ -267,7 +268,7 @@ void RenderPartObject::layout()
     RenderPart::layout();
 
     if (!m_widget)
-      updateWidget(false);
+        updateWidget(false);
     
     setNeedsLayout(false);
 }

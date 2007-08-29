@@ -70,7 +70,8 @@ namespace WebCore {
         ObjectContentNone,
         ObjectContentImage,
         ObjectContentFrame,
-        ObjectContentPlugin
+        ObjectContentNetscapePlugin,
+        ObjectContentOtherPlugin
     };
 }
 

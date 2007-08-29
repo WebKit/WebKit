@@ -1213,7 +1213,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
 {
     WebFrameBridge* bridge = m_webFrame->_private->bridge;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return (ObjectContentType)[bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
+    return [bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
     END_BLOCK_OBJC_EXCEPTIONS;
     return ObjectContentNone;
 }

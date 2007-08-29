@@ -1,3 +1,37 @@
+2007-08-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5424866> Bottom portion of any Web Clip widget appears transparent
+
+        Restore the previous behavior, creating plug-ins on attach, for WebKit plug-ins. Netscape plug-ins
+        are still created during the first layout.
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::getInstance):
+        Only call layout if the renderer doesn't have a widget.
+        
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::getInstance):
+        Likewise.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUsePlugin):
+        Update for enum change.
+        
+        * loader/FrameLoaderTypes.h:
+        Add ObjectContentNetscapePlugin and ObjectContentOtherPlugin.
+        
+        * page/mac/WebCoreFrameBridge.h:
+        Get rid of the enum here, we can use the one in FrameLoaderTypes.h
+        
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        Only create the plug-in if it's not a Netscape plug-in.
+        
+        (WebCore::RenderPartObject::layout):
+        Fix indentation.
+        
 2007-08-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

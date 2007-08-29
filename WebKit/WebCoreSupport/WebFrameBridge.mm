@@ -614,32 +614,46 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return view;
 }
 
-- (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL
+- (ObjectContentType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL
 {
     if ([MIMEType length] == 0) {
         // Try to guess the MIME type based off the extension.
         NSString *extension = [[URL path] pathExtension];
         if ([extension length] > 0) {
             MIMEType = WKGetMIMETypeForExtension(extension);
-            if ([MIMEType length] == 0 && [[self webView] _pluginForExtension:extension])
+            if ([MIMEType length] == 0) {
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
-                return ObjectElementPlugin;
+                if (WebBasePluginPackage *package = [[self webView] _pluginForExtension:extension]) {
+                    if ([package isKindOfClass:[WebNetscapePluginPackage class]])
+                        return ObjectContentNetscapePlugin;
+                    else {
+                        ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+                        return ObjectContentOtherPlugin;
+                    }
+                }
+            }
         }
     }
 
     if ([MIMEType length] == 0)
-        return ObjectElementFrame; // Go ahead and hope that we can display the content.
+        return ObjectContentFrame; // Go ahead and hope that we can display the content.
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
-        return ObjectElementImage;
+        return ObjectContentImage;
 
-    if ([[self webView] _isMIMETypeRegisteredAsPlugin:MIMEType])
-        return ObjectElementPlugin;
+    if (WebBasePluginPackage *package = [[self webView] _pluginForMIMEType:MIMEType]) {
+        if ([package isKindOfClass:[WebNetscapePluginPackage class]])
+            return ObjectContentNetscapePlugin;
+        else {
+            ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+            return ObjectContentOtherPlugin;
+        }
+    }
 
     if ([WebFrameView _viewClassForMIMEType:MIMEType])
-        return ObjectElementFrame;
+        return ObjectContentFrame;
     
-    return ObjectElementNone;
+    return ObjectContentNone;
 }
 
 - (jobject)getAppletInView:(NSView *)view
