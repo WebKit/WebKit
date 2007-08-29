@@ -127,22 +127,48 @@ using namespace HTMLNames;
 
 static IMP oldSetCursorIMP = NULL;
 
-static void setCursorForMouseLocation(id self, SEL cmd, NSPoint point)
+#ifdef BUILDING_ON_TIGER
+static IMP oldResetCursorRectsIMP = NULL;
+static BOOL canSetCursor = YES;
+
+static void resetCursorRects(NSWindow* self, SEL cmd)
 {
-    NSView* view = [[(NSWindow*)self _web_borderView] hitTest:point];
+    NSPoint point = [self mouseLocationOutsideOfEventStream];
+    NSView* view = [[self _web_borderView] hitTest:point];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         WebHTMLView *htmlView = (WebHTMLView*)view;
         NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
         NSDictionary *dict = [htmlView elementAtPoint:point allowShadowContent:NO];
         DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
-        if ([element isKindOfClass:[DOMHTMLAppletElement class]] || [element isKindOfClass:[DOMHTMLObjectElement class]] ||
-            [element isKindOfClass:[DOMHTMLEmbedElement class]])
-            oldSetCursorIMP(self, cmd, point);
-        return;
+        if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
+            ![element isKindOfClass:[DOMHTMLEmbedElement class]])
+            canSetCursor = NO;
     }
+    oldResetCursorRectsIMP(self, cmd);
+    canSetCursor = YES;
+}
 
+static void setCursor(NSCursor* self, SEL cmd)
+{
+    if (canSetCursor)
+        oldSetCursorIMP(self, cmd);
+}
+#else
+static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
+{
+    NSView* view = [[self _web_borderView] hitTest:point];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView *htmlView = (WebHTMLView*)view;
+        NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
+        NSDictionary *dict = [htmlView elementAtPoint:point allowShadowContent:NO];
+        DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
+        if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
+            ![element isKindOfClass:[DOMHTMLEmbedElement class]])
+            return;
+    }
     oldSetCursorIMP(self, cmd, point);
 }
+#endif
 
 extern "C" {
 
@@ -351,17 +377,32 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 #endif
 
     if (!oldSetCursorIMP) {
+#ifdef BUILDING_ON_TIGER
+        Method setCursorMethod = class_getInstanceMethod([NSCursor class], @selector(set));
+#else
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
+#endif
         ASSERT(setCursorMethod);
 
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
-        oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursorForMouseLocation);
+        oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
 #else
         oldSetCursorIMP = setCursorMethod->method_imp;
-        setCursorMethod->method_imp = (IMP)setCursorForMouseLocation;
+        setCursorMethod->method_imp = (IMP)setCursor;
 #endif
         ASSERT(oldSetCursorIMP);
     }
+    
+#ifdef BUILDING_ON_TIGER
+    if (!oldResetCursorRectsIMP) {
+        Method resetCursorRectsMethod = class_getInstanceMethod([NSWindow class], @selector(resetCursorRects));
+        ASSERT(resetCursorRectsMethod);
+        oldResetCursorRectsIMP = setCursorMethod->method_imp;
+        resetCursorRects->method_imp = (IMP)resetCursorRects;
+        ASSERT(oldResetCursorRectsIMP);
+    }
+#endif
+
 }
 
 - (void)dealloc

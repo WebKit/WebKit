@@ -1,3 +1,16 @@
+2007-08-29  David Hyatt  <hyatt@apple.com>
+
+        The method that was swizzled to fix 5441281 does not exist on Tiger.
+        Tiger has to do a double swizzle instead (of resetCursorRects and NSCursor's
+        set method) in order to roughly achieve the same effect.
+
+        Reviewed by darin
+
+        * WebView/WebHTMLView.mm:
+        (resetCursorRects):
+        (setCursor):
+        (+[WebHTMLViewPrivate initialize]):
+
 2007-08-29  Anders Carlsson  <andersca@apple.com>
 
         Fix 64-bit build.
