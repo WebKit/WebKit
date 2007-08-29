@@ -53,3 +53,18 @@ cpp_quote("// FIXME: WebKitErrorPlugInWillHandleLoad is used for the cancel we d
 cpp_quote("#define WebKitErrorPlugInWillHandleLoad 204")
 
 cpp_quote("#define WebErrorFailingURLKey TEXT(\"WebErrorFailingURLKey\")")
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    object,
+    oleautomation,
+    uuid(19FED49C-7016-48a6-B5C6-07ADE116531B),
+    pointer_default(unique)
+]
+
+interface IWebErrorPrivate : IUnknown
+{
+    HRESULT sslPeerCertificate([out, retval] OLE_HANDLE* result);
+}

@@ -27,13 +27,14 @@
 #define WebError_h
 
 #include "IWebError.h"
+#include "IWebErrorPrivate.h"
 
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
 #include <WebCore/ResourceError.h>
 #pragma warning(pop)
 
-class WebError : public IWebError {
+class WebError : public IWebError, IWebErrorPrivate {
 public:
     static WebError* createInstance(const WebCore::ResourceError&, IPropertyBag* userInfo = 0);
 protected:
@@ -82,11 +83,16 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isPolicyChangeError( 
         /* [retval][out] */ BOOL *result);
 
+    // IWebErrorPrivate
+    virtual HRESULT STDMETHODCALLTYPE sslPeerCertificate( 
+        /* [retval][out] */ OLE_HANDLE *result);
+
     const WebCore::ResourceError& resourceError() const;
 
 private:
     ULONG m_refCount;
     COMPtr<IPropertyBag> m_userInfo;
+    RetainPtr<CFDictionaryRef> m_cfErrorUserInfoDict;
     WebCore::ResourceError m_error;
 };
 

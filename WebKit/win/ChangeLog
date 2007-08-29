@@ -1,3 +1,16 @@
+2007-08-29  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5074612> Added SPI to retrieve certificate info from a WebError.
+
+        Reviewed by Steve.
+
+        * Interfaces/IWebErrorPrivate.idl: Added IWebErrorPrivate
+        * WebError.cpp:
+        (WebError::QueryInterface): WebError now also implements IWebErrorPrivate
+        (WebError::sslPeerCertificate): retrieves certificate info from CFError's user info.
+        * WebError.h:
+        * WebKit.vcproj/WebKitGUID.vcproj: Added IWebErrorPrivate_i.c
+
 2007-08-28  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5079253> Cannot set different margins for the page
