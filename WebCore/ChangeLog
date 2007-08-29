@@ -2,6 +2,22 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15097
+        Make PNGImageDecoder.cpp size its frame buffer vector in its
+        constructor, so it never throws decoded image data away no matter
+        what order its functions are called in.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::decode):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+
+2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=15104
         Don't double-compensate for sizeof(unsigned) when making a buffer
         overflow check in the GIF decoder.  Now interlaced GIFs don't
