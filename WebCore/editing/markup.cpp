@@ -457,38 +457,6 @@ static bool elementHasTextDecorationProperty(Node* node)
     return !propertyMissingOrEqualToNone(style.get(), CSS_PROP_TEXT_DECORATION);
 }
 
-static PassRefPtr<Range> moveEndpointsBeforeNode(const Range* range, Node* node)
-{
-    if (!range || range->isDetached())
-        return 0;
-
-    Document* document = range->ownerDocument();
-
-    ExceptionCode ec = 0;
-    Node* startContainer = range->startContainer(ec);
-    ASSERT(ec == 0);
-    int startOffset = range->startOffset(ec);
-    ASSERT(ec == 0);
-    Node* endContainer = range->endContainer(ec);
-    ASSERT(ec == 0);
-    int endOffset = range->endOffset(ec);
-    ASSERT(ec == 0);
-
-    ASSERT(startContainer);
-    ASSERT(endContainer);
-
-    if (startContainer == node || startContainer->isDescendantOf(node)) {
-        startContainer = node->parent();
-        startOffset = node->nodeIndex();
-    }
-    if (endContainer == node || endContainer->isDescendantOf(node)) {
-        endContainer = node->parent();
-        endOffset = node->nodeIndex();
-    }
-
-    return new Range(document, startContainer, startOffset, endContainer, endOffset);
-}
-
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 DeprecatedString createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool convertBlocksToInlines)
@@ -506,7 +474,7 @@ DeprecatedString createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotat
     // but make sure neither endpoint is inside the delete user interface.
     Frame* frame = document->frame();
     DeleteButtonController* deleteButton = frame ? frame->editor()->deleteButtonController() : 0;
-    RefPtr<Range> updatedRange = moveEndpointsBeforeNode(range, deleteButton ? deleteButton->containerElement() : 0);
+    RefPtr<Range> updatedRange = avoidIntersectionWithNode(range, deleteButton ? deleteButton->containerElement() : 0);
     if (deleteButton)
         deleteButton->disable();
 

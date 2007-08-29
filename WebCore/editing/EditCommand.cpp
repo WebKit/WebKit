@@ -53,7 +53,8 @@ EditCommand::EditCommand(Document* document)
 {
     ASSERT(m_document);
     ASSERT(m_document->frame());
-    setStartingSelection(m_document->frame()->selectionController()->selection());
+    DeleteButtonController* deleteButton = m_document->frame()->editor()->deleteButtonController();
+    setStartingSelection(avoidIntersectionWithNode(m_document->frame()->selectionController()->selection(), deleteButton ? deleteButton->containerElement() : 0));
     setEndingSelection(m_startingSelection);
 }
 

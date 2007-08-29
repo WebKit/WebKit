@@ -35,6 +35,8 @@ class Document;
 class Element;
 class Node;
 class Position;
+class Range;
+class Selection;
 class String;
 class VisiblePosition;
 
@@ -67,6 +69,9 @@ const String& nonBreakingSpaceString();
 
 Position positionBeforeNode(const Node*);
 Position positionAfterNode(const Node*);
+
+PassRefPtr<Range> avoidIntersectionWithNode(const Range*, Node*);
+Selection avoidIntersectionWithNode(const Selection&, Node*);
 
 bool isSpecialElement(const Node*);
 bool validBlockTag(const String&);

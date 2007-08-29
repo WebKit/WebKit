@@ -161,8 +161,10 @@ void DeleteButtonController::show(HTMLElement* element)
 
     m_target = element;
 
-    m_containerElement = new HTMLDivElement(m_target->document());
-    m_containerElement->setId(containerElementIdentifier);
+    if (!m_containerElement) {
+        m_containerElement = new HTMLDivElement(m_target->document());
+        m_containerElement->setId(containerElementIdentifier);
+    }
 
     CSSMutableStyleDeclaration* style = m_containerElement->getInlineStyleDecl();
     style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
@@ -253,7 +255,6 @@ void DeleteButtonController::hide()
     ExceptionCode ec = 0;
     if (m_containerElement && m_containerElement->parentNode())
         m_containerElement->parentNode()->removeChild(m_containerElement.get(), ec);
-    m_containerElement = 0;
 
     if (m_target) {
         if (m_wasStaticPositioned)
@@ -264,7 +265,6 @@ void DeleteButtonController::hide()
 
     m_wasStaticPositioned = false;
     m_wasAutoZIndex = false;
-    m_target = 0;
 }
 
 void DeleteButtonController::enable()

@@ -1,3 +1,37 @@
+2007-08-28  Alice Liu  <alice.liu@apple.com>
+
+        fixed <rdar://problem/5420682> Mail crashes at WebCore::InsertLineBreakCommand::doApply() 
+                                       after dropping a selected image over container's close box
+
+        Reviewed by Darin and Maciej.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show):
+        (WebCore::DeleteButtonController::hide):
+        * editing/DeleteButtonController.h:
+        (WebCore::DeleteButtonController::enabled):
+        General changes made to DeleteButtonController: when hiding, it's not necessary to clear out 
+        the m_containerElement and m_target, especially since to fix this bug we need to keep 
+        their values around.  It's sufficient to just detach the container from target.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        Move the selection out of the deletion UI since we don't want to expose the deletion UI to any editing.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeForPoint):
+        Move the range out of the deletion UI since we don't want to expose the deletion UI to any editing.
+
+        * editing/htmlediting.cpp:
+        * editing/htmlediting.h:
+        (WebCore::avoidIntersectionWithNode):
+        Moved function that operates on Range from markup.cpp to here
+        Added new implementation for function that operates on Selection
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        Moved function out of this file to htmlediting.cpp, and renamed to avoidIntersectionWithNode
+
 2007-08-29  David Hyatt  <hyatt@apple.com>
 
         Fix for 5441281, remove our dependency on cursor rects and drag margins

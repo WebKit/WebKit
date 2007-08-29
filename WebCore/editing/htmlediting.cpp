@@ -36,6 +36,7 @@
 #include "RenderObject.h"
 #include "RegularExpression.h"
 #include "Range.h"
+#include "Selection.h"
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
@@ -866,6 +867,60 @@ bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)
     Position downstream(visiblePosition.deepEquivalent().downstream());
     return downstream.node()->hasTagName(brTag) ||
            downstream.node()->isTextNode() && downstream.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n';
+}
+
+PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
+{
+    if (!range || range->isDetached())
+        return 0;
+
+    Document* document = range->ownerDocument();
+
+    ExceptionCode ec = 0;
+    Node* startContainer = range->startContainer(ec);
+    ASSERT(ec == 0);
+    int startOffset = range->startOffset(ec);
+    ASSERT(ec == 0);
+    Node* endContainer = range->endContainer(ec);
+    ASSERT(ec == 0);
+    int endOffset = range->endOffset(ec);
+    ASSERT(ec == 0);
+
+    ASSERT(startContainer);
+    ASSERT(endContainer);
+    ASSERT(node->parent());
+
+    if (startContainer == node || startContainer->isDescendantOf(node)) {
+        startContainer = node->parent();
+        startOffset = node->nodeIndex();
+    }
+    if (endContainer == node || endContainer->isDescendantOf(node)) {
+        endContainer = node->parent();
+        endOffset = node->nodeIndex();
+    }
+
+    return new Range(document, startContainer, startOffset, endContainer, endOffset);
+}
+
+Selection avoidIntersectionWithNode(const Selection& selection, Node* node)
+{
+    if (selection.isNone())
+        return Selection(selection);
+        
+    Selection updatedSelection(selection);
+    Node* base = selection.base().node();
+    Node* extent = selection.extent().node();
+    ASSERT(base);
+    ASSERT(extent);
+    ASSERT(node->parent());
+    
+    if (base == node || base->isDescendantOf(node))
+        updatedSelection.setBase(Position(node->parent(), node->nodeIndex()));
+    
+    if (extent == node || extent->isDescendantOf(node))
+        updatedSelection.setExtent(Position(node->parent(), node->nodeIndex()));
+        
+    return updatedSelection;
 }
 
 } // namespace WebCore

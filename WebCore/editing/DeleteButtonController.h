@@ -50,7 +50,7 @@ public:
     void show(HTMLElement*);
     void hide();
 
-    bool enabled() { ASSERT(!m_disableStack || (m_disableStack && !m_target)); return m_disableStack == 0; }
+    bool enabled() const { return (m_disableStack == 0 || m_target); }
     void enable();
     void disable();
 
