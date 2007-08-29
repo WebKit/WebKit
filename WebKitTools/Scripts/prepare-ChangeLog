@@ -1074,8 +1074,8 @@ sub generateFileList(\@\@\%)
                 push @addedRegressionTests, $file
                     if isAddedStatus($status)
                        && $file =~ /\.([a-zA-Z]+)$/
-                       && $supportedTestExtensions{$1}
-                       && !scalar(grep(/^resources$/, @components));
+                       && $supportedTestExtensions{lc($1)}
+                       && !scalar(grep(/^resources$/i, @components));
             }
             push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status)) {

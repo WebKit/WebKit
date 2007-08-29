@@ -1,3 +1,12 @@
+2007-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Adam.
+
+        Added case-insensitivity to checks for adding regression tests.
+
+        * Scripts/prepare-ChangeLog:
+        (generateFileList):
+
 2007-08-28  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Maciej.
