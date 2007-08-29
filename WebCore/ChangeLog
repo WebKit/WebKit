@@ -1,3 +1,20 @@
+2007-08-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5441281, remove our dependency on cursor rects and drag margins
+        in AppKit for a large performance boost on the PLT and iBench.
+
+        Reviewed by darin
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::safeRemoveFromSuperview):
+        (WebCore::Widget::addToSuperview):
+        Suppress the resetting of drag margins when views are added and removed.
+
+        (WebCore::Widget::setCursor):
+        Just use NSCursor's set method to immediately set the cursor.  We no longer
+        rely on NSScrollView/NSClipView setDocumentCursor, since that is implemented
+        using cursor rects.
+
 2007-08-29  Rick  <rick@writhe.org.uk>
 
         Reviewed by Tim Hatcher.

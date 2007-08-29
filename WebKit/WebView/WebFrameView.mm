@@ -68,6 +68,11 @@
 
 using namespace WebCore;
 
+@interface NSWindow (WindowPrivate)
+- (BOOL)_needsToResetDragMargins;
+- (void)_setNeedsToResetDragMargins:(BOOL)s;
+@end
+
 @interface NSClipView (AppKitSecretsIKnow)
 - (BOOL)_scrollTo:(const NSPoint *)newOrigin; // need the boolean result from this method
 @end
@@ -163,18 +168,18 @@ enum {
     
     [sv setSuppressLayout:YES];
     
-    // Always start out with arrow.  New docView can then change as needed, but doesn't have to
-    // clean up after the previous docView.  Also TextView will set cursor when added to view
-    // tree, so must do this before setDocumentView:.
-    [sv setDocumentCursor:[NSCursor arrowCursor]];
-
     // If the old view is the first responder, transfer first responder status to the new view as 
-    // a convienience and so that we don't leave the window pointing to a view that's no longer in it.
+    // a convenience and so that we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [sv window];
     NSResponder *firstResponder = [window firstResponder];
     bool makeNewViewFirstResponder = [firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:[sv documentView]];
 
+    // Suppress the resetting of drag margins since we know we can't affect them.
+    BOOL resetDragMargins = [window _needsToResetDragMargins];
+    [window _setNeedsToResetDragMargins:NO];
     [sv setDocumentView:view];
+    [window _setNeedsToResetDragMargins:resetDragMargins];
+
     if (makeNewViewFirstResponder)
         [window makeFirstResponder:view];
     [sv setSuppressLayout:NO];

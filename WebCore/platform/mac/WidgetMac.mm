@@ -41,6 +41,11 @@
 
 #import <wtf/RetainPtr.h>
 
+@interface NSWindow (WindowPrivate)
+- (BOOL) _needsToResetDragMargins;
+- (void) _setNeedsToResetDragMargins:(BOOL)s;
+@end
+
 namespace WebCore {
 
 class WidgetPrivate {
@@ -61,7 +66,11 @@ static void safeRemoveFromSuperview(NSView *view)
     if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:view])
         [window makeFirstResponder:nil];
 
+    // Suppress the resetting of drag margins since we know we can't affect them.
+    BOOL resetDragMargins = [window _needsToResetDragMargins];
+    [window _setNeedsToResetDragMargins:NO];
     [view removeFromSuperview];
+    [window _setNeedsToResetDragMargins:resetDragMargins];
 }
 
 Widget::Widget() : data(new WidgetPrivate)
@@ -134,18 +143,11 @@ void Widget::setFocus()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::setCursor(const Cursor& cursor)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    for (id view = data->view.get(); view; view = [view superview]) {
-        if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
-            if ([view respondsToSelector:@selector(documentCursor)] && cursor.impl() == [view documentCursor])
-                break;
-            [view setDocumentCursor:cursor.impl()];
-            break;
-        }
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
+ void Widget::setCursor(const Cursor& cursor)
+ {
+    if ([NSCursor currentCursor] == cursor.impl())
+        return;
+    [cursor.impl() set];
 }
 
 void Widget::show()
@@ -240,16 +242,22 @@ void Widget::setIsSelected(bool isSelected)
         [frame->bridge() setIsSelected:isSelected forView:getView()];
 }
 
-void Widget::addToSuperview(NSView *superview)
+void Widget::addToSuperview(NSView *view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    ASSERT(superview);
+    ASSERT(view);
     NSView *subview = getOuterView();
-    ASSERT(![superview isDescendantOf:subview]);
-    if ([subview superview] != superview)
-        [superview addSubview:subview];
+    ASSERT(![view isDescendantOf:subview]);
+    
+    // Suppress the resetting of drag margins since we know we can't affect them.
+    NSWindow* window = [view window];
+    BOOL resetDragMargins = [window _needsToResetDragMargins];
+    [window _setNeedsToResetDragMargins:NO];
+    if ([subview superview] != view)
+        [view addSubview:subview];
     data->removeFromSuperviewSoon = false;
+    [window _setNeedsToResetDragMargins:resetDragMargins];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

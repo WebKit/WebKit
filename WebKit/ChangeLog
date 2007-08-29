@@ -1,3 +1,46 @@
+2007-08-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5441281, remove our dependency on cursor rects and drag margins
+        in AppKit for a large performance boost on the PLT and iBench.
+
+        Reviewed by darin
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendNullEvent]):
+        (-[WebBaseNetscapePluginView mouseEntered:]):
+        (-[WebBaseNetscapePluginView mouseExited:]):
+        (-[WebBaseNetscapePluginView stop]):
+        Clean up cursor setting from Netscape plugins.  Don't unconditionally mutate
+        the cursor when a plugin stops.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+        Suppress the resetting of drag margins while the new document view is being
+        added to the view hierarchy.
+
+        * WebView/WebHTMLView.mm:
+        (-[NSWindow _web_borderView]):
+        Expose the border view of the NSWindow so that it can be hit tested.
+
+        (setCursorForMouseLocation):
+        Apply a method swizzle to override the private AppKit method, _setCursorForMouseLocation.
+        We have to do this to suppress the cursor rect invalidation handling from resetting
+        the cursor for no reason.
+
+        The swizzle will do a hit test and allow the cursor set to occur if the mouse ends up
+        being over a plugin or over a view other than a WebHTMLView.
+
+        (+[WebHTMLViewPrivate initialize]):
+        The swizzle for setCursorForMouseLocation is set up here.
+
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        Add a 100ms delay to the fake mouse moved event that fires when the view moves
+        under the mouse (without the mouse moving).  This happens on iBench when the
+        pages get scrolled.  By adding a delay we ensure that even with the mouse inside
+        the window, we don't experience cursor thrashing when pages are updating and
+        scrolling rapidly.
+
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

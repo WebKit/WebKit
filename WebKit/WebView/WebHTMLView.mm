@@ -39,6 +39,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocumentInternal.h"
+#import "WebDynamicScrollBarsView.h"
 #import "WebEditingDelegate.h"
 #import "WebElementDictionary.h"
 #import "WebFrameBridge.h"
@@ -107,8 +108,41 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 
+#import <objc/objc.h>
+#import <objc/objc-class.h>
+
 using namespace WebCore;
 using namespace HTMLNames;
+
+@interface NSWindow (BorderViewAccess)
+- (NSView*)_web_borderView;
+@end
+
+@implementation NSWindow (BorderViewAccess)
+- (NSView*)_web_borderView
+{
+    return _borderView;
+}
+@end
+
+static IMP oldSetCursorIMP = NULL;
+
+static void setCursorForMouseLocation(id self, SEL cmd, NSPoint point)
+{
+    NSView* view = [[(NSWindow*)self _web_borderView] hitTest:point];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView *htmlView = (WebHTMLView*)view;
+        NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
+        NSDictionary *dict = [htmlView elementAtPoint:point allowShadowContent:NO];
+        DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
+        if ([element isKindOfClass:[DOMHTMLAppletElement class]] || [element isKindOfClass:[DOMHTMLObjectElement class]] ||
+            [element isKindOfClass:[DOMHTMLEmbedElement class]])
+            oldSetCursorIMP(self, cmd, point);
+        return;
+    }
+
+    oldSetCursorIMP(self, cmd, point);
+}
 
 extern "C" {
 
@@ -309,12 +343,26 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 @implementation WebHTMLViewPrivate
 
-#ifndef BUILDING_ON_TIGER
+
 + (void)initialize
 {
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+
+    if (!oldSetCursorIMP) {
+        Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
+        ASSERT(setCursorMethod);
+
+#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
+        oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursorForMouseLocation);
+#else
+        oldSetCursorIMP = setCursorMethod->method_imp;
+        setCursorMethod->method_imp = (IMP)setCursorForMouseLocation;
+#endif
+        ASSERT(oldSetCursorIMP);
+    }
+}
 
 - (void)dealloc
 {
@@ -931,7 +979,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
     if (!_private->updateMouseoverTimer) {
         CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
-        _private->updateMouseoverTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
+        
+        // Use a 100ms delay so that the synthetic mouse over update doesn't cause cursor thrashing when pages are loading
+        // and scrolling rapidly back to back.
+        _private->updateMouseoverTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent() + 0.1, 0, 0, 0,
                                                               _updateMouseoverTimerCallback, &context);
         CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateMouseoverTimer, kCFRunLoopDefaultMode);
     }

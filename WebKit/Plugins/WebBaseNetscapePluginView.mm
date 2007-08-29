@@ -817,7 +817,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         event.where.v = -1;
         event.where.h = -1;
     }
-
+    
     [self sendEvent:&event];
 }
 
@@ -960,24 +960,25 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
-    
+
     LOG(PluginEvents, "NPP_HandleEvent(mouseEntered): %d", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
     EventRecord event;
-        
+    
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
-    
-    LOG(PluginEvents, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
-    
-    // Set cursor back to arrow cursor.
+
+    // Set cursor back to arrow cursor.  Because NSCursor doesn't know about changes that the plugin made, we could get confused about what we think the
+    // current cursor is otherwise.  Therefore we have no choice but to unconditionally reset the cursor when the mouse exits the plugin.
     [[NSCursor arrowCursor] set];
+
+    LOG(PluginEvents, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
@@ -1427,9 +1428,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
    
     // Stop the null events
     [self stopNullEvents];
-
-    // Set cursor back to arrow cursor
-    [[NSCursor arrowCursor] set];
     
     // Stop notifications and callbacks.
     [self removeWindowObservers];

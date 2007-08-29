@@ -93,6 +93,7 @@ typedef union PluginPort {
     BOOL isTransparent;
     BOOL isCompletelyObscured;
     BOOL shouldStopSoon;
+
     unsigned pluginFunctionCallDepth;
     
     DOMElement *element;
