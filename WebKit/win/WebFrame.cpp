@@ -2311,7 +2311,7 @@ ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mim
         return WebCore::ObjectContentImage;
 
     if (PluginDatabaseWin::installedPlugins()->isMIMETypeRegistered(mimeType))
-        return WebCore::ObjectContentPlugin;
+        return WebCore::ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return WebCore::ObjectContentFrame;
