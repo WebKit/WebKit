@@ -1,3 +1,25 @@
+2007-08-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15098
+        <rdar://problem/5440319> REGRESSION (9A530-9A534): Double scroll bar on pdfs
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (WebFrameLoaderClient::makeDocumentView):
+         Don't suppress scrollbars before the view creation if we're making the view for a non-html view
+
+        * WebView/WebFrameViewInternal.h: Make _scrollView return a WebDynamicScrollBarsView since so many clients were relying on it being that type anyway.
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+        (-[WebFrameView _scrollView]):
+        (-[WebFrameView setAllowsScrolling:]):
+        (-[WebFrameView allowsScrolling]):
+        * WebView/WebView.mm:
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView alwaysShowVerticalScroller]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+        (-[WebView alwaysShowHorizontalScroller]):
+
 2007-08-29  David Hyatt  <hyatt@apple.com>
 
         The method that was swizzled to fix 5441281 does not exist on Tiger.

@@ -163,7 +163,7 @@ enum {
 
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
 {
-    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self _scrollView];
+    WebDynamicScrollBarsView *sv = [self _scrollView];
     core([self _webView])->dragController()->setDidInitiateDrag(false);
     
     [sv setSuppressLayout:YES];
@@ -222,7 +222,7 @@ enum {
     _private->webFrame = webFrame;    
 }
 
-- (NSScrollView *)_scrollView
+- (WebDynamicScrollBarsView *)_scrollView
 {
     // this can be called by [super dealloc] when cleaning up the keyview loop,
     // after _private has been nilled out.
@@ -365,7 +365,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebDynamicScrollBarsView *scrollView = (WebDynamicScrollBarsView *)[self _scrollView];
+    WebDynamicScrollBarsView *scrollView = [self _scrollView];
     [scrollView setAllowsScrolling:flag];
     WebCore::Frame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0) {
@@ -376,7 +376,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)allowsScrolling
 {
-    return [(WebDynamicScrollBarsView *)[self _scrollView] allowsScrolling];
+    return [[self _scrollView] allowsScrolling];
 }
 
 - (NSView <WebDocumentView> *)documentView

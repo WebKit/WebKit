@@ -41,6 +41,7 @@
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
+#import "WebDynamicScrollBarsView.h"
 #import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
 #import "WebFrameBridge.h"
@@ -155,12 +156,17 @@ void WebFrameLoaderClient::makeDocumentView()
     WebFrameView *v = m_webFrame->_private->webFrameView;
     WebDataSource *ds = [m_webFrame.get() _dataSource];
 
-    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && [[WebFrameView class] _viewClassForMIMEType:[[ds response] MIMEType]] == [WebHTMLView class];
+    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[[ds response] MIMEType]] == [WebHTMLView class];
+    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && willProduceHTMLView;
     if (canSkipCreation) {
         [[v documentView] setDataSource:ds];
         return;
     }
 
+    // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
+    if (!willProduceHTMLView)
+        [[v _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
+    
     NSView <WebDocumentView> *documentView = [v _makeDocumentViewForDataSource:ds];
     if (!documentView)
         return;
