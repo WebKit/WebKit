@@ -1,3 +1,12 @@
+2007-08-29  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix compilation.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::objectContentType):
+
 2007-08-19  Mike Hommey  <mh+webkit@glandium.org>
 
         Reviewed by George Staikos.

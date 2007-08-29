@@ -850,7 +850,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
 {
     qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<_mimeType;
     if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
-        return ObjectContentPlugin;
+        return ObjectContentOtherPlugin;
 
     if (!url.isValid())
         return ObjectContentNone;
@@ -868,7 +868,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
         return ObjectContentImage;
 
     if (QWebFactoryLoader::self()->supportsMimeType(mimeType))
-        return ObjectContentPlugin;
+        return ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
