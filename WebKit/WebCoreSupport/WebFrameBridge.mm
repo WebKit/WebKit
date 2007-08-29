@@ -624,12 +624,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             if ([MIMEType length] == 0) {
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
                 if (WebBasePluginPackage *package = [[self webView] _pluginForExtension:extension]) {
-                    if ([package isKindOfClass:[WebNetscapePluginPackage class]])
-                        return ObjectContentNetscapePlugin;
-                    else {
-                        ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+                    if ([package isKindOfClass:[WebPluginPackage class]]) 
                         return ObjectContentOtherPlugin;
+#ifndef __LP64__
+                    else {
+                        ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
+                        return ObjectContentNetscapePlugin;
                     }
+#endif
                 }
             }
         }
@@ -642,12 +644,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return ObjectContentImage;
 
     if (WebBasePluginPackage *package = [[self webView] _pluginForMIMEType:MIMEType]) {
-        if ([package isKindOfClass:[WebNetscapePluginPackage class]])
-            return ObjectContentNetscapePlugin;
-        else {
-            ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+        if ([package isKindOfClass:[WebPluginPackage class]]) 
             return ObjectContentOtherPlugin;
+#ifndef __LP64__
+        else {
+            ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
+            return ObjectContentNetscapePlugin;
         }
+#endif
     }
 
     if ([WebFrameView _viewClassForMIMEType:MIMEType])

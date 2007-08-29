@@ -1,3 +1,9 @@
+2007-08-29  Anders Carlsson  <andersca@apple.com>
+
+        Fix 64-bit build.
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2007-08-29  David Hyatt  <hyatt@apple.com>
 
         Fix for 5441281, remove our dependency on cursor rects and drag margins
