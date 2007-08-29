@@ -1,3 +1,21 @@
+2007-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Update fix landed in r25249 to account for XMLHttpRequest, which can also be EventTargets.
+
+        Tests: http/tests/security/listener/resources/childWithXMLHttpRequest.html
+               http/tests/security/listener/resources/targetChild-XMLHttpRequest-addEventListener.html
+               http/tests/security/listener/resources/targetChild-XMLHttpRequest-shortcut.html
+               http/tests/security/listener/xss-XMLHttpRequest-addEventListener.html
+               http/tests/security/listener/xss-XMLHttpRequest-shortcut.html
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::putValueProperty): Use the Window object associated with document's frame, not the active Window.
+        (KJS::JSXMLHttpRequestPrototypeFunction::callAsFunction): ditto
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::document): Expose Document member so bindings can access the correct frame.
+
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

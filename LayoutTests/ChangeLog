@@ -1,3 +1,17 @@
+2007-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Additional tests for <rdar://problem/5426142>
+
+        * http/tests/security/listener/resources/childWithXMLHttpRequest.html: Added.
+        * http/tests/security/listener/resources/targetChild-XMLHttpRequest-addEventListener.html: Added.
+        * http/tests/security/listener/resources/targetChild-XMLHttpRequest-shortcut.html: Added.
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt: Added.
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener.html: Added.
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt: Added.
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut.html: Added.
+
 2007-08-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
