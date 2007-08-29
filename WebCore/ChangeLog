@@ -2,6 +2,22 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15096
+        Move the GIF frame duration minimum check into the various
+        ImageSource*.cpp backends and use the same values as
+        ImageSourceCG.cpp.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+
+2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=15097
         Make PNGImageDecoder.cpp size its frame buffer vector in its
         constructor, so it never throws decoded image data away no matter

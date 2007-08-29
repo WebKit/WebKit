@@ -651,11 +651,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         // Let's choose 3 (the more popular)
         if (frame_reader->disposal_method == 4)
           frame_reader->disposal_method = (gdispose)3;
-        unsigned short n = GETINT16(q + 1);
-        // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
-        // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
-        // a duration of <= 10 ms. See gfxImageFrame::GetTimeout in Gecko or Radar 4051389 for more.
-        frame_reader->delay_time = n <= 1 ? 100 : n * 10;
+        frame_reader->delay_time = GETINT16(q + 1) * 10;
       }
       GETN(1, gif_consume_block);
     }

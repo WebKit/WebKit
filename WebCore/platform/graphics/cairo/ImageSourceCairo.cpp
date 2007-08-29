@@ -182,7 +182,13 @@ float ImageSource::frameDurationAtIndex(size_t index)
     if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
         return 0;
 
-    return buffer->duration() / 1000.0f;
+    // Many annoying ads specify a 0 duration to make an image flash as quickly
+    // as possible.  We follow WinIE's behavior and use a duration of 100 ms
+    // for any frames that specify a duration of <= 50 ms.  See
+    // <http://bugs.webkit.org/show_bug.cgi?id=14413> or Radar 4051389 for
+    // more.
+    const float duration = buffer->duration() / 1000.0f;
+    return (duration < 0.051f) ? 0.100f : duration;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
