@@ -1,3 +1,17 @@
+2007-08-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5436800> REGRESSION: PLT is 1.5% slower due 
+        to r24593 and r25098
+
+        In r25098, we only called setCreatedByParser for XML! This patch 
+        calls it for HTML too, and takes care of the performance 
+        regression.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::styleConstructor):
+
 2007-08-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
