@@ -1,3 +1,12 @@
+2007-08-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix scrolling with the keyboard if only one of the two scrollbars is visible.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::keyPressEvent):
+
 2007-08-29  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

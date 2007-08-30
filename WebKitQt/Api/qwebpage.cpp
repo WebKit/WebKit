@@ -428,33 +428,43 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
         PlatformScrollbar *h, *v;
         h = mainFrame()->d->horizontalScrollBar();
         v = mainFrame()->d->verticalScrollBar();
-        if (!h || !v)
-          return;
 
         switch (ev->key()) {
             case Qt::Key_Up:
-                v->setValue(v->value() - 10);
-                update();
+                if (v) {
+                    v->setValue(v->value() - 10);
+                    update();
+                }
                 break;
             case Qt::Key_Down:
-                v->setValue(v->value() + 10);
-                update();
+                if (v) {
+                    v->setValue(v->value() + 10);
+                    update();
+                }
                 break;
             case Qt::Key_Left:
-                h->setValue(h->value() - 10);
-                update();
+                if (h) {
+                    h->setValue(h->value() - 10);
+                    update();
+                }
                 break;
             case Qt::Key_Right:
-                h->setValue(h->value() + 10);
-                update();
+                if (h) {
+                    h->setValue(h->value() + 10);
+                    update();
+                }
                 break;
             case Qt::Key_PageUp:
-                v->setValue(v->value() - height());
-                update();
+                if (v) {
+                    v->setValue(v->value() - height());
+                    update();
+                }
                 break;
             case Qt::Key_PageDown:
-                v->setValue(v->value() + height());
-                update();
+                if (v) {
+                    v->setValue(v->value() + height());
+                    update();
+                }
                 break;
             default:
                 handled = false;
