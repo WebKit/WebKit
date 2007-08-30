@@ -1,3 +1,14 @@
+2007-08-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13282
+          <rdar://problem/5126392> REGRESSION (NativePopUp): Rightmost character cut off in pop-up menu
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth): When measuring option text, use
+        the same WebCore run rounding behavior that is used to draw it in the popup button.
+
 2007-08-30  Riku Voipio  <riku.voipio@iki.fi>
 
         Reviewed by Dave Kilzer.

@@ -140,11 +140,6 @@ void RenderMenuList::setStyle(RenderStyle* newStyle)
 
 void RenderMenuList::updateOptionsWidth()
 {
-    // FIXME: There is no longer any reason to use a text style with the font hacks disabled.
-    // It is a leftover from when the text was not drawn with the engine -- now that we render
-    // with the engine, we can just use the default style as the engine does.
-    TextStyle textStyle(0, 0, 0, false, false, false, false);
-
     float maxOptionWidth = 0;
     const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
     int size = listItems.size();    
@@ -153,7 +148,7 @@ void RenderMenuList::updateOptionsWidth()
         if (element->hasTagName(optionTag)) {
             String text = static_cast<HTMLOptionElement*>(element)->optionText();
             if (!text.isEmpty())
-                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text, textStyle));
+                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text, TextStyle()));
         }
     }
 
