@@ -32,9 +32,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-/* On ARM some versions of GCC don't pack structures by default so sizeof(UChar)
+/* On some ARM platforms GCC won't pack structures by default so sizeof(UChar)
    will end up being != 2 which causes crashes since the code depends on that. */
-#if COMPILER(GCC) && PLATFORM(ARM)
+#if COMPILER(GCC) && PLATFORM(FORCE_PACK)
 #define PACK_STRUCT __attribute__((packed))
 #else
 #define PACK_STRUCT

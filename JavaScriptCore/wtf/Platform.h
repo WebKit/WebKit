@@ -130,7 +130,14 @@
 #if   defined(arm) \
    || defined(__arm__)
 #define WTF_PLATFORM_ARM 1
+#if defined(__ARMEB__)
+#define WTF_PLATFORM_BIG_ENDIAN 1
+#elif !defined(__ARM_EABI__) && !defined(__ARMEB__)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
+#endif
+#if !defined(__ARM_EABI__)
+#define WTF_PLATFORM_FORCE_PACK 1
+#endif
 #endif
 
 /* PLATFORM(X86) */

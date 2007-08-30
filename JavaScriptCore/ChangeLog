@@ -1,3 +1,15 @@
+2007-08-30  Riku Voipio  <riku.voipio@iki.fi>
+
+        Reviewed by Dave Kilzer.
+
+        Better ARM defines.
+
+        * kjs/ustring.h: Update comments to reflect the change and update test
+        to fit changes to Platform.h.
+        * wtf/Platform.h: Forced packing is only needed on oldabi ARM.
+        Set middle-endian floats only for little-endian oldabi ARM.
+        Set big-endian define for big-endian ARM.
+
 2007-08-29  Ryan Leavengood <leavengood@gmail.com>
 
         Reviewed by Maciej.

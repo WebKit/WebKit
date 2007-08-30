@@ -1,3 +1,12 @@
+2007-08-30  Riku Voipio  <riku.voipio@iki.fi>
+
+        Reviewed by Dave Kilzer.
+
+        Better ARM defines.
+
+        * platform/DeprecatedString.h: Update comments to reflect the
+        change and update test to fit changes to Platform.h.
+
 2007-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
