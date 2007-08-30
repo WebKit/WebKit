@@ -1273,16 +1273,18 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength)
     if (!result)
         goto exit;
 
-    UChar* resultPos = result;
-    if (textSegments) {
-        unsigned size = textSegments->size();
-        for (unsigned i = 0; i < size; ++i) {
-            const pair<UChar*, unsigned>& segment = textSegments->at(i);
-            memcpy(resultPos, segment.first, segment.second * sizeof(UChar));
-            resultPos += segment.second;
+    {
+        UChar* resultPos = result;
+        if (textSegments) {
+            unsigned size = textSegments->size();
+            for (unsigned i = 0; i < size; ++i) {
+                const pair<UChar*, unsigned>& segment = textSegments->at(i);
+                memcpy(resultPos, segment.first, segment.second * sizeof(UChar));
+                resultPos += segment.second;
+            }
         }
+        memcpy(resultPos, textBuffer.data(), textBuffer.size() * sizeof(UChar));
     }
-    memcpy(resultPos, textBuffer.data(), textBuffer.size() * sizeof(UChar));
 
 exit:
     if (textSegments) {

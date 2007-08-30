@@ -1,3 +1,14 @@
+2007-08-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Fix Qt/Gdk build. gcc on Linux at least doesn't like initializing
+        variables between jumps with goto ("jump to label foo crosses
+        initialization of bar").
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainTextToMallocAllocatedBuffer):
+
 2007-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti.
