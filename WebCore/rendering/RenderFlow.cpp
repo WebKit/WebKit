@@ -856,6 +856,7 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, i
 
 void RenderFlow::checkConsistency() const
 {
+#ifdef CHECK_CONSISTENCY
     const InlineFlowBox* prev = 0;
     for (const InlineFlowBox* child = m_firstLineBox; child != 0; child = child->nextFlowBox()) {
         ASSERT(child->object() == this);
@@ -863,6 +864,7 @@ void RenderFlow::checkConsistency() const
         prev = child;
     }
     ASSERT(prev == m_lastLineBox);
+#endif
 }
 
 #endif

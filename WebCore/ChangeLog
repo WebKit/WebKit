@@ -1,3 +1,24 @@
+2007-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix http://bugs.webkig.org/show_bug.cgi?id=14981
+          DEBUG builds of WebKit hang videwing Yahoo! Mail messages
+          with ~5 MB text attachment
+
+        * rendering/InlineFlowBox.cpp: (WebCore::InlineFlowBox::checkConsistency):
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::checkConsistency):
+        * rendering/RenderText.cpp: (WebCore::RenderText::checkConsistency):
+        Put the actual consistency check inside an ifdef. If you need it you can
+        turn it on. There's still some function call overhead in builds that don't
+        have NDEBUG defined, but that's worth it so we can turn this on and off
+        without recompiling the world.
+
+        - small code style improvement to recently changed function
+
+        * editing/TextIterator.cpp: (WebCore::plainTextToMallocAllocatedBuffer):
+        Use a typedef and make_pair to make the code dealing with the pair simpler to read.
+
 2007-08-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

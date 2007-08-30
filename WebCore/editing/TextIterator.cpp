@@ -1246,7 +1246,8 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength)
     // Use system malloc for buffers since they can consume lots of memory and current TCMalloc is unable return it back to OS.
     static const unsigned cMaxSegmentSize = 1 << 16;
     bufferLength = 0;
-    Vector<pair<UChar*, unsigned> >* textSegments = 0;
+    typedef pair<UChar*, unsigned> TextSegment;
+    Vector<TextSegment>* textSegments = 0;
     Vector<UChar> textBuffer;
     textBuffer.reserveCapacity(cMaxSegmentSize);
     for (TextIterator it(r); !it.atEnd(); it.advance()) {
@@ -1255,10 +1256,9 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength)
             if (!newSegmentBuffer)
                 goto exit;
             memcpy(newSegmentBuffer, textBuffer.data(), textBuffer.size() * sizeof(UChar));
-            pair<UChar*, unsigned> newSegment(newSegmentBuffer, textBuffer.size());
             if (!textSegments)
-                textSegments = new Vector<pair<UChar*, unsigned> >;
-            textSegments->append(newSegment);
+                textSegments = new Vector<TextSegment>;
+            textSegments->append(make_pair(newSegmentBuffer, textBuffer.size()));
             textBuffer.clear();
         }
         textBuffer.append(it.characters(), it.length());
@@ -1278,7 +1278,7 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength)
         if (textSegments) {
             unsigned size = textSegments->size();
             for (unsigned i = 0; i < size; ++i) {
-                const pair<UChar*, unsigned>& segment = textSegments->at(i);
+                const TextSegment& segment = textSegments->at(i);
                 memcpy(resultPos, segment.first, segment.second * sizeof(UChar));
                 resultPos += segment.second;
             }
