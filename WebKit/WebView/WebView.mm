@@ -1650,17 +1650,23 @@ NSMutableDictionary *countInvocations;
 
 + (void)initialize
 {
-    static BOOL tooLate = NO;
-    if (!tooLate) {
+    static BOOL initialized = NO;
+    if (initialized)
+        return;
+    initialized = YES;
+
 #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
-        // this prevents open source users from crashing when using the Show DOM Tree menu item in Safari 2
-        // FIXME: remove this when we no longer need to support Safari 2
-        if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"])
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_finishedLaunching) name:NSApplicationDidFinishLaunchingNotification object:NSApp];
+    // This prevents open source users from crashing when using the Show DOM Tree menu item in Safari 2.
+    // FIXME: remove this when we no longer need to support Safari 2.
+    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"])
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_finishedLaunching) name:NSApplicationDidFinishLaunchingNotification object:NSApp];
 #endif
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
-        tooLate = YES;
-    }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
+
+    // Older versions of Safari use the pasteboard types without initializing them.
+    // But they create a WebView beforehand, so if we initialize here that should be fine.
+    WebURLPasteboardType();
 }
 
 + (void)_applicationWillTerminate
@@ -1774,7 +1780,7 @@ NSMutableDictionary *countInvocations;
 
 + (NSString *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard
 {
-    return [pasteboard stringForType:WebURLNamePboardType];
+    return [pasteboard stringForType:WebURLNamePasteboardType()];
 }
 
 + (void)registerURLSchemeAsLocal:(NSString *)protocol

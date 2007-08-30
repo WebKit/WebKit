@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,12 @@
 @class WebArchive;
 @class WebHTMLView;
 
-extern NSString *WebURLPboardType;
-extern NSString *WebURLNamePboardType;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+NSString *WebURLPasteboardType(void);
+NSString *WebURLNamePasteboardType(void);
 
 @interface NSPasteboard (WebExtras)
 
@@ -79,3 +83,7 @@ extern NSString *WebURLNamePboardType;
 - (void)_web_writePromisedRTFDFromArchive:(WebArchive*)archive containsImage:(BOOL)containsImage;
 
 @end
+
+#ifdef __cplusplus
+}
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,10 @@ using namespace WebCore;
 String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, String* title) const
 {
     NSURL *URL = [pasteboard _web_bestURL];
-    if (title)
-        if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType])
+    if (title) {
+        if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePasteboardType()])
             *title = URLTitleString;
+    }
 
     return [URL _web_originalDataAsString];
 }

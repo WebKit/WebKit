@@ -1,3 +1,37 @@
+2007-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/4582212> WebKit inappropriately adds +initialize to
+          NSPasteboard via a category, prevents AppKit initialize
+          http://bugs.webkit.org/show_bug.cgi?id=9417
+
+        * Misc/WebNSPasteboardExtras.h: Got rid of the global data objects and replaced
+        them with global functions.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (initializePasteboardTypes): Changed the initialize method to be this function.
+        (WebURLPasteboardType): Added, calls the initialize function and then returns
+        the value of the global.
+        (WebURLNamePasteboardType): Ditto.
+        (+[NSPasteboard _web_writableTypesForURL]): Changed to call the new function instead
+        of getting at the global directly.
+        (+[NSPasteboard _web_dragTypesForURL]): Ditto.
+        (-[NSPasteboard _web_writeURL:andTitle:types:]): Ditto.
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::urlFromPasteboard): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]): Ditto.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]): Added a call to one of the functions to take advantage
+        of the side effect that initializes the globals; this is to help out old versions
+        of Safari.
+        (+[WebView URLTitleFromPasteboard:]): Changed to call the new function instead
+        of getting at the global directly.
+
+        * WebKit.exp: Add exports of the new functions.
+
 2007-08-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
