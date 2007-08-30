@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -888,14 +888,14 @@ PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
 
     ASSERT(startContainer);
     ASSERT(endContainer);
-    ASSERT(node->parent());
+    ASSERT(!node || node->parentNode());
 
     if (startContainer == node || startContainer->isDescendantOf(node)) {
-        startContainer = node->parent();
+        startContainer = node->parentNode();
         startOffset = node->nodeIndex();
     }
     if (endContainer == node || endContainer->isDescendantOf(node)) {
-        endContainer = node->parent();
+        endContainer = node->parentNode();
         endOffset = node->nodeIndex();
     }
 
@@ -912,13 +912,13 @@ Selection avoidIntersectionWithNode(const Selection& selection, Node* node)
     Node* extent = selection.extent().node();
     ASSERT(base);
     ASSERT(extent);
-    ASSERT(node->parent());
+    ASSERT(!node || node->parentNode());
     
     if (base == node || base->isDescendantOf(node))
-        updatedSelection.setBase(Position(node->parent(), node->nodeIndex()));
+        updatedSelection.setBase(Position(node->parentNode(), node->nodeIndex()));
     
     if (extent == node || extent->isDescendantOf(node))
-        updatedSelection.setExtent(Position(node->parent(), node->nodeIndex()));
+        updatedSelection.setExtent(Position(node->parentNode(), node->nodeIndex()));
         
     return updatedSelection;
 }

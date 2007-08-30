@@ -1,3 +1,10 @@
+2007-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        * editing/htmlediting.cpp: (WebCore::avoidIntersectionWithNode):
+        Fix an assert that was firing for me all the time when doing editing operations.
+
 2007-08-29  Anders Carlsson <andersca@apple.com>
 
         Reviewed by Adam.
