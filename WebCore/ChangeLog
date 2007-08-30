@@ -1,3 +1,15 @@
+2007-08-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5404329>
+        Plugin content starves WM_TIMER events on UI thread (affects idle behavior of app) on http://www.vincent-vella.com/, http://www.sagmeister.com/
+        
+        Add a tiny delay to invalidation timer to prevent it from starving other timers.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::invalidateRect):
+
 2007-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

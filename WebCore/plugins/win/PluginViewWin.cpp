@@ -1219,7 +1219,7 @@ void PluginViewWin::invalidateRect(NPRect* rect)
         if (m_quirks & PluginQuirkThrottleInvalidate) {
             m_invalidRects.append(r);
             if (!m_invalidateTimer.isActive())
-                m_invalidateTimer.startOneShot(0.0);
+                m_invalidateTimer.startOneShot(0.001);
         } else
             Widget::invalidateRect(r);
     }
