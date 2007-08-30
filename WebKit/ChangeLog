@@ -1,3 +1,14 @@
+2007-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim.
+        
+        <rdar://problem/5439953> REGRESSION: Cannot load feeds in widgets in Dashcode due to change in WebKit delegate methods
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]): Don't create the debugger object if the frame has not yet
+        created its script interpreter, to avoid premature dispatch of windowScriptObjectAvailable/Cleared
+        delegate methods. The script debugger will be created in any case when the window object does appear.
+
 2007-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
