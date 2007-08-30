@@ -1,3 +1,13 @@
+2007-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+ 
+        - fix <rdar://problem/5423270> CrashTracer: [USER] 1 crash in Safari at com.apple.WebCore:
+          WebCore::plainTextToMallocAllocatedBuffer + 762
+
+        * editing/TextIterator.cpp: (WebCore::plainTextToMallocAllocatedBuffer):
+        Check for a malloc failure and exit the function if it failed.
+
 2007-08-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

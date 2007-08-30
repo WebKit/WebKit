@@ -1240,8 +1240,10 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
     
 UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength) 
 {
+    UChar* result = 0;
+
     // Do this in pieces to avoid massive reallocations if there is a large amount of text.
-    // Use system malloc for buffers since they can consume lots of memory and current TCMalloc is unable return it back to OS
+    // Use system malloc for buffers since they can consume lots of memory and current TCMalloc is unable return it back to OS.
     static const unsigned cMaxSegmentSize = 1 << 16;
     bufferLength = 0;
     Vector<pair<UChar*, unsigned> >* textSegments = 0;
@@ -1249,34 +1251,47 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength)
     textBuffer.reserveCapacity(cMaxSegmentSize);
     for (TextIterator it(r); !it.atEnd(); it.advance()) {
         if (textBuffer.size() && textBuffer.size() + it.length() > cMaxSegmentSize) {
+            UChar* newSegmentBuffer = static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar)));
+            if (!newSegmentBuffer)
+                goto exit;
+            memcpy(newSegmentBuffer, textBuffer.data(), textBuffer.size() * sizeof(UChar));
+            pair<UChar*, unsigned> newSegment(newSegmentBuffer, textBuffer.size());
             if (!textSegments)
                 textSegments = new Vector<pair<UChar*, unsigned> >;
-            pair<UChar*, unsigned> newSegment(static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar))), textBuffer.size());
-            memcpy(newSegment.first, textBuffer.data(), textBuffer.size() * sizeof(UChar));
             textSegments->append(newSegment);
             textBuffer.clear();
         }
         textBuffer.append(it.characters(), it.length());
         bufferLength += it.length();
     }
-    
+
     if (!bufferLength)
         return 0;
-    
+
     // Since we know the size now, we can make a single buffer out of the pieces with one big alloc
-    UChar* resultBuffer = static_cast<UChar*>(malloc(bufferLength * sizeof(UChar)));
-    UChar* resultPos = resultBuffer;
+    result = static_cast<UChar*>(malloc(bufferLength * sizeof(UChar)));
+    if (!result)
+        goto exit;
+
+    UChar* resultPos = result;
     if (textSegments) {
-        for (unsigned n = 0; n < textSegments->size(); n++) {
-            const pair<UChar*, unsigned>& s = textSegments->at(n);
-            memcpy(resultPos, s.first, s.second * sizeof(UChar));
-            free(s.first);
-            resultPos += s.second;
+        unsigned size = textSegments->size();
+        for (unsigned i = 0; i < size; ++i) {
+            const pair<UChar*, unsigned>& segment = textSegments->at(i);
+            memcpy(resultPos, segment.first, segment.second * sizeof(UChar));
+            resultPos += segment.second;
         }
-        delete textSegments;
     }
     memcpy(resultPos, textBuffer.data(), textBuffer.size() * sizeof(UChar));
-    return resultBuffer;
+
+exit:
+    if (textSegments) {
+        unsigned size = textSegments->size();
+        for (unsigned i = 0; i < size; ++i)
+            free(textSegments->at(i).first);
+        delete textSegments;
+    }
+    return result;
 }
 
 DeprecatedString plainText(const Range* r)
