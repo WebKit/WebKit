@@ -88,6 +88,115 @@ private:
     // FIXME: user gesture
 };
 
+static const double MessageThrottleTimeInterval = 0.001;
+
+class PluginMessageThrottlerWin {
+public:
+    PluginMessageThrottlerWin(PluginViewWin* pluginView)
+        : m_back(0), m_front(0)
+        , m_pluginView(pluginView)
+        , m_messageThrottleTimer(this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
+    {
+        // Initialize the free list with our inline messages
+        for (unsigned i = 0; i < NumInlineMessages - 1; i++)
+            m_inlineMessages[i].next = &m_inlineMessages[i + 1];
+        m_inlineMessages[NumInlineMessages - 1].next = 0;
+        m_freeInlineMessages = &m_inlineMessages[0];
+    }
+
+    ~PluginMessageThrottlerWin()
+    {
+        PluginMessage* next;
+    
+        for (PluginMessage* message = m_front; message; message = next) {
+            next = message->next;
+            freeMessage(message);
+        }        
+    }
+    
+    void appendMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+    {
+        PluginMessage* message = allocateMessage();
+
+        message->hWnd = hWnd;
+        message->msg = msg;
+        message->wParam = wParam;
+        message->lParam = lParam;
+        message->next = 0;
+
+        if (m_back)
+            m_back->next = message;
+        m_back = message;
+        if (!m_front)
+            m_front = message;
+
+        if (!m_messageThrottleTimer.isActive())
+            m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
+    }
+
+private:
+    struct PluginMessage {
+        HWND hWnd;
+        UINT msg;
+        WPARAM wParam;
+        LPARAM lParam;
+
+        struct PluginMessage* next;
+    };
+    
+    void messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*)
+    {
+        PluginMessage* message = m_front;
+        m_front = m_front->next;
+        if (message == m_back)
+            m_back = 0;
+
+        ::CallWindowProc(m_pluginView->pluginWndProc(), message->hWnd, message->msg, message->wParam, message->lParam);
+
+        freeMessage(message);
+
+        if (m_front)
+            m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
+    }
+
+    PluginMessage* allocateMessage()
+    {
+        PluginMessage *message;
+
+        if (m_freeInlineMessages) {
+            message = m_freeInlineMessages;
+            m_freeInlineMessages = message->next;
+        } else
+            message = new PluginMessage;
+
+        return message;
+    }
+
+    bool isInlineMessage(PluginMessage* message) 
+    {
+        return message >= &m_inlineMessages[0] && message <= &m_inlineMessages[NumInlineMessages - 1];
+    }
+
+    void freeMessage(PluginMessage* message) 
+    {
+        if (isInlineMessage(message)) {
+            message->next = m_freeInlineMessages;
+            m_freeInlineMessages = message;
+        } else
+            delete message;
+    }
+
+    PluginViewWin* m_pluginView;
+    PluginMessage* m_back;
+    PluginMessage* m_front;
+
+    static const int NumInlineMessages = 4;
+    PluginMessage m_inlineMessages[NumInlineMessages];
+    PluginMessage* m_freeInlineMessages;
+
+    Timer<PluginMessageThrottlerWin> m_messageThrottleTimer;
+};
+
 static String scriptStringIfJavaScriptURL(const KURL& url)
 {
     if (!url.url().startsWith("javascript:", false))
@@ -137,8 +246,23 @@ static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam
 {
     PluginViewWin* pluginView = reinterpret_cast<PluginViewWin*>(GetProp(hWnd, kWebPluginViewProperty));
 
+    return pluginView->wndProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT
+PluginViewWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (message == WM_USER + 1 &&
+        m_quirks & PluginQuirkThrottleWMUserPlusOneMessages) {
+        if (!m_messageThrottler)
+            m_messageThrottler.set(new PluginMessageThrottlerWin(this));
+
+        m_messageThrottler->appendMessage(hWnd, message, wParam, lParam);
+        return 0;
+    }
+
     // Call the plug-in's window proc.
-    return ::CallWindowProc(pluginView->pluginWndProc(), hWnd, message, wParam, lParam);
+    return ::CallWindowProc(m_pluginWndProc, hWnd, message, wParam, lParam);
 }
 
 void PluginViewWin::updateWindow() const
@@ -1179,6 +1303,7 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     if (mimeType == "application/x-shockwave-flash") {
         m_quirks |= PluginQuirkWantsMozillaUserAgent;
         m_quirks |= PluginQuirkThrottleInvalidate;
+        m_quirks |= PluginQuirkThrottleWMUserPlusOneMessages;
     }
 
     // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so

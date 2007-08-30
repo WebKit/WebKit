@@ -1,3 +1,28 @@
+2007-08-29  Anders Carlsson <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5386098>
+        Repro hang with some Flash plugin content (http://dougmccune.com/blog/2007/07/25/coming-to-flexcamp-at-adobe/)
+        
+        In some cases, Flash ends up starving the main loop by sending a lot of WM_USER + 1 messages. Throttle these
+        messages so they won't end up hanging the web browser.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin):
+        (WebCore::PluginMessageThrottlerWin::~PluginMessageThrottlerWin):
+        (WebCore::PluginMessageThrottlerWin::appendMessage):
+        (WebCore::PluginMessageThrottlerWin::messageThrottleTimerFired):
+        (WebCore::PluginMessageThrottlerWin::allocateMessage):
+        (WebCore::PluginMessageThrottlerWin::isInlineMessage):
+        (WebCore::PluginMessageThrottlerWin::freeMessage):
+        (WebCore::PluginViewWndProc):
+        (WebCore::PluginViewWin::wndProc):
+        (WebCore::PluginViewWin::determineQuirks):
+        * plugins/win/PluginViewWin.h:
+        (WebCore::):
+        (WebCore::PluginViewWin::pluginWndProc):
+
 2007-08-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

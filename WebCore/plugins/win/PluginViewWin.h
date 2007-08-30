@@ -39,6 +39,7 @@
 #include "npapi.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -55,6 +56,7 @@ namespace WebCore {
     class KeyboardEvent;
     class MouseEvent;
     class KURL;
+    class PluginMessageThrottlerWin;
     class PluginPackageWin;
     class PluginRequestWin;
     class PluginStreamWin;
@@ -64,6 +66,7 @@ namespace WebCore {
         PluginQuirkDeferFirstSetWindowCall = 1 << 1,
         PluginQuirkThrottleInvalidate = 1 << 2, 
         PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
+        PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4
     };
 
     enum PluginStatus {
@@ -124,8 +127,9 @@ namespace WebCore {
 
         virtual void setParent(ScrollView*);
 
-        int quirks() const { return m_quirks; }
-        WNDPROC pluginWndProc() { return m_pluginWndProc; }
+        LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+        WNDPROC pluginWndProc() const { return m_pluginWndProc; }
     private:
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         void init();
@@ -149,6 +153,8 @@ namespace WebCore {
         void invalidateTimerFired(Timer<PluginViewWin>*);
         Timer<PluginViewWin> m_requestTimer;
         Timer<PluginViewWin> m_invalidateTimer;
+
+        OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
 
         void updateWindow() const;
         void determineQuirks(const String& mimeType);
