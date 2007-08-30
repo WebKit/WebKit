@@ -431,40 +431,28 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
 
         switch (ev->key()) {
             case Qt::Key_Up:
-                if (v) {
+                if (v)
                     v->setValue(v->value() - 10);
-                    update();
-                }
                 break;
             case Qt::Key_Down:
-                if (v) {
+                if (v)
                     v->setValue(v->value() + 10);
-                    update();
-                }
                 break;
             case Qt::Key_Left:
-                if (h) {
+                if (h)
                     h->setValue(h->value() - 10);
-                    update();
-                }
                 break;
             case Qt::Key_Right:
-                if (h) {
+                if (h)
                     h->setValue(h->value() + 10);
-                    update();
-                }
                 break;
             case Qt::Key_PageUp:
-                if (v) {
+                if (v)
                     v->setValue(v->value() - height());
-                    update();
-                }
                 break;
             case Qt::Key_PageDown:
-                if (v) {
+                if (v)
                     v->setValue(v->value() + height());
-                    update();
-                }
                 break;
             default:
                 handled = false;
