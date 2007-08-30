@@ -429,34 +429,34 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
         h = mainFrame()->d->horizontalScrollBar();
         v = mainFrame()->d->verticalScrollBar();
 
-        switch (ev->key()) {
-            case Qt::Key_Up:
-                if (v)
-                    v->setValue(v->value() - 10);
-                break;
-            case Qt::Key_Down:
-                if (v)
-                    v->setValue(v->value() + 10);
-                break;
-            case Qt::Key_Left:
-                if (h)
-                    h->setValue(h->value() - 10);
-                break;
-            case Qt::Key_Right:
-                if (h)
-                    h->setValue(h->value() + 10);
-                break;
-            case Qt::Key_PageUp:
-                if (v)
-                    v->setValue(v->value() - height());
-                break;
-            case Qt::Key_PageDown:
-                if (v)
-                    v->setValue(v->value() + height());
-                break;
-            default:
-                handled = false;
-                break;
+        if (ev == QKeySequence::MoveToNextPage) {
+            if (v)
+                v->setValue(v->value() + height());
+        } else if (ev == QKeySequence::MoveToPreviousPage) {
+            if (v)
+                v->setValue(v->value() - height());
+        } else {
+            switch (ev->key()) {
+                case Qt::Key_Up:
+                    if (v)
+                        v->setValue(v->value() - 10);
+                    break;
+                case Qt::Key_Down:
+                    if (v)
+                        v->setValue(v->value() + 10);
+                    break;
+                case Qt::Key_Left:
+                    if (h)
+                        h->setValue(h->value() - 10);
+                    break;
+                case Qt::Key_Right:
+                    if (h)
+                        h->setValue(h->value() + 10);
+                    break;
+                default:
+                    handled = false;
+                    break;
+            }
         }
     }
 

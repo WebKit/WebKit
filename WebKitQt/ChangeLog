@@ -2,6 +2,15 @@
 
         Reviewed by Zack.
 
+        Use QKeySequence::StandardKey for the page wise scrolling shortcuts.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::keyPressEvent):
+
+2007-08-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
         When scrolling with the keyboard don't call update() on the entire widget.
         The scrollbar/scrollview implementation is already smart enough to scroll with bitblt
         on a value change.
