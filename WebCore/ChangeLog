@@ -1,3 +1,14 @@
+2007-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15122
+
+        * editing/htmlediting.cpp: (WebCore::avoidIntersectionWithNode):
+        Change assertion so that it only fires when actually modifying the selection.
+        This isn't nearly as helpful, because the old assertion could catch potential
+        problems in more cases, but it's not obvious how to do better.
+
 2007-08-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

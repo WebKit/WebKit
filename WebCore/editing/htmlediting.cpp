@@ -888,13 +888,14 @@ PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
 
     ASSERT(startContainer);
     ASSERT(endContainer);
-    ASSERT(!node || node->parentNode());
 
     if (startContainer == node || startContainer->isDescendantOf(node)) {
+        ASSERT(node->parentNode());
         startContainer = node->parentNode();
         startOffset = node->nodeIndex();
     }
     if (endContainer == node || endContainer->isDescendantOf(node)) {
+        ASSERT(node->parentNode());
         endContainer = node->parentNode();
         endOffset = node->nodeIndex();
     }
@@ -912,13 +913,16 @@ Selection avoidIntersectionWithNode(const Selection& selection, Node* node)
     Node* extent = selection.extent().node();
     ASSERT(base);
     ASSERT(extent);
-    ASSERT(!node || node->parentNode());
     
-    if (base == node || base->isDescendantOf(node))
+    if (base == node || base->isDescendantOf(node)) {
+        ASSERT(node->parentNode());
         updatedSelection.setBase(Position(node->parentNode(), node->nodeIndex()));
+    }
     
-    if (extent == node || extent->isDescendantOf(node))
+    if (extent == node || extent->isDescendantOf(node)) {
+        ASSERT(node->parentNode());
         updatedSelection.setExtent(Position(node->parentNode(), node->nodeIndex()));
+    }
         
     return updatedSelection;
 }
