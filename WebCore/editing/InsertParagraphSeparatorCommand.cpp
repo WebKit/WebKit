@@ -43,8 +43,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document *document, bool useDefaultParagraphElement) 
-    : CompositeEditCommand(document),
-      m_useDefaultParagraphElement(useDefaultParagraphElement)
+    : CompositeEditCommand(document)
+    , m_useDefaultParagraphElement(useDefaultParagraphElement)
 {
 }
 
