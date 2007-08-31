@@ -1,3 +1,21 @@
+2007-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+        
+        <rdar://problem/5430772> REGRESSION(303-310A5) list items do not show with mouse over on istweb.apple.com/quack.apple.com
+        
+        VC++ treats bitfields as signed members, so Node::m_styleChange would be
+        sign extended if it was assigned the value FullStyleChange.  This caused
+        style recalculation to stop propagating.  
+        
+        We work around this VC++ oddity by storing the enum as an unsigned, and
+        casting back to StyleChangeType in the getter.
+                
+        Test: fast/css/hover-affects-child.html
+
+        * dom/Node.h:
+        (WebCore::Node::styleChangeType):
+
 2007-08-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

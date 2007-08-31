@@ -1,3 +1,12 @@
+2007-08-30  Oliver Hunt <oliver@apple.com>
+
+        Reviewed by Adam.
+        
+        Simple test case to ensure that hover affects are correctly propagated
+
+        * fast/css/hover-affects-child-expected.txt: Added.
+        * fast/css/hover-affects-child.html: Added.
+
 2007-08-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

@@ -228,7 +228,7 @@ public:
     bool attached() const { return m_attached; }
     void setAttached(bool b = true) { m_attached = b; }
     bool changed() const { return m_styleChange != NoStyleChange; }
-    StyleChangeType styleChangeType() const { return m_styleChange; }
+    StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_styleChange); }
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }
     void setHasID(bool b = true) { m_hasId = b; }
@@ -470,7 +470,7 @@ protected:
     bool m_hasId : 1;
     bool m_hasClass : 1;
     bool m_attached : 1;
-    StyleChangeType m_styleChange : 2;
+    unsigned m_styleChange : 2;
     bool m_hasChangedChild : 1;
     bool m_inDocument : 1;
 
