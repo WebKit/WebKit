@@ -81,17 +81,13 @@ KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
     if (m_instance)
         return m_instance.get();
 
-    RenderObject* r = renderer();
-
-    if (r && r->isWidget()) {
-        RenderWidget* renderWidget = static_cast<RenderWidget*>(r);
-            
-        if (!renderWidget->widget())
-            document()->updateLayoutIgnorePendingStylesheets();
-          
-        if (Widget* widget = renderWidget->widget()) 
-            m_instance = frame->createScriptInstanceForWidget(widget);
-    }
+    RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? static_cast<RenderWidget*>(renderer()) : 0;
+    if (renderWidget && !renderWidget->widget()) {
+        document()->updateLayoutIgnorePendingStylesheets();
+        renderWidget = (renderer() && renderer()->isWidget()) ? static_cast<RenderWidget*>(renderer()) : 0;
+    }          
+    if (renderWidget && renderWidget->widget()) 
+        m_instance = frame->createScriptInstanceForWidget(renderWidget->widget());
 
     return m_instance.get();
 }

@@ -1,3 +1,19 @@
+2007-08-31  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+
+        Fix <rdar://problem/5452943>
+        REGRESSION (r25283): Reproducible crash in HTMLObjectElement::getInstance under guard malloc
+        
+        Calling updateLayoutIgnorePendingStylesheets() may do arbitrary things to render tree so
+        no RenderObjects can be cached over it.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::findWidgetRenderer):
+        (WebCore::HTMLEmbedElement::getInstance):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::getInstance):
+
 2007-08-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

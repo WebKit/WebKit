@@ -57,6 +57,17 @@ HTMLEmbedElement::~HTMLEmbedElement()
 }
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
+static inline RenderWidget* findWidgetRenderer(const Node* n) 
+{
+    if (!n->renderer())
+        do
+            n = n->parentNode();
+        while (n && !n->hasTagName(objectTag));
+    
+    return (n && n->renderer() && n->renderer()->isWidget()) 
+        ? static_cast<RenderWidget*>(n->renderer()) : 0;
+}
+    
 KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
 {
     Frame* frame = document()->frame();
@@ -66,29 +77,15 @@ KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
     if (m_instance)
         return m_instance.get();
     
-    RenderObject *r = renderer();
-    if (!r) {
-        Node *p = parentNode();
-        
-        while (p) {
-            if (p->hasTagName(objectTag)) {
-                r = p->renderer();
-                break;
-            }
-            
-            p = p->parentNode();
-        }
+    RenderWidget* renderWidget = findWidgetRenderer(this);
+    if (renderWidget && !renderWidget->widget()) {
+        document()->updateLayoutIgnorePendingStylesheets();
+        renderWidget = findWidgetRenderer(this);
     }
-
-    if (r && r->isWidget()) {
-        RenderWidget* renderWidget = static_cast<RenderWidget*>(r);
-        
-        if (!renderWidget->widget())
-            document()->updateLayoutIgnorePendingStylesheets();
-        
-        if (Widget* widget = renderWidget->widget()) 
-            m_instance = frame->createScriptInstanceForWidget(widget);
-    }
+    
+    if (renderWidget && renderWidget->widget()) 
+        m_instance = frame->createScriptInstanceForWidget(renderWidget->widget());
+    
     return m_instance.get();
 }
 #endif
