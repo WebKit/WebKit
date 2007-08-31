@@ -1,3 +1,42 @@
+2007-08-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5368833> 
+        REGRESSION: Pasting a triple-clicked line of quoted text at the top of a message adds an extra, quoted line
+        
+        Tested for behavior that we no longer want to have:
+        * editing/pasteboard/quirks-mode-br-2-expected.checksum: Removed.
+        * editing/pasteboard/quirks-mode-br-2-expected.png: Removed.
+        * editing/pasteboard/quirks-mode-br-2-expected.txt: Removed.
+        * editing/pasteboard/quirks-mode-br-2.html: Removed.
+        
+        * platform/mac/editing/pasteboard: Added.
+        
+        Demonstrates bug:
+        * editing/pasteboard/5368833.html: Added.
+        * platform/mac/editing/pasteboard/5368833-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5368833-expected.png: Added.
+        * platform/mac/editing/pasteboard/5368833-expected.txt: Added.
+        
+        Regenerated these expected results to reflect new behavior:
+        * editing/pasteboard/paste-text-012-expected.checksum: Removed.
+        * editing/pasteboard/paste-text-012-expected.png: Removed.
+        * editing/pasteboard/paste-text-012-expected.txt: Removed.
+        * editing/pasteboard/paste-text-013-expected.checksum: Removed.
+        * editing/pasteboard/paste-text-016-expected.checksum: Removed.
+        * editing/pasteboard/paste-text-016-expected.png: Removed.
+        * editing/pasteboard/paste-text-016-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.txt: Added.
+        * platform/mac/editing/pasteboard/paste-text-013-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-text-013-expected.txt: Added.
+        * platform/mac/editing/pasteboard/paste-text-016-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-text-016-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-text-016-expected.txt: Added.
+
 2007-08-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

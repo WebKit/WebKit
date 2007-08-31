@@ -1,3 +1,39 @@
+2007-08-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5368833> 
+        REGRESSION: Pasting a triple-clicked line of quoted text at the top of a message adds an extra, quoted line
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertParagraphSeparator): Added an option for
+        using a plain div to hold the new paragraph, instead of a clone of the previous
+        block.
+        * editing/CompositeEditCommand.h:
+        * editing/InsertParagraphSeparatorCommand.cpp: Ditto.
+        (WebCore::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): Ditto.
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Ditto.
+        * editing/InsertParagraphSeparatorCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Use a default block element when creating
+        new paragraphs, so that empty paragraphs don't contain the block style of the previous
+        one.
+        Don't expand collapsed brs at the end of inserted content, this was the root of the bug.
+        We'd copy <blockquote>hello<br></blockquote><br class="Apple-interchange-newline">
+        and get an extra paragraph.  The removed code used to make sure that if the copied 
+        selection ends with a paragraph break that is represented in the copied markup by a 
+        regular br (not an interchange newline br), that that paragraph break appears in the 
+        pasted content, but shouldMergeEnd, which was introduced after this code was written, 
+        now takes care of that.
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR): Inserted content should always
+        displace placeholder brs, even if that inserted content ends with a br.
+        * editing/markup.cpp:
+        (WebCore::needInterchangeNewlineAfter): This code failed to add an interchange newline
+        if the user copied <div>hello</div><br>, only don't add an interchange newline when
+        copying ^hello<br>^<br>, because then the copied paragraph break will already be 
+        represented in the copied markup by a br.
+        (WebCore::createMarkup):
+
 2007-08-30  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

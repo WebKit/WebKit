@@ -117,9 +117,9 @@ void CompositeEditCommand::removeStyledElement(Element* element)
     applyCommandToComposite(new ApplyStyleCommand(element, true));
 }
 
-void CompositeEditCommand::insertParagraphSeparator()
+void CompositeEditCommand::insertParagraphSeparator(bool useDefaultParagraphElement)
 {
-    applyCommandToComposite(new InsertParagraphSeparatorCommand(document()));
+    applyCommandToComposite(new InsertParagraphSeparatorCommand(document(), useDefaultParagraphElement));
 }
 
 void CompositeEditCommand::insertNodeBefore(Node* insertChild, Node* refChild)

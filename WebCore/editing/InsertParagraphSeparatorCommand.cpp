@@ -42,8 +42,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document *document) 
-    : CompositeEditCommand(document)
+InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document *document, bool useDefaultParagraphElement) 
+    : CompositeEditCommand(document),
+      m_useDefaultParagraphElement(useDefaultParagraphElement)
 {
 }
 
@@ -136,7 +137,9 @@ void InsertParagraphSeparatorCommand::doApply()
     if (startBlock == startBlock->rootEditableElement()) {
         blockToInsert = static_pointer_cast<Node>(createDefaultParagraphElement(document()));
         nestNewBlock = true;
-    } else
+    } else if (m_useDefaultParagraphElement)
+        blockToInsert = static_pointer_cast<Node>(createDefaultParagraphElement(document()));
+    else
         blockToInsert = startBlock->cloneNode(false);
     
     //---------------------------------------------------------------------

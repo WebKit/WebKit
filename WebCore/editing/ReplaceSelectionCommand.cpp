@@ -410,6 +410,8 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
 
         // Remove empty style spans.
         if (isStyleSpan(element) && !element->hasChildNodes()) {
+            if (m_firstNodeInserted == m_lastLeafInserted && m_firstNodeInserted == element)
+                m_firstNodeInserted = 0;
             if (m_firstNodeInserted == element)
                 m_firstNodeInserted = element->traverseNextSibling();
             if (m_lastLeafInserted == element)
@@ -611,6 +613,9 @@ void ReplaceSelectionCommand::doApply()
     
     removeRedundantStyles(mailBlockquoteEnclosingSelectionStart);
     
+    if (!m_firstNodeInserted)
+        return;
+    
     endOfInsertedContent = positionAtEndOfInsertedContent();
     startOfInsertedContent = positionAtStartOfInsertedContent();
     
@@ -652,7 +657,9 @@ void ReplaceSelectionCommand::doApply()
         if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
             if (!isStartOfParagraph(endOfInsertedContent)) {
                 setEndingSelection(endOfInsertedContent);
-                insertParagraphSeparator();
+                // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
+                // block's style seems to annoy users.
+                insertParagraphSeparator(true);
 
                 // Select up to the paragraph separator that was added.
                 lastPositionToSelect = endingSelection().visibleStart().deepEquivalent();
@@ -662,14 +669,6 @@ void ReplaceSelectionCommand::doApply()
             // Select up to the beginning of the next paragraph.
             lastPositionToSelect = next.deepEquivalent().downstream();
         }
-
-    } else if (m_lastLeafInserted->hasTagName(brTag)) {
-        // We want to honor the last incoming line break, so, if it will collapse away because of quirks mode, 
-        // add an extra one.
-        // FIXME: This will expand a br inside a block: <div><br></div>
-        // FIXME: Should we expand all incoming brs that collapse because of quirks mode?
-        if (!document()->inStrictMode() && isEndOfBlock(endOfInsertedContent) && !isStartOfParagraph(endOfInsertedContent))
-            insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastLeafInserted.get());
             
     } else if (shouldMergeEnd(selectionEndWasEndOfParagraph)) {
         // Bail to avoid infinite recursion.
@@ -759,7 +758,7 @@ bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR)
         !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos) ||
         // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.
         // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
-        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos) && !m_lastLeafInserted->hasTagName(brTag);
+        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos);
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
