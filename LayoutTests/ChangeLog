@@ -1,3 +1,13 @@
+2007-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        Test for <rdar://problem/5450600> REGRESSION: can't paste in textfield if its in a body that has user-select:none set (affects widgets)
+
+        * editing/pasteboard/paste-plaintext-user-select-none-expected.txt: Added.
+        * editing/pasteboard/paste-plaintext-user-select-none.html: Added.
+        * fast/forms/textarea-paste-newline.html: Updated to escape '\n' in failure description.
+
 2007-08-30  Oliver Hunt <oliver@apple.com>
 
         Reviewed by Adam.

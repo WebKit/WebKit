@@ -1,3 +1,16 @@
+2007-08-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        Fix for <rdar://problem/5450600> REGRESSION: can't paste in textfield if its in a body that has user-select:none set (affects widgets)
+
+        Test: editing/pasteboard/paste-plaintext-user-select-none.html
+
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+          Copy the user-select style from the current selection node and apply it so it is considered during the test rendering.
+          This is important since we recently changed user-select to be inherited.  When we consider valid VisiblePositions for the test rendering,
+          we need to have the correct user-select value that will actually be used for the real insertion.
+
 2007-08-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
@@ -11,7 +24,7 @@
         * plugins/win/PluginStreamWin.cpp:
         (WebCore::PluginStreamWin::didReceiveData):
 
-2007-08-31  Darin Adler  <darin@apple.com>
+a2007-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
 
