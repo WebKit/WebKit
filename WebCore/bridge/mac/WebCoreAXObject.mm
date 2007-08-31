@@ -331,7 +331,7 @@ static bool isPasswordFieldElement(Node* node)
 -(BOOL)isAttachment
 {
     // widgets are the replaced elements that we represent to AX as attachments
-    BOOL result = m_renderer->isWidget();
+    BOOL result = m_renderer && m_renderer->isWidget();
     
     // assert that a widget is a replaced element that is not an image
     ASSERT(!result || (m_renderer->isReplaced() && !m_renderer->isImage()));
