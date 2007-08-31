@@ -50,7 +50,7 @@ public:
     void show(HTMLElement*);
     void hide();
 
-    bool enabled() const { return (m_disableStack == 0 || m_target); }
+    bool enabled() const { return (m_disableStack == 0); }
     void enable();
     void disable();
 
@@ -59,6 +59,8 @@ public:
 private:
     static const char* const buttonElementIdentifier;
     static const char* const outlineElementIdentifier;
+
+    void createDeletionUI();
 
     Frame* m_frame;
     RefPtr<HTMLElement> m_target;

@@ -1,3 +1,27 @@
+2007-08-31  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed <rdar://problem/5420682> Mail crashes at WebCore::InsertLineBreakCommand::doApply() after dropping a selected image over container's close box
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::show):
+        Factored out the code in ::show() that created and styled the elements of the Deletion UI
+
+        (WebCore::DeleteButtonController::createDeletionUI):
+        Neglecting to move the append of the deletionUI elements into the same clause that handles the creation
+        of them ended up creating multiple elements at were repeatedly appended to the target, resulting in a 
+        bloated table deletion UI which was slow to show and hide. 
+
+        * editing/DeleteButtonController.h:
+        (WebCore::DeleteButtonController::enabled):
+        Restore this function to how it used to be pre-r25305, sans asserts
+
+        * editing/EditCommand.cpp:
+        Add disable/enable sandwich when undoing/redoing commands too
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+
 2007-08-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders.

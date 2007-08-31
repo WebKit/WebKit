@@ -1,3 +1,14 @@
+2007-08-31  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Test for <rdar://problem/5420682> Mail crashes at WebCore::InsertLineBreakCommand::doApply() after dropping a selected image over container's close box
+
+        * editing/deleting/deletionUI-single-instance.html: Added.
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.checksum: Added.
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.png: Added.
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt: Added.
+
 2007-08-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.
