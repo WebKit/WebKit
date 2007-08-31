@@ -556,7 +556,21 @@ void PluginViewWin::handleEvent(Event* event)
 void PluginViewWin::setParent(ScrollView* parent)
 {
     Widget::setParent(parent);
-    init();
+
+    if (parent)
+        init();
+    else {
+        if (!m_window)
+            return;
+
+        // If the plug-in window or one of its children have the focus, we need to 
+        // clear it to prevent the web view window from being focused because that can
+        // trigger a layout while the plugin element is being detached.
+        HWND focusedWindow = ::GetFocus();
+        if (m_window == focusedWindow || ::IsChild(m_window, focusedWindow))
+            ::SetFocus(0);
+    }
+
 }
 
 void PluginViewWin::setNPWindowRect(const IntRect& rect)

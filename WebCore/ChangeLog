@@ -1,3 +1,16 @@
+2007-08-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5443936>
+        Crash after QT movie completes playback at apple.com/imac
+        
+        If the plug-in or one of its children have focus, set it to NULL to prevent the web view window from getting the focus, 
+        which can cause a layout to happen while in HTMLObjectElement::detach. (This is what we do on the Mac).
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::setParent):
+
 2007-08-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.
