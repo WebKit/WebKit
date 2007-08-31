@@ -1,3 +1,16 @@
+2007-08-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5423939>
+        http://bugs.webkit.org/show_bug.cgi?id=15013
+        ASSERTION FAILED !m_inDestructor in WebCore::Shared<WebCore::PluginStreamWin>::ref() on Windows
+        
+        Protect the stream in case it's destroyed by the plug-in.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::didReceiveData):
+
 2007-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
