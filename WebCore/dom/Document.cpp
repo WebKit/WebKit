@@ -704,7 +704,6 @@ Element *Document::getElementById(const AtomicString& elementId) const
             if (n->isElementNode()) {
                 element = static_cast<Element*>(n);
                 if (element->hasID() && element->getAttribute(idAttr) == elementId) {
-                    m_duplicateIds.remove(elementId.impl());
                     m_elementsById.set(elementId.impl(), element);
                     return element;
                 }
@@ -806,16 +805,20 @@ void Document::addElementById(const AtomicString& elementId, Element* element)
 {
     if (!m_elementsById.contains(elementId.impl()))
         m_elementsById.set(elementId.impl(), element);
-    else
+    else {
         m_duplicateIds.add(elementId.impl());
+        m_elementsById.remove(elementId.impl());
+    }
 }
 
 void Document::removeElementById(const AtomicString& elementId, Element* element)
 {
     if (m_elementsById.get(elementId.impl()) == element)
         m_elementsById.remove(elementId.impl());
-    else
+    else {
         m_duplicateIds.remove(elementId.impl());
+        m_elementsById.remove(elementId.impl());
+    }
 }
 
 Element* Document::getElementByAccessKey(const String& key) const

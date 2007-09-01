@@ -1,3 +1,14 @@
+2007-09-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12988
+        First element (in document order) is not returned when other duplicate ID-ed elements were created first
+
+        * fast/dom/duplicate-ids-document-order-expected.txt: Added.
+        * fast/dom/duplicate-ids-document-order.html: Added.
+
 2007-08-31  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Hatcher.
