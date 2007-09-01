@@ -138,9 +138,8 @@ LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR 
     if (cfStr)
         CFRelease(cfStr);
     for (unsigned int i=1; i<str.length(); i++)
-        if (str[i] == '@' && str[i - 1] == '%')
+        if (str[i] == '@' && (str[i - 1] == '%' || (i > 2 && str[i - 1] == '$' && str[i - 2] >= '1' && str[i - 2] <= '9' && str[i - 3] == '%')))
             str.replace(i, 1, "s");
-
     LPCTSTR lpszStr = str.charactersWithNullTermination();
 
     if (!stringsBundle)

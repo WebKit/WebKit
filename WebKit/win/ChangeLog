@@ -1,3 +1,14 @@
+2007-08-31  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5432594> Safari quits when hovering over mailto links on a webpage
+        
+        In addition to substituting %@ with %s, we also need to substitute %{1-9}$@ with %{1-9}$s.
+
+        Reviewed by Oliver.
+
+        * WebLocalizableStrings.cpp:
+        (WebLocalizedLPCTSTR):
+
 2007-08-29  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5074612> Added SPI to retrieve certificate info from a WebError.
