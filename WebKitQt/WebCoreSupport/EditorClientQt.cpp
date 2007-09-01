@@ -436,6 +436,10 @@ bool EditorClientQt::isEditing() const
 {
     return m_editing;
 }
+    
+void EditorClientQt::setInputMethodState(bool)
+{
+}
 
 }
 

@@ -329,4 +329,9 @@ Selection HTMLTextAreaElement::selection() const
     return static_cast<RenderTextControl*>(renderer())->selection(cachedSelStart, cachedSelEnd);
 }
 
+bool HTMLTextAreaElement::shouldUseInputMethod() const
+{
+    return true;
+}
+
 } // namespace

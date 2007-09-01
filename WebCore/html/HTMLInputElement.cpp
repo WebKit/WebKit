@@ -221,6 +221,11 @@ void HTMLInputElement::aboutToUnload()
         document()->frame()->textFieldDidEndEditing(this);
 }
 
+bool HTMLInputElement::shouldUseInputMethod() const
+{
+    return m_type == TEXT || m_type == SEARCH || m_type == ISINDEX;
+}
+
 void HTMLInputElement::dispatchFocusEvent()
 {
     if (isTextField()) {

@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "Document.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -272,13 +273,16 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     if (!node) {
         if (oldDocument)
             oldDocument->setFocusedNode(0);
+        m_page->editorClient()->setInputMethodState(false);
         return true;
     }
     
     RefPtr<Document> newDocument = node ? node->document() : 0;
     
-    if (newDocument && newDocument->focusedNode() == node)
+    if (newDocument && newDocument->focusedNode() == node) {
+        m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
         return true;
+    }
     
     if (oldDocument && oldDocument != newDocument)
         oldDocument->setFocusedNode(0);
@@ -288,6 +292,8 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     if (newDocument)
         newDocument->setFocusedNode(node);
     
+    m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
+
     return true;
 }
 

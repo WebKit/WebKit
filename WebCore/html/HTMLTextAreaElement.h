@@ -89,6 +89,7 @@ public:
     void cacheSelection(int s, int e) { cachedSelStart = s; cachedSelEnd = e; };
     Selection selection() const;
 
+    virtual bool shouldUseInputMethod() const;
 private:
     void updateValue() const;
 

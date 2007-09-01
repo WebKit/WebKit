@@ -1,3 +1,23 @@
+2007-09-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5344848> IME is incorrectly used for key events when on non-editable regions
+ 
+        When focusing a password field or a non-editable element we disassociate any IME that may have
+        been active, and reassociate should a non-password editable element is focused.
+
+        This makes password input with an IME active simpler, and brings our IME behaviour in line with
+        IE.        
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::setInputMethodState):
+        * WebEditorClient.h:
+        * WebView.cpp:
+        (IMMDict::IMMDict):
+        (WebView::setInputMethodState):
+        * WebView.h:
+
 2007-08-31  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5432594> Safari quits when hovering over mailto links on a webpage

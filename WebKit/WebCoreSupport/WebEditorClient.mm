@@ -627,3 +627,7 @@ void WebEditorClient::getGuessesForWord(const String& word, WTF::Vector<String>&
             guesses.append(string);
     }
 }
+
+void WebEditorClient::setInputMethodState(bool)
+{
+}

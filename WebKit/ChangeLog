@@ -1,3 +1,15 @@
+2007-09-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5344848> IME is incorrectly used for key events when on non-editable regions
+
+        EditorClient::setInputMethodState stub
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setInputMethodState):
+
 2007-08-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim.

@@ -261,6 +261,7 @@ public:
 
     virtual bool isContentEditable() const;
     virtual bool isContentRichlyEditable() const;
+    virtual bool shouldUseInputMethod() const;
     virtual IntRect getRect() const;
 
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };

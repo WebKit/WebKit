@@ -63,6 +63,7 @@ public:
     virtual void dispatchBlurEvent();
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
+    virtual bool shouldUseInputMethod() const;
 
     virtual const AtomicString& name() const;
 

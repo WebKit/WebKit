@@ -760,3 +760,7 @@ void WebEditorClient::getGuessesForWord(const String& word, Vector<String>& gues
     }
 }
 
+void WebEditorClient::setInputMethodState(bool enabled)
+{
+    m_webView->setInputMethodState(enabled);
+}

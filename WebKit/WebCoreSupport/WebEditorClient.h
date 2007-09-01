@@ -108,7 +108,7 @@ public:
     virtual void showSpellingUI(bool show);
     virtual bool spellingUIIsShowing();
     virtual void getGuessesForWord(const WebCore::String&, WTF::Vector<WebCore::String>& guesses);
-
+    virtual void setInputMethodState(bool enabled);
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();

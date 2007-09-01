@@ -1,3 +1,29 @@
+2007-09-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5344848> IME is incorrectly used for key events when on non-editable regions
+
+        Adding a new EditorClient method so it is possible to inform WebKit of focus changes.
+        Also added new virtual method Node::shouldUseInputMethod to allow us to trivially check
+        whether an input method should be used when processing input for the currently focused
+        Node.
+
+        * bridge/EditorClient.h:
+        * dom/Node.cpp:
+        (WebCore::Node::shouldUseInputMethod):
+        * dom/Node.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldUseInputMethod):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::shouldUseInputMethod):
+        * html/HTMLTextAreaElement.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedNode):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::setInputMethodState):
+
 2007-09-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

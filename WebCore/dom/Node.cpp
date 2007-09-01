@@ -382,6 +382,11 @@ bool Node::isContentRichlyEditable() const
     return parent() && parent()->isContentRichlyEditable();
 }
 
+bool Node::shouldUseInputMethod() const
+{
+    return isContentEditable();
+}
+
 IntRect Node::getRect() const
 {
     int _x, _y;
