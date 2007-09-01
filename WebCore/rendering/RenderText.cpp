@@ -492,7 +492,7 @@ void RenderText::trimmedPrefWidths(int leadWidth,
     }
 }
 
-inline bool isSpaceAccordingToStyle(UChar c, RenderStyle* style)
+static inline bool isSpaceAccordingToStyle(UChar c, RenderStyle* style)
 {
     return c == ' ' || (c == noBreakSpace && style->nbspMode() == SPACE);
 }

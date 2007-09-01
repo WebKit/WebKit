@@ -1,3 +1,31 @@
+2007-09-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15083
+        Some symbols in WebKit do not need to be exported
+
+        Do not export these symbols.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::hashComponents):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::toString):
+        (WebCore::getTokenizer):
+        * history/HistoryItem.cpp:
+        (WebCore::defaultNotifyHistoryItemChanged):
+        * platform/Arena.cpp:
+        (WebCore::CeilingLog2):
+        * platform/graphics/Color.cpp:
+        (WebCore::calcHue):
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::CGPathToCFStringApplierFunction):
+        (WebCore::CFStringFromCGPath):
+        * rendering/RenderText.cpp:
+        (WebCore::isSpaceAccordingToStyle):
+
 2007-08-31  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Hatcher.

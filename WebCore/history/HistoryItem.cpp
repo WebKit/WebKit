@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void defaultNotifyHistoryItemChanged() {}
+static void defaultNotifyHistoryItemChanged() {}
 void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()

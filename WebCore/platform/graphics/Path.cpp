@@ -39,7 +39,7 @@ const float QUARTER = 0.552f; // approximation of control point positions on a b
                               // to simulate a quarter of a circle.
 namespace WebCore {
 
-void pathLengthApplierFunction(void* info, const PathElement* element)
+static void pathLengthApplierFunction(void* info, const PathElement* element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
     if (traversalState.m_success)

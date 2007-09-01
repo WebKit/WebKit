@@ -43,7 +43,7 @@ struct QualifiedNameComponents {
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
 static const unsigned PHI = 0x9e3779b9U;
     
-inline unsigned hashComponents(const QualifiedNameComponents& buf)
+static inline unsigned hashComponents(const QualifiedNameComponents& buf)
 {
     ASSERT(sizeof(QualifiedNameComponents) % (sizeof(uint16_t) * 2) == 0);
 

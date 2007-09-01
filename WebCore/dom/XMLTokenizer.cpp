@@ -612,12 +612,12 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
     return false;
 }
 #ifndef USE_QXMLSTREAM
-inline String toString(const xmlChar* str, unsigned len)
+static inline String toString(const xmlChar* str, unsigned len)
 {
     return UTF8Encoding().decode(reinterpret_cast<const char*>(str), len);
 }
 
-inline String toString(const xmlChar* str)
+static inline String toString(const xmlChar* str)
 {
     if (!str)
         return String();
@@ -952,7 +952,7 @@ void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID
     doc->setDocType(new DocumentType(doc, toString(name), toString(externalID), toString(systemID)));
 }
 
-inline XMLTokenizer* getTokenizer(void* closure)
+static inline XMLTokenizer* getTokenizer(void* closure)
 {
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
     return static_cast<XMLTokenizer*>(ctxt->_private);
