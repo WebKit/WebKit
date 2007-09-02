@@ -1,3 +1,10 @@
+2007-09-01  Darin Adler  <darin@apple.com>
+
+        - rolled out fix for bug 12988 because it broke getElementById in a layout test
+          I'm working on a new fix.
+
+        * dom/Document.cpp: Rolled out.
+
 2007-09-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

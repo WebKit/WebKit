@@ -1,3 +1,9 @@
+2007-09-01  Darin Adler  <darin@apple.com>
+
+        - rolled out the test case for 12988 until we re-fix it
+
+        * fast/dom/duplicate-ids-document-order.html: Removed.
+
 2007-09-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
