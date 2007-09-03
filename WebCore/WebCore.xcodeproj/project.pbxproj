@@ -13245,7 +13245,6 @@
 			baseConfigurationReference = 1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
@@ -13255,7 +13254,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;

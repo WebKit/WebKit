@@ -477,7 +477,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = All;
 			};
@@ -488,7 +487,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = All;
 				ZERO_LINK = NO;
 			};
@@ -505,7 +503,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A00BA9F3050081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
@@ -515,7 +512,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A00BA9F3050081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;

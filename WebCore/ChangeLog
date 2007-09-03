@@ -1,3 +1,15 @@
+2007-09-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5452164> Production build with in symbols directory has no debug info
+
+        Enable debug symbol generation on all build configurations.  Production builds are stripped
+        of symbols by Xcode during deployment post-processing.
+
+        * Configurations/Base.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-09-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan and Mark Rowe
