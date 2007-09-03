@@ -667,7 +667,7 @@ static HTMLLabelElement* labelForElement(Element* element)
             return label->innerText();
     }
     
-    if (m_renderer->element()->isLink())
+    if (m_renderer->element()->isLink() || [self isHeading])
         return [self textUnderElement];
         
     if ([self isAttachment]) {
