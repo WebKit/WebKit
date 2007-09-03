@@ -29,6 +29,7 @@
 #import "WebCoreStatistics.h"
 
 #import "WebCache.h"
+#import <WebCore/IconDatabase.h>
 #import <WebCore/JavaScriptStatistics.h>
 #import <WebCore/Node.h>
 #import <WebKit/WebFrameBridge.h>
@@ -80,6 +81,26 @@ using namespace WebCore;
 + (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
 {
     JavaScriptStatistics::garbageCollectOnAlternateThread(waitUntilDone);
+}
+
++ (size_t)iconPageURLMappingCount
+{
+    return iconDatabase()->pageURLMappingCount();
+}
+
++ (size_t)iconRetainedPageURLCount
+{
+    return iconDatabase()->retainedPageURLCount();
+}
+
++ (size_t)iconRecordCount
+{
+    return iconDatabase()->iconRecordCount();
+}
+
++ (size_t)iconsWithDataCount
+{
+    return iconDatabase()->iconRecordCountWithData();
 }
 
 + (BOOL)shouldPrintExceptions

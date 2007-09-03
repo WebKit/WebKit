@@ -43,6 +43,11 @@
 + (void)garbageCollectJavaScriptObjects;
 + (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
 
++ (size_t)iconPageURLMappingCount;
++ (size_t)iconRetainedPageURLCount;
++ (size_t)iconRecordCount;
++ (size_t)iconsWithDataCount;
+
 + (BOOL)shouldPrintExceptions;
 + (void)setShouldPrintExceptions:(BOOL)print;
 

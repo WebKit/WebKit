@@ -1,3 +1,16 @@
+2007-09-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan and Mark Rowe
+
+        Groundwork for support for monitoring IconDatabase in-memory statistics
+ 
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics iconPageURLMappingCount]):
+        (+[WebCoreStatistics iconRetainedPageURLCount]):
+        (+[WebCoreStatistics iconRecordCount]):
+        (+[WebCoreStatistics iconsWithDataCount]):
+
 2007-09-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

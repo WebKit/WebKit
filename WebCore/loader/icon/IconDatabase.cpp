@@ -1191,4 +1191,24 @@ bool IconDatabase::checkIntegrity()
     return false;
 }
 
+size_t IconDatabase::pageURLMappingCount() const
+{
+    return 0;
+}
+
+size_t IconDatabase::retainedPageURLCount() const
+{
+    return 0;
+}
+
+size_t IconDatabase::iconRecordCount() const
+{
+    return 0;
+}
+
+size_t IconDatabase::iconRecordCountWithData() const
+{
+    return 0;
+}
+
 } // namespace WebCore
