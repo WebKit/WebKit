@@ -130,8 +130,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/html \
                 $$PWD/bindings/js \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
-                $$PWD/platform/image-decoders \
-                $$PWD/../WebKitQt/WebCoreSupport
+                $$PWD/platform/image-decoders
+
 QT += network xml
 
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1

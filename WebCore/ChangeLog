@@ -1,3 +1,11 @@
+2007-08-20  Oleg Sukhodolsky <son.two@gmail.com>
+
+        Reviewed by Mark.
+
+        WebKitQt/WebCoreSupport should not be added to INCLUDEPATH for gdk-port
+
+        * WebCore.pro:
+
 2007-09-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
