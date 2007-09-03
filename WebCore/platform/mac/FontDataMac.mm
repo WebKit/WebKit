@@ -262,13 +262,18 @@ void FontData::determinePitch()
     // Note that the AppKit does not report Osaka-Mono as fixed pitch.
 
     // Special case MS-PGothic.
-    // According to <rdar://problem/4032938, we should not treat MS-PGothic as fixed pitch.
+    // According to <rdar://problem/4032938>, we should not treat MS-PGothic as fixed pitch.
     // Note that AppKit does report MS-PGothic as fixed pitch.
 
+    // Special case MonotypeCorsiva
+    // According to <rdar://problem/5454704>, we should not treat MonotypeCorsiva as fixed pitch.
+    // Note that AppKit does report MonotypeCorsiva as fixed pitch.
+
     NSString *name = [f fontName];
-    m_treatAsFixedPitch = ([f isFixedPitch] || [f _isFakeFixedPitch] || 
-           [name caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame) && 
-          ![name caseInsensitiveCompare:@"MS-PGothic"] == NSOrderedSame;
+    m_treatAsFixedPitch = ([f isFixedPitch] || [f _isFakeFixedPitch] ||
+           [name caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame) &&
+           [name caseInsensitiveCompare:@"MS-PGothic"] != NSOrderedSame &&
+           [name caseInsensitiveCompare:@"MonotypeCorsiva"] != NSOrderedSame;
 }
 
 float FontData::platformWidthForGlyph(Glyph glyph) const
