@@ -49,8 +49,8 @@ int SQLStatement::prepare()
 {    
     const void* tail;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
-    if (sqlite3_prepare16(m_database.m_db, m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
-        LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", lastError(), m_query.ascii().data(), sqlite3_errmsg(m_database.m_db));
+    if (sqlite3_prepare16(m_database.sqlite3Handle(), m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
+        LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", lastError(), m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
         m_statement = 0;
     }
     return lastError();
@@ -64,7 +64,7 @@ int SQLStatement::step()
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW) {
         LOG(SQLDatabase, "sqlite3_step failed (%i)\nQuery - %s\nError - %s", 
-            error, m_query.ascii().data(), sqlite3_errmsg(m_database.m_db));
+            error, m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
     }
     return error;
 }

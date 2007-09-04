@@ -1,3 +1,35 @@
+2007-09-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Some SQLite tweaks for debugging
+        -In debug builds, track the thread that opened the database and enforce that any statements
+         that operate on the SQLDatabase do so from the thread that opened it
+        -Track whether or not a transaction is in progress for the SQLDatabase to find cases where
+         someone opens a new transaction while there is still one outstanding (a SQLite logic error)
+
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::SQLDatabase): 
+        (WebCore::SQLDatabase::open): Track the opening thread.  Also, return false if the DB failed to
+          open instead of trying to run a PRAGMA on it!
+        (WebCore::SQLDatabase::close): Reset the opening thread
+        * loader/icon/SQLDatabase.h:
+        (WebCore::SQLDatabase::transactionInProgress): 
+        (WebCore::SQLDatabase::sqlite3Handle): For access to the raw sqlite3* handle to do a thread
+          safety check
+
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::prepare): Use the new sqlite3Handle accessor
+        (WebCore::SQLStatement::step): Ditto
+
+        * loader/icon/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction): Removed the c'tor form that could automatically
+          begin the transaction - never used and shouldn't be in practice!
+        (WebCore::SQLTransaction::begin): Maintain the transaction-in-progress flag on the DB
+        (WebCore::SQLTransaction::commit): Ditto
+        (WebCore::SQLTransaction::rollback): Ditto
+        * loader/icon/SQLTransaction.h:
+
 2007-09-04  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej and John.

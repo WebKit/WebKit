@@ -35,7 +35,7 @@ class SQLDatabase;
 class SQLTransaction : public Noncopyable
 {
 public:
-    SQLTransaction(SQLDatabase& db, bool start = false);
+    SQLTransaction(SQLDatabase& db);
     ~SQLTransaction();
     
     void begin();

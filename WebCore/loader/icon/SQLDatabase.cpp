@@ -40,8 +40,11 @@ const int SQLResultRow = SQLITE_ROW;
 
 SQLDatabase::SQLDatabase()
     : m_db(0)
+    , m_transactionInProgress(false)
 {
-
+#ifndef NDEBUG
+    memset(&m_openingThread, 0, sizeof(pthread_t));
+#endif
 }
 
 bool SQLDatabase::open(const String& filename)
@@ -57,7 +60,14 @@ bool SQLDatabase::open(const String& filename)
             sqlite3_errmsg(m_db));
         sqlite3_close(m_db);
         m_db = 0;
+        return false;
     }
+
+#ifndef NDEBUG
+    if (isOpen())
+        m_openingThread = pthread_self();
+#endif
+    
     if (!SQLStatement(*this, "PRAGMA temp_store = MEMORY;").executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
 
@@ -71,6 +81,9 @@ void SQLDatabase::close()
         m_path.truncate(0);
         m_db = 0;
     }
+#ifndef NDEBUG
+    memset(&m_openingThread, 0, sizeof(pthread_t));
+#endif
 }
 
 void SQLDatabase::setFullsync(bool fsync) 
