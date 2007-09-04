@@ -1,0 +1,15 @@
+<html>
+<link rel=stylesheet href="data:text/css,bogus{}">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<body>
+Test that focus() sets input focus correctly even when there are pending stylesheet loads.<br>
+<input id=t>
+<script>
+var t = document.getElementById('t');
+t.focus();
+var s = window.getSelection();
+document.write('<br>' + (s.focusNode ? "<span style='color:green'>PASS</span>" :  "<span style='color:red'>FAIL</span>"));
+</script>

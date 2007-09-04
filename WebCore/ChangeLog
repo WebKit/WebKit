@@ -1,3 +1,17 @@
+2007-09-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fix <rdar://problem/5452112>
+        REGRESSION: Initially focused textfield on www.mac.com login page has no insertion point, and doesn't accept typed characters
+        
+        Use updateLayoutIgnorePendingStylesheets() instead of updateLayout(). We need to have rendering to set input focus.
+
+        Test: fast/forms/focus-style-pending.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+
 2007-09-04  Girish Ramakrishnan  <girish@trolltech.com>
 
         Reviewed by Simon.

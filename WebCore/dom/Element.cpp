@@ -989,7 +989,7 @@ void Element::focus(bool restorePreviousSelection)
     if (doc->focusedNode() == this)
         return;
 
-    doc->updateLayout();
+    doc->updateLayoutIgnorePendingStylesheets();
     
     if (!supportsFocus())
         return;

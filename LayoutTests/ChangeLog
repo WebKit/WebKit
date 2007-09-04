@@ -1,3 +1,13 @@
+2007-09-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for <rdar://problem/5452112>
+        REGRESSION: Initially focused textfield on www.mac.com login page has no insertion point, and doesn't accept typed characters
+
+        * fast/forms/focus-style-pending-expected.txt: Added.
+        * fast/forms/focus-style-pending.html: Added.
+
 2007-09-01  Darin Adler  <darin@apple.com>
 
         - rolled out the test case for 12988 until we re-fix it
