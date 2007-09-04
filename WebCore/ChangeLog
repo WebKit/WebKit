@@ -1,3 +1,15 @@
+2007-09-04  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej and John.
+
+        <rdar://problem/5452675> CrashTracer: [USER] 10 crashes in Mail at com.apple.WebCore: WebCore::Node::nodeIndex const + 6
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        Adjust pos to pos.downstream() after the refNode is calculated, but before the insertion. Doing it earlier
+        undid the logic of positionAvoidingSpecialElementBoundary(). The downstream is still needed just to set the
+        ending selection.
+
 2007-09-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,15 @@
+2007-09-04  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej and John.
+
+        Testcase for:
+        <rdar://problem/5452675> CrashTracer: [USER] 10 crashes in Mail at com.apple.WebCore: WebCore::Node::nodeIndex const + 6
+
+        * editing/inserting/insert-paragraph-05.html: Added.
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.checksum: Added.
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.png: Added.
+        * platform/mac/editing/inserting/insert-paragraph-05-expected.txt: Added.
+
 2007-09-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
