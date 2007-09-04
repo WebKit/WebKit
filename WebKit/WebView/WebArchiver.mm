@@ -84,8 +84,15 @@ using namespace WebCore;
 + (WebArchive *)_archiveWithMarkupString:(NSString *)markupString fromFrame:(WebFrame *)frame nodes:(NSArray *)nodes
 { 
     NSURLResponse *response = [[frame _dataSource] response];
+    NSURL *responseURL = [response URL];
+    
+    // it's possible to have a response without a URL here
+    // <rdar://problem/5454935>
+    if (!responseURL)
+        responseURL = [NSURL URLWithString:@""];
+    
     WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
-                                                              URL:[response URL] 
+                                                              URL:responseURL
                                                          MIMEType:[response MIMEType]
                                                  textEncodingName:@"UTF-8"
                                                         frameName:[frame name]];
