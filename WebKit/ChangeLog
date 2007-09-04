@@ -1,3 +1,16 @@
+2007-09-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5271213>, resizing iChat window is slower than in
+        Tiger.  This patch implements a fast scaling mode that can be used by
+        WebViews, e.g., during window resizing.
+
+        Reviewed by John Sullivan
+
+        * WebView/WebView.mm:
+        (-[WebView _setUseFastImageScalingMode:]):
+        (-[WebView _inFastImageScalingMode]):
+        * WebView/WebViewPrivate.h:
+
 2007-09-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

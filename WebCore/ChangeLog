@@ -1,3 +1,31 @@
+2007-09-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5271213>, resizing iChat window is slower than in
+        Tiger. This patch implements a fast scaling mode that can be used by
+        WebViews, e.g., during window resizing.
+
+        Reviewed by John Sullivan
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Frame.cpp:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::inLowQualityImageInterpolationMode):
+        (WebCore::Page::setInLowQualityImageInterpolationMode):
+        * page/Page.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::setUseLowQualityImageInterpolation):
+        (WebCore::GraphicsContext::useLowQualityImageInterpolation):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setUseLowQualityImageInterpolation):
+        (WebCore::GraphicsContext::useLowQualityImageInterpolation):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+
 2007-09-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

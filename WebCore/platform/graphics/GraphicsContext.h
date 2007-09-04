@@ -121,16 +121,23 @@ namespace WebCore {
         void strokeRect(const FloatRect&, float lineWidth);
 
         void drawImage(Image*, const IntPoint&, CompositeOperator = CompositeSourceOver);
-        void drawImage(Image*, const IntRect&, CompositeOperator = CompositeSourceOver);
+        void drawImage(Image*, const IntRect&, CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawImage(Image*, const IntPoint& destPoint, const IntRect& srcRect, CompositeOperator = CompositeSourceOver);
-        void drawImage(Image*, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver);
+        void drawImage(Image*, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawImage(Image*, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
-                       CompositeOperator = CompositeSourceOver);
+                       CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
                        CompositeOperator = CompositeSourceOver);
         void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect, 
                             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver);
+#if PLATFORM(CG)
+        void setUseLowQualityImageInterpolation(bool = true);
+        bool useLowQualityImageInterpolation() const;
+#else
+        void setUseLowQualityImageInterpolation(bool = true) {}
+        bool useLowQualityImageInterpolation() const { return false; }
+#endif
 
         void clip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);

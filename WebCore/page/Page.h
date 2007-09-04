@@ -106,6 +106,9 @@ namespace WebCore {
         
         void clearUndoRedoOperations();
 
+        bool inLowQualityImageInterpolationMode() const;
+        void setInLowQualityImageInterpolationMode(bool = true);
+
 #if PLATFORM(WIN)
         // The global DLL or application instance used for all windows.
         static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
@@ -134,6 +137,8 @@ namespace WebCore {
         bool m_tabKeyCyclesThroughElements;
         bool m_defersLoading;
 
+        bool m_inLowQualityInterpolationMode;
+    
         InspectorController* m_parentInspectorController;
 
 #if PLATFORM(WIN)

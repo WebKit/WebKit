@@ -81,6 +81,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_frameCount(0)
     , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
+    , m_inLowQualityInterpolationMode(false)
     , m_parentInspectorController(0)
 {
     if (!allPages) {
@@ -222,6 +223,16 @@ void Page::setDefersLoading(bool defers)
 void Page::clearUndoRedoOperations()
 {
     m_editorClient->clearUndoRedoOperations();
+}
+
+bool Page::inLowQualityImageInterpolationMode() const
+{
+    return m_inLowQualityInterpolationMode;
+}
+
+void Page::setInLowQualityImageInterpolationMode(bool mode)
+{
+    m_inLowQualityInterpolationMode = mode;
 }
 
 } // namespace WebCore

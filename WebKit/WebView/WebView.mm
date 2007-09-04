@@ -1521,6 +1521,21 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     return mainFrame && mainFrame->inViewSourceMode();
 }
 
+- (void)_setUseFastImageScalingMode:(BOOL)flag
+{
+    if (_private->page && _private->page->inLowQualityImageInterpolationMode() != flag) {
+        _private->page->setInLowQualityImageInterpolationMode(flag);
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (BOOL)_inFastImageScalingMode
+{
+    if (_private->page)
+        return _private->page->inLowQualityImageInterpolationMode();
+    return NO;
+}
+
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
 {
     if (!_private->pluginDatabase)

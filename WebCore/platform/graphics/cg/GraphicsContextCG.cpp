@@ -768,6 +768,22 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     }
 }
 
+void GraphicsContext::setUseLowQualityImageInterpolation(bool lowQualityMode)
+{
+    if (paintingDisabled())
+        return;
+        
+    CGContextSetInterpolationQuality(platformContext(), lowQualityMode ? kCGInterpolationNone : kCGInterpolationDefault);
+}
+
+bool GraphicsContext::useLowQualityImageInterpolation() const
+{
+    if (paintingDisabled())
+        return false;
+    
+    return CGContextGetInterpolationQuality(platformContext());
+}
+
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
 {
     if (paintingDisabled())

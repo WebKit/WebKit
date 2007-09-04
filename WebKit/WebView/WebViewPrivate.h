@@ -416,6 +416,10 @@ Could be worth adding to the API.
 
 - (void)_clearUndoRedoOperations;
 
+/* Used to do fast (lower quality) scaling of images so that window resize can be quick. */
+- (BOOL)_inFastImageScalingMode;
+- (void)_setUseFastImageScalingMode:(BOOL)flag;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)
