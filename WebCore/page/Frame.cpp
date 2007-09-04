@@ -2016,7 +2016,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_highlightTextMatches(false)
     , m_windowHasFocus(false)
     , m_inViewSourceMode(false)
-    , m_inLowQualityInterpolationMode(false)
     , frameCount(0)
     , m_prohibitsScrolling(false)
     , m_windowScriptNPObject(0)
