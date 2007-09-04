@@ -1,3 +1,15 @@
+2007-09-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        * WebView/WebView.mm:
+        (-[WebView _loadBackForwardListFromOtherView:]): Added missing null check.
+        (-[WebView _setInitiatedDrag:]): Ditto.
+        (-[WebView _clearUndoRedoOperations]): Ditto.
+        (-[WebView encodeWithCoder:]): Ditto.
+        (-[WebView backForwardList]): Ditto.
+        (-[WebView setMaintainsBackForwardList:]): Ditto.
+
 2007-09-04  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by John Sullivan.

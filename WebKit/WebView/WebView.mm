@@ -810,6 +810,9 @@ static bool debugWidget = true;
     if (!_private->page)
         return;
     
+    if (!otherView->_private->page)
+        return;
+    
     // It turns out the right combination of behavior is done with the back/forward load
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
@@ -1322,6 +1325,8 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag
 {
+    if (!_private->page)
+        return;
     _private->page->dragController()->setDidInitiateDrag(initiatedDrag);
 }
 
@@ -1590,6 +1595,8 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 - (void)_clearUndoRedoOperations
 {
+    if (!_private->page)
+        return;
     _private->page->clearUndoRedoOperations();
 }
 
@@ -1962,15 +1969,15 @@ NS_ENDHANDLER
     // Restore the subviews we set aside.
     _subviews = originalSubviews;
 
+    BOOL useBackForwardList = _private->page && _private->page->backForwardList()->enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
-        [encoder encodeBool:_private->page->backForwardList()->enabled() forKey:@"UseBackForwardList"];
+        [encoder encodeBool:useBackForwardList forKey:@"UseBackForwardList"];
         [encoder encodeBool:_private->allowsUndo forKey:@"AllowsUndo"];
     } else {
         int version = WebViewVersion;
-        BOOL useBackForwardList = _private->page->backForwardList()->enabled();
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
         [encoder encodeObject:[[self mainFrame] name]];
         [encoder encodeObject:[self groupName]];
@@ -1979,7 +1986,7 @@ NS_ENDHANDLER
         [encoder encodeValuesOfObjCTypes:"c", &_private->allowsUndo];
     }
 
-    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->page->backForwardList()->enabled());
+    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)useBackForwardList);
 }
 
 - (void)dealloc
@@ -2165,13 +2172,17 @@ NS_ENDHANDLER
 
 - (WebBackForwardList *)backForwardList
 {
-    if (_private->page->backForwardList()->enabled())
-        return kit(_private->page->backForwardList());
-    return nil;
+    if (!_private->page)
+        return nil;
+    if (!_private->page->backForwardList()->enabled())
+        return nil;
+    return kit(_private->page->backForwardList());
 }
 
 - (void)setMaintainsBackForwardList: (BOOL)flag
 {
+    if (!_private->page)
+        return;
     _private->page->backForwardList()->setEnabled(flag);
 }
 
