@@ -1,5 +1,20 @@
 2007-09-04  Maciej Stachowiak  <mjs@apple.com>
 
+        Back out accidentally committed change.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSetIsMultiThreaded):
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::do_malloc):
+        * wtf/FastMallocInternal.h: Added.
+
+2007-09-04  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - Added Vector::appendRange(), which appends to a vector based on a given start and end iterator

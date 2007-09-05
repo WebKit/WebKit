@@ -160,6 +160,10 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
+void fastMallocSetIsMultiThreaded() 
+{
+}
+
 } // namespace WTF
 
 #if PLATFORM(DARWIN)
@@ -1546,13 +1550,54 @@ inline void TCMalloc_ThreadCache::Scavenge() {
 #endif
 }
 
+#ifdef WTF_CHANGES
+bool isMultiThreaded;
+TCMalloc_ThreadCache *mainThreadCache;
+
+void fastMallocSetIsMultiThreaded()
+{
+    // We lock when writing mainThreadCache but not when reading it. It's OK if
+    // the main thread reads a stale, non-NULL value for mainThreadCache because
+    // mainThreadCache is the same as the main thread's thread-specific cache.
+    // Other threads can't read a stale, non-NULL value for mainThreadCache because
+    // clients must call this function before allocating on other threads, so they'll 
+    // have synchronized before reading mainThreadCache.
+    
+    // A similar principle applies to isMultiThreaded. It's OK for the main thread
+    // in GetCache() to read a stale, false value for isMultiThreaded because 
+    // doing so will just cause it to make an unnecessary call to InitModule(),
+    // which will synchronize it.
+
+    // To save a branch in some cases, mainThreadCache is only set when 
+    // isMultiThreaded is false.
+
+    {
+        SpinLockHolder lock(&pageheap_lock);
+        isMultiThreaded = true;
+        mainThreadCache = 0;
+    }
+
+    TCMalloc_ThreadCache::InitModule();
+}
+#endif
+
 ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
   void* ptr = NULL;
+#ifndef WTF_CHANGES
   if (!tsd_inited) {
     InitModule();
   } else {
     ptr = pthread_getspecific(heap_key);
   }
+#else
+  if (mainThreadCache) // fast path for single-threaded mode
+    return mainThreadCache;
+
+  if (isMultiThreaded) // fast path for multi-threaded mode -- heap_key already initialized
+    ptr = pthread_getspecific(heap_key);
+  else // slow path for possible first-time init
+    InitModule();
+#endif
   if (ptr == NULL) ptr = CreateCacheIfNecessary();
   return reinterpret_cast<TCMalloc_ThreadCache*>(ptr);
 }
@@ -1561,6 +1606,8 @@ ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
 // because we may be in the thread destruction code and may have
 // already cleaned up the cache for this thread.
 inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
+  if (mainThreadCache)
+      return mainThreadCache;
   if (!tsd_inited) return NULL;
   return reinterpret_cast<TCMalloc_ThreadCache*>
     (pthread_getspecific(heap_key));
@@ -1662,6 +1709,8 @@ void* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
       thread_heaps = heap;
       thread_heap_count++;
       RecomputeThreadCacheSize(); 
+      if (!isMultiThreaded)
+        mainThreadCache = heap;
     }
   }
 
@@ -1992,6 +2041,7 @@ static Span* DoSampledAllocation(size_t size) {
 static ALWAYS_INLINE void* do_malloc(size_t size) {
 
 #ifdef WTF_CHANGES
+    ASSERT(isMultiThreaded || pthread_main_np());
     ASSERT(!isForbidden());
 #endif
 
