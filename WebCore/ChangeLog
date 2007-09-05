@@ -1,3 +1,19 @@
+2007-09-05  David Harrison  <harrison@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/5306171> Mail: The first return after an attachment in multipart/mixed message is lost
+
+        Test added: editing/selection/toString-1.html
+        
+        Source changes:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        - Remove outdated and erroneous check for m_lastTextNode.
+        - Fix VisiblePosition check to look for line diff. Simple position diff gives the
+        wrong answer when the start is table/0 and the current is the first position
+        inside the content of the table.
+
 2007-09-04  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Maciej Stachowiak.
