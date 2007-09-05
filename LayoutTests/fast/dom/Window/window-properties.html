@@ -44,6 +44,22 @@ function typeStringNullAware(value)
         : "[" + valueType + "]";
 }
 
+var __skip__ = {
+    "window.__skip__" : 1,
+    "window.opener" : 1, // Work around DumpRenderTree bug where previous tests add window properties
+    "window.Components" : 1, // Work around Firefox exception
+
+    // Don't log DumpRenderTree injected objects
+    "window.layoutTestController" : 1, // Work around http://bugs.webkit.org/show_bug.cgi?id=11373
+    "window.GCController" : 1, 
+    "window.appleScriptController" : 1,
+    "window.eventSender" : 1,
+    "window.navigationController" : 1,
+    "window.objCPlugin" : 1,
+    "window.objCPluginFunction" : 1,
+    "window.textInputController" : 1
+};
+
 function logValue(valueName)
 {
     var value = tryEval(valueName);
@@ -52,25 +68,16 @@ function logValue(valueName)
     // Don't taint the test with our own variables
     if (value == logBuffer || value == pre)
         return;
-    
+
     // Don't taint the test with our own properties
     if (/__visitedByLogValue__/.test(valueName) || /__nameWhenVisitedByLogValue__/.test(valueName))
         return;
-        
-    // Work around DumpRenderTree bug where previous tests add window properties
-    if ("window.opener" == valueName)
-        return;
-    
-    // Work around http://bugs.webkit.org/show_bug.cgi?id=11373
-    if ("window.layoutTestController" == valueName)
+
+    if (__skip__[valueName])
         return;
 
     // Work around Firefox infinite recursion
     if (/\.[0-9]/.test(valueName))
-        return;
-    
-    // Work around Firefox exception
-    if ("window.Components" == valueName)
         return;
 
     // Avoid infinite recursion
@@ -80,7 +87,7 @@ function logValue(valueName)
     }
 
     log(valueName + " " + typeStringNullAware(value) + "\n");
-    
+
     if (valueType == "object") {
         value.__visitedByLogValue__ = true;
         value.__nameWhenVisitedByLogValue__ = valueName;

@@ -1,3 +1,14 @@
+2007-09-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Don't log DumpRenderTree injected properties in fast/dom/Window/window-properties.html.  This change makes
+        it pass on Windows so it can be removed from the Skipped list.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+        * platform/win/Skipped:
+
 2007-09-05  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin Decker.

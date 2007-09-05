@@ -587,9 +587,6 @@ fast/forms/input-truncate-newline.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 
-# Seems to be a difference btw. WebScriptObject and the JSCore API
-fast/dom/Window/window-properties.html
-
 # Unimplemented part of DRT. (This test is currently disabled).
 # http/tests/plugins/npapi-response-headers.html
 
