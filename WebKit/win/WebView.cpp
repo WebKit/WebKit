@@ -870,12 +870,16 @@ bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 
 bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData)
 {
-    // Don't send key events for shift, ctrl, and capslock keys when they're by themselves
-    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL) {
+    // Don't send key events for shift, ctrl, alt and capslock keys when they're by themselves
+    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
         return false;
-    }
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
+
+    // Don't send key events for alt+space.
+    if (keyEvent.altKey() && virtualKeyCode == VK_SPACE)
+        return false;
+
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     m_currentCharacterCode = 0;
 
@@ -999,20 +1003,27 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
 
-bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData)
+bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
+    // Don't send key events for shift, ctrl, alt and capslock keys when they're by themselves
+    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL ||  virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
+        return false;
+
+    // Don't send key events for alt+space, since the OS needs to handle that.
+    if (virtualKeyCode == VK_SPACE && systemKeyDown)
+        return false;
+
     MSG msg;
     // If the next message is a WM_CHAR message, then take it out of the queue, and use
     // the message parameters to get the character code to construct the PlatformKeyboardEvent.
-    if (::PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_CHAR, PM_REMOVE)) 
+    if (systemKeyDown) {
+        if (::PeekMessage(&msg, m_viewWindow, WM_SYSCHAR, WM_SYSCHAR, PM_REMOVE)) 
+            m_currentCharacterCode = (UChar)msg.wParam;
+    } else if (::PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_CHAR, PM_REMOVE)) 
         m_currentCharacterCode = (UChar)msg.wParam;
 
     // FIXME: We need to check WM_UNICHAR to support supplementary characters.
     // FIXME: We may need to handle other messages for international text.
-
-    // Don't send key events for shift, ctrl, and capslock keys when they're by themselves
-    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_CAPITAL)
-        return false;
 
     m_inIMEKeyDown = virtualKeyCode == VK_PROCESSKEY;
     if (virtualKeyCode == VK_PROCESSKEY && !m_inIMEComposition)
@@ -1202,9 +1213,13 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 if (coreFrame->view()->didFirstLayout())
                     handled = webView->mouseWheel(wParam, lParam, (wParam & MK_SHIFT) || message == WM_VISTA_MOUSEHWHEEL);
             break;
+        case WM_SYSKEYDOWN:
+            handled = webView->keyDown(wParam, lParam, true);
+            break;
         case WM_KEYDOWN:
             handled = webView->keyDown(wParam, lParam);
             break;
+        case WM_SYSKEYUP:
         case WM_KEYUP:
             handled = webView->keyUp(wParam, lParam);
             break;

@@ -622,7 +622,7 @@ public:
     void performContextMenuAction(WPARAM, LPARAM);
     bool mouseWheel(WPARAM, LPARAM, bool isHorizontal);
     bool execCommand(WPARAM wParam, LPARAM lParam);
-    bool keyDown(WPARAM, LPARAM);
+    bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);
     bool keyUp(WPARAM, LPARAM);
     HRESULT updateWebCoreSettingsFromPreferences(IWebPreferences* preferences);
     bool inResizer(LPARAM lParam);

@@ -1,3 +1,16 @@
+2007-09-05  Dave Hyatt <hyatt@apple.com>
+
+        Make sure ALT+other keys is properly sent into the DOM so that Web pages (and editing fields) can
+        detect key combos like ALT+Enter.
+       
+        Reviewed by Steve
+
+        * WebView.cpp:
+        (WebView::keyUp):
+        (WebView::keyDown):
+        (WebViewWndProc):
+        * WebView.h:
+
 2007-09-04  Sam Weinig  <sam@webkit.org>
 
         Build fix.
