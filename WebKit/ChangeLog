@@ -1,3 +1,18 @@
+2007-09-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5452908> NIBs saved in the Pre-10.2 format while Safari 3 installed do not work without Safari 3
+
+        This happened because we encoded a new field that the old WebKit does not know how to read.
+        And NSCoder throws an exception if initWithCoder finishes while there is still unread data in the archive.
+
+        The WebViewVersion is now 4 to distinguish that we do not encode/decode allowsUndo.
+
+        * WebView/WebView.mm:
+        (-[WebView initWithCoder:]): Only try to read allowsUndo if the version is 3.
+        (-[WebView encodeWithCoder:]): No longer encode allowsUndo.
+
 2007-09-04  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5271213>, resizing iChat window is slower than in

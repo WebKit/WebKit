@@ -371,7 +371,7 @@ NSString * const WebViewDidEndEditingNotification =           @"WebViewDidEndEdi
 NSString * const WebViewDidChangeTypingStyleNotification =    @"WebViewDidChangeTypingStyleNotification";
 NSString * const WebViewDidChangeSelectionNotification =      @"WebViewDidChangeSelectionNotification";
 
-enum { WebViewVersion = 3 };
+enum { WebViewVersion = 4 };
 
 #define timedLayoutSize 4096
 
@@ -1944,7 +1944,9 @@ NS_DURING
         preferences = [decoder decodeObject];
         if (version > 1)
             [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
-        if (version > 2)
+        // The allowsUndo field is no longer written out in encodeWithCoder, but since there are
+        // version 3 NIBs that have this field encoded, we still need to read it in.
+        if (version == 3)
             [decoder decodeValuesOfObjCTypes:"c", &allowsUndo];
     }
 
@@ -1998,7 +2000,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[self groupName]];
         [encoder encodeObject:[self preferences]];
         [encoder encodeValuesOfObjCTypes:"c", &useBackForwardList];
-        [encoder encodeValuesOfObjCTypes:"c", &_private->allowsUndo];
+        // DO NOT encode any new fields here, doing so will break older WebKit releases.
     }
 
     LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)useBackForwardList);
