@@ -305,12 +305,42 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IWebIBActions> webIBActions;
+    if (FAILED(webView->QueryInterface(IID_IWebIBActions, (void**)&webIBActions)))
+        return JSValueMakeUndefined(context);
+
+    webIBActions->makeTextLarger(0);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IWebIBActions> webIBActions;
+    if (FAILED(webView->QueryInterface(IID_IWebIBActions, (void**)&webIBActions)))
+        return JSValueMakeUndefined(context);
+
+    webIBActions->makeTextSmaller(0);
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseUp", mouseUpCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseMoveTo", mouseMoveToCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "leapForward", leapForwardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "keyDown", keyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "textZoomIn", textZoomInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "textZoomOut", textZoomOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

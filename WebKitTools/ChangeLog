@@ -1,3 +1,14 @@
+2007-09-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5382277>
+        Implement eventSender.textZoomIn and eventSender.textZoomOut for windows DRT.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EventSender.cpp:
+        (textZoomInCallback):
+        (textZoomOutCallback):
+
 2007-08-29  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Adam.

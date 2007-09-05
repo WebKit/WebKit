@@ -1,3 +1,13 @@
+2007-09-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5382277>
+        Remove fast/css/ignore-text-zoom.html from skip list now that 
+        eventSender.textZoomIn is supported.
+
+        * platform/win/Skipped:
+
 2007-09-04  Adele Peterson  <adele@apple.com>
 
         Updated test for <rdar://problem/5279521>.  The old test didn't crash before the fix.
