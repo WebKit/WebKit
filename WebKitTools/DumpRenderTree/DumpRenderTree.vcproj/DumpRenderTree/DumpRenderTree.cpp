@@ -576,6 +576,10 @@ static void runTest(const char* pathOrURL)
         COMPtr<IWebBackForwardList> bfList;
         if (SUCCEEDED(webView->backForwardList(&bfList)))
             bfList->currentItem(&prevTestBFItem);
+
+        COMPtr<IWebIBActions> webIBActions;
+        if (SUCCEEDED(webView->QueryInterface(IID_IWebIBActions, (void**)&webIBActions)))
+            webIBActions->makeTextStandardSize(0);
     }
 
     WorkQueue::shared()->clear();

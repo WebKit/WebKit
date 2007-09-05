@@ -1,3 +1,13 @@
+2007-09-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix many layout test failures caused by r25364.
+        Set text size to standand size at the begining of each test matching the mac.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (runTest):
+
 2007-09-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.
