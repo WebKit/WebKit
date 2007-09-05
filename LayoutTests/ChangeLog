@@ -1,3 +1,15 @@
+2007-09-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Split out mac specific tests from plugins/bindings-test.html into its own test.
+
+        * platform/mac/plugins/bindings-test-objc-expected.txt: Added.
+        * platform/mac/plugins/bindings-test-objc.html: Copied from plugins/bindings-test.html.
+        * platform/win/Skipped:
+        * plugins/bindings-test-expected.txt:
+        * plugins/bindings-test.html:
+
 2007-09-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam and Niko.

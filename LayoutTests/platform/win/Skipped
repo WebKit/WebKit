@@ -365,7 +365,6 @@ http/tests/security/local-JavaScript-from-remote.html
 http/tests/security/local-image-from-remote.html
 
 # No built-in plugin in DRT <rdar://problem/5074411>
-plugins/bindings-test.html
 plugins/call-as-function-test.html
 plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
