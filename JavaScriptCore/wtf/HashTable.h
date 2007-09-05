@@ -969,4 +969,6 @@ namespace WTF {
 
 } // namespace WTF
 
+#include "HashIterators.h"
+
 #endif // WTF_HashTable_h

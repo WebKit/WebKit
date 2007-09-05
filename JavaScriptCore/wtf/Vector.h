@@ -458,6 +458,8 @@ namespace WTF {
         void fill(const T&, size_t);
         void fill(const T& val) { fill(val, size()); }
 
+        template<typename Iterator> void appendRange(Iterator start, Iterator end);
+
         T* releaseBuffer();
 
         void swap(Vector<T, inlineCapacity>& other)
@@ -546,6 +548,14 @@ namespace WTF {
         std::fill(begin(), end(), val);
         TypeOperations::uninitializedFill(end(), begin() + newSize, val);
         m_size = newSize;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    template<typename Iterator>
+    void Vector<T, inlineCapacity>::appendRange(Iterator start, Iterator end)
+    {
+        for (Iterator it = start; it != end; ++it)
+            append(*it);
     }
 
     template<typename T, size_t inlineCapacity>

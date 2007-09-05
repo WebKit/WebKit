@@ -83,6 +83,7 @@
 		51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F648D60BB4E2CA0033D760 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
+		652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */ = {isa = PBXBuildFile; fileRef = 652246A40C8D7A0E007BDAF7 /* HashIterators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
 		6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
@@ -102,7 +103,6 @@
 		65C647B4093EF8D60022C380 /* RefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C647B3093EF8D60022C380 /* RefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65C7A1740A8EAACB00FA37EA /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D87E09B5A32E0002E4D7 /* Platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
 		65DFC93008EA173A00F7300B /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92A08EA173A00F7300B /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93108EA173A00F7300B /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92B08EA173A00F7300B /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93208EA173A00F7300B /* HashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92C08EA173A00F7300B /* HashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -487,6 +487,7 @@
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; tabWidth = 8; };
+		652246A40C8D7A0E007BDAF7 /* HashIterators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashIterators.h; sourceTree = "<group>"; };
 		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
 		6541720E039E08B90058BFEB /* dftables.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = dftables.c; path = pcre/dftables.c; sourceTree = "<group>"; tabWidth = 8; };
@@ -516,7 +517,6 @@
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
 		65D6D87E09B5A32E0002E4D7 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
-		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92B08EA173A00F7300B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92C08EA173A00F7300B /* HashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashSet.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -893,13 +893,13 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				652246A40C8D7A0E007BDAF7 /* HashIterators.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
-				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
 				9302043A0B790750000C6115 /* FastMallocPCRE.cpp */,
 				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
 				93B6A0DE0AA64DA40076DE27 /* GetPtr.h */,
@@ -1193,7 +1193,6 @@
 				65DFC93208EA173A00F7300B /* HashSet.h in Headers */,
 				65DFC93408EA173A00F7300B /* HashTable.h in Headers */,
 				65DFC93508EA173A00F7300B /* HashTraits.h in Headers */,
-				65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */,
 				65EA4C9C092AF9E20093D800 /* JSLock.h in Headers */,
 				65C647B4093EF8D60022C380 /* RefPtr.h in Headers */,
 				6580F796094070560082C219 /* PassRefPtr.h in Headers */,
@@ -1249,6 +1248,7 @@
 				51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */,
 				5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */,
 				5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */,
+				652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

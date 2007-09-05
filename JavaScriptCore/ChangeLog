@@ -1,3 +1,79 @@
+2007-09-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Added Vector::appendRange(), which appends to a vector based on a given start and end iterator
+        - Added keys() and values() functions to HashMap iterators, which give keys-only and values-only iterators
+        
+        Together, these allow easy copying of a set, or the keys or values of a map, into a Vector. Examples:
+        
+        HashMap<int, int> map;
+        HashSet<int> set;
+        Vector<int> vec;
+        // ...
+        vec.appendRange(set.begin(), set.end());
+        vec.appendRange(map.begin().keys(), map.end().keys());
+        vec.appendRange(map.begin().values(), map.end().values());
+
+        This also allows for a slightly nicer syntax when iterating a map. Instead of saying 
+        (*it)->first, you can say *it.values(). Similarly for keys. Example:
+        
+        HashMap<int, int>::const_iterator end = map.end();
+        for (HashMap<int, int>::const_iterator it = map.begin(); it != end; ++it)
+        printf(" [%d => %d]", *it.keys(), *it.values());
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/HashIterators.h: Added.
+        (WTF::):
+        (WTF::HashTableConstKeysIterator::HashTableConstKeysIterator):
+        (WTF::HashTableConstKeysIterator::get):
+        (WTF::HashTableConstKeysIterator::operator*):
+        (WTF::HashTableConstKeysIterator::operator->):
+        (WTF::HashTableConstKeysIterator::operator++):
+        (WTF::HashTableConstValuesIterator::HashTableConstValuesIterator):
+        (WTF::HashTableConstValuesIterator::get):
+        (WTF::HashTableConstValuesIterator::operator*):
+        (WTF::HashTableConstValuesIterator::operator->):
+        (WTF::HashTableConstValuesIterator::operator++):
+        (WTF::HashTableKeysIterator::HashTableKeysIterator):
+        (WTF::HashTableKeysIterator::get):
+        (WTF::HashTableKeysIterator::operator*):
+        (WTF::HashTableKeysIterator::operator->):
+        (WTF::HashTableKeysIterator::operator++):
+        (WTF::HashTableKeysIterator::operator HashTableConstKeysIterator<HashTableType, KeyType, MappedType>):
+        (WTF::HashTableValuesIterator::HashTableValuesIterator):
+        (WTF::HashTableValuesIterator::get):
+        (WTF::HashTableValuesIterator::operator*):
+        (WTF::HashTableValuesIterator::operator->):
+        (WTF::HashTableValuesIterator::operator++):
+        (WTF::HashTableValuesIterator::operator HashTableConstValuesIterator<HashTableType, KeyType, MappedType>):
+        (WTF::operator==):
+        (WTF::operator!=):
+        * wtf/HashTable.h:
+        * wtf/Vector.h:
+        (WTF::::appendRange):
+
+2007-09-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Remove single-threaded optimization for FastMalloc. 
+        
+        It does not appear to help anywhere but Mac OS X on PPC, due to
+        pthread_getspecific being slow there. On Intel, removing the
+        optimization results in a 1% PLT speedup, a 2% JS iBench speedup,
+        and no measurable effect on HTML iBench (maybe a slight speedup).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread):
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::do_malloc):
+        * wtf/FastMallocInternal.h: Removed.
+
 2007-09-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

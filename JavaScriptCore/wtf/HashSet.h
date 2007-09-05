@@ -25,6 +25,7 @@
 #define WTF_HashSet_h
 
 #include "HashTable.h"
+#include "Vector.h"
 
 namespace WTF {
 
@@ -314,7 +315,19 @@ namespace WTF {
     {
         deleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
     }
-
+    
+    template<typename T, typename U, typename V>
+    inline void copyToVector(const HashSet<T, U, V>& collection, Vector<T>& vector)
+    {
+        typedef typename HashSet<T, U, V>::const_iterator iterator;
+        
+        vector.resize(collection.size());
+        
+        iterator it = collection.begin();
+        iterator end = collection.end();
+        for (unsigned i = 0; it != end; ++it, ++i)
+            vector[i] = *it;
+    }  
 } // namespace WTF
 
 using WTF::HashSet;
