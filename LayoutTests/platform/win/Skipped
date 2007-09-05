@@ -26,6 +26,9 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Prevent the mac platform directory from running <rdar://problem/5463017>
+platform/mac 
+
 # Obj-C Mac only test on Windows?  That's unpossible!
 http/tests/misc/willCacheResponse-delegate-callback.html
 

@@ -1,3 +1,11 @@
+2007-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam and Niko.
+
+        Force run-webkit-tests to not run the tests in platform/mac
+
+        * platform/win/Skipped:
+
 2007-09-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
