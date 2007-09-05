@@ -26,24 +26,8 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# AppleScript on Windows? That's crazy talk!
-fast/AppleScript
-
-# Obj-C QuickTime plugin on Windows? That's unpossible!
-plugins/pluginDocumentView-deallocated-dataSource.html
-
 # Obj-C Mac only test on Windows?  That's unpossible!
 http/tests/misc/willCacheResponse-delegate-callback.html
-fast/dom/wrapper-identity.html
-fast/dom/wrapper-round-tripping.html
-fast/objc/longlongTest.html
-
-# Input Method tests are completely Mac specific for now
-# <rdar://problem/5352927>
-editing/input/mac
-
-# x-nextstep is a legacy mac text codec that we can't deal with on windows
-fast/encoding/char-decoding-mac.html
 
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html
@@ -222,31 +206,6 @@ editing/undo/undo-delete.html
 editing/undo/undo-forward-delete-boundary.html
 editing/undo/undo-forward-delete.html
 
-# DRT doesn't implement textInputController <rdar://problem/5074430>
-editing/deleting/5300379.html
-editing/deleting/delete-to-end-of-paragraph.html
-editing/deleting/smart-delete-003.html
-editing/deleting/smart-delete-004.html
-editing/execCommand/nsresponder-indent.html
-editing/execCommand/nsresponder-outdent.html
-editing/input/firstrectforcharacterrange-plain.html
-editing/input/firstrectforcharacterrange-styled.html
-editing/input/range-for-empty-document.html
-editing/input/replace-invalid-range.html
-editing/input/text-input-controller.html
-editing/input/wrapped-line-char-rect.html
-editing/selection/4947387.html
-editing/selection/5195166-1.html
-editing/selection/5195166-2.html
-editing/selection/select-line.html
-editing/selection/selection-actions.html
-fast/dom/character-index-for-point.html
-fast/forms/attributed-strings.html
-fast/text/attributed-substring-from-range-001.html
-fast/text/attributed-substring-from-range-in-textfield.html
-fast/text/attributed-substring-from-range.html
-fast/text/justified-text-rect.html
-
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
 
@@ -263,7 +222,7 @@ fast/forms/textfield-drag-into-disabled.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 
-# editing/pasteboard/drag-selected-image-to-contenteditable.html fails on boomer <rdar://problem/5143967>
+# editing/pasteboard/drag-selected-image-to-contenteditable.html fails on windows <rdar://problem/5143967>
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 editing/pasteboard/drag-selected-image-to-contenteditable.html
 

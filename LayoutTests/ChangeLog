@@ -1,3 +1,193 @@
+2007-09-04  Oliver Hunt  <oliver@apple.com>
+
+        RS=Adam
+        
+        Moving a number of mac specific tests into LayoutTests/platform/mac so that they
+        don't need to be in the windows Skiplist.
+        
+        This includes most of the tests that used textInputController as it is a test
+        of the mac-specific NSTextInput API.
+
+        * editing/deleting/5300379-expected.checksum: Removed.
+        * editing/deleting/5300379-expected.png: Removed.
+        * editing/deleting/5300379-expected.txt: Removed.
+        * editing/deleting/5300379.html: Removed.
+        * editing/deleting/delete-to-end-of-paragraph-expected.checksum: Removed.
+        * editing/deleting/delete-to-end-of-paragraph-expected.png: Removed.
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt: Removed.
+        * editing/deleting/delete-to-end-of-paragraph.html: Removed.
+        * editing/deleting/smart-delete-003-expected.checksum: Removed.
+        * editing/deleting/smart-delete-003-expected.png: Removed.
+        * editing/deleting/smart-delete-003-expected.txt: Removed.
+        * editing/deleting/smart-delete-003.html: Removed.
+        * editing/deleting/smart-delete-004-expected.checksum: Removed.
+        * editing/deleting/smart-delete-004-expected.png: Removed.
+        * editing/deleting/smart-delete-004-expected.txt: Removed.
+        * editing/deleting/smart-delete-004.html: Removed.
+        * editing/execCommand/nsresponder-indent-expected.checksum: Removed.
+        * editing/execCommand/nsresponder-indent-expected.png: Removed.
+        * editing/execCommand/nsresponder-indent-expected.txt: Removed.
+        * editing/execCommand/nsresponder-indent.html: Removed.
+        * editing/execCommand/nsresponder-outdent-expected.checksum: Removed.
+        * editing/execCommand/nsresponder-outdent-expected.png: Removed.
+        * editing/execCommand/nsresponder-outdent-expected.txt: Removed.
+        * editing/execCommand/nsresponder-outdent.html: Removed.
+        * editing/input/firstrectforcharacterrange-plain-expected.txt: Removed.
+        * editing/input/firstrectforcharacterrange-plain.html: Removed.
+        * editing/input/firstrectforcharacterrange-styled-expected.txt: Removed.
+        * editing/input/firstrectforcharacterrange-styled.html: Removed.
+        * editing/input/mac: Removed.
+        * editing/input/mac/hangul-enter-confirms-and-sends-keypress-expected.txt: Removed.
+        * editing/input/mac/hangul-enter-confirms-and-sends-keypress.html: Removed.
+        * editing/input/mac/hangul.js: Removed.
+        * editing/input/mac/kotoeri-enter-to-confirm-and-newline-expected.txt: Removed.
+        * editing/input/mac/kotoeri-enter-to-confirm-and-newline.html: Removed.
+        * editing/input/mac/kotoeri.js: Removed.
+        * editing/input/mac/logger.js: Removed.
+        * editing/input/range-for-empty-document-expected.txt: Removed.
+        * editing/input/range-for-empty-document.html: Removed.
+        * editing/input/replace-invalid-range-expected.txt: Removed.
+        * editing/input/replace-invalid-range.html: Removed.
+        * editing/input/text-input-controller-expected.txt: Removed.
+        * editing/input/text-input-controller.html: Removed.
+        * editing/input/wrapped-line-char-rect-expected.txt: Removed.
+        * editing/input/wrapped-line-char-rect.html: Removed.
+        * editing/selection/4947387-expected.checksum: Removed.
+        * editing/selection/4947387-expected.png: Removed.
+        * editing/selection/4947387-expected.txt: Removed.
+        * editing/selection/4947387.html: Removed.
+        * editing/selection/5195166-1-expected.checksum: Removed.
+        * editing/selection/5195166-1-expected.png: Removed.
+        * editing/selection/5195166-1-expected.txt: Removed.
+        * editing/selection/5195166-1.html: Removed.
+        * editing/selection/5195166-2-expected.checksum: Removed.
+        * editing/selection/5195166-2-expected.png: Removed.
+        * editing/selection/5195166-2-expected.txt: Removed.
+        * editing/selection/5195166-2.html: Removed.
+        * editing/selection/select-line-expected.txt: Removed.
+        * editing/selection/select-line.html: Removed.
+        * editing/selection/selection-actions-expected.checksum: Removed.
+        * editing/selection/selection-actions-expected.png: Removed.
+        * editing/selection/selection-actions-expected.txt: Removed.
+        * editing/selection/selection-actions.html: Removed.
+        * fast/AppleScript: Removed.
+        * fast/AppleScript/001-expected.txt: Removed.
+        * fast/AppleScript/001.html: Removed.
+        * fast/AppleScript/array-expected.txt: Removed.
+        * fast/AppleScript/array.html: Removed.
+        * fast/AppleScript/date-expected.txt: Removed.
+        * fast/AppleScript/date.html: Removed.
+        * fast/dom/character-index-for-point-expected.txt: Removed.
+        * fast/dom/character-index-for-point.html: Removed.
+        * fast/dom/wrapper-identity-expected.txt: Removed.
+        * fast/dom/wrapper-identity.html: Removed.
+        * fast/dom/wrapper-round-tripping-expected.txt: Removed.
+        * fast/dom/wrapper-round-tripping.html: Removed.
+        * fast/encoding/char-decoding-mac-expected.txt: Removed.
+        * fast/encoding/char-decoding-mac.html: Removed.
+        * fast/forms/attributed-strings-expected.txt: Removed.
+        * fast/forms/attributed-strings.html: Removed.
+        * fast/objc: Removed.
+        * fast/objc/longlongTest-expected.txt: Removed.
+        * fast/objc/longlongTest.html: Removed.
+        * fast/text/attributed-substring-from-range-001-expected.txt: Removed.
+        * fast/text/attributed-substring-from-range-001.html: Removed.
+        * fast/text/attributed-substring-from-range-expected.txt: Removed.
+        * fast/text/attributed-substring-from-range-in-textfield-expected.txt: Removed.
+        * fast/text/attributed-substring-from-range-in-textfield.html: Removed.
+        * fast/text/attributed-substring-from-range.html: Removed.
+        * fast/text/justified-text-rect-expected.checksum: Removed.
+        * fast/text/justified-text-rect-expected.png: Removed.
+        * fast/text/justified-text-rect-expected.txt: Removed.
+        * fast/text/justified-text-rect.html: Removed.
+        * platform/mac/editing/deleting/5300379-expected.checksum: Copied from editing/deleting/5300379-expected.checksum.
+        * platform/mac/editing/deleting/5300379-expected.png: Copied from editing/deleting/5300379-expected.png.
+        * platform/mac/editing/deleting/5300379-expected.txt: Copied from editing/deleting/5300379-expected.txt.
+        * platform/mac/editing/deleting/5300379.html: Copied from editing/deleting/5300379.html.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.checksum: Copied from editing/deleting/delete-to-end-of-paragraph-expected.checksum.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.png: Copied from editing/deleting/delete-to-end-of-paragraph-expected.png.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.txt: Copied from editing/deleting/delete-to-end-of-paragraph-expected.txt.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph.html: Copied from editing/deleting/delete-to-end-of-paragraph.html.
+        * platform/mac/editing/deleting/smart-delete-003-expected.checksum: Copied from editing/deleting/smart-delete-003-expected.checksum.
+        * platform/mac/editing/deleting/smart-delete-003-expected.png: Copied from editing/deleting/smart-delete-003-expected.png.
+        * platform/mac/editing/deleting/smart-delete-003-expected.txt: Copied from editing/deleting/smart-delete-003-expected.txt.
+        * platform/mac/editing/deleting/smart-delete-003.html: Copied from editing/deleting/smart-delete-003.html.
+        * platform/mac/editing/deleting/smart-delete-004-expected.checksum: Copied from editing/deleting/smart-delete-004-expected.checksum.
+        * platform/mac/editing/deleting/smart-delete-004-expected.png: Copied from editing/deleting/smart-delete-004-expected.png.
+        * platform/mac/editing/deleting/smart-delete-004-expected.txt: Copied from editing/deleting/smart-delete-004-expected.txt.
+        * platform/mac/editing/deleting/smart-delete-004.html: Copied from editing/deleting/smart-delete-004.html.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.checksum: Copied from editing/execCommand/nsresponder-indent-expected.checksum.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.png: Copied from editing/execCommand/nsresponder-indent-expected.png.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.txt: Copied from editing/execCommand/nsresponder-indent-expected.txt.
+        * platform/mac/editing/execCommand/nsresponder-indent.html: Copied from editing/execCommand/nsresponder-indent.html.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.checksum: Copied from editing/execCommand/nsresponder-outdent-expected.checksum.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.png: Copied from editing/execCommand/nsresponder-outdent-expected.png.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.txt: Copied from editing/execCommand/nsresponder-outdent-expected.txt.
+        * platform/mac/editing/execCommand/nsresponder-outdent.html: Copied from editing/execCommand/nsresponder-outdent.html.
+        * platform/mac/editing/input: Copied from editing/input/mac.
+        * platform/mac/editing/input/firstrectforcharacterrange-plain-expected.txt: Copied from editing/input/firstrectforcharacterrange-plain-expected.txt.
+        * platform/mac/editing/input/firstrectforcharacterrange-plain.html: Copied from editing/input/firstrectforcharacterrange-plain.html.
+        * platform/mac/editing/input/firstrectforcharacterrange-styled-expected.txt: Copied from editing/input/firstrectforcharacterrange-styled-expected.txt.
+        * platform/mac/editing/input/firstrectforcharacterrange-styled.html: Copied from editing/input/firstrectforcharacterrange-styled.html.
+        * platform/mac/editing/input/range-for-empty-document-expected.txt: Copied from editing/input/range-for-empty-document-expected.txt.
+        * platform/mac/editing/input/range-for-empty-document.html: Copied from editing/input/range-for-empty-document.html.
+        * platform/mac/editing/input/replace-invalid-range-expected.txt: Copied from editing/input/replace-invalid-range-expected.txt.
+        * platform/mac/editing/input/replace-invalid-range.html: Copied from editing/input/replace-invalid-range.html.
+        * platform/mac/editing/input/text-input-controller-expected.txt: Copied from editing/input/text-input-controller-expected.txt.
+        * platform/mac/editing/input/text-input-controller.html: Copied from editing/input/text-input-controller.html.
+        * platform/mac/editing/input/wrapped-line-char-rect-expected.txt: Copied from editing/input/wrapped-line-char-rect-expected.txt.
+        * platform/mac/editing/input/wrapped-line-char-rect.html: Copied from editing/input/wrapped-line-char-rect.html.
+        * platform/mac/editing/selection/4947387-expected.checksum: Copied from editing/selection/4947387-expected.checksum.
+        * platform/mac/editing/selection/4947387-expected.png: Copied from editing/selection/4947387-expected.png.
+        * platform/mac/editing/selection/4947387-expected.txt: Copied from editing/selection/4947387-expected.txt.
+        * platform/mac/editing/selection/4947387.html: Copied from editing/selection/4947387.html.
+        * platform/mac/editing/selection/5195166-1-expected.checksum: Copied from editing/selection/5195166-1-expected.checksum.
+        * platform/mac/editing/selection/5195166-1-expected.png: Copied from editing/selection/5195166-1-expected.png.
+        * platform/mac/editing/selection/5195166-1-expected.txt: Copied from editing/selection/5195166-1-expected.txt.
+        * platform/mac/editing/selection/5195166-1.html: Copied from editing/selection/5195166-1.html.
+        * platform/mac/editing/selection/5195166-2-expected.checksum: Copied from editing/selection/5195166-2-expected.checksum.
+        * platform/mac/editing/selection/5195166-2-expected.png: Copied from editing/selection/5195166-2-expected.png.
+        * platform/mac/editing/selection/5195166-2-expected.txt: Copied from editing/selection/5195166-2-expected.txt.
+        * platform/mac/editing/selection/5195166-2.html: Copied from editing/selection/5195166-2.html.
+        * platform/mac/editing/selection/select-line-expected.txt: Copied from editing/selection/select-line-expected.txt.
+        * platform/mac/editing/selection/select-line.html: Copied from editing/selection/select-line.html.
+        * platform/mac/editing/selection/selection-actions-expected.checksum: Copied from editing/selection/selection-actions-expected.checksum.
+        * platform/mac/editing/selection/selection-actions-expected.png: Copied from editing/selection/selection-actions-expected.png.
+        * platform/mac/editing/selection/selection-actions-expected.txt: Copied from editing/selection/selection-actions-expected.txt.
+        * platform/mac/editing/selection/selection-actions.html: Copied from editing/selection/selection-actions.html.
+        * platform/mac/fast/AppleScript: Copied from fast/AppleScript.
+        * platform/mac/fast/dom: Added.
+        * platform/mac/fast/dom/character-index-for-point-expected.txt: Copied from fast/dom/character-index-for-point-expected.txt.
+        * platform/mac/fast/dom/character-index-for-point.html: Copied from fast/dom/character-index-for-point.html.
+        * platform/mac/fast/dom/wrapper-identity-expected.txt: Copied from fast/dom/wrapper-identity-expected.txt.
+        * platform/mac/fast/dom/wrapper-identity.html: Copied from fast/dom/wrapper-identity.html.
+        * platform/mac/fast/dom/wrapper-round-tripping-expected.txt: Copied from fast/dom/wrapper-round-tripping-expected.txt.
+        * platform/mac/fast/dom/wrapper-round-tripping.html: Copied from fast/dom/wrapper-round-tripping.html.
+        * platform/mac/fast/encoding: Added.
+        * platform/mac/fast/encoding/char-decoding-mac-expected.txt: Copied from fast/encoding/char-decoding-mac-expected.txt.
+        * platform/mac/fast/encoding/char-decoding-mac.html: Copied from fast/encoding/char-decoding-mac.html.
+        * platform/mac/fast/forms: Added.
+        * platform/mac/fast/forms/attributed-strings-expected.txt: Copied from fast/forms/attributed-strings-expected.txt.
+        * platform/mac/fast/forms/attributed-strings.html: Copied from fast/forms/attributed-strings.html.
+        * platform/mac/fast/objc: Copied from fast/objc.
+        * platform/mac/fast/text: Added.
+        * platform/mac/fast/text/attributed-substring-from-range-001-expected.txt: Copied from fast/text/attributed-substring-from-range-001-expected.txt.
+        * platform/mac/fast/text/attributed-substring-from-range-001.html: Copied from fast/text/attributed-substring-from-range-001.html.
+        * platform/mac/fast/text/attributed-substring-from-range-expected.txt: Copied from fast/text/attributed-substring-from-range-expected.txt.
+        * platform/mac/fast/text/attributed-substring-from-range-in-textfield-expected.txt: Copied from fast/text/attributed-substring-from-range-in-textfield-expected.txt.
+        * platform/mac/fast/text/attributed-substring-from-range-in-textfield.html: Copied from fast/text/attributed-substring-from-range-in-textfield.html.
+        * platform/mac/fast/text/attributed-substring-from-range.html: Copied from fast/text/attributed-substring-from-range.html.
+        * platform/mac/fast/text/justified-text-rect-expected.checksum: Copied from fast/text/justified-text-rect-expected.checksum.
+        * platform/mac/fast/text/justified-text-rect-expected.png: Copied from fast/text/justified-text-rect-expected.png.
+        * platform/mac/fast/text/justified-text-rect-expected.txt: Copied from fast/text/justified-text-rect-expected.txt.
+        * platform/mac/fast/text/justified-text-rect.html: Copied from fast/text/justified-text-rect.html.
+        * platform/mac/plugins: Added.
+        * platform/mac/plugins/pluginDocumentView-deallocated-dataSource-expected.txt: Copied from plugins/pluginDocumentView-deallocated-dataSource-expected.txt.
+        * platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html: Copied from plugins/pluginDocumentView-deallocated-dataSource.html.
+        * platform/win/Skipped:
+        * plugins/pluginDocumentView-deallocated-dataSource-expected.txt: Removed.
+        * plugins/pluginDocumentView-deallocated-dataSource.html: Removed.
+
 2007-09-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam.
