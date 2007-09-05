@@ -393,7 +393,7 @@ JPEGImageDecoder::~JPEGImageDecoder()
 }
 
 // Take the data and store it.
-void JPEGImageDecoder::setData(const Vector<char>& data, bool allDataReceived)
+void JPEGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
     if (m_failed)
         return;
@@ -443,7 +443,7 @@ void JPEGImageDecoder::decode(bool sizeOnly) const
     if (m_failed)
         return;
 
-    m_failed = !m_reader->decode(m_data, sizeOnly);
+    m_failed = !m_reader->decode(m_data->buffer(), sizeOnly);
 
     if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete)) {
         delete m_reader;

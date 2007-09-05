@@ -144,7 +144,7 @@ PNGImageDecoder::~PNGImageDecoder()
 }
 
 // Take the data and store it.
-void PNGImageDecoder::setData(const Vector<char>& data, bool allDataReceived)
+void PNGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
     if (m_failed)
         return;
@@ -191,7 +191,7 @@ void PNGImageDecoder::decode(bool sizeOnly) const
     if (m_failed)
         return;
 
-    m_reader->decode(m_data, sizeOnly);
+    m_reader->decode(m_data->buffer(), sizeOnly);
     
     if (m_failed || (m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete)) {
         delete m_reader;
@@ -288,7 +288,7 @@ void PNGImageDecoder::headerAvailable()
 
     if (reader()->decodingSizeOnly()) {
         // If we only needed the size, halt the reader.     
-        reader()->setReadOffset(m_data.size() - png->buffer_size);
+        reader()->setReadOffset(m_data->size() - png->buffer_size);
         png->buffer_size = 0;
     }
 }
@@ -365,7 +365,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     int width = m_size.width();
     unsigned* dst = buffer.bytes().data() + rowIndex * width;
     bool sawAlpha = false;
-    for (unsigned i = 0; i < width; i++) {
+    for (int i = 0; i < width; i++) {
         unsigned red = *row++;
         unsigned green = *row++;
         unsigned blue = *row++;

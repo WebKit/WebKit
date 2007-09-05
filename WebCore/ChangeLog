@@ -1,3 +1,36 @@
+2007-09-04  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15072
+        Bug 15072: Fix ImageDecoder.cpp to not copy incoming data
+
+        Change ImageDecoder::setData to take a SharedBuffer*.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::bytes):
+        (WebCore::RGBA32Buffer::height):
+        (WebCore::ImageDecoder::setData):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::frameCount):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::decodingHalted):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::setData):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::setData):
+        (WebCore::PNGImageDecoder::decode):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2007-09-04  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5271213>, resizing iChat window is slower than in

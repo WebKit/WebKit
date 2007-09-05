@@ -116,7 +116,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     m_decoder = createDecoder(data->buffer());
     if (!m_decoder)
         return;
-    m_decoder->setData(data->buffer(), allDataReceived);
+    m_decoder->setData(data, allDataReceived);
 }
 
 bool ImageSource::isSizeAvailable()

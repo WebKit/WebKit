@@ -29,6 +29,7 @@
 #include "config.h"
 #include "IntRect.h"
 #include "ImageSource.h"
+#include "SharedBuffer.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,9 +47,10 @@ public:
                      m_includeInNextFrame(false), m_hasAlpha(false)
     {} 
 
+    const RGBA32Array& bytes() const { return m_bytes; }
     RGBA32Array& bytes() { return m_bytes; }
     const IntRect& rect() const { return m_rect; }
-    unsigned height() { return m_height; }
+    unsigned height() const { return m_height; }
     FrameStatus status() const { return m_status; }
     unsigned duration() const { return m_duration; }
     bool includeInNextFrame() const { return m_includeInNextFrame; }
@@ -99,7 +101,7 @@ public:
     virtual ~ImageDecoder() {}
 
     // All specific decoder plugins must do something with the data they are given.
-    virtual void setData(const Vector<char>& data, bool allDataReceived) { m_data = data; }
+    virtual void setData(SharedBuffer* data, bool allDataReceived) { m_data = data; }
 
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const = 0;
@@ -127,7 +129,7 @@ public:
     void setFailed() { m_failed = true; }
 
 protected:
-    Vector<char> m_data; // The encoded data.
+    RefPtr<SharedBuffer> m_data; // The encoded data.
     Vector<RGBA32Buffer> m_frameBufferCache;
     bool m_sizeAvailable;
     mutable bool m_failed;
