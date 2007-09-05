@@ -418,7 +418,7 @@ namespace WTF {
       return QChar((unsigned short)ch).toUpper().unicode();
     }
 
-    inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
       *error = false;
       if (resultLength < srcLength) {
