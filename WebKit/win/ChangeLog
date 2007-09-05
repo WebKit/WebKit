@@ -1,3 +1,9 @@
+2007-09-04  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-09-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.
