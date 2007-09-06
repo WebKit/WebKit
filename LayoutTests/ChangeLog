@@ -1,3 +1,18 @@
+2007-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Same and Darin
+        
+        Split the wrapper test into seperate Obj-C and JS tests so the we can use the JS tests on other platforms.
+
+        * fast/dom/resources/wrapper-identity-base.js: Added -- This provides the basic utility functions and
+          variables needed for the wrapper tests
+        * fast/dom/wrapper-identity-expected.txt: Added.
+        * fast/dom/wrapper-identity.html: Added.
+        * platform/mac/fast/dom/objc-wrapper-identity-expected.txt: Copied from platform/mac/fast/dom/wrapper-identity-expected.txt.
+        * platform/mac/fast/dom/objc-wrapper-identity.html: Copied from platform/mac/fast/dom/wrapper-identity.html.
+        * platform/mac/fast/dom/wrapper-identity-expected.txt: Removed.
+        * platform/mac/fast/dom/wrapper-identity.html: Removed.
+
 2007-09-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -1,19 +1,3 @@
-<html>
-<head>
-<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
-<script src="../../../../fast/js/resources/js-test-pre.js"></script>
-<style id="style" media="screen">
-.non-existent-class {
-    color: black;
-    clip: rect(0, 0, 1, 1);
-    content: counter(dummy, square);
-}
-</style>
-</head>
-<body>
-<p id="description"></p>
-<div id="console"></div>
-<script>
 // We use a static list of window properties to avoid breaking when new properties are added.
 var staticWindowProperties = [
     'CSSPrimitiveValue',
@@ -178,6 +162,7 @@ var staticWindowProperties = [
     'window'
 ];
 
+
 function isEqualJS(a, b)
 {
     return a === b;
@@ -197,33 +182,3 @@ function testObjC(s)
 {
     shouldBeTrue("var object = " + s + "; isEqualObjC(object, object);");
 }
-
-function runTest()
-{
-    description("This tests wrapper identity for both JavaScript and Objective-C.");
-    if (!window.layoutTestController)
-        debug("The ObjC tests only work in DumpRenderTree.\n");
-    
-    var tests = [ ];
-    tests.push("[ ]");
-    tests.push("{ }");
-    tests.push("new Array()");
-    tests.push("new RegExp()");
-    tests.push("new String()");
-    for (var i = 0; i < staticWindowProperties.length; i++) //>
-        tests.push("window['" + staticWindowProperties[i] + "']");
-        
-    for (var i = 0; i < tests.length; i++) //>
-        testJS(tests[i]);
-
-    for (var i = 0; i < tests.length; i++) //>
-        testObjC(tests[i]);
-        
-    // Not yet tested -- most interesting parts of the DOM, like the tests in
-    // wrapper-classes.html.
-}
-
-window.onload = runTest;
-</script>
-</body>
-</html>
