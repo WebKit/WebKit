@@ -107,7 +107,7 @@
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
 
     // DebuggerDocumentMac will release on close
-    DebuggerDocumentMac *document = [[DebuggerDocumentMac alloc] initWithServerName:key];
+    DebuggerClientMac *document = [[DebuggerClientMac alloc] initWithServerName:key];
     [document showWindow:sender];
 }
 

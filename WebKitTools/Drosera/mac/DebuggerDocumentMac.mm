@@ -28,11 +28,16 @@
  */
 
 #import "DebuggerDocumentMac.h"
+
 #import "DebuggerApplication.h"
 #import "DebuggerDocument.h"
+
 #import <Carbon/Carbon.h>
+#import <JavaScriptCore/JSContextRef.h>
+#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <JavaScriptCore/RetainPtr.h>
 
 static NSString *DebuggerConsoleToolbarItem = @"DebuggerConsoleToolbarItem";
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
@@ -41,7 +46,27 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
-@implementation DebuggerDocumentMac
+@interface NSString (WebScriptStringExtras)
++ (NSString *)stringOrNilFromWebScriptResult:(id)scriptResult;
+@end
+
+@implementation NSString (WebScriptStringExtras)
++ (NSString *)stringOrNilFromWebScriptResult:(id)scriptResult
+{
+    NSString *ret = nil;
+
+   if ([scriptResult isKindOfClass:NSClassFromString(@"WebScriptObject")])
+       ret = [scriptResult callWebScriptMethod:@"toString" withArguments:nil];
+   else if (scriptResult && ![scriptResult isKindOfClass:[NSString class]])
+       ret = [scriptResult description];
+   else if (scriptResult)
+       ret = scriptResult;
+
+    return ret;
+}
+@end
+
+@implementation DebuggerClientMac
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     return NO;
@@ -52,11 +77,16 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     return NO;
 }
 
++ (void)log:(NSString *)msg
+{
+    NSLog(@"%@", msg);
+}
+
 #pragma mark -
 
 - (id)initWithServerName:(NSString *)serverName
 {
-    callbacks = new DebuggerDocument();
+    debuggerDocument = new DebuggerDocument(self);
 
     if ((self = [super init]))
         [self switchToServerNamed:serverName];
@@ -65,7 +95,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (void)dealloc
 {
-    delete callbacks;
+    delete debuggerDocument;
 
     [server release];
     [currentServerName release];
@@ -85,36 +115,6 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     return [currentFrame functionName];
 }
 
-- (NSArray *)currentFunctionStack
-{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    WebScriptCallFrame *frame = currentFrame;
-    while (frame) {
-        if ([frame functionName])
-            [result addObject:[frame functionName]];
-        else if ([frame caller])
-            [result addObject:@"(anonymous function)"];
-        else
-            [result addObject:@"(global scope)"];
-        frame = [frame caller];
-    }
-    return [result autorelease];
-}
-
-- (id)evaluateScript:(NSString *)script inCallFrame:(int)frame
-{
-    WebScriptCallFrame *cframe = currentFrame;
-    for (unsigned count = 0; count < frame; count++)
-        cframe = [cframe caller];
-    if (!cframe)
-        return nil;
-
-    id result = [cframe evaluateWebScript:script];
-    if ([result isKindOfClass:NSClassFromString(@"WebScriptObject")])
-        return [result callWebScriptMethod:@"toString" withArguments:nil];
-    return result;
-}
-
 - (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
 {
     WebScriptObject *enumerateAttributes = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
@@ -131,74 +131,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     return [result autorelease];
 }
 
-- (NSArray *)localScopeVariableNamesForCallFrame:(int)frame
-{
-    WebScriptCallFrame *cframe = currentFrame;
-    for (unsigned count = 0; count < frame; count++)
-        cframe = [cframe caller];
-
-    if (![[cframe scopeChain] count])
-        return nil;
-
-    WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
-    return [self webScriptAttributeKeysForScriptObject:scope];
-}
-
-- (NSString *)valueForScopeVariableNamed:(NSString *)key inCallFrame:(int)frame
-{
-    WebScriptCallFrame *cframe = currentFrame;
-    for (unsigned count = 0; count < frame; count++)
-        cframe = [cframe caller];
-
-    if (![[cframe scopeChain] count])
-        return nil;
-
-    unsigned scopeCount = [[cframe scopeChain] count];
-    for (unsigned i = 0; i < scopeCount; i++) {
-        WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:i];
-        id value = [scope valueForKey:key];
-        if ([value isKindOfClass:NSClassFromString(@"WebScriptObject")])
-            return [value callWebScriptMethod:@"toString" withArguments:nil];
-        if (value && ![value isKindOfClass:[NSString class]])
-            return [NSString stringWithFormat:@"%@", value];
-        if (value)
-            return value;
-    }
-
-    return nil;
-}
-
-#pragma mark -
-#pragma mark File Loading
-
-- (NSString *)breakpointEditorHTML
-{
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef jsRet = DebuggerDocument::breakpointEditorHTML(context);
-    if (!jsRet)
-        return 0;
-
-    JSStringRef jsString = JSValueToStringCopy(context, jsRet, 0);
-    const JSChar* cRet = JSStringGetCharactersPtr(jsString);
-
-    NSString* returnString = [NSString stringWithCharacters:cRet length:JSStringGetLength(jsString)];
-    CFRelease(jsString);
-
-    return returnString;
-}
-
 #pragma mark -
 #pragma mark Pause & Step
 
-- (BOOL)isPaused
-{
-    return callbacks->isPaused();
-}
-
 - (void)pause
 {
-    callbacks->pause();
-
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server pause];
     [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
@@ -206,8 +143,6 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (void)resume
 {
-    callbacks->resume();
-
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server resume];
 }
@@ -218,47 +153,42 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         [server step];
 }
 
-- (void)log:(NSString *)msg
-{
-    NSLog(@"%@", msg);
-}
-
 #pragma mark -
 #pragma mark Interface Actions
 
 - (IBAction)pause:(id)sender
 {
-    DebuggerDocument::pause([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarPause([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)resume:(id)sender
 {
-    DebuggerDocument::resume([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarResume([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepInto:(id)sender
 {
-    DebuggerDocument::stepInto([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarStepInto([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepOver:(id)sender
 {
-    DebuggerDocument::stepOver([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarStepOver([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)stepOut:(id)sender
 {
-    DebuggerDocument::stepOut([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarStepOut([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)showConsole:(id)sender
 {
-    DebuggerDocument::showConsole([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarShowConsole([[webView mainFrame] globalContext]);
 }
 
 - (IBAction)closeCurrentFile:(id)sender
 {
-    callbacks->closeCurrentFile([[webView mainFrame] globalContext]);
+    DebuggerDocument::toolbarCloseCurrentFile([[webView mainFrame] globalContext]);
 }
 
 #pragma mark -
@@ -453,13 +383,19 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)interfaceItem
 {
     SEL action = [interfaceItem action];
-    if (action == @selector(pause:))
-        return ![self isPaused];
+    if (action == @selector(pause:)) {
+        JSContextRef context = [[webView mainFrame] globalContext];
+        JSValueRef isPausedVal = debuggerDocument->isPaused(context);
+        return !JSValueToBoolean(context, isPausedVal);
+    }
     if (action == @selector(resume:) ||
         action == @selector(stepOver:) ||
         action == @selector(stepOut:) ||
-        action == @selector(stepInto:))
-        return [self isPaused];
+        action == @selector(stepInto:)) {
+        JSContextRef context = [[webView mainFrame] globalContext];
+        JSValueRef isPausedVal = debuggerDocument->isPaused(context);
+        return JSValueToBoolean(context, isPausedVal);
+    }
     return YES;
 }
 
@@ -549,8 +485,12 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
 {
     // note: this is the Debuggers's own WebView, not the one being debugged
-    if ([[sender window] isEqual:[self window]])
-        [[sender windowScriptObject] setValue:self forKey:@"DebuggerDocument"];
+    JSContextRef context = [[webView mainFrame] globalContext];
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    
+    JSValueRef exception = 0;
+    debuggerDocument->windowScriptObjectAvailable(context, globalObject, &exception);
+    ASSERT(!exception);
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
@@ -590,14 +530,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!documentSource)
         return;
 
-    JSStringRef documentSourceJS = JSStringCreateWithCFString((CFStringRef)documentSource);     // We already checked for NULL
+    JSRetainPtr<JSStringRef> documentSourceJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)documentSource));     // We already checked for NULL
     NSString *url = [[[dataSource response] URL] absoluteString];
-    JSStringRef urlJS = JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR(""));
+    JSRetainPtr<JSStringRef> urlJS(KJS::Adopt, JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR("")));
 
-    DebuggerDocument::updateFileSource([[webView mainFrame] globalContext], documentSourceJS, urlJS);
-
-    JSStringRelease(documentSourceJS);
-    JSStringRelease(urlJS);
+    DebuggerDocument::updateFileSource([[webView mainFrame] globalContext], documentSourceJS.get(), urlJS.get());
 }
 
 - (void)webView:(WebView *)view didParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
@@ -621,18 +558,14 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
             urlCopy = [[[[dataSource response] URL] absoluteString] copy];
     }
 
-    JSStringRef sourceCopyJS = JSStringCreateWithCFString((CFStringRef)sourceCopy);  // We checked for NULL earlier.
-    JSStringRef documentSourceCopyJS = JSStringCreateWithCFString(documentSourceCopy ? (CFStringRef)documentSourceCopy : (CFStringRef)@"");
-    JSStringRef urlCopyJS = JSStringCreateWithCFString(urlCopy ? (CFStringRef)urlCopy : (CFStringRef)@"");
+    JSRetainPtr<JSStringRef> sourceCopyJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)sourceCopy));  // We checked for NULL earlier.
+    JSRetainPtr<JSStringRef> documentSourceCopyJS(KJS::Adopt, JSStringCreateWithCFString(documentSourceCopy ? (CFStringRef)documentSourceCopy : (CFStringRef)@""));
+    JSRetainPtr<JSStringRef> urlCopyJS(KJS::Adopt, JSStringCreateWithCFString(urlCopy ? (CFStringRef)urlCopy : (CFStringRef)@""));
     JSContextRef context = [[webView mainFrame] globalContext];
     JSValueRef sidJS = JSValueMakeNumber(context, sid);     // JSValueRefs are garbage collected
     JSValueRef baseLineJS = JSValueMakeNumber(context, baseLine);
 
-    DebuggerDocument::didParseScript(context, sourceCopyJS, documentSourceCopyJS, urlCopyJS, sidJS, baseLineJS);
-
-    JSStringRelease(sourceCopyJS);
-    JSStringRelease(documentSourceCopyJS);
-    JSStringRelease(urlCopyJS);
+    DebuggerDocument::didParseScript(context, sourceCopyJS.get(), documentSourceCopyJS.get(), urlCopyJS.get(), sidJS, baseLineJS);
 
     [sourceCopy release];
     [documentSourceCopy release];
@@ -656,7 +589,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     JSValueRef sidJS = JSValueMakeNumber(context, sid);
     JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
 
-    DebuggerDocument::didEnterCallFrame(context, sidJS, linenoJS);
+    JSValueRef exception = 0;
+    DebuggerDocument::didEnterCallFrame(context, sidJS, linenoJS, &exception);
+    ASSERT(!exception);
 }
 
 - (void)webView:(WebView *)view willExecuteStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -668,7 +603,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     JSValueRef sidJS = JSValueMakeNumber(context, sid);
     JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
 
-    DebuggerDocument::willExecuteStatement(context, sidJS, linenoJS);
+    JSValueRef exception = 0;
+    DebuggerDocument::willExecuteStatement(context, sidJS, linenoJS, &exception);
+    ASSERT(!exception);
 }
 
 - (void)webView:(WebView *)view willLeaveCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
@@ -680,7 +617,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     JSValueRef sidJS = JSValueMakeNumber(context, sid);
     JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
 
-    DebuggerDocument::willLeaveCallFrame(context, sidJS, linenoJS);
+    JSValueRef exception = 0;
+    DebuggerDocument::willLeaveCallFrame(context, sidJS, linenoJS, &exception);
+    ASSERT(!exception);
 
     id old = currentFrame;
     currentFrame = [[frame caller] retain];
@@ -696,7 +635,128 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     JSValueRef sidJS = JSValueMakeNumber(context, sid);
     JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
 
-    DebuggerDocument::exceptionWasRaised(context, sidJS, linenoJS);
+    JSValueRef exception = 0;
+    DebuggerDocument::exceptionWasRaised(context, sidJS, linenoJS, &exception);
+    ASSERT(!exception);
 }
 @end
+
+// DebuggerDocument platform specific implementations
+
+void DebuggerDocument::platformPause(JSContextRef context)
+{
+    [m_debuggerClient pause];
+}
+
+void DebuggerDocument::platformResume(JSContextRef context)
+{
+    [m_debuggerClient resume];
+}
+
+void DebuggerDocument::platformStepInto(JSContextRef)
+{
+    [m_debuggerClient stepInto];
+}
+
+JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef script, int callFrame)
+{
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    for (unsigned count = 0; count < callFrame; count++)
+        cframe = [cframe caller];
+
+    if (!cframe)
+        return JSValueMakeUndefined(context);
+
+    RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
+    id value = [cframe evaluateWebScript:(NSString *)scriptCF.get()];
+
+    NSString *resultString = [NSString stringOrNilFromWebScriptResult:value];
+    JSRetainPtr<JSStringRef> resultJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
+    JSValueRef returnValue = JSValueMakeString(context, resultJS.get());
+
+    return returnValue;
+}
+
+void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
+{
+    for (WebScriptCallFrame *frame = [m_debuggerClient currentFrame]; frame;) {
+        CFStringRef function;
+        if ([frame functionName])
+            function = (CFStringRef)[frame functionName];
+        else if ([frame caller])
+            function = CFSTR("(anonymous function)");
+        else
+            function = CFSTR("(global scope)");
+        frame = [frame caller];
+
+        JSRetainPtr<JSStringRef> stackString(KJS::Adopt, JSStringCreateWithCFString(function));
+        JSValueRef stackValue = JSValueMakeString(context, stackString.get());
+        currentStack.append(stackValue);
+    }
+}
+
+void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
+{
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    for (unsigned count = 0; count < callFrame; count++)
+        cframe = [cframe caller];
+
+    if (!cframe)
+        return;
+    if (![[cframe scopeChain] count])
+        return;
+
+    WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
+    NSArray *localScopeVariableNames = [m_debuggerClient webScriptAttributeKeysForScriptObject:scope];
+
+    for (int i = 0; i < [localScopeVariableNames count]; ++i) {
+        JSRetainPtr<JSStringRef> variableName(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)[localScopeVariableNames objectAtIndex:i]));
+        JSValueRef variableNameValue = JSValueMakeString(context, variableName.get());
+        variableNames.append(variableNameValue);
+    }
+}
+
+JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
+{
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    for (unsigned count = 0; count < callFrame; count++)
+        cframe = [cframe caller];
+
+    if (!cframe)
+        return JSValueMakeUndefined(context);
+
+    unsigned scopeCount = [[cframe scopeChain] count];
+    
+    if (!scopeCount)
+        return JSValueMakeUndefined(context);
+
+    NSString *resultString = nil;
+    
+    for (unsigned i = 0; i < scopeCount && resultString == nil; i++) {
+        WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:i];
+
+        RetainPtr<CFStringRef> keyCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, key));
+        
+        id value = nil;
+        @try {
+            value = [scope valueForKey:(NSString *)keyCF.get()];
+        } @catch(NSException* localException) { // The value wasn't found.
+        }
+
+        resultString = [NSString stringOrNilFromWebScriptResult:value];
+    }
+
+    if (!resultString)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> resultJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
+    JSValueRef retVal = JSValueMakeString(context, resultJS.get());
+    return retVal;
+}
+
+void DebuggerDocument::platformLog(JSContextRef context, JSStringRef msg)
+{
+    RetainPtr<CFStringRef> msgCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, msg));
+    [DebuggerClientMac log:(NSString *)msgCF.get()];
+}
 

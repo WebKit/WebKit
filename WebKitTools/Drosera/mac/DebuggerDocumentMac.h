@@ -29,14 +29,14 @@
 
 class DebuggerDocument;
 
-@interface DebuggerDocumentMac : NSWindowController <WebScriptDebugListener>
+@interface DebuggerClientMac : NSWindowController <WebScriptDebugListener>
 {
     IBOutlet WebView *webView;
     id<WebScriptDebugServer> server;
     WebScriptCallFrame *currentFrame;
     NSString *currentServerName;
     BOOL webViewLoaded;
-    DebuggerDocument* callbacks;
+    DebuggerDocument* debuggerDocument;
 }
 - (id)initWithServerName:(NSString *)serverName;
 - (void)switchToServerNamed:(NSString *)name;

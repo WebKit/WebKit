@@ -1,3 +1,93 @@
+2007-09-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam, Sam, Darin.
+
+        - Separated what is platform dependant from what is not.  Creating the structure needed for Drosera for Win.
+
+        * Drosera/Debugger.h: Added.
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::breakpointEditorHTMLCallback):
+        (DebuggerDocument::isPausedCallback):
+        (DebuggerDocument::pauseCallback):
+        (DebuggerDocument::resumeCallback):
+        (DebuggerDocument::stepIntoCallback):
+        (DebuggerDocument::evaluateScriptCallback):
+        (DebuggerDocument::currentFunctionStackCallback):
+        (DebuggerDocument::localScopeVariableNamesForCallFrameCallback):
+        (DebuggerDocument::valueForScopeVariableNamedCallback):
+        (DebuggerDocument::logCallback):
+        (DebuggerDocument::breakpointEditorHTML):
+        (DebuggerDocument::isPaused):
+        (DebuggerDocument::pause):
+        (DebuggerDocument::resume):
+        (DebuggerDocument::stepInto):
+        (DebuggerDocument::evaluateScript):
+        (DebuggerDocument::currentFunctionStack):
+        (DebuggerDocument::localScopeVariableNamesForCallFrame):
+        (DebuggerDocument::valueForScopeVariableNamed):
+        (DebuggerDocument::log):
+        (DebuggerDocument::toolbarPause):
+        (DebuggerDocument::toolbarResume):
+        (DebuggerDocument::toolbarStepInto):
+        (DebuggerDocument::toolbarStepOver):
+        (DebuggerDocument::toolbarStepOut):
+        (DebuggerDocument::toolbarShowConsole):
+        (DebuggerDocument::toolbarCloseCurrentFile):
+        (DebuggerDocument::updateFileSource):
+        (DebuggerDocument::didParseScript):
+        (DebuggerDocument::willExecuteStatement):
+        (DebuggerDocument::didEnterCallFrame):
+        (DebuggerDocument::willLeaveCallFrame):
+        (DebuggerDocument::exceptionWasRaised):
+        (DebuggerDocument::windowScriptObjectAvailable):
+        (DebuggerDocument::toJSArray):
+        (DebuggerDocument::callGlobalFunction):
+        (DebuggerDocument::callFunctionOnObject):
+        (DebuggerDocument::getDroseraJSClass):
+        (DebuggerDocument::staticFunctions):
+        (DebuggerDocument::logException):
+        * Drosera/DebuggerDocument.h:
+        (DebuggerDocument::DebuggerDocument):
+        * Drosera/ForwardingHeaders: Added.
+        * Drosera/ForwardingHeaders/wtf: Added.
+        * Drosera/ForwardingHeaders/wtf/Platform.h: Added.
+        * Drosera/config.h:
+        * Drosera/console.html:
+        * Drosera/console.js:
+        * Drosera/debugger.js:
+        * Drosera/mac/DebuggerApplication.mm:
+        (-[DebuggerApplication attach:]):
+        * Drosera/mac/DebuggerDocumentMac.h:
+        * Drosera/mac/DebuggerDocumentMac.mm:
+        (+[NSString stringOrNilFromWebScriptResult:]):
+        (+[DebuggerClientMac log:]):
+        (-[DebuggerClientMac initWithServerName:]):
+        (-[DebuggerClientMac dealloc]):
+        (-[DebuggerClientMac pause]):
+        (-[DebuggerClientMac resume]):
+        (-[DebuggerClientMac pause:]):
+        (-[DebuggerClientMac resume:]):
+        (-[DebuggerClientMac stepInto:]):
+        (-[DebuggerClientMac stepOver:]):
+        (-[DebuggerClientMac stepOut:]):
+        (-[DebuggerClientMac showConsole:]):
+        (-[DebuggerClientMac closeCurrentFile:]):
+        (-[DebuggerClientMac validateUserInterfaceItem:]):
+        (-[DebuggerClientMac webView:windowScriptObjectAvailable:]):
+        (-[DebuggerClientMac webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerClientMac webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[DebuggerClientMac webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerClientMac webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::platformCurrentFunctionStack):
+        (DebuggerDocument::platformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+
 2007-09-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

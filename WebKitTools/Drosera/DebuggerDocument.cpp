@@ -30,23 +30,86 @@
 #include "DebuggerDocument.h"
 
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/RetainPtr.h>
+#include <JavaScriptCore/Vector.h>
 
-// You can expand breakpoints by double clicking them.  This is where that HTML comes from.
+//-- Callbacks
+
+JSValueRef DebuggerDocument::breakpointEditorHTMLCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->breakpointEditorHTML(context);
+}
+
+JSValueRef DebuggerDocument::isPausedCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->isPaused(context);
+}
+
+JSValueRef DebuggerDocument::pauseCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->pause(context);
+}
+
+JSValueRef DebuggerDocument::resumeCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->resume(context);
+}
+
+JSValueRef DebuggerDocument::stepIntoCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->stepInto(context);
+}
+
+JSValueRef DebuggerDocument::evaluateScriptCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->evaluateScript(context, argumentCount, arguments, exception);
+}
+
+JSValueRef DebuggerDocument::currentFunctionStackCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* exception)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->currentFunctionStack(context, exception);
+}
+
+JSValueRef DebuggerDocument::localScopeVariableNamesForCallFrameCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->localScopeVariableNamesForCallFrame(context, argumentCount, arguments, exception);
+}
+
+JSValueRef DebuggerDocument::valueForScopeVariableNamedCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    DebuggerDocument* debuggerDocument = reinterpret_cast<DebuggerDocument*>(JSObjectGetPrivate(thisObject));
+    return debuggerDocument->valueForScopeVariableNamed(context, argumentCount, arguments, exception);
+}
+
+JSValueRef DebuggerDocument::logCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return DebuggerDocument::log(context, argumentCount, arguments, exception);
+}
+
+//-- Functions the callbacks call.  These are the ones that are 100% cross platform, the rest are defined in platform specific files.
 JSValueRef DebuggerDocument::breakpointEditorHTML(JSContextRef context)
 {
     RetainPtr<CFURLRef> htmlURLRef(AdoptCF, ::CFBundleCopyResourceURL(::CFBundleGetBundleWithIdentifier(CFSTR("org.webkit.drosera")), CFSTR("breakpointEditor"), CFSTR("html"), 0));
     if (!htmlURLRef)
-        return 0;
+        return JSValueMakeUndefined(context);
 
     // FIXME: I'm open to a better way to do this.  We convert from UInt8 to CFString to JSString (3 string types!)
     RetainPtr<CFReadStreamRef> readStreamRef(AdoptCF, CFReadStreamCreateWithFile(0, htmlURLRef.get()));
     CFReadStreamRef readStream = readStreamRef.get();
 
     if (!CFReadStreamOpen(readStream))
-        return 0;
+        return JSValueMakeUndefined(context);
 
     // Large enough for current BreakPointEditor.html but won't need to be changed if that file changes 
     // because we loop over the entire file and read it in bufferLength pieces at a time
@@ -64,109 +127,168 @@ JSValueRef DebuggerDocument::breakpointEditorHTML(JSContextRef context)
 
     CFReadStreamClose(readStream);
     if (readResult == -1)
-        return 0;
+        return JSValueMakeUndefined(context);
 
     // FIXME: Is there a way to determine the encoding?
     RetainPtr<CFStringRef> fileContents(AdoptCF, CFStringCreateWithBytes(0, charBuffer.data(), charBuffer.size(), kCFStringEncodingUTF8, true));
-    JSStringRef fileContentsJS = JSStringCreateWithCFString(fileContents.get());
-    JSValueRef ret = JSValueMakeString(context, fileContentsJS);
-
-    JSStringRelease(fileContentsJS);
+    JSRetainPtr<JSStringRef> fileContentsJS(KJS::Adopt, JSStringCreateWithCFString(fileContents.get()));
+    JSValueRef ret = JSValueMakeString(context, fileContentsJS.get());
 
     return ret;
 }
 
-bool DebuggerDocument::isPaused()
+JSValueRef DebuggerDocument::isPaused(JSContextRef context)
 {
-    return m_paused;
+    return JSValueMakeBoolean(context, m_paused);
 }
 
-// ------------------------------------------------------------------------------------------------------------
-// FIXME There is still some cross-platform work that needs to be done here, but first WebCore and the WebScriptDebugger stuff needs to be re-written
-// to be cross-platform and we need to impmlement RPC on windows, then more can be moved into these functions
-// ------------------------------------------------------------------------------------------------------------
-void DebuggerDocument::pause()
+JSValueRef DebuggerDocument::pause(JSContextRef context)
 {
     m_paused = true;
+    platformPause(context);
+    return JSValueMakeUndefined(context);
 }
 
-void DebuggerDocument::resume()
+JSValueRef DebuggerDocument::resume(JSContextRef context)
 {
     m_paused = false;
+    platformResume(context);
+    return JSValueMakeUndefined(context);
 }
 
-void DebuggerDocument::stepInto()
+JSValueRef DebuggerDocument::stepInto(JSContextRef context)
 {
+    platformStepInto(context);
+    return JSValueMakeUndefined(context);
 }
 
-JSValueRef DebuggerDocument::evaluateScript(JSContextRef context, CallFrame frame)
+JSValueRef DebuggerDocument::evaluateScript(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    return JSValueMakeNumber(context, frame);
-}
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(context);
 
-Vector<CallFrame> DebuggerDocument::currentFunctionStack()
-{
-    Vector<CallFrame> ret;
-    return ret;
-}
-
-Vector<CallFrame> DebuggerDocument::localScopeVariableNamesForCallFrame(JSContextRef /*context*/)
-{
-    Vector<CallFrame> ret;
-    return ret;
-}
-
-JSStringRef DebuggerDocument::valueForScopeVariableNamed(CallFrame /*frame*/, JSStringRef key)
-{
-    return key;
-}
-
-//-- These are the calls into the JS. --//
-
-void DebuggerDocument::callGlobalFunction(JSContextRef context, const char* functionName, int argumentCount, JSValueRef arguments[])
-{
-    JSObjectRef globalObject = JSContextGetGlobalObject(context);
-
-    JSStringRef string = JSStringCreateWithUTF8CString(functionName);
-    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, globalObject, string, 0), 0);
-    JSStringRelease(string);
-
-    JSObjectCallAsFunction(context, function, 0, argumentCount, arguments, 0);
-}
+    if (!JSValueIsNumber(context, arguments[1]))
+        return JSValueMakeUndefined(context);
     
-void DebuggerDocument::pause(JSContextRef context)
-{
-    DebuggerDocument::callGlobalFunction(context, "pause", 0, 0);
+    double callFrame = JSValueToNumber(context, arguments[1], exception);
+    ASSERT(!*exception);
+
+    JSRetainPtr<JSStringRef> script(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    JSValueRef ret = platformEvaluateScript(context, script.get(), (int)callFrame);
+
+    return ret;
 }
 
-void DebuggerDocument::resume(JSContextRef context)
+JSValueRef DebuggerDocument::currentFunctionStack(JSContextRef context, JSValueRef* exception)
 {
-    DebuggerDocument::callGlobalFunction(context, "resume", 0, 0);
+    Vector<JSValueRef> stack;
+    getPlatformCurrentFunctionStack(context, stack);
+    return DebuggerDocument::toJSArray(context, stack, exception);
 }
 
-void DebuggerDocument::stepInto(JSContextRef context)
+JSValueRef DebuggerDocument::localScopeVariableNamesForCallFrame(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    DebuggerDocument::callGlobalFunction(context, "stepInto", 0, 0);
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    if (!JSValueIsNumber(context, arguments[0]))
+        return JSValueMakeUndefined(context);    
+
+    double callFrame = JSValueToNumber(context, arguments[0], exception);
+    ASSERT(!*exception);
+
+    // Get the variable names
+    Vector<JSValueRef> localVariableNames;
+    getPlatformLocalScopeVariableNamesForCallFrame(context, callFrame, localVariableNames);
+    return DebuggerDocument::toJSArray(context, localVariableNames, exception);
 }
 
-void DebuggerDocument::stepOver(JSContextRef context)
+
+JSValueRef DebuggerDocument::valueForScopeVariableNamed(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    DebuggerDocument::callGlobalFunction(context, "stepOver", 0, 0);
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(context);
+
+    if (!JSValueIsString(context, arguments[0]))
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> key(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    if (!JSValueIsNumber(context, arguments[1]))
+        return JSValueMakeUndefined(context);
+
+    double callFrame = JSValueToNumber(context, arguments[1], exception);
+    ASSERT(!*exception);
+
+    return platformValueForScopeVariableNamed(context, key.get(), (int)callFrame);
 }
 
-void DebuggerDocument::stepOut(JSContextRef context)
+JSValueRef DebuggerDocument::log(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    DebuggerDocument::callGlobalFunction(context, "stepOut", 0, 0);
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    if (!JSValueIsString(context, arguments[0]))
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> msg(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    DebuggerDocument::platformLog(context, msg.get());
+    return JSValueMakeUndefined(context);
 }
 
-void DebuggerDocument::showConsole(JSContextRef context)
+//-- These are the calls into the JS. --//    
+void DebuggerDocument::toolbarPause(JSContextRef context)
 {
-    DebuggerDocument::callGlobalFunction(context, "showConsoleWindow", 0, 0);
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "pause", 0, 0, &exception);
+    ASSERT(!exception);
 }
 
-void DebuggerDocument::closeCurrentFile(JSContextRef context)
+void DebuggerDocument::toolbarResume(JSContextRef context)
 {
-    DebuggerDocument::callGlobalFunction(context, "closeCurrentFile", 0, 0);
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "resume", 0, 0, &exception);
+    ASSERT(!exception);
+}
+
+void DebuggerDocument::toolbarStepInto(JSContextRef context)
+{
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "stepInto", 0, 0, &exception);
+    ASSERT(!exception);
+}
+
+void DebuggerDocument::toolbarStepOver(JSContextRef context)
+{
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "stepOver", 0, 0, &exception);
+    ASSERT(!exception);
+}
+
+void DebuggerDocument::toolbarStepOut(JSContextRef context)
+{
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "stepOut", 0, 0, &exception);
+    ASSERT(!exception);
+}
+
+void DebuggerDocument::toolbarShowConsole(JSContextRef context)
+{
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "showConsoleWindow", 0, 0, &exception);
+    ASSERT(!exception);
+}
+
+void DebuggerDocument::toolbarCloseCurrentFile(JSContextRef context)
+{
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "closeCurrentFile", 0, 0, &exception);
+    ASSERT(!exception);
 }
 
 void DebuggerDocument::updateFileSource(JSContextRef context, JSStringRef documentSource, JSStringRef url)
@@ -178,7 +300,9 @@ void DebuggerDocument::updateFileSource(JSContextRef context, JSStringRef docume
     JSValueRef arguments[] = { documentSourceValue, urlValue, forceValue };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
 
-    DebuggerDocument::callGlobalFunction(context, "updateFileSource", argumentsSize, arguments);
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "updateFileSource", argumentsSize, arguments, &exception);
+    ASSERT(!exception);
 }
 
 void DebuggerDocument::didParseScript(JSContextRef context, JSStringRef source, JSStringRef documentSource, JSStringRef url, JSValueRef sourceId, JSValueRef baseLine)
@@ -189,34 +313,139 @@ void DebuggerDocument::didParseScript(JSContextRef context, JSStringRef source, 
 
     JSValueRef arguments[] = { sourceValue, documentSourceValue, urlValue, sourceId, baseLine };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
-    DebuggerDocument::callGlobalFunction(context, "didParseScript", argumentsSize, arguments);
+
+    JSValueRef exception = 0;
+    DebuggerDocument::callGlobalFunction(context, "didParseScript", argumentsSize, arguments, &exception);
+    ASSERT(!exception);
 }
 
-void DebuggerDocument::willExecuteStatement(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+void DebuggerDocument::willExecuteStatement(JSContextRef context, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception)
 {
     JSValueRef arguments[] = { sourceId, lineno };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
-    DebuggerDocument::callGlobalFunction(context, "willExecuteStatement", argumentsSize, arguments);
+
+    DebuggerDocument::callGlobalFunction(context, "willExecuteStatement", argumentsSize, arguments, exception);
 }
 
-void DebuggerDocument::didEnterCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+void DebuggerDocument::didEnterCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception)
 {
     JSValueRef arguments[] = { sourceId, lineno };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
-    DebuggerDocument::callGlobalFunction(context, "didEnterCallFrame", argumentsSize, arguments);
+
+    DebuggerDocument::callGlobalFunction(context, "didEnterCallFrame", argumentsSize, arguments, exception);
 }
 
-void DebuggerDocument::willLeaveCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+void DebuggerDocument::willLeaveCallFrame(JSContextRef context, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception)
 {
     JSValueRef arguments[] = { sourceId, lineno };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
-    DebuggerDocument::callGlobalFunction(context, "willLeaveCallFrame", argumentsSize, arguments);
+
+    DebuggerDocument::callGlobalFunction(context, "willLeaveCallFrame", argumentsSize, arguments, exception);
 }
 
-void DebuggerDocument::exceptionWasRaised(JSContextRef context, JSValueRef sourceId, JSValueRef lineno)
+void DebuggerDocument::exceptionWasRaised(JSContextRef context, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception)
 {
     JSValueRef arguments[] = { sourceId, lineno };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
-    DebuggerDocument::callGlobalFunction(context, "exceptionWasRaised", argumentsSize, arguments);
+
+    DebuggerDocument::callGlobalFunction(context, "exceptionWasRaised", argumentsSize, arguments, exception);
+}
+
+void DebuggerDocument::windowScriptObjectAvailable(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> droseraStr(KJS::Adopt, JSStringCreateWithUTF8CString("DebuggerDocument"));
+    JSValueRef droseraObject = JSObjectMake(context, getDroseraJSClass(), this);
+
+    JSObjectSetProperty(context, windowObject, droseraStr.get(), droseraObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+}
+
+JSValueRef DebuggerDocument::toJSArray(JSContextRef context, Vector<JSValueRef>& vectorValues, JSValueRef* exception)
+{
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    JSRetainPtr<JSStringRef> constructorString(KJS::Adopt, JSStringCreateWithUTF8CString("Array"));
+    JSValueRef constructorProperty = JSObjectGetProperty(context, globalObject, constructorString.get(), exception);
+    ASSERT(!*exception);
+
+    JSObjectRef arrayConstructor = JSValueToObject(context, constructorProperty, exception);
+    ASSERT(!*exception);
+
+    JSObjectRef array = JSObjectCallAsConstructor(context, arrayConstructor, 0, 0, exception);
+    ASSERT(!*exception);
+
+    JSRetainPtr<JSStringRef> pushString(KJS::Adopt, JSStringCreateWithUTF8CString("push"));
+    JSValueRef pushValue = JSObjectGetProperty(context, array, pushString.get(), exception);
+    ASSERT(!*exception);
+
+    JSObjectRef push = JSValueToObject(context, pushValue, exception);
+    ASSERT(!*exception);
+
+    for (Vector<JSValueRef>::iterator it = vectorValues.begin(); it != vectorValues.end(); ++it) {
+        JSObjectCallAsFunction(context, push, array, 1, it, exception);
+        ASSERT(!*exception);
+    }
+    
+    return array;
+}
+
+// Private
+JSValueRef DebuggerDocument::callGlobalFunction(JSContextRef context, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception)
+{
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    return callFunctionOnObject(context, globalObject, functionName, argumentCount, arguments, exception);
+}
+
+JSValueRef DebuggerDocument::callFunctionOnObject(JSContextRef context, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> string(KJS::Adopt, JSStringCreateWithUTF8CString(functionName));
+    JSValueRef objectProperty = JSObjectGetProperty(context, object, string.get(), exception);
+    ASSERT(!*exception);
+    
+    JSObjectRef function = JSValueToObject(context, objectProperty, exception);
+    ASSERT(!*exception);
+    ASSERT(JSObjectIsFunction(context, function));
+ 
+    return JSObjectCallAsFunction(context, function, 0, argumentCount, arguments, exception);
+}
+
+JSClassRef DebuggerDocument::getDroseraJSClass()
+{
+    static JSClassRef droseraClass = 0;
+
+    if (!droseraClass) {
+        JSClassDefinition classDefinition = {0};
+        classDefinition.staticFunctions = DebuggerDocument::staticFunctions();
+
+        droseraClass = JSClassCreate(&classDefinition);
+    }
+
+    return droseraClass;
+}
+
+JSStaticFunction* DebuggerDocument::staticFunctions()
+{
+    static JSStaticFunction staticFunctions[] = {
+        { "breakpointEditorHTML", DebuggerDocument::breakpointEditorHTMLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "currentFunctionStack", DebuggerDocument::currentFunctionStackCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "evaluateScript", DebuggerDocument::evaluateScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isPaused", DebuggerDocument::isPausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "localScopeVariableNamesForCallFrame", DebuggerDocument::localScopeVariableNamesForCallFrameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "pause", DebuggerDocument::pauseCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "resume", DebuggerDocument::resumeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "stepInto", DebuggerDocument::stepIntoCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "valueForScopeVariableNamed", DebuggerDocument::valueForScopeVariableNamedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "log", DebuggerDocument::logCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { 0, 0, 0 }
+    };
+
+    return staticFunctions;
+}
+
+void DebuggerDocument::logException(JSContextRef context, JSValueRef exception)
+{
+    if (!exception)
+        return;
+    
+    JSRetainPtr<JSStringRef> msg(KJS::Adopt, JSValueToStringCopy(context, exception, 0));
+    DebuggerDocument::platformLog(context, msg.get());
 }
 

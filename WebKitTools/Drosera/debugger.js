@@ -60,13 +60,13 @@ ScriptCallFrame = function (functionName, index, row)
 
 ScriptCallFrame.prototype.valueForScopeVariable = function (name)
 {
-    return DebuggerDocument.valueForScopeVariableNamed_inCallFrame_(name, this.index);
+    return DebuggerDocument.valueForScopeVariableNamed(name, this.index);
 }
 
 ScriptCallFrame.prototype.loadVariables = function ()
 {
     if (!this.localVariableNames)
-        this.localVariableNames = DebuggerDocument.localScopeVariableNamesForCallFrame_(this.index);
+        this.localVariableNames = DebuggerDocument.localScopeVariableNamesForCallFrame(this.index);
 
     var variablesTable = document.getElementById("variablesTable");
     variablesTable.innerHTML = "";
@@ -388,12 +388,11 @@ function breakpointAction(event)
 {
     var file = files[currentFile];
     var lineNum = event.target.title;
-    
-    if (file.breakpoints[lineNum]) {
-        if (!pendingAction)
-            pendingAction = setTimeout(toggleBreakpointOnLine, DebuggerDocument.doubleClickMilliseconds(), lineNum);  
-    } else
+
+    if (!file.breakpoints[lineNum])
         file.breakpoints[lineNum] = new BreakPoint(event.target.parentNode, file, lineNum);
+    else
+        toggleBreakpointOnLine(lineNum);
 }
 
 BreakPoint = function(row, file, line) 
@@ -428,7 +427,7 @@ function toggleBreakpointEditorOnLine(lineNum)
             editor.innerHTML = breakpointEditorHTML;
             
             bp.row.childNodes[1].appendChild(editor);
-            
+
             bp.editor = editor;
             file.breakpoints[lineNum] = bp;
 
@@ -468,7 +467,7 @@ function updateBreakpointTypeOnLine(line)
 function setConditionFieldText(breakpoint)
 {
     var conditionField = breakpoint.editor.query('.//div[@class="condition"]');
-    
+
     var functionBody = breakpoint.value;
     if (!functionBody || functionBody == "break")
         functionBody = "";
@@ -509,7 +508,7 @@ function toggleBreakpointOnLine(lineNum)
     var breakpoint = files[currentFile].breakpoints[lineNum];
     pendingAction = null;
     if (breakpoint.enabled)
-        breakpoint.row.addStyleClass("disabled");    
+        breakpoint.row.addStyleClass("disabled");
     else
         breakpoint.row.removeStyleClass("disabled");
     
@@ -519,7 +518,7 @@ function toggleBreakpointOnLine(lineNum)
     var editor = breakpoint.editor;
     if (editor) {
         editor.query('.//input[@class="enable"]').checked = breakpoint.enabled;
-        setConditionFieldText(editor, lineNum);
+        setConditionFieldText(breakpoint, lineNum);
     }
 }
 
@@ -1005,7 +1004,7 @@ function loadFile(fileIndex, manageNavLists)
             td.className = "gutter";
             td.title = (i + 1);
             td.addEventListener("click", breakpointAction, true);
-            td.addEventListener("dblclick", function() { toggleBreakpointEditorOnLine(event.target.title); }, true);
+            td.addEventListener("dblclick", function(event) { toggleBreakpointEditorOnLine(event.target.title); }, true);
             td.addEventListener("mousedown", moveBreakPoint, true);
             tr.appendChild(td);
 
@@ -1316,7 +1315,7 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
         return;
 
     lastStatement = [sourceId, line];
-    
+
     var breakpoint = file.breakpoints[line];
 
     var shouldBreak = false;
@@ -1324,14 +1323,14 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
     if (breakpoint && breakpoint.enabled) {
         switch(breakpoint.type) {
             case 0:
-                shouldBreak = (breakpoint.value == "break" || DebuggerDocument.evaluateScript_inCallFrame_(breakpoint.value, 0) == 1);
+                shouldBreak = (breakpoint.value == "break" || DebuggerDocument.evaluateScript(breakpoint.value, 0) == 1);
                 if (shouldBreak)
                     breakpoint.hitcount++;
                 break;
             case 1:
                 var message = "Hit breakpoint on line " + line;
                 if (breakpoint.value != "break")
-                    message = DebuggerDocument.evaluateScript_inCallFrame_(breakpoint.value, 0);
+                    message = DebuggerDocument.evaluateScript(breakpoint.value, 0);
                 if (consoleWindow)
                     consoleWindow.appendMessage("", message);
                 breakpoint.hitcount++;
@@ -1344,7 +1343,7 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
         if (counter)
             counter.innerText = breakpoint.hitcount;
     }
-    
+
     if (pauseOnNextStatement || shouldBreak || (steppingOver && !steppingStack)) {
         pause();
         pauseOnNextStatement = false;

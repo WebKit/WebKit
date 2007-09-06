@@ -153,10 +153,11 @@
 		63D54F770AE8280F0064C440 /* breakpointEditor.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; name = breakpointEditor.html; path = ../breakpointEditor.html; sourceTree = SOURCE_ROOT; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		95C906AF0C8E439200F9BE0F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../ForwardingHeaders/wtf/Platform.h; sourceTree = SOURCE_ROOT; };
 		D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = /System/Library/Frameworks/JavaScriptCore.framework; sourceTree = "<absolute>"; };
-		D2D794EC0C4BED83004784F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../config.h; sourceTree = SOURCE_ROOT; };
-		D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DebuggerDocument.cpp; path = ../DebuggerDocument.cpp; sourceTree = SOURCE_ROOT; };
-		D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DebuggerDocument.h; path = ../DebuggerDocument.h; sourceTree = SOURCE_ROOT; };
+		D2D794EC0C4BED83004784F7 /* config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = config.h; path = ../config.h; sourceTree = SOURCE_ROOT; };
+		D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DebuggerDocument.cpp; path = ../DebuggerDocument.cpp; sourceTree = SOURCE_ROOT; };
+		D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = DebuggerDocument.h; path = ../DebuggerDocument.h; sourceTree = SOURCE_ROOT; };
 		D2D795050C4BEDC3004784F7 /* DebuggerDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DebuggerDocumentMac.h; sourceTree = "<group>"; };
 		D2D795060C4BEDC3004784F7 /* DebuggerDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerDocumentMac.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -289,6 +290,7 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				95C906AF0C8E439200F9BE0F /* Platform.h */,
 				D2D794EC0C4BED83004784F7 /* config.h */,
 				1C74F1840A47DEE600FEC632 /* DebuggerApplication.mm */,
 				1C74F1830A47DEE600FEC632 /* DebuggerApplication.h */,
@@ -563,6 +565,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = Drosera.pch;
+				HEADER_SEARCH_PATHS = ../ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -571,6 +574,7 @@
 					WebCore,
 				);
 				PRODUCT_NAME = Drosera;
+				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -585,6 +589,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREFIX_HEADER = Drosera.pch;
+				HEADER_SEARCH_PATHS = ../ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -593,6 +598,7 @@
 					WebCore,
 				);
 				PRODUCT_NAME = Drosera;
+				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -606,6 +612,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
+				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 			};
 			name = Debug;
 		};
@@ -616,6 +623,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
+				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 			};
 			name = Release;
 		};

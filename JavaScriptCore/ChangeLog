@@ -1,3 +1,27 @@
+2007-09-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam, Sam, Darin.
+
+        - Created a JSRetainPtr specifically for JSStringRefs so they can be automatically refed and derefed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSRetainPtr.h: Copied from wtf/RetainPtr.h.
+        (KJS::JSRetain):
+        (KJS::JSRelease):
+        (KJS::):
+        (KJS::JSRetainPtr::JSRetainPtr):
+        (KJS::JSRetainPtr::~JSRetainPtr):
+        (KJS::JSRetainPtr::get):
+        (KJS::JSRetainPtr::releaseRef):
+        (KJS::JSRetainPtr::operator->):
+        (KJS::JSRetainPtr::operator UnspecifiedBoolType):
+        (KJS::::operator):
+        (KJS::::adopt):
+        (KJS::::swap):
+        (KJS::swap):
+        (KJS::operator==):
+        (KJS::operator!=):
+
 2007-09-05  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed Qt build fix.

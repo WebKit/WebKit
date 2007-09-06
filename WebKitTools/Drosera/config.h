@@ -18,10 +18,6 @@
  *
  */
 
-// FIXME: I would like to not include a WebCore header that requires we compile 
-// WebKit when we build Drosera. I'm not sure of the correct architecture.
-#ifdef WIN32
-
 #include <wtf/Platform.h>
 
 #if PLATFORM(WIN)
@@ -37,4 +33,4 @@
 #include <tchar.h>
 
 #endif // PLATFORM(WIN)
-#endif // WIN32
+

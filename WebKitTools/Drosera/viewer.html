@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         Element.prototype.firstParentWithClass = function(className) {
             var node = this.parentNode;
             while(node.className.indexOf(className) == -1) {
-                if(node == document) 
+                if (node == document) 
                     return null;
                 node = node.parentNode;
             }

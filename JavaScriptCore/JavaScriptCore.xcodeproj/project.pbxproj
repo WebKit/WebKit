@@ -231,6 +231,7 @@
 		93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26CF608B29A1C00F85226 /* pcre_get.c */; };
 		93E26DDC08B2A4F400F85226 /* pcre_printint.src in Headers */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.src */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
+		9503198E0C8F51110015C757 /* JSRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9503195A0C8F50040015C757 /* JSRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D212022B0AD4310D00ED79B6 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateMath.h */; };
 		E11D51760B2E798D0056C188 /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51750B2E798D0056C188 /* StringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -585,6 +586,7 @@
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
+		9503195A0C8F50040015C757 /* JSRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRetainPtr.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
@@ -989,6 +991,7 @@
 				1483B589099BC1950016E4F0 /* JSImmediate.h */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
+				9503195A0C8F50040015C757 /* JSRetainPtr.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
 				93F1981A08245AAE001E9ABC /* keywords.table */,
 				F692A8650255597D01FF60F7 /* lexer.cpp */,
@@ -1252,6 +1255,7 @@
 				51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */,
 				5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */,
 				5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */,
+				9503198E0C8F51110015C757 /* JSRetainPtr.h in Headers */,
 				652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
