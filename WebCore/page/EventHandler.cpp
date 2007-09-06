@@ -1296,10 +1296,13 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         // Figure out which view to send the event to.
         RenderObject* target = node->renderer();
         
-        if (target && target->isWidget() &&
-            passWheelEventToWidget(e, static_cast<RenderWidget*>(target)->widget())) {
-            e.accept();
-            return true;
+        if (target && target->isWidget()) {
+            Widget* widget = static_cast<RenderWidget*>(target)->widget();
+
+            if (widget && passWheelEventToWidget(e, widget)) {
+                e.accept();
+                return true;
+            }
         }
 
         node = node->shadowAncestorNode();

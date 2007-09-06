@@ -1,5 +1,17 @@
 2007-09-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Ada.
+
+        <rdar://problem/5457844>
+        Crash when using mouse wheel with plug-ins disabled.
+
+        Null check the widget.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+
+2007-09-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         Small tweak.
