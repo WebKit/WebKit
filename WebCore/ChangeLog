@@ -1,5 +1,14 @@
 2007-09-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        Small tweak.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::startStream):
+
+2007-09-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam and Steve.
 
         <rdar://problem/5459321>

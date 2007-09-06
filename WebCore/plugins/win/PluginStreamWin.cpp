@@ -154,7 +154,7 @@ void PluginStreamWin::startStream()
     m_stream.headers = m_headers.data();
     m_stream.pdata = 0;
     m_stream.ndata = this;
-    m_stream.end = max(expectedContentLength, static_cast<long long>(0));
+    m_stream.end = max(expectedContentLength, 0LL);
     m_stream.lastmodified = m_resourceResponse.lastModifiedDate();
     m_stream.notifyData = m_notifyData;
 
