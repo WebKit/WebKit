@@ -1,3 +1,9 @@
+2007-09-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - copy of WebKitDetect script from wiki
+
+        * misc/WebKitDetect.html: Added.
+
 2007-08-20  Adam Roben  <aroben@apple.com>
 
         Remove any mention of drwtsn32.log, as it is almost never useful for tracking down crashes
